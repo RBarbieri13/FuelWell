@@ -32,10 +32,12 @@ export function GradientButton({
 }: GradientButtonProps) {
   const baseClasses = cn(
     "inline-flex items-center justify-center",
-    "gradient-brand",
-    "text-white font-medium rounded-xl",
-    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fw-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+    "bg-gradient-to-r from-emerald-500 to-teal-500",
+    "text-white font-semibold rounded-xl shadow-md",
+    "hover:shadow-lg hover:from-emerald-600 hover:to-teal-600",
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2",
     "disabled:pointer-events-none disabled:opacity-50",
+    "transition-all duration-200",
     sizeClasses[size],
     className
   )
@@ -43,7 +45,8 @@ export function GradientButton({
   if (href) {
     return (
       <motion.div
-        whileHover={{ scale: 1.02, filter: "brightness(1.1)" }}
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
         transition={{ duration: 0.15, ease: "easeOut" }}
         className="inline-block"
       >
@@ -56,7 +59,8 @@ export function GradientButton({
 
   return (
     <motion.button
-      whileHover={{ scale: 1.02, filter: "brightness(1.1)" }}
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
       transition={{ duration: 0.15, ease: "easeOut" }}
       type={type}
       onClick={onClick}

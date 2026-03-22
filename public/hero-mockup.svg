@@ -1,0 +1,82 @@
+<svg width="375" height="500" viewBox="0 0 375 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Phone background -->
+  <rect width="375" height="500" rx="24" fill="#FAFBFE"/>
+
+  <!-- Status bar -->
+  <rect x="0" y="0" width="375" height="44" rx="24" fill="white"/>
+  <text x="187" y="28" text-anchor="middle" font-family="system-ui" font-size="13" font-weight="600" fill="#1A1D2E">9:41</text>
+  <circle cx="330" cy="22" r="4" fill="#34D399"/>
+
+  <!-- App header -->
+  <rect x="0" y="44" width="375" height="56" fill="white"/>
+  <rect x="16" y="56" width="28" height="28" rx="8" fill="url(#mockup-grad)"/>
+  <circle cx="30" cy="70" r="6" fill="white" opacity="0.6"/>
+  <circle cx="30" cy="70" r="3" fill="white"/>
+  <text x="52" y="75" font-family="system-ui" font-weight="700" font-size="18" fill="#1A1D2E">FuelWell</text>
+  <text x="150" y="75" font-family="system-ui" font-weight="700" font-size="18" fill="#34D399"> Coach</text>
+
+  <!-- Greeting card -->
+  <rect x="16" y="116" width="343" height="80" rx="16" fill="url(#card-grad)"/>
+  <text x="32" y="145" font-family="system-ui" font-weight="600" font-size="15" fill="white">Good morning!</text>
+  <text x="32" y="168" font-family="system-ui" font-weight="400" font-size="13" fill="white" opacity="0.85">You're on a 5-day streak. Keep it up!</text>
+  <rect x="32" y="176" width="80" height="6" rx="3" fill="white" opacity="0.3"/>
+  <rect x="32" y="176" width="60" height="6" rx="3" fill="white" opacity="0.6"/>
+
+  <!-- Macro rings section -->
+  <rect x="16" y="212" width="343" height="100" rx="16" fill="white" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="32" y="237" font-family="system-ui" font-weight="600" font-size="13" fill="#1A1D2E">Today's Progress</text>
+
+  <!-- Calories ring -->
+  <circle cx="72" cy="280" r="22" fill="none" stroke="#E2E8F0" stroke-width="4"/>
+  <circle cx="72" cy="280" r="22" fill="none" stroke="#34D399" stroke-width="4" stroke-dasharray="100 138" stroke-linecap="round" transform="rotate(-90 72 280)"/>
+  <text x="72" y="284" text-anchor="middle" font-family="system-ui" font-weight="700" font-size="11" fill="#1A1D2E">1,420</text>
+  <text x="72" y="308" text-anchor="middle" font-family="system-ui" font-size="10" fill="#64748B">Calories</text>
+
+  <!-- Protein ring -->
+  <circle cx="162" cy="280" r="22" fill="none" stroke="#E2E8F0" stroke-width="4"/>
+  <circle cx="162" cy="280" r="22" fill="none" stroke="#F4945E" stroke-width="4" stroke-dasharray="90 138" stroke-linecap="round" transform="rotate(-90 162 280)"/>
+  <text x="162" y="284" text-anchor="middle" font-family="system-ui" font-weight="700" font-size="11" fill="#1A1D2E">98g</text>
+  <text x="162" y="308" text-anchor="middle" font-family="system-ui" font-size="10" fill="#64748B">Protein</text>
+
+  <!-- Carbs ring -->
+  <circle cx="252" cy="280" r="22" fill="none" stroke="#E2E8F0" stroke-width="4"/>
+  <circle cx="252" cy="280" r="22" fill="none" stroke="#67C7E2" stroke-width="4" stroke-dasharray="75 138" stroke-linecap="round" transform="rotate(-90 252 280)"/>
+  <text x="252" y="284" text-anchor="middle" font-family="system-ui" font-weight="700" font-size="11" fill="#1A1D2E">145g</text>
+  <text x="252" y="308" text-anchor="middle" font-family="system-ui" font-size="10" fill="#64748B">Carbs</text>
+
+  <!-- Fat ring -->
+  <circle cx="340" cy="280" r="22" fill="none" stroke="#E2E8F0" stroke-width="4"/>
+  <circle cx="340" cy="280" r="22" fill="none" stroke="#C084FC" stroke-width="4" stroke-dasharray="80 138" stroke-linecap="round" transform="rotate(-90 340 280)"/>
+  <text x="340" y="284" text-anchor="middle" font-family="system-ui" font-weight="700" font-size="11" fill="#1A1D2E">52g</text>
+  <text x="340" y="308" text-anchor="middle" font-family="system-ui" font-size="10" fill="#64748B">Fat</text>
+
+  <!-- Chat message -->
+  <rect x="16" y="328" width="343" height="90" rx="16" fill="white" stroke="#E2E8F0" stroke-width="1"/>
+  <circle cx="40" cy="352" r="14" fill="#ECFDF5"/>
+  <text x="40" y="356" text-anchor="middle" font-family="system-ui" font-size="14" fill="#34D399">AI</text>
+  <text x="62" y="353" font-family="system-ui" font-weight="600" font-size="12" fill="#1A1D2E">FuelWell Coach</text>
+  <text x="62" y="372" font-family="system-ui" font-size="12" fill="#64748B">For lunch, try grilled salmon with</text>
+  <text x="62" y="388" font-family="system-ui" font-size="12" fill="#64748B">quinoa and roasted veggies. It'll hit</text>
+  <text x="62" y="404" font-family="system-ui" font-size="12" fill="#64748B">your protein goal perfectly.</text>
+
+  <!-- Input bar -->
+  <rect x="16" y="434" width="280" height="44" rx="22" fill="#F1F5F9" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="36" y="460" font-family="system-ui" font-size="13" fill="#94A3B8">Ask your coach anything...</text>
+  <rect x="308" y="434" width="44" height="44" rx="22" fill="url(#send-grad)"/>
+  <path d="M324 456 L336 450 L324 444" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+  <defs>
+    <linearGradient id="mockup-grad" x1="16" y1="56" x2="44" y2="84">
+      <stop offset="0%" stop-color="#F4945E"/>
+      <stop offset="100%" stop-color="#34D399"/>
+    </linearGradient>
+    <linearGradient id="card-grad" x1="16" y1="116" x2="359" y2="196">
+      <stop offset="0%" stop-color="#34D399"/>
+      <stop offset="100%" stop-color="#06B6D4"/>
+    </linearGradient>
+    <linearGradient id="send-grad" x1="308" y1="434" x2="352" y2="478">
+      <stop offset="0%" stop-color="#34D399"/>
+      <stop offset="100%" stop-color="#06B6D4"/>
+    </linearGradient>
+  </defs>
+</svg>

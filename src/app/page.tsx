@@ -1,14 +1,382 @@
+"use client";
+
+import Image from "next/image";
 import { Section } from "@/components/ui/section";
+import { GradientButton } from "@/components/ui/gradient-button";
+import { OutlineButton } from "@/components/ui/outline-button";
+import { AnimatedSection } from "@/components/animated-section";
+import { FeatureCard } from "@/components/feature-card";
+import {
+  Brain,
+  DollarSign,
+  Dumbbell,
+  TrendingUp,
+  Users,
+  Camera,
+  ChefHat,
+  Wallet,
+  BookOpen,
+  BarChart3,
+  XCircle,
+  User,
+  Bot,
+  ArrowRight,
+  Sparkles,
+} from "lucide-react";
+
+const credibilityItems = [
+  { icon: Brain, label: "AI-guided nutrition" },
+  { icon: DollarSign, label: "Budget-friendly planning" },
+  { icon: Dumbbell, label: "Adaptive workouts" },
+  { icon: TrendingUp, label: "Progress insights" },
+  { icon: Users, label: "Supports trainers" },
+];
+
+const problemBullets = [
+  "You eat out and don\u2019t know what to order.",
+  "Weekends derail your progress.",
+  "Your weight fluctuates and you don\u2019t know why.",
+  "Healthy food feels expensive or boring.",
+  "Your workout plan doesn\u2019t adapt to your life.",
+];
+
+const howItWorksSteps = [
+  {
+    number: 1,
+    title: "Tell",
+    description:
+      "Share your goals, preferences, dietary needs, and budget. FuelWell learns who you are and how you live.",
+    color: "from-emerald-400 to-teal-400",
+  },
+  {
+    number: 2,
+    title: "Get",
+    description:
+      "Receive personalized meal suggestions, grocery lists, workout plans, and real-time coaching \u2014 all tailored to your day.",
+    color: "from-orange-400 to-amber-400",
+  },
+  {
+    number: 3,
+    title: "Track",
+    description:
+      "See your progress clearly with trends, insights, and smart nudges that keep you moving forward without obsessing over numbers.",
+    color: "from-cyan-400 to-blue-400",
+  },
+];
+
+const features = [
+  {
+    icon: Camera,
+    title: "Make smarter food decisions",
+    description:
+      "Snap a photo of your meal or describe what you\u2019re eating. FuelWell gives you instant feedback, alternatives, and coaching \u2014 not just calorie counts.",
+  },
+  {
+    icon: ChefHat,
+    title: "Build meals that taste good",
+    description:
+      "Get recipe ideas and meal suggestions based on your preferences, what\u2019s in your fridge, and what fits your goals.",
+  },
+  {
+    icon: Wallet,
+    title: "Stay on budget",
+    description:
+      "Set a weekly grocery budget and get meal plans that respect it. No more choosing between your health and your wallet.",
+  },
+  {
+    icon: Dumbbell,
+    title: "Get customized workouts",
+    description:
+      "Whether you\u2019re at home, in a gym, or traveling \u2014 FuelWell builds workouts around your equipment, time, and fitness level.",
+    premium: true,
+  },
+  {
+    icon: BookOpen,
+    title: "Understand your body",
+    description:
+      "Learn why your weight changes, what affects your energy, and how food and movement connect.",
+  },
+  {
+    icon: BarChart3,
+    title: "Track progress clearly",
+    description:
+      "Visual dashboards that show trends over time \u2014 not just daily numbers. See the big picture so you stay motivated.",
+  },
+];
+
+const coachingExamples = [
+  {
+    question: "I\u2019m at a Mexican restaurant. What should I order?",
+    answer:
+      "Go for grilled chicken fajitas with extra veggies. Skip the sour cream, keep the guac \u2014 it\u2019s healthy fat. Ask for corn tortillas instead of flour.",
+  },
+  {
+    question: "I went over my calories yesterday. Should I eat less today?",
+    answer:
+      "No need to punish yourself. One day doesn\u2019t define your progress. Stick to your normal plan today and focus on hydration.",
+  },
+  {
+    question: "I only have 20 minutes to work out. Is it even worth it?",
+    answer:
+      "Absolutely. Here\u2019s a quick full-body circuit with no equipment. 20 minutes of focused effort beats skipping it entirely.",
+  },
+  {
+    question: "Why did my weight go up even though I\u2019ve been eating well?",
+    answer:
+      "Weight fluctuates daily due to water retention, sodium, sleep, and stress. Your 7-day trend is still heading down.",
+  },
+  {
+    question: "I\u2019m bored with my meals. Can you mix it up?",
+    answer:
+      "Let\u2019s refresh your rotation. Here are 3 new recipes that hit your macros and budget with prep time under 30 minutes.",
+  },
+];
 
 export default function Home() {
   return (
-    <Section className="flex items-center justify-center min-h-[70vh]">
-      <div className="text-center space-y-4">
-        <h1 className="gradient-text">FuelWell</h1>
-        <p className="text-lg text-muted-foreground">
-          Fuel Well, Feel Well.
-        </p>
-      </div>
-    </Section>
+    <>
+      {/* ───── HERO ───── */}
+      <section className="relative overflow-hidden">
+        {/* Pastel gradient mesh background */}
+        <div className="absolute inset-0 gradient-mesh" />
+        <div className="absolute inset-0 dot-grid" />
+        <div className="absolute top-[-15%] left-[-5%] w-[500px] h-[500px] rounded-full bg-emerald-200/30 blur-[120px] animate-float-slow" />
+        <div className="absolute bottom-[-10%] right-[-5%] w-[400px] h-[400px] rounded-full bg-orange-200/25 blur-[100px] animate-float-slower" />
+        <div className="absolute top-[20%] right-[15%] w-[300px] h-[300px] rounded-full bg-violet-200/20 blur-[80px] animate-pulse-glow" />
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 md:pt-40 pb-20 md:pb-28">
+          <AnimatedSection className="max-w-3xl mx-auto text-center space-y-8">
+            <div className="inline-flex items-center gap-2 rounded-full border border-fw-border bg-white/80 px-4 py-1.5 text-sm text-muted-foreground backdrop-blur-sm shadow-sm font-accent">
+              <Sparkles className="h-3.5 w-3.5 text-fw-accent" />
+              Now accepting Founders 100 members
+            </div>
+
+            <h1 className="text-4xl md:text-5xl lg:text-[3.75rem] font-bold tracking-tight text-foreground leading-[1.08]">
+              Build a healthier lifestyle{" "}
+              <span className="gradient-text">without giving up real life.</span>
+            </h1>
+
+            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+              Your AI-powered wellness coach for smarter food choices, adaptive
+              workouts, real-time progress tracking, and sustainable habits that
+              actually fit your life.
+            </p>
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
+              <GradientButton href="/founders-100" size="default">
+                Join the Founders 100
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </GradientButton>
+              <OutlineButton href="/features">
+                See How It Works
+              </OutlineButton>
+            </div>
+
+            <p className="text-sm text-muted-foreground/80 max-w-xl mx-auto font-accent">
+              Built for people who want to eat better, train smarter, and
+              understand their progress without rigid dieting or guilt.
+            </p>
+          </AnimatedSection>
+
+          {/* Hero phone mockup */}
+          <AnimatedSection delay={0.3} className="mt-16 max-w-sm mx-auto">
+            <div className="relative">
+              <div className="absolute -inset-4 bg-gradient-to-br from-emerald-200/40 via-transparent to-orange-200/40 rounded-[2rem] blur-xl transition-opacity duration-500 group-hover:opacity-80" />
+              <div className="group relative rounded-[1.5rem] border border-fw-border bg-white shadow-card-hover overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                <Image
+                  src="/hero-mockup.svg"
+                  alt="FuelWell app interface showing AI coaching conversation"
+                  width={375}
+                  height={500}
+                  className="w-full h-auto"
+                  priority
+                />
+              </div>
+            </div>
+          </AnimatedSection>
+        </div>
+      </section>
+
+      {/* ───── CREDIBILITY STRIP ───── */}
+      <Section className="py-8 md:py-12 border-y border-fw-border/50 bg-fw-surface/50">
+        <AnimatedSection delay={0.1}>
+          <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12">
+            {credibilityItems.map((item) => (
+              <div
+                key={item.label}
+                className="flex items-center gap-2.5 text-muted-foreground group"
+              >
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50 group-hover:bg-emerald-100 transition-colors duration-200">
+                  <item.icon className="h-4 w-4 text-fw-accent" />
+                </div>
+                <span className="text-sm font-medium font-accent group-hover:text-foreground transition-colors duration-200">{item.label}</span>
+              </div>
+            ))}
+          </div>
+        </AnimatedSection>
+      </Section>
+
+      {/* ───── PROBLEM SECTION ───── */}
+      <Section>
+        <AnimatedSection className="max-w-3xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground text-center mb-4">
+            Most fitness plans fail when life gets busy.
+          </h2>
+          <p className="text-muted-foreground text-center text-lg mb-10 max-w-2xl mx-auto leading-relaxed">
+            Rigid meal plans and cookie-cutter workouts weren&apos;t designed
+            for real life. They don&apos;t account for restaurant dinners,
+            weekend plans, tight budgets, or the stress of daily decision-making.
+          </p>
+          <ul className="space-y-4 max-w-lg mx-auto">
+            {problemBullets.map((bullet, i) => (
+              <AnimatedSection key={bullet} delay={0.3 + i * 0.08}>
+                <li className="flex items-start gap-3 group">
+                  <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-red-50 mt-0.5 group-hover:bg-red-100 transition-colors duration-200">
+                    <XCircle className="h-3.5 w-3.5 text-red-400" />
+                  </div>
+                  <span className="text-muted-foreground group-hover:text-foreground transition-colors duration-200">
+                    {bullet}
+                  </span>
+                </li>
+              </AnimatedSection>
+            ))}
+          </ul>
+        </AnimatedSection>
+      </Section>
+
+      {/* ───── SOLUTION / HOW IT WORKS ───── */}
+      <Section className="bg-fw-surface">
+        <AnimatedSection className="text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+            Meet FuelWell, your daily decision coach.
+          </h2>
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+            Three simple steps to a healthier, more sustainable routine.
+          </p>
+        </AnimatedSection>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+          <div className="hidden md:block absolute top-7 left-[calc(16.67%+28px)] right-[calc(16.67%+28px)] h-[2px] bg-gradient-to-r from-emerald-300 via-orange-300 to-cyan-300 opacity-30 overflow-hidden">
+            <div className="h-full w-full shimmer" />
+          </div>
+
+          {howItWorksSteps.map((step) => (
+            <AnimatedSection
+              key={step.number}
+              delay={step.number * 0.15}
+              className="text-center relative"
+            >
+              <div className={`inline-flex items-center justify-center h-14 w-14 rounded-2xl bg-gradient-to-br ${step.color} text-white text-xl font-bold mb-5 shadow-md relative z-10`}>
+                {step.number}
+              </div>
+              <h3 className="text-xl font-semibold text-foreground mb-3">
+                {step.title}
+              </h3>
+              <p className="text-muted-foreground leading-relaxed max-w-xs mx-auto">
+                {step.description}
+              </p>
+            </AnimatedSection>
+          ))}
+        </div>
+      </Section>
+
+      {/* ───── CORE FEATURES GRID ───── */}
+      <Section>
+        <AnimatedSection className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+            What FuelWell helps you do
+          </h2>
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+            Everything you need to eat smarter, train better, and stay on track.
+          </p>
+        </AnimatedSection>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {features.map((feature, i) => (
+            <AnimatedSection key={feature.title} delay={i * 0.08}>
+              <FeatureCard
+                icon={feature.icon}
+                title={feature.title}
+                description={feature.description}
+                premium={feature.premium}
+              />
+            </AnimatedSection>
+          ))}
+        </div>
+      </Section>
+
+      {/* ───── SMART COACHING EXAMPLES ───── */}
+      <Section className="bg-fw-surface">
+        <AnimatedSection className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+            Real-time coaching for real-life situations
+          </h2>
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+            FuelWell doesn&apos;t just track &mdash; it coaches. Here&apos;s what that
+            looks like in practice.
+          </p>
+        </AnimatedSection>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {coachingExamples.map((example, i) => (
+            <AnimatedSection key={i} delay={i * 0.08}>
+              <div className="group rounded-2xl border border-fw-border bg-white p-5 h-full flex flex-col gap-4 hover:shadow-card-hover hover:border-fw-accent/30 hover:-translate-y-1 transition-all duration-300 shadow-card">
+                {/* User bubble */}
+                <div className="flex items-start gap-3">
+                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-orange-50 group-hover:scale-110 transition-transform duration-300">
+                    <User className="h-3.5 w-3.5 text-fw-orange" />
+                  </div>
+                  <div className="rounded-2xl rounded-tl-sm bg-fw-surface border border-fw-border px-4 py-2.5">
+                    <p className="text-sm font-medium text-foreground leading-relaxed">
+                      {example.question}
+                    </p>
+                  </div>
+                </div>
+
+                {/* AI bubble */}
+                <div className="flex items-start gap-3">
+                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-50 group-hover:scale-110 transition-transform duration-300">
+                    <Bot className="h-3.5 w-3.5 text-fw-accent" />
+                  </div>
+                  <div className="rounded-2xl rounded-tl-sm bg-emerald-50/50 border border-emerald-100 px-4 py-2.5 flex-1">
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {example.answer}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </AnimatedSection>
+          ))}
+        </div>
+      </Section>
+
+      {/* ───── FINAL CTA ───── */}
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0 gradient-mesh" />
+        <div className="absolute inset-0 dot-grid opacity-50" />
+        <div className="absolute top-[20%] left-[30%] w-[300px] h-[300px] rounded-full bg-emerald-200/20 blur-[100px] animate-float-slow" />
+        <div className="absolute bottom-[20%] right-[20%] w-[250px] h-[250px] rounded-full bg-orange-200/15 blur-[80px] animate-float-slower" />
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
+          <AnimatedSection className="text-center max-w-2xl mx-auto space-y-6">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground">
+              FuelWell. <span className="gradient-text">Feel well.</span>
+            </h2>
+            <p className="text-lg text-muted-foreground leading-relaxed">
+              Join the pilot and start building a healthier lifestyle with
+              real-time guidance that fits your life.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
+              <GradientButton href="/founders-100" size="default">
+                Join the Founders 100
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </GradientButton>
+              <OutlineButton href="/about">
+                Learn More
+              </OutlineButton>
+            </div>
+          </AnimatedSection>
+        </div>
+      </section>
+    </>
   );
 }
