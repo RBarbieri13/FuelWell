@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { GradientButton } from "@/components/ui/gradient-button";
-import { supabase } from "@/lib/supabase";
+import { getSupabase } from "@/lib/supabase";
 import { CheckCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -54,7 +54,7 @@ export function SignupForm() {
     setSubmitting(true);
 
     try {
-      const { error: supabaseError } = await supabase
+      const { error: supabaseError } = await getSupabase()
         .from("signups")
         .insert({
           email: trimmedEmail,
