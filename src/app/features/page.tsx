@@ -14,31 +14,458 @@ import {
   Sparkles,
   Zap,
   Shield,
+  Search,
+  MapPin,
+  Clock,
+  Flame,
+  Battery,
+  Wifi,
 } from "lucide-react";
 import { Section } from "@/components/ui/section";
 import { AnimatedSection } from "@/components/animated-section";
 import { GradientButton } from "@/components/ui/gradient-button";
 import { Badge } from "@/components/ui/badge";
 
+// ---------------------------------------------------------------------------
+// Rich mockup sub-components — one per feature
+// ---------------------------------------------------------------------------
+
+function AiCoachingMockup() {
+  return (
+    <div className="flex flex-col h-full">
+      {/* Header */}
+      <div className="flex items-center gap-2 px-3 py-2 border-b border-fw-border/40 bg-fw-surface/50">
+        <div className="h-6 w-6 rounded-full bg-emerald-100 flex items-center justify-center text-xs">🤖</div>
+        <span className="text-xs font-semibold text-foreground">FuelCoach AI</span>
+        <span className="ml-auto flex items-center gap-1">
+          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="text-[10px] text-emerald-600 font-medium">Online</span>
+        </span>
+      </div>
+
+      {/* Messages */}
+      <div className="flex-1 px-3 py-3 space-y-2.5 overflow-hidden">
+        {/* User bubble */}
+        <div className="flex justify-end">
+          <div className="max-w-[78%] bg-emerald-500 text-white text-[11px] leading-snug rounded-2xl rounded-br-sm px-3 py-2 shadow-sm">
+            What should I eat before my 7am workout? I only have 20 minutes.
+          </div>
+        </div>
+
+        {/* AI bubble */}
+        <div className="flex justify-start gap-1.5">
+          <div className="h-5 w-5 rounded-full bg-emerald-100 flex items-center justify-center text-[10px] shrink-0 mt-0.5">🤖</div>
+          <div className="max-w-[78%] bg-white border border-fw-border/60 text-[11px] leading-snug rounded-2xl rounded-bl-sm px-3 py-2 shadow-sm text-foreground">
+            Quick pre-workout pick: a banana + 1 tbsp almond butter. Fast carbs + a little protein. ⚡ Eat it 15 min before you start.
+          </div>
+        </div>
+
+        {/* User bubble */}
+        <div className="flex justify-end">
+          <div className="max-w-[78%] bg-emerald-500 text-white text-[11px] leading-snug rounded-2xl rounded-br-sm px-3 py-2 shadow-sm">
+            What if I&apos;m trying to lose fat — does that still work?
+          </div>
+        </div>
+
+        {/* AI bubble */}
+        <div className="flex justify-start gap-1.5">
+          <div className="h-5 w-5 rounded-full bg-emerald-100 flex items-center justify-center text-[10px] shrink-0 mt-0.5">🤖</div>
+          <div className="max-w-[78%] bg-white border border-fw-border/60 text-[11px] leading-snug rounded-2xl rounded-bl-sm px-3 py-2 shadow-sm text-foreground">
+            Yes! Only ~200 cal, and it helps you push harder so you burn more. Your deficit stays intact 🔥
+          </div>
+        </div>
+
+        {/* Typing indicator */}
+        <div className="flex justify-start gap-1.5 items-end">
+          <div className="h-5 w-5 rounded-full bg-emerald-100 flex items-center justify-center text-[10px] shrink-0">🤖</div>
+          <div className="bg-white border border-fw-border/60 rounded-2xl rounded-bl-sm px-3 py-2 flex gap-1 shadow-sm">
+            <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/40 animate-bounce [animation-delay:0ms]" />
+            <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/40 animate-bounce [animation-delay:150ms]" />
+            <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/40 animate-bounce [animation-delay:300ms]" />
+          </div>
+        </div>
+      </div>
+
+      {/* Input bar */}
+      <div className="px-3 pb-3">
+        <div className="flex items-center gap-2 rounded-xl border border-fw-border/60 bg-fw-surface px-3 py-2">
+          <span className="text-[11px] text-muted-foreground/50 flex-1">Ask anything...</span>
+          <div className="h-5 w-5 rounded-full bg-emerald-500 flex items-center justify-center">
+            <span className="text-white text-[9px] font-bold">↑</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function RealWorldFoodMockup() {
+  return (
+    <div className="flex flex-col h-full">
+      {/* Search bar */}
+      <div className="px-3 pt-3 pb-2">
+        <div className="flex items-center gap-2 rounded-xl border border-fw-border/60 bg-fw-surface px-3 py-2">
+          <Search className="h-3 w-3 text-muted-foreground/50" />
+          <span className="text-[11px] text-muted-foreground/50">Chipotle Mexican Grill</span>
+          <MapPin className="h-3 w-3 text-orange-400 ml-auto" />
+        </div>
+      </div>
+
+      {/* Restaurant card */}
+      <div className="mx-3 rounded-xl border border-fw-border/50 bg-white overflow-hidden shadow-sm">
+        <div className="h-10 bg-gradient-to-r from-orange-400 to-amber-400 flex items-center px-3 gap-2">
+          <span className="text-base">🌯</span>
+          <span className="text-white text-xs font-semibold">Chipotle Mexican Grill</span>
+          <span className="ml-auto text-[10px] text-white/80">0.3 mi</span>
+        </div>
+        <div className="p-2.5 space-y-1.5">
+          <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">AI-Suggested Combos</p>
+          {[
+            { name: "Chicken Bowl (half rice)", cal: 520, p: 48, c: 45, f: 14, badge: "Best Macro Split" },
+            { name: "Steak Salad + vinaigrette", cal: 440, p: 42, c: 22, f: 20, badge: "High Protein" },
+          ].map((item) => (
+            <div key={item.name} className="flex items-center gap-2 rounded-lg bg-orange-50 border border-orange-100 px-2.5 py-2">
+              <div className="flex-1 min-w-0">
+                <p className="text-[11px] font-medium text-foreground truncate">{item.name}</p>
+                <div className="flex gap-2 mt-0.5">
+                  <span className="text-[10px] text-muted-foreground">{item.cal} cal</span>
+                  <span className="text-[10px] text-emerald-600 font-medium">{item.p}g P</span>
+                  <span className="text-[10px] text-orange-500 font-medium">{item.c}g C</span>
+                  <span className="text-[10px] text-violet-500 font-medium">{item.f}g F</span>
+                </div>
+              </div>
+              <span className="text-[9px] bg-orange-100 text-orange-600 font-semibold px-1.5 py-0.5 rounded-full whitespace-nowrap">{item.badge}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Tip banner */}
+      <div className="mx-3 mt-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 flex gap-2 items-start">
+        <span className="text-sm">💡</span>
+        <p className="text-[10px] text-amber-800 leading-snug">
+          <span className="font-semibold">Pro tip:</span> Ask for dressing on the side and dip your fork — saves ~150 cal without losing flavor.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function PhotoLoggingMockup() {
+  return (
+    <div className="flex flex-col h-full">
+      {/* Camera viewfinder */}
+      <div className="mx-3 mt-3 rounded-xl overflow-hidden border border-violet-200 relative bg-zinc-900 flex-1">
+        {/* Simulated plate image bg */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="h-20 w-20 rounded-full bg-zinc-700/60 flex items-center justify-center text-4xl opacity-70">🍽️</div>
+        </div>
+
+        {/* Corner brackets */}
+        {["top-2 left-2", "top-2 right-2", "bottom-2 left-2", "bottom-2 right-2"].map((pos, i) => (
+          <div
+            key={i}
+            className={`absolute ${pos} h-4 w-4 border-violet-400`}
+            style={{
+              borderTopWidth: i < 2 ? 2 : 0,
+              borderBottomWidth: i >= 2 ? 2 : 0,
+              borderLeftWidth: i % 2 === 0 ? 2 : 0,
+              borderRightWidth: i % 2 !== 0 ? 2 : 0,
+            }}
+          />
+        ))}
+
+        {/* Scanning line */}
+        <div className="absolute left-3 right-3 h-px bg-violet-400/70 top-1/3" />
+
+        {/* Detecting badge */}
+        <div className="absolute bottom-2 left-1/2 -translate-x-1/2">
+          <span className="text-[10px] bg-violet-500/80 text-white px-2.5 py-1 rounded-full font-medium backdrop-blur-sm flex items-center gap-1">
+            <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
+            Detecting foods...
+          </span>
+        </div>
+      </div>
+
+      {/* Detected items */}
+      <div className="px-3 py-2.5 space-y-1.5">
+        <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">Detected</p>
+        {[
+          { name: "Grilled Chicken Breast", portion: "6 oz", p: 42, c: 0, f: 6, cal: 220, confidence: 97 },
+          { name: "Brown Rice", portion: "1 cup", p: 5, c: 45, f: 2, cal: 216, confidence: 92 },
+          { name: "Steamed Broccoli", portion: "1.5 cups", p: 4, c: 11, f: 0, cal: 55, confidence: 89 },
+        ].map((food) => (
+          <div key={food.name} className="flex items-center gap-2 rounded-lg border border-fw-border/50 bg-white px-2.5 py-1.5">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-1.5">
+                <p className="text-[11px] font-medium text-foreground truncate">{food.name}</p>
+                <span className="text-[9px] text-violet-500 font-semibold">{food.confidence}%</span>
+              </div>
+              <p className="text-[10px] text-muted-foreground">{food.portion} · {food.cal} cal</p>
+            </div>
+            <div className="flex gap-1.5 text-[10px] font-medium shrink-0">
+              <span className="text-emerald-600">{food.p}P</span>
+              <span className="text-orange-500">{food.c}C</span>
+              <span className="text-violet-500">{food.f}F</span>
+            </div>
+          </div>
+        ))}
+        {/* Total bar */}
+        <div className="flex justify-between items-center pt-1 border-t border-fw-border/40">
+          <span className="text-[10px] font-semibold text-foreground">Total</span>
+          <div className="flex gap-2 text-[10px] font-semibold">
+            <span className="text-muted-foreground">491 cal</span>
+            <span className="text-emerald-600">51g P</span>
+            <span className="text-orange-500">56g C</span>
+            <span className="text-violet-500">8g F</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function RecipeCreationMockup() {
+  return (
+    <div className="flex flex-col h-full px-3 py-3 gap-2.5">
+      {/* Recipe header */}
+      <div className="flex items-start gap-3">
+        <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-pink-100 to-rose-100 border border-pink-200 flex items-center justify-center text-2xl shrink-0">🥗</div>
+        <div className="flex-1 min-w-0">
+          <p className="text-xs font-bold text-foreground leading-tight">High-Protein Greek Chicken Bowl</p>
+          <div className="flex items-center gap-2 mt-1">
+            <span className="flex items-center gap-1 text-[10px] text-muted-foreground"><Clock className="h-2.5 w-2.5" /> 22 min</span>
+            <span className="text-[10px] text-muted-foreground">·</span>
+            <span className="text-[10px] text-muted-foreground">2 servings</span>
+            <span className="text-[10px] text-muted-foreground">·</span>
+            <span className="text-[10px] font-semibold text-emerald-600">$4.20/serving</span>
+          </div>
+          {/* Macro pills */}
+          <div className="flex flex-wrap gap-1 mt-1.5">
+            {[
+              { label: "498 cal", color: "bg-zinc-100 text-zinc-600" },
+              { label: "46g protein", color: "bg-emerald-50 text-emerald-700" },
+              { label: "38g carbs", color: "bg-orange-50 text-orange-600" },
+              { label: "14g fat", color: "bg-violet-50 text-violet-600" },
+            ].map((pill) => (
+              <span key={pill.label} className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${pill.color}`}>{pill.label}</span>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Ingredients */}
+      <div className="rounded-xl border border-fw-border/50 bg-white overflow-hidden shadow-sm">
+        <div className="px-2.5 py-1.5 border-b border-fw-border/40 bg-fw-surface/50">
+          <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">Ingredients</p>
+        </div>
+        <div className="divide-y divide-fw-border/30">
+          {[
+            { name: "Chicken breast", qty: "8 oz", cal: 248 },
+            { name: "Quinoa (dry)", qty: "½ cup", cal: 156 },
+            { name: "Cucumber", qty: "1 medium", cal: 16 },
+            { name: "Cherry tomatoes", qty: "½ cup", cal: 27 },
+            { name: "Feta cheese", qty: "1 oz", cal: 74 },
+            { name: "Greek dressing", qty: "1 tbsp", cal: 35 },
+          ].map((ing) => (
+            <div key={ing.name} className="flex items-center justify-between px-2.5 py-1.5">
+              <div className="flex items-center gap-2">
+                <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 shrink-0" />
+                <span className="text-[11px] text-foreground">{ing.name}</span>
+              </div>
+              <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+                <span>{ing.qty}</span>
+                <span className="w-10 text-right">{ing.cal} cal</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* AI badge */}
+      <div className="flex items-center gap-2 rounded-xl border border-pink-200 bg-pink-50 px-2.5 py-1.5">
+        <span className="text-sm">✨</span>
+        <p className="text-[10px] text-pink-700 leading-snug">Generated for your <span className="font-semibold">46g protein goal</span> · Under your $5 budget</p>
+      </div>
+    </div>
+  );
+}
+
+function MealPlanningMockup() {
+  const days = ["M", "T", "W", "T", "F", "S", "S"];
+  const meals = [
+    ["Oats + eggs", "Chicken rice", "Salmon bowl"],
+    ["Greek yogurt", "Turkey wrap", "Beef stir-fry"],
+    ["Smoothie", "Tuna salad", "Chicken pasta"],
+    ["Eggs + toast", "Lentil soup", "Shrimp tacos"],
+    ["Protein shake", "Grilled chicken", "Pork tenderloin"],
+    ["Pancakes", "Burrito bowl", "Grilled salmon"],
+    ["Veggie omelet", "Chicken salad", "Pasta primavera"],
+  ];
+
+  return (
+    <div className="flex flex-col h-full px-3 py-3 gap-2.5">
+      {/* Budget meter */}
+      <div className="rounded-xl border border-green-200 bg-green-50 px-3 py-2">
+        <div className="flex items-center justify-between mb-1.5">
+          <p className="text-[11px] font-semibold text-green-800">Weekly Grocery Budget</p>
+          <p className="text-[11px] font-bold text-green-700">$68 / $75</p>
+        </div>
+        <div className="h-2 rounded-full bg-green-200 overflow-hidden">
+          <div className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-green-500" style={{ width: "90.7%" }} />
+        </div>
+        <p className="text-[10px] text-green-600 mt-1">$7 remaining · 91% allocated</p>
+      </div>
+
+      {/* Calendar grid */}
+      <div className="rounded-xl border border-fw-border/50 bg-white overflow-hidden shadow-sm flex-1">
+        {/* Day headers */}
+        <div className="grid grid-cols-7 border-b border-fw-border/40 bg-fw-surface/50">
+          {days.map((d, i) => (
+            <div key={i} className="py-1 text-center text-[9px] font-bold text-muted-foreground uppercase">{d}</div>
+          ))}
+        </div>
+        {/* Meal rows — breakfast / lunch / dinner */}
+        {[0, 1, 2].map((mealIdx) => {
+          const mealLabel = ["🌅", "☀️", "🌙"][mealIdx];
+          return (
+            <div key={mealIdx} className={`grid grid-cols-7 ${mealIdx < 2 ? "border-b border-fw-border/30" : ""}`}>
+              {days.map((_, dayIdx) => {
+                const name = meals[dayIdx][mealIdx];
+                const isToday = dayIdx === 2;
+                return (
+                  <div
+                    key={dayIdx}
+                    className={`px-0.5 py-1.5 flex flex-col items-center gap-0.5 ${isToday ? "bg-emerald-50" : ""} ${dayIdx < 6 ? "border-r border-fw-border/20" : ""}`}
+                  >
+                    {dayIdx === 0 && <span className="text-[9px]">{mealLabel}</span>}
+                    <div className={`rounded text-center px-0.5 py-0.5 w-full ${isToday ? "bg-emerald-100" : "bg-fw-surface"}`}>
+                      <p className="text-[8px] leading-tight text-foreground/80 break-words hyphens-auto">{name}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Per-day cost row */}
+      <div className="flex items-center gap-1 justify-between">
+        {["$9", "$8", "$10", "$9", "$11", "$12", "$9"].map((cost, i) => (
+          <div key={i} className={`flex-1 text-center text-[9px] font-semibold ${i === 2 ? "text-emerald-600" : "text-muted-foreground"}`}>{cost}</div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function TrainingProgramMockup() {
+  const exercises = [
+    { name: "Barbell Squat", sets: "4×6", weight: "185 lb", done: true },
+    { name: "Romanian Deadlift", sets: "3×8", weight: "145 lb", done: true },
+    { name: "Leg Press", sets: "3×10", weight: "270 lb", done: false },
+    { name: "Leg Curl", sets: "3×12", weight: "95 lb", done: false },
+  ];
+
+  return (
+    <div className="flex flex-col h-full px-3 py-3 gap-2.5">
+      {/* Workout header */}
+      <div className="flex items-center gap-2.5">
+        <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-purple-100 to-indigo-100 border border-purple-200 flex items-center justify-center text-xl shrink-0">🏋️</div>
+        <div className="flex-1 min-w-0">
+          <p className="text-xs font-bold text-foreground">Lower Body — Week 6 / Day 3</p>
+          <p className="text-[10px] text-muted-foreground">Progressive Overload Block · Adaptive Intensity</p>
+        </div>
+        <div className="flex flex-col items-end gap-0.5">
+          <span className="text-[10px] font-bold text-violet-600">+5%</span>
+          <span className="text-[9px] text-muted-foreground">vs last wk</span>
+        </div>
+      </div>
+
+      {/* Energy + wearable */}
+      <div className="grid grid-cols-2 gap-2">
+        <div className="rounded-xl border border-fw-border/50 bg-white px-2.5 py-2 flex items-center gap-2 shadow-sm">
+          <Battery className="h-3.5 w-3.5 text-emerald-500" />
+          <div>
+            <p className="text-[10px] font-semibold text-foreground">Energy: High</p>
+            <p className="text-[9px] text-muted-foreground">HRV 68ms · Oura</p>
+          </div>
+        </div>
+        <div className="rounded-xl border border-fw-border/50 bg-white px-2.5 py-2 flex items-center gap-2 shadow-sm">
+          <Wifi className="h-3.5 w-3.5 text-violet-500" />
+          <div>
+            <p className="text-[10px] font-semibold text-foreground">Synced</p>
+            <p className="text-[9px] text-muted-foreground">Apple Watch ✓</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Exercise list */}
+      <div className="rounded-xl border border-fw-border/50 bg-white overflow-hidden shadow-sm flex-1">
+        <div className="px-2.5 py-1.5 border-b border-fw-border/40 bg-fw-surface/50">
+          <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">Today&apos;s Exercises</p>
+        </div>
+        <div className="divide-y divide-fw-border/30">
+          {exercises.map((ex) => (
+            <div key={ex.name} className={`flex items-center gap-2.5 px-2.5 py-2 ${ex.done ? "opacity-60" : ""}`}>
+              <div className={`h-4 w-4 rounded-full border-2 flex items-center justify-center shrink-0 ${ex.done ? "border-emerald-400 bg-emerald-400" : "border-violet-300"}`}>
+                {ex.done && <Check className="h-2.5 w-2.5 text-white" strokeWidth={3} />}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className={`text-[11px] font-medium ${ex.done ? "line-through text-muted-foreground" : "text-foreground"}`}>{ex.name}</p>
+                <p className="text-[10px] text-muted-foreground">{ex.sets} · {ex.weight}</p>
+              </div>
+              <div className="h-1.5 w-12 rounded-full bg-fw-border/50 overflow-hidden">
+                <div
+                  className={`h-full rounded-full ${ex.done ? "bg-emerald-400" : "bg-violet-300"}`}
+                  style={{ width: ex.done ? "100%" : "0%" }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Adaptive note */}
+      <div className="flex items-center gap-2 rounded-xl border border-violet-200 bg-violet-50 px-2.5 py-1.5">
+        <Flame className="h-3.5 w-3.5 text-violet-500 shrink-0" />
+        <p className="text-[10px] text-violet-700">Your HRV is up — intensity increased 5% vs last session.</p>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Mockup registry — maps feature title to its component
+// ---------------------------------------------------------------------------
+
+const MOCKUP_MAP: Record<string, React.ReactNode> = {
+  "24/7 AI Coaching": <AiCoachingMockup />,
+  "Smart Real-World Food Suggestions": <RealWorldFoodMockup />,
+  "Photo-Based Food Logging": <PhotoLoggingMockup />,
+  "AI Recipe Creation": <RecipeCreationMockup />,
+  "Budget-Friendly Meal Planning": <MealPlanningMockup />,
+  "Adaptive Training Programs": <TrainingProgramMockup />,
+};
+
+// ---------------------------------------------------------------------------
+// Page data
+// ---------------------------------------------------------------------------
+
 const coreFeatures = [
   {
     icon: MessageCircle,
     title: "24/7 AI Coaching",
     description:
-      "Get conversational coaching that understands your goals, schedule, and preferences. Ask anything from meal ideas to motivation \u2014 day or night.",
+      "Get conversational coaching that understands your goals, schedule, and preferences. Ask anything from meal ideas to motivation — day or night.",
     bullets: [
       "\"What should I eat before a morning workout?\"",
-      "\"I'm at a party and there's only pizza \u2014 what do I do?\"",
+      "\"I'm at a party and there's only pizza — what do I do?\"",
       "\"I missed my protein goal yesterday, how do I make up for it?\"",
       "\"Can I have a cheat meal and still stay on track?\"",
     ],
     gradient: "from-emerald-500/20 to-cyan-500/20",
-    accentColor: "text-emerald-600",
-    mockupLines: [
-      { label: "Messages", value: "1,247" },
-      { label: "Avg Response", value: "< 2s" },
-      { label: "Topics Covered", value: "86" },
-    ],
   },
   {
     icon: Utensils,
@@ -52,18 +479,12 @@ const coreFeatures = [
       "Smart swaps that save 200+ calories without sacrificing flavor",
     ],
     gradient: "from-orange-500/20 to-amber-500/20",
-    accentColor: "text-orange-500",
-    mockupLines: [
-      { label: "Restaurants", value: "500+" },
-      { label: "Avg Saved", value: "280 cal" },
-      { label: "Suggestions", value: "Real-time" },
-    ],
   },
   {
     icon: Camera,
     title: "Photo-Based Food Logging",
     description:
-      "Snap a photo of your plate or scan a barcode \u2014 FuelWell auto-identifies foods, estimates portions, and logs your macros instantly.",
+      "Snap a photo of your plate or scan a barcode — FuelWell auto-identifies foods, estimates portions, and logs your macros instantly.",
     bullets: [
       "Take a photo and let AI identify everything on your plate",
       "Scan packaged items for instant nutrition data",
@@ -71,12 +492,6 @@ const coreFeatures = [
       "Edit and refine entries with a single tap",
     ],
     gradient: "from-violet-500/20 to-fuchsia-500/20",
-    accentColor: "text-violet-600",
-    mockupLines: [
-      { label: "Accuracy", value: "94%" },
-      { label: "Log Time", value: "< 5s" },
-      { label: "Foods in DB", value: "1M+" },
-    ],
   },
   {
     icon: ChefHat,
@@ -90,31 +505,19 @@ const coreFeatures = [
       "Filter by cuisine, dietary restrictions, or pantry items",
     ],
     gradient: "from-pink-500/20 to-rose-500/20",
-    accentColor: "text-pink-600",
-    mockupLines: [
-      { label: "Recipes", value: "10K+" },
-      { label: "Avg Prep", value: "25 min" },
-      { label: "Avg Cost", value: "$4.50" },
-    ],
   },
   {
     icon: ShoppingCart,
     title: "Budget-Friendly Meal Planning",
     description:
-      "Set a weekly grocery budget and let FuelWell build meal plans with a matching grocery list \u2014 hitting your macros without breaking the bank.",
+      "Set a weekly grocery budget and let FuelWell build meal plans with a matching grocery list — hitting your macros without breaking the bank.",
     bullets: [
       "Weekly meal plans that respect your budget",
       "Auto-generated grocery lists organized by store section",
-      "Macro-optimized meals at $3\u20135 per serving",
+      "Macro-optimized meals at $3–5 per serving",
       "Swap suggestions when ingredients are on sale",
     ],
     gradient: "from-green-500/20 to-emerald-500/20",
-    accentColor: "text-green-600",
-    mockupLines: [
-      { label: "Budget Fit", value: "98%" },
-      { label: "Per Serving", value: "$3\u20135" },
-      { label: "Weekly Plans", value: "Custom" },
-    ],
   },
   {
     icon: Dumbbell,
@@ -129,12 +532,6 @@ const coreFeatures = [
     ],
     premium: true,
     gradient: "from-purple-500/20 to-indigo-500/20",
-    accentColor: "text-violet-600",
-    mockupLines: [
-      { label: "Exercises", value: "500+" },
-      { label: "Adapts To", value: "Energy" },
-      { label: "Wearables", value: "4+" },
-    ],
   },
 ] as const;
 
@@ -143,7 +540,7 @@ const progressItems = [
     icon: BarChart3,
     title: "Weekly Performance Reports",
     description:
-      "Calorie trends, protein consistency, workout completion rate, and weekly deficit or surplus estimates \u2014 delivered every Sunday.",
+      "Calorie trends, protein consistency, workout completion rate, and weekly deficit or surplus estimates — delivered every Sunday.",
     stat: "Weekly",
     statLabel: "Delivery",
   },
@@ -173,6 +570,10 @@ const integrations = [
   { name: "Smart Scales", icon: BarChart3 },
 ];
 
+// ---------------------------------------------------------------------------
+// Page
+// ---------------------------------------------------------------------------
+
 export default function FeaturesPage() {
   return (
     <>
@@ -191,14 +592,14 @@ export default function FeaturesPage() {
             </h1>
             <p className="mt-6 text-lg md:text-xl text-muted-foreground leading-relaxed">
               From real-time AI coaching and photo-based food logging to
-              budget-friendly meal plans and adaptive workouts \u2014 FuelWell is
+              budget-friendly meal plans and adaptive workouts — FuelWell is
               your all-in-one wellness platform.
             </p>
           </AnimatedSection>
         </div>
       </section>
 
-      {/* Core Features \u2014 alternating layout */}
+      {/* Core Features — alternating layout */}
       <Section id="core-features" className="py-12 md:py-16">
         <div className="space-y-24 md:space-y-32">
           {coreFeatures.map((feature, index) => {
@@ -245,49 +646,20 @@ export default function FeaturesPage() {
                       {/* Mockup chrome */}
                       <div className="absolute inset-3 rounded-xl bg-white border border-fw-border/50 flex flex-col overflow-hidden shadow-sm">
                         {/* Title bar */}
-                        <div className="flex items-center gap-2 px-4 py-3 border-b border-fw-border/50">
+                        <div className="flex items-center gap-2 px-4 py-2.5 border-b border-fw-border/50 shrink-0">
                           <div className="flex gap-1.5">
                             <div className="h-2.5 w-2.5 rounded-full bg-fw-error/60" />
                             <div className="h-2.5 w-2.5 rounded-full bg-fw-warning/60" />
                             <div className="h-2.5 w-2.5 rounded-full bg-fw-accent/60" />
                           </div>
-                          <span className="text-xs text-muted-foreground/60 ml-2 font-mono">
+                          <span className="text-[10px] text-muted-foreground/60 ml-2 font-mono">
                             FuelWell
                           </span>
                         </div>
 
-                        {/* Content area */}
-                        <div className="flex-1 p-4 flex flex-col gap-3 justify-center">
-                          <div className="flex items-center gap-2 mb-1">
-                            <Icon className={`h-5 w-5 ${feature.accentColor}`} />
-                            <span className="text-sm font-medium text-foreground">
-                              {feature.title}
-                            </span>
-                          </div>
-
-                          {/* Stats row */}
-                          <div className="grid grid-cols-3 gap-2">
-                            {feature.mockupLines.map((line) => (
-                              <div
-                                key={line.label}
-                                className="rounded-lg bg-fw-surface border border-fw-border/50 p-2.5 text-center"
-                              >
-                                <p className={`text-sm font-semibold ${feature.accentColor}`}>
-                                  {line.value}
-                                </p>
-                                <p className="text-[10px] text-muted-foreground/70 mt-0.5">
-                                  {line.label}
-                                </p>
-                              </div>
-                            ))}
-                          </div>
-
-                          {/* Skeleton lines */}
-                          <div className="space-y-2 mt-1">
-                            <div className="h-2 rounded-full bg-fw-border/60 w-full" />
-                            <div className="h-2 rounded-full bg-fw-border/60 w-4/5" />
-                            <div className="h-2 rounded-full bg-fw-border/60 w-3/5" />
-                          </div>
+                        {/* Rich mockup content */}
+                        <div className="flex-1 overflow-hidden">
+                          {MOCKUP_MAP[feature.title]}
                         </div>
                       </div>
                     </div>
@@ -302,7 +674,7 @@ export default function FeaturesPage() {
       {/* Progress & Reporting */}
       <Section id="progress" className="bg-fw-surface">
         <AnimatedSection className="text-center max-w-2xl mx-auto mb-12">
-          <h2>Progress & Reporting</h2>
+          <h2>Progress &amp; Reporting</h2>
           <p className="mt-4 text-muted-foreground leading-relaxed">
             See where you&apos;ve been, where you are, and where you&apos;re headed
             &mdash; with data-driven insights delivered weekly.

@@ -1,9 +1,17 @@
 "use client";
 
-import Image from "next/image";
 import { Section } from "@/components/ui/section";
 import { GradientButton } from "@/components/ui/gradient-button";
 import { OutlineButton } from "@/components/ui/outline-button";
+import { AppCarousel } from "@/components/app-carousel";
+import {
+  FoodLoggingVisual,
+  RecipeVisual,
+  BudgetVisual,
+  WorkoutVisual,
+  BodyVisual,
+  ProgressVisual,
+} from "@/components/feature-visuals";
 import { AnimatedSection } from "@/components/animated-section";
 import { FeatureCard } from "@/components/feature-card";
 import {
@@ -22,6 +30,13 @@ import {
   Bot,
   ArrowRight,
   Sparkles,
+  Globe,
+  Smartphone,
+  Tablet,
+  Watch,
+  Heart,
+  Activity,
+  Zap,
 } from "lucide-react";
 
 const credibilityItems = [
@@ -64,24 +79,33 @@ const howItWorksSteps = [
   },
 ];
 
-const features = [
+const features: {
+  icon: typeof Camera;
+  title: string;
+  description: string;
+  premium?: boolean;
+  visual: React.ReactNode;
+}[] = [
   {
     icon: Camera,
     title: "Make smarter food decisions",
     description:
       "Snap a photo of your meal or describe what you\u2019re eating. FuelWell gives you instant feedback, alternatives, and coaching \u2014 not just calorie counts.",
+    visual: <FoodLoggingVisual />,
   },
   {
     icon: ChefHat,
     title: "Build meals that taste good",
     description:
       "Get recipe ideas and meal suggestions based on your preferences, what\u2019s in your fridge, and what fits your goals.",
+    visual: <RecipeVisual />,
   },
   {
     icon: Wallet,
     title: "Stay on budget",
     description:
       "Set a weekly grocery budget and get meal plans that respect it. No more choosing between your health and your wallet.",
+    visual: <BudgetVisual />,
   },
   {
     icon: Dumbbell,
@@ -89,18 +113,21 @@ const features = [
     description:
       "Whether you\u2019re at home, in a gym, or traveling \u2014 FuelWell builds workouts around your equipment, time, and fitness level.",
     premium: true,
+    visual: <WorkoutVisual />,
   },
   {
     icon: BookOpen,
     title: "Understand your body",
     description:
       "Learn why your weight changes, what affects your energy, and how food and movement connect.",
+    visual: <BodyVisual />,
   },
   {
     icon: BarChart3,
     title: "Track progress clearly",
     description:
       "Visual dashboards that show trends over time \u2014 not just daily numbers. See the big picture so you stay motivated.",
+    visual: <ProgressVisual />,
   },
 ];
 
@@ -146,9 +173,12 @@ export default function Home() {
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 md:pt-40 pb-20 md:pb-28">
           <AnimatedSection className="max-w-3xl mx-auto text-center space-y-8">
-            <div className="inline-flex items-center gap-2 rounded-full border border-fw-border bg-white/80 px-4 py-1.5 text-sm text-muted-foreground backdrop-blur-sm shadow-sm font-accent">
-              <Sparkles className="h-3.5 w-3.5 text-fw-accent" />
-              Now accepting Founders 100 members
+            <div className="inline-flex items-center gap-3 rounded-full border-2 border-fw-accent/30 bg-white/90 px-6 py-2.5 text-base font-semibold text-foreground backdrop-blur-sm shadow-md font-accent animate-pulse-glow">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100">
+                <Sparkles className="h-4 w-4 text-fw-accent" />
+              </div>
+              <span>Now accepting <span className="gradient-text font-bold">Founders 100</span> members</span>
+              <ArrowRight className="h-4 w-4 text-fw-accent" />
             </div>
 
             <h1 className="text-4xl md:text-5xl lg:text-[3.75rem] font-bold tracking-tight text-foreground leading-[1.08]">
@@ -178,21 +208,9 @@ export default function Home() {
             </p>
           </AnimatedSection>
 
-          {/* Hero phone mockup */}
-          <AnimatedSection delay={0.3} className="mt-16 max-w-sm mx-auto">
-            <div className="relative">
-              <div className="absolute -inset-4 bg-gradient-to-br from-emerald-200/40 via-transparent to-orange-200/40 rounded-[2rem] blur-xl transition-opacity duration-500 group-hover:opacity-80" />
-              <div className="group relative rounded-[1.5rem] border border-fw-border bg-white shadow-card-hover overflow-hidden hover:shadow-lg transition-shadow duration-300">
-                <Image
-                  src="/hero-mockup.svg"
-                  alt="FuelWell app interface showing AI coaching conversation"
-                  width={375}
-                  height={500}
-                  className="w-full h-auto"
-                  priority
-                />
-              </div>
-            </div>
+          {/* Hero app carousel */}
+          <AnimatedSection delay={0.3} className="mt-16 px-6">
+            <AppCarousel />
           </AnimatedSection>
         </div>
       </section>
@@ -280,6 +298,57 @@ export default function Home() {
         </div>
       </Section>
 
+      {/* ───── PLATFORM AVAILABILITY ───── */}
+      <Section className="py-12 md:py-16 border-y border-fw-border/40">
+        <AnimatedSection className="text-center mb-10">
+          <h3 className="text-xl md:text-2xl font-bold text-foreground mb-2">Available Everywhere You Are</h3>
+          <p className="text-muted-foreground text-sm max-w-lg mx-auto">
+            Use FuelWell across all your devices, synced and seamless.
+          </p>
+        </AnimatedSection>
+
+        <div className="flex flex-wrap items-center justify-center gap-5 md:gap-8 mb-10">
+          {[
+            { icon: Globe, label: "Web App", desc: "Any browser" },
+            { icon: Smartphone, label: "iPhone", desc: "iOS 16+" },
+            { icon: Tablet, label: "iPad", desc: "iPadOS 16+" },
+            { icon: Smartphone, label: "Android", desc: "Android 12+" },
+          ].map((p, i) => (
+            <AnimatedSection key={p.label} delay={i * 0.08}>
+              <div className="flex flex-col items-center gap-2 group">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 border border-emerald-100 group-hover:bg-emerald-100 group-hover:scale-110 transition-all duration-200 shadow-sm">
+                  <p.icon className="h-6 w-6 text-fw-accent" />
+                </div>
+                <p className="text-sm font-semibold text-foreground">{p.label}</p>
+                <p className="text-[10px] text-muted-foreground">{p.desc}</p>
+              </div>
+            </AnimatedSection>
+          ))}
+        </div>
+
+        <AnimatedSection delay={0.3} className="text-center">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">Integrations</p>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            {[
+              { icon: Heart, label: "Apple Health" },
+              { icon: Watch, label: "Apple Watch" },
+              { icon: Activity, label: "WHOOP" },
+              { icon: Zap, label: "Oura Ring" },
+              { icon: TrendingUp, label: "Garmin" },
+              { icon: BarChart3, label: "Smart Scales" },
+            ].map((int) => (
+              <div
+                key={int.label}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-fw-border bg-white hover:border-fw-accent/30 hover:bg-fw-surface transition-all duration-200 shadow-card"
+              >
+                <int.icon className="h-3.5 w-3.5 text-fw-accent" />
+                <span className="text-xs font-medium text-foreground">{int.label}</span>
+              </div>
+            ))}
+          </div>
+        </AnimatedSection>
+      </Section>
+
       {/* ───── CORE FEATURES GRID ───── */}
       <Section>
         <AnimatedSection className="text-center mb-12">
@@ -298,6 +367,7 @@ export default function Home() {
                 title={feature.title}
                 description={feature.description}
                 premium={feature.premium}
+                visual={feature.visual}
               />
             </AnimatedSection>
           ))}

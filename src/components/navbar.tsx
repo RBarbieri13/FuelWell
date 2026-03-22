@@ -34,14 +34,14 @@ export function Navbar() {
       className={cn(
         "sticky top-0 z-50 w-full border-b transition-all duration-300",
         scrolled
-          ? "border-fw-border/60 glass shadow-sm"
-          : "border-transparent bg-transparent"
+          ? "border-fw-border glass shadow-sm"
+          : "border-fw-border/40 bg-white/60 backdrop-blur-sm"
       )}
     >
-      <div className="max-w-7xl mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="flex items-center gap-2 group">
-          <Image src="/logo-icon.svg" alt="" width={32} height={32} className="rounded-lg group-hover:scale-105 transition-transform duration-200" />
-          <span className="text-xl font-bold font-heading text-foreground">
+      <div className="max-w-7xl mx-auto flex h-18 items-center justify-between px-4 sm:px-6 lg:px-8">
+        <Link href="/" className="flex items-center gap-2.5 group">
+          <Image src="/logo-icon.svg" alt="" width={38} height={38} className="rounded-lg group-hover:scale-105 transition-transform duration-200" />
+          <span className="text-2xl font-bold font-heading text-foreground">
             Fuel
             <span className="text-fw-accent transition-colors group-hover:text-fw-orange">
               Well
