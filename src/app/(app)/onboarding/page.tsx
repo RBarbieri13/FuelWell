@@ -72,8 +72,24 @@ export default function OnboardingPage() {
     }));
   }
 
+  function canProceed(): boolean {
+    switch (step) {
+      case 0: return true; // welcome
+      case 1: return true; // name is optional
+      case 2: return !!data.dateOfBirth;
+      case 3: return !!data.gender;
+      case 4: return !!data.heightCm && !!data.weightKg && Number(data.heightCm) >= 50 && Number(data.weightKg) >= 20;
+      case 5: return !!data.activityLevel;
+      case 6: return !!data.goal;
+      case 7: return true; // diet preference has default
+      case 8: return true; // allergies optional
+      case 9: return !!getPreviewMacros();
+      default: return true;
+    }
+  }
+
   function next() {
-    if (step < totalSteps - 1) setStep(step + 1);
+    if (step < totalSteps - 1 && canProceed()) setStep(step + 1);
   }
 
   function back() {
@@ -447,7 +463,7 @@ export default function OnboardingPage() {
             )}
 
             {step < totalSteps - 1 ? (
-              <Button onClick={next}>
+              <Button onClick={next} disabled={!canProceed()}>
                 {step === 0 ? "Let's go" : "Next"}
                 <ArrowRight className="w-4 h-4" />
               </Button>

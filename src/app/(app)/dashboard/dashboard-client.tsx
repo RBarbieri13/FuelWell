@@ -69,7 +69,7 @@ export function DashboardClient({
       </div>
 
       {/* Calorie Ring + Macros */}
-      <div className="grid md:grid-cols-2 gap-4">
+      <div className="grid md:grid-cols-2 gap-3 sm:gap-4">
         <Card className="flex items-center justify-center py-8">
           <CalorieRing consumed={caloriesConsumed} target={calorieTarget} />
         </Card>

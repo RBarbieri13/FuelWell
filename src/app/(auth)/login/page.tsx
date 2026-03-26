@@ -138,16 +138,26 @@ function LoginForm() {
                 placeholder="you@example.com"
                 autoComplete="email"
               />
-              <Input
-                label="Password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                placeholder="Your password"
-                autoComplete="current-password"
-                error={error || undefined}
-              />
+              <div>
+                <Input
+                  label="Password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  placeholder="Your password"
+                  autoComplete="current-password"
+                  error={error || undefined}
+                />
+                <div className="mt-1.5 text-right">
+                  <Link
+                    href="/forgot-password"
+                    className="text-xs text-neutral-400 hover:text-primary-600 transition-colors"
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
+              </div>
 
               <Button type="submit" size="lg" className="w-full" loading={loading}>
                 Sign in

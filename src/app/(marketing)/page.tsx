@@ -48,7 +48,7 @@ export default function HomePage() {
                 AI-powered nutrition coaching
               </div>
 
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-neutral-900 leading-[1.1]">
+              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-neutral-900 leading-[1.1]">
                 Eat smarter.
                 <br />
                 <span className="text-primary-600">Feel better.</span>
@@ -110,7 +110,7 @@ export default function HomePage() {
               </h2>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-12 md:gap-8">
+            <div className="grid md:grid-cols-3 gap-8 md:gap-8">
               {[
                 {
                   step: "01",
@@ -165,7 +165,7 @@ export default function HomePage() {
               </h2>
             </div>
 
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
               {[
                 {
                   icon: Brain,
