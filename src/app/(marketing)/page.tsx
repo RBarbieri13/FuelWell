@@ -225,6 +225,51 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* About Us */}
+        <section id="about" className="py-20 sm:py-28">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6">
+            <div className="text-center mb-16">
+              <p className="text-sm font-semibold text-primary-600 uppercase tracking-wider mb-3">
+                About us
+              </p>
+              <h2 className="text-3xl sm:text-4xl font-bold text-neutral-900 tracking-tight">
+                Built by people who get it
+              </h2>
+            </div>
+
+            <div className="max-w-3xl mx-auto">
+              <p className="text-neutral-600 leading-relaxed text-center mb-12">
+                We&apos;re Max and Robby — two guys who got tired of nutrition
+                apps that felt like spreadsheets. We&apos;ve both been through
+                the cycle of tracking obsessively, burning out, and quitting.
+                FuelWell is what we wished existed: a coach that meets you where
+                you are, adapts to your life, and never makes you feel bad about
+                a slice of pizza.
+              </p>
+
+              <div className="grid grid-cols-2 gap-8 max-w-lg mx-auto">
+                {/* Max */}
+                <div className="flex flex-col items-center gap-3">
+                  <div className="w-36 h-36 sm:w-44 sm:h-44 rounded-2xl bg-neutral-100 border border-neutral-200 flex items-center justify-center overflow-hidden">
+                    {/* Replace with <Image src="..." alt="Max" fill className="object-cover" /> */}
+                    <span className="text-sm text-neutral-400">Photo</span>
+                  </div>
+                  <p className="text-sm font-semibold text-neutral-900">Max</p>
+                </div>
+
+                {/* Robby */}
+                <div className="flex flex-col items-center gap-3">
+                  <div className="w-36 h-36 sm:w-44 sm:h-44 rounded-2xl bg-neutral-100 border border-neutral-200 flex items-center justify-center overflow-hidden">
+                    {/* Replace with <Image src="..." alt="Robby" fill className="object-cover" /> */}
+                    <span className="text-sm text-neutral-400">Photo</span>
+                  </div>
+                  <p className="text-sm font-semibold text-neutral-900">Robby</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* CTA */}
         <section className="py-20 sm:py-28">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
