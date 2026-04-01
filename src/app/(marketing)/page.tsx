@@ -10,7 +10,113 @@ import {
   Zap,
   ArrowRight,
   Check,
+  MapPin,
+  TrendingDown,
+  Timer,
+  Scale,
+  Shuffle,
 } from "lucide-react";
+
+function CoachingViz({ type }: { type: "plate" | "trend" | "timer" | "scale" | "recipes" }) {
+  const vizClass = "h-8 flex-1 flex items-center";
+
+  switch (type) {
+    case "plate":
+      // Mini plate breakdown: protein / carbs / fat
+      return (
+        <div className={vizClass}>
+          <div className="flex items-center gap-1.5">
+            {[
+              { w: "w-7", color: "bg-blue-400", label: "P" },
+              { w: "w-5", color: "bg-amber-400", label: "C" },
+              { w: "w-3", color: "bg-rose-400", label: "F" },
+            ].map((bar) => (
+              <div key={bar.label} className="flex flex-col items-center gap-0.5">
+                <div className={`${bar.w} h-1.5 ${bar.color} rounded-full`} />
+                <span className="text-[9px] text-neutral-400 leading-none">{bar.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    case "trend":
+      // Mini sparkline showing a week of calories
+      return (
+        <div className={vizClass}>
+          <svg viewBox="0 0 80 24" className="w-20 h-6" fill="none">
+            <polyline
+              points="2,18 14,14 26,20 38,12 50,10 62,8 78,6"
+              stroke="#3b82f6"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <circle cx="38" cy="12" r="2.5" fill="#ef4444" stroke="white" strokeWidth="1" />
+            <line x1="38" y1="12" x2="38" y2="22" stroke="#ef4444" strokeWidth="1" strokeDasharray="2 2" />
+          </svg>
+        </div>
+      );
+    case "timer":
+      // Mini circular timer
+      return (
+        <div className={vizClass}>
+          <svg viewBox="0 0 28 28" className="w-7 h-7" fill="none">
+            <circle cx="14" cy="14" r="11" stroke="#e5e7eb" strokeWidth="2" />
+            <circle
+              cx="14"
+              cy="14"
+              r="11"
+              stroke="#8b5cf6"
+              strokeWidth="2"
+              strokeDasharray="69.1"
+              strokeDashoffset="46"
+              strokeLinecap="round"
+              transform="rotate(-90 14 14)"
+            />
+            <text x="14" y="17" textAnchor="middle" className="text-[8px] font-bold fill-neutral-700">
+              20m
+            </text>
+          </svg>
+        </div>
+      );
+    case "scale":
+      // Mini weight trend line going up slightly then down overall
+      return (
+        <div className={vizClass}>
+          <svg viewBox="0 0 80 24" className="w-20 h-6" fill="none">
+            <polyline
+              points="2,10 14,8 26,12 38,14 50,11 62,9 78,6"
+              stroke="#f59e0b"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <polyline
+              points="2,14 78,8"
+              stroke="#22c55e"
+              strokeWidth="1.5"
+              strokeDasharray="3 3"
+            />
+            <circle cx="38" cy="14" r="2.5" fill="#f59e0b" stroke="white" strokeWidth="1" />
+          </svg>
+        </div>
+      );
+    case "recipes":
+      // Three mini recipe cards
+      return (
+        <div className={`${vizClass} gap-1`}>
+          {["#22c55e", "#3b82f6", "#f59e0b"].map((color) => (
+            <div
+              key={color}
+              className="w-6 h-7 rounded bg-neutral-100 border border-neutral-200 flex items-center justify-center"
+            >
+              <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: color, opacity: 0.6 }} />
+            </div>
+          ))}
+        </div>
+      );
+  }
+}
 
 export default function HomePage() {
   return (
@@ -219,6 +325,108 @@ export default function HomePage() {
                   <p className="text-sm text-neutral-500 leading-relaxed">
                     {feature.desc}
                   </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Real-time Coaching Examples */}
+        <section className="py-20 sm:py-28 bg-neutral-50/70">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6">
+            <div className="text-center mb-16">
+              <p className="text-sm font-semibold text-primary-600 uppercase tracking-wider mb-3">
+                Real coaching
+              </p>
+              <h2 className="text-3xl sm:text-4xl font-bold text-neutral-900 tracking-tight">
+                Real-time coaching for real-life situations
+              </h2>
+              <p className="mt-4 text-lg text-neutral-500 max-w-2xl mx-auto">
+                FuelWell doesn&apos;t just track — it coaches. Here&apos;s what
+                that looks like in practice.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[
+                {
+                  icon: MapPin,
+                  iconBg: "bg-orange-50",
+                  iconColor: "text-orange-500",
+                  vizType: "plate" as const,
+                  question:
+                    "I'm at a Mexican restaurant. What should I order?",
+                  answer:
+                    "Go for grilled chicken fajitas with extra veggies. Skip the sour cream, keep the guac — it's healthy fat. Ask for corn tortillas instead of flour.",
+                },
+                {
+                  icon: TrendingDown,
+                  iconBg: "bg-blue-50",
+                  iconColor: "text-blue-500",
+                  vizType: "trend" as const,
+                  question:
+                    "I went over my calories yesterday. Should I eat less today?",
+                  answer:
+                    "No need to punish yourself. One day doesn't define your progress. Stick to your normal plan today and focus on hydration.",
+                },
+                {
+                  icon: Timer,
+                  iconBg: "bg-violet-50",
+                  iconColor: "text-violet-500",
+                  vizType: "timer" as const,
+                  question:
+                    "I only have 20 minutes to work out. Is it even worth it?",
+                  answer:
+                    "Absolutely. Here's a quick full-body circuit with no equipment. 20 minutes of focused effort beats skipping it entirely.",
+                },
+                {
+                  icon: Scale,
+                  iconBg: "bg-amber-50",
+                  iconColor: "text-amber-500",
+                  vizType: "scale" as const,
+                  question:
+                    "Why did my weight go up even though I've been eating well?",
+                  answer:
+                    "Weight fluctuates daily due to water retention, sodium, sleep, and stress. Your 7-day trend is still heading down.",
+                },
+                {
+                  icon: Shuffle,
+                  iconBg: "bg-emerald-50",
+                  iconColor: "text-emerald-500",
+                  vizType: "recipes" as const,
+                  question:
+                    "I'm bored with my meals. Can you mix it up?",
+                  answer:
+                    "Let's refresh your rotation. Here are 3 new recipes that hit your macros and budget with prep time under 30 minutes.",
+                },
+              ].map((item) => (
+                <div
+                  key={item.question}
+                  className="bg-white rounded-2xl border border-neutral-200/80 p-5 flex flex-col gap-4 hover:shadow-sm transition-shadow"
+                >
+                  {/* Mini visualization */}
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`w-9 h-9 rounded-lg ${item.iconBg} flex items-center justify-center shrink-0`}
+                    >
+                      <item.icon className={`w-4.5 h-4.5 ${item.iconColor}`} />
+                    </div>
+                    <CoachingViz type={item.vizType} />
+                  </div>
+
+                  {/* Question */}
+                  <div className="bg-neutral-50 rounded-xl px-4 py-3 border border-neutral-100">
+                    <p className="text-sm font-medium text-neutral-800 leading-relaxed">
+                      {item.question}
+                    </p>
+                  </div>
+
+                  {/* Answer */}
+                  <div className="bg-primary-50/60 rounded-xl px-4 py-3 border border-primary-100/60">
+                    <p className="text-sm text-neutral-600 leading-relaxed">
+                      {item.answer}
+                    </p>
+                  </div>
                 </div>
               ))}
             </div>
