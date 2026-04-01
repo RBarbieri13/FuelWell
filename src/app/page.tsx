@@ -47,12 +47,30 @@ const credibilityItems = [
   { icon: Users, label: "Supports trainers" },
 ];
 
+const realLifeExamples = [
+  {
+    emoji: "🍽️",
+    situation: "At a restaurant?",
+    solution: "We help you pick the best option on the menu.",
+  },
+  {
+    emoji: "🍕",
+    situation: "Ate more than planned?",
+    solution: "We adjust the rest of your day automatically.",
+  },
+  {
+    emoji: "😓",
+    situation: "Feeling sore or low energy?",
+    solution: "We adapt your workout on the spot.",
+  },
+];
+
 const problemBullets = [
   "You eat out and don\u2019t know what to order.",
-  "Weekends derail your progress.",
-  "Your weight fluctuates and you don\u2019t know why.",
-  "Healthy food feels expensive or boring.",
-  "Your workout plan doesn\u2019t adapt to your life.",
+  "Weekends throw you off and you can\u2019t recover.",
+  "Your weight jumps around and nobody explains why.",
+  "Eating healthy feels like a second job.",
+  "Your workout plan ignores how your body actually feels.",
 ];
 
 const howItWorksSteps = [
@@ -187,14 +205,13 @@ export default function Home() {
             </h1>
 
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              Your AI-powered wellness coach for smarter food choices, adaptive
-              workouts, real-time progress tracking, and sustainable habits that
-              actually fit your life.
+              Smarter food choices. Adaptive workouts. Real-time coaching.
+              Habits that actually stick — because they fit your life.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
               <GradientButton href="/founders-100" size="default">
-                Join the Founders 100
+                Secure Your Spot
                 <ArrowRight className="ml-2 h-4 w-4" />
               </GradientButton>
               <OutlineButton href="/features">
@@ -203,8 +220,7 @@ export default function Home() {
             </div>
 
             <p className="text-sm text-muted-foreground/80 max-w-xl mx-auto font-accent">
-              Built for people who want to eat better, train smarter, and
-              understand their progress without rigid dieting or guilt.
+              No rigid diets. No guilt. Just smarter decisions, every day.
             </p>
           </AnimatedSection>
 
@@ -214,6 +230,26 @@ export default function Home() {
           </AnimatedSection>
         </div>
       </section>
+
+      {/* ───── REAL-LIFE EXAMPLES ───── */}
+      <Section className="py-10 md:py-14">
+        <AnimatedSection className="text-center mb-8">
+          <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+            FuelWell meets you where life happens.
+          </h2>
+        </AnimatedSection>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-4xl mx-auto">
+          {realLifeExamples.map((ex, i) => (
+            <AnimatedSection key={ex.situation} delay={i * 0.1}>
+              <div className="group rounded-2xl border-2 border-fw-border bg-white p-6 text-center hover:-translate-y-1 hover:border-fw-accent/40 transition-all duration-300 shadow-card hover:shadow-lg">
+                <span className="text-4xl block mb-3 group-hover:scale-110 transition-transform duration-300">{ex.emoji}</span>
+                <p className="text-lg font-bold text-foreground mb-1">{ex.situation}</p>
+                <p className="text-muted-foreground text-sm">{ex.solution}</p>
+              </div>
+            </AnimatedSection>
+          ))}
+        </div>
+      </Section>
 
       {/* ───── CREDIBILITY STRIP ───── */}
       <Section className="py-8 md:py-12 border-y border-fw-border/50 bg-fw-surface/50">
@@ -238,12 +274,10 @@ export default function Home() {
       <Section>
         <AnimatedSection className="max-w-3xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground text-center mb-4">
-            Most fitness plans fail when life gets busy.
+            Most fitness plans break the moment life gets real.
           </h2>
           <p className="text-muted-foreground text-center text-lg mb-10 max-w-2xl mx-auto leading-relaxed">
-            Rigid meal plans and cookie-cutter workouts weren&apos;t designed
-            for real life. They don&apos;t account for restaurant dinners,
-            weekend plans, tight budgets, or the stress of daily decision-making.
+            Rigid meal plans don&apos;t survive restaurant dinners, weekend plans, or tight budgets. Sound familiar?
           </p>
           <ul className="space-y-4 max-w-lg mx-auto">
             {problemBullets.map((bullet, i) => (
@@ -266,10 +300,10 @@ export default function Home() {
       <Section className="bg-fw-surface">
         <AnimatedSection className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Meet FuelWell, your daily decision coach.
+            Your daily decision coach.
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Three simple steps to a healthier, more sustainable routine.
+            Three steps. No overthinking.
           </p>
         </AnimatedSection>
 
@@ -353,10 +387,10 @@ export default function Home() {
       <Section>
         <AnimatedSection className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            What FuelWell helps you do
+            What changes when you have FuelWell
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Everything you need to eat smarter, train better, and stay on track.
+            Eat smarter. Train better. Actually stay consistent.
           </p>
         </AnimatedSection>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -378,11 +412,10 @@ export default function Home() {
       <Section className="bg-fw-surface">
         <AnimatedSection className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Real-time coaching for real-life situations
+            Coaching that sounds like a friend, not a textbook.
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            FuelWell doesn&apos;t just track &mdash; it coaches. Here&apos;s what that
-            looks like in practice.
+            Real questions. Real answers. Zero judgment.
           </p>
         </AnimatedSection>
 
@@ -432,12 +465,11 @@ export default function Home() {
               FuelWell. <span className="gradient-text">Feel well.</span>
             </h2>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              Join the pilot and start building a healthier lifestyle with
-              real-time guidance that fits your life.
+              Make consistency actually stick — with real-time guidance that fits your life.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
               <GradientButton href="/founders-100" size="default">
-                Join the Founders 100
+                Secure Your Spot
                 <ArrowRight className="ml-2 h-4 w-4" />
               </GradientButton>
               <OutlineButton href="/about">

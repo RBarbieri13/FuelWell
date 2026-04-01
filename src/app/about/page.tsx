@@ -17,6 +17,7 @@ import {
   Handshake,
   Infinity,
 } from "lucide-react";
+import Image from "next/image";
 
 
 const principles = [
@@ -101,26 +102,82 @@ export default function AboutPage() {
           <div className="max-w-3xl mx-auto space-y-6">
             <h2>Our Story</h2>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              FuelWell was born from a personal frustration with rigid diet plans
-              and all-or-nothing fitness routines. The founder wanted a smarter
-              way to balance health goals with real life, and found that AI could
-              help make better decisions in the moment. FuelWell is designed to
-              bring that same kind of practical, supportive guidance to others.
+              We got tired of the same cycle: start a plan on Monday, life
+              happens by Wednesday, quit by Friday. Rigid diets and
+              cookie-cutter workouts weren&apos;t built for people with real
+              schedules, real budgets, and real appetites.
+            </p>
+            <p className="text-lg text-muted-foreground leading-relaxed">
+              So we built what we wished existed — a coach that actually
+              understands your day. One that helps you pick the right thing at a
+              restaurant, adjusts when you&apos;re sore, and doesn&apos;t make you feel
+              guilty for eating pizza on a Saturday night.
             </p>
           </div>
         </AnimatedSection>
       </Section>
 
-      {/* Philosophy */}
+      {/* Meet the Founders */}
       <Section>
+        <AnimatedSection className="text-center mb-10">
+          <h2>Meet the Founders</h2>
+          <p className="mt-3 text-muted-foreground max-w-xl mx-auto">
+            Two guys who love fitness but love real life more.
+          </p>
+        </AnimatedSection>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-2xl mx-auto">
+          <AnimatedSection delay={0.1}>
+            <div className="group text-center space-y-4">
+              <div className="relative w-48 h-48 mx-auto rounded-2xl overflow-hidden border-2 border-fw-border group-hover:border-fw-accent/40 transition-all duration-300 shadow-card group-hover:shadow-lg">
+                <Image
+                  src="/robby.png"
+                  alt="Robby — Co-Founder"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-foreground">Robby</h3>
+                <p className="text-sm text-fw-accent font-medium">Co-Founder &bull; Tech &amp; Product</p>
+                <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
+                  Builder, dad, lifter. Obsessed with making AI actually useful
+                  for everyday health decisions.
+                </p>
+              </div>
+            </div>
+          </AnimatedSection>
+          <AnimatedSection delay={0.2}>
+            <div className="group text-center space-y-4">
+              <div className="relative w-48 h-48 mx-auto rounded-2xl overflow-hidden border-2 border-fw-border group-hover:border-fw-accent/40 transition-all duration-300 shadow-card group-hover:shadow-lg">
+                <Image
+                  src="/max.png"
+                  alt="Max — Co-Founder"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-foreground">Max</h3>
+                <p className="text-sm text-fw-accent font-medium">Co-Founder &bull; Strategy &amp; Content</p>
+                <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
+                  Former athlete turned wellness nerd. Believes fitness should
+                  enhance your life, not consume it.
+                </p>
+              </div>
+            </div>
+          </AnimatedSection>
+        </div>
+      </Section>
+
+      {/* Philosophy */}
+      <Section className="bg-fw-surface">
         <AnimatedSection>
           <div className="max-w-3xl mx-auto space-y-4">
             <h2>Built to Guide, Not Judge</h2>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              FuelWell is not about guilt, punishment, or perfection. It helps
-              users make informed choices while staying in control. It is also
-              meant to complement, not replace, personal trainers, nutritionists,
-              or workout classes.
+              No guilt trips. No punishment days. FuelWell helps you make
+              better choices while staying in control — and it works
+              alongside your trainer, not against them.
             </p>
           </div>
         </AnimatedSection>
@@ -169,13 +226,12 @@ export default function AboutPage() {
       <Section>
         <AnimatedSection>
           <div className="text-center space-y-6">
-            <h2>Ready to Join?</h2>
+            <h2>Ready to try it?</h2>
             <p className="text-lg text-muted-foreground max-w-xl mx-auto">
-              Be among the first to experience AI-powered nutrition and fitness
-              coaching.
+              Be one of the first 100 members to shape what FuelWell becomes.
             </p>
             <GradientButton href="/founders-100">
-              Join the Founders 100
+              Secure Your Spot
               <ArrowRight className="ml-2 h-4 w-4" />
             </GradientButton>
           </div>

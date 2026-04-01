@@ -276,8 +276,8 @@ export default function Founders100Page() {
                 </div>
                 <p className="text-sm text-muted-foreground mt-1">
                   or{" "}
-                  <span className="text-foreground font-semibold">$159/year</span>{" "}
-                  for life — <span className="text-violet-600 font-semibold">save 22%</span>
+                  <span className="text-foreground font-semibold">$149.99/year</span>{" "}
+                  for life — <span className="text-violet-600 font-semibold">save 26%</span>
                 </p>
               </div>
 
@@ -334,7 +334,7 @@ export default function Founders100Page() {
             </span>
             Limited availability — 93 spots remaining
           </div>
-          <h2 className="mb-4">Join the Founders 100</h2>
+          <h2 className="mb-4">Secure Your Spot</h2>
           <p className="text-muted-foreground mb-8 leading-relaxed">
             Secure your lifetime rate and help shape the future of AI-powered
             wellness coaching. Only 100 founding spots will be available.

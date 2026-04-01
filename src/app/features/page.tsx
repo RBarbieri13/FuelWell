@@ -20,6 +20,7 @@ import {
   Flame,
   Battery,
   Wifi,
+  ArrowRight,
 } from "lucide-react";
 import { Section } from "@/components/ui/section";
 import { AnimatedSection } from "@/components/animated-section";
@@ -737,11 +738,12 @@ export default function FeaturesPage() {
         <AnimatedSection className="text-center max-w-2xl mx-auto">
           <h2 className="mb-4">Ready to get started?</h2>
           <p className="text-muted-foreground mb-8">
-            Join the Founders 100 and be among the first to experience AI-powered
+            Be one of the first 100 members to experience AI-powered
             nutrition and fitness coaching.
           </p>
           <GradientButton href="/founders-100" size="default">
-            Join the Founders 100
+            Secure Your Spot
+            <ArrowRight className="ml-2 h-4 w-4" />
           </GradientButton>
         </AnimatedSection>
       </Section>
