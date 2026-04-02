@@ -121,28 +121,33 @@ export default function AboutPage() {
       <Section>
         <AnimatedSection className="text-center mb-10">
           <h2>Meet the Founders</h2>
-          <p className="mt-3 text-muted-foreground max-w-xl mx-auto">
-            Two guys who love fitness but love real life more.
+        </AnimatedSection>
+
+        <AnimatedSection>
+          <p className="text-lg text-muted-foreground leading-relaxed text-center max-w-3xl mx-auto mb-12">
+            We&apos;re Max and Robby — two guys who got tired of nutrition
+            apps that felt like spreadsheets. We&apos;ve both been through
+            the cycle of tracking obsessively, burning out, and quitting.
+            FuelWell is what we wished existed: a coach that meets you where
+            you are, adapts to your life, and never makes you feel bad about
+            a slice of pizza.
           </p>
         </AnimatedSection>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-2xl mx-auto">
           <AnimatedSection delay={0.1}>
             <div className="group text-center space-y-4">
               <div className="relative w-48 h-48 mx-auto rounded-2xl overflow-hidden border-2 border-fw-border group-hover:border-fw-accent/40 transition-all duration-300 shadow-card group-hover:shadow-lg">
                 <Image
-                  src="/robby.png"
-                  alt="Robby — Co-Founder"
+                  src="/max.png"
+                  alt="Max — Founder & President"
                   fill
                   className="object-cover"
                 />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-foreground">Robby</h3>
-                <p className="text-sm text-fw-accent font-medium">Co-Founder &bull; Tech &amp; Product</p>
-                <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
-                  Builder, dad, lifter. Obsessed with making AI actually useful
-                  for everyday health decisions.
-                </p>
+                <h3 className="text-lg font-bold text-foreground">Max</h3>
+                <p className="text-sm text-fw-accent font-medium">Founder &amp; President</p>
               </div>
             </div>
           </AnimatedSection>
@@ -150,40 +155,24 @@ export default function AboutPage() {
             <div className="group text-center space-y-4">
               <div className="relative w-48 h-48 mx-auto rounded-2xl overflow-hidden border-2 border-fw-border group-hover:border-fw-accent/40 transition-all duration-300 shadow-card group-hover:shadow-lg">
                 <Image
-                  src="/max.png"
-                  alt="Max — Co-Founder"
+                  src="/robby.png"
+                  alt="Robby — Co-Founder & CTO"
                   fill
-                  className="object-cover"
+                  className="object-cover object-top"
                 />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-foreground">Max</h3>
-                <p className="text-sm text-fw-accent font-medium">Co-Founder &bull; Strategy &amp; Content</p>
-                <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
-                  Former athlete turned wellness nerd. Believes fitness should
-                  enhance your life, not consume it.
-                </p>
+                <h3 className="text-lg font-bold text-foreground">Robby</h3>
+                <p className="text-sm text-fw-accent font-medium">Co-Founder &amp; Chief Technology Officer</p>
               </div>
             </div>
           </AnimatedSection>
         </div>
       </Section>
 
-      {/* Philosophy */}
+      {/* Principles Grid */}
       <Section className="bg-fw-surface">
-        <AnimatedSection>
-          <div className="max-w-3xl mx-auto space-y-4">
-            <h2>Built to Guide, Not Judge</h2>
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              No guilt trips. No punishment days. FuelWell helps you make
-              better choices while staying in control — and it works
-              alongside your trainer, not against them.
-            </p>
-          </div>
-        </AnimatedSection>
-
-        {/* Principles Grid */}
-        <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
           {principles.map((principle, index) => (
             <AnimatedSection key={principle.title} delay={index * 0.1}>
               <div className="group bg-white border border-fw-border rounded-xl p-6 text-center space-y-3 shadow-card hover:-translate-y-1 hover:border-fw-accent/30 transition-all duration-300">

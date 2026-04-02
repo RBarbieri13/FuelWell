@@ -78,7 +78,7 @@ const howItWorksSteps = [
     number: 1,
     title: "Tell",
     description:
-      "Share your goals, preferences, dietary needs, and budget. FuelWell learns who you are and how you live.",
+      "Share your goals, preferences, dietary needs, and budget. FuelWell adapts to who you are and how you live.",
     color: "from-emerald-400 to-teal-400",
   },
   {
@@ -230,6 +230,20 @@ export default function Home() {
           </AnimatedSection>
         </div>
       </section>
+
+      {/* ───── BUILT TO GUIDE, NOT JUDGE ───── */}
+      <Section className="py-12 md:py-16">
+        <AnimatedSection className="max-w-3xl mx-auto text-center space-y-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground">
+            Built to Guide, Not Judge
+          </h2>
+          <p className="text-lg text-muted-foreground leading-relaxed">
+            No guilt trips. No punishment days. FuelWell helps you make
+            better choices while staying in control — and it works
+            alongside your trainer, not against them.
+          </p>
+        </AnimatedSection>
+      </Section>
 
       {/* ───── REAL-LIFE EXAMPLES ───── */}
       <Section className="py-10 md:py-14">

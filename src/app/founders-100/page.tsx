@@ -286,25 +286,17 @@ export default function Founders100Page() {
                 Everything in Pro, plus:
               </p>
               <ul className="space-y-3 mb-8 flex-1">
-                {[...proFeatures, ...premiumExtras].map((feature) => {
-                  const isPremiumExtra = premiumExtras.some((e) => e.label === feature.label);
-                  return (
-                    <li
-                      key={feature.label}
-                      className="flex items-center gap-3 text-sm"
-                    >
-                      <span className="text-base">{feature.icon}</span>
-                      <span
-                        className={isPremiumExtra ? "text-foreground font-medium" : ""}
-                      >
-                        {feature.label}
-                      </span>
-                      {isPremiumExtra && (
-                        <span className="ml-auto text-[9px] font-semibold text-violet-600 bg-violet-100 px-1.5 py-0.5 rounded-full">NEW</span>
-                      )}
-                    </li>
-                  );
-                })}
+                {premiumExtras.map((feature) => (
+                  <li
+                    key={feature.label}
+                    className="flex items-center gap-3 text-sm"
+                  >
+                    <span className="text-base">{feature.icon}</span>
+                    <span className="text-foreground font-medium">
+                      {feature.label}
+                    </span>
+                  </li>
+                ))}
               </ul>
 
               <GradientButton href="/signup" className="w-full">

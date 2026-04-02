@@ -563,6 +563,251 @@ const progressItems = [
   },
 ];
 
+// ---------------------------------------------------------------------------
+// Progress Reporting Chart Mockup
+// ---------------------------------------------------------------------------
+
+function ProgressReportingMockup() {
+  // Caloric deficit data (daily target 2100, actual varies)
+  const calorieData = [
+    { day: "Mon", target: 2100, actual: 1950 },
+    { day: "Tue", target: 2100, actual: 2020 },
+    { day: "Wed", target: 2100, actual: 1880 },
+    { day: "Thu", target: 2100, actual: 2150 },
+    { day: "Fri", target: 2100, actual: 1920 },
+    { day: "Sat", target: 2100, actual: 2300 },
+    { day: "Sun", target: 2100, actual: 1980 },
+  ];
+  const maxCal = 2400;
+  const chartH = 80;
+
+  // Protein intake (grams)
+  const proteinData = [135, 142, 128, 150, 138, 120, 145];
+  const proteinGoal = 140;
+  const maxProtein = 160;
+
+  // Weight trend (lbs over 8 weeks)
+  const weightData = [186, 184.5, 183, 182.5, 181, 180, 179.5, 178];
+
+  return (
+    <div className="space-y-6">
+      {/* Caloric Deficit Chart */}
+      <div className="rounded-xl border border-fw-border bg-white p-4 shadow-sm">
+        <div className="flex items-center justify-between mb-3">
+          <h4 className="text-xs font-bold text-foreground">Weekly Caloric Intake</h4>
+          <div className="flex items-center gap-3 text-[10px]">
+            <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-emerald-400" />Actual</span>
+            <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-zinc-300" />Target</span>
+          </div>
+        </div>
+        <div className="relative" style={{ height: chartH }}>
+          {/* Target line */}
+          <div
+            className="absolute left-0 right-0 border-t-2 border-dashed border-zinc-200"
+            style={{ top: `${((maxCal - 2100) / maxCal) * chartH}px` }}
+          />
+          <div className="flex items-end justify-between h-full gap-1">
+            {calorieData.map((d) => {
+              const barH = (d.actual / maxCal) * chartH;
+              const isOver = d.actual > d.target;
+              return (
+                <div key={d.day} className="flex-1 flex flex-col items-center gap-1">
+                  <div
+                    className={`w-full max-w-[28px] rounded-t-md ${isOver ? "bg-orange-300" : "bg-emerald-400"}`}
+                    style={{ height: `${barH}px` }}
+                  />
+                  <span className="text-[9px] text-muted-foreground">{d.day}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        <div className="mt-2 flex justify-between text-[10px] text-muted-foreground">
+          <span>Avg: <span className="font-semibold text-foreground">2,029 cal/day</span></span>
+          <span>Deficit: <span className="font-semibold text-emerald-600">−497 cal/week</span></span>
+        </div>
+      </div>
+
+      {/* Protein Intake Chart */}
+      <div className="rounded-xl border border-fw-border bg-white p-4 shadow-sm">
+        <div className="flex items-center justify-between mb-3">
+          <h4 className="text-xs font-bold text-foreground">Daily Protein (g)</h4>
+          <span className="text-[10px] text-muted-foreground">Goal: {proteinGoal}g</span>
+        </div>
+        <div className="relative" style={{ height: 60 }}>
+          {/* Goal line */}
+          <div
+            className="absolute left-0 right-0 border-t-2 border-dashed border-blue-200"
+            style={{ top: `${((maxProtein - proteinGoal) / maxProtein) * 60}px` }}
+          />
+          <div className="flex items-end justify-between h-full gap-1">
+            {proteinData.map((g, i) => {
+              const barH = (g / maxProtein) * 60;
+              const hit = g >= proteinGoal;
+              return (
+                <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                  <div
+                    className={`w-full max-w-[28px] rounded-t-md ${hit ? "bg-blue-400" : "bg-blue-200"}`}
+                    style={{ height: `${barH}px` }}
+                  />
+                  <span className="text-[9px] text-muted-foreground">{calorieData[i].day}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        <p className="mt-2 text-[10px] text-muted-foreground">
+          Hit goal <span className="font-semibold text-blue-600">4 of 7 days</span> this week
+        </p>
+      </div>
+
+      {/* Weight Trend */}
+      <div className="rounded-xl border border-fw-border bg-white p-4 shadow-sm">
+        <div className="flex items-center justify-between mb-3">
+          <h4 className="text-xs font-bold text-foreground">Weight Trend (lbs)</h4>
+          <span className="text-[10px] font-semibold text-emerald-600">−8 lbs</span>
+        </div>
+        <div className="relative h-12">
+          <svg viewBox="0 0 280 48" className="w-full h-full" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="weightGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#22c55e" stopOpacity="0.3" />
+                <stop offset="100%" stopColor="#22c55e" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+            {(() => {
+              const minW = 176;
+              const maxW = 188;
+              const points = weightData.map((w, i) => {
+                const x = (i / (weightData.length - 1)) * 280;
+                const y = 48 - ((w - minW) / (maxW - minW)) * 48;
+                return `${x},${y}`;
+              });
+              const areaPoints = `0,48 ${points.join(" ")} 280,48`;
+              return (
+                <>
+                  <polygon points={areaPoints} fill="url(#weightGrad)" />
+                  <polyline points={points.join(" ")} fill="none" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                  {weightData.map((w, i) => {
+                    const x = (i / (weightData.length - 1)) * 280;
+                    const y = 48 - ((w - minW) / (maxW - minW)) * 48;
+                    return <circle key={i} cx={x} cy={y} r="3" fill="white" stroke="#22c55e" strokeWidth="2" />;
+                  })}
+                </>
+              );
+            })()}
+          </svg>
+        </div>
+        <div className="flex justify-between text-[9px] text-muted-foreground mt-1">
+          <span>Week 1</span>
+          <span>Week 8</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Body Recomposition Timeline Mockup
+// ---------------------------------------------------------------------------
+
+function BodyRecompMockup() {
+  const milestones = [
+    { week: "Week 1", label: "Baseline", weight: "186 lbs", bf: "24%", muscle: "141 lbs", status: "done" },
+    { week: "Week 4", label: "Fat loss phase", weight: "182 lbs", bf: "22%", muscle: "142 lbs", status: "done" },
+    { week: "Week 8", label: "Recomp begins", weight: "178 lbs", bf: "20%", muscle: "142.5 lbs", status: "current" },
+    { week: "Week 12", label: "Lean gain phase", weight: "176 lbs", bf: "18%", muscle: "144 lbs", status: "projected" },
+    { week: "Week 16", label: "Target", weight: "175 lbs", bf: "16%", muscle: "147 lbs", status: "projected" },
+  ];
+
+  return (
+    <div className="space-y-4">
+      <div className="rounded-xl border border-fw-border bg-white p-4 shadow-sm">
+        <h4 className="text-xs font-bold text-foreground mb-4">Body Recomposition Timeline</h4>
+
+        {/* Dual line chart */}
+        <div className="relative h-16 mb-2">
+          <svg viewBox="0 0 280 64" className="w-full h-full" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="bfGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#f97316" stopOpacity="0.2" />
+                <stop offset="100%" stopColor="#f97316" stopOpacity="0" />
+              </linearGradient>
+              <linearGradient id="muscleGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.2" />
+                <stop offset="100%" stopColor="#3b82f6" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+            {/* Body fat line (decreasing) */}
+            {(() => {
+              const bfValues = [24, 22, 20, 18, 16];
+              const minBf = 14;
+              const maxBf = 26;
+              const points = bfValues.map((v, i) => {
+                const x = (i / (bfValues.length - 1)) * 280;
+                const y = 64 - ((v - minBf) / (maxBf - minBf)) * 64;
+                return `${x},${y}`;
+              });
+              return (
+                <>
+                  <polyline points={points.join(" ")} fill="none" stroke="#f97316" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                  {/* Projected dashed portion */}
+                  <line x1="140" y1={64 - ((20 - minBf) / (maxBf - minBf)) * 64} x2="280" y2={64 - ((16 - minBf) / (maxBf - minBf)) * 64} stroke="#f97316" strokeWidth="2" strokeDasharray="6,4" opacity="0.5" />
+                  {bfValues.map((v, i) => {
+                    const x = (i / (bfValues.length - 1)) * 280;
+                    const y = 64 - ((v - minBf) / (maxBf - minBf)) * 64;
+                    return <circle key={i} cx={x} cy={y} r="3" fill="white" stroke="#f97316" strokeWidth="2" />;
+                  })}
+                </>
+              );
+            })()}
+            {/* Lean mass line (increasing) */}
+            {(() => {
+              const muscleValues = [141, 142, 142.5, 144, 147];
+              const minM = 139;
+              const maxM = 149;
+              const points = muscleValues.map((v, i) => {
+                const x = (i / (muscleValues.length - 1)) * 280;
+                const y = 64 - ((v - minM) / (maxM - minM)) * 64;
+                return `${x},${y}`;
+              });
+              return (
+                <>
+                  <polyline points={points.join(" ")} fill="none" stroke="#3b82f6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                  <line x1="140" y1={64 - ((142.5 - minM) / (maxM - minM)) * 64} x2="280" y2={64 - ((147 - minM) / (maxM - minM)) * 64} stroke="#3b82f6" strokeWidth="2" strokeDasharray="6,4" opacity="0.5" />
+                  {muscleValues.map((v, i) => {
+                    const x = (i / (muscleValues.length - 1)) * 280;
+                    const y = 64 - ((v - minM) / (maxM - minM)) * 64;
+                    return <circle key={i} cx={x} cy={y} r="3" fill="white" stroke="#3b82f6" strokeWidth="2" />;
+                  })}
+                </>
+              );
+            })()}
+          </svg>
+        </div>
+        <div className="flex items-center justify-center gap-4 text-[10px] mb-4">
+          <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-orange-400" />Body Fat %</span>
+          <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-blue-400" />Lean Mass (lbs)</span>
+          <span className="flex items-center gap-1"><span className="h-2 w-2 border border-zinc-300 rounded-full" style={{ borderStyle: "dashed" }} />Projected</span>
+        </div>
+
+        {/* Milestone timeline */}
+        <div className="space-y-2">
+          {milestones.map((m) => (
+            <div key={m.week} className={`flex items-center gap-3 rounded-lg px-3 py-2 text-[11px] ${m.status === "current" ? "bg-emerald-50 border border-emerald-200" : m.status === "projected" ? "bg-zinc-50 border border-zinc-200 opacity-70" : "bg-white border border-fw-border/50"}`}>
+              <div className={`h-2.5 w-2.5 rounded-full shrink-0 ${m.status === "done" ? "bg-emerald-400" : m.status === "current" ? "bg-emerald-500 ring-2 ring-emerald-200" : "bg-zinc-300"}`} />
+              <span className="font-semibold text-foreground w-14">{m.week}</span>
+              <span className="text-muted-foreground flex-1">{m.label}</span>
+              <span className="text-foreground font-medium">{m.weight}</span>
+              <span className="text-orange-500 font-medium w-8 text-right">{m.bf}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const integrations = [
   { name: "Apple Health", icon: Zap },
   { name: "WHOOP", icon: Sparkles },
@@ -682,7 +927,7 @@ export default function FeaturesPage() {
           </p>
         </AnimatedSection>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-3 gap-8 mb-16">
           {progressItems.map((item, i) => {
             const Icon = item.icon;
             return (
@@ -705,6 +950,25 @@ export default function FeaturesPage() {
               </AnimatedSection>
             );
           })}
+        </div>
+
+        {/* Progress Reporting Visual */}
+        <div className="grid md:grid-cols-2 gap-10 max-w-5xl mx-auto">
+          <AnimatedSection delay={0.1}>
+            <h3 className="text-xl font-bold text-foreground mb-4">Weekly Performance Report</h3>
+            <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
+              Caloric deficit tracking, protein intake consistency, and weight trend — all in one view. Delivered every Sunday.
+            </p>
+            <ProgressReportingMockup />
+          </AnimatedSection>
+
+          <AnimatedSection delay={0.2}>
+            <h3 className="text-xl font-bold text-foreground mb-4">Body Recomposition Timeline</h3>
+            <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
+              Track body fat percentage and lean mass over time. See projected milestones based on your current trajectory.
+            </p>
+            <BodyRecompMockup />
+          </AnimatedSection>
         </div>
       </Section>
 
