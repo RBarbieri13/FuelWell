@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FuelWell App Map</title>
+<style>
+  :root {
+    --primary: #22c55e;
+    --primary-dark: #16a34a;
+    --primary-light: #f0fdf4;
+    --accent: #f97316;
+    --accent-light: #fff7ed;
+    --protein: #3b82f6;
+    --carbs: #f59e0b;
+    --fat: #ef4444;
+    --neutral-50: #fafafa;
+    --neutral-100: #f5f5f5;
+    --neutral-200: #e5e5e5;
+    --neutral-500: #737373;
+    --neutral-700: #404040;
+    --neutral-800: #262626;
+    --neutral-900: #171717;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--neutral-50);
+    color: var(--neutral-800);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    padding: 3rem 0 2rem;
+    border-bottom: 2px solid var(--primary);
+    margin-bottom: 2.5rem;
+  }
+  .header h1 {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: var(--neutral-900);
+    margin-bottom: 0.25rem;
+  }
+  .header h1 span { color: var(--primary-dark); }
+  .header .subtitle {
+    font-size: 1.1rem;
+    color: var(--neutral-500);
+  }
+  .header .date {
+    font-size: 0.85rem;
+    color: var(--neutral-500);
+    margin-top: 0.5rem;
+  }
+
+  /* App Info Box */
+  .info-box {
+    background: white;
+    border: 1px solid var(--neutral-200);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  .info-box h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--neutral-700);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .info-grid {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 0.5rem 1rem;
+    font-size: 0.95rem;
+  }
+  .info-grid dt { font-weight: 600; color: var(--neutral-700); }
+  .info-grid dd { color: var(--neutral-800); }
+
+  /* Color Swatches */
+  .swatches {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+  }
+  .swatch {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    color: var(--neutral-700);
+  }
+  .swatch-dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    border: 1px solid rgba(0,0,0,0.1);
+  }
+
+  /* Nav Section */
+  .nav-section {
+    background: white;
+    border: 1px solid var(--neutral-200);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  .nav-tabs {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .nav-tab {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+  .nav-tab.highlight {
+    background: var(--primary-dark);
+    color: white;
+    border-color: var(--primary-dark);
+  }
+
+  /* Status Summary */
+  .status-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+  }
+  .status-card {
+    background: white;
+    border: 1px solid var(--neutral-200);
+    border-radius: 12px;
+    padding: 1.25rem;
+    text-align: center;
+  }
+  .status-card .count {
+    font-size: 2rem;
+    font-weight: 700;
+  }
+  .status-card .label {
+    font-size: 0.85rem;
+    color: var(--neutral-500);
+    margin-top: 0.25rem;
+  }
+  .status-built .count { color: var(--primary-dark); }
+  .status-scaffold .count { color: var(--accent); }
+  .status-planned .count { color: var(--protein); }
+
+  /* Section Headers */
+  .section-header {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--neutral-900);
+    margin: 2.5rem 0 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--neutral-200);
+  }
+
+  /* Screen Cards */
+  .screen-card {
+    background: white;
+    border: 1px solid var(--neutral-200);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    transition: box-shadow 0.2s;
+  }
+  .screen-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  .screen-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+  .screen-card-header h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--neutral-900);
+  }
+  .screen-badges {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+  .badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .badge-built { background: #dcfce7; color: #166534; }
+  .badge-scaffold { background: #ffedd5; color: #9a3412; }
+  .badge-planned { background: #dbeafe; color: #1e40af; }
+  .badge-route {
+    background: var(--neutral-100);
+    color: var(--neutral-700);
+    font-family: 'SF Mono', 'Menlo', monospace;
+    font-weight: 500;
+    text-transform: none;
+  }
+  .badge-tab {
+    background: #f3e8ff;
+    color: #6b21a8;
+  }
+
+  .screen-purpose {
+    font-size: 0.95rem;
+    color: var(--neutral-700);
+    margin-bottom: 1rem;
+    font-style: italic;
+  }
+
+  .screen-section-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--neutral-500);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.4rem;
+  }
+
+  .component-list {
+    list-style: none;
+    margin-bottom: 1rem;
+  }
+  .component-list li {
+    position: relative;
+    padding: 0.25rem 0 0.25rem 1.25rem;
+    font-size: 0.9rem;
+    color: var(--neutral-800);
+  }
+  .component-list li::before {
+    content: '>';
+    position: absolute;
+    left: 0;
+    color: var(--primary);
+    font-weight: 700;
+  }
+  .component-list li.sub {
+    padding-left: 2.5rem;
+    color: var(--neutral-700);
+    font-size: 0.85rem;
+  }
+  .component-list li.sub::before {
+    left: 1.25rem;
+    content: '-';
+    color: var(--neutral-500);
+  }
+
+  .screen-note {
+    background: var(--neutral-100);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+    color: var(--neutral-700);
+    margin-top: 0.75rem;
+  }
+  .screen-note strong { color: var(--neutral-800); }
+
+  /* Flow Diagram */
+  .flow-box {
+    background: white;
+    border: 1px solid var(--neutral-200);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .flow-box h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: var(--neutral-800);
+  }
+  .flow-steps {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    font-size: 0.85rem;
+  }
+  .flow-step {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    padding: 0.35rem 0.75rem;
+    border-radius: 6px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .flow-arrow {
+    color: var(--neutral-500);
+    font-size: 1.1rem;
+  }
+  .flow-step.planned {
+    background: #dbeafe;
+    color: #1e40af;
+    border: 1px dashed #93c5fd;
+  }
+
+  /* Priority List */
+  .priority-list {
+    list-style: none;
+    counter-reset: priority;
+  }
+  .priority-list li {
+    counter-increment: priority;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--neutral-100);
+    font-size: 0.95rem;
+  }
+  .priority-list li::before {
+    content: counter(priority);
+    background: var(--primary-dark);
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* Print Styles */
+  @media print {
+    body { background: white; }
+    .container { max-width: 100%; padding: 1rem; }
+    .screen-card { break-inside: avoid; box-shadow: none; border: 1px solid #ccc; }
+    .flow-box { break-inside: avoid; }
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 640px) {
+    .container { padding: 1rem; }
+    .header h1 { font-size: 1.75rem; }
+    .info-grid { grid-template-columns: 1fr; }
+    .status-summary { grid-template-columns: 1fr; }
+    .flow-steps { flex-direction: column; align-items: flex-start; }
+    .flow-arrow { transform: rotate(90deg); }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <h1>Fuel<span>Well</span> App Map</h1>
+    <div class="subtitle">Screen Inventory & Wireframe Guide</div>
+    <div class="date">Last updated: March 26, 2026</div>
+  </div>
+
+  <!-- App Info -->
+  <div class="info-box">
+    <h2>App Overview</h2>
+    <dl class="info-grid">
+      <dt>App Name</dt><dd>FuelWell</dd>
+      <dt>Type</dt><dd>AI-powered nutrition &amp; fitness mobile app</dd>
+      <dt>Design Vibe</dt><dd>Clean, modern, warm &amp; approachable. Premium health companion, not clinical.</dd>
+      <dt>Target User</dt><dd>Health-conscious adults who want AI-guided nutrition coaching</dd>
+      <dt>Target Device</dt><dd>iPhone 15 Pro (393 x 852) — mobile-first, responsive to desktop</dd>
+      <dt>Typography</dt><dd>Geist (sans-serif) + Geist Mono; tabular numbers for data</dd>
+      <dt>Tech Stack</dt><dd>Next.js, Supabase Auth, Tailwind CSS</dd>
+    </dl>
+    <div class="swatches">
+      <div class="swatch"><div class="swatch-dot" style="background:#22c55e"></div>Primary Green</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#f97316"></div>Accent Orange</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#3b82f6"></div>Protein Blue</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#f59e0b"></div>Carbs Amber</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#ef4444"></div>Fat Red</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#171717"></div>Dark Text</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#fafafa; border-color:#d4d4d4"></div>Background</div>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <div class="nav-section">
+    <h2>Bottom Navigation (Mobile)</h2>
+    <div class="nav-tabs">
+      <div class="nav-tab">Home</div>
+      <div class="nav-tab">Coach</div>
+      <div class="nav-tab highlight">Log Meal</div>
+      <div class="nav-tab">Progress</div>
+      <div class="nav-tab">Profile</div>
+    </div>
+  </div>
+
+  <!-- Status Summary -->
+  <div class="status-summary">
+    <div class="status-card status-built">
+      <div class="count">15</div>
+      <div class="label">Built</div>
+    </div>
+    <div class="status-card status-scaffold">
+      <div class="count">3</div>
+      <div class="label">Scaffolded</div>
+    </div>
+    <div class="status-card status-planned">
+      <div class="count">6</div>
+      <div class="label">Planned</div>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- PUBLIC / MARKETING -->
+  <!-- ============================================ -->
+  <div class="section-header">Public &amp; Marketing</div>
+
+  <div class="screen-card">
+    <div class="screen-card-header">
+      <h3>SCREEN-01: Marketing Landing Page</h3>
+      <div class="screen-badges">
+        <span class="badge badge-built">Built</span>
+        <span class="badge badge-route">/</span>
+      </div>
+    </div>
+    <div class="screen-purpose">Convert visitors — showcase FuelWell value proposition</div>
+    <div class="screen-section-label">Components</div>
+    <ul class="component-list">
+      <li>Sticky nav header with Logo, Login, Sign Up</li>
+      <li>Hero section with gradient background blobs</li>
+      <li>"AI-powered nutrition coaching" badge</li>
+      <li>Dual CTA: "Start free" + "See how it works"</li>
+      <li>Social proof strip</li>
+      <li>"How it Works" 3-step flow (Set goals, Log meals, Get coached)</li>
+      <li>Features grid (6 cards: AI Coaching, Macro Tracking, Progress, Photo Log, Recipes, Quick Actions)</li>
+      <li>Final CTA section + Footer</li>
+    </ul>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- AUTH FLOW -->
+  <!-- ============================================ -->
+  <div class="section-header">Authentication Flow</div>
+
+  <div class="screen-card">
+    <div class="screen-card-header">
+      <h3>SCREEN-02: Login</h3>
+      <div class="screen-badges">
+        <span class="badge badge-built">Built</span>
+        <span class="badge badge-route">/login</span>
+      </div>
+    </div>
+    <div class="screen-purpose">Authenticate returning users</div>
+    <div class="screen-section-label">Components</div>
+    <ul class="component-list">
+      <li>Desktop: split layout — dark green branding panel + form</li>
+      <li>Google OAuth button</li>
+      <li>Email + password inputs with "Forgot password?" link</li>
+      <li>Sign in button with loading state</li>
+      <li>"Sign up" link for new users</li>
+    </ul>
+  </div>
+
+  <div class="screen-card">
+    <div class="screen-card-header">
+      <h3>SCREEN-03: Sign Up</h3>
+      <div class="screen-badges">
+        <span class="badge badge-built">Built</span>
+        <span class="badge badge-route">/signup</span>
+      </div>
+    </div>
+    <div class="screen-purpose">Register new users</div>
+    <div class="screen-section-label">Components</div>
+    <ul class="component-list">
+      <li>Desktop: split layout — dark panel with benefit checkmarks + form</li>
+      <li>Google OAuth button</li>
+      <li>Email + password inputs</li>
+      <li>Real-time password strength bar (Weak / Fair / Good / Strong)</li>
+      <li>"Create account" button + Login link</li>
+    </ul>
+  </div>
+
+  <div class="screen-card">
+    <div class="screen-card-header">
+      <h3>SCREEN-04: Forgot Password</h3>
+      <div class="screen-badges">
+        <span class="badge badge-built">Built</span>
+        <span class="badge badge-route">/forgot-password</span>
+      </div>
+    </div>
+    <div class="screen-purpose">Password reset request</div>
+    <div class="screen-section-label">Components</div>
+    <ul class="component-list">
+      <li>Email input</li>
+      <li>"Send reset link" button</li>
+      <li>Back to login link</li>
+    </ul>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- ONBOARDING -->
+  <!-- ============================================ -->
+  <div class="section-header">Onboarding Flow (10-Step Wizard)</div>
+
+  <div class="screen-card">
+    <div class="screen-card-header">
+      <h3>SCREEN-05: Welcome</h3>
+      <div class="screen-badges">
+        <span class="badge badge-built">Built</span>
+        <span class="badge badge-route">/app/onboarding</span>
+        <span class="badge badge-tab">Step 0</span>
+      </div>
+    </div>
+    <div class="screen-purpose">First screen after signup — welcome and motivate</div>
+    <ul class="component-list">
+      <li>Animated progress bar (0/10)</li>
+      <li>Welcome message and app intro</li>
+      <li>"Let's get started" CTA</li>
+    </ul>
+    <div class="screen-note"><strong>Note:</strong> Should feel premium and motivating. Sets the tone for the whole app.</div>
+  </div>
+
+  <div class="screen-card">
+    <div class="screen-card-header">
+      <h3>SCREEN-06: Name</h3>
+      <div class="screen-badges">
+        <span class="badge badge-built">Built</span>
+        <span class="badge badge-tab">Step 1</span>
+      </div>
+    </div>
+    <div class="screen-purpose">Collect name for personalization</div>
+    <ul class="component-list">
+      <li>Text input for display name</li>
+    </ul>
+    <div class="screen-note"><strong>Note:</strong> Optional — enables "Hey, {name}" on dashboard.</div>
+  </div>
+
+  <div class="screen-card">
+    <div class="screen-card-header">
+      <h3>SCREEN-07: Date of Birth</h3>
+      <div class="screen-badges">
+        <span class="badge badge-built">Built</span>
+        <span class="badge badge-tab">Step 2</span>
+      </div>
+    </div>
+    <div class="screen-purpose">Collect DOB for calorie calculation (BMR)</div>
+    <ul class="component-list">
+      <li>Date picker input</li>
+    </ul>
+  </div>
+
+  <div class="screen-card">
+    <div class="screen-card-header">
+      <h3>SCREEN-08: Biological Sex</h3>
+      <div class="screen-badges">
+        <span class="badge badge-built">Built</span>
+        <span class="badge badge-tab">Step 3</span>
+      </div>
+    </div>
+    <div class="screen-purpose">Collect biological sex for BMR accuracy</div>
+    <ul class="component-list">
+      <li>3-button grid: Male, Female, Other</li>
+    </ul>
+  </div>
+
+  <div class="screen-card">
+    <div class="screen-card-header">
+      <h3>SCREEN-09: Measurements</h3>
+      <div class="screen-badges">
+        <span class="badge badge-built">Built</span>
+        <span class="badge badge-tab">Step 4</span>
+      </div>
+    </div>
+    <div class="screen-purpose">Collect height and weight</div>
+    <ul class="component-list">
+      <li>Height input (cm, min 50)</li>
+      <li>Weight input (kg, min 20)</li>
+    </ul>
+    <div class="screen-note"><strong>Note:</strong> Keep fast — minimize friction. Units toggle (lbs/kg) planned.</div>
+  </div>
+
+  <div class="screen-card">
+    <div class="screen-card-header">
+      <h3>SCREEN-10: Activity Level</h3>
+      <div class="screen-badges">
+        <span class="badge badge-built">Built</span>
+        <span class="badge badge-tab">Step 5</span>
+      </div>
+    </div>
+    <div class="screen-purpose">Assess daily activity for calorie multiplier</div>
+    <ul class="component-list">
+      <li>5-option list: Sedentary, Lightly Active, Moderately Active, Active, Very Active</li>
+    </ul>
+  </div>
+
+  <div class="screen-card">
+    <div class="screen-card-header">
+      <h3>SCREEN-11: Goal Selection</h3>
+      <div class="screen-badges">
+        <span class="badge badge-built">Built</span>
+        <span class="badge badge-tab">Step 6</span>
+      </div>
+    </div>
+    <div class="screen-purpose">User selects primary fitness goal</div>
+    <ul class="component-list">
+      <li>3 goal cards with emoji: Lose Weight, Maintain, Gain Weight</li>
+    </ul>
+    <div class="screen-note"><strong>Note:</strong> Determines calorie adjustment (-500 for lose, +300 for gain) and macro splits.</div>
+  </div>
+
+  <div class="screen-card">
+    <div class="screen-card-header">
+      <h3>SCREEN-12: Dietary Preference</h3>
+      <div class="screen-badges">
+        <span class="badge badge-built">Built</span>
+        <span class="badge badge-tab">Step 7</span>
+      </div>
+    </div>
+    <div class="screen-purpose">Capture diet type for recipe/meal suggestions</div>
+    <ul class="component-list">
+      <li>6-button grid (Standard, Vegetarian, Vegan, Keto, Paleo, etc.)</li>
+    </ul>
+    <div class="screen-note"><strong>Note:</strong> Optional. Informs AI Coach and recipe recommendations.</div>
+  </div>
+
+  <div class="screen-card">
+    <div class="screen-card-header">
+      <h3>SCREEN-13: Food Allergies</h3>
+      <div class="screen-badges">
+        <span class="badge badge-built">Built</span>
+        <span class="badge badge-tab">Step 8</span>
+      </div>
+    </div>
+    <div class="screen-purpose">Capture allergens for safe recommendations</div>
+    <ul class="component-list">
+      <li>8-option multi-select grid of common allergens</li>
+    </ul>
+    <div class="screen-note"><strong>Note:</strong> Critical for AI Coach safety — never suggest flagged allergens.</div>
+  </div>
+
+  <div class="screen-card">
+    <div class="screen-card-header">
+      <h3>SCREEN-14: Review &amp; Confirm</h3>
+      <div class="screen-badges">
+        <span class="badge badge-built">Built</span>
+        <span class="badge badge-tab">Step 9</span>
+      </div>
+    </div>
+    <div class="screen-purpose">Show calculated targets — the payoff moment</div>
+    <ul class="component-list">
+      <li>Summary card with all collected info</li>
+      <li>Large calorie target display</li>
+      <li>3-column macro grid: Protein, Carbs, Fat with color coding</li>
+      <li>Goal, Activity, Diet, Allergies summary</li>
+      <li>"Complete Setup" button</li>
+    </ul>
+    <div class="screen-note"><strong>Note:</strong> This is the payoff — user sees their personalized plan. Make it feel rewarding.</div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- CORE APP -->
+  <!-- ============================================ -->
+  <div class="section-header">Core App Screens</div>
+
+  <div class="screen-card" style="border-left: 4px solid var(--primary)">
+    <div class="screen-card-header">
+      <h3>SCREEN-15: Home Dashboard</h3>
+      <div class="screen-badges">
+        <span class="badge badge-built">Built</span>
+        <span class="badge badge-route">/app/dashboard</span>
+        <span class="badge badge-tab">Home Tab</span>
+      </div>
+    </div>
+    <div class="screen-purpose">Daily overview and command center — the most important screen</div>
+    <div class="screen-section-label">Components</div>
+    <ul class="component-list">
+      <li>Personalized greeting: "Hey, {name}"</li>
+      <li>Onboarding banner (if profile incomplete)</li>
+      <li><strong>Calorie Ring</strong> (animated SVG)</li>
+      <li class="sub">Circular progress — remaining calories in center</li>
+      <li class="sub">Green if under target, red if over</li>
+      <li class="sub">"X / Y kcal" badge below</li>
+      <li><strong>Macro Bars</strong> (3 animated rows)</li>
+      <li class="sub">Protein (blue), Carbs (amber), Fat (red)</li>
+      <li class="sub">Color dot + label + "X / Y g" + progress bar</li>
+      <li><strong>Quick Actions</strong> (2x2 grid)</li>
+      <li class="sub">Log Meal, Snap Photo, Ask Coach, Scan Barcode</li>
+      <li><strong>AI Coach Insight Card</strong></li>
+      <li class="sub">Dynamic coaching message based on daily progress</li>
+      <li class="sub">"Chat with coach" link</li>
+    </ul>
+    <div class="screen-note"><strong>Note:</strong> The "command center." Everything a user needs at a glance. Smart coaching messages adapt to progress.</div>
+  </div>
+
+  <div class="screen-card" style="border-left: 4px solid var(--primary)">
+    <div class="screen-card-header">
+      <h3>SCREEN-16: Meal Log</h3>
+      <div class="screen-badges">
+        <span class="badge badge-built">Built</span>
+        <span class="badge badge-route">/app/log</span>
+        <span class="badge badge-tab">Log Tab</span>
+      </div>
+    </div>
+    <div class="screen-purpose">Log meals and view daily food intake — speed is king</div>
+    <div class="screen-section-label">Components</div>
+    <ul class="component-list">
+      <li><strong>Mode tabs:</strong> Search | Photo | Scan</li>
+      <li><strong>Search Mode</strong> (default)</li>
+      <li class="sub">Search input with magnifying glass</li>
+      <li class="sub">"Recent Foods" list with name, serving, calories, protein</li>
+      <li class="sub">Plus icon to quick-add</li>
+      <li><strong>Photo Mode</strong></li>
+      <li class="sub">Camera icon card — "Snap your meal" + "Open Camera"</li>
+      <li><strong>Scan Mode</strong></li>
+      <li class="sub">Barcode icon card — "Scan a barcode" + "Open Scanner"</li>
+      <li><strong>Meal Type Selector:</strong> Breakfast | Lunch | Dinner | Snack</li>
+    </ul>
+    <div class="screen-note"><strong>Note:</strong> Must be FAST — minimal taps to log a food item. The daily driver of the app.</div>
+  </div>
+
+  <div class="screen-card">
+    <div class="screen-card-header">
+      <h3>SCREEN-17: Food Search &amp; Add</h3>
+      <div class="screen-badges">
+        <span class="badge badge-scaffold">Partial</span>
+        <span class="badge badge-route">/app/log (search mode)</span>
+      </div>
+    </div>
+    <div class="screen-purpose">Search food database and add items to a meal</div>
+    <ul class="component-list">
+      <li>Search bar with recent/favorites tabs (planned)</li>
+      <li>Food results with calorie/macro preview</li>
+      <li>Serving size adjuster (planned)</li>
+      <li>Add to meal button</li>
+      <li>Barcode scan shortcut</li>
+    </ul>
+    <div class="screen-note"><strong>Note:</strong> Currently embedded in Meal Log search mode. May need its own dedicated view as the food database grows.</div>
+  </div>
+
+  <div class="screen-card" style="border-left: 4px solid var(--accent)">
+    <div class="screen-card-header">
+      <h3>SCREEN-18: AI Coach Chat</h3>
+      <div class="screen-badges">
+        <span class="badge badge-scaffold">Scaffold</span>
+        <span class="badge badge-route">/app/coach</span>
+        <span class="badge badge-tab">Coach Tab</span>
+      </div>
+    </div>
+    <div class="screen-purpose">Conversational AI for nutrition/fitness guidance — core differentiator</div>
+    <div class="screen-section-label">Planned Components</div>
+    <ul class="component-list">
+      <li>Chat message bubbles</li>
+      <li>Suggested quick-reply chips</li>
+      <li>Context cards (user's current stats shown inline)</li>
+      <li>Typing indicator</li>
+      <li>Clear chat, export, adjust AI persona options</li>
+    </ul>
+    <div class="screen-note"><strong>Note:</strong> Should feel like texting a knowledgeable friend. Currently shows empty state with "Start a conversation" prompt.</div>
+  </div>
+
+  <div class="screen-card">
+    <div class="screen-card-header">
+      <h3>SCREEN-19: Recipes Library</h3>
+      <div class="screen-badges">
+        <span class="badge badge-scaffold">Scaffold</span>
+        <span class="badge badge-route">/app/recipes</span>
+      </div>
+    </div>
+    <div class="screen-purpose">Browse and save recipes matching user goals</div>
+    <div class="screen-section-label">Planned Components</div>
+    <ul class="component-list">
+      <li>Recipe cards with photo, title, macros, prep time</li>
+      <li>Filter by meal type, diet, prep time, macro goals</li>
+      <li>Search bar</li>
+      <li>"Saved" / "Favorites" tab</li>
+      <li>AI-generated suggestions based on remaining macros</li>
+    </ul>
+    <div class="screen-note"><strong>Note:</strong> "What can I make with my remaining macros?" is the killer feature. Desktop sidebar only (not in mobile nav).</div>
+  </div>
+
+  <div class="screen-card">
+    <div class="screen-card-header">
+      <h3>SCREEN-20: Progress &amp; Analytics</h3>
+      <div class="screen-badges">
+        <span class="badge badge-scaffold">Scaffold</span>
+        <span class="badge badge-route">/app/progress</span>
+        <span class="badge badge-tab">Progress Tab</span>
+      </div>
+    </div>
+    <div class="screen-purpose">Visualize long-term trends — motivational</div>
+    <div class="screen-section-label">Planned Components</div>
+    <ul class="component-list">
+      <li>Weight chart (line graph over time)</li>
+      <li>Calorie adherence heatmap (calendar view)</li>
+      <li>Macro breakdown trends</li>
+      <li>Streak counter / consistency score</li>
+      <li>Milestone badges</li>
+    </ul>
+    <div class="screen-note"><strong>Note:</strong> Should make users feel good about their progress. Unlocks after 3 days of logging.</div>
+  </div>
+
+  <div class="screen-card">
+    <div class="screen-card-header">
+      <h3>SCREEN-21: Profile &amp; Settings</h3>
+      <div class="screen-badges">
+        <span class="badge badge-built">Built</span>
+        <span class="badge badge-route">/app/profile</span>
+        <span class="badge badge-tab">Profile Tab</span>
+      </div>
+    </div>
+    <div class="screen-purpose">User profile, preferences, and app settings</div>
+    <ul class="component-list">
+      <li>Avatar + display name (inline editable) + email</li>
+      <li><strong>Daily Targets:</strong> Calories, Protein, Carbs, Fat (color-coded cards)</li>
+      <li><strong>User Info:</strong> Goal, Activity, Weight, Height</li>
+      <li>"Recalculate nutrition targets" link</li>
+      <li>Sign out with confirmation flow</li>
+    </ul>
+    <div class="screen-note"><strong>Note:</strong> Keep clean — don't overcrowd. Inline editing, no modals.</div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- PLANNED -->
+  <!-- ============================================ -->
+  <div class="section-header">Planned Screens (Not Yet Built)</div>
+
+  <div class="screen-card" style="border-left: 4px dashed var(--protein)">
+    <div class="screen-card-header">
+      <h3>SCREEN-22: Workout Hub</h3>
+      <div class="screen-badges">
+        <span class="badge badge-planned">Planned</span>
+        <span class="badge badge-route">/app/workouts</span>
+      </div>
+    </div>
+    <div class="screen-purpose">Browse, start, and track workouts</div>
+    <ul class="component-list">
+      <li>Today's recommended workout card</li>
+      <li>Categories: Strength, Cardio, Flexibility, Custom</li>
+      <li>Recent workout history</li>
+      <li>Create custom workout button</li>
+      <li>Filter by equipment, duration, difficulty</li>
+    </ul>
+  </div>
+
+  <div class="screen-card" style="border-left: 4px dashed var(--protein)">
+    <div class="screen-card-header">
+      <h3>SCREEN-23: Active Workout Session</h3>
+      <div class="screen-badges">
+        <span class="badge badge-planned">Planned</span>
+        <span class="badge badge-route">/app/workouts/active</span>
+      </div>
+    </div>
+    <div class="screen-purpose">In-progress workout tracking</div>
+    <ul class="component-list">
+      <li>Exercise name + demo gif/image</li>
+      <li>Sets/reps tracker with checkboxes</li>
+      <li>Rest timer (auto-start between sets)</li>
+      <li>Weight/resistance input</li>
+      <li>Skip / Swap exercise option</li>
+      <li>Progress bar</li>
+    </ul>
+    <div class="screen-note"><strong>Note:</strong> One-handed use, large touch targets. User is sweating and distracted.</div>
+  </div>
+
+  <div class="screen-card" style="border-left: 4px dashed var(--protein)">
+    <div class="screen-card-header">
+      <h3>SCREEN-24: Notification Center</h3>
+      <div class="screen-badges">
+        <span class="badge badge-planned">Planned</span>
+        <span class="badge badge-route">/app/notifications</span>
+      </div>
+    </div>
+    <div class="screen-purpose">Centralized notification hub</div>
+    <ul class="component-list">
+      <li>Meal reminders</li>
+      <li>Goal milestone alerts</li>
+      <li>AI Coach nudges</li>
+      <li>Weekly summary</li>
+    </ul>
+  </div>
+
+  <div class="screen-card" style="border-left: 4px dashed var(--protein)">
+    <div class="screen-card-header">
+      <h3>SCREEN-25: Meal Plan Generator</h3>
+      <div class="screen-badges">
+        <span class="badge badge-planned">Planned</span>
+        <span class="badge badge-route">/app/meal-plan</span>
+      </div>
+    </div>
+    <div class="screen-purpose">AI-generated daily/weekly meal plans</div>
+    <ul class="component-list">
+      <li>Day/week view toggle</li>
+      <li>Meal slots (Breakfast, Lunch, Dinner, Snacks)</li>
+      <li>Auto-generated meals fitting remaining macros</li>
+      <li>Swap meal option</li>
+      <li>Grocery list generation</li>
+    </ul>
+    <div class="screen-note"><strong>Note:</strong> Premium feature candidate. "Plan my week" is a high-value use case.</div>
+  </div>
+
+  <div class="screen-card" style="border-left: 4px dashed var(--protein)">
+    <div class="screen-card-header">
+      <h3>SCREEN-26: Grocery List</h3>
+      <div class="screen-badges">
+        <span class="badge badge-planned">Planned</span>
+        <span class="badge badge-route">/app/grocery-list</span>
+      </div>
+    </div>
+    <div class="screen-purpose">Auto-generated shopping list from meal plans</div>
+    <ul class="component-list">
+      <li>Categorized list (Produce, Dairy, Protein, etc.)</li>
+      <li>Checkboxes for items</li>
+      <li>Shareable list</li>
+      <li>Add custom items</li>
+    </ul>
+  </div>
+
+  <div class="screen-card" style="border-left: 4px dashed var(--protein)">
+    <div class="screen-card-header">
+      <h3>SCREEN-27: Water Tracking</h3>
+      <div class="screen-badges">
+        <span class="badge badge-planned">Planned</span>
+        <span class="badge badge-route">Dashboard widget or /app/water</span>
+      </div>
+    </div>
+    <div class="screen-purpose">Track daily water intake</div>
+    <ul class="component-list">
+      <li>Water bottle fill animation</li>
+      <li>Quick-add buttons (glass, bottle, custom)</li>
+      <li>Daily goal indicator</li>
+    </ul>
+    <div class="screen-note"><strong>Note:</strong> Simple but high-engagement. Could live as a dashboard card.</div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- SCREEN FLOWS -->
+  <!-- ============================================ -->
+  <div class="section-header">Screen Flow Connections</div>
+
+  <div class="flow-box">
+    <h3>New User Flow</h3>
+    <div class="flow-steps">
+      <span class="flow-step">Landing Page</span>
+      <span class="flow-arrow">&rarr;</span>
+      <span class="flow-step">Sign Up</span>
+      <span class="flow-arrow">&rarr;</span>
+      <span class="flow-step">Onboarding (10 steps)</span>
+      <span class="flow-arrow">&rarr;</span>
+      <span class="flow-step">Dashboard</span>
+    </div>
+  </div>
+
+  <div class="flow-box">
+    <h3>Returning User Flow</h3>
+    <div class="flow-steps">
+      <span class="flow-step">Login</span>
+      <span class="flow-arrow">&rarr;</span>
+      <span class="flow-step">Dashboard</span>
+    </div>
+  </div>
+
+  <div class="flow-box">
+    <h3>Main App Navigation (Bottom Tabs)</h3>
+    <div class="flow-steps">
+      <span class="flow-step">Dashboard</span>
+      <span class="flow-arrow">&harr;</span>
+      <span class="flow-step">Coach</span>
+      <span class="flow-arrow">&harr;</span>
+      <span class="flow-step" style="background:var(--primary-dark);color:white;">Log Meal</span>
+      <span class="flow-arrow">&harr;</span>
+      <span class="flow-step">Progress</span>
+      <span class="flow-arrow">&harr;</span>
+      <span class="flow-step">Profile</span>
+    </div>
+  </div>
+
+  <div class="flow-box">
+    <h3>Nutrition Drill-Down</h3>
+    <div class="flow-steps">
+      <span class="flow-step">Dashboard</span>
+      <span class="flow-arrow">&rarr;</span>
+      <span class="flow-step">Meal Log</span>
+      <span class="flow-arrow">&rarr;</span>
+      <span class="flow-step">Food Search &amp; Add</span>
+    </div>
+  </div>
+
+  <div class="flow-box">
+    <h3>Recipe &amp; Meal Planning Flow</h3>
+    <div class="flow-steps">
+      <span class="flow-step">Dashboard</span>
+      <span class="flow-arrow">&rarr;</span>
+      <span class="flow-step">Recipes</span>
+      <span class="flow-arrow">&rarr;</span>
+      <span class="flow-step planned">Meal Plan</span>
+      <span class="flow-arrow">&rarr;</span>
+      <span class="flow-step planned">Grocery List</span>
+    </div>
+  </div>
+
+  <div class="flow-box">
+    <h3>Workout Flow (Planned)</h3>
+    <div class="flow-steps">
+      <span class="flow-step">Dashboard</span>
+      <span class="flow-arrow">&rarr;</span>
+      <span class="flow-step planned">Workout Hub</span>
+      <span class="flow-arrow">&rarr;</span>
+      <span class="flow-step planned">Active Workout</span>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- PRIORITY -->
+  <!-- ============================================ -->
+  <div class="section-header">Priority Screens for First Review</div>
+
+  <ol class="priority-list">
+    <li><strong>Home Dashboard</strong> — the command center, anchors the entire visual language</li>
+    <li><strong>Meal Log</strong> — the daily driver, speed is everything</li>
+    <li><strong>Onboarding Flow</strong> — first impression, sets the tone</li>
+    <li><strong>AI Coach Chat</strong> — core differentiator</li>
+    <li><strong>Marketing Landing Page</strong> — conversion</li>
+  </ol>
+
+</div>
+</body>
+</html>
