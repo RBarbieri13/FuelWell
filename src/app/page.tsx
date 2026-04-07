@@ -190,8 +190,8 @@ export default function Home() {
         <div className="absolute bottom-[-10%] right-[-5%] w-[400px] h-[400px] rounded-full bg-orange-200/25 blur-[100px] animate-float-slower" />
         <div className="absolute top-[20%] right-[15%] w-[300px] h-[300px] rounded-full bg-violet-200/20 blur-[80px] animate-pulse-glow" />
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 md:pt-40 pb-20 md:pb-28">
-          <AnimatedSection className="max-w-3xl mx-auto text-center space-y-8">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 md:pt-44 pb-24 md:pb-32">
+          <AnimatedSection className="max-w-4xl mx-auto text-center space-y-10">
             <Link
               href="/founders-100"
               className="group relative inline-flex items-center gap-3 rounded-full border-2 border-fw-accent/40 bg-white/90 px-8 py-3.5 text-lg font-bold text-foreground backdrop-blur-sm shadow-lg font-accent hover:shadow-2xl hover:border-fw-accent/60 hover:scale-105 transition-all duration-300 overflow-hidden"
@@ -204,27 +204,27 @@ export default function Home() {
               <ArrowRight className="relative h-5 w-5 text-fw-accent group-hover:translate-x-1 transition-transform duration-200" />
             </Link>
 
-            <h1 className="text-4xl md:text-5xl lg:text-[3.75rem] font-bold tracking-tight text-foreground leading-[1.08]">
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-[-0.035em] text-foreground leading-[1.05]">
               Build a healthier lifestyle{" "}
               <span className="gradient-text">without giving up real life.</span>
             </h1>
 
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
               Smarter food choices. Adaptive workouts. Real-time coaching.
               Habits that actually stick — because they fit your life.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
-              <GradientButton href="/founders-100" size="default">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+              <GradientButton href="/founders-100" size="lg">
                 Secure Your Spot
-                <ArrowRight className="ml-2 h-4 w-4" />
+                <ArrowRight className="ml-2 h-5 w-5" />
               </GradientButton>
               <OutlineButton href="/features">
                 See How It Works
               </OutlineButton>
             </div>
 
-            <p className="text-sm text-muted-foreground/80 max-w-xl mx-auto font-accent">
+            <p className="text-base text-muted-foreground/80 max-w-xl mx-auto font-accent">
               No rigid diets. No guilt. Just smarter decisions, every day.
             </p>
           </AnimatedSection>
@@ -237,12 +237,12 @@ export default function Home() {
       </section>
 
       {/* ───── BUILT TO GUIDE, NOT JUDGE ───── */}
-      <Section className="py-12 md:py-16">
-        <AnimatedSection className="max-w-3xl mx-auto text-center space-y-4">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground">
+      <Section className="py-16 md:py-20">
+        <AnimatedSection className="max-w-3xl mx-auto text-center space-y-5">
+          <h2 className="text-3xl md:text-[2.75rem] font-bold text-foreground leading-tight">
             Built to Guide, Not Judge
           </h2>
-          <p className="text-lg text-muted-foreground leading-relaxed">
+          <p className="text-lg md:text-xl text-muted-foreground leading-[1.7] max-w-2xl mx-auto">
             No guilt trips. No punishment days. FuelWell helps you make
             better choices while staying in control — and it works
             alongside your trainer, not against them.
@@ -251,19 +251,19 @@ export default function Home() {
       </Section>
 
       {/* ───── REAL-LIFE EXAMPLES ───── */}
-      <Section className="py-10 md:py-14">
-        <AnimatedSection className="text-center mb-8">
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+      <Section className="py-14 md:py-20">
+        <AnimatedSection className="text-center mb-10">
+          <h2 className="text-3xl md:text-[2.75rem] font-bold text-foreground leading-tight">
             FuelWell meets you where life happens.
           </h2>
         </AnimatedSection>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
           {realLifeExamples.map((ex, i) => (
             <AnimatedSection key={ex.situation} delay={i * 0.1}>
-              <div className="group rounded-2xl border-2 border-fw-border bg-white p-6 text-center hover:-translate-y-1 hover:border-fw-accent/40 transition-all duration-300 shadow-card hover:shadow-lg">
-                <span className="text-4xl block mb-3 group-hover:scale-110 transition-transform duration-300">{ex.emoji}</span>
-                <p className="text-lg font-bold text-foreground mb-1">{ex.situation}</p>
-                <p className="text-muted-foreground text-sm">{ex.solution}</p>
+              <div className="group rounded-2xl border-2 border-fw-border bg-white p-8 text-center hover:-translate-y-1 hover:border-fw-accent/40 transition-all duration-300 shadow-card hover:shadow-lg">
+                <span className="text-5xl block mb-4 group-hover:scale-110 transition-transform duration-300">{ex.emoji}</span>
+                <p className="text-xl font-bold text-foreground mb-2">{ex.situation}</p>
+                <p className="text-muted-foreground text-base leading-relaxed">{ex.solution}</p>
               </div>
             </AnimatedSection>
           ))}
@@ -271,16 +271,16 @@ export default function Home() {
       </Section>
 
       {/* ───── CREDIBILITY STRIP ───── */}
-      <Section className="py-8 md:py-12 border-y border-fw-border/50 bg-fw-surface/50">
+      <Section className="py-10 md:py-14 border-y border-fw-border/50 bg-fw-surface/50">
         <AnimatedSection delay={0.1}>
-          <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12">
+          <div className="flex flex-wrap items-center justify-center gap-10 md:gap-14">
             {credibilityItems.map((item) => (
               <div
                 key={item.label}
-                className="flex items-center gap-2.5 text-muted-foreground group"
+                className="flex items-center gap-3 text-muted-foreground group"
               >
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50 group-hover:bg-emerald-100 transition-colors duration-200">
-                  <item.icon className="h-4 w-4 text-fw-accent" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 group-hover:bg-emerald-100 transition-colors duration-200">
+                  <item.icon className="h-5 w-5 text-fw-accent" />
                 </div>
                 <span className="text-base font-semibold font-accent group-hover:text-foreground transition-colors duration-200">{item.label}</span>
               </div>
@@ -292,20 +292,20 @@ export default function Home() {
       {/* ───── PROBLEM SECTION ───── */}
       <Section>
         <AnimatedSection className="max-w-3xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground text-center mb-4">
+          <h2 className="text-3xl md:text-[2.75rem] font-bold text-foreground text-center mb-5 leading-tight">
             Most fitness plans break the moment life gets real.
           </h2>
-          <p className="text-muted-foreground text-center text-lg mb-10 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-muted-foreground text-center text-lg md:text-xl mb-12 max-w-2xl mx-auto leading-[1.7]">
             Rigid meal plans don&apos;t survive restaurant dinners, weekend plans, or tight budgets. Sound familiar?
           </p>
-          <ul className="space-y-4 max-w-lg mx-auto">
+          <ul className="space-y-5 max-w-lg mx-auto">
             {problemBullets.map((bullet, i) => (
               <AnimatedSection key={bullet} delay={0.3 + i * 0.08}>
-                <li className="flex items-start gap-3 group">
-                  <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-red-50 mt-0.5 group-hover:bg-red-100 transition-colors duration-200">
-                    <XCircle className="h-3.5 w-3.5 text-red-400" />
+                <li className="flex items-start gap-4 group">
+                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-red-50 mt-0.5 group-hover:bg-red-100 transition-colors duration-200">
+                    <XCircle className="h-4 w-4 text-red-400" />
                   </div>
-                  <span className="text-muted-foreground group-hover:text-foreground transition-colors duration-200">
+                  <span className="text-base text-muted-foreground leading-relaxed group-hover:text-foreground transition-colors duration-200">
                     {bullet}
                   </span>
                 </li>
@@ -316,18 +316,18 @@ export default function Home() {
       </Section>
 
       {/* ───── SOLUTION / HOW IT WORKS ───── */}
-      <Section className="bg-fw-surface">
+      <Section className="bg-fw-surface py-20 md:py-28">
         <AnimatedSection className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+          <h2 className="text-3xl md:text-[2.75rem] font-bold text-foreground mb-5 leading-tight">
             Your daily decision coach.
           </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+          <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
             Three steps. No overthinking.
           </p>
         </AnimatedSection>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
-          <div className="hidden md:block absolute top-7 left-[calc(16.67%+28px)] right-[calc(16.67%+28px)] h-[2px] bg-gradient-to-r from-emerald-300 via-orange-300 to-cyan-300 opacity-30 overflow-hidden">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 relative">
+          <div className="hidden md:block absolute top-8 left-[calc(16.67%+32px)] right-[calc(16.67%+32px)] h-[2px] bg-gradient-to-r from-emerald-300 via-orange-300 to-cyan-300 opacity-30 overflow-hidden">
             <div className="h-full w-full shimmer" />
           </div>
 
@@ -337,13 +337,13 @@ export default function Home() {
               delay={step.number * 0.15}
               className="text-center relative"
             >
-              <div className={`inline-flex items-center justify-center h-14 w-14 rounded-2xl bg-gradient-to-br ${step.color} text-white text-xl font-bold mb-5 shadow-md relative z-10`}>
+              <div className={`inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-gradient-to-br ${step.color} text-white text-2xl font-bold mb-6 shadow-md relative z-10`}>
                 {step.number}
               </div>
-              <h3 className="text-xl font-semibold text-foreground mb-3">
+              <h3 className="text-2xl font-semibold text-foreground mb-3">
                 {step.title}
               </h3>
-              <p className="text-muted-foreground leading-relaxed max-w-xs mx-auto">
+              <p className="text-base text-muted-foreground leading-[1.7] max-w-xs mx-auto">
                 {step.description}
               </p>
             </AnimatedSection>
@@ -353,11 +353,11 @@ export default function Home() {
 
       {/* ───── CORE FEATURES GRID ───── */}
       <Section>
-        <AnimatedSection className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+        <AnimatedSection className="text-center mb-14">
+          <h2 className="text-3xl md:text-[2.75rem] font-bold text-foreground mb-5 leading-tight">
             What changes when you have FuelWell
           </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+          <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
             Eat smarter. Train better. Actually stay consistent.
           </p>
         </AnimatedSection>
@@ -377,12 +377,12 @@ export default function Home() {
       </Section>
 
       {/* ───── SMART COACHING EXAMPLES ───── */}
-      <Section className="bg-fw-surface">
-        <AnimatedSection className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+      <Section className="bg-fw-surface py-20 md:py-28">
+        <AnimatedSection className="text-center mb-14">
+          <h2 className="text-3xl md:text-[2.75rem] font-bold text-foreground mb-5 leading-tight">
             Coaching that sounds like a friend, not a textbook.
           </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+          <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
             Real questions. Real answers. Zero judgment.
           </p>
         </AnimatedSection>
@@ -390,13 +390,13 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {coachingExamples.map((example, i) => (
             <AnimatedSection key={i} delay={i * 0.08}>
-              <div className="group rounded-2xl border border-fw-border bg-white p-5 h-full flex flex-col gap-4 hover:shadow-card-hover hover:border-fw-accent/30 hover:-translate-y-1 transition-all duration-300 shadow-card">
+              <div className="group rounded-2xl border border-fw-border bg-white p-6 h-full flex flex-col gap-5 hover:shadow-card-hover hover:border-fw-accent/30 hover:-translate-y-1 transition-all duration-300 shadow-card">
                 {/* User bubble */}
                 <div className="flex items-start gap-3">
-                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-orange-50 group-hover:scale-110 transition-transform duration-300">
-                    <User className="h-3.5 w-3.5 text-fw-orange" />
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-orange-50 group-hover:scale-110 transition-transform duration-300">
+                    <User className="h-4 w-4 text-fw-orange" />
                   </div>
-                  <div className="rounded-2xl rounded-tl-sm bg-fw-surface border border-fw-border px-4 py-2.5">
+                  <div className="rounded-2xl rounded-tl-sm bg-fw-surface border border-fw-border px-4 py-3">
                     <p className="text-sm font-medium text-foreground leading-relaxed">
                       {example.question}
                     </p>
@@ -405,11 +405,11 @@ export default function Home() {
 
                 {/* AI bubble */}
                 <div className="flex items-start gap-3">
-                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-50 group-hover:scale-110 transition-transform duration-300">
-                    <Bot className="h-3.5 w-3.5 text-fw-accent" />
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-50 group-hover:scale-110 transition-transform duration-300">
+                    <Bot className="h-4 w-4 text-fw-accent" />
                   </div>
-                  <div className="rounded-2xl rounded-tl-sm bg-emerald-50/50 border border-emerald-100 px-4 py-2.5 flex-1">
-                    <p className="text-sm text-muted-foreground leading-relaxed">
+                  <div className="rounded-2xl rounded-tl-sm bg-emerald-50/50 border border-emerald-100 px-4 py-3 flex-1">
+                    <p className="text-sm text-muted-foreground leading-[1.7]">
                       {example.answer}
                     </p>
                   </div>
@@ -421,15 +421,15 @@ export default function Home() {
       </Section>
 
       {/* ───── PLATFORM AVAILABILITY ───── */}
-      <Section className="py-12 md:py-16 border-y border-fw-border/40">
-        <AnimatedSection className="text-center mb-10">
-          <h3 className="text-xl md:text-2xl font-bold text-foreground mb-2">Available Everywhere You Are</h3>
-          <p className="text-muted-foreground text-sm max-w-lg mx-auto">
+      <Section className="py-16 md:py-20 border-y border-fw-border/40">
+        <AnimatedSection className="text-center mb-12">
+          <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-3">Available Everywhere You Are</h3>
+          <p className="text-muted-foreground text-base max-w-lg mx-auto leading-relaxed">
             Use FuelWell across all your devices, synced and seamless.
           </p>
         </AnimatedSection>
 
-        <div className="flex flex-wrap items-center justify-center gap-5 md:gap-8 mb-10">
+        <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10 mb-12">
           {[
             { icon: Globe, label: "Web App", desc: "Any browser" },
             { icon: Smartphone, label: "iPhone", desc: "iOS 16+" },
@@ -437,19 +437,19 @@ export default function Home() {
             { icon: Smartphone, label: "Android", desc: "Android 12+" },
           ].map((p, i) => (
             <AnimatedSection key={p.label} delay={i * 0.08}>
-              <div className="flex flex-col items-center gap-2 group">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 border border-emerald-100 group-hover:bg-emerald-100 group-hover:scale-110 transition-all duration-200 shadow-sm">
-                  <p.icon className="h-6 w-6 text-fw-accent" />
+              <div className="flex flex-col items-center gap-2.5 group">
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-50 border border-emerald-100 group-hover:bg-emerald-100 group-hover:scale-110 transition-all duration-200 shadow-sm">
+                  <p.icon className="h-7 w-7 text-fw-accent" />
                 </div>
-                <p className="text-sm font-semibold text-foreground">{p.label}</p>
-                <p className="text-[10px] text-muted-foreground">{p.desc}</p>
+                <p className="text-base font-semibold text-foreground">{p.label}</p>
+                <p className="text-xs text-muted-foreground">{p.desc}</p>
               </div>
             </AnimatedSection>
           ))}
         </div>
 
         <AnimatedSection delay={0.3} className="text-center">
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">Integrations</p>
+          <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-5">Integrations</p>
           <div className="flex flex-wrap items-center justify-center gap-3">
             {[
               { icon: Heart, label: "Apple Health" },
@@ -461,10 +461,10 @@ export default function Home() {
             ].map((int) => (
               <div
                 key={int.label}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-fw-border bg-white hover:border-fw-accent/30 hover:bg-fw-surface transition-all duration-200 shadow-card"
+                className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl border border-fw-border bg-white hover:border-fw-accent/30 hover:bg-fw-surface transition-all duration-200 shadow-card"
               >
-                <int.icon className="h-3.5 w-3.5 text-fw-accent" />
-                <span className="text-xs font-medium text-foreground">{int.label}</span>
+                <int.icon className="h-4 w-4 text-fw-accent" />
+                <span className="text-sm font-medium text-foreground">{int.label}</span>
               </div>
             ))}
           </div>
@@ -478,18 +478,18 @@ export default function Home() {
         <div className="absolute top-[20%] left-[30%] w-[300px] h-[300px] rounded-full bg-emerald-200/20 blur-[100px] animate-float-slow" />
         <div className="absolute bottom-[20%] right-[20%] w-[250px] h-[250px] rounded-full bg-orange-200/15 blur-[80px] animate-float-slower" />
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
-          <AnimatedSection className="text-center max-w-2xl mx-auto space-y-6">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32">
+          <AnimatedSection className="text-center max-w-2xl mx-auto space-y-8">
+            <h2 className="text-4xl md:text-5xl font-bold text-foreground">
               FuelWell. <span className="gradient-text">Feel well.</span>
             </h2>
-            <p className="text-lg text-muted-foreground leading-relaxed">
+            <p className="text-xl text-muted-foreground leading-relaxed max-w-xl mx-auto">
               Make consistency actually stick — with real-time guidance that fits your life.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
-              <GradientButton href="/founders-100" size="default">
+              <GradientButton href="/founders-100" size="lg">
                 Secure Your Spot
-                <ArrowRight className="ml-2 h-4 w-4" />
+                <ArrowRight className="ml-2 h-5 w-5" />
               </GradientButton>
               <OutlineButton href="/about">
                 Learn More
