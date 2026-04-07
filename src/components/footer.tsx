@@ -32,14 +32,8 @@ export function Footer() {
         <div className="grid grid-cols-2 gap-8 md:grid-cols-5">
           {/* Brand */}
           <div className="col-span-2 md:col-span-2 space-y-4">
-            <Link href="/" className="inline-flex items-center gap-2 group">
-              <Image src="/logo-icon.svg" alt="" width={28} height={28} className="rounded-lg group-hover:scale-105 transition-transform duration-200" />
-              <span className="text-xl font-bold font-heading text-foreground">
-                Fuel
-                <span className="text-emerald-600 transition-colors group-hover:text-orange-500">
-                  Well
-                </span>
-              </span>
+            <Link href="/" className="inline-flex items-center group">
+              <Image src="/fuelwell-logo-full.png" alt="FuelWell Health" width={160} height={80} className="group-hover:scale-105 transition-transform duration-200" />
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
               AI-powered nutrition and fitness coaching that adapts to your real

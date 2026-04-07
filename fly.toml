@@ -2,6 +2,9 @@ app = 'fuelwell-website'
 primary_region = 'iad'
 
 [build]
+  [build.args]
+    NEXT_PUBLIC_SUPABASE_URL = "https://xzsftuxvnkgxtbiibvac.supabase.co"
+    NEXT_PUBLIC_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh6c2Z0dXh2bmtneHRiaWlidmFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxNDQ2MjYsImV4cCI6MjA4OTcyMDYyNn0.FLgujVu2Q-woXObMIWTHKxbT4v9W-5EfmyumyDq5Udk"
 
 [http_service]
   internal_port = 3000

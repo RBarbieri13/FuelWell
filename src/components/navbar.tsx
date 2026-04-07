@@ -38,34 +38,32 @@ export function Navbar() {
           : "border-fw-border/40 bg-white/60 backdrop-blur-sm"
       )}
     >
-      <div className="max-w-7xl mx-auto flex h-18 items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="flex items-center gap-2.5 group">
-          <Image src="/logo-icon.svg" alt="" width={38} height={38} className="rounded-lg group-hover:scale-105 transition-transform duration-200" />
-          <span className="text-2xl font-bold font-heading text-foreground">
-            Fuel
-            <span className="text-fw-accent transition-colors group-hover:text-fw-orange">
-              Well
-            </span>
+      <div className="max-w-7xl mx-auto flex h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
+        <Link href="/" className="inline-flex items-center gap-3 group">
+          <Image src="/fw-icon.png" alt="FuelWell" width={40} height={40} className="shrink-0 rounded-lg group-hover:scale-105 transition-transform duration-200 relative -top-[8px]" />
+          <span className="inline-flex items-baseline gap-1.5 text-[26px] font-bold font-heading text-foreground leading-none">
+            <span>Fuel<span className="text-fw-accent transition-colors group-hover:text-fw-orange">Well</span></span>
+            <span className="text-base font-semibold text-muted-foreground">Health</span>
           </span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-8">
+        <nav className="hidden md:flex items-center gap-10">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               className={cn(
-                "relative text-sm font-medium transition-colors hover:text-fw-accent",
+                "relative text-base font-semibold transition-colors hover:text-fw-accent",
                 pathname === link.href
                   ? "text-fw-accent"
-                  : "text-muted-foreground"
+                  : "text-foreground"
               )}
             >
               {link.label}
               {pathname === link.href && (
                 <motion.span
                   layoutId="nav-indicator"
-                  className="absolute -bottom-[21px] left-0 right-0 h-[2px] gradient-brand rounded-full"
+                  className="absolute -bottom-[25px] left-0 right-0 h-[2px] gradient-brand rounded-full"
                   transition={{ type: "spring", stiffness: 350, damping: 30 }}
                 />
               )}
@@ -74,7 +72,7 @@ export function Navbar() {
         </nav>
 
         <div className="hidden md:block">
-          <GradientButton href="/founders-100" size="sm">
+          <GradientButton href="/founders-100" size="default">
             Join Founders 100
           </GradientButton>
         </div>

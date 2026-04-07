@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Section } from "@/components/ui/section";
 import { GradientButton } from "@/components/ui/gradient-button";
 import { OutlineButton } from "@/components/ui/outline-button";
@@ -191,13 +192,17 @@ export default function Home() {
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 md:pt-40 pb-20 md:pb-28">
           <AnimatedSection className="max-w-3xl mx-auto text-center space-y-8">
-            <div className="inline-flex items-center gap-3 rounded-full border-2 border-fw-accent/30 bg-white/90 px-6 py-2.5 text-base font-semibold text-foreground backdrop-blur-sm shadow-md font-accent animate-pulse-glow">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100">
-                <Sparkles className="h-4 w-4 text-fw-accent" />
+            <Link
+              href="/founders-100"
+              className="group relative inline-flex items-center gap-3 rounded-full border-2 border-fw-accent/40 bg-white/90 px-8 py-3.5 text-lg font-bold text-foreground backdrop-blur-sm shadow-lg font-accent hover:shadow-2xl hover:border-fw-accent/60 hover:scale-105 transition-all duration-300 overflow-hidden"
+            >
+              <span className="absolute inset-0 rounded-full bg-gradient-to-r from-emerald-400/20 via-orange-300/20 to-violet-400/20 animate-[shimmer_3s_ease-in-out_infinite] bg-[length:200%_100%]" />
+              <div className="relative flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 shadow-md">
+                <Sparkles className="h-5 w-5 text-white animate-pulse" />
               </div>
-              <span>Now accepting <span className="gradient-text font-bold">Founders 100</span> members</span>
-              <ArrowRight className="h-4 w-4 text-fw-accent" />
-            </div>
+              <span className="relative">Now accepting <span className="gradient-text font-extrabold text-xl">Founders 100</span> members</span>
+              <ArrowRight className="relative h-5 w-5 text-fw-accent group-hover:translate-x-1 transition-transform duration-200" />
+            </Link>
 
             <h1 className="text-4xl md:text-5xl lg:text-[3.75rem] font-bold tracking-tight text-foreground leading-[1.08]">
               Build a healthier lifestyle{" "}
@@ -277,7 +282,7 @@ export default function Home() {
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50 group-hover:bg-emerald-100 transition-colors duration-200">
                   <item.icon className="h-4 w-4 text-fw-accent" />
                 </div>
-                <span className="text-sm font-medium font-accent group-hover:text-foreground transition-colors duration-200">{item.label}</span>
+                <span className="text-base font-semibold font-accent group-hover:text-foreground transition-colors duration-200">{item.label}</span>
               </div>
             ))}
           </div>
@@ -344,57 +349,6 @@ export default function Home() {
             </AnimatedSection>
           ))}
         </div>
-      </Section>
-
-      {/* ───── PLATFORM AVAILABILITY ───── */}
-      <Section className="py-12 md:py-16 border-y border-fw-border/40">
-        <AnimatedSection className="text-center mb-10">
-          <h3 className="text-xl md:text-2xl font-bold text-foreground mb-2">Available Everywhere You Are</h3>
-          <p className="text-muted-foreground text-sm max-w-lg mx-auto">
-            Use FuelWell across all your devices, synced and seamless.
-          </p>
-        </AnimatedSection>
-
-        <div className="flex flex-wrap items-center justify-center gap-5 md:gap-8 mb-10">
-          {[
-            { icon: Globe, label: "Web App", desc: "Any browser" },
-            { icon: Smartphone, label: "iPhone", desc: "iOS 16+" },
-            { icon: Tablet, label: "iPad", desc: "iPadOS 16+" },
-            { icon: Smartphone, label: "Android", desc: "Android 12+" },
-          ].map((p, i) => (
-            <AnimatedSection key={p.label} delay={i * 0.08}>
-              <div className="flex flex-col items-center gap-2 group">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 border border-emerald-100 group-hover:bg-emerald-100 group-hover:scale-110 transition-all duration-200 shadow-sm">
-                  <p.icon className="h-6 w-6 text-fw-accent" />
-                </div>
-                <p className="text-sm font-semibold text-foreground">{p.label}</p>
-                <p className="text-[10px] text-muted-foreground">{p.desc}</p>
-              </div>
-            </AnimatedSection>
-          ))}
-        </div>
-
-        <AnimatedSection delay={0.3} className="text-center">
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">Integrations</p>
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            {[
-              { icon: Heart, label: "Apple Health" },
-              { icon: Watch, label: "Apple Watch" },
-              { icon: Activity, label: "WHOOP" },
-              { icon: Zap, label: "Oura Ring" },
-              { icon: TrendingUp, label: "Garmin" },
-              { icon: BarChart3, label: "Smart Scales" },
-            ].map((int) => (
-              <div
-                key={int.label}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-fw-border bg-white hover:border-fw-accent/30 hover:bg-fw-surface transition-all duration-200 shadow-card"
-              >
-                <int.icon className="h-3.5 w-3.5 text-fw-accent" />
-                <span className="text-xs font-medium text-foreground">{int.label}</span>
-              </div>
-            ))}
-          </div>
-        </AnimatedSection>
       </Section>
 
       {/* ───── CORE FEATURES GRID ───── */}
@@ -464,6 +418,57 @@ export default function Home() {
             </AnimatedSection>
           ))}
         </div>
+      </Section>
+
+      {/* ───── PLATFORM AVAILABILITY ───── */}
+      <Section className="py-12 md:py-16 border-y border-fw-border/40">
+        <AnimatedSection className="text-center mb-10">
+          <h3 className="text-xl md:text-2xl font-bold text-foreground mb-2">Available Everywhere You Are</h3>
+          <p className="text-muted-foreground text-sm max-w-lg mx-auto">
+            Use FuelWell across all your devices, synced and seamless.
+          </p>
+        </AnimatedSection>
+
+        <div className="flex flex-wrap items-center justify-center gap-5 md:gap-8 mb-10">
+          {[
+            { icon: Globe, label: "Web App", desc: "Any browser" },
+            { icon: Smartphone, label: "iPhone", desc: "iOS 16+" },
+            { icon: Tablet, label: "iPad", desc: "iPadOS 16+" },
+            { icon: Smartphone, label: "Android", desc: "Android 12+" },
+          ].map((p, i) => (
+            <AnimatedSection key={p.label} delay={i * 0.08}>
+              <div className="flex flex-col items-center gap-2 group">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 border border-emerald-100 group-hover:bg-emerald-100 group-hover:scale-110 transition-all duration-200 shadow-sm">
+                  <p.icon className="h-6 w-6 text-fw-accent" />
+                </div>
+                <p className="text-sm font-semibold text-foreground">{p.label}</p>
+                <p className="text-[10px] text-muted-foreground">{p.desc}</p>
+              </div>
+            </AnimatedSection>
+          ))}
+        </div>
+
+        <AnimatedSection delay={0.3} className="text-center">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">Integrations</p>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            {[
+              { icon: Heart, label: "Apple Health" },
+              { icon: Watch, label: "Apple Watch" },
+              { icon: Activity, label: "WHOOP" },
+              { icon: Zap, label: "Oura Ring" },
+              { icon: TrendingUp, label: "Garmin" },
+              { icon: BarChart3, label: "Smart Scales" },
+            ].map((int) => (
+              <div
+                key={int.label}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-fw-border bg-white hover:border-fw-accent/30 hover:bg-fw-surface transition-all duration-200 shadow-card"
+              >
+                <int.icon className="h-3.5 w-3.5 text-fw-accent" />
+                <span className="text-xs font-medium text-foreground">{int.label}</span>
+              </div>
+            ))}
+          </div>
+        </AnimatedSection>
       </Section>
 
       {/* ───── FINAL CTA ───── */}

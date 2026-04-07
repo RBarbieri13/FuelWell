@@ -217,12 +217,12 @@ export default function Founders100Page() {
 
               <div className="mb-6 p-4 rounded-2xl bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-100">
                 <div className="flex items-baseline gap-1">
-                  <span className="text-4xl font-bold">$10.99</span>
+                  <span className="text-4xl font-bold">$9.99</span>
                   <span className="text-muted-foreground">/month for life</span>
                 </div>
                 <p className="text-sm text-muted-foreground mt-1">
-                  or <span className="text-foreground font-semibold">$99/year</span>{" "}
-                  for life — <span className="text-fw-accent font-semibold">save 25%</span>
+                  or <span className="text-foreground font-semibold">$89/year</span>{" "}
+                  for life — <span className="text-fw-accent font-semibold">save 26%</span>
                 </p>
               </div>
 
@@ -277,7 +277,7 @@ export default function Founders100Page() {
                 <p className="text-sm text-muted-foreground mt-1">
                   or{" "}
                   <span className="text-foreground font-semibold">$149.99/year</span>{" "}
-                  for life — <span className="text-violet-600 font-semibold">save 26%</span>
+                  for life — <span className="text-violet-600 font-semibold">save 27%</span>
                 </p>
               </div>
 

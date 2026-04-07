@@ -129,41 +129,46 @@ export default function AboutPage() {
             apps that felt like spreadsheets. We&apos;ve both been through
             the cycle of tracking obsessively, burning out, and quitting.
             FuelWell is what we wished existed: a coach that meets you where
-            you are, adapts to your life, and never makes you feel bad about
-            a slice of pizza.
+            you are, and adapts to your life.
           </p>
         </AnimatedSection>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-2xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-12 max-w-3xl mx-auto">
           <AnimatedSection delay={0.1}>
-            <div className="group text-center space-y-4">
-              <div className="relative w-48 h-48 mx-auto rounded-2xl overflow-hidden border-2 border-fw-border group-hover:border-fw-accent/40 transition-all duration-300 shadow-card group-hover:shadow-lg">
-                <Image
-                  src="/max.png"
-                  alt="Max — Founder & President"
-                  fill
-                  className="object-cover"
-                />
+            <div className="group text-center space-y-5">
+              <div className="relative mx-auto w-56 h-56 sm:w-64 sm:h-64">
+                <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-fw-accent/40 via-emerald-200/30 to-violet-300/30 group-hover:from-fw-accent/60 group-hover:via-emerald-300/40 group-hover:to-violet-400/40 transition-all duration-500 blur-sm" />
+                <div className="relative w-full h-full rounded-full overflow-hidden border-[3px] border-white shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+                  <Image
+                    src="/max.png"
+                    alt="Max — Founder & President"
+                    fill
+                    className="object-cover object-top"
+                  />
+                </div>
               </div>
               <div>
-                <h3 className="text-lg font-bold text-foreground">Max</h3>
-                <p className="text-sm text-fw-accent font-medium">Founder &amp; President</p>
+                <h3 className="text-2xl font-bold text-foreground">Max</h3>
+                <p className="text-base text-fw-accent font-semibold mt-1">Founder &amp; President</p>
               </div>
             </div>
           </AnimatedSection>
           <AnimatedSection delay={0.2}>
-            <div className="group text-center space-y-4">
-              <div className="relative w-48 h-48 mx-auto rounded-2xl overflow-hidden border-2 border-fw-border group-hover:border-fw-accent/40 transition-all duration-300 shadow-card group-hover:shadow-lg">
-                <Image
-                  src="/robby.png"
-                  alt="Robby — Co-Founder & CTO"
-                  fill
-                  className="object-cover object-top"
-                />
+            <div className="group text-center space-y-5">
+              <div className="relative mx-auto w-56 h-56 sm:w-64 sm:h-64">
+                <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-fw-accent/40 via-emerald-200/30 to-violet-300/30 group-hover:from-fw-accent/60 group-hover:via-emerald-300/40 group-hover:to-violet-400/40 transition-all duration-500 blur-sm" />
+                <div className="relative w-full h-full rounded-full overflow-hidden border-[3px] border-white shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+                  <Image
+                    src="/robby.png"
+                    alt="Robby — Co-Founder & CTO"
+                    fill
+                    className="object-cover object-top"
+                  />
+                </div>
               </div>
               <div>
-                <h3 className="text-lg font-bold text-foreground">Robby</h3>
-                <p className="text-sm text-fw-accent font-medium">Co-Founder &amp; Chief Technology Officer</p>
+                <h3 className="text-2xl font-bold text-foreground">Robby</h3>
+                <p className="text-base text-fw-accent font-semibold mt-1">Co-Founder &amp; Chief Technology Officer</p>
               </div>
             </div>
           </AnimatedSection>
@@ -175,11 +180,11 @@ export default function AboutPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
           {principles.map((principle, index) => (
             <AnimatedSection key={principle.title} delay={index * 0.1}>
-              <div className="group bg-white border border-fw-border rounded-xl p-6 text-center space-y-3 shadow-card hover:-translate-y-1 hover:border-fw-accent/30 transition-all duration-300">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50 group-hover:bg-emerald-100 mx-auto transition-colors duration-200">
-                  <principle.icon className="w-5 h-5 text-fw-accent group-hover:scale-110 transition-transform duration-300" />
+              <div className="group bg-white border border-fw-border rounded-xl p-8 text-center space-y-4 shadow-card hover:-translate-y-1 hover:border-fw-accent/30 transition-all duration-300">
+                <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-emerald-50 group-hover:bg-emerald-100 mx-auto transition-colors duration-200">
+                  <principle.icon className="w-7 h-7 text-fw-accent group-hover:scale-110 transition-transform duration-300" />
                 </div>
-                <p className="font-medium text-foreground">{principle.title}</p>
+                <p className="text-lg font-semibold text-foreground">{principle.title}</p>
               </div>
             </AnimatedSection>
           ))}
@@ -198,11 +203,11 @@ export default function AboutPage() {
                   value={item.value}
                   className="bg-white border border-fw-border rounded-xl px-4 shadow-card"
                 >
-                  <AccordionTrigger className="text-base text-foreground">
+                  <AccordionTrigger className="text-lg font-semibold text-foreground">
                     {item.question}
                   </AccordionTrigger>
                   <AccordionContent>
-                    <p className="text-muted-foreground">{item.answer}</p>
+                    <p className="text-base text-muted-foreground leading-relaxed">{item.answer}</p>
                   </AccordionContent>
                 </AccordionItem>
               ))}

@@ -1,0 +1,187 @@
+/* V2 Design Tokens — Stitch-Inspired Redesign */
+
+/* Scoped under .v2 wrapper */
+.v2 {
+  /* Colors */
+  --v2-primary: #006c49;
+  --v2-primary-light: #10b981;
+  --v2-accent: #00ffab;
+  --v2-bg: #f8f9fa;
+  --v2-card: #ffffff;
+  --v2-surface-1: #f0f1f1;
+  --v2-surface-2: #e7e8e8;
+  --v2-surface-3: #edeeef;
+  --v2-text: #191c1d;
+  --v2-text-body: #3c4a42;
+  --v2-text-muted: #6c7a71;
+  --v2-border: #e7e8e8;
+
+  /* Fonts */
+  --v2-font-heading: var(--font-plus-jakarta), 'Plus Jakarta Sans', system-ui, sans-serif;
+  --v2-font-body: var(--font-inter-v2), 'Inter', system-ui, sans-serif;
+
+  /* Shadows */
+  --v2-shadow-card: 0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.03);
+  --v2-shadow-editorial: 0 20px 40px rgba(0,105,68,0.06);
+  --v2-shadow-hover: 0 8px 30px rgba(0,105,68,0.1);
+
+  /* Background */
+  background-color: var(--v2-bg);
+  color: var(--v2-text);
+}
+
+/* V2 Typography */
+.v2 h1, .v2 .v2-h1 {
+  font-family: var(--v2-font-heading);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+  color: var(--v2-text);
+}
+
+.v2 h2, .v2 .v2-h2 {
+  font-family: var(--v2-font-heading);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: var(--v2-text);
+}
+
+.v2 h3, .v2 .v2-h3 {
+  font-family: var(--v2-font-heading);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  color: var(--v2-text);
+}
+
+.v2 p, .v2 .v2-body {
+  font-family: var(--v2-font-body);
+  font-weight: 500;
+  color: var(--v2-text-body);
+}
+
+/* V2 Label style */
+.v2-label {
+  font-family: var(--v2-font-body);
+  font-weight: 700;
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--v2-primary);
+}
+
+/* V2 Gradient text */
+.v2 .v2-gradient-text {
+  background: linear-gradient(135deg, #006c49, #10b981);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* V2 Glass morphism */
+.v2-glass {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* V2 CTA Button */
+.v2-btn-primary {
+  background: linear-gradient(135deg, #006c49, #10b981);
+  color: white;
+  border-radius: 9999px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+.v2-btn-primary:hover {
+  transform: scale(1.03);
+  box-shadow: 0 8px 24px rgba(0,108,73,0.2);
+}
+
+.v2-btn-outline {
+  background: transparent;
+  border: 2px solid var(--v2-border);
+  color: var(--v2-text);
+  border-radius: 9999px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+.v2-btn-outline:hover {
+  border-color: var(--v2-primary);
+  color: var(--v2-primary);
+}
+
+/* V2 Card */
+.v2-card {
+  background: var(--v2-card);
+  border: 1px solid var(--v2-border);
+  border-radius: 1rem;
+  box-shadow: var(--v2-shadow-card);
+  transition: all 0.3s ease;
+}
+.v2-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--v2-shadow-hover);
+}
+
+/* V2 Editorial card */
+.v2-card-editorial {
+  box-shadow: var(--v2-shadow-editorial);
+}
+
+/* V2 Full-width green CTA section */
+.v2-cta-green {
+  background: linear-gradient(135deg, #006c49, #10b981);
+  color: white;
+}
+
+/* V2 Green glow */
+.v2-glow {
+  box-shadow: 0 4px 30px rgba(0,108,73,0.12), 0 1px 3px rgba(0,0,0,0.04);
+}
+
+/* V2 Snap scroll carousel */
+.v2-carousel {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  gap: 1rem;
+  padding-bottom: 1rem;
+}
+.v2-carousel::-webkit-scrollbar {
+  display: none;
+}
+.v2-carousel > * {
+  scroll-snap-align: center;
+  flex-shrink: 0;
+}
+
+/* V2 Green underline bar (for section headings) */
+.v2-underline-bar {
+  display: block;
+  width: 4rem;
+  height: 0.25rem;
+  background: #10b981;
+  border-radius: 9999px;
+  margin-top: 0.75rem;
+}
+
+/* V2 Animations */
+@keyframes v2-pulse-green {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.4); }
+  50% { box-shadow: 0 0 0 12px rgba(16,185,129,0); }
+}
+.v2-pulse-green {
+  animation: v2-pulse-green 2s ease-in-out infinite;
+}
+
+/* V2 Progress ring */
+.v2-progress-ring {
+  transform: rotate(-90deg);
+}
+.v2-progress-ring circle {
+  transition: stroke-dashoffset 0.8s ease;
+}
