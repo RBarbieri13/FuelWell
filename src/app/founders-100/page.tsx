@@ -69,19 +69,33 @@ const benefits = [
 ];
 
 const proFeatures = [
-  { label: "AI nutrition coaching", icon: "🧠" },
-  { label: "Macro tracking", icon: "📊" },
-  { label: "Restaurant guidance", icon: "🍽️" },
-  { label: "Recipe generation", icon: "👨‍🍳" },
-  { label: "Grocery planning", icon: "🛒" },
-  { label: "Progress reports", icon: "📈" },
+  { label: "AI nutrition coaching (reactive responses)", icon: "🧠" },
+  { label: "Macro tracking with smart calculations", icon: "📊" },
+  { label: "Text-based meal logging", icon: "📝" },
+  { label: "Restaurant suggestions (manual input)", icon: "🍽️" },
+  { label: "Recipe suggestions (semi-personalized)", icon: "👨‍🍳" },
+  { label: "Grocery list generator", icon: "🛒" },
+  { label: "Basic calorie + macro estimates", icon: "🔢" },
+  { label: "Weekly summaries + weight tracking", icon: "📈" },
+  { label: "General lifestyle guidance", icon: "🌱" },
 ];
 
 const premiumExtras = [
-  { label: "Adaptive AI workout builder", icon: "💪" },
-  { label: "Soreness-aware customization", icon: "🔄" },
-  { label: "Advanced coaching insights", icon: "🎯" },
-  { label: "Expanded progress analysis", icon: "📉" },
+  { label: "Context-aware AI coach — remembers your history", icon: "🧠", highlight: true },
+  { label: "Real-time adaptive suggestions as your day unfolds", icon: "⚡", highlight: true },
+  { label: "Proactive coaching — your AI reaches out first", icon: "💬", highlight: true },
+  { label: "Photo-based meal analysis — snap and log instantly", icon: "📸", highlight: true },
+  { label: "Adaptive workout builder — daily custom workouts", icon: "💪", highlight: false },
+  { label: "Dynamic calorie adjustments based on behavior", icon: "🔄", highlight: false },
+  { label: "Menu scanning + AI-optimized restaurant orders", icon: "🍽️", highlight: false },
+  { label: "Injury & recovery coaching with substitutions", icon: "🩹", highlight: false },
+  { label: "Side-by-side photo progress with AI analysis", icon: "📷", highlight: false },
+  { label: "AI-projected body recomposition timeline", icon: "📐", highlight: false },
+  { label: "Advanced progress reports — trends + projections", icon: "📉", highlight: false },
+  { label: "Budget-optimized grocery planning", icon: "💰", highlight: false },
+  { label: "Wearable integrations — Apple Health, Whoop, Oura", icon: "⌚", highlight: false },
+  { label: "Personalized learning engine — adapts to your patterns", icon: "🎯", highlight: false },
+  { label: "Fully personalized recipes matched to your macros", icon: "🍳", highlight: false },
 ];
 
 const trustBadges = [
@@ -264,8 +278,8 @@ export default function Founders100Page() {
                   </div>
                   <h3 className="text-2xl font-bold">FuelWell Premium</h3>
                 </div>
-                <p className="text-sm text-muted-foreground mb-6 ml-[52px]">
-                  Nutrition + adaptive fitness coaching
+                <p className="text-sm text-violet-600 font-medium mb-6 ml-[52px]">
+                  Your full AI coaching experience
                 </p>
               </div>
 
@@ -285,14 +299,14 @@ export default function Founders100Page() {
                 <Sparkles className="h-3 w-3" />
                 Everything in Pro, plus:
               </p>
-              <ul className="space-y-3 mb-8 flex-1">
+              <ul className="space-y-2.5 mb-8 flex-1">
                 {premiumExtras.map((feature) => (
                   <li
                     key={feature.label}
-                    className="flex items-center gap-3 text-sm"
+                    className="flex items-start gap-3 text-sm"
                   >
-                    <span className="text-base">{feature.icon}</span>
-                    <span className="text-foreground font-medium">
+                    <span className="text-base shrink-0 mt-0.5">{feature.icon}</span>
+                    <span className={feature.highlight ? "text-foreground font-semibold" : "text-foreground/80"}>
                       {feature.label}
                     </span>
                   </li>
