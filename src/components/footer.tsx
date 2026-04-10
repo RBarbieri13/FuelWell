@@ -28,18 +28,18 @@ const socialLinks = [
 export function Footer() {
   return (
     <footer className="bg-fw-surface border-t border-fw-border">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-2 gap-8 md:grid-cols-5">
           {/* Brand */}
           <div className="col-span-2 md:col-span-2 space-y-4">
             <Link href="/" className="inline-flex items-center group">
-              <Image src="/fuelwell-logo-full.png" alt="FuelWell Health" width={160} height={80} className="group-hover:scale-105 transition-transform duration-200" />
+              <Image src="/fuelwell-logo-full.png" alt="FuelWell Health" width={150} height={75} className="group-hover:scale-105 transition-transform duration-200" />
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
               AI-powered nutrition and fitness coaching that adapts to your real
               life. Fuel well, feel well.
             </p>
-            <div className="flex items-center gap-3 pt-1">
+            <div className="flex items-center gap-2.5 pt-1">
               {socialLinks.map((link) => {
                 const Icon = link.icon;
                 return (
@@ -58,8 +58,8 @@ export function Footer() {
 
           {/* Product */}
           <div className="space-y-3">
-            <p className="text-sm font-semibold text-foreground">Product</p>
-            <nav className="flex flex-col gap-2">
+            <p className="text-sm font-semibold text-foreground uppercase tracking-wider">Product</p>
+            <nav className="flex flex-col gap-2.5">
               {productLinks.map((link) => (
                 <Link
                   key={link.href}
@@ -74,8 +74,8 @@ export function Footer() {
 
           {/* Company */}
           <div className="space-y-3">
-            <p className="text-sm font-semibold text-foreground">Company</p>
-            <nav className="flex flex-col gap-2">
+            <p className="text-sm font-semibold text-foreground uppercase tracking-wider">Company</p>
+            <nav className="flex flex-col gap-2.5">
               {companyLinks.map((link) => (
                 <Link
                   key={link.href}
@@ -90,8 +90,8 @@ export function Footer() {
 
           {/* Legal */}
           <div className="space-y-3">
-            <p className="text-sm font-semibold text-foreground">Legal</p>
-            <nav className="flex flex-col gap-2">
+            <p className="text-sm font-semibold text-foreground uppercase tracking-wider">Legal</p>
+            <nav className="flex flex-col gap-2.5">
               {legalLinks.map((link) => (
                 <Link
                   key={link.label}
@@ -107,7 +107,7 @@ export function Footer() {
 
         <Separator className="my-8 bg-fw-border/50" />
 
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
           <p>
             &copy; {new Date().getFullYear()} FuelWell Health, Inc. All rights
             reserved.
@@ -117,7 +117,7 @@ export function Footer() {
           </p>
         </div>
 
-        <p className="text-[10px] text-center text-muted-foreground/60 mt-6 max-w-2xl mx-auto">
+        <p className="text-[11px] text-center text-muted-foreground/50 mt-6 max-w-xl mx-auto leading-relaxed">
           FuelWell is designed to support healthier decision-making and
           education. It does not replace medical advice, personal trainers, or
           licensed nutrition professionals.

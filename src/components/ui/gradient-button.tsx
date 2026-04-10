@@ -9,13 +9,14 @@ interface GradientButtonProps {
   href?: string
   onClick?: () => void
   className?: string
-  size?: "default" | "sm"
+  size?: "default" | "sm" | "lg"
   type?: "button" | "submit" | "reset"
   disabled?: boolean
   "aria-label"?: string
 }
 
 const sizeClasses = {
+  lg: "h-14 px-10 text-lg",
   default: "h-12 px-8 text-base",
   sm: "h-10 px-6 text-sm",
 }

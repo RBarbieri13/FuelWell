@@ -32,13 +32,23 @@ export function Navbar() {
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 w-full border-b transition-all duration-300",
+        "sticky top-0 z-50 w-full transition-all duration-300",
         scrolled
-          ? "border-fw-border glass shadow-sm"
-          : "border-fw-border/40 bg-white/60 backdrop-blur-sm"
+          ? "glass shadow-[0_1px_3px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.04)]"
+          : "bg-white/80 backdrop-blur-sm"
       )}
     >
-      <div className="max-w-7xl mx-auto flex h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
+      {/* Bottom separator */}
+      <div
+        className={cn(
+          "absolute bottom-0 left-0 right-0 h-px transition-opacity duration-300",
+          scrolled ? "opacity-100" : "opacity-60"
+        )}
+        style={{
+          background: "linear-gradient(90deg, transparent, #cbd5e1 20%, #94a3b8 50%, #cbd5e1 80%, transparent)",
+        }}
+      />
+      <div className="max-w-7xl mx-auto flex h-[72px] items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="inline-flex items-center gap-3 group">
           <Image src="/fw-icon.png" alt="FuelWell" width={40} height={40} className="shrink-0 rounded-lg group-hover:scale-105 transition-transform duration-200 relative -top-[8px]" />
           <span className="inline-flex items-baseline gap-1.5 text-[26px] font-bold font-heading text-foreground leading-none">
@@ -47,13 +57,13 @@ export function Navbar() {
           </span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-10">
+        <nav className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               className={cn(
-                "relative text-base font-semibold transition-colors hover:text-fw-accent",
+                "relative text-[15px] font-medium transition-colors hover:text-fw-accent",
                 pathname === link.href
                   ? "text-fw-accent"
                   : "text-foreground"
@@ -63,7 +73,7 @@ export function Navbar() {
               {pathname === link.href && (
                 <motion.span
                   layoutId="nav-indicator"
-                  className="absolute -bottom-[25px] left-0 right-0 h-[2px] gradient-brand rounded-full"
+                  className="absolute -bottom-[22px] left-0 right-0 h-[2px] gradient-brand rounded-full"
                   transition={{ type: "spring", stiffness: 350, damping: 30 }}
                 />
               )}
@@ -79,7 +89,7 @@ export function Navbar() {
 
         <button
           aria-label={open ? "Close menu" : "Open menu"}
-          className="md:hidden text-foreground p-2 rounded-lg hover:bg-muted transition-colors"
+          className="md:hidden text-foreground p-3 rounded-xl hover:bg-muted transition-colors"
           onClick={() => setOpen((v) => !v)}
         >
           {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -95,7 +105,7 @@ export function Navbar() {
             transition={{ duration: 0.2, ease: "easeOut" }}
             className="md:hidden border-t border-fw-border/50 glass overflow-hidden"
           >
-            <div className="px-4 pb-6 pt-4 space-y-2">
+            <div className="px-5 pb-8 pt-5 space-y-2">
               {navLinks.map((link, i) => (
                 <motion.div
                   key={link.href}
@@ -107,7 +117,7 @@ export function Navbar() {
                     href={link.href}
                     onClick={() => setOpen(false)}
                     className={cn(
-                      "block text-base font-medium px-4 py-2.5 rounded-lg transition-colors",
+                      "block text-lg font-medium px-5 py-3 rounded-xl transition-colors",
                       pathname === link.href
                         ? "text-fw-accent bg-fw-accent/10"
                         : "text-muted-foreground hover:text-foreground hover:bg-muted"
@@ -117,11 +127,11 @@ export function Navbar() {
                   </Link>
                 </motion.div>
               ))}
-              <div className="px-4 pt-4">
+              <div className="px-5 pt-5">
                 <GradientButton
                   href="/founders-100"
                   className="w-full"
-                  size="sm"
+                  size="default"
                 >
                   Join Founders 100
                 </GradientButton>
