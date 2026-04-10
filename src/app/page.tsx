@@ -1,20 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Section } from "@/components/ui/section";
 import { GradientButton } from "@/components/ui/gradient-button";
 import { OutlineButton } from "@/components/ui/outline-button";
 import { AppCarousel } from "@/components/app-carousel";
-import {
-  FoodLoggingVisual,
-  RecipeVisual,
-  BudgetVisual,
-  WorkoutVisual,
-  BodyVisual,
-  ProgressVisual,
-} from "@/components/feature-visuals";
 import { AnimatedSection } from "@/components/animated-section";
-import { FeatureCard } from "@/components/feature-card";
 import {
   Brain,
   DollarSign,
@@ -46,24 +38,6 @@ const credibilityItems = [
   { icon: Dumbbell, label: "Adaptive workouts" },
   { icon: TrendingUp, label: "Progress insights" },
   { icon: Users, label: "Supports trainers" },
-];
-
-const realLifeExamples = [
-  {
-    emoji: "🍽️",
-    situation: "At a restaurant?",
-    solution: "We help you pick the best option on the menu.",
-  },
-  {
-    emoji: "🍕",
-    situation: "Ate more than planned?",
-    solution: "We adjust the rest of your day automatically.",
-  },
-  {
-    emoji: "😓",
-    situation: "Feeling sore or low energy?",
-    solution: "We adapt your workout on the spot.",
-  },
 ];
 
 const problemBullets = [
@@ -98,55 +72,106 @@ const howItWorksSteps = [
   },
 ];
 
-const features: {
-  icon: typeof Camera;
-  title: string;
-  description: string;
-  premium?: boolean;
-  visual: React.ReactNode;
-}[] = [
+/* Feature showcase items — each pairs a Stitch image with text in an alternating layout */
+const featureShowcases = [
   {
-    icon: Camera,
+    image: "/features/smarter-food.png",
+    imageAlt: "FuelWell AI insight for smarter food decisions",
+    width: 688,
+    height: 1559,
     title: "Make smarter food decisions",
     description:
       "Snap a photo of your meal or describe what you\u2019re eating. FuelWell gives you instant feedback, alternatives, and coaching \u2014 not just calorie counts.",
-    visual: <FoodLoggingVisual />,
+    icon: Camera,
   },
   {
-    icon: ChefHat,
+    image: "/features/build-meals.png",
+    imageAlt: "FuelWell AI-personalized meal with macro breakdown and preparation guide",
+    width: 276,
+    height: 1600,
     title: "Build meals that taste good",
     description:
-      "Get recipe ideas and meal suggestions based on your preferences, what\u2019s in your fridge, and what fits your goals.",
-    visual: <RecipeVisual />,
+      "Optimized nutrition doesn\u2019t mean sacrificing flavor. Get AI-personalized recipes engineered for your macros, inflammatory markers, and taste preferences \u2014 with step-by-step prep guides.",
+    icon: ChefHat,
   },
   {
-    icon: Wallet,
+    image: "/features/stay-on-budget.png",
+    imageAlt: "FuelWell smart spending tracker with grocery list and budget optimization",
+    width: 274,
+    height: 1600,
     title: "Stay on budget",
     description:
-      "Set a weekly grocery budget and get meal plans that respect it. No more choosing between your health and your wallet.",
-    visual: <BudgetVisual />,
+      "Fueling your body shouldn\u2019t break the bank. Your AI assistant optimizes your cart for maximum nutrition at minimal cost \u2014 with real-time spending tracking and smart swap suggestions.",
+    icon: Wallet,
+  },
+];
+
+/* Real-life scenario showcases — full phone mockups */
+const scenarioShowcases = [
+  {
+    image: "/features/at-restaurant.png",
+    imageAlt: "FuelWell dining mode showing macro allowance, AI smart tips, and menu scanning",
+    width: 318,
+    height: 1600,
+    title: "At a restaurant?",
+    subtitle: "Dining Mode activates automatically.",
+    description:
+      "FuelWell analyzes your remaining macros in real-time, gives you AI-powered tips for the best menu choices, and even lets you scan the menu for instant recommendations.",
   },
   {
-    icon: Dumbbell,
+    image: "/features/ate-more.png",
+    imageAlt: "FuelWell auto-balance feature adjusting macros after overeating",
+    width: 375,
+    height: 1600,
+    title: "Ate more than planned?",
+    subtitle: "No guilt. Just recalibration.",
+    description:
+      "One meal doesn\u2019t define your journey. FuelWell automatically rebalances your day \u2014 adjusting dinner, snacks, and even suggesting a quick walk to offset the surplus.",
+  },
+  {
+    image: "/features/sore-recovery.png",
+    imageAlt: "FuelWell recovery mode with inflammation detection and AI coach recommendations",
+    width: 272,
+    height: 1600,
+    title: "Sore or low energy?",
+    subtitle: "Your body is telling you something.",
+    description:
+      "FuelWell detects when your body needs recovery, tracks inflammation markers and glycogen levels, and recommends the right fuel and movement to accelerate repair.",
+  },
+];
+
+/* Additional feature showcases — upgraded from SVG placeholders to Stitch images */
+const additionalShowcases = [
+  {
+    image: "/features/customized-workouts.png",
+    imageAlt: "FuelWell Muscle Mass Mastery program with goals, milestones, and AI coach insights",
+    width: 472,
+    height: 1600,
     title: "Get customized workouts",
     description:
-      "Whether you\u2019re at home, in a gym, or traveling \u2014 FuelWell builds workouts around your equipment, time, and fitness level.",
+      "Whether you\u2019re at home, in a gym, or traveling \u2014 FuelWell builds workouts around your equipment, time, and fitness level. Track muscle mass, set milestones, and get real-time AI coaching.",
+    icon: Dumbbell,
     premium: true,
-    visual: <WorkoutVisual />,
   },
   {
-    icon: BookOpen,
+    image: "/features/body-insights.png",
+    imageAlt: "FuelWell activity insights showing steps, heart rate, calorie deficit, and body measurements",
+    width: 494,
+    height: 1600,
     title: "Understand your body",
     description:
-      "Learn why your weight changes, what affects your energy, and how food and movement connect.",
-    visual: <BodyVisual />,
+      "See your daily steps, heart rate zones, calorie trends, and detailed body measurements in one place. Learn why your weight changes, what affects your energy, and how food and movement connect.",
+    icon: BookOpen,
   },
   {
-    icon: BarChart3,
+    image: "/features/progress-tracking.png",
+    imageAlt: "FuelWell measurements dashboard with weight trends, hydration, muscle mass, and AI coach insights",
+    width: 563,
+    height: 1600,
     title: "Track progress clearly",
     description:
-      "Visual dashboards that show trends over time \u2014 not just daily numbers. See the big picture so you stay motivated.",
-    visual: <ProgressVisual />,
+      "Visual dashboards that show trends over time \u2014 not just daily numbers. Monitor weight, hydration, muscle mass, and activity with AI-powered insights that keep you motivated.",
+    icon: BarChart3,
   },
 ];
 
@@ -190,18 +215,18 @@ export default function Home() {
         <div className="absolute bottom-[-10%] right-[-5%] w-[400px] h-[400px] rounded-full bg-orange-200/25 blur-[100px] animate-float-slower" />
         <div className="absolute top-[20%] right-[15%] w-[300px] h-[300px] rounded-full bg-violet-200/20 blur-[80px] animate-pulse-glow" />
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 md:pt-44 pb-24 md:pb-32">
-          <AnimatedSection className="max-w-4xl mx-auto text-center space-y-10">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 md:pt-36 pb-20 md:pb-28">
+          <AnimatedSection className="max-w-3xl mx-auto text-center space-y-8">
             <Link
               href="/founders-100"
-              className="group relative inline-flex items-center gap-3 rounded-full border-2 border-fw-accent/40 bg-white/90 px-8 py-3.5 text-lg font-bold text-foreground backdrop-blur-sm shadow-lg font-accent hover:shadow-2xl hover:border-fw-accent/60 hover:scale-105 transition-all duration-300 overflow-hidden"
+              className="group relative inline-flex items-center gap-2.5 rounded-full border border-fw-accent/30 bg-white/90 px-6 py-2.5 text-sm font-semibold text-foreground backdrop-blur-sm shadow-sm font-accent hover:shadow-md hover:border-fw-accent/50 hover:scale-[1.02] transition-all duration-300 overflow-hidden"
             >
-              <span className="absolute inset-0 rounded-full bg-gradient-to-r from-emerald-400/20 via-orange-300/20 to-violet-400/20 animate-[shimmer_3s_ease-in-out_infinite] bg-[length:200%_100%]" />
-              <div className="relative flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 shadow-md">
-                <Sparkles className="h-5 w-5 text-white animate-pulse" />
+              <span className="absolute inset-0 rounded-full bg-gradient-to-r from-emerald-400/10 via-transparent to-violet-400/10" />
+              <div className="relative flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 shadow-sm">
+                <Sparkles className="h-3.5 w-3.5 text-white" />
               </div>
-              <span className="relative">Now accepting <span className="gradient-text font-extrabold text-xl">Founders 100</span> members</span>
-              <ArrowRight className="relative h-5 w-5 text-fw-accent group-hover:translate-x-1 transition-transform duration-200" />
+              <span className="relative">Now accepting <span className="gradient-text font-bold">Founders 100</span> members</span>
+              <ArrowRight className="relative h-4 w-4 text-fw-accent group-hover:translate-x-0.5 transition-transform duration-200" />
             </Link>
 
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-[-0.035em] text-foreground leading-[1.05]">
@@ -209,12 +234,12 @@ export default function Home() {
               <span className="gradient-text">without giving up real life.</span>
             </h1>
 
-            <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-[1.6]">
               Smarter food choices. Adaptive workouts. Real-time coaching.
               Habits that actually stick — because they fit your life.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
               <GradientButton href="/founders-100" size="lg">
                 Secure Your Spot
                 <ArrowRight className="ml-2 h-5 w-5" />
@@ -224,7 +249,7 @@ export default function Home() {
               </OutlineButton>
             </div>
 
-            <p className="text-base text-muted-foreground/80 max-w-xl mx-auto font-accent">
+            <p className="text-sm text-muted-foreground/70 max-w-md mx-auto font-accent">
               No rigid diets. No guilt. Just smarter decisions, every day.
             </p>
           </AnimatedSection>
@@ -237,12 +262,12 @@ export default function Home() {
       </section>
 
       {/* ───── BUILT TO GUIDE, NOT JUDGE ───── */}
-      <Section className="py-16 md:py-20">
-        <AnimatedSection className="max-w-3xl mx-auto text-center space-y-5">
+      <Section className="py-14 md:py-18">
+        <AnimatedSection className="max-w-2xl mx-auto text-center space-y-4">
           <h2 className="text-3xl md:text-[2.75rem] font-bold text-foreground leading-tight">
             Built to Guide, Not Judge
           </h2>
-          <p className="text-lg md:text-xl text-muted-foreground leading-[1.7] max-w-2xl mx-auto">
+          <p className="text-base md:text-lg text-muted-foreground leading-[1.7] max-w-xl mx-auto">
             No guilt trips. No punishment days. FuelWell helps you make
             better choices while staying in control — and it works
             alongside your trainer, not against them.
@@ -250,20 +275,49 @@ export default function Home() {
         </AnimatedSection>
       </Section>
 
-      {/* ───── REAL-LIFE EXAMPLES ───── */}
-      <Section className="py-14 md:py-20">
-        <AnimatedSection className="text-center mb-10">
+      {/* ───── REAL-LIFE SCENARIOS — FULL PHONE SHOWCASES ───── */}
+      <Section className="py-16 md:py-24 bg-fw-surface/50">
+        <AnimatedSection className="text-center mb-14">
           <h2 className="text-3xl md:text-[2.75rem] font-bold text-foreground leading-tight">
             FuelWell meets you where life happens.
           </h2>
+          <p className="text-muted-foreground text-base md:text-lg max-w-lg mx-auto mt-3 leading-relaxed">
+            Real situations. Real solutions. See exactly how FuelWell responds.
+          </p>
         </AnimatedSection>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-          {realLifeExamples.map((ex, i) => (
-            <AnimatedSection key={ex.situation} delay={i * 0.1}>
-              <div className="group rounded-2xl border-2 border-fw-border bg-white p-8 text-center hover:-translate-y-1 hover:border-fw-accent/40 transition-all duration-300 shadow-card hover:shadow-lg">
-                <span className="text-5xl block mb-4 group-hover:scale-110 transition-transform duration-300">{ex.emoji}</span>
-                <p className="text-xl font-bold text-foreground mb-2">{ex.situation}</p>
-                <p className="text-muted-foreground text-base leading-relaxed">{ex.solution}</p>
+
+        <div className="space-y-20 md:space-y-28">
+          {scenarioShowcases.map((scenario, i) => (
+            <AnimatedSection key={scenario.title} delay={0.1}>
+              <div className={`flex flex-col ${i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} items-center gap-10 md:gap-16 max-w-5xl mx-auto`}>
+                {/* Phone mockup */}
+                <div className="flex-shrink-0 w-[260px] md:w-[300px]">
+                  <div className="rounded-[2.5rem] border-[6px] border-gray-800 bg-gray-800 shadow-phone overflow-hidden">
+                    <div className="rounded-[2rem] overflow-hidden bg-white">
+                      <Image
+                        src={scenario.image}
+                        alt={scenario.imageAlt}
+                        width={scenario.width}
+                        height={scenario.height}
+                        className="w-full h-auto"
+                        priority={i === 0}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Text content */}
+                <div className="flex-1 text-center md:text-left max-w-lg">
+                  <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
+                    {scenario.title}
+                  </h3>
+                  <p className="text-fw-accent font-semibold text-sm uppercase tracking-wider mb-4">
+                    {scenario.subtitle}
+                  </p>
+                  <p className="text-base md:text-lg text-muted-foreground leading-[1.7]">
+                    {scenario.description}
+                  </p>
+                </div>
               </div>
             </AnimatedSection>
           ))}
@@ -271,18 +325,18 @@ export default function Home() {
       </Section>
 
       {/* ───── CREDIBILITY STRIP ───── */}
-      <Section className="py-10 md:py-14 border-y border-fw-border/50 bg-fw-surface/50">
+      <Section className="py-8 md:py-10 border-y border-fw-border/50">
         <AnimatedSection delay={0.1}>
-          <div className="flex flex-wrap items-center justify-center gap-10 md:gap-14">
+          <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12">
             {credibilityItems.map((item) => (
               <div
                 key={item.label}
-                className="flex items-center gap-3 text-muted-foreground group"
+                className="flex items-center gap-2.5 text-muted-foreground group"
               >
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 group-hover:bg-emerald-100 transition-colors duration-200">
-                  <item.icon className="h-5 w-5 text-fw-accent" />
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-50 group-hover:bg-emerald-100 transition-colors duration-200">
+                  <item.icon className="h-4.5 w-4.5 text-fw-accent" />
                 </div>
-                <span className="text-base font-semibold font-accent group-hover:text-foreground transition-colors duration-200">{item.label}</span>
+                <span className="text-sm font-semibold font-accent group-hover:text-foreground transition-colors duration-200">{item.label}</span>
               </div>
             ))}
           </div>
@@ -290,22 +344,22 @@ export default function Home() {
       </Section>
 
       {/* ───── PROBLEM SECTION ───── */}
-      <Section>
-        <AnimatedSection className="max-w-3xl mx-auto">
+      <Section className="py-16 md:py-22">
+        <AnimatedSection className="max-w-2xl mx-auto">
           <h2 className="text-3xl md:text-[2.75rem] font-bold text-foreground text-center mb-5 leading-tight">
             Most fitness plans break the moment life gets real.
           </h2>
-          <p className="text-muted-foreground text-center text-lg md:text-xl mb-12 max-w-2xl mx-auto leading-[1.7]">
+          <p className="text-muted-foreground text-center text-base md:text-lg mb-10 max-w-xl mx-auto leading-[1.7]">
             Rigid meal plans don&apos;t survive restaurant dinners, weekend plans, or tight budgets. Sound familiar?
           </p>
-          <ul className="space-y-5 max-w-lg mx-auto">
+          <ul className="space-y-4 max-w-md mx-auto">
             {problemBullets.map((bullet, i) => (
               <AnimatedSection key={bullet} delay={0.3 + i * 0.08}>
-                <li className="flex items-start gap-4 group">
-                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-red-50 mt-0.5 group-hover:bg-red-100 transition-colors duration-200">
-                    <XCircle className="h-4 w-4 text-red-400" />
+                <li className="flex items-start gap-3 group">
+                  <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-red-50 mt-0.5 group-hover:bg-red-100 transition-colors duration-200">
+                    <XCircle className="h-3.5 w-3.5 text-red-400" />
                   </div>
-                  <span className="text-base text-muted-foreground leading-relaxed group-hover:text-foreground transition-colors duration-200">
+                  <span className="text-[15px] text-muted-foreground leading-relaxed group-hover:text-foreground transition-colors duration-200">
                     {bullet}
                   </span>
                 </li>
@@ -316,18 +370,18 @@ export default function Home() {
       </Section>
 
       {/* ───── SOLUTION / HOW IT WORKS ───── */}
-      <Section className="bg-fw-surface py-20 md:py-28">
-        <AnimatedSection className="text-center mb-16">
+      <Section className="bg-fw-surface py-16 md:py-22">
+        <AnimatedSection className="text-center mb-12">
           <h2 className="text-3xl md:text-[2.75rem] font-bold text-foreground mb-5 leading-tight">
             Your daily decision coach.
           </h2>
-          <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
+          <p className="text-muted-foreground text-base md:text-lg max-w-lg mx-auto leading-relaxed">
             Three steps. No overthinking.
           </p>
         </AnimatedSection>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 relative">
-          <div className="hidden md:block absolute top-8 left-[calc(16.67%+32px)] right-[calc(16.67%+32px)] h-[2px] bg-gradient-to-r from-emerald-300 via-orange-300 to-cyan-300 opacity-30 overflow-hidden">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative max-w-4xl mx-auto">
+          <div className="hidden md:block absolute top-7 left-[calc(16.67%+28px)] right-[calc(16.67%+28px)] h-[2px] bg-gradient-to-r from-emerald-300 via-orange-300 to-cyan-300 opacity-30 overflow-hidden">
             <div className="h-full w-full shimmer" />
           </div>
 
@@ -337,13 +391,13 @@ export default function Home() {
               delay={step.number * 0.15}
               className="text-center relative"
             >
-              <div className={`inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-gradient-to-br ${step.color} text-white text-2xl font-bold mb-6 shadow-md relative z-10`}>
+              <div className={`inline-flex items-center justify-center h-14 w-14 rounded-2xl bg-gradient-to-br ${step.color} text-white text-xl font-bold mb-5 shadow-md relative z-10`}>
                 {step.number}
               </div>
-              <h3 className="text-2xl font-semibold text-foreground mb-3">
+              <h3 className="text-xl font-semibold text-foreground mb-2">
                 {step.title}
               </h3>
-              <p className="text-base text-muted-foreground leading-[1.7] max-w-xs mx-auto">
+              <p className="text-sm text-muted-foreground leading-[1.7] max-w-[280px] mx-auto">
                 {step.description}
               </p>
             </AnimatedSection>
@@ -351,65 +405,132 @@ export default function Home() {
         </div>
       </Section>
 
-      {/* ───── CORE FEATURES GRID ───── */}
-      <Section>
+      {/* ───── FEATURE SHOWCASES — FULL PHONE MOCKUPS ───── */}
+      <Section className="py-16 md:py-24">
         <AnimatedSection className="text-center mb-14">
           <h2 className="text-3xl md:text-[2.75rem] font-bold text-foreground mb-5 leading-tight">
             What changes when you have FuelWell
           </h2>
-          <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
+          <p className="text-muted-foreground text-base md:text-lg max-w-xl mx-auto leading-relaxed">
             Eat smarter. Train better. Actually stay consistent.
           </p>
         </AnimatedSection>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {features.map((feature, i) => (
-            <AnimatedSection key={feature.title} delay={i * 0.08}>
-              <FeatureCard
-                icon={feature.icon}
-                title={feature.title}
-                description={feature.description}
-                premium={feature.premium}
-                visual={feature.visual}
-              />
+
+        <div className="space-y-20 md:space-y-28">
+          {featureShowcases.map((feature, i) => (
+            <AnimatedSection key={feature.title} delay={0.1}>
+              <div className={`flex flex-col ${i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} items-center gap-10 md:gap-16 max-w-5xl mx-auto`}>
+                {/* Phone mockup */}
+                <div className="flex-shrink-0 w-[260px] md:w-[300px]">
+                  <div className="rounded-[2.5rem] border-[6px] border-gray-800 bg-gray-800 shadow-phone overflow-hidden">
+                    <div className="rounded-[2rem] overflow-hidden bg-white">
+                      <Image
+                        src={feature.image}
+                        alt={feature.imageAlt}
+                        width={feature.width}
+                        height={feature.height}
+                        className="w-full h-auto"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Text content */}
+                <div className="flex-1 text-center md:text-left max-w-lg">
+                  <div className="inline-flex items-center justify-center h-12 w-12 rounded-xl bg-gradient-to-br from-emerald-50 to-teal-50 ring-1 ring-emerald-200/50 mb-5 shadow-sm">
+                    <feature.icon className="h-5 w-5 text-emerald-600" />
+                  </div>
+                  <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
+                    {feature.title}
+                  </h3>
+                  <p className="text-base md:text-lg text-muted-foreground leading-[1.7]">
+                    {feature.description}
+                  </p>
+                </div>
+              </div>
+            </AnimatedSection>
+          ))}
+        </div>
+
+        {/* Additional feature showcases — full phone mockups */}
+        <div className="space-y-20 md:space-y-28 mt-20 md:mt-28">
+          {additionalShowcases.map((feature, i) => (
+            <AnimatedSection key={feature.title} delay={0.1}>
+              <div className={`flex flex-col ${i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} items-center gap-10 md:gap-16 max-w-5xl mx-auto`}>
+                {/* Phone mockup */}
+                <div className="flex-shrink-0 w-[260px] md:w-[300px]">
+                  <div className="rounded-[2.5rem] border-[6px] border-gray-800 bg-gray-800 shadow-phone overflow-hidden">
+                    <div className="rounded-[2rem] overflow-hidden bg-white">
+                      <Image
+                        src={feature.image}
+                        alt={feature.imageAlt}
+                        width={feature.width}
+                        height={feature.height}
+                        className="w-full h-auto"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Text content */}
+                <div className="flex-1 text-center md:text-left max-w-lg">
+                  <div className="inline-flex items-center gap-2 mb-5">
+                    <div className="inline-flex items-center justify-center h-12 w-12 rounded-xl bg-gradient-to-br from-emerald-50 to-teal-50 ring-1 ring-emerald-200/50 shadow-sm">
+                      <feature.icon className="h-5 w-5 text-emerald-600" />
+                    </div>
+                    {feature.premium && (
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-orange-600 bg-orange-50 border border-orange-200 px-2.5 py-1 rounded-full">
+                        Premium
+                      </span>
+                    )}
+                  </div>
+                  <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
+                    {feature.title}
+                  </h3>
+                  <p className="text-base md:text-lg text-muted-foreground leading-[1.7]">
+                    {feature.description}
+                  </p>
+                </div>
+              </div>
             </AnimatedSection>
           ))}
         </div>
       </Section>
 
       {/* ───── SMART COACHING EXAMPLES ───── */}
-      <Section className="bg-fw-surface py-20 md:py-28">
-        <AnimatedSection className="text-center mb-14">
+      <Section className="bg-fw-surface py-16 md:py-24">
+        <AnimatedSection className="text-center mb-12">
           <h2 className="text-3xl md:text-[2.75rem] font-bold text-foreground mb-5 leading-tight">
             Coaching that sounds like a friend, not a textbook.
           </h2>
-          <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
+          <p className="text-muted-foreground text-base md:text-lg max-w-lg mx-auto leading-relaxed">
             Real questions. Real answers. Zero judgment.
           </p>
         </AnimatedSection>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {coachingExamples.map((example, i) => (
             <AnimatedSection key={i} delay={i * 0.08}>
-              <div className="group rounded-2xl border border-fw-border bg-white p-6 h-full flex flex-col gap-5 hover:shadow-card-hover hover:border-fw-accent/30 hover:-translate-y-1 transition-all duration-300 shadow-card">
+              <div className="group rounded-2xl border border-fw-border bg-white p-5 h-full flex flex-col gap-4 hover:shadow-card-hover hover:border-fw-accent/30 hover:-translate-y-0.5 transition-all duration-300 shadow-card">
                 {/* User bubble */}
-                <div className="flex items-start gap-3">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-orange-50 group-hover:scale-110 transition-transform duration-300">
-                    <User className="h-4 w-4 text-fw-orange" />
+                <div className="flex items-start gap-2.5">
+                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-orange-50 group-hover:scale-105 transition-transform duration-300">
+                    <User className="h-3.5 w-3.5 text-fw-orange" />
                   </div>
-                  <div className="rounded-2xl rounded-tl-sm bg-fw-surface border border-fw-border px-4 py-3">
-                    <p className="text-sm font-medium text-foreground leading-relaxed">
+                  <div className="rounded-2xl rounded-tl-sm bg-fw-surface border border-fw-border px-3.5 py-2.5">
+                    <p className="text-sm font-medium text-foreground leading-snug">
                       {example.question}
                     </p>
                   </div>
                 </div>
 
                 {/* AI bubble */}
-                <div className="flex items-start gap-3">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-50 group-hover:scale-110 transition-transform duration-300">
-                    <Bot className="h-4 w-4 text-fw-accent" />
+                <div className="flex items-start gap-2.5">
+                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-50 group-hover:scale-105 transition-transform duration-300">
+                    <Bot className="h-3.5 w-3.5 text-fw-accent" />
                   </div>
-                  <div className="rounded-2xl rounded-tl-sm bg-emerald-50/50 border border-emerald-100 px-4 py-3 flex-1">
-                    <p className="text-sm text-muted-foreground leading-[1.7]">
+                  <div className="rounded-2xl rounded-tl-sm bg-emerald-50/50 border border-emerald-100 px-3.5 py-2.5 flex-1">
+                    <p className="text-[13px] text-muted-foreground leading-[1.65]">
                       {example.answer}
                     </p>
                   </div>
@@ -421,15 +542,15 @@ export default function Home() {
       </Section>
 
       {/* ───── PLATFORM AVAILABILITY ───── */}
-      <Section className="py-16 md:py-20 border-y border-fw-border/40">
-        <AnimatedSection className="text-center mb-12">
-          <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-3">Available Everywhere You Are</h3>
-          <p className="text-muted-foreground text-base max-w-lg mx-auto leading-relaxed">
+      <Section className="py-12 md:py-16 border-y border-fw-border/40">
+        <AnimatedSection className="text-center mb-8">
+          <h3 className="text-xl md:text-2xl font-bold text-foreground mb-2">Available Everywhere You Are</h3>
+          <p className="text-muted-foreground text-sm max-w-md mx-auto leading-relaxed">
             Use FuelWell across all your devices, synced and seamless.
           </p>
         </AnimatedSection>
 
-        <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10 mb-12">
+        <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12 mb-10">
           {[
             { icon: Globe, label: "Web App", desc: "Any browser" },
             { icon: Smartphone, label: "iPhone", desc: "iOS 16+" },
@@ -437,20 +558,39 @@ export default function Home() {
             { icon: Smartphone, label: "Android", desc: "Android 12+" },
           ].map((p, i) => (
             <AnimatedSection key={p.label} delay={i * 0.08}>
-              <div className="flex flex-col items-center gap-2.5 group">
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-50 border border-emerald-100 group-hover:bg-emerald-100 group-hover:scale-110 transition-all duration-200 shadow-sm">
-                  <p.icon className="h-7 w-7 text-fw-accent" />
+              <div className="flex flex-col items-center gap-2 group">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 border border-emerald-100 group-hover:bg-emerald-100 group-hover:scale-105 transition-all duration-200 shadow-sm">
+                  <p.icon className="h-6 w-6 text-fw-accent" />
                 </div>
-                <p className="text-base font-semibold text-foreground">{p.label}</p>
-                <p className="text-xs text-muted-foreground">{p.desc}</p>
+                <p className="text-sm font-semibold text-foreground">{p.label}</p>
+                <p className="text-[11px] text-muted-foreground">{p.desc}</p>
               </div>
             </AnimatedSection>
           ))}
         </div>
 
+        {/* Desktop dashboard preview */}
+        <AnimatedSection delay={0.2} className="mb-12">
+          <div className="max-w-4xl mx-auto rounded-2xl border border-fw-border bg-gray-900 shadow-xl overflow-hidden">
+            <div className="flex items-center gap-1.5 px-4 py-2.5 bg-gray-800 border-b border-gray-700">
+              <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
+              <div className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
+              <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
+              <span className="ml-3 text-[11px] text-gray-400 font-mono">app.fuelwell.ai</span>
+            </div>
+            <Image
+              src="/features/desktop-dashboard.png"
+              alt="FuelWell desktop performance overview with muscle activation, workload distribution, and AI fueling intelligence"
+              width={1416}
+              height={1600}
+              className="w-full h-auto"
+            />
+          </div>
+        </AnimatedSection>
+
         <AnimatedSection delay={0.3} className="text-center">
-          <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-5">Integrations</p>
-          <div className="flex flex-wrap items-center justify-center gap-3">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">Integrations</p>
+          <div className="flex flex-wrap items-center justify-center gap-2.5">
             {[
               { icon: Heart, label: "Apple Health" },
               { icon: Watch, label: "Apple Watch" },
@@ -461,10 +601,10 @@ export default function Home() {
             ].map((int) => (
               <div
                 key={int.label}
-                className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl border border-fw-border bg-white hover:border-fw-accent/30 hover:bg-fw-surface transition-all duration-200 shadow-card"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-fw-border bg-white hover:border-fw-accent/30 hover:bg-fw-surface transition-all duration-200 shadow-card"
               >
-                <int.icon className="h-4 w-4 text-fw-accent" />
-                <span className="text-sm font-medium text-foreground">{int.label}</span>
+                <int.icon className="h-3.5 w-3.5 text-fw-accent" />
+                <span className="text-xs font-medium text-foreground">{int.label}</span>
               </div>
             ))}
           </div>
@@ -478,12 +618,12 @@ export default function Home() {
         <div className="absolute top-[20%] left-[30%] w-[300px] h-[300px] rounded-full bg-emerald-200/20 blur-[100px] animate-float-slow" />
         <div className="absolute bottom-[20%] right-[20%] w-[250px] h-[250px] rounded-full bg-orange-200/15 blur-[80px] animate-float-slower" />
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32">
-          <AnimatedSection className="text-center max-w-2xl mx-auto space-y-8">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
+          <AnimatedSection className="text-center max-w-xl mx-auto space-y-6">
             <h2 className="text-4xl md:text-5xl font-bold text-foreground">
               FuelWell. <span className="gradient-text">Feel well.</span>
             </h2>
-            <p className="text-xl text-muted-foreground leading-relaxed max-w-xl mx-auto">
+            <p className="text-lg text-muted-foreground leading-relaxed max-w-md mx-auto">
               Make consistency actually stick — with real-time guidance that fits your life.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
