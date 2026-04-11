@@ -270,7 +270,7 @@ export default function Home() {
           </p>
         </AnimatedSection>
 
-        <div className="space-y-20 md:space-y-28">
+        <div className="space-y-12 md:space-y-16">
           {scenarioShowcases.map((scenario, i) => (
             <AnimatedSection key={scenario.title} delay={0.1}>
               <div className={`flex flex-col ${i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} items-center gap-10 md:gap-16 max-w-5xl mx-auto`}>
@@ -415,7 +415,7 @@ export default function Home() {
           </p>
         </AnimatedSection>
 
-        <div className="space-y-20 md:space-y-28">
+        <div className="space-y-12 md:space-y-16">
           {featureShowcases.map((feature, i) => (
             <AnimatedSection key={feature.title} delay={0.1}>
               <div className={`flex flex-col ${i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} items-center gap-10 md:gap-16 max-w-5xl mx-auto`}>
@@ -452,7 +452,7 @@ export default function Home() {
         </div>
 
         {/* Additional feature showcases — full phone mockups */}
-        <div className="space-y-20 md:space-y-28 mt-20 md:mt-28">
+        <div className="space-y-12 md:space-y-16 mt-12 md:mt-16">
           {additionalShowcases.map((feature, i) => (
             <AnimatedSection key={feature.title} delay={0.1}>
               <div className={`flex flex-col ${i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} items-center gap-10 md:gap-16 max-w-5xl mx-auto`}>
@@ -542,20 +542,24 @@ export default function Home() {
 
         {/* Desktop dashboard preview */}
         <AnimatedSection delay={0.2} className="mb-12">
-          <div className="max-w-4xl mx-auto rounded-2xl border border-fw-border bg-gray-900 shadow-xl overflow-hidden">
-            <div className="flex items-center gap-1.5 px-4 py-2.5 bg-gray-800 border-b border-gray-700">
-              <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
-              <div className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
-              <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
-              <span className="ml-3 text-[11px] text-gray-400 font-mono">app.fuelwell.ai</span>
+          <div className="max-w-4xl mx-auto rounded-3xl border-2 border-fw-border bg-white shadow-card-premium overflow-hidden">
+            <div className="flex items-center gap-1.5 px-5 py-3 bg-gradient-to-r from-fw-surface to-white border-b border-fw-border/60">
+              <div className="w-2.5 h-2.5 rounded-full bg-red-300" />
+              <div className="w-2.5 h-2.5 rounded-full bg-amber-300" />
+              <div className="w-2.5 h-2.5 rounded-full bg-emerald-300" />
+              <span className="ml-3 text-[11px] text-muted-foreground font-mono">app.fuelwell.ai</span>
             </div>
-            <Image
-              src="/features/desktop-dashboard.png"
-              alt="FuelWell desktop performance overview with muscle activation, workload distribution, and AI fueling intelligence"
-              width={1416}
-              height={1600}
-              className="w-full h-auto"
-            />
+            <div className="bg-gradient-to-br from-fw-surface/50 via-white to-emerald-50/30 p-4 md:p-6">
+              <div className="rounded-2xl overflow-hidden border border-fw-border/40 bg-white shadow-card">
+                <Image
+                  src="/features/desktop-dashboard.png"
+                  alt="FuelWell desktop performance overview with muscle activation, workload distribution, and AI fueling intelligence"
+                  width={1416}
+                  height={1600}
+                  className="w-full h-auto invert-[0.92] hue-rotate-180 contrast-[0.88] brightness-[1.02] saturate-[1.15]"
+                />
+              </div>
+            </div>
           </div>
         </AnimatedSection>
 

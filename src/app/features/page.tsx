@@ -23,6 +23,9 @@ import { Section } from "@/components/ui/section";
 import { AnimatedSection } from "@/components/animated-section";
 import { GradientButton } from "@/components/ui/gradient-button";
 import { Badge } from "@/components/ui/badge";
+import { StitchCarousel } from "@/components/stitch-carousel";
+import { MacroCalculator } from "@/components/macro-calculator";
+import { InteractiveCoach } from "@/components/interactive-coach";
 
 const coreFeatures = [
   {
@@ -283,6 +286,49 @@ export default function FeaturesPage() {
             );
           })}
         </div>
+      </Section>
+
+      {/* More FuelWell capabilities — carousel */}
+      <Section className="bg-gradient-to-b from-white via-fw-surface/40 to-white">
+        <AnimatedSection className="text-center max-w-2xl mx-auto mb-10">
+          <h2>More ways FuelWell has your back</h2>
+          <p className="mt-4 text-muted-foreground leading-relaxed">
+            A few more capabilities baked into the app — click through to see each one.
+          </p>
+        </AnimatedSection>
+        <AnimatedSection delay={0.1}>
+          <StitchCarousel />
+        </AnimatedSection>
+      </Section>
+
+      {/* Interactive macro calculator */}
+      <Section className="py-16 md:py-24">
+        <AnimatedSection className="text-center mb-10">
+          <h2 className="text-3xl md:text-[2.5rem] font-bold text-foreground mb-4 leading-tight">
+            Your personalized macros, calculated live.
+          </h2>
+          <p className="text-muted-foreground text-base md:text-lg max-w-xl mx-auto leading-relaxed">
+            Drag the sliders and watch your starting plan update in real time.
+          </p>
+        </AnimatedSection>
+        <AnimatedSection delay={0.1} className="max-w-6xl mx-auto">
+          <MacroCalculator />
+        </AnimatedSection>
+      </Section>
+
+      {/* Interactive coach chat */}
+      <Section className="bg-fw-surface py-16 md:py-24">
+        <AnimatedSection className="text-center mb-12">
+          <h2 className="text-3xl md:text-[2.5rem] font-bold text-foreground mb-4 leading-tight">
+            Coaching that sounds like a friend, not a textbook.
+          </h2>
+          <p className="text-muted-foreground text-base md:text-lg max-w-lg mx-auto leading-relaxed">
+            Tap a question and watch FuelCoach respond live.
+          </p>
+        </AnimatedSection>
+        <AnimatedSection delay={0.1} className="max-w-6xl mx-auto">
+          <InteractiveCoach />
+        </AnimatedSection>
       </Section>
 
       {/* Integrations — larger branded device cards */}
