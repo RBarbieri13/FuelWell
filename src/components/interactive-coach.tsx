@@ -106,12 +106,12 @@ export function InteractiveCoach() {
         <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
           Ask FuelWell anything.
         </h3>
-        <p className="text-sm md:text-base text-muted-foreground leading-relaxed mb-6">
+        <p className="text-base md:text-lg text-muted-foreground leading-relaxed mb-6">
           Tap any question below and watch the coach respond the same way it
           would inside the app. No judgment, no textbook answers.
         </p>
 
-        <div className="space-y-2.5 flex-1">
+        <div className="space-y-3 flex-1">
           {PROMPTS.map((p, i) => (
             <button
               key={p.question}
@@ -119,7 +119,7 @@ export function InteractiveCoach() {
               onClick={() => handleAsk(i)}
               disabled={isTyping}
               className={cn(
-                "group w-full text-left rounded-2xl border-2 p-4 transition-all duration-200",
+                "group w-full text-left rounded-2xl border-2 p-5 transition-all duration-200",
                 "disabled:opacity-60 disabled:cursor-not-allowed",
                 activePromptIdx === i
                   ? "border-fw-accent bg-emerald-50/60 shadow-card"
@@ -129,7 +129,7 @@ export function InteractiveCoach() {
               <div className="flex items-center gap-2 mb-1">
                 <span
                   className={cn(
-                    "text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full",
+                    "text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full",
                     activePromptIdx === i
                       ? "bg-fw-accent text-white"
                       : "bg-fw-surface text-muted-foreground"
@@ -143,7 +143,7 @@ export function InteractiveCoach() {
               </div>
               <p
                 className={cn(
-                  "text-sm font-medium leading-snug",
+                  "text-base font-semibold leading-snug",
                   activePromptIdx === i ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
                 )}
               >
@@ -155,26 +155,31 @@ export function InteractiveCoach() {
       </div>
 
       {/* Right column: chat window */}
-      <div className="rounded-3xl border-2 border-fw-border bg-white shadow-card-premium overflow-hidden flex flex-col min-h-[520px]">
+      <div className="rounded-3xl border-2 border-fw-border bg-white shadow-card-premium overflow-hidden flex flex-col min-h-[580px]">
         {/* Header */}
-        <div className="flex items-center gap-3 px-5 py-3.5 border-b border-fw-border bg-gradient-to-r from-emerald-50/70 to-white">
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-teal-400 shadow-sm">
-            <Bot className="h-4 w-4 text-white" />
+        <div className="flex items-center gap-3 px-5 py-4 border-b border-fw-border bg-gradient-to-r from-emerald-50 via-teal-50/70 to-white relative">
+          <div className="absolute inset-x-0 bottom-0 h-[2px] bg-gradient-to-r from-transparent via-emerald-400/40 to-transparent" />
+          <div className="relative flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 shadow-[0_8px_20px_rgba(52,211,153,0.35)] ring-2 ring-white">
+            <Bot className="h-5 w-5 text-white" />
+            <span className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-emerald-400 border-2 border-white animate-pulse" />
           </div>
           <div className="flex-1">
-            <p className="text-sm font-bold text-foreground">FuelCoach AI</p>
-            <div className="flex items-center gap-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <p className="text-[11px] text-emerald-600 font-semibold">Online</p>
+            <div className="flex items-center gap-2">
+              <p className="text-base font-bold text-foreground">FuelCoach AI</p>
+              <span className="text-[10px] font-bold text-violet-600 bg-violet-50 border border-violet-100 px-1.5 py-0.5 rounded-full uppercase tracking-wider">Premium</span>
+            </div>
+            <div className="flex items-center gap-1.5 mt-0.5">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <p className="text-xs text-emerald-700 font-semibold">Online • average reply 0.4s</p>
             </div>
           </div>
-          <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground bg-fw-surface border border-fw-border px-2 py-1 rounded-full">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-fw-accent bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full shadow-sm">
             Live demo
           </span>
         </div>
 
         {/* Chat area */}
-        <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4 bg-gradient-to-b from-white to-fw-surface/30">
+        <div className="flex-1 overflow-y-auto px-5 py-5 space-y-4 bg-gradient-to-b from-white via-fw-surface/20 to-emerald-50/20">
           <AnimatePresence initial={false}>
             {messages.map((msg) => (
               <motion.div
@@ -186,28 +191,34 @@ export function InteractiveCoach() {
                 className={cn("flex gap-2.5", msg.role === "user" ? "justify-end" : "justify-start")}
               >
                 {msg.role === "ai" && (
-                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-50 mt-0.5">
-                    <Bot className="h-3.5 w-3.5 text-fw-accent" />
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 shadow-sm ring-2 ring-white mt-0.5">
+                    <Bot className="h-4 w-4 text-white" />
                   </div>
                 )}
                 <div
                   className={cn(
-                    "max-w-[78%] rounded-2xl px-4 py-2.5 shadow-sm",
+                    "max-w-[80%] rounded-2xl px-4 py-3 shadow-sm",
                     msg.role === "user"
-                      ? "rounded-tr-sm bg-fw-surface border border-fw-border text-foreground"
-                      : "rounded-tl-sm bg-emerald-50 border border-emerald-100 text-foreground"
+                      ? "rounded-tr-sm bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-100 text-foreground"
+                      : "rounded-tl-sm bg-white border border-emerald-100 text-foreground shadow-card"
                   )}
                 >
-                  <p className="text-sm leading-[1.6]">
+                  <p className="text-[15px] leading-[1.65]">
                     {msg.role === "user" ? msg.content : msg.typed}
                     {msg.role === "ai" && msg.typed !== msg.content && (
-                      <span className="inline-block w-1.5 h-4 bg-fw-accent/80 ml-0.5 align-middle animate-pulse" />
+                      <span className="inline-block w-1.5 h-5 bg-fw-accent/80 ml-0.5 align-middle animate-pulse" />
                     )}
                   </p>
+                  {msg.role === "ai" && msg.typed === msg.content && (
+                    <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-emerald-50">
+                      <span className="text-[10px] text-emerald-600 font-semibold">✓ FuelCoach AI</span>
+                      <span className="text-[10px] text-muted-foreground/70">• just now</span>
+                    </div>
+                  )}
                 </div>
                 {msg.role === "user" && (
-                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-orange-50 mt-0.5">
-                    <User className="h-3.5 w-3.5 text-fw-orange" />
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-orange-100 to-amber-100 ring-2 ring-white mt-0.5">
+                    <User className="h-4 w-4 text-fw-orange" />
                   </div>
                 )}
               </motion.div>
