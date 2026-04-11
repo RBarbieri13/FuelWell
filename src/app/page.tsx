@@ -7,6 +7,8 @@ import { GradientButton } from "@/components/ui/gradient-button";
 import { OutlineButton } from "@/components/ui/outline-button";
 import { AppCarousel } from "@/components/app-carousel";
 import { AnimatedSection } from "@/components/animated-section";
+import { MacroCalculator } from "@/components/macro-calculator";
+import { InteractiveCoach } from "@/components/interactive-coach";
 import {
   Brain,
   DollarSign,
@@ -19,8 +21,6 @@ import {
   BookOpen,
   BarChart3,
   XCircle,
-  User,
-  Bot,
   ArrowRight,
   Sparkles,
   Globe,
@@ -55,6 +55,10 @@ const howItWorksSteps = [
     description:
       "Share your goals, preferences, dietary needs, and budget. FuelWell adapts to who you are and how you live.",
     color: "from-emerald-400 to-teal-400",
+    image: "/features/ate-more.png",
+    imageAlt: "FuelWell profile and goals setup",
+    width: 375,
+    height: 1600,
   },
   {
     number: 2,
@@ -62,6 +66,10 @@ const howItWorksSteps = [
     description:
       "Receive personalized meal suggestions, grocery lists, workout plans, and real-time coaching \u2014 all tailored to your day.",
     color: "from-orange-400 to-amber-400",
+    image: "/features/progress-tracking.png",
+    imageAlt: "FuelWell personalized meal and workout plan",
+    width: 563,
+    height: 1600,
   },
   {
     number: 3,
@@ -69,6 +77,10 @@ const howItWorksSteps = [
     description:
       "See your progress clearly with trends, insights, and smart nudges that keep you moving forward without obsessing over numbers.",
     color: "from-cyan-400 to-blue-400",
+    image: "/features/body-insights.png",
+    imageAlt: "FuelWell activity insights and progress tracking",
+    width: 494,
+    height: 1600,
   },
 ];
 
@@ -175,34 +187,6 @@ const additionalShowcases = [
   },
 ];
 
-const coachingExamples = [
-  {
-    question: "I\u2019m at a Mexican restaurant. What should I order?",
-    answer:
-      "Go for grilled chicken fajitas with extra veggies. Skip the sour cream, keep the guac \u2014 it\u2019s healthy fat. Ask for corn tortillas instead of flour.",
-  },
-  {
-    question: "I went over my calories yesterday. Should I eat less today?",
-    answer:
-      "No need to punish yourself. One day doesn\u2019t define your progress. Stick to your normal plan today and focus on hydration.",
-  },
-  {
-    question: "I only have 20 minutes to work out. Is it even worth it?",
-    answer:
-      "Absolutely. Here\u2019s a quick full-body circuit with no equipment. 20 minutes of focused effort beats skipping it entirely.",
-  },
-  {
-    question: "Why did my weight go up even though I\u2019ve been eating well?",
-    answer:
-      "Weight fluctuates daily due to water retention, sodium, sleep, and stress. Your 7-day trend is still heading down.",
-  },
-  {
-    question: "I\u2019m bored with my meals. Can you mix it up?",
-    answer:
-      "Let\u2019s refresh your rotation. Here are 3 new recipes that hit your macros and budget with prep time under 30 minutes.",
-  },
-];
-
 export default function Home() {
   return (
     <>
@@ -299,7 +283,7 @@ export default function Home() {
                         alt={scenario.imageAlt}
                         width={scenario.width}
                         height={scenario.height}
-                        className="w-full h-auto"
+                        className="w-full h-[600px] md:h-[640px] object-cover object-top"
                         priority={i === 0}
                       />
                     </div>
@@ -397,9 +381,24 @@ export default function Home() {
               <h3 className="text-xl font-semibold text-foreground mb-2">
                 {step.title}
               </h3>
-              <p className="text-sm text-muted-foreground leading-[1.7] max-w-[280px] mx-auto">
+              <p className="text-sm text-muted-foreground leading-[1.7] max-w-[280px] mx-auto mb-6">
                 {step.description}
               </p>
+              <div className="flex justify-center">
+                <div className="w-[180px]">
+                  <div className="rounded-[1.75rem] border-[5px] border-gray-800 bg-gray-800 shadow-phone overflow-hidden">
+                    <div className="rounded-[1.35rem] overflow-hidden bg-white">
+                      <Image
+                        src={step.image}
+                        alt={step.imageAlt}
+                        width={step.width}
+                        height={step.height}
+                        className="w-full h-[340px] object-cover object-top"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
             </AnimatedSection>
           ))}
         </div>
@@ -429,7 +428,7 @@ export default function Home() {
                         alt={feature.imageAlt}
                         width={feature.width}
                         height={feature.height}
-                        className="w-full h-auto"
+                        className="w-full h-[600px] md:h-[640px] object-cover object-top"
                       />
                     </div>
                   </div>
@@ -466,7 +465,7 @@ export default function Home() {
                         alt={feature.imageAlt}
                         width={feature.width}
                         height={feature.height}
-                        className="w-full h-auto"
+                        className="w-full h-[600px] md:h-[640px] object-cover object-top"
                       />
                     </div>
                   </div>
@@ -508,37 +507,9 @@ export default function Home() {
           </p>
         </AnimatedSection>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {coachingExamples.map((example, i) => (
-            <AnimatedSection key={i} delay={i * 0.08}>
-              <div className="group rounded-2xl border border-fw-border bg-white p-5 h-full flex flex-col gap-4 hover:shadow-card-hover hover:border-fw-accent/30 hover:-translate-y-0.5 transition-all duration-300 shadow-card">
-                {/* User bubble */}
-                <div className="flex items-start gap-2.5">
-                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-orange-50 group-hover:scale-105 transition-transform duration-300">
-                    <User className="h-3.5 w-3.5 text-fw-orange" />
-                  </div>
-                  <div className="rounded-2xl rounded-tl-sm bg-fw-surface border border-fw-border px-3.5 py-2.5">
-                    <p className="text-sm font-medium text-foreground leading-snug">
-                      {example.question}
-                    </p>
-                  </div>
-                </div>
-
-                {/* AI bubble */}
-                <div className="flex items-start gap-2.5">
-                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-50 group-hover:scale-105 transition-transform duration-300">
-                    <Bot className="h-3.5 w-3.5 text-fw-accent" />
-                  </div>
-                  <div className="rounded-2xl rounded-tl-sm bg-emerald-50/50 border border-emerald-100 px-3.5 py-2.5 flex-1">
-                    <p className="text-[13px] text-muted-foreground leading-[1.65]">
-                      {example.answer}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </AnimatedSection>
-          ))}
-        </div>
+        <AnimatedSection delay={0.1} className="max-w-6xl mx-auto">
+          <InteractiveCoach />
+        </AnimatedSection>
       </Section>
 
       {/* ───── PLATFORM AVAILABILITY ───── */}
@@ -588,26 +559,44 @@ export default function Home() {
           </div>
         </AnimatedSection>
 
-        <AnimatedSection delay={0.3} className="text-center">
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">Integrations</p>
-          <div className="flex flex-wrap items-center justify-center gap-2.5">
+        <AnimatedSection delay={0.3}>
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-6 text-center">Works with the tech you already wear</p>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 max-w-4xl mx-auto">
             {[
-              { icon: Heart, label: "Apple Health" },
-              { icon: Watch, label: "Apple Watch" },
-              { icon: Activity, label: "WHOOP" },
-              { icon: Zap, label: "Oura Ring" },
-              { icon: TrendingUp, label: "Garmin" },
-              { icon: BarChart3, label: "Smart Scales" },
+              { icon: Heart, label: "Apple Health", color: "from-red-50 to-pink-50", iconColor: "text-red-500" },
+              { icon: Watch, label: "Apple Watch", color: "from-gray-50 to-slate-100", iconColor: "text-gray-700" },
+              { icon: Activity, label: "WHOOP", color: "from-teal-50 to-emerald-50", iconColor: "text-teal-600" },
+              { icon: Zap, label: "Oura Ring", color: "from-amber-50 to-yellow-50", iconColor: "text-amber-600" },
+              { icon: TrendingUp, label: "Garmin", color: "from-blue-50 to-sky-50", iconColor: "text-blue-600" },
+              { icon: BarChart3, label: "Smart Scales", color: "from-violet-50 to-purple-50", iconColor: "text-violet-600" },
             ].map((int) => (
               <div
                 key={int.label}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-fw-border bg-white hover:border-fw-accent/30 hover:bg-fw-surface transition-all duration-200 shadow-card"
+                className="group rounded-2xl border border-fw-border bg-white p-4 text-center hover:-translate-y-0.5 hover:shadow-card-hover hover:border-fw-accent/30 transition-all duration-300 shadow-card flex flex-col items-center gap-2.5"
               >
-                <int.icon className="h-3.5 w-3.5 text-fw-accent" />
-                <span className="text-xs font-medium text-foreground">{int.label}</span>
+                <div className={`flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${int.color} ring-1 ring-fw-border/40 shadow-sm group-hover:scale-105 transition-transform duration-300`}>
+                  <int.icon className={`h-7 w-7 ${int.iconColor}`} />
+                </div>
+                <span className="text-xs font-semibold text-foreground">{int.label}</span>
               </div>
             ))}
           </div>
+        </AnimatedSection>
+      </Section>
+
+      {/* ───── INTERACTIVE MACRO CALCULATOR ───── */}
+      <Section className="py-16 md:py-24">
+        <AnimatedSection className="text-center mb-10">
+          <h2 className="text-3xl md:text-[2.75rem] font-bold text-foreground mb-4 leading-tight">
+            Your personalized macros, calculated live.
+          </h2>
+          <p className="text-muted-foreground text-base md:text-lg max-w-xl mx-auto leading-relaxed">
+            Drag the sliders below and see exactly where FuelWell would start you — then
+            get in the app to let real weight and training data refine it every week.
+          </p>
+        </AnimatedSection>
+        <AnimatedSection delay={0.1} className="max-w-6xl mx-auto">
+          <MacroCalculator />
         </AnimatedSection>
       </Section>
 
