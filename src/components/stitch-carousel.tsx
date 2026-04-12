@@ -61,16 +61,16 @@ export function StitchCarousel() {
   const slide = SLIDES[current];
 
   return (
-    <div className="max-w-5xl mx-auto">
+    <div className="max-w-6xl mx-auto">
       <div className="relative rounded-3xl border-2 border-fw-border bg-gradient-to-br from-emerald-50/50 via-white to-violet-50/40 p-6 md:p-10 shadow-card-premium overflow-hidden">
         {/* Decorative background orbs */}
         <div className="absolute -top-24 -right-24 w-64 h-64 rounded-full bg-emerald-200/30 blur-3xl pointer-events-none" />
         <div className="absolute -bottom-24 -left-24 w-64 h-64 rounded-full bg-violet-200/25 blur-3xl pointer-events-none" />
 
-        <div className="relative grid md:grid-cols-[280px_1fr] gap-8 md:gap-12 items-center">
-          {/* Phone frame */}
+        <div className="relative flex flex-col gap-8 md:gap-10">
+          {/* Device frame — tablet / widescreen */}
           <div className="flex justify-center">
-            <div className="w-[240px] md:w-[260px] relative">
+            <div className="w-full max-w-3xl relative">
               <AnimatePresence mode="wait" custom={direction}>
                 <motion.div
                   key={current}
@@ -80,14 +80,16 @@ export function StitchCarousel() {
                   exit={{ x: direction >= 0 ? -60 : 60, opacity: 0 }}
                   transition={{ duration: 0.35, ease: "easeOut" }}
                 >
-                  <div className="rounded-[2.25rem] border-[6px] border-gray-800 bg-gray-800 shadow-phone overflow-hidden">
-                    <div className="rounded-[1.85rem] overflow-hidden bg-white">
+                  {/* Tablet-style bezel */}
+                  <div className="rounded-[1.75rem] border-[10px] border-gray-800 bg-gray-800 shadow-phone overflow-hidden">
+                    <div className="relative w-full aspect-[4/3] bg-white flex items-center justify-center rounded-[0.6rem] overflow-hidden">
                       <Image
                         src={slide.image}
                         alt={slide.alt}
                         width={279}
                         height={1600}
-                        className="w-full h-[520px] md:h-[560px] object-cover object-top"
+                        sizes="(min-width: 768px) 720px, 100vw"
+                        className="max-w-full max-h-full w-auto h-auto object-contain"
                       />
                     </div>
                   </div>
@@ -97,7 +99,7 @@ export function StitchCarousel() {
           </div>
 
           {/* Text + controls */}
-          <div className="text-center md:text-left">
+          <div className="text-center max-w-2xl mx-auto">
             <AnimatePresence mode="wait">
               <motion.div
                 key={current}
@@ -113,14 +115,14 @@ export function StitchCarousel() {
                 <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-3 leading-tight">
                   {slide.title}
                 </h3>
-                <p className="text-base md:text-lg text-muted-foreground leading-[1.7] max-w-md md:max-w-none mx-auto md:mx-0">
+                <p className="text-base md:text-lg text-muted-foreground leading-[1.7] mx-auto">
                   {slide.description}
                 </p>
               </motion.div>
             </AnimatePresence>
 
             {/* Controls */}
-            <div className="flex items-center justify-center md:justify-start gap-4 mt-7">
+            <div className="flex items-center justify-center gap-4 mt-7">
               <button
                 type="button"
                 onClick={() => go(-1)}
