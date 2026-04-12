@@ -244,9 +244,11 @@ export function Founders100Content({ spotsClaimed }: Founders100ContentProps) {
                   </span>
                 </div>
                 <p className="text-sm text-muted-foreground mt-1">
-                  or <span className="text-foreground font-semibold">$89/year</span>{" "}
+                  or <span className="text-foreground font-semibold">$54/6mo</span>{" "}
+                  <span className="line-through text-muted-foreground/60">$69</span>{" · "}
+                  <span className="text-foreground font-semibold">$96/year</span>{" "}
                   <span className="line-through text-muted-foreground/60">$119</span> —{" "}
-                  <span className="text-fw-accent font-semibold">save 26%</span>
+                  <span className="text-fw-accent font-semibold">save 20%</span>
                 </p>
               </div>
 
@@ -290,7 +292,7 @@ export function Founders100Content({ spotsClaimed }: Founders100ContentProps) {
 
               <div className="mb-6 p-4 rounded-2xl bg-gradient-to-r from-violet-100/80 to-purple-50 border border-violet-200 relative">
                 <div className="flex items-baseline gap-2 flex-wrap">
-                  <span className="text-4xl font-bold">$16.99</span>
+                  <span className="text-4xl font-bold">$15.99</span>
                   <span className="text-muted-foreground">/mo for life</span>
                   <span className="text-sm line-through text-muted-foreground/60 ml-auto">
                     Regular $18.99/mo
@@ -298,9 +300,11 @@ export function Founders100Content({ spotsClaimed }: Founders100ContentProps) {
                 </div>
                 <p className="text-sm text-muted-foreground mt-1">
                   or{" "}
-                  <span className="text-foreground font-semibold">$149.99/year</span>{" "}
+                  <span className="text-foreground font-semibold">$84/6mo</span>{" "}
+                  <span className="line-through text-muted-foreground/60">$99</span>{" · "}
+                  <span className="text-foreground font-semibold">$144/year</span>{" "}
                   <span className="line-through text-muted-foreground/60">$179</span> —{" "}
-                  <span className="text-violet-600 font-semibold">save 27%</span>
+                  <span className="text-violet-600 font-semibold">save 25%</span>
                 </p>
               </div>
 

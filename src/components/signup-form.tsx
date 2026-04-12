@@ -16,8 +16,8 @@ const founders100Pricing = [
     description: "AI-powered nutrition coaching",
     plans: [
       { period: "Monthly", founders: "$9.99/mo", regular: "$12.99/mo" },
-      { period: "6-Month", founders: "$59", regular: "$69" },
-      { period: "Annual", founders: "$89", regular: "$119" },
+      { period: "6-Month", founders: "$54", regular: "$69" },
+      { period: "Annual", founders: "$96", regular: "$119" },
     ],
   },
   {
@@ -25,9 +25,9 @@ const founders100Pricing = [
     name: "FuelWell Premium",
     description: "Full AI coaching experience",
     plans: [
-      { period: "Monthly", founders: "$16.99/mo", regular: "$18.99/mo" },
-      { period: "6-Month", founders: "$89", regular: "$99" },
-      { period: "Annual", founders: "$149.99", regular: "$179" },
+      { period: "Monthly", founders: "$15.99/mo", regular: "$18.99/mo" },
+      { period: "6-Month", founders: "$84", regular: "$99" },
+      { period: "Annual", founders: "$144", regular: "$179" },
     ],
   },
 ];
@@ -51,7 +51,8 @@ export function SignupForm({
   successMessage = "We'll be in touch soon.",
   showFoundersPricing = false,
 }: SignupFormProps) {
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -68,7 +69,19 @@ export function SignupForm({
     e.preventDefault();
     setError(null);
 
+    const trimmedFirstName = firstName.trim();
+    const trimmedLastName = lastName.trim();
     const trimmedEmail = email.trim();
+
+    if (!trimmedFirstName) {
+      setError("First name is required.");
+      return;
+    }
+
+    if (!trimmedLastName) {
+      setError("Last name is required.");
+      return;
+    }
 
     if (!trimmedEmail) {
       setError("Email is required.");
@@ -87,7 +100,9 @@ export function SignupForm({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: name.trim() || null,
+          name: `${trimmedFirstName} ${trimmedLastName}`,
+          firstName: trimmedFirstName,
+          lastName: trimmedLastName,
           email: trimmedEmail,
           source,
         }),
@@ -126,19 +141,38 @@ export function SignupForm({
     <>
       <Toast visible={toastVisible} message={successTitle} />
       <form onSubmit={handleSubmit} className="space-y-6 max-w-lg mx-auto">
-      {/* Name */}
-      <div className="space-y-2">
-        <Label htmlFor="name">
-          Name <span className="text-muted-foreground">(optional)</span>
-        </Label>
-        <Input
-          id="name"
-          type="text"
-          placeholder="Your name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="h-12 bg-white border-fw-border"
-        />
+      {/* First / Last name */}
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="space-y-2">
+          <Label htmlFor="firstName">
+            First name <span className="text-fw-orange">*</span>
+          </Label>
+          <Input
+            id="firstName"
+            type="text"
+            placeholder="First name"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            required
+            autoComplete="given-name"
+            className="h-12 bg-white border-fw-border"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="lastName">
+            Last name <span className="text-fw-orange">*</span>
+          </Label>
+          <Input
+            id="lastName"
+            type="text"
+            placeholder="Last name"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            required
+            autoComplete="family-name"
+            className="h-12 bg-white border-fw-border"
+          />
+        </div>
       </div>
 
       {/* Email */}
