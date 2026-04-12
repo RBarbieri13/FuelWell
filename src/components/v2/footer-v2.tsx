@@ -78,6 +78,9 @@ export function FooterV2() {
 
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-[#6c7a71]">
           <p>&copy; {new Date().getFullYear()} FuelWell Health, Inc. All rights reserved.</p>
+          <span className="inline-flex items-center rounded-md border border-[#e7e8e8] bg-white px-2 py-1 text-[11px] font-medium text-[#006c49]">
+            Founded March 2026
+          </span>
           <p>Made for healthier living</p>
         </div>
 

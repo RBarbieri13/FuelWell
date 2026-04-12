@@ -112,6 +112,9 @@ export function Footer() {
             &copy; {new Date().getFullYear()} FuelWell Health, Inc. All rights
             reserved.
           </p>
+          <span className="inline-flex items-center rounded-md border border-fw-border bg-white px-2 py-1 text-[11px] font-medium text-muted-foreground">
+            Founded March 2026
+          </span>
           <p className="flex items-center gap-1">
             Made with <Heart className="h-3 w-3 text-rose-400 fill-rose-400 animate-pulse" /> for healthier living
           </p>
