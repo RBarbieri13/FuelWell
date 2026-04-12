@@ -27,6 +27,7 @@ const screens = [
     alt: "FuelWell Hypertrophy Chest workout with bench press tracking and performance insights",
     width: 434,
     height: 1600,
+    fit: "contain" as const,
   },
   {
     label: "Insights",
@@ -34,6 +35,7 @@ const screens = [
     alt: "FuelWell Insight and Action view with weekly consistency score, HRV, sleep, and logged meals",
     width: 481,
     height: 1600,
+    fit: "contain" as const,
   },
   {
     label: "Progress",
@@ -90,7 +92,12 @@ export function AppCarousel() {
                 alt={screen.alt}
                 width={screen.width}
                 height={screen.height}
-                className="w-full h-full object-cover object-top"
+                className={cn(
+                  "w-full h-full",
+                  "fit" in screen && screen.fit === "contain"
+                    ? "object-contain object-top"
+                    : "object-cover object-top"
+                )}
                 priority={current === 0}
               />
             </motion.div>
