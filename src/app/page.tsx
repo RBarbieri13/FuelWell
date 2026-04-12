@@ -540,29 +540,6 @@ export default function Home() {
           ))}
         </div>
 
-        {/* Desktop dashboard preview */}
-        <AnimatedSection delay={0.2} className="mb-12">
-          <div className="max-w-4xl mx-auto rounded-3xl border-2 border-fw-border bg-white shadow-card-premium overflow-hidden">
-            <div className="flex items-center gap-1.5 px-5 py-3 bg-gradient-to-r from-fw-surface to-white border-b border-fw-border/60">
-              <div className="w-2.5 h-2.5 rounded-full bg-red-300" />
-              <div className="w-2.5 h-2.5 rounded-full bg-amber-300" />
-              <div className="w-2.5 h-2.5 rounded-full bg-emerald-300" />
-              <span className="ml-3 text-[11px] text-muted-foreground font-mono">app.fuelwell.ai</span>
-            </div>
-            <div className="bg-gradient-to-br from-fw-surface/50 via-white to-emerald-50/30 p-4 md:p-6">
-              <div className="rounded-2xl overflow-hidden border border-fw-border/40 bg-white shadow-card">
-                <Image
-                  src="/features/desktop-dashboard.png"
-                  alt="FuelWell desktop performance overview with muscle activation, workload distribution, and AI fueling intelligence"
-                  width={1416}
-                  height={1600}
-                  className="w-full h-auto invert-[0.92] hue-rotate-180 contrast-[0.88] brightness-[1.02] saturate-[1.15]"
-                />
-              </div>
-            </div>
-          </div>
-        </AnimatedSection>
-
         <AnimatedSection delay={0.3}>
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-6 text-center">Works with the tech you already wear</p>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 max-w-4xl mx-auto">
@@ -572,7 +549,6 @@ export default function Home() {
               { icon: Activity, label: "WHOOP", color: "from-teal-50 to-emerald-50", iconColor: "text-teal-600" },
               { icon: Zap, label: "Oura Ring", color: "from-amber-50 to-yellow-50", iconColor: "text-amber-600" },
               { icon: TrendingUp, label: "Garmin", color: "from-blue-50 to-sky-50", iconColor: "text-blue-600" },
-              { icon: BarChart3, label: "Smart Scales", color: "from-violet-50 to-purple-50", iconColor: "text-violet-600" },
             ].map((int) => (
               <div
                 key={int.label}

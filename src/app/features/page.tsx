@@ -17,7 +17,6 @@ import {
   Watch,
   Activity,
   Zap,
-  Scale,
 } from "lucide-react";
 import { Section } from "@/components/ui/section";
 import { AnimatedSection } from "@/components/animated-section";
@@ -160,7 +159,6 @@ const integrations = [
   { name: "WHOOP", icon: Activity, color: "from-teal-50 to-emerald-50", iconColor: "text-teal-600" },
   { name: "Oura Ring", icon: Zap, color: "from-amber-50 to-yellow-50", iconColor: "text-amber-600" },
   { name: "Garmin", icon: TrendingUp, color: "from-blue-50 to-sky-50", iconColor: "text-blue-600" },
-  { name: "Smart Scales", icon: Scale, color: "from-violet-50 to-purple-50", iconColor: "text-violet-600" },
 ];
 
 export default function FeaturesPage() {
