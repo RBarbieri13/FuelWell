@@ -21,12 +21,11 @@ async function getSpotsClaimed(): Promise<number> {
 
   const supabase = createClient(url, key);
   const { count, error } = await supabase
-    .from("founder_signups")
-    .select("*", { count: "exact", head: true })
-    .eq("source", "founders-100");
+    .from("founders_100")
+    .select("*", { count: "exact", head: true });
 
   if (error) {
-    console.error("Failed to fetch founder_signups count:", error);
+    console.error("Failed to fetch founders_100 count:", error);
     return 0;
   }
 
