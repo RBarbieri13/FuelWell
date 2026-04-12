@@ -6,49 +6,49 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-type Screen = {
+type Slide = {
   image: string;
   alt: string;
-  title: string;
   width: number;
   height: number;
 };
 
-const SCREENS: Screen[] = [
+const SLIDES: Slide[] = [
   {
-    image: "/features/screen-dashboard.png",
-    alt: "FuelWell dashboard showing daily calorie ring, macro breakdown, sleep, heart rate, and hydration",
-    title: "Today's Dashboard",
-    width: 706,
+    image: "/features/showcase-muscle-mastery.png",
+    alt: "FuelWell Muscle Mass Mastery desktop dashboard with lean mass target, performance roadmap, and optimization alerts",
+    width: 1239,
     height: 1600,
   },
   {
-    image: "/features/screen-activity.png",
-    alt: "FuelWell activity page with daily steps, calorie deficit, body weight, fat mass, and heart rate trends",
-    title: "Activity Tracking",
-    width: 494,
+    image: "/features/showcase-dine-out.png",
+    alt: "FuelWell Smart Menu Scanner with AI food detection, macro insights, meal summary, and allergen alerts",
+    width: 1600,
+    height: 1280,
+  },
+  {
+    image: "/features/showcase-fitness-goals.png",
+    alt: "FuelWell fitness goals with personalized training programs, injury prevention, and workout decision guide",
+    width: 267,
     height: 1600,
   },
   {
-    image: "/features/screen-workout.png",
-    alt: "FuelWell hypertrophy workout with set logging, bench press animation, and performance insights",
-    title: "Workout Logging",
-    width: 434,
+    image: "/features/showcase-dine-confidence.png",
+    alt: "FuelWell dine out with confidence showing allergen alerts, macro insights, and menu scanner",
+    width: 279,
     height: 1600,
   },
   {
-    image: "/features/screen-insights.png",
-    alt: "FuelWell daily insight and action page with personalized tips, consistency score, and meal log",
-    title: "Insight & Action",
-    width: 481,
-    height: 1600,
-  },
-  {
-    image: "/features/screen-nutrition.png",
-    alt: "FuelWell AI nutrition insight with smart food decisions, macro breakdown, and harvest bowl recipe",
-    title: "AI Nutrition",
+    image: "/features/showcase-smart-food.png",
+    alt: "FuelWell enhanced AI nutrition insight with smart food decisions and harvest bowl macro breakdown",
     width: 688,
     height: 1559,
+  },
+  {
+    image: "/features/showcase-withings.png",
+    alt: "Withings Health Mate integration showing body composition tracking and muscle mass goals",
+    width: 706,
+    height: 1600,
   },
 ];
 
@@ -59,101 +59,91 @@ export function AppScreensCarousel() {
   const go = useCallback(
     (dir: number) => {
       setDirection(dir);
-      setCurrent((prev) => (prev + dir + SCREENS.length) % SCREENS.length);
+      setCurrent((prev) => (prev + dir + SLIDES.length) % SLIDES.length);
     },
     [],
   );
 
-  const screen = SCREENS[current];
+  const slide = SLIDES[current];
+  const isWide = slide.width >= slide.height;
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="relative flex flex-col items-center gap-6">
-        {/* Phone frame with animated slide */}
-        <div className="relative flex items-center gap-4 md:gap-8">
-          {/* Left arrow */}
-          <button
-            type="button"
-            onClick={() => go(-1)}
-            aria-label="Previous screen"
-            className="flex h-10 w-10 md:h-12 md:w-12 shrink-0 items-center justify-center rounded-full border-2 border-fw-border bg-white shadow-card hover:border-fw-accent/40 hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200"
-          >
-            <ChevronLeft className="h-5 w-5 text-foreground" />
-          </button>
+    <div className="max-w-5xl mx-auto">
+      <div className="relative flex items-center gap-3 md:gap-6">
+        {/* Left arrow */}
+        <button
+          type="button"
+          onClick={() => go(-1)}
+          aria-label="Previous image"
+          className="flex h-10 w-10 md:h-12 md:w-12 shrink-0 items-center justify-center rounded-full border-2 border-fw-border bg-white shadow-card hover:border-fw-accent/40 hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200 z-10"
+        >
+          <ChevronLeft className="h-5 w-5 text-foreground" />
+        </button>
 
-          {/* Phone */}
-          <div className="w-[280px] md:w-[320px]">
-            <AnimatePresence mode="wait" custom={direction}>
-              <motion.div
-                key={current}
-                custom={direction}
-                initial={{ x: direction >= 0 ? 80 : -80, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                exit={{ x: direction >= 0 ? -80 : 80, opacity: 0 }}
-                transition={{ duration: 0.35, ease: "easeOut" }}
-              >
-                <div className="rounded-[2.5rem] border-[6px] border-gray-800 bg-gray-800 shadow-phone overflow-hidden">
-                  <div className="rounded-[2rem] overflow-hidden bg-white">
-                    <Image
-                      src={screen.image}
-                      alt={screen.alt}
-                      width={screen.width}
-                      height={screen.height}
-                      className="w-full h-[560px] md:h-[640px] object-cover object-top"
-                      priority={current === 0}
-                    />
-                  </div>
-                </div>
-              </motion.div>
-            </AnimatePresence>
-          </div>
-
-          {/* Right arrow */}
-          <button
-            type="button"
-            onClick={() => go(1)}
-            aria-label="Next screen"
-            className="flex h-10 w-10 md:h-12 md:w-12 shrink-0 items-center justify-center rounded-full border-2 border-fw-border bg-white shadow-card hover:border-fw-accent/40 hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200"
-          >
-            <ChevronRight className="h-5 w-5 text-foreground" />
-          </button>
-        </div>
-
-        {/* Title + dot indicators */}
-        <div className="flex flex-col items-center gap-3">
-          <AnimatePresence mode="wait">
-            <motion.p
+        {/* Image container */}
+        <div className="flex-1 flex justify-center overflow-hidden">
+          <AnimatePresence mode="wait" custom={direction}>
+            <motion.div
               key={current}
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-              transition={{ duration: 0.25 }}
-              className="text-lg md:text-xl font-semibold text-foreground"
+              custom={direction}
+              initial={{ x: direction >= 0 ? 100 : -100, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: direction >= 0 ? -100 : 100, opacity: 0 }}
+              transition={{ duration: 0.35, ease: "easeOut" }}
+              className="flex justify-center w-full"
             >
-              {screen.title}
-            </motion.p>
-          </AnimatePresence>
-
-          <div className="flex items-center gap-2">
-            {SCREENS.map((_, i) => (
-              <button
-                key={i}
-                type="button"
-                onClick={() => {
-                  setDirection(i > current ? 1 : -1);
-                  setCurrent(i);
-                }}
-                aria-label={`Go to screen ${i + 1}`}
+              <div
                 className={cn(
-                  "h-2 rounded-full transition-all duration-300",
-                  i === current
-                    ? "w-8 bg-fw-accent"
-                    : "w-2 bg-fw-border hover:bg-muted-foreground/40",
+                  "rounded-2xl overflow-hidden shadow-card-premium border border-fw-border/60",
+                  isWide ? "w-full" : "max-h-[600px] md:max-h-[700px]",
                 )}
-              />
-            ))}
-          </div>
+              >
+                <Image
+                  src={slide.image}
+                  alt={slide.alt}
+                  width={slide.width}
+                  height={slide.height}
+                  className={cn(
+                    "object-contain",
+                    isWide ? "w-full h-auto" : "h-[600px] md:h-[700px] w-auto mx-auto",
+                  )}
+                  priority={current === 0}
+                />
+              </div>
+            </motion.div>
+          </AnimatePresence>
         </div>
+
+        {/* Right arrow */}
+        <button
+          type="button"
+          onClick={() => go(1)}
+          aria-label="Next image"
+          className="flex h-10 w-10 md:h-12 md:w-12 shrink-0 items-center justify-center rounded-full border-2 border-fw-border bg-white shadow-card hover:border-fw-accent/40 hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200 z-10"
+        >
+          <ChevronRight className="h-5 w-5 text-foreground" />
+        </button>
+      </div>
+
+      {/* Dot indicators */}
+      <div className="flex items-center justify-center gap-2 mt-6">
+        {SLIDES.map((_, i) => (
+          <button
+            key={i}
+            type="button"
+            onClick={() => {
+              setDirection(i > current ? 1 : -1);
+              setCurrent(i);
+            }}
+            aria-label={`Go to image ${i + 1}`}
+            className={cn(
+              "h-2 rounded-full transition-all duration-300",
+              i === current
+                ? "w-8 bg-fw-accent"
+                : "w-2 bg-fw-border hover:bg-muted-foreground/40",
+            )}
+          />
+        ))}
       </div>
     </div>
   );
