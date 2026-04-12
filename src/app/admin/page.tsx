@@ -9,16 +9,16 @@ export const metadata = {
   robots: { index: false, follow: false },
 };
 
-type FounderSignupRow = {
+type Founders100Row = {
   id: string;
   created_at: string;
   email: string;
   name: string | null;
-  source: string;
+  tier: string;
+  billing_period: string;
 };
 
 async function loadData(): Promise<{
-  signups: SignupRow[];
   founders: SignupRow[];
   error: string | null;
 }> {
@@ -26,43 +26,29 @@ async function loadData(): Promise<{
     const supabase = getSupabaseAdmin();
 
     const { data, error } = await supabase
-      .from("founder_signups")
-      .select("id, created_at, email, name, source")
+      .from("founders_100")
+      .select("id, created_at, email, name, tier, billing_period")
       .order("created_at", { ascending: false });
 
     if (error) throw error;
 
-    const rows = data as FounderSignupRow[];
+    const founders: SignupRow[] = (data as Founders100Row[]).map((r) => ({
+      id: r.id,
+      created_at: r.created_at,
+      email: r.email,
+      name: r.name,
+      source: "founders-100",
+    }));
 
-    const founders: SignupRow[] = rows
-      .filter((r) => r.source === "founders-100")
-      .map((r) => ({
-        id: r.id,
-        created_at: r.created_at,
-        email: r.email,
-        name: r.name,
-        source: "founders-100",
-      }));
-
-    const signups: SignupRow[] = rows
-      .filter((r) => r.source !== "founders-100")
-      .map((r) => ({
-        id: r.id,
-        created_at: r.created_at,
-        email: r.email,
-        name: r.name,
-        source: r.source ?? "signup",
-      }));
-
-    return { signups, founders, error: null };
+    return { founders, error: null };
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error loading data";
-    return { signups: [], founders: [], error: message };
+    return { founders: [], error: message };
   }
 }
 
 export default async function AdminDashboardPage() {
-  const { signups, founders, error } = await loadData();
+  const { founders, error } = await loadData();
 
   return (
     <main className="min-h-screen bg-white px-6 py-12 md:px-12">
@@ -84,10 +70,9 @@ export default async function AdminDashboardPage() {
           </div>
         )}
 
-        <section className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <StatCard label="Founders 100" value={founders.length} accent="violet" />
-          <StatCard label="General Signups" value={signups.length} accent="emerald" />
-          <StatCard label="Total Leads" value={signups.length + founders.length} accent="orange" />
+          <StatCard label="Total Leads" value={founders.length} accent="orange" />
         </section>
 
         <SignupsTable
@@ -95,13 +80,6 @@ export default async function AdminDashboardPage() {
           description="People who signed up from the Founders 100 page."
           rows={founders}
           filename="founders-100.csv"
-        />
-
-        <SignupsTable
-          title="General Signups"
-          description="People who signed up from the main signup form."
-          rows={signups}
-          filename="signups.csv"
         />
       </div>
     </main>
