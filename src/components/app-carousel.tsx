@@ -74,7 +74,7 @@ export function AppCarousel() {
         </div>
 
         {/* Screen content */}
-        <div className="relative h-[580px] overflow-hidden">
+        <div className="relative h-[680px] overflow-hidden">
           <AnimatePresence mode="wait" custom={direction}>
             <motion.div
               key={current}
