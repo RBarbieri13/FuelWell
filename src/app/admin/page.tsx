@@ -9,16 +9,13 @@ export const metadata = {
   robots: { index: false, follow: false },
 };
 
-type Founders100Row = {
+type FounderSignupRow = {
   id: string;
   created_at: string;
   email: string;
   name: string | null;
-  tier: string | null;
-  billing_period: string | null;
+  source: string;
 };
-
-type SignupsRow = Founders100Row & { source_page: string | null };
 
 async function loadData(): Promise<{
   signups: SignupRow[];
@@ -28,39 +25,34 @@ async function loadData(): Promise<{
   try {
     const supabase = getSupabaseAdmin();
 
-    const [signupsResult, foundersResult] = await Promise.all([
-      supabase
-        .from("signups")
-        .select("id, created_at, email, name, tier, billing_period, source_page")
-        .order("created_at", { ascending: false }),
-      supabase
-        .from("founders_100")
-        .select("id, created_at, email, name, tier, billing_period")
-        .order("created_at", { ascending: false }),
-    ]);
+    const { data, error } = await supabase
+      .from("founder_signups")
+      .select("id, created_at, email, name, source")
+      .order("created_at", { ascending: false });
 
-    if (signupsResult.error) throw signupsResult.error;
-    if (foundersResult.error) throw foundersResult.error;
+    if (error) throw error;
 
-    const signups: SignupRow[] = (signupsResult.data as SignupsRow[]).map((r) => ({
-      id: r.id,
-      created_at: r.created_at,
-      email: r.email,
-      name: r.name,
-      tier: r.tier,
-      billing_period: r.billing_period,
-      source: r.source_page ?? "signup",
-    }));
+    const rows = data as FounderSignupRow[];
 
-    const founders: SignupRow[] = (foundersResult.data as Founders100Row[]).map((r) => ({
-      id: r.id,
-      created_at: r.created_at,
-      email: r.email,
-      name: r.name,
-      tier: r.tier,
-      billing_period: r.billing_period,
-      source: "founders-100",
-    }));
+    const founders: SignupRow[] = rows
+      .filter((r) => r.source === "founders-100")
+      .map((r) => ({
+        id: r.id,
+        created_at: r.created_at,
+        email: r.email,
+        name: r.name,
+        source: "founders-100",
+      }));
+
+    const signups: SignupRow[] = rows
+      .filter((r) => r.source !== "founders-100")
+      .map((r) => ({
+        id: r.id,
+        created_at: r.created_at,
+        email: r.email,
+        name: r.name,
+        source: r.source ?? "signup",
+      }));
 
     return { signups, founders, error: null };
   } catch (err) {

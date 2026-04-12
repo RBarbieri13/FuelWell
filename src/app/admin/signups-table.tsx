@@ -5,8 +5,6 @@ export type SignupRow = {
   created_at: string;
   email: string;
   name: string | null;
-  tier: string | null;
-  billing_period: string | null;
   source: string;
 };
 
@@ -22,7 +20,7 @@ export function SignupsTable({
   filename: string;
 }) {
   function downloadCsv() {
-    const headers = ["Date", "Name", "Email", "Tier", "Billing Period", "Source"];
+    const headers = ["Date", "Name", "Email", "Source"];
     const escape = (value: string) => `"${value.replace(/"/g, '""')}"`;
     const lines = [
       headers.map(escape).join(","),
@@ -31,12 +29,10 @@ export function SignupsTable({
           new Date(r.created_at).toISOString(),
           r.name ?? "",
           r.email,
-          r.tier ?? "",
-          r.billing_period ?? "",
           r.source,
         ]
           .map(escape)
-          .join(",")
+          .join(","),
       ),
     ];
 
@@ -78,15 +74,14 @@ export function SignupsTable({
               <th className="px-4 py-3 font-medium">Date</th>
               <th className="px-4 py-3 font-medium">Name</th>
               <th className="px-4 py-3 font-medium">Email</th>
-              <th className="px-4 py-3 font-medium">Tier</th>
-              <th className="px-4 py-3 font-medium">Billing</th>
+              <th className="px-4 py-3 font-medium">Source</th>
             </tr>
           </thead>
           <tbody>
             {rows.length === 0 ? (
               <tr>
                 <td
-                  colSpan={5}
+                  colSpan={4}
                   className="px-4 py-8 text-center text-neutral-500"
                 >
                   No signups yet.
@@ -100,8 +95,7 @@ export function SignupsTable({
                   </td>
                   <td className="px-4 py-3">{r.name ?? "—"}</td>
                   <td className="px-4 py-3 font-mono text-xs">{r.email}</td>
-                  <td className="px-4 py-3 capitalize">{r.tier ?? "—"}</td>
-                  <td className="px-4 py-3">{r.billing_period ?? "—"}</td>
+                  <td className="px-4 py-3 capitalize">{r.source}</td>
                 </tr>
               ))
             )}
