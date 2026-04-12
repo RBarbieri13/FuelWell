@@ -27,22 +27,16 @@ const SLIDES: Slide[] = [
     height: 1280,
   },
   {
-    image: "/features/showcase-fitness-goals.png",
-    alt: "FuelWell fitness goals with personalized training programs, injury prevention, and workout decision guide",
-    width: 267,
+    image: "/features/showcase-smart-food-v2.png",
+    alt: "FuelWell smarter food decisions with AI-powered meal analysis, macro tracking, and harvest bowl breakdown",
+    width: 256,
     height: 1600,
   },
   {
-    image: "/features/showcase-dine-confidence.png",
-    alt: "FuelWell dine out with confidence showing allergen alerts, macro insights, and menu scanner",
-    width: 279,
+    image: "/features/showcase-supplements.png",
+    alt: "FuelWell precision supplement dashboard with nutrient absorption timeline, daily stack, and optimization process",
+    width: 1423,
     height: 1600,
-  },
-  {
-    image: "/features/showcase-smart-food.png",
-    alt: "FuelWell enhanced AI nutrition insight with smart food decisions and harvest bowl macro breakdown",
-    width: 688,
-    height: 1559,
   },
   {
     image: "/features/showcase-withings.png",
