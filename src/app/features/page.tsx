@@ -25,6 +25,7 @@ import { Badge } from "@/components/ui/badge";
 import { StitchCarousel } from "@/components/stitch-carousel";
 import { MacroCalculator } from "@/components/macro-calculator";
 import { InteractiveCoach } from "@/components/interactive-coach";
+import { AppScreensCarousel } from "@/components/app-screens-carousel";
 
 const coreFeatures = [
   {
@@ -326,6 +327,21 @@ export default function FeaturesPage() {
         </AnimatedSection>
         <AnimatedSection delay={0.1} className="max-w-6xl mx-auto">
           <InteractiveCoach />
+        </AnimatedSection>
+      </Section>
+
+      {/* App screens showcase carousel */}
+      <Section className="py-16 md:py-24">
+        <AnimatedSection className="text-center max-w-2xl mx-auto mb-10">
+          <h2 className="text-3xl md:text-[2.5rem] font-bold text-foreground mb-4 leading-tight">
+            See it in action
+          </h2>
+          <p className="text-muted-foreground text-base md:text-lg max-w-xl mx-auto leading-relaxed">
+            Swipe through real app screens — from your daily dashboard to AI-powered nutrition insights.
+          </p>
+        </AnimatedSection>
+        <AnimatedSection delay={0.1}>
+          <AppScreensCarousel />
         </AnimatedSection>
       </Section>
 
