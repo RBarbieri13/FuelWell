@@ -1,7 +1,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
-import { Heart, Twitter, Instagram, Music2 } from "lucide-react";
+import { Heart, Twitter, Instagram, Music2, Linkedin, ExternalLink } from "lucide-react";
+
+const LINKEDIN_URL = "https://www.linkedin.com/company/fuelwell-health/";
 
 const productLinks = [
   { label: "Features", href: "/features" },
@@ -23,6 +25,7 @@ const socialLinks = [
   { label: "Twitter/X", href: "#", icon: Twitter },
   { label: "Instagram", href: "#", icon: Instagram },
   { label: "TikTok", href: "#", icon: Music2 },
+  { label: "LinkedIn", href: LINKEDIN_URL, icon: Linkedin },
 ];
 
 export function Footer() {
@@ -43,14 +46,16 @@ export function Footer() {
               {socialLinks.map((link) => {
                 const Icon = link.icon;
                 return (
-                  <Link
+                  <a
                     key={link.label}
                     href={link.href}
+                    target={link.href !== "#" ? "_blank" : undefined}
+                    rel={link.href !== "#" ? "noopener noreferrer" : undefined}
                     aria-label={link.label}
                     className="flex h-8 w-8 items-center justify-center rounded-lg bg-white border border-fw-border text-muted-foreground hover:text-fw-accent hover:border-fw-accent/40 transition-all duration-200"
                   >
                     <Icon className="h-3.5 w-3.5" />
-                  </Link>
+                  </a>
                 );
               })}
             </div>
@@ -103,6 +108,45 @@ export function Footer() {
               ))}
             </nav>
           </div>
+        </div>
+
+        {/* Connect with Us — LinkedIn preview */}
+        <Separator className="my-8 bg-fw-border/50" />
+
+        <div className="max-w-sm mx-auto md:mx-0">
+          <p className="text-sm font-semibold text-foreground uppercase tracking-wider mb-3">
+            Connect with Us
+          </p>
+          <a
+            href={LINKEDIN_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group block rounded-xl border border-fw-border bg-white p-4 shadow-card hover:shadow-card-hover hover:border-fw-accent/30 hover:-translate-y-0.5 transition-all duration-300"
+          >
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#0A66C2]">
+                <Linkedin className="h-5 w-5 text-white" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <p className="text-sm font-semibold text-foreground truncate">
+                    FuelWell Health
+                  </p>
+                  <ExternalLink className="h-3 w-3 text-muted-foreground/50 shrink-0 group-hover:text-fw-accent transition-colors duration-200" />
+                </div>
+                <p className="text-xs text-muted-foreground truncate">
+                  AI-powered nutrition & fitness coaching
+                </p>
+              </div>
+            </div>
+            <div className="mt-3 flex items-center gap-4 text-[11px] text-muted-foreground/70">
+              <span>Health, Wellness & Fitness</span>
+              <span className="flex items-center gap-1">
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                Follow us on LinkedIn
+              </span>
+            </div>
+          </a>
         </div>
 
         <Separator className="my-8 bg-fw-border/50" />

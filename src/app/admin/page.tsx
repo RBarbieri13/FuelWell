@@ -1,4 +1,4 @@
-import { getSupabaseAdmin } from "@/lib/supabase-admin";
+import { getSupabase } from "@/lib/supabase";
 import { SignupsTable, type SignupRow } from "./signups-table";
 
 export const dynamic = "force-dynamic";
@@ -18,21 +18,34 @@ type Founders100Row = {
   billing_period: string;
 };
 
+async function queryFounders(
+  client: ReturnType<typeof getSupabase>,
+): Promise<Founders100Row[]> {
+  const { data, error } = await client
+    .from("founders_100")
+    .select("id, created_at, email, name, tier, billing_period")
+    .order("created_at", { ascending: false });
+
+  if (error) throw error;
+  return data as Founders100Row[];
+}
+
 async function loadData(): Promise<{
   founders: SignupRow[];
   error: string | null;
 }> {
   try {
-    const supabase = getSupabaseAdmin();
+    let rows: Founders100Row[];
 
-    const { data, error } = await supabase
-      .from("founders_100")
-      .select("id, created_at, email, name, tier, billing_period")
-      .order("created_at", { ascending: false });
+    // Try service role key first, fall back to anon key
+    try {
+      const { getSupabaseAdmin } = await import("@/lib/supabase-admin");
+      rows = await queryFounders(getSupabaseAdmin());
+    } catch {
+      rows = await queryFounders(getSupabase());
+    }
 
-    if (error) throw error;
-
-    const founders: SignupRow[] = (data as Founders100Row[]).map((r) => ({
+    const founders: SignupRow[] = rows.map((r) => ({
       id: r.id,
       created_at: r.created_at,
       email: r.email,
@@ -42,7 +55,8 @@ async function loadData(): Promise<{
 
     return { founders, error: null };
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Unknown error loading data";
+    const message =
+      err instanceof Error ? err.message : "Unknown error loading data";
     return { founders: [], error: message };
   }
 }
