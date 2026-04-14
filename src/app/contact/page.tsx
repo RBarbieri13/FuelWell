@@ -9,6 +9,11 @@ export const metadata: Metadata = {
   description: "Get in touch with the FuelWell team.",
 };
 
+const founders = [
+  { name: "Robby", role: "Co-Founder & CTO", email: "Robby@fuelwellhealth.com" },
+  { name: "Max", role: "Founder & President", email: "Max@fuelwellhealth.com" },
+];
+
 export default function ContactPage() {
   return (
     <>
@@ -30,32 +35,38 @@ export default function ContactPage() {
       <Section className="pb-24">
         <div className="max-w-2xl mx-auto">
           <div className="grid sm:grid-cols-2 gap-6 mb-12">
-            <AnimatedSection delay={0.1}>
-              <div className="rounded-2xl border border-fw-border bg-white p-6 text-center space-y-3 hover:border-fw-accent/30 transition-colors duration-300 shadow-card">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 mx-auto">
-                  <Mail className="h-6 w-6 text-fw-accent" />
-                </div>
-                <h3 className="text-lg font-semibold text-foreground">Email Us</h3>
-                <p className="text-sm text-muted-foreground">
-                  hello@fuelwell.app
-                </p>
-              </div>
-            </AnimatedSection>
-
-            <AnimatedSection delay={0.2}>
-              <div className="rounded-2xl border border-fw-border bg-white p-6 text-center space-y-3 hover:border-violet-200 transition-colors duration-300 shadow-card">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-violet-50 mx-auto">
-                  <MessageSquare className="h-6 w-6 text-violet-600" />
-                </div>
-                <h3 className="text-lg font-semibold text-foreground">Founders 100</h3>
-                <p className="text-sm text-muted-foreground">
-                  Direct feedback channel for members
-                </p>
-              </div>
-            </AnimatedSection>
+            {founders.map((founder, i) => (
+              <AnimatedSection key={founder.email} delay={0.1 + i * 0.1}>
+                <a
+                  href={`mailto:${founder.email}`}
+                  className="block rounded-2xl border border-fw-border bg-white p-6 text-center space-y-3 hover:border-fw-accent/30 transition-colors duration-300 shadow-card"
+                >
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 mx-auto">
+                    <Mail className="h-6 w-6 text-fw-accent" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-foreground">{founder.name}</h3>
+                  <p className="text-xs text-muted-foreground/70">{founder.role}</p>
+                  <p className="text-sm text-fw-accent font-medium">
+                    {founder.email}
+                  </p>
+                </a>
+              </AnimatedSection>
+            ))}
           </div>
 
           <AnimatedSection delay={0.3}>
+            <div className="rounded-2xl border border-fw-border bg-white p-6 text-center space-y-3 hover:border-violet-200 transition-colors duration-300 shadow-card mb-12">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-violet-50 mx-auto">
+                <MessageSquare className="h-6 w-6 text-violet-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-foreground">Founders 100</h3>
+              <p className="text-sm text-muted-foreground">
+                Direct feedback channel for members
+              </p>
+            </div>
+          </AnimatedSection>
+
+          <AnimatedSection delay={0.4}>
             <div className="text-center space-y-6">
               <p className="text-muted-foreground leading-relaxed">
                 We&apos;re a small team building something we believe in. We read
