@@ -209,9 +209,16 @@ export default function Home() {
               <div className="relative flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 shadow-sm">
                 <Sparkles className="h-3.5 w-3.5 text-white" />
               </div>
-              <span className="relative">Now accepting <span className="gradient-text font-bold">Founders 100</span> members</span>
+              <span className="relative">
+                Get <span className="gradient-text font-bold">50% off for life</span> — only 100 founding spots
+              </span>
               <ArrowRight className="relative h-4 w-4 text-fw-accent group-hover:translate-x-0.5 transition-transform duration-200" />
             </Link>
+
+            <div className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-orange-500 to-pink-500 px-5 py-2 text-sm font-bold text-white shadow-lg shadow-orange-500/30 animate-pulse-glow">
+              <span className="h-2 w-2 rounded-full bg-white animate-pulse" />
+              Launching June 30, 2026 — lock in your spot now
+            </div>
 
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-[-0.035em] text-foreground leading-[1.05]">
               Build a healthier lifestyle{" "}

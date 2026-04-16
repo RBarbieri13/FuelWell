@@ -69,33 +69,28 @@ const benefits = [
 ];
 
 const proFeatures = [
-  { label: "AI nutrition coaching (reactive responses)", icon: "🧠" },
+  { label: "Context-aware AI coach — remembers your history", icon: "🧠" },
+  { label: "Real-time adaptive suggestions as your day unfolds", icon: "⚡" },
+  { label: "Proactive coaching — your AI reaches out first", icon: "💬" },
+  { label: "Photo-based meal analysis — snap and log instantly", icon: "📸" },
+  { label: "Dynamic calorie adjustments based on behavior", icon: "🔄" },
+  { label: "Menu scanning + AI-optimized restaurant orders", icon: "🍽️" },
+  { label: "AI-projected body recomposition timeline", icon: "📐" },
+  { label: "Personalized learning engine — adapts to your patterns", icon: "🎯" },
+  { label: "Fully personalized recipes matched to your macros", icon: "🍳" },
   { label: "Macro tracking with smart calculations", icon: "📊" },
-  { label: "Text-based meal logging", icon: "📝" },
-  { label: "Restaurant suggestions (manual input)", icon: "🍽️" },
-  { label: "Recipe suggestions (semi-personalized)", icon: "👨‍🍳" },
   { label: "Grocery list generator", icon: "🛒" },
-  { label: "Basic calorie + macro estimates", icon: "🔢" },
   { label: "Weekly summaries + weight tracking", icon: "📈" },
   { label: "General lifestyle guidance", icon: "🌱" },
 ];
 
 const premiumExtras = [
-  { label: "Context-aware AI coach — remembers your history", icon: "🧠", highlight: true },
-  { label: "Real-time adaptive suggestions as your day unfolds", icon: "⚡", highlight: true },
-  { label: "Proactive coaching — your AI reaches out first", icon: "💬", highlight: true },
-  { label: "Photo-based meal analysis — snap and log instantly", icon: "📸", highlight: true },
-  { label: "Adaptive workout builder — daily custom workouts", icon: "💪", highlight: false },
-  { label: "Dynamic calorie adjustments based on behavior", icon: "🔄", highlight: false },
-  { label: "Menu scanning + AI-optimized restaurant orders", icon: "🍽️", highlight: false },
-  { label: "Injury & recovery coaching with substitutions", icon: "🩹", highlight: false },
-  { label: "Side-by-side photo progress with AI analysis", icon: "📷", highlight: false },
-  { label: "AI-projected body recomposition timeline", icon: "📐", highlight: false },
+  { label: "Adaptive workout builder — daily custom workouts", icon: "💪", highlight: true },
+  { label: "Injury & recovery coaching with substitutions", icon: "🩹", highlight: true },
+  { label: "Side-by-side photo progress with AI analysis", icon: "📷", highlight: true },
   { label: "Advanced progress reports — trends + projections", icon: "📉", highlight: false },
   { label: "Budget-optimized grocery planning", icon: "💰", highlight: false },
   { label: "Wearable integrations — Apple Health, Whoop, Oura", icon: "⌚", highlight: false },
-  { label: "Personalized learning engine — adapts to your patterns", icon: "🎯", highlight: false },
-  { label: "Fully personalized recipes matched to your macros", icon: "🍳", highlight: false },
 ];
 
 const trustBadges = [
