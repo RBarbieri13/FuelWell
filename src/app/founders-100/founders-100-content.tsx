@@ -232,18 +232,18 @@ export function Founders100Content({ spotsClaimed }: Founders100ContentProps) {
 
               <div className="mb-6 p-4 rounded-2xl bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-100">
                 <div className="flex items-baseline gap-2 flex-wrap">
-                  <span className="text-4xl font-bold">$9.99</span>
+                  <span className="text-4xl font-bold">$6.49</span>
                   <span className="text-muted-foreground">/mo for life</span>
                   <span className="text-sm line-through text-muted-foreground/60 ml-auto">
                     Regular $12.99/mo
                   </span>
                 </div>
                 <p className="text-sm text-muted-foreground mt-1">
-                  or <span className="text-foreground font-semibold">$54/6mo</span>{" "}
+                  or <span className="text-foreground font-semibold">$34.50/6mo</span>{" "}
                   <span className="line-through text-muted-foreground/60">$69</span>{" · "}
-                  <span className="text-foreground font-semibold">$96/year</span>{" "}
+                  <span className="text-foreground font-semibold">$59.50/year</span>{" "}
                   <span className="line-through text-muted-foreground/60">$119</span> —{" "}
-                  <span className="text-fw-accent font-semibold">save 20%</span>
+                  <span className="text-fw-accent font-semibold">save 50%</span>
                 </p>
               </div>
 
@@ -287,7 +287,7 @@ export function Founders100Content({ spotsClaimed }: Founders100ContentProps) {
 
               <div className="mb-6 p-4 rounded-2xl bg-gradient-to-r from-violet-100/80 to-purple-50 border border-violet-200 relative">
                 <div className="flex items-baseline gap-2 flex-wrap">
-                  <span className="text-4xl font-bold">$15.99</span>
+                  <span className="text-4xl font-bold">$9.49</span>
                   <span className="text-muted-foreground">/mo for life</span>
                   <span className="text-sm line-through text-muted-foreground/60 ml-auto">
                     Regular $18.99/mo
@@ -295,11 +295,11 @@ export function Founders100Content({ spotsClaimed }: Founders100ContentProps) {
                 </div>
                 <p className="text-sm text-muted-foreground mt-1">
                   or{" "}
-                  <span className="text-foreground font-semibold">$84/6mo</span>{" "}
+                  <span className="text-foreground font-semibold">$49.50/6mo</span>{" "}
                   <span className="line-through text-muted-foreground/60">$99</span>{" · "}
-                  <span className="text-foreground font-semibold">$144/year</span>{" "}
+                  <span className="text-foreground font-semibold">$89.50/year</span>{" "}
                   <span className="line-through text-muted-foreground/60">$179</span> —{" "}
-                  <span className="text-violet-600 font-semibold">save 25%</span>
+                  <span className="text-violet-600 font-semibold">save 50%</span>
                 </p>
               </div>
 
