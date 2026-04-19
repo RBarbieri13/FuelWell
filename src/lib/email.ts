@@ -13,6 +13,20 @@ function getReplyTo(): string | undefined {
   return process.env.FOUNDERS_EMAIL_REPLY_TO ?? undefined;
 }
 
+const DEFAULT_FOUNDERS_CC = [
+  "Max@FuelWellHealth.com",
+  "Robby@FuelWellHealth.com",
+];
+
+function getCcAddresses(): string[] {
+  const raw = process.env.FOUNDERS_EMAIL_CC;
+  if (!raw) return DEFAULT_FOUNDERS_CC;
+  return raw
+    .split(",")
+    .map((address) => address.trim())
+    .filter(Boolean);
+}
+
 export function buildFoundersWelcomeEmail({ firstName }: { firstName: string }): {
   subject: string;
   html: string;
@@ -150,9 +164,14 @@ export async function sendFoundersWelcomeEmail({
   const resend = new Resend(apiKey);
   const { subject, html, text } = buildFoundersWelcomeEmail({ firstName });
 
+  const cc = getCcAddresses().filter(
+    (address) => address.toLowerCase() !== email.toLowerCase(),
+  );
+
   const { error } = await resend.emails.send({
     from: getFromAddress(),
     to: email,
+    cc: cc.length > 0 ? cc : undefined,
     replyTo: getReplyTo(),
     subject,
     html,
