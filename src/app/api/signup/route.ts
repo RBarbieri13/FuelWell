@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { sendFoundersWelcomeEmail } from "@/lib/email";
 
 function getSupabaseServer() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -20,7 +21,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { name, email } = body as Record<string, string | undefined | null>;
+  const { name, firstName, email, source } = body as Record<
+    string,
+    string | undefined | null
+  >;
 
   const trimmedEmail = email?.trim();
   if (!trimmedEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
@@ -28,6 +32,8 @@ export async function POST(request: NextRequest) {
   }
 
   const trimmedName = name?.trim() || null;
+  const trimmedFirstName =
+    firstName?.trim() || trimmedName?.split(" ")[0] || "there";
   const supabase = getSupabaseServer();
 
   const { error } = await supabase.from("founders_100").insert({
@@ -49,6 +55,17 @@ export async function POST(request: NextRequest) {
       { error: "Something went wrong. Please try again." },
       { status: 500 },
     );
+  }
+
+  if (source === "founders-100") {
+    try {
+      await sendFoundersWelcomeEmail({
+        firstName: trimmedFirstName,
+        email: trimmedEmail,
+      });
+    } catch (emailError) {
+      console.error("Failed to send Founders 100 welcome email:", emailError);
+    }
   }
 
   return NextResponse.json({ success: true });
