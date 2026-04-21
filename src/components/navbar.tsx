@@ -34,8 +34,8 @@ export function Navbar() {
       className={cn(
         "sticky top-0 z-50 w-full transition-all duration-300",
         scrolled
-          ? "glass shadow-[0_1px_3px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.04)]"
-          : "bg-white/80 backdrop-blur-sm"
+          ? "glass shadow-[0_4px_12px_rgba(0,0,0,0.12),0_2px_4px_rgba(0,0,0,0.06)]"
+          : "bg-white/80 backdrop-blur-sm shadow-[0_2px_6px_rgba(0,0,0,0.08)]"
       )}
     >
       {/* Bottom separator */}
@@ -63,7 +63,7 @@ export function Navbar() {
               key={link.href}
               href={link.href}
               className={cn(
-                "relative text-[15px] font-medium transition-colors hover:text-fw-accent",
+                "relative text-lg font-semibold transition-colors hover:text-fw-accent",
                 pathname === link.href
                   ? "text-fw-accent"
                   : "text-foreground"
