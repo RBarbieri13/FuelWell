@@ -100,6 +100,16 @@ export function buildFoundersWelcomeEmail(): {
                   <a href="mailto:max@fuelwellhealth.com" style="color:#1a73e8;text-decoration:underline;">max@fuelwellhealth.com</a>
                   | 320-459-7934
                 </p>
+                <p style="margin:0;">
+                  <a href="https://fuelwellhealth.com/" style="text-decoration:none;">
+                    <img
+                      src="https://fuelwellhealth.com/fuelwell-logo-full.png"
+                      alt="FuelWell Health"
+                      width="110"
+                      style="display:block;width:110px;max-width:110px;height:auto;border:0;outline:none;"
+                    />
+                  </a>
+                </p>
               </td>
             </tr>
           </table>
