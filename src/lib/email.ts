@@ -1,16 +1,18 @@
 import { Resend } from "resend";
 
 type WelcomeEmailArgs = {
-  firstName: string;
   email: string;
 };
 
 function getFromAddress(): string {
-  return process.env.FOUNDERS_EMAIL_FROM ?? "FuelWell <hello@fuelwellhealth.com>";
+  return (
+    process.env.FOUNDERS_EMAIL_FROM ??
+    "Max Laureano <max@fuelwellhealth.com>"
+  );
 }
 
 function getReplyTo(): string | undefined {
-  return process.env.FOUNDERS_EMAIL_REPLY_TO ?? undefined;
+  return process.env.FOUNDERS_EMAIL_REPLY_TO ?? "max@fuelwellhealth.com";
 }
 
 const DEFAULT_FOUNDERS_CC = [
@@ -27,13 +29,12 @@ function getCcAddresses(): string[] {
     .filter(Boolean);
 }
 
-export function buildFoundersWelcomeEmail({ firstName }: { firstName: string }): {
+export function buildFoundersWelcomeEmail(): {
   subject: string;
   html: string;
   text: string;
 } {
-  const subject = "Welcome to the FuelWell Founders 100!";
-  const safeName = escapeHtml(firstName);
+  const subject = "Welcome to the FuelWell Founders 100";
 
   const html = `<!DOCTYPE html>
 <html lang="en">
@@ -42,67 +43,62 @@ export function buildFoundersWelcomeEmail({ firstName }: { firstName: string }):
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>${subject}</title>
   </head>
-  <body style="margin:0;padding:0;background-color:#f5f7f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#1f2933;line-height:1.6;">
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color:#f5f7f9;padding:32px 16px;">
+  <body style="margin:0;padding:0;background-color:#ffffff;font-family:Arial,Helvetica,sans-serif;color:#202124;line-height:1.5;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color:#ffffff;padding:24px 16px;">
       <tr>
-        <td align="center">
-          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width:600px;background-color:#ffffff;border-radius:16px;box-shadow:0 2px 8px rgba(15,23,42,0.06);overflow:hidden;">
+        <td align="left">
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width:640px;">
             <tr>
-              <td style="padding:32px 40px 8px 40px;">
-                <p style="margin:0 0 16px 0;font-size:16px;">Hi ${safeName},</p>
-                <p style="margin:0 0 16px 0;font-size:16px;">
-                  I&rsquo;m so excited you&rsquo;ve agreed to join our pilot group! Thank you for your support as we
-                  get ready to launch. Your feedback is going to be incredibly valuable in shaping the future of
-                  FuelWell. If you haven&rsquo;t seen it yet, check out our website:
-                  <a href="https://fuelwellhealth.com/" style="color:#0f766e;text-decoration:underline;">https://fuelwellhealth.com/</a>
+              <td style="padding:0 8px;font-size:14px;color:#202124;">
+                <p style="margin:0 0 14px 0;">Hello,</p>
+
+                <p style="margin:0 0 14px 0;">
+                  Thank you for joining FuelWell! We really appreciate you signing up for the FuelWell Founders
+                  100. It means a lot to have you involved this early.
                 </p>
 
-                <h2 style="margin:24px 0 8px 0;font-size:20px;color:#0f172a;">The Pilot Launch</h2>
-                <p style="margin:0 0 16px 0;font-size:16px;">
-                  We are on track for a launch in early May 2026. You can expect one more email from me in the
-                  upcoming weeks with detailed instructions on how to download the app and set up your profile.
+                <p style="margin:0 0 14px 0;">
+                  We&rsquo;re currently kicking off a small pilot group in early May to test, break, and improve
+                  everything before opening things up more broadly. That group is helping us make sure what
+                  we&rsquo;re building actually works the way it&rsquo;s supposed to.
                 </p>
 
-                <h2 style="margin:24px 0 8px 0;font-size:20px;color:#0f172a;">What to Expect from FuelWell</h2>
-                <p style="margin:0 0 12px 0;font-size:16px;">
-                  FuelWell is designed to be a real-time decision coach rather than a traditional tracking app.
-                  Key features you&rsquo;ll be testing include:
+                <p style="margin:0 0 14px 0;">
+                  The plan is to open up the Founders 100 shortly after, with a target launch of
+                  <strong>June 30th.</strong>
                 </p>
-                <ul style="margin:0 0 16px 20px;padding:0;font-size:16px;">
-                  <li style="margin-bottom:8px;"><strong>24/7 AI Health Coach:</strong> Provides reactive and contextual guidance to help you decide what to eat or how to adjust your day in real time.</li>
-                  <li style="margin-bottom:8px;"><strong>Dynamic Nutrition:</strong> Macro targets that can adapt based on your progress and daily behavior.</li>
-                  <li style="margin-bottom:8px;"><strong>Intelligent Logging:</strong> Fast meal logging via photo recognition, search, or barcode scanning to reduce daily friction.</li>
-                  <li style="margin-bottom:8px;"><strong>Real-World Guidance:</strong> Practical advice for eating at restaurants, including menu analysis and healthy choice indicators.</li>
-                  <li style="margin-bottom:8px;"><strong>Adaptive Workouts:</strong> Personalized training sessions that adjust based on your soreness, energy levels, and available time.</li>
+
+                <p style="margin:0 0 8px 0;">When that opens up, you&rsquo;ll be one of the first to:</p>
+                <ul style="margin:0 0 14px 24px;padding:0;">
+                  <li style="margin-bottom:4px;">get full access to the app</li>
+                  <li style="margin-bottom:4px;">lock in discounted pricing (50 percent off) for life</li>
+                  <li style="margin-bottom:4px;">have a direct hand in shaping how we build and improve it</li>
                 </ul>
 
-                <h2 style="margin:24px 0 8px 0;font-size:20px;color:#0f172a;">What We&rsquo;re Looking For</h2>
-                <p style="margin:0 0 12px 0;font-size:16px;">
-                  As part of this pilot, we are looking for your honest feedback on:
-                </p>
-                <ul style="margin:0 0 16px 20px;padding:0;font-size:16px;">
-                  <li style="margin-bottom:8px;"><strong>Usability:</strong> Is the app intuitive and fast enough to use during a busy day?</li>
-                  <li style="margin-bottom:8px;"><strong>Coaching Quality:</strong> Do the AI&rsquo;s suggestions feel personal, relevant, and supportive of your health goals?</li>
-                  <li style="margin-bottom:8px;"><strong>Consistency:</strong> Does the app help you stay on track during difficult times, like weekends or social events?</li>
-                </ul>
-                <p style="margin:0 0 16px 0;font-size:16px;">
-                  We&rsquo;ll be collecting feedback through a few short surveys sent through the duration of the
-                  Pilot, most likely one per week, with a total of 3.
+                <p style="margin:0 0 14px 0;">
+                  More than anything, this group is important to us because we&rsquo;re not trying to build just
+                  another tracking app. The whole goal with FuelWell is to help people make better decisions
+                  throughout the day &mdash; the moments where consistency usually breaks down.
                 </p>
 
-                <p style="margin:0 0 16px 0;font-size:16px;">
-                  I&rsquo;m incredibly excited to get this into your hands, and start building FuelWell alongside
-                  you. If you wouldn&rsquo;t mind, please confirm receipt by replying that you got the email!
+                <p style="margin:0 0 14px 0;">
+                  Between now and launch, we&rsquo;ll keep you in the loop with updates, previews, and ways to
+                  get involved if you want to.
                 </p>
 
-                <p style="margin:24px 0 4px 0;font-size:16px;">Best,</p>
-              </td>
-            </tr>
-            <tr>
-              <td style="padding:0 40px 32px 40px;">
-                <p style="margin:0;font-size:12px;color:#64748b;">
-                  You&rsquo;re receiving this email because you signed up for the FuelWell Founders 100 pilot at
-                  <a href="https://fuelwellhealth.com/" style="color:#64748b;text-decoration:underline;">fuelwellhealth.com</a>.
+                <p style="margin:0 0 14px 0;">
+                  If you have any questions, ideas, or just want to talk through what we&rsquo;re building, feel
+                  free to reply directly to this &mdash; We&rsquo;d love to hear from you.
+                </p>
+
+                <p style="margin:0 0 28px 0;">Really appreciate the support.</p>
+
+                <p style="margin:0 0 2px 0;color:#9aa0a6;font-size:13px;"><strong>Max Laureano</strong></p>
+                <p style="margin:0 0 2px 0;color:#9aa0a6;font-size:13px;">CEO and Founder</p>
+                <p style="margin:0 0 2px 0;color:#9aa0a6;font-size:13px;">FuelWell Health</p>
+                <p style="margin:0 0 14px 0;color:#9aa0a6;font-size:13px;">
+                  <a href="mailto:max@fuelwellhealth.com" style="color:#1a73e8;text-decoration:underline;">max@fuelwellhealth.com</a>
+                  | 320-459-7934
                 </p>
               </td>
             </tr>
@@ -113,43 +109,38 @@ export function buildFoundersWelcomeEmail({ firstName }: { firstName: string }):
   </body>
 </html>`;
 
-  const text = `Hi ${firstName},
+  const text = `Hello,
 
-I'm so excited you've agreed to join our pilot group! Thank you for your support as we get ready to launch. Your feedback is going to be incredibly valuable in shaping the future of FuelWell. If you haven't seen it yet, check out our website:
-https://fuelwellhealth.com/
+Thank you for joining FuelWell! We really appreciate you signing up for the FuelWell Founders 100. It means a lot to have you involved this early.
 
-The Pilot Launch
+We're currently kicking off a small pilot group in early May to test, break, and improve everything before opening things up more broadly. That group is helping us make sure what we're building actually works the way it's supposed to.
 
-We are on track for a launch in early May 2026. You can expect one more email from me in the upcoming weeks with detailed instructions on how to download the app and set up your profile.
+The plan is to open up the Founders 100 shortly after, with a target launch of June 30th.
 
-What to Expect from FuelWell
+When that opens up, you'll be one of the first to:
+- get full access to the app
+- lock in discounted pricing (50 percent off) for life
+- have a direct hand in shaping how we build and improve it
 
-FuelWell is designed to be a real-time decision coach rather than a traditional tracking app. Key features you'll be testing include:
-- 24/7 AI Health Coach: Provides reactive and contextual guidance to help you decide what to eat or how to adjust your day in real time.
-- Dynamic Nutrition: Macro targets that can adapt based on your progress and daily behavior.
-- Intelligent Logging: Fast meal logging via photo recognition, search, or barcode scanning to reduce daily friction.
-- Real-World Guidance: Practical advice for eating at restaurants, including menu analysis and healthy choice indicators.
-- Adaptive Workouts: Personalized training sessions that adjust based on your soreness, energy levels, and available time.
+More than anything, this group is important to us because we're not trying to build just another tracking app. The whole goal with FuelWell is to help people make better decisions throughout the day — the moments where consistency usually breaks down.
 
-What We're Looking For
+Between now and launch, we'll keep you in the loop with updates, previews, and ways to get involved if you want to.
 
-As part of this pilot, we are looking for your honest feedback on:
-- Usability: Is the app intuitive and fast enough to use during a busy day?
-- Coaching Quality: Do the AI's suggestions feel personal, relevant, and supportive of your health goals?
-- Consistency: Does the app help you stay on track during difficult times, like weekends or social events?
+If you have any questions, ideas, or just want to talk through what we're building, feel free to reply directly to this — We'd love to hear from you.
 
-We'll be collecting feedback through a few short surveys sent through the duration of the Pilot, most likely one per week, with a total of 3.
+Really appreciate the support.
 
-I'm incredibly excited to get this into your hands, and start building FuelWell alongside you. If you wouldn't mind, please confirm receipt by replying that you got the email!
 
-Best,
+Max Laureano
+CEO and Founder
+FuelWell Health
+max@fuelwellhealth.com | 320-459-7934
 `;
 
   return { subject, html, text };
 }
 
 export async function sendFoundersWelcomeEmail({
-  firstName,
   email,
 }: WelcomeEmailArgs): Promise<void> {
   const apiKey = process.env.RESEND_API_KEY;
@@ -162,7 +153,7 @@ export async function sendFoundersWelcomeEmail({
   }
 
   const resend = new Resend(apiKey);
-  const { subject, html, text } = buildFoundersWelcomeEmail({ firstName });
+  const { subject, html, text } = buildFoundersWelcomeEmail();
 
   const cc = getCcAddresses().filter(
     (address) => address.toLowerCase() !== email.toLowerCase(),
@@ -183,13 +174,4 @@ export async function sendFoundersWelcomeEmail({
       `Resend failed to send welcome email: ${error.name ?? "unknown"} — ${error.message ?? ""}`,
     );
   }
-}
-
-function escapeHtml(value: string): string {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
 }

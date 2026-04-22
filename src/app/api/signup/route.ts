@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { name, firstName, email, source } = body as Record<
+  const { name, email, source } = body as Record<
     string,
     string | undefined | null
   >;
@@ -32,8 +32,6 @@ export async function POST(request: NextRequest) {
   }
 
   const trimmedName = name?.trim() || null;
-  const trimmedFirstName =
-    firstName?.trim() || trimmedName?.split(" ")[0] || "there";
   const supabase = getSupabaseServer();
 
   const { error } = await supabase.from("founders_100").insert({
@@ -59,10 +57,7 @@ export async function POST(request: NextRequest) {
 
   if (source === "founders-100") {
     try {
-      await sendFoundersWelcomeEmail({
-        firstName: trimmedFirstName,
-        email: trimmedEmail,
-      });
+      await sendFoundersWelcomeEmail({ email: trimmedEmail });
     } catch (emailError) {
       console.error("Failed to send Founders 100 welcome email:", emailError);
     }
