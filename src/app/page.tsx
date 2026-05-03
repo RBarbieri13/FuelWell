@@ -201,10 +201,8 @@ export default function Home() {
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 md:pt-36 pb-20 md:pb-28">
           <AnimatedSection className="max-w-3xl mx-auto text-center space-y-8">
-            <Link
-              href="/founders-100"
-              className="group relative inline-flex items-center gap-2.5 rounded-full border border-fw-accent/30 bg-white/90 px-6 py-2.5 text-sm font-semibold text-foreground backdrop-blur-sm shadow-sm font-accent hover:shadow-md hover:border-fw-accent/50 hover:scale-[1.02] transition-all duration-300 overflow-hidden"
-            >
+            <div
+className="flex items-center justify-center gap-2.5 text-sm font-semibold text-foreground"            >
               <span className="absolute inset-0 rounded-full bg-gradient-to-r from-emerald-400/10 via-transparent to-violet-400/10" />
               <div className="relative flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 shadow-sm">
                 <Sparkles className="h-3.5 w-3.5 text-white" />
@@ -212,10 +210,9 @@ export default function Home() {
               <span className="relative">
                 Get <span className="gradient-text font-bold">50% off for life</span> — only 100 founding spots
               </span>
-              <ArrowRight className="relative h-4 w-4 text-fw-accent group-hover:translate-x-0.5 transition-transform duration-200" />
-            </Link>
+            </div>
 
-            <div className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-orange-500 to-pink-500 px-5 py-2 text-sm font-bold text-white shadow-lg shadow-orange-500/30 animate-pulse-glow">
+            <div className="block inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-orange-500 to-pink-500 px-5 py-2 text-sm font-bold text-white shadow-lg shadow-orange-500/30 animate-pulse-glow">
               <span className="h-2 w-2 rounded-full bg-white animate-pulse" />
               Launching June 30, 2026 — lock in your spot now
             </div>
