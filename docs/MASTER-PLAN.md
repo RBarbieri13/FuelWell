@@ -1,8 +1,13 @@
 # FuelWell — Master Plan
 
 **Date drafted:** 2026-05-03
+**Last status review:** 2026-05-03 — currently mid–Phase 0
 **Status:** Living document. Updated as Gap Analysis decisions are made and chapters are referenced in implementation.
 **Owners:** Robert (build) + Max (product/business)
+
+## Where we are right now
+
+**Phase 0 — Pre-build alignment** is in progress. None of Phase 0's gates are green yet, so Phase 1 has not started. A premature pass at `DESIGN.md` (a Phase 1 deliverable) was drafted and has been moved to `docs/ios-guide/drafts/DESIGN.md.draft` to be re-derived properly when Phase 1 begins. See the Phase 0 checklist below for what needs to happen next.
 
 This is the binding plan for building the FuelWell iOS app to Pilot, Founding 100, and Public launch. It supersedes `docs/FuelWell-Phase-Plan.md` (which remains as the simpler partner-facing summary).
 
