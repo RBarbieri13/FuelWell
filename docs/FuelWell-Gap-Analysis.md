@@ -1,20 +1,33 @@
-# FuelWell — Gap Analysis Open Items
+# FuelWell — Gap Analysis Resolutions
 
-Internal worksheet. Fill out together with Max. Each row needs a decision before iOS build begins.
+Phase 0 worksheet. All 12 items resolved 2026-05-13. Locked for Pilot build.
 
-| # | Open item | Decision needed | Robert | Max | Resolution |
-|---|---|---|---|---|---|
-| 1 | Education layer | Where does it live? Tab, inline cards in coach, or modal lessons? | | | |
-| 2 | Restaurant DB vs. photo-menu | DB + photo, photo-only for MVP, or curated top-N chains? | | | |
-| 3 | Dynamic macro recalc | What fires a recalc? Weekly, weight change, streak break, coach-initiated? | | | |
-| 4 | Trainer compatibility | In MVP, deferred, or view-only import of external plans? | | | |
-| 5 | Recomposition timeline | Hide it, show as projection, or full feature? | | | |
-| 6 | Proactive coaching cadence | Daily check-in, event-driven only, quiet hours? | | | |
-| 7 | Grocery list source of truth | Generated from recipes, manual, or both? | | | |
-| 8 | Progress tracking inputs | Weight + macros confirmed. Photos, measurements, mood in MVP? | | | |
-| 9 | HealthKit scope | Read-only or write-back? Which metrics? | | | |
-| 10 | Auth model for pilot | Supabase email/password, Apple Sign-In required, or both? | | | |
-| 11 | Offline behavior | Log meal offline and sync, or online-only for pilot? | | | |
-| 12 | AI provider & cost ceiling | Claude or GPT? Per-user monthly cap? | | | |
+| # | Open item | Resolution |
+|---|---|---|
+| 1 | Education layer | **Learn tab** with full search + categories, plus inline contextual cards in coach replies. Both surfaces, one content store. |
+| 2 | Restaurant DB vs. photo-menu | **Curated database** of top chains for Pilot. Photo-menu OCR deferred to v1.5. |
+| 3 | Dynamic macro recalc | **Weekly auto-recalc** + manual "Recalculate My Plan" button. Post-workout adjustment is Premium (v1.5). |
+| 4 | Trainer compatibility | **Manual entry only** — "log my trainer's workout" free-form. No adaptive logic at Pilot. |
+| 5 | Recomposition timeline | **Hidden at Pilot.** Defer to Premium tier in v1.5. |
+| 6 | Proactive coaching cadence | **Event-driven only**, quiet hours 10pm–7am. No time-based daily pings. |
+| 7 | Grocery list source of truth | **Both** — auto-generated from selected recipes, plus manual additions. |
+| 8 | Progress tracking inputs | **Full set**: weight, macros, body photos, body measurements, daily mood/energy rating. |
+| 9 | HealthKit scope | **Read-only** at Pilot: weight, steps, workouts, active energy. Write-back deferred to v1.5. |
+| 10 | Auth model for pilot | **Apple Sign-In + email/password.** Apple Sign-In required by App Store guidelines once any other method exists. |
+| 11 | Offline behavior | **Online-only** at Pilot. View cached data offline; cannot log new entries. Offline-first deferred. |
+| 12 | AI provider & cost ceiling | **Anthropic Claude.** $5/user/month soft cap, $10/user/month kill-switch. |
 
-**Sign-off:** Robert ____________________  Max ____________________  Date __________
+## Additional Pilot scope decisions
+
+| Item | Resolution |
+|---|---|
+| Meal plan generator | Three plan options per generation, user picks one. |
+| Apple Developer account | Individual (not Organization). |
+| Learn tab depth | Full search + categories (not minimal). |
+| Coach proactivity triggers | Skipped meal, over-target macros, missed workout, weight-trend deviation. |
+
+## Scope note
+
+Pilot is meaningfully larger than the original 7-feature spec. Added since first draft: full meal plan generator (3 options), Learn tab with search, body photos, body measurements, mood tracking, curated restaurant database. All accepted with eyes open — tracked here so we don't pretend the scope is still small.
+
+**Sign-off:** Robert ✅ 2026-05-13  Max ____________________  Date __________

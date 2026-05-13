@@ -6,11 +6,11 @@ Sequential reference checklist. No fixed dates. Everyone on a single pilot plan;
 
 From the Inspiration Guide (CTO version): every screen answers **"what should I do right now?"** before it shows data. FuelWell is a real-time decision system, not a tracker. If a screen only shows numbers, it is wrong.
 
-## Phase 0 — Pre-build alignment
-- [ ] Resolve all 12 gap-analysis items with Max
-- [ ] Re-read Inspiration Guide (CTO version); extract decision-engine principles into `ios/PRINCIPLES.md`
-- [ ] Lock the 7-feature MVP scope in writing; freeze additions until pilot ships
-- [ ] Decide repo layout (`/` Next.js stays, `/ios` for Xcode project)
+## Phase 0 — Pre-build alignment ✅ Complete (2026-05-13)
+- [x] Resolve all 12 gap-analysis items with Max → see `FuelWell-Gap-Analysis.md`
+- [x] Re-read Inspiration Guide (CTO version); extract decision-engine principles into `ios/PRINCIPLES.md`
+- [x] Lock Pilot scope in writing; freeze additions until pilot ships (note: scope grew beyond original 7 features — see gap analysis)
+- [x] Decide repo layout (`/` Next.js stays, `/ios` for Xcode project)
 
 ## Phase 1 — Foundations
 - [ ] Xcode project, Swift 6, SPM module structure
