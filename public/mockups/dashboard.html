@@ -3,51 +3,44 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>FuelWell — Dashboard Mockup</title>
+<title>FuelWell — Dashboard Mockup (Max-revised)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-  /* ============ FuelWell Design Tokens ============
-     Sourced from docs/ios-guide/drafts/DESIGN.md.draft
-     Note: brand green reconciliation TODO logged — using #47E7B0 (logo)
-     as the canonical primary per commit 63419cb. ============================ */
+  /* ============ FuelWell Design Tokens (brand-locked) ============
+     Brand green: #47E7B0 (logo, confirmed canonical 2026-05-13)
+     Tokens sourced from docs/ios-guide/drafts/DESIGN.md.draft           */
   :root {
-    /* Brand */
-    --fw-green: #47E7B0;            /* logo green / primary */
-    --fw-green-deep: #00D278;       /* success / positive verdict */
-    --fw-orange: #E87A1D;           /* CTA accent */
-    --fw-violet: #A855F7;           /* premium / future tier */
+    --fw-green: #47E7B0;
+    --fw-green-deep: #00D278;
+    --fw-orange: #E87A1D;
+    --fw-violet: #A855F7;
     --fw-info: #00B4D8;
     --fw-warning: #F59E0B;
     --fw-error: #EF4444;
 
-    /* Surfaces (dark) */
     --bg-base: #0A0A0F;
     --bg-surface: #111118;
     --bg-elevated: #1A1A24;
     --bg-border: #2A2A3A;
 
-    /* Text */
     --text-primary: #FFFFFF;
     --text-body: #E0E0E0;
     --text-secondary: #999999;
     --text-muted: #777777;
 
-    /* Gradients */
     --grad-brand: linear-gradient(135deg, #E87A1D, #00D278);
     --grad-text: linear-gradient(90deg, #00D278, #00B4D8);
     --grad-verdict: linear-gradient(135deg, rgba(71,231,176,0.18), rgba(0,180,216,0.10));
-    --grad-header: linear-gradient(180deg, #16213E 0%, #0A0A0F 100%);
+    --grad-eating-out: linear-gradient(135deg, rgba(232,122,29,0.22), rgba(168,85,247,0.12));
+    --grad-coach: linear-gradient(135deg, rgba(168,85,247,0.18), rgba(0,180,216,0.10));
 
-    /* Spacing */
-    --s-xs: 4px;  --s-sm: 8px;  --s-md: 16px;
-    --s-lg: 24px; --s-xl: 32px; --s-2xl: 48px;
+    --s-xs: 4px;  --s-sm: 8px;  --s-md: 12px;
+    --s-lg: 16px; --s-xl: 24px; --s-2xl: 32px;
 
-    /* Radii */
-    --r-sm: 6px; --r-md: 12px; --r-lg: 20px; --r-xl: 28px; --r-pill: 999px;
+    --r-sm: 6px; --r-md: 12px; --r-lg: 18px; --r-xl: 24px; --r-pill: 999px;
 
-    /* Fonts */
     --f-display: "Outfit", -apple-system, system-ui, sans-serif;
     --f-body: "Inter", -apple-system, system-ui, sans-serif;
     --f-num: "DM Sans", -apple-system, ui-monospace, monospace;
@@ -56,8 +49,7 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { background: #050507; color: var(--text-body); font-family: var(--f-body); -webkit-font-smoothing: antialiased; }
   body {
-    min-height: 100vh;
-    padding: 32px;
+    min-height: 100vh; padding: 32px;
     display: flex; flex-direction: column; align-items: center; gap: 16px;
     background:
       radial-gradient(1200px 600px at 50% -10%, rgba(71,231,176,0.06), transparent 60%),
@@ -65,345 +57,337 @@
       #050507;
   }
 
-  .meta {
-    color: var(--text-muted); font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase;
-    text-align: center;
-  }
+  .meta { color: var(--text-muted); font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; text-align: center; }
   .meta strong { color: var(--fw-green); }
+  .meta em { color: var(--fw-orange); font-style: normal; }
 
-  /* ============ iPhone Frame ============ */
+  /* ============ Device frame ============ */
   .device {
-    width: 414px;
-    background: var(--bg-base);
-    border-radius: 56px;
-    border: 8px solid #1c1c22;
-    box-shadow:
-      0 0 0 2px #0a0a10,
-      0 60px 120px -40px rgba(71,231,176,0.18),
-      0 30px 80px -20px rgba(0,0,0,0.9);
-    overflow: hidden;
-    position: relative;
+    width: 414px; background: var(--bg-base);
+    border-radius: 56px; border: 8px solid #1c1c22;
+    box-shadow: 0 0 0 2px #0a0a10, 0 60px 120px -40px rgba(71,231,176,0.18), 0 30px 80px -20px rgba(0,0,0,0.9);
+    overflow: hidden; position: relative;
   }
   .notch {
     position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
     width: 120px; height: 32px; background: #000; border-radius: 24px; z-index: 30;
   }
   .statusbar {
-    height: 54px; padding: 18px 32px 0; display: flex; justify-content: space-between; align-items: center;
+    height: 50px; padding: 16px 28px 0; display: flex; justify-content: space-between; align-items: center;
     font-family: var(--f-num); font-weight: 600; font-size: 14px; color: var(--text-primary);
     position: relative; z-index: 10;
   }
   .statusbar .icons { display: flex; gap: 6px; align-items: center; }
   .signal-bars { display: inline-flex; gap: 2px; align-items: end; }
   .signal-bars span { width: 3px; background: var(--text-primary); border-radius: 1px; }
-  .signal-bars span:nth-child(1) { height: 4px; }
-  .signal-bars span:nth-child(2) { height: 6px; }
-  .signal-bars span:nth-child(3) { height: 8px; }
-  .signal-bars span:nth-child(4) { height: 10px; }
-  .battery {
-    width: 24px; height: 12px; border: 1px solid var(--text-primary); border-radius: 3px;
-    position: relative; padding: 1px;
-  }
+  .signal-bars span:nth-child(1) { height: 4px; } .signal-bars span:nth-child(2) { height: 6px; }
+  .signal-bars span:nth-child(3) { height: 8px; } .signal-bars span:nth-child(4) { height: 10px; }
+  .battery { width: 24px; height: 12px; border: 1px solid var(--text-primary); border-radius: 3px; position: relative; padding: 1px; }
   .battery::after { content: ''; position: absolute; right: -3px; top: 3px; width: 2px; height: 4px; background: var(--text-primary); border-radius: 0 1px 1px 0; }
   .battery > i { display: block; width: 78%; height: 100%; background: var(--fw-green); border-radius: 1px; }
 
   /* ============ Scroll area ============ */
   .screen {
     height: 880px; overflow-y: auto;
-    padding: 8px 16px 110px;
+    padding: 4px 14px 110px;
     background: var(--bg-base);
-    scrollbar-width: thin;
-    scrollbar-color: var(--bg-border) transparent;
+    scrollbar-width: thin; scrollbar-color: var(--bg-border) transparent;
   }
   .screen::-webkit-scrollbar { width: 4px; }
   .screen::-webkit-scrollbar-thumb { background: var(--bg-border); border-radius: 2px; }
 
-  /* ============ Top greeting ============ */
+  /* ============ Above-the-fold marker ============
+     The dashed line marks what's visible without scrolling.
+     Per Max: macro ring + next-meal verdict + coach nudge + mood/energy
+     + "I'm eating out right now" must ALL sit above this line.        */
+  .fold-line {
+    margin: 4px -14px;
+    border-top: 1.5px dashed rgba(71,231,176,0.4);
+    position: relative;
+  }
+  .fold-line::after {
+    content: 'FOLD';
+    position: absolute; right: 16px; top: -8px;
+    background: var(--bg-base); padding: 0 6px;
+    font-family: var(--f-num); font-size: 9px; font-weight: 700; color: var(--fw-green);
+    letter-spacing: 0.12em;
+  }
+
+  /* ============ Top greeting (compact) ============ */
   .top {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 4px 4px 14px;
+    padding: 4px 4px 8px;
   }
-  .top .hello { display: flex; flex-direction: column; gap: 2px; }
-  .top .hello small { font-size: 11px; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600; }
-  .top .hello h1 { font-family: var(--f-display); font-weight: 700; font-size: 22px; color: var(--text-primary); letter-spacing: -0.01em; }
-  .top .right { display: flex; align-items: center; gap: 10px; }
+  .top .hello { display: flex; flex-direction: column; gap: 1px; }
+  .top .hello small { font-size: 10px; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600; }
+  .top .hello h1 { font-family: var(--f-display); font-weight: 700; font-size: 18px; color: var(--text-primary); letter-spacing: -0.01em; }
+  .top .right { display: flex; align-items: center; gap: 8px; }
   .streak {
     display: inline-flex; align-items: center; gap: 4px;
     background: rgba(232,122,29,0.12); color: var(--fw-orange);
-    padding: 6px 10px; border-radius: var(--r-pill);
-    font-family: var(--f-num); font-size: 12px; font-weight: 700;
+    padding: 4px 8px; border-radius: var(--r-pill);
+    font-family: var(--f-num); font-size: 11px; font-weight: 700;
     border: 1px solid rgba(232,122,29,0.25);
   }
   .avatar {
-    width: 38px; height: 38px; border-radius: var(--r-pill);
+    width: 34px; height: 34px; border-radius: var(--r-pill);
     background: linear-gradient(135deg, #2A1A3E, #1A2A3E);
     display: grid; place-items: center;
-    font-family: var(--f-display); font-weight: 700; font-size: 14px; color: var(--fw-green);
-    border: 1.5px solid var(--bg-border);
+    font-family: var(--f-display); font-weight: 700; font-size: 13px; color: var(--fw-green);
+    border: 1.5px solid var(--bg-border); position: relative;
   }
 
-  /* ============ Cards (generic) ============ */
-  .card {
-    background: var(--bg-surface);
-    border: 1px solid var(--bg-border);
-    border-radius: var(--r-lg);
-    padding: var(--s-lg);
-    margin-bottom: var(--s-md);
-  }
-  .card.elevated { background: var(--bg-elevated); }
-  .card-head {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 12px;
-  }
-  .card-title {
-    font-family: var(--f-body); font-size: 11px; font-weight: 600;
-    letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary);
-  }
-  .card-link { color: var(--fw-green); font-size: 12px; font-weight: 600; }
-
-  /* ============ Verdict banner ============ */
+  /* ============ Verdict (decision-first) ============ */
   .verdict {
     background: var(--grad-verdict);
     border: 1px solid rgba(71,231,176,0.32);
-    border-radius: var(--r-xl);
-    padding: 18px 18px 16px;
-    position: relative;
-    overflow: hidden;
+    border-radius: var(--r-lg);
+    padding: 12px 14px;
+    position: relative; overflow: hidden;
     margin-bottom: var(--s-md);
   }
   .verdict::before {
     content: ''; position: absolute; inset: 0;
-    background: radial-gradient(400px 200px at 80% 20%, rgba(71,231,176,0.18), transparent 70%);
+    background: radial-gradient(360px 180px at 80% 20%, rgba(71,231,176,0.16), transparent 70%);
     pointer-events: none;
   }
-  .verdict .v-row { display: flex; align-items: flex-start; gap: 12px; position: relative; }
-  .verdict .v-icon {
-    width: 40px; height: 40px; border-radius: 14px;
+  .verdict .row { display: flex; gap: 10px; position: relative; align-items: flex-start; }
+  .verdict .ic-circle {
+    width: 32px; height: 32px; border-radius: 10px;
     background: rgba(71,231,176,0.18); border: 1px solid rgba(71,231,176,0.32);
-    display: grid; place-items: center;
-    color: var(--fw-green); font-size: 22px; flex-shrink: 0;
+    display: grid; place-items: center; color: var(--fw-green); flex-shrink: 0;
   }
-  .verdict .v-tag {
-    display: inline-block; font-family: var(--f-body); font-size: 10px; font-weight: 700;
+  .verdict .tag {
+    display: inline-block; font-family: var(--f-body); font-size: 9px; font-weight: 700;
     letter-spacing: 0.12em; text-transform: uppercase; color: var(--fw-green);
-    margin-bottom: 4px;
+    margin-bottom: 2px;
   }
-  .verdict .v-text {
-    font-family: var(--f-display); font-weight: 600; font-size: 17px; line-height: 1.35;
+  .verdict .text {
+    font-family: var(--f-display); font-weight: 600; font-size: 14px; line-height: 1.35;
     color: var(--text-primary); letter-spacing: -0.01em;
   }
-  .verdict .v-sub {
-    margin-top: 6px; font-size: 13px; color: var(--text-secondary); line-height: 1.4;
+  .verdict .sub {
+    margin-top: 3px; font-size: 11px; color: var(--text-secondary); line-height: 1.35;
   }
-  .verdict .v-cta {
-    margin-top: 14px; display: flex; gap: 8px;
+  .verdict .cta {
+    margin-top: 10px; display: flex; gap: 6px;
   }
   .btn {
-    flex: 1; height: 44px; border-radius: var(--r-md); border: none; cursor: pointer;
-    font-family: var(--f-body); font-weight: 600; font-size: 14px; letter-spacing: -0.01em;
+    flex: 1; height: 38px; border-radius: var(--r-md); border: none; cursor: pointer;
+    font-family: var(--f-body); font-weight: 600; font-size: 13px; letter-spacing: -0.01em;
     display: inline-flex; align-items: center; justify-content: center; gap: 6px;
   }
-  .btn-primary { background: var(--grad-brand); color: #fff; box-shadow: 0 6px 20px -6px rgba(232,122,29,0.5); }
+  .btn-primary { background: var(--grad-brand); color: #fff; box-shadow: 0 6px 18px -6px rgba(232,122,29,0.5); }
   .btn-ghost { background: rgba(255,255,255,0.04); color: var(--text-body); border: 1px solid var(--bg-border); }
 
-  /* ============ Macro ring + breakdown ============ */
+  /* ============ Macro ring (compact) ============ */
   .macros {
-    display: grid; grid-template-columns: 152px 1fr; gap: 18px; align-items: center;
+    display: grid; grid-template-columns: 110px 1fr; gap: 14px; align-items: center;
+    background: var(--bg-surface); border: 1px solid var(--bg-border);
+    border-radius: var(--r-lg); padding: 12px;
+    margin-bottom: var(--s-md);
   }
-  .ring-wrap { position: relative; width: 152px; height: 152px; }
+  .ring-wrap { position: relative; width: 110px; height: 110px; }
   .ring-center {
     position: absolute; inset: 0; display: grid; place-items: center; text-align: center;
   }
   .ring-center .num {
-    font-family: var(--f-num); font-weight: 700; font-size: 36px;
+    font-family: var(--f-num); font-weight: 700; font-size: 28px;
     color: var(--text-primary); letter-spacing: -0.02em; line-height: 1;
     font-feature-settings: "tnum";
   }
-  .ring-center .label { font-size: 10px; color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; font-weight: 600; }
-  .ring-center .delta { font-family: var(--f-num); font-size: 11px; color: var(--fw-green); margin-top: 4px; font-weight: 600; }
+  .ring-center .label { font-size: 9px; color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 3px; font-weight: 600; }
+  .ring-center .delta { font-family: var(--f-num); font-size: 10px; color: var(--fw-green); margin-top: 2px; font-weight: 600; }
 
-  .macro-list { display: flex; flex-direction: column; gap: 12px; }
-  .macro-row { display: grid; grid-template-columns: 64px 1fr auto; gap: 10px; align-items: center; }
-  .macro-row .name { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; }
+  .macro-list { display: flex; flex-direction: column; gap: 7px; }
+  .macro-row { display: grid; grid-template-columns: 48px 1fr auto; gap: 8px; align-items: center; }
+  .macro-row .name { font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600; }
   .macro-row .name.protein { color: var(--fw-green); }
   .macro-row .name.carbs { color: var(--fw-info); }
   .macro-row .name.fat { color: var(--fw-orange); }
-  .macro-row .bar { height: 6px; background: var(--bg-elevated); border-radius: var(--r-pill); overflow: hidden; }
+  .macro-row .bar { height: 5px; background: var(--bg-elevated); border-radius: var(--r-pill); overflow: hidden; }
   .macro-row .bar > i { display: block; height: 100%; border-radius: inherit; }
   .macro-row .bar .protein { background: var(--fw-green); }
   .macro-row .bar .carbs { background: var(--fw-info); }
   .macro-row .bar .fat { background: var(--fw-orange); }
-  .macro-row .vals { font-family: var(--f-num); font-size: 12px; color: var(--text-body); font-weight: 600; }
+  .macro-row .vals { font-family: var(--f-num); font-size: 11px; color: var(--text-body); font-weight: 600; }
   .macro-row .vals span { color: var(--text-muted); font-weight: 400; }
 
-  /* ============ Stat tiles ============ */
-  .stat-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
-  .tile {
-    background: var(--bg-surface); border: 1px solid var(--bg-border); border-radius: var(--r-md);
-    padding: 12px; display: flex; flex-direction: column; gap: 4px; min-height: 86px;
+  /* ============ "I'm eating out right now" quick action ============ */
+  .eating-out {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--grad-eating-out);
+    border: 1px solid rgba(232,122,29,0.36);
+    border-radius: var(--r-lg);
+    padding: 12px 14px;
+    margin-bottom: var(--s-md);
+    cursor: pointer; position: relative; overflow: hidden;
   }
-  .tile .t-label { font-size: 10px; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600; display: flex; align-items: center; gap: 4px; }
-  .tile .t-value { font-family: var(--f-num); font-weight: 700; font-size: 20px; color: var(--text-primary); letter-spacing: -0.02em; line-height: 1; }
-  .tile .t-value small { font-size: 11px; color: var(--text-muted); font-weight: 500; margin-left: 2px; }
-  .tile .t-prog { height: 4px; background: var(--bg-elevated); border-radius: var(--r-pill); margin-top: auto; }
-  .tile .t-prog > i { display: block; height: 100%; border-radius: inherit; background: var(--fw-green); }
-  .tile .t-foot { font-family: var(--f-num); font-size: 11px; color: var(--text-secondary); display: flex; justify-content: space-between; }
-  .tile .t-foot .ok { color: var(--fw-green); }
-  .tile .t-foot .warn { color: var(--fw-warning); }
-
-  /* ============ Meals timeline ============ */
-  .meals { display: flex; flex-direction: column; gap: 10px; }
-  .meal-row {
-    display: grid; grid-template-columns: 48px 1fr auto; gap: 12px; align-items: center;
-    padding: 10px; border-radius: var(--r-md); background: var(--bg-elevated);
-    border: 1px solid var(--bg-border);
+  .eating-out::after {
+    content: '›'; position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+    font-size: 24px; color: var(--fw-orange); font-weight: 300; opacity: 0.7;
   }
-  .meal-row.empty { opacity: 0.55; border-style: dashed; }
-  .meal-thumb {
-    width: 48px; height: 48px; border-radius: var(--r-md);
-    background: linear-gradient(135deg, #2A2A3A, #1A1A24);
-    display: grid; place-items: center; font-size: 22px; color: var(--fw-green);
+  .eating-out .e-icon {
+    width: 36px; height: 36px; border-radius: 12px;
+    background: rgba(232,122,29,0.16); border: 1px solid rgba(232,122,29,0.3);
+    display: grid; place-items: center; color: var(--fw-orange); flex-shrink: 0;
+    font-size: 18px;
   }
-  .meal-meta { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-  .meal-meta .slot { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); font-weight: 600; }
-  .meal-meta .name { font-family: var(--f-display); font-weight: 600; font-size: 14px; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .meal-meta .macros-line { font-family: var(--f-num); font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
-  .meal-meta .macros-line span { color: var(--text-body); font-weight: 600; }
-  .meal-row .cals { font-family: var(--f-num); font-weight: 700; font-size: 16px; color: var(--text-primary); text-align: right; }
-  .meal-row .cals small { display: block; font-size: 10px; color: var(--text-muted); font-weight: 500; letter-spacing: 0.04em; margin-top: 2px; }
-
-  /* ============ Body composition / weight chart ============ */
-  .composition { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .comp-cell { display: flex; flex-direction: column; gap: 2px; }
-  .comp-cell .lbl { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); font-weight: 600; }
-  .comp-cell .val { font-family: var(--f-num); font-weight: 700; font-size: 22px; color: var(--text-primary); letter-spacing: -0.02em; }
-  .comp-cell .val small { font-size: 12px; color: var(--text-muted); font-weight: 500; margin-left: 2px; }
-  .comp-cell .delta { font-family: var(--f-num); font-size: 11px; font-weight: 600; }
-  .delta.down { color: var(--fw-green); }
-  .delta.up { color: var(--fw-warning); }
-  .delta.neutral { color: var(--text-secondary); }
-
-  /* ============ Measurements row ============ */
-  .meas-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
-  .meas {
-    background: var(--bg-elevated); border: 1px solid var(--bg-border);
-    border-radius: var(--r-md); padding: 8px 6px; text-align: center;
-    display: flex; flex-direction: column; gap: 2px;
+  .eating-out .e-text {
+    display: flex; flex-direction: column; gap: 1px; flex: 1; padding-right: 18px;
   }
-  .meas .l { font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); font-weight: 600; }
-  .meas .v { font-family: var(--f-num); font-weight: 700; font-size: 13px; color: var(--text-primary); }
-  .meas .d { font-family: var(--f-num); font-size: 9px; font-weight: 600; }
+  .eating-out .e-title { font-family: var(--f-display); font-weight: 700; font-size: 14px; color: var(--text-primary); letter-spacing: -0.01em; }
+  .eating-out .e-sub { font-size: 11px; color: var(--text-secondary); line-height: 1.3; }
+  .eating-out .e-sub b { color: var(--fw-green); font-family: var(--f-num); font-weight: 600; }
 
-  /* ============ Goals progress ============ */
-  .goals { display: flex; flex-direction: column; gap: 12px; }
-  .goal { display: grid; grid-template-columns: 1fr auto; row-gap: 6px; }
-  .goal .g-name { font-size: 13px; font-weight: 600; color: var(--text-body); }
-  .goal .g-pct { font-family: var(--f-num); font-size: 12px; font-weight: 700; color: var(--text-primary); }
-  .goal .g-bar { grid-column: 1 / -1; height: 6px; background: var(--bg-elevated); border-radius: var(--r-pill); overflow: hidden; }
-  .goal .g-bar > i { display: block; height: 100%; border-radius: inherit; }
-  .goal .g-foot { grid-column: 1 / -1; font-family: var(--f-num); font-size: 11px; color: var(--text-secondary); display: flex; justify-content: space-between; }
-
-  /* ============ Coach card ============ */
+  /* ============ Coach nudge (event-driven, compact) ============ */
   .coach {
-    background: linear-gradient(135deg, rgba(168,85,247,0.10), rgba(0,180,216,0.06));
-    border: 1px solid rgba(168,85,247,0.25);
-    border-radius: var(--r-lg); padding: 16px;
-    display: flex; gap: 12px; align-items: flex-start;
+    background: var(--grad-coach);
+    border: 1px solid rgba(168,85,247,0.28);
+    border-radius: var(--r-lg);
+    padding: 11px 12px;
+    display: flex; gap: 10px; align-items: flex-start;
     margin-bottom: var(--s-md);
   }
   .coach .c-avatar {
-    width: 36px; height: 36px; border-radius: var(--r-pill); flex-shrink: 0;
+    width: 30px; height: 30px; border-radius: var(--r-pill); flex-shrink: 0;
     background: linear-gradient(135deg, var(--fw-violet), var(--fw-info));
-    display: grid; place-items: center; color: #fff; font-family: var(--f-display); font-weight: 700; font-size: 14px;
+    display: grid; place-items: center; color: #fff; font-family: var(--f-display); font-weight: 700; font-size: 12px;
   }
   .coach .c-body { flex: 1; }
-  .coach .c-tag { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--fw-violet); font-weight: 700; margin-bottom: 4px; }
-  .coach .c-text { font-family: var(--f-display); font-weight: 500; font-size: 14px; color: var(--text-primary); line-height: 1.4; }
-  .coach .c-chips { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+  .coach .c-tag { font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--fw-violet); font-weight: 700; margin-bottom: 2px; }
+  .coach .c-text { font-family: var(--f-display); font-weight: 500; font-size: 12.5px; color: var(--text-primary); line-height: 1.35; }
+  .coach .c-chips { display: flex; gap: 5px; margin-top: 7px; flex-wrap: wrap; }
   .chip {
-    padding: 6px 10px; border-radius: var(--r-pill); font-size: 12px; font-weight: 600;
+    padding: 4px 8px; border-radius: var(--r-pill); font-size: 11px; font-weight: 600;
     background: rgba(255,255,255,0.06); color: var(--text-body); border: 1px solid var(--bg-border);
     cursor: pointer;
   }
   .chip.primary { background: rgba(71,231,176,0.14); color: var(--fw-green); border-color: rgba(71,231,176,0.32); }
 
-  /* ============ Mood / energy ============ */
-  .mood { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .mood-block { display: flex; flex-direction: column; gap: 8px; }
-  .mood-block .label { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); font-weight: 600; }
-  .mood-dots { display: flex; gap: 6px; }
+  /* ============ Mood/energy one-tap row (inline) ============ */
+  .mood-row {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    background: var(--bg-surface); border: 1px solid var(--bg-border);
+    border-radius: var(--r-lg); padding: 10px 12px;
+    margin-bottom: var(--s-md);
+  }
+  .mood-block { display: flex; flex-direction: column; gap: 5px; }
+  .mood-block .label { font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); font-weight: 600; }
+  .mood-dots { display: flex; gap: 4px; }
   .dot {
-    width: 26px; height: 26px; border-radius: var(--r-pill);
+    width: 22px; height: 22px; border-radius: var(--r-pill);
     border: 1px solid var(--bg-border); display: grid; place-items: center;
-    font-family: var(--f-num); font-size: 11px; font-weight: 700; color: var(--text-muted);
+    font-family: var(--f-num); font-size: 10px; font-weight: 700; color: var(--text-muted);
+    cursor: pointer;
   }
   .dot.active { background: var(--fw-green); color: #0a0a0f; border-color: var(--fw-green); }
   .dot.active.warm { background: var(--fw-orange); border-color: var(--fw-orange); color: #0a0a0f; }
 
-  /* ============ Sleep ============ */
-  .sleep-row { display: flex; align-items: center; gap: 14px; }
-  .sleep-ring { flex-shrink: 0; }
-  .sleep-meta { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .sleep-meta .k { font-size: 10px; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600; }
-  .sleep-meta .v { font-family: var(--f-num); font-weight: 700; font-size: 14px; color: var(--text-primary); margin-top: 2px; }
+  /* ============ Cards (generic, below the fold) ============ */
+  .card {
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--r-lg);
+    padding: 14px;
+    margin-bottom: var(--s-md);
+  }
+  .card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .card-title { font-family: var(--f-body); font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary); }
+  .card-link { color: var(--fw-green); font-size: 11px; font-weight: 600; }
 
-  /* ============ Streak heatmap ============ */
-  .heat { display: grid; grid-template-columns: repeat(14, 1fr); gap: 4px; }
-  .heat span { aspect-ratio: 1; border-radius: 4px; background: var(--bg-elevated); }
-  .heat span.l1 { background: rgba(71,231,176,0.18); }
-  .heat span.l2 { background: rgba(71,231,176,0.40); }
-  .heat span.l3 { background: rgba(71,231,176,0.65); }
-  .heat span.l4 { background: var(--fw-green); }
+  /* ============ Stat tiles ============ */
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-bottom: var(--s-md); }
+  .tile {
+    background: var(--bg-surface); border: 1px solid var(--bg-border); border-radius: var(--r-md);
+    padding: 10px; display: flex; flex-direction: column; gap: 3px; min-height: 78px;
+  }
+  .tile .t-label { font-size: 9px; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600; }
+  .tile .t-value { font-family: var(--f-num); font-weight: 700; font-size: 17px; color: var(--text-primary); letter-spacing: -0.02em; line-height: 1; }
+  .tile .t-value small { font-size: 10px; color: var(--text-muted); font-weight: 500; margin-left: 2px; }
+  .tile .t-prog { height: 3px; background: var(--bg-elevated); border-radius: var(--r-pill); margin-top: auto; }
+  .tile .t-prog > i { display: block; height: 100%; border-radius: inherit; background: var(--fw-green); }
+
+  /* ============ Meals timeline ============ */
+  .meals { display: flex; flex-direction: column; gap: 7px; }
+  .meal-row {
+    display: grid; grid-template-columns: 42px 1fr auto; gap: 10px; align-items: center;
+    padding: 8px; border-radius: var(--r-md); background: var(--bg-elevated);
+    border: 1px solid var(--bg-border);
+  }
+  .meal-row.empty { opacity: 0.6; border-style: dashed; }
+  .meal-thumb {
+    width: 42px; height: 42px; border-radius: var(--r-md);
+    background: linear-gradient(135deg, #2A2A3A, #1A1A24);
+    display: grid; place-items: center; font-size: 20px; color: var(--fw-green);
+  }
+  .meal-meta { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+  .meal-meta .slot { font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); font-weight: 600; }
+  .meal-meta .name { font-family: var(--f-display); font-weight: 600; font-size: 13px; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .meal-meta .macros-line { font-family: var(--f-num); font-size: 10px; color: var(--text-secondary); margin-top: 1px; }
+  .meal-meta .macros-line span { color: var(--text-body); font-weight: 600; }
+  .meal-row .cals { font-family: var(--f-num); font-weight: 700; font-size: 14px; color: var(--text-primary); text-align: right; }
+  .meal-row .cals small { display: block; font-size: 9px; color: var(--text-muted); font-weight: 500; letter-spacing: 0.04em; margin-top: 1px; }
+
+  /* ============ Daily Recap card (below the fold) ============ */
+  .recap-card {
+    background: linear-gradient(135deg, rgba(168,85,247,0.10), rgba(71,231,176,0.06));
+    border: 1px solid rgba(168,85,247,0.22);
+    border-radius: var(--r-lg);
+    padding: 12px;
+    margin-bottom: var(--s-md);
+    display: flex; gap: 10px; align-items: center;
+    cursor: pointer; position: relative;
+  }
+  .recap-card::after {
+    content: '›'; position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+    font-size: 22px; color: var(--fw-violet); opacity: 0.7; font-weight: 300;
+  }
+  .recap-card .r-ic {
+    width: 32px; height: 32px; border-radius: 10px;
+    background: rgba(168,85,247,0.16); border: 1px solid rgba(168,85,247,0.3);
+    display: grid; place-items: center; color: var(--fw-violet); flex-shrink: 0;
+  }
+  .recap-card .r-body { flex: 1; padding-right: 16px; }
+  .recap-card .r-title { font-family: var(--f-display); font-weight: 600; font-size: 13px; color: var(--text-primary); }
+  .recap-card .r-sub { font-size: 10.5px; color: var(--text-secondary); margin-top: 1px; }
 
   /* ============ Tab bar ============ */
   .tabbar {
     position: absolute; left: 0; right: 0; bottom: 0;
     background: rgba(10,10,15,0.92);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     border-top: 1px solid var(--bg-border);
-    padding: 10px 8px 28px;
+    padding: 10px 8px 26px;
     display: grid; grid-template-columns: repeat(5, 1fr);
     z-index: 20;
   }
-  .tab {
-    display: flex; flex-direction: column; align-items: center; gap: 2px;
-    color: var(--text-muted); font-size: 10px; font-weight: 600; letter-spacing: 0.04em;
-    padding: 4px;
-  }
+  .tab { display: flex; flex-direction: column; align-items: center; gap: 2px; color: var(--text-muted); font-size: 10px; font-weight: 600; padding: 4px; }
   .tab.active { color: var(--fw-green); }
   .tab-icon { font-size: 20px; line-height: 1; }
   .home-indicator {
     position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
-    width: 134px; height: 5px; border-radius: var(--r-pill); background: var(--text-primary);
-    z-index: 25;
+    width: 134px; height: 5px; border-radius: var(--r-pill); background: var(--text-primary); z-index: 25;
   }
 
-  /* FAB */
   .fab {
-    position: absolute; right: 22px; bottom: 96px;
-    width: 56px; height: 56px; border-radius: var(--r-pill);
+    position: absolute; right: 18px; bottom: 92px;
+    width: 52px; height: 52px; border-radius: var(--r-pill);
     background: var(--grad-brand); display: grid; place-items: center;
-    color: #fff; font-size: 28px; font-weight: 300; line-height: 1;
+    color: #fff; font-size: 26px; font-weight: 300; line-height: 1;
     box-shadow: 0 14px 30px -10px rgba(232,122,29,0.6), 0 6px 16px -4px rgba(0,0,0,0.6);
     z-index: 22;
   }
 
-  /* Sparkline svg utility */
-  .spark { width: 100%; height: 56px; display: block; }
-
-  /* Density divider */
-  .row-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
-  /* Inline icon helper (stroke-only glyphs) */
   .ic { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; vertical-align: -2px; }
 </style>
 </head>
 <body>
 
-<p class="meta"><strong>FuelWell</strong> · Phase 0.5 Step 4 reference · Dashboard mockup · Dark theme · Brand-locked</p>
+<p class="meta"><strong>FuelWell</strong> · Dashboard mockup v2 · <em>Max-revised above-the-fold spec</em></p>
+<p class="meta" style="opacity:0.7; font-size: 10px;">All 5 essentials visible without scrolling: macro ring · next-meal verdict · coach nudge · mood/energy one-tap · "I'm eating out right now"</p>
 
-<div class="device" role="img" aria-label="FuelWell iOS Dashboard mockup">
+<div class="device" role="img" aria-label="FuelWell iOS Dashboard mockup (Max-revised)">
   <div class="notch"></div>
 
   <!-- Status bar -->
@@ -418,120 +402,145 @@
 
   <div class="screen">
 
-    <!-- Greeting -->
+    <!-- ▼▼▼ ABOVE THE FOLD — five essentials per Max ▼▼▼ -->
+
+    <!-- 1. Compact greeting -->
     <div class="top">
       <div class="hello">
-        <small>Wednesday · May 13</small>
+        <small>Thursday · May 14</small>
         <h1>Good afternoon, Robert</h1>
       </div>
       <div class="right">
-        <div class="streak" title="Logging streak">🔥 <span>23d</span></div>
+        <div class="streak" title="Logging streak">🔥 23d</div>
         <div class="avatar">RB</div>
       </div>
     </div>
 
-    <!-- VERDICT BANNER (decision-first) -->
+    <!-- 2. Verdict / next recommended meal -->
     <section class="verdict" aria-label="Coach verdict">
-      <div class="v-row">
-        <div class="v-icon" aria-hidden="true">
-          <svg class="ic" viewBox="0 0 24 24" style="width:22px;height:22px;"><path d="M5 12l5 5L20 7"/></svg>
+      <div class="row">
+        <div class="ic-circle" aria-hidden="true">
+          <svg class="ic" viewBox="0 0 24 24" style="width:18px;height:18px;"><path d="M5 12l5 5L20 7"/></svg>
         </div>
-        <div>
-          <span class="v-tag">On track</span>
-          <div class="v-text">You've got 612 kcal and 38 g protein left. A grilled chicken bowl puts you right on target tonight.</div>
-          <div class="v-sub">Based on today's intake, your training load, and your weight trend this week.</div>
+        <div style="flex:1;">
+          <span class="tag">On track · next meal</span>
+          <div class="text">A grilled chicken bowl puts you right on target tonight.</div>
+          <div class="sub">612 kcal · 38 g protein remaining</div>
         </div>
       </div>
-      <div class="v-cta">
-        <button class="btn btn-primary">
-          <svg class="ic" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-          Log dinner
-        </button>
+      <div class="cta">
+        <button class="btn btn-primary">Log dinner</button>
         <button class="btn btn-ghost">Ask coach</button>
       </div>
     </section>
 
-    <!-- MACROS RING + breakdown -->
-    <section class="card" aria-label="Today's macros">
-      <div class="card-head">
-        <span class="card-title">Today's macros</span>
-        <a class="card-link" href="#">Details ›</a>
-      </div>
-      <div class="macros">
-        <div class="ring-wrap">
-          <svg viewBox="0 0 120 120" width="152" height="152">
-            <!-- Background ring -->
-            <circle cx="60" cy="60" r="50" stroke="#1A1A24" stroke-width="12" fill="none"/>
-            <!-- Calories progress ring (~67% used) -->
-            <circle cx="60" cy="60" r="50" stroke="url(#calGrad)" stroke-width="12" fill="none"
-                    stroke-linecap="round"
-                    stroke-dasharray="314.16"
-                    stroke-dashoffset="103.7"
-                    transform="rotate(-90 60 60)"/>
-            <defs>
-              <linearGradient id="calGrad" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#47E7B0"/>
-                <stop offset="100%" stop-color="#00B4D8"/>
-              </linearGradient>
-            </defs>
-          </svg>
-          <div class="ring-center">
-            <div>
-              <div class="num">612</div>
-              <div class="label">kcal left</div>
-              <div class="delta">of 1,840 target</div>
-            </div>
+    <!-- 3. Macro ring (compact) -->
+    <section class="macros" aria-label="Today's macros">
+      <div class="ring-wrap">
+        <svg viewBox="0 0 120 120" width="110" height="110">
+          <circle cx="60" cy="60" r="50" stroke="#1A1A24" stroke-width="11" fill="none"/>
+          <circle cx="60" cy="60" r="50" stroke="url(#calGrad)" stroke-width="11" fill="none"
+                  stroke-linecap="round" stroke-dasharray="314.16" stroke-dashoffset="103.7"
+                  transform="rotate(-90 60 60)"/>
+          <defs>
+            <linearGradient id="calGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#47E7B0"/>
+              <stop offset="100%" stop-color="#00B4D8"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="ring-center">
+          <div>
+            <div class="num">612</div>
+            <div class="label">kcal left</div>
           </div>
         </div>
-        <div class="macro-list">
-          <div class="macro-row">
-            <div class="name protein">Protein</div>
-            <div class="bar"><i class="protein" style="width:74%"></i></div>
-            <div class="vals">112<span>/150g</span></div>
-          </div>
-          <div class="macro-row">
-            <div class="name carbs">Carbs</div>
-            <div class="bar"><i class="carbs" style="width:62%"></i></div>
-            <div class="vals">118<span>/190g</span></div>
-          </div>
-          <div class="macro-row">
-            <div class="name fat">Fat</div>
-            <div class="bar"><i class="fat" style="width:81%"></i></div>
-            <div class="vals">52<span>/64g</span></div>
-          </div>
-          <div class="macro-row" style="margin-top:2px;">
-            <div class="name" style="color:var(--fw-info);">Fiber</div>
-            <div class="bar"><i style="background:var(--fw-info); width:55%"></i></div>
-            <div class="vals">17<span>/30g</span></div>
-          </div>
+      </div>
+      <div class="macro-list">
+        <div class="macro-row">
+          <div class="name protein">Protein</div>
+          <div class="bar"><i class="protein" style="width:74%"></i></div>
+          <div class="vals">112<span>/150</span></div>
+        </div>
+        <div class="macro-row">
+          <div class="name carbs">Carbs</div>
+          <div class="bar"><i class="carbs" style="width:62%"></i></div>
+          <div class="vals">118<span>/190</span></div>
+        </div>
+        <div class="macro-row">
+          <div class="name fat">Fat</div>
+          <div class="bar"><i class="fat" style="width:81%"></i></div>
+          <div class="vals">52<span>/64</span></div>
         </div>
       </div>
     </section>
 
-    <!-- HEALTH STATS (HealthKit) -->
+    <!-- 4. "I'm eating out right now" quick action -->
+    <button class="eating-out" aria-label="I'm eating out right now — quick action">
+      <div class="e-icon">🍽️</div>
+      <div class="e-text">
+        <div class="e-title">I'm eating out right now</div>
+        <div class="e-sub">We'll match restaurants to your <b>612 kcal · 38g protein</b> left</div>
+      </div>
+    </button>
+
+    <!-- 5. Coach nudge (event-driven, shows when triggered) -->
+    <section class="coach" aria-label="Coach nudge">
+      <div class="c-avatar">FW</div>
+      <div class="c-body">
+        <div class="c-tag">Coach · noticed</div>
+        <div class="c-text">Sleep dropped to 6h 22m avg this week. Want a wind-down routine for tonight?</div>
+        <div class="c-chips">
+          <button class="chip primary">Suggest one</button>
+          <button class="chip">Not now</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. Mood / energy one-tap row -->
+    <section class="mood-row" aria-label="Quick mood and energy">
+      <div class="mood-block">
+        <span class="label">Mood</span>
+        <div class="mood-dots">
+          <div class="dot">1</div><div class="dot">2</div><div class="dot">3</div>
+          <div class="dot active">4</div><div class="dot">5</div>
+        </div>
+      </div>
+      <div class="mood-block">
+        <span class="label">Energy</span>
+        <div class="mood-dots">
+          <div class="dot">1</div><div class="dot">2</div>
+          <div class="dot active warm">3</div><div class="dot">4</div><div class="dot">5</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ▲▲▲ FOLD ▲▲▲ -->
+    <div class="fold-line"></div>
+
+    <!-- ▼▼▼ BELOW THE FOLD — supporting context ▼▼▼ -->
+
+    <!-- Quick stats (HealthKit) -->
     <section class="stat-grid" aria-label="Today's activity">
       <div class="tile">
         <div class="t-label">💧 Hydration</div>
-        <div class="t-value">1.8<small>/2.5 L</small></div>
+        <div class="t-value">1.8<small>/2.5L</small></div>
         <div class="t-prog"><i style="width:72%"></i></div>
-        <div class="t-foot"><span>72%</span><span class="ok">+0.4 L vs avg</span></div>
       </div>
       <div class="tile">
         <div class="t-label">👟 Steps</div>
         <div class="t-value">8,432<small>/10k</small></div>
         <div class="t-prog"><i style="width:84%; background: var(--fw-info)"></i></div>
-        <div class="t-foot"><span>84%</span><span class="ok">on pace</span></div>
       </div>
       <div class="tile">
-        <div class="t-label">🔥 Active kcal</div>
+        <div class="t-label">🔥 Active</div>
         <div class="t-value">486<small>/600</small></div>
         <div class="t-prog"><i style="width:81%; background: var(--fw-orange)"></i></div>
-        <div class="t-foot"><span>81%</span><span class="ok">strong day</span></div>
       </div>
     </section>
 
-    <!-- TODAY'S MEALS -->
-    <section class="card" style="margin-top: var(--s-md);" aria-label="Today's meals">
+    <!-- Today's meals -->
+    <section class="card" aria-label="Today's meals">
       <div class="card-head">
         <span class="card-title">Today's meals · 1,228 kcal logged</span>
         <a class="card-link" href="#">All ›</a>
@@ -542,7 +551,7 @@
           <div class="meal-meta">
             <div class="slot">Breakfast · 7:42 AM</div>
             <div class="name">Greek yogurt + berries + granola</div>
-            <div class="macros-line"><span>P 28</span> · <span>C 42</span> · <span>F 9</span> · 18 g fiber</div>
+            <div class="macros-line"><span>P 28</span> · <span>C 42</span> · <span>F 9</span></div>
           </div>
           <div class="cals">358<small>kcal</small></div>
         </div>
@@ -551,7 +560,7 @@
           <div class="meal-meta">
             <div class="slot">Lunch · 12:18 PM</div>
             <div class="name">Chicken Caesar wrap, side salad</div>
-            <div class="macros-line"><span>P 48</span> · <span>C 52</span> · <span>F 22</span> · 5 g fiber</div>
+            <div class="macros-line"><span>P 48</span> · <span>C 52</span> · <span>F 22</span></div>
           </div>
           <div class="cals">612<small>kcal</small></div>
         </div>
@@ -560,7 +569,7 @@
           <div class="meal-meta">
             <div class="slot">Snack · 3:04 PM</div>
             <div class="name">Almonds (30 g) + apple</div>
-            <div class="macros-line"><span>P 6</span> · <span>C 24</span> · <span>F 14</span> · 6 g fiber</div>
+            <div class="macros-line"><span>P 6</span> · <span>C 24</span> · <span>F 14</span></div>
           </div>
           <div class="cals">258<small>kcal</small></div>
         </div>
@@ -576,236 +585,41 @@
       </div>
     </section>
 
-    <!-- BODY COMPOSITION + WEIGHT TREND -->
-    <section class="card" aria-label="Body composition">
-      <div class="card-head">
-        <span class="card-title">Body composition · 30 days</span>
-        <a class="card-link" href="#">History ›</a>
+    <!-- Daily Recap (NEW per Max) -->
+    <section class="recap-card" aria-label="Daily Recap">
+      <div class="r-ic">
+        <svg class="ic" viewBox="0 0 24 24" style="width:18px;height:18px;"><path d="M4 6h16M4 12h10M4 18h7"/></svg>
       </div>
-      <div class="composition" style="margin-bottom: 14px;">
-        <div class="comp-cell">
-          <span class="lbl">Weight</span>
-          <span class="val">186.4<small>lb</small></span>
-          <span class="delta down">▼ 4.2 lb · 4 wk</span>
-        </div>
-        <div class="comp-cell">
-          <span class="lbl">Body fat (est)</span>
-          <span class="val">18.6<small>%</small></span>
-          <span class="delta down">▼ 1.1 pp · 4 wk</span>
-        </div>
-        <div class="comp-cell">
-          <span class="lbl">Lean mass</span>
-          <span class="val">151.7<small>lb</small></span>
-          <span class="delta neutral">· holding</span>
-        </div>
-        <div class="comp-cell">
-          <span class="lbl">Resting kcal</span>
-          <span class="val">1,742<small>/d</small></span>
-          <span class="delta neutral">· stable</span>
-        </div>
-      </div>
-
-      <!-- Weight sparkline -->
-      <svg class="spark" viewBox="0 0 320 56" preserveAspectRatio="none" aria-label="Weight trend last 30 days">
-        <defs>
-          <linearGradient id="wgtGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#47E7B0" stop-opacity="0.45"/>
-            <stop offset="100%" stop-color="#47E7B0" stop-opacity="0"/>
-          </linearGradient>
-        </defs>
-        <!-- Grid baseline -->
-        <line x1="0" y1="40" x2="320" y2="40" stroke="#2A2A3A" stroke-dasharray="2 4"/>
-        <!-- Area -->
-        <path d="M0,12 L20,15 L40,11 L60,18 L80,14 L100,22 L120,20 L140,28 L160,24 L180,32 L200,30 L220,36 L240,34 L260,40 L280,38 L300,44 L320,42 L320,56 L0,56 Z"
-              fill="url(#wgtGrad)"/>
-        <!-- Line -->
-        <path d="M0,12 L20,15 L40,11 L60,18 L80,14 L100,22 L120,20 L140,28 L160,24 L180,32 L200,30 L220,36 L240,34 L260,40 L280,38 L300,44 L320,42"
-              stroke="#47E7B0" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-        <!-- Latest dot -->
-        <circle cx="320" cy="42" r="4" fill="#47E7B0" stroke="#0A0A0F" stroke-width="2"/>
-      </svg>
-
-      <!-- Measurements row -->
-      <div class="meas-grid" style="margin-top: 14px;">
-        <div class="meas"><span class="l">Waist</span><span class="v">33.5"</span><span class="d delta down">▼0.4"</span></div>
-        <div class="meas"><span class="l">Hips</span><span class="v">38.2"</span><span class="d delta down">▼0.2"</span></div>
-        <div class="meas"><span class="l">Chest</span><span class="v">42.0"</span><span class="d delta neutral">·</span></div>
-        <div class="meas"><span class="l">Arms</span><span class="v">14.4"</span><span class="d delta up">▲0.1"</span></div>
-        <div class="meas"><span class="l">Thighs</span><span class="v">23.1"</span><span class="d delta down">▼0.2"</span></div>
+      <div class="r-body">
+        <div class="r-title">Today's recap (8 PM)</div>
+        <div class="r-sub">Coach is preparing your summary — tap when ready</div>
       </div>
     </section>
 
-    <!-- FITNESS / TRAINING -->
-    <section class="card" aria-label="Training summary">
+    <!-- Weight trend (compact) -->
+    <section class="card" aria-label="Weight trend">
       <div class="card-head">
-        <span class="card-title">Training · this week</span>
-        <a class="card-link" href="#">Log workout ›</a>
+        <span class="card-title">Weekly · weight trend</span>
+        <a class="card-link" href="#">Progress ›</a>
       </div>
-      <div class="composition" style="margin-bottom: 12px;">
-        <div class="comp-cell">
-          <span class="lbl">Sessions</span>
-          <span class="val">4<small>/5</small></span>
-          <span class="delta down">on plan</span>
+      <div style="display: flex; gap: 14px; align-items: center;">
+        <div style="display:flex; flex-direction: column; gap: 1px;">
+          <span style="font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Current</span>
+          <span style="font-family: var(--f-num); font-weight: 700; font-size: 22px; color: var(--text-primary); letter-spacing: -0.02em;">186.4 <small style="font-size:11px; color: var(--text-muted);">lb</small></span>
+          <span style="font-family: var(--f-num); font-size: 11px; font-weight: 600; color: var(--fw-green);">▼ 1.2 lb this week</span>
         </div>
-        <div class="comp-cell">
-          <span class="lbl">Volume</span>
-          <span class="val">38,420<small>lb</small></span>
-          <span class="delta down">▲ 6.2% wk/wk</span>
-        </div>
-        <div class="comp-cell">
-          <span class="lbl">Active min</span>
-          <span class="val">214<small>/300</small></span>
-          <span class="delta neutral">71% wk</span>
-        </div>
-        <div class="comp-cell">
-          <span class="lbl">VO₂ est</span>
-          <span class="val">42.1<small>ml/kg</small></span>
-          <span class="delta down">▲ 0.4</span>
-        </div>
-      </div>
-
-      <!-- Weekly bar chart -->
-      <svg class="spark" viewBox="0 0 320 56" preserveAspectRatio="none" aria-label="Weekly active minutes">
-        <g>
-          <rect x="6"  y="14" width="32" height="42" rx="4" fill="#47E7B0"/>
-          <rect x="50" y="22" width="32" height="34" rx="4" fill="#47E7B0"/>
-          <rect x="94" y="46" width="32" height="10" rx="4" fill="#2A2A3A"/>
-          <rect x="138" y="10" width="32" height="46" rx="4" fill="#47E7B0"/>
-          <rect x="182" y="28" width="32" height="28" rx="4" fill="#47E7B0"/>
-          <rect x="226" y="46" width="32" height="10" rx="4" fill="#2A2A3A"/>
-          <rect x="270" y="36" width="32" height="20" rx="4" fill="#E87A1D" opacity="0.85"/>
-        </g>
-        <g font-family="DM Sans" font-size="9" fill="#777" text-anchor="middle">
-          <text x="22" y="8">M</text><text x="66" y="8">T</text><text x="110" y="8">W</text>
-          <text x="154" y="8">T</text><text x="198" y="8">F</text><text x="242" y="8">S</text><text x="286" y="8">S</text>
-        </g>
-      </svg>
-      <div style="display:flex; justify-content: space-between; margin-top: 8px; font-family: var(--f-num); font-size: 11px; color: var(--text-secondary);">
-        <span>Today: <span style="color: var(--fw-orange); font-weight:700;">38 min</span> active</span>
-        <span>Trainer session at 6:00 PM</span>
-      </div>
-    </section>
-
-    <!-- HEALTH GOALS -->
-    <section class="card" aria-label="Health goals">
-      <div class="card-head">
-        <span class="card-title">Goals · Q2</span>
-        <a class="card-link" href="#">Edit ›</a>
-      </div>
-      <div class="goals">
-        <div class="goal">
-          <div class="g-name">Reach 180 lb (lean cut)</div>
-          <div class="g-pct">68%</div>
-          <div class="g-bar"><i style="width:68%; background: var(--fw-green);"></i></div>
-          <div class="g-foot"><span>186.4 lb today</span><span>6.4 lb to go</span></div>
-        </div>
-        <div class="goal">
-          <div class="g-name">Hit 150 g protein daily (28-day avg)</div>
-          <div class="g-pct">91%</div>
-          <div class="g-bar"><i style="width:91%; background: var(--fw-green);"></i></div>
-          <div class="g-foot"><span>137 g · 28-day avg</span><span>13 g short</span></div>
-        </div>
-        <div class="goal">
-          <div class="g-name">5 strength sessions/week</div>
-          <div class="g-pct">80%</div>
-          <div class="g-bar"><i style="width:80%; background: var(--fw-info);"></i></div>
-          <div class="g-foot"><span>4 of 5 this week</span><span>1 to go</span></div>
-        </div>
-        <div class="goal">
-          <div class="g-name">Sleep ≥ 7 h on average</div>
-          <div class="g-pct">54%</div>
-          <div class="g-bar"><i style="width:54%; background: var(--fw-warning);"></i></div>
-          <div class="g-foot"><span>6h 22m avg this week</span><span class="g-foot" style="color:var(--fw-warning);">attention</span></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- SLEEP + RECOVERY -->
-    <section class="card" aria-label="Sleep and recovery">
-      <div class="card-head">
-        <span class="card-title">Sleep & recovery · last night</span>
-        <a class="card-link" href="#">7-day ›</a>
-      </div>
-      <div class="sleep-row">
-        <div class="sleep-ring">
-          <svg width="80" height="80" viewBox="0 0 80 80">
-            <circle cx="40" cy="40" r="32" stroke="#1A1A24" stroke-width="8" fill="none"/>
-            <circle cx="40" cy="40" r="32" stroke="#A855F7" stroke-width="8" fill="none"
-                    stroke-linecap="round"
-                    stroke-dasharray="201.06"
-                    stroke-dashoffset="68"
-                    transform="rotate(-90 40 40)"/>
-            <text x="40" y="38" text-anchor="middle" font-family="DM Sans" font-weight="700" font-size="16" fill="#FFFFFF">6h</text>
-            <text x="40" y="52" text-anchor="middle" font-family="DM Sans" font-size="10" fill="#777">38m</text>
-          </svg>
-        </div>
-        <div class="sleep-meta">
-          <div><div class="k">Bedtime</div><div class="v">11:42 PM</div></div>
-          <div><div class="k">Wake</div><div class="v">6:20 AM</div></div>
-          <div><div class="k">HRV</div><div class="v">62 ms <span style="font-size:10px; color: var(--fw-green); font-weight:600;">▲4</span></div></div>
-          <div><div class="k">Resting HR</div><div class="v">54 bpm <span style="font-size:10px; color: var(--fw-green); font-weight:600;">▼1</span></div></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- MOOD / ENERGY -->
-    <section class="card" aria-label="Mood and energy">
-      <div class="card-head">
-        <span class="card-title">How you're feeling</span>
-        <a class="card-link" href="#">Log ›</a>
-      </div>
-      <div class="mood">
-        <div class="mood-block">
-          <span class="label">Mood today</span>
-          <div class="mood-dots">
-            <div class="dot">1</div>
-            <div class="dot">2</div>
-            <div class="dot">3</div>
-            <div class="dot active">4</div>
-            <div class="dot">5</div>
-          </div>
-        </div>
-        <div class="mood-block">
-          <span class="label">Energy today</span>
-          <div class="mood-dots">
-            <div class="dot">1</div>
-            <div class="dot">2</div>
-            <div class="dot active warm">3</div>
-            <div class="dot">4</div>
-            <div class="dot">5</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- COACH PROACTIVE -->
-    <section class="coach" aria-label="Coach proactive prompt">
-      <div class="c-avatar">FW</div>
-      <div class="c-body">
-        <div class="c-tag">Coach · proactive</div>
-        <div class="c-text">Sleep dropped to 6h 22m average this week. Want me to suggest a wind-down routine, or shift tomorrow's training to AM?</div>
-        <div class="c-chips">
-          <button class="chip primary">Suggest wind-down</button>
-          <button class="chip">Move workout</button>
-          <button class="chip">Not now</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- 14-DAY ADHERENCE HEATMAP -->
-    <section class="card" aria-label="Adherence heatmap">
-      <div class="card-head">
-        <span class="card-title">14-day macro adherence</span>
-        <span style="font-family: var(--f-num); font-size: 11px; color: var(--text-secondary);">85% on target</span>
-      </div>
-      <div class="heat" aria-hidden="true">
-        <span class="l3"></span><span class="l4"></span><span class="l2"></span><span class="l4"></span>
-        <span class="l3"></span><span class="l1"></span><span class="l4"></span><span class="l4"></span>
-        <span class="l2"></span><span class="l3"></span><span class="l4"></span><span class="l3"></span>
-        <span class="l4"></span><span class="l3"></span>
-      </div>
-      <div style="display: flex; justify-content: space-between; margin-top: 8px; font-family: var(--f-num); font-size: 10px; color: var(--text-muted);">
-        <span>Apr 30</span><span>Today</span>
+        <svg viewBox="0 0 240 56" preserveAspectRatio="none" style="flex:1; height: 56px;" aria-label="Weight last 30 days">
+          <defs>
+            <linearGradient id="wgtGrad2" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#47E7B0" stop-opacity="0.45"/>
+              <stop offset="100%" stop-color="#47E7B0" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <line x1="0" y1="40" x2="240" y2="40" stroke="#2A2A3A" stroke-dasharray="2 4"/>
+          <path d="M0,12 L20,15 L40,11 L60,18 L80,14 L100,22 L120,20 L140,28 L160,24 L180,32 L200,30 L220,36 L240,38 L240,56 L0,56 Z" fill="url(#wgtGrad2)"/>
+          <path d="M0,12 L20,15 L40,11 L60,18 L80,14 L100,22 L120,20 L140,28 L160,24 L180,32 L200,30 L220,36 L240,38" stroke="#47E7B0" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="240" cy="38" r="3.5" fill="#47E7B0" stroke="#0A0A0F" stroke-width="2"/>
+        </svg>
       </div>
     </section>
 
@@ -844,7 +658,7 @@
 </div>
 
 <p class="meta" style="margin-top:8px;">
-  Tokens: <strong>#47E7B0</strong> brand · <strong>#E87A1D</strong> CTA · <strong>#A855F7</strong> coach · Outfit / Inter / DM Sans · dark surface stack
+  Brand-locked · <strong>#47E7B0</strong> · <strong>#E87A1D</strong> · <strong>#A855F7</strong> · Outfit / Inter / DM Sans · dark surface stack
 </p>
 
 </body>
