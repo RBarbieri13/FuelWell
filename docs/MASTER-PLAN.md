@@ -7,7 +7,36 @@
 
 ## Where we are right now
 
-**Phase 0 — Pre-build alignment** is in progress. Phase 0.5 (Visual Design) and Phase 0.6 (Interactive Prototype) have been added to this plan as new explicit phases — they bracket Phase 0 and Phase 1 to ensure every screen is mapped, drawn, mocked up, and clickable *before* any iOS code is written.
+**Phase 0 — Pre-build alignment** is ✅ complete (2026-05-13, both Robert and Max signed off). Phase 0.5 (Visual Design) is now in progress. Phase 0.5 and 0.6 (Interactive Prototype) bracket Phase 0 and Phase 1 so every screen is mapped, drawn, mocked up, and clickable *before* any iOS code is written.
+
+**Phase 0 deliverables:**
+- ✅ iOS Production Guide ingested (`docs/ios-guide/`)
+- ✅ Gap Analysis worksheet filled out and resolved (`docs/FuelWell-Gap-Analysis.md`) — all 12 items + 10 engineering defaults locked; Max countersigned with comments
+- ✅ Q&A log preserved (`docs/FuelWell-Gap-Analysis-Log.md`) — verbatim Robert + Max
+- ✅ `PRINCIPLES.md` written (`docs/ios-guide/PRINCIPLES.md`) — 13 binding rules + Daily Loop from Vision + Inspiration + Blueprint
+- ✅ Product context aggregated (`docs/ios-guide/PRODUCT-CONTEXT.md`) — single in-repo reference for the Drive sources
+- ✅ DESIGN.md rolled back to draft (`docs/ios-guide/drafts/DESIGN.md.draft`)
+- ⏳ iOS guide chapters 1–3 detailed read — Robert, deferred to Phase 1 prep
+- ⏳ Account confirmations (Apple Developer Individual, Anthropic, Supabase, Sentry, PostHog) — Robert, partial (Apple Developer confirmed Individual)
+- ⏳ Editor decision (Cursor or Xcode) — Robert
+- ✅ Open scope deltas resolved — see table below
+
+## Scope deltas — resolved
+
+These surfaced from the Execution Blueprint and the Inspiration Deep Dive. Resolutions captured here.
+
+| # | Delta | Resolution |
+|---|---|---|
+| S1 | Workouts at Pilot (Screens 22–23) | **Manual workout entry IN**; no adaptive logic. Trainer enhancement, not replacement. |
+| S2 | Water tracking (Screen 27) | **IN** — surfaces as a passive HealthKit-style tile on Dashboard. Low friction, high engagement. |
+| S3 | Meal Plan Generator (Screen 25) | **IN at Pilot.** Three plan options per generation, each with a single-line summary. Auto-populates Grocery List on Accept. |
+| S4 | Streaks / consistency score | **IN** — gentle vocabulary only (e.g. "X-day logging streak"). No public leaderboards. Per Max's "no guilt" principle. |
+| S5 | Photo / camera-first meal logging | **IN.** Photo is the default tab on Add Meal. Also includes barcode scan and search. Voice deferred. |
+| S6 | Restaurant nutrition database | **Curated chain database** for Pilot (resolved via Gap #2). Top 3 picks show macros immediately. Surfaceable from Dashboard via "I'm eating out right now" CTA. |
+| S7 | Education system delivery | **Dual-surface** (resolved via Gap #1): full Learn tab with search + categories, plus inline contextual cards inside Coach Chat. One content store. |
+| S8 | Personal recipe bank + "repeat last meal" shortcut | **IN.** Recipe Browser leads with "based on your remaining macros today." Recent meals appear as one-tap chips in Add Meal. |
+
+Master Plan §"Phase 3 — Craft" is updated to reflect the real Pilot scope: **14 top-level screens** (added Daily Recap per Max), 9 onboarding sub-screens (added Lifestyle per Max), plus the Dashboard "I'm eating out right now" quick action and empty-state coaching across every screen.
 
 This is the binding plan for building the FuelWell iOS app to Pilot, Founding 100, and Public launch. It supersedes `docs/FuelWell-Phase-Plan.md` (which remains as the simpler partner-facing summary).
 

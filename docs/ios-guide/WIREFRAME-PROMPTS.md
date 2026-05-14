@@ -1,6 +1,6 @@
 # FuelWell — Wireframe Prompts (Phase 0.5 · Step 3)
 
-**Status:** DRAFT — wireframe specs derived from `APP-MAP.md` and `FLOW-CHART.md`. Update if either upstream doc changes.
+**Status:** ✅ READY — incorporates Max's Step 1 review (2026-05-13). Includes new Lifestyle onboarding step, new Daily Recap screen (#14), Dashboard above-the-fold compression with "I'm eating out" CTA, Photo-default Add Meal, weekly-default Progress, single-line Meal Plan summaries, grouped Grocery, and empty-state guidance per screen.
 
 **Purpose:** ready-to-paste prompts for Claude Design, one per wireframe. Each prompt is self-contained so you can run them in separate sessions without losing context.
 
@@ -51,6 +51,10 @@ LAYOUT RULES
 - Card components: rounded rectangles with a 1pt border, internal padding visible.
 - Verdict-first principle: any "what should I do" banner or recommendation always sits ABOVE supporting data on the screen.
 
+EMPTY STATES
+- Every wireframe must include an "empty state" variation alongside the populated one (e.g. no meals logged yet, no recipes saved, no progress data). Max calls these "brand moments" — they're not blank lists, they're coaching opportunities.
+- Empty state copy is always a question or suggestion, never just "Nothing here yet." Example: "You haven't logged a meal today — want a suggestion based on your plan?"
+
 OUTPUT
 - One wireframe per request unless I ask for variations.
 - Annotate non-obvious elements with a small label and a leader line. Annotations sit OUTSIDE the device frame.
@@ -88,7 +92,7 @@ Generate 3 variations:
 ### 3.2 Onboarding — Sign in / Sign up
 
 ```
-Wireframe: ONBOARDING — SIGN IN / SIGN UP (Screen 2 of 8)
+Wireframe: ONBOARDING — SIGN IN / SIGN UP (Screen 2 of 9)
 
 Single full-screen view. No tab bar.
 
@@ -113,7 +117,7 @@ Generate 3 variations:
 ### 3.3 Onboarding — Goal selection
 
 ```
-Wireframe: ONBOARDING — GOAL SELECTION (Screen 3 of 8)
+Wireframe: ONBOARDING — GOAL SELECTION (Screen 3 of 9)
 
 Single full-screen view. No tab bar.
 
@@ -138,7 +142,7 @@ Generate 3 variations:
 ### 3.4 Onboarding — Body baseline
 
 ```
-Wireframe: ONBOARDING — BODY BASELINE (Screen 4 of 8)
+Wireframe: ONBOARDING — BODY BASELINE (Screen 4 of 9)
 
 Single full-screen view. No tab bar.
 
@@ -164,12 +168,12 @@ Generate 3 variations:
 ### 3.5 Onboarding — Dietary constraints
 
 ```
-Wireframe: ONBOARDING — DIETARY CONSTRAINTS (Screen 5 of 8)
+Wireframe: ONBOARDING — DIETARY CONSTRAINTS (Screen 5 of 9)
 
 Single full-screen view. No tab bar.
 
 ABOVE THE FOLD:
-- Back arrow, progress dots (5 of 8)
+- Back arrow, progress dots (5 of 9)
 - Title: "[Screen Title: Anything we should avoid?]"
 - Subtitle: "[Subtitle: Optional — you can change this later]"
 - Two horizontally-scrolling chip rows, each labeled:
@@ -183,17 +187,43 @@ Generate 3 variations:
 1. Two chip rows + free text (as described)
 2. Toggle list (long vertical list with switches)
 3. Searchable picker that adds chips as selected
+
+(Next step in flow: Lifestyle — see 3.6)
 ```
 
-### 3.6 Onboarding — HealthKit permission
+### 3.6 Onboarding — Lifestyle *(NEW per Max)*
 
 ```
-Wireframe: ONBOARDING — HEALTHKIT PERMISSION (Screen 6 of 8)
+Wireframe: ONBOARDING — LIFESTYLE (Screen 6 of 9)
+
+Single full-screen view. No tab bar. This step is what tunes restaurant and recipe ranking from the very first session.
+
+ABOVE THE FOLD:
+- Back arrow, progress dots (6 of 9 filled)
+- Title: "[Screen Title: How do you usually eat?]"
+- Subtitle: "[Subtitle: One sentence — we'll tailor your suggestions]"
+- Vertical stack of 3 selectable cards, each with:
+  - Icon placeholder (left, square)
+  - Title + one-line description
+  - Selection state indicator (radio circle)
+  - Cards: "[Cook at home mostly]" / "[Eat out mostly]" / "[Both equally]"
+- Primary action: "[Primary Action: Continue]" (disabled until selection)
+
+Generate 3 variations:
+1. Stacked cards with icons left (clean list feel)
+2. Three large equal tiles in a single column with hero icons on top
+3. Toggle-style segmented control without card chrome
+```
+
+### 3.7 Onboarding — HealthKit permission
+
+```
+Wireframe: ONBOARDING — HEALTHKIT PERMISSION (Screen 7 of 9)
 
 Single full-screen view. No tab bar. This screen EXPLAINS what we'll request; the actual iOS permission sheet comes after the Continue tap.
 
 ABOVE THE FOLD:
-- Back arrow, progress dots (6 of 8)
+- Back arrow, progress dots (6 of 9)
 - Heart/health icon placeholder, centered
 - Title: "[Screen Title: Connect Apple Health]"
 - Subtitle paragraph: "[Body: 2-3 sentences explaining read-only scope]"
@@ -215,12 +245,12 @@ Generate 3 variations:
 ### 3.7 Onboarding — Notification permission
 
 ```
-Wireframe: ONBOARDING — NOTIFICATION PERMISSION (Screen 7 of 8)
+Wireframe: ONBOARDING — NOTIFICATION PERMISSION (Screen 8 of 9)
 
 Same pattern as 3.6 but for push notifications.
 
 ABOVE THE FOLD:
-- Back arrow, progress dots (7 of 8)
+- Back arrow, progress dots (7 of 9)
 - Bell icon placeholder, centered
 - Title: "[Screen Title: Let your coach reach you]"
 - Subtitle: "[Body: Event-driven only — never spammy. Quiet hours 10pm–7am.]"
@@ -242,7 +272,9 @@ Generate 3 variations:
 ### 3.8 Onboarding — Your Plan reveal
 
 ```
-Wireframe: ONBOARDING — YOUR PLAN REVEAL (Screen 8 of 8)
+Wireframe: ONBOARDING — YOUR PLAN REVEAL (Screen 9 of 9)
+
+NOTE (per Max): this is the "magic moment." Should feel like a PAYOFF, not a confirmation screen. Do not cut the why-this-plan explainer — it's critical.
 
 This is the "magic moment" — the user sees their first computed plan.
 
@@ -267,39 +299,50 @@ Generate 3 variations:
 3. Ring/dial visual for calories, macros as breakdown legend
 ```
 
-### 3.9 Dashboard (Home tab root)
+### 3.9 Dashboard (Home tab root) — UPDATED per Max
 
 ```
 Wireframe: DASHBOARD (Home tab root)
 
 Tab bar visible at bottom (Home tab selected).
 
-ABOVE THE FOLD (CRITICAL — verdict must be visible):
-- Top bar: greeting on left ("[Greeting: Good afternoon, Robert]"), avatar circle on right
-- VERDICT BANNER (full-width card, prominent): contains an icon + one-line verdict ("[Verdict: You're on track — log lunch when ready]") + primary CTA button "[Primary Action: Log Meal]"
-- Macro ring section: large circular progress ring (calories remaining) on left, three small horizontal bars on right (protein / carbs / fat remaining)
-- "Today's meals" section header
-- Meal row 1: icon + meal name + macros chip + chevron
+ABOVE THE FOLD CONTRACT (CRITICAL — all FIVE elements must be visible without scrolling):
+1. Verdict banner / next recommended meal
+2. Macro ring
+3. One coach nudge card (only when triggered; otherwise empty space stays for the row but the card is hidden)
+4. Mood/energy one-tap row (1-5 dots for mood, 1-5 dots for energy, inline — NOT a sheet)
+5. "I'm eating out right now" quick action button — prominent, easily tappable
+
+Layout, top to bottom:
+- Top bar: greeting on left ("[Greeting: Good afternoon, Robert]" with date subline), avatar circle on right with streak badge overlay
+- VERDICT BANNER (full-width card): one-line verdict ("[Verdict: You've got 612 kcal and 38g protein left]") + reasoning subtitle + primary CTA "[Primary Action: Log dinner]"
+- Macro ring + horizontal P/C/F bars (compact — ring smaller than original spec to make room above the fold)
+- "I'M EATING OUT RIGHT NOW" QUICK ACTION: full-width pill button with restaurant-fork icon — visually distinct from the verdict CTA, sits directly below macros
+- Coach nudge card (shown only when a trigger fires; collapsible to a 1-line strip if not actively triggered)
+- Mood/energy row: two inline 1-5 dot scales side by side, labeled "Mood" and "Energy" — single-tap logs
 
 BELOW THE FOLD:
-- Meal rows 2, 3, 4 (breakfast, lunch, dinner, snack)
-- Coach prompt card (if any) — labeled "[Coach card: contextual prompt]"
+- Today's meals list (logged meals so far + pending meal slot rows)
+- Daily Recap card (appears after 8pm or as a persistent always-accessible link)
+- Quick stats row (steps / hydration / active kcal — small tiles)
 - Floating Action Button (FAB) at bottom-right: "[FAB: Quick Add +]"
 
-The verdict banner MUST sit above the macro ring. The macro ring is data; the banner is decision.
+EMPTY STATE (first-time user, no meals logged):
+- Verdict says: "[Empty verdict: Welcome — your day starts here. Log your first meal whenever you're ready.]"
+- "Today's meals" section reads: "[Empty: You haven't logged a meal yet today — want a suggestion based on your plan?]" with a primary CTA "[Suggest a meal]"
 
-Generate 3 variations:
-1. Verdict banner as a full-width pill at top
-2. Verdict banner integrated with macro ring (verdict text overlays ring)
-3. Verdict banner as a coach-style speech bubble
+Generate 3 variations of the populated state:
+1. Verdict + ring + eating-out CTA + nudge + mood — clean vertical stack (above the fold density-optimized)
+2. Verdict integrated with ring (verdict text overlays the ring's center) to save vertical space — eating-out CTA gets more prominence
+3. Card-based — each above-the-fold element in its own elevated card with consistent rhythm
 ```
 
-### 3.10 Meal Log day view (Log tab root)
+### 3.10 Meal Log day view (Log tab root) — UPDATED per Max
 
 ```
 Wireframe: MEAL LOG DAY VIEW (Log tab root)
 
-Tab bar visible at bottom (Log tab selected).
+Tab bar visible at bottom (Log tab selected). This screen is opened multiple times per day — the add affordance MUST be fast and prominent.
 
 ABOVE THE FOLD:
 - Top bar: title "[Screen Title: Today]" centered, "+" button right
@@ -313,40 +356,49 @@ BELOW THE FOLD:
 - Section: "Dinner"
 - Section: "Snacks"
 
+PERSISTENT FLOATING ADD BUTTON (Max): a large, brand-colored FAB pinned bottom-right above the tab bar — visible while scrolling. Distinct from the top-right "+" and visually heavier.
+
+EMPTY STATE (first-time user):
+- Header reads as usual
+- Body reads: "[Empty: No meals logged yet. The fastest way is a photo — tap the + below.]"
+- The persistent FAB pulses subtly to draw attention on first session only.
+
 Generate 3 variations:
-1. Sections by meal type (breakfast/lunch/dinner/snack)
-2. Single chronological timeline of meals with times
-3. Grid view — each meal as a card with thumbnail
+1. Sections by meal type with persistent FAB bottom-right
+2. Single chronological timeline of meals with times + persistent FAB
+3. Grid view — each meal as a card with thumbnail + persistent FAB
 ```
 
-### 3.11 Add Meal — Search / Photo / Scan (sheet)
+### 3.11 Add Meal — Photo / Search / Scan (sheet) — UPDATED per Max
 
 ```
-Wireframe: ADD MEAL SHEET (Search / Photo / Scan)
+Wireframe: ADD MEAL SHEET (Photo / Search / Scan)
 
 Presented as a modal sheet from the bottom, covering ~90% of screen height. No tab bar visible.
 
-ABOVE THE FOLD:
+DEFAULT TAB: PHOTO (Max — most frictionless for real life). Order in the segmented control: [Photo] [Search] [Scan].
+
+ABOVE THE FOLD (default Photo mode):
 - Sheet grabber bar (small horizontal pill at top)
 - Top row: "Cancel" left, title "[Screen Title: Add meal]" center, meal slot pill on right (e.g. "Lunch ▾")
-- Segmented control with 3 options: [Search] [Photo] [Scan]
-- Search-mode default view:
-  - Search input with magnifier icon: "[Field: Search foods or brands]"
-  - "Recent" section header
-  - Recent foods row: 4-5 chip-style items horizontally scrollable
-  - "Results" section header (empty until user types)
+- Segmented control: [Photo] [Search] [Scan] — Photo selected
+- Full-bleed camera viewfinder placeholder with:
+  - Centered shutter button (large)
+  - Helper text "[Helper: Point at your plate — we'll parse it]"
+  - Secondary "[Text Link: Choose from library]" below shutter
+  - "Recent foods" horizontal chip row pinned just above the tab bar area for one-tap re-log
 
-BELOW THE FOLD:
-- Results list (empty state placeholder)
-
-Also generate alternate states:
-- Photo mode: full-bleed camera viewfinder placeholder with shutter button and "[Helper: Point at your plate]" overlay
+ALTERNATE STATES (also draw):
+- Search mode: search input "[Field: Search foods or brands]" + "Recent" chips + results list area
 - Scan mode: viewfinder with horizontal barcode reticle and "[Helper: Align barcode]"
 
-Generate 3 variations of the Search mode layout:
-1. Standard list with recent chips
-2. Recent chips as a grid above search
-3. Search input dominant, recent collapsed into a single "Recent" toggle
+EMPTY STATE (Search with no recents):
+- "[Empty: Start typing — we'll pull from Open Food Facts + your previous meals.]"
+
+Generate 3 variations of the Photo mode layout:
+1. Full-bleed camera with recent chips pinned at bottom (as described)
+2. Camera viewfinder takes top 60%, recent chips and library link in a panel below
+3. Camera with a coach hint overlay: "[Hint: Coach can guess this from one shot]" — emphasizes AI assistance
 ```
 
 ### 3.12 Food Detail / Portion editor (sheet)
@@ -371,27 +423,38 @@ Generate 3 variations:
 3. No image at top — name + macros only, image lower
 ```
 
-### 3.13 Restaurant Guidance (Log child)
+### 3.13 Restaurant Guidance (Log child / Dashboard quick-action target) — UPDATED per Max
 
 ```
-Wireframe: RESTAURANT GUIDANCE (Log child)
+Wireframe: RESTAURANT GUIDANCE
 
-Pushed screen. Tab bar still visible.
+Pushed screen. Tab bar still visible. Can be entered two ways: from Log tab, or via Dashboard "I'm eating out right now" CTA (which pre-loads today's remaining macros).
 
-ABOVE THE FOLD:
+ABOVE THE FOLD (when entered from Dashboard CTA — primary use case):
+- Back arrow, title "[Screen Title: Eating out]"
+- Subtitle pill: "[Context: 612 kcal · 38g protein left today]" — shows today's remaining macros as the active filter
+- "Top 3 picks for right now" section — 3 prominent cards, each shows:
+  - Restaurant logo + name + cuisine
+  - One recommended menu item with macros immediately visible
+  - "Why this fits" one-line explainer
+- Below picks: "[Text Link: Show all restaurants]"
+
+ABOVE THE FOLD (when entered from Log tab — browse mode):
 - Back arrow, title "[Screen Title: Restaurants]"
 - Search bar: "[Field: Search restaurants]"
 - Toggle: "[Toggle: Show nearby]" (off by default)
 - Featured restaurant row (horizontal scroll, 3-4 large cards): each card has logo placeholder, name, "Coach pick" badge slot
 - Section: "All restaurants" — vertical list, each row has logo, name, cuisine tag, chevron
 
-BELOW THE FOLD:
-- More restaurant rows
+EMPTY STATE (curated list still loading, or no nearby chains):
+- "[Empty: We don't have these restaurants in our database yet — try search or scan a menu photo.]"
 
-Generate 3 variations:
-1. Featured carousel + vertical list (as described)
-2. Vertical list only, with "Coach pick" badge inline
-3. Grid layout (2 columns) of restaurant tiles
+Generate 3 variations of the Dashboard-CTA-entry state (primary):
+1. Three large stacked picks with macros and "why this fits" lines (as described)
+2. Three picks in a horizontal scroll carousel, full-screen view per pick
+3. Two-column grid of picks with the macro fit indicator as a colored bar across each card
+
+Then generate 3 variations of the Log-tab browse state.
 ```
 
 ### 3.14 Restaurant Detail (Log child of child)
@@ -418,26 +481,32 @@ Generate 3 variations:
 3. Single ranked list — coach picks pinned at top with a "Recommended" badge, rest of menu below
 ```
 
-### 3.15 Recipe Browser (Log child)
+### 3.15 Recipe Browser (Log child) — UPDATED per Max
 
 ```
 Wireframe: RECIPE BROWSER
 
 Pushed screen. Tab bar visible.
 
+DEFAULT VIEW LEADS WITH REMAINING-MACROS RANKING (Max — that's the differentiator vs every other recipe app).
+
 ABOVE THE FOLD:
 - Back arrow, title "[Screen Title: Recipes]"
-- Toggle prominent at top: "[Toggle: Use my remaining macros]" (off by default)
-- Filter chip row (horizontal scroll): [Quick (<20 min)] [High protein] [Vegetarian] [Cuisine ▾] [+ More]
-- Recipe card grid (2 columns), each card: image placeholder (square top), recipe name, prep time, calorie count, macros chip row
+- Hero section "For your remaining macros today" — a labeled banner showing remaining macros + 3 ranked recipe cards (horizontal scroll), each card pre-tagged with macro fit
+- Toggle "[Toggle: Browse all instead]" below the hero section
+- Filter chip row (horizontal scroll, visible when toggled to Browse): [Quick (<20 min)] [High protein] [Vegetarian] [Cuisine ▾] [+ More]
 
 BELOW THE FOLD:
-- More recipe cards
+- Recipe card grid (2 columns), each card: image placeholder (square top), recipe name, prep time, calorie count, macros chip row
+
+EMPTY STATE (no recipes match remaining macros):
+- "[Empty: Nothing in your saved recipes fits today's remaining macros. Want a fresh meal plan, or browse all?]"
+- Two CTAs: [Generate plan] [Browse all]
 
 Generate 3 variations:
-1. 2-column grid (as described)
-2. Single-column list with horizontal recipe cards (image left, text right)
-3. Pinterest-style masonry with varied card heights
+1. Remaining-macros hero strip + standard grid below (as described)
+2. Remaining-macros recipes occupy the whole screen until user explicitly chooses Browse
+3. Side-by-side: "for your macros" on left half, generic browse on right half (tab-style)
 ```
 
 ### 3.16 Recipe Detail
@@ -484,25 +553,29 @@ INITIAL STATE (no plan generated yet):
 - Primary action: "[Primary Action: Generate 3 plans]"
 
 RESULTS STATE (after generation):
-- 3 plan option cards stacked vertically, each card shows:
-  - Plan title (e.g. "Plan A — High protein focus")
-  - 1-line summary
+- 3 plan option cards stacked vertically. Each card shows (Max — single-line summary so users can choose without reading every macro):
+  - Plan title (e.g. "Plan A")
+  - PROMINENT single-line summary (e.g. "Higher protein, lighter dinners")
   - Macro fit indicator (small bar chart placeholder)
   - "[Button: View this plan]"
 - Bottom: "[Secondary Action: Regenerate]"
 
+EMPTY STATE (before first generation in a session): hero illustration + the form above.
+
 Generate both states. Then generate 3 variations of the results state:
-1. Vertical stack of 3 cards (as described)
-2. Swipeable horizontal cards (one at a time, dot indicators)
-3. Side-by-side comparison table
+1. Vertical stack of 3 cards with bold single-line summary as the dominant visual element
+2. Swipeable horizontal cards (one at a time, dot indicators) with the summary line as a banner
+3. Three side-by-side comparison cards where the summary lines align in a "pick by feel" row
 ```
 
-### 3.18 Grocery List
+### 3.18 Grocery List — UPDATED per Max
 
 ```
 Wireframe: GROCERY LIST
 
 Pushed screen. Tab bar visible.
+
+GROUPED BY CATEGORY (Max — produce, protein, pantry, etc. Clean and minimal, NOT a spreadsheet).
 
 ABOVE THE FOLD:
 - Back arrow, title "[Screen Title: Grocery list]", share icon top-right
@@ -514,20 +587,26 @@ BELOW THE FOLD:
 - Sections: Dairy, Pantry, Other
 - Bottom bar: "[Secondary Action: Clear bought items]"
 
-Checked items show with strikethrough.
+Checked items show with strikethrough. Categories use minimal section headers — small caps, muted color, no boxes around groups (spreadsheet feel to avoid).
 
-Generate 3 variations:
-1. Grouped by category (as described)
-2. Flat single list with sort/filter toggle at top
-3. Grouped by source recipe instead of category
+EMPTY STATE:
+- "[Empty: Your list is empty. Generate a meal plan or add items below.]"
+- Two CTAs: [Generate plan] [Add manually]
+
+Generate 3 variations (all grouped by category):
+1. Standard category sections with minimal section dividers (as described)
+2. Collapsible category groups (tap to expand/collapse)
+3. Category color-coded dot prefix on each item; flat-looking but visually grouped
 ```
 
-### 3.19 Coach Chat (Coach tab root)
+### 3.19 Coach Chat (Coach tab root) — UPDATED per Max
 
 ```
 Wireframe: COACH CHAT (Coach tab root)
 
 Tab bar visible at bottom (Coach tab selected).
+
+Input placeholder copy (CRITICAL per Max): "Ask me anything about today…" — should feel like asking an expert, not texting a bot.
 
 ABOVE THE FOLD:
 - Top bar: title "[Screen Title: Coach]", "New" button top-right
@@ -536,7 +615,11 @@ ABOVE THE FOLD:
   - User message bubble (aligned right): shorter placeholder
   - Coach message with INLINE LEARN CARD: bubble containing text + embedded card (rounded rectangle with article title and "[Link: Read full article]")
   - Coach message with QUICK-REPLY CHIPS below it: 3 chips like [Yes log it] [Tell me more] [Not now]
-- Input bar pinned above tab bar: text field "[Field: Message]", mic icon left, send button right
+- Input bar pinned above tab bar: text field with placeholder "[Field placeholder: Ask me anything about today…]", mic icon left, send button right
+
+EMPTY STATE (first-time, no conversation):
+- Welcome message from coach: "[Empty: Hi Robert. I'm here when you need a second opinion, not when I think you should ping you. What's on your mind?]"
+- 3 starter chips: [Plan my dinner] [I'm eating out] [Check my macros]
 
 Generate 3 variations:
 1. Standard chat layout (as described)
@@ -544,7 +627,9 @@ Generate 3 variations:
 3. Card-style messages (each turn in a card rather than a bubble)
 ```
 
-### 3.20 Learn home (Learn tab root)
+### 3.20 Learn home (Learn tab root) — UPDATED per Max
+
+Tone (Max): articles are 3-minute reads max, end with one actionable takeaway, smart-friend voice (never academic). "Why does this matter to me?" must be answered in the first sentence.
 
 ```
 Wireframe: LEARN HOME (Learn tab root)
@@ -567,75 +652,91 @@ Generate 3 variations:
 3. Search-first — search bar dominant, categories as compact chips below
 ```
 
-### 3.21 Article Detail
+### 3.21 Article Detail — UPDATED per Max
 
 ```
 Wireframe: ARTICLE DETAIL
 
-Pushed screen. Tab bar visible.
+Pushed screen. Tab bar visible. Articles target ~3 min read max. Every article ends with a labeled "One thing to try today" actionable takeaway card.
 
 ABOVE THE FOLD:
 - Back arrow, share top-right, save (bookmark) top-right
 - Article hero image placeholder (16:9, full-width)
 - Article title (large)
-- Meta row: reading time · category tag
+- Meta row: reading time (e.g. "2 min read") · category tag
 
 BELOW THE FOLD:
 - Article body — paragraphs of placeholder text with one inline image placeholder mid-article
+- "ONE THING TO TRY TODAY" callout card (full-width, brand-accented, contains a single actionable suggestion)
 - "Related articles" section at bottom — 2-3 cards
 
 Generate 3 variations:
-1. Hero image + title + body (as described)
-2. Title-first (no hero image, just typography)
-3. Reading-mode focused — narrow column, generous whitespace
+1. Hero image + title + body + takeaway card (as described)
+2. Title-first (no hero image, just typography) with takeaway card sticky at bottom
+3. Reading-mode focused — narrow column, generous whitespace, takeaway card centered as a moment
 ```
 
-### 3.22 Progress overview (Progress tab root)
+### 3.22 Progress overview (Progress tab root) — UPDATED per Max
 
 ```
 Wireframe: PROGRESS (Progress tab root)
 
 Tab bar visible at bottom (Progress tab selected).
 
+DEFAULT VIEW: WEEKLY (Max — daily fluctuations are noisy and discouraging; weekly trends tell the real story).
+
 ABOVE THE FOLD:
 - Top bar: title "[Screen Title: Progress]"
-- Time range selector: segmented [7d] [30d] [90d] [All]
-- Weight card: line chart placeholder + summary stat ("[Stat: -2.3 lb this week]") + small "[Button: Add weight]"
-- Macro adherence card: bar chart placeholder + summary ("[Stat: 85% on target]")
+- Time range selector: segmented [Weekly (selected)] [Monthly] [90-day] [All] — WEEKLY is the default visual state
+- Weight card: line chart placeholder showing weekly averages + summary stat ("[Stat: -1.2 lb week over week]") + small "[Button: Add weight]"
+- Macro adherence card: weekly bar chart placeholder + summary ("[Stat: 85% on target this week]")
 
 BELOW THE FOLD:
-- Body photos section: horizontal scroll of photo thumbnails + "[Button: Add photo]"
-- Measurements section: list of measurement types with last values and trend arrows + "[Button: Add measurement]"
-- Mood & energy section: small calendar heatmap placeholder + "[Button: Log mood]"
+- Body photos section: horizontal scroll of photo thumbnails + "[Button: Add photo]" — skippable, low-friction
+- Measurements section: list of measurement types with weekly trend arrows + "[Button: Add measurement]" — skippable, low-friction
+- Mood & energy section: weekly average dots + small heatmap of the week + "[Button: Log mood]" — one-tap
+
+EMPTY STATE (no progress data yet):
+- "[Empty: We'll start seeing trends after a week of logging. Your first weigh-in or photo makes it real.]"
+- Three CTAs: [Add weight] [Add photo] [Log mood]
 
 Generate 3 variations:
-1. Card-stack vertical scroll (as described)
-2. Tabbed top-level — [Weight] [Photos] [Measurements] [Mood] tabs under the title
-3. Single dashboard with all sections compressed and visible above fold
+1. Weekly card-stack vertical scroll (as described)
+2. Tabbed top-level — [Weight] [Photos] [Measurements] [Mood] tabs under the title, each tab defaulting to weekly view
+3. Single weekly dashboard with all sections compressed and visible above fold
 ```
 
-### 3.23 Your Plan / Profile (Home child)
+### 3.23 Your Plan / Profile (Home child) — UPDATED per Max
 
 ```
 Wireframe: YOUR PLAN / PROFILE
 
 Pushed screen. Tab bar visible.
 
+Recalculate behavior (Max): tapping Recalculate triggers a CONFIRM MODAL first — intentional, slightly weighty feel to prevent accidental triggers.
+
 ABOVE THE FOLD:
 - Back arrow, title "[Screen Title: Your plan]", settings gear top-right
 - Profile header: avatar circle, name, goal pill (e.g. "Lose weight")
 - Current targets card: 2x2 grid (cal / p / c / f) with each value tappable to edit
-- Action row: "[Primary Action: Recalculate my plan]"
+- Action row: "[Primary Action: Recalculate my plan]" — button styled with slight weight/depth so it doesn't feel trivial
 - "Why this plan" expander
 
 BELOW THE FOLD:
 - Expanded reasoning text
-- Edit links: [Edit goal] [Edit body baseline] [Edit dietary constraints]
+- Edit links: [Edit goal] [Edit body baseline] [Edit dietary constraints] [Edit lifestyle]
 
-Generate 3 variations:
-1. Profile header + targets + actions (as described)
+ALSO DRAW: the Recalculate confirm modal.
+- Modal title: "[Modal title: Recalculate your plan?]"
+- Body: "[Body: We'll update your daily targets based on your latest weight, lifestyle, and recent trends. Your current plan stays in history.]"
+- Two buttons: "[Primary: Recalculate]" / "[Secondary: Cancel]"
+
+Generate 3 variations of the screen:
+1. Profile header + targets + weighty action (as described)
 2. Targets as the hero, profile minimized to a single row
 3. Settings-style list — all editable fields as a vertical list
+
+Also generate the confirm modal (one variation is fine).
 ```
 
 ### 3.24 Settings (Home child)
@@ -663,7 +764,42 @@ Generate 3 variations:
 3. Search-prominent — search bar at top + flat list of all settings
 ```
 
-### 3.25 Sheets — Photo Capture / Measurements Entry / Mood Entry
+### 3.25 Daily Recap / Coach Summary *(NEW per Max)*
+
+```
+Wireframe: DAILY RECAP / COACH SUMMARY (Home child — accessible from Dashboard and from 8pm push)
+
+Pushed screen (or modal presentation when triggered from push). Tab bar visible if pushed.
+
+ABOVE THE FOLD:
+- Back arrow / close X top-left, share top-right
+- Title: "[Screen Title: Today's recap]" with date subline
+- Hero verdict card (coach voice, first-person, brand-accented):
+  - One opening line: "[Verdict: Here's what I noticed today]"
+  - One paragraph summary (~3-4 sentences) in coach voice
+- "Highlights" section header
+
+BELOW THE FOLD:
+- Highlight rows, one per signal (each row: small icon + label + 1-line observation + trend indicator):
+  - Macro adherence
+  - Sleep
+  - Mood / energy
+  - Training
+  - Weight trend
+- "Tomorrow" card (full-width, brand-accented):
+  - "[Suggestion: Try a higher-protein breakfast — you ran 18g short today.]"
+- Bottom action row: "[Primary Action: Reply to coach]" → opens Coach Chat with recap context preloaded
+
+EMPTY STATE (first day of usage, not enough data):
+- "[Empty: Tomorrow's the start of your recap. The more you log, the smarter this gets.]"
+
+Generate 3 variations:
+1. Stacked vertical scroll: hero verdict + highlights + tomorrow card (as described)
+2. Card-pager: each highlight is a swipeable full-width card; tomorrow card at the end
+3. Compact dashboard: hero verdict on top, highlights in a 2-column grid, tomorrow card at bottom
+```
+
+### 3.26 Sheets — Photo Capture / Measurements Entry / Mood Entry
 
 ```
 Wireframe: PROGRESS ENTRY SHEETS (3 sheets, one image showing all three side by side as separate frames)
@@ -706,28 +842,30 @@ Track wireframe progress here. Each row gets ticked when Max signs off.
 | 3 | Onboarding — Goal selection | ☐ | ☐ | ☐ |
 | 4 | Onboarding — Body baseline | ☐ | ☐ | ☐ |
 | 5 | Onboarding — Dietary constraints | ☐ | ☐ | ☐ |
-| 6 | Onboarding — HealthKit permission | ☐ | ☐ | ☐ |
-| 7 | Onboarding — Notification permission | ☐ | ☐ | ☐ |
-| 8 | Onboarding — Your Plan reveal | ☐ | ☐ | ☐ |
-| 9 | Dashboard | ☐ | ☐ | ☐ |
-| 10 | Meal Log day view | ☐ | ☐ | ☐ |
-| 11 | Add Meal sheet | ☐ | ☐ | ☐ |
-| 12 | Food Detail sheet | ☐ | ☐ | ☐ |
-| 13 | Restaurant Guidance | ☐ | ☐ | ☐ |
-| 14 | Restaurant Detail | ☐ | ☐ | ☐ |
-| 15 | Recipe Browser | ☐ | ☐ | ☐ |
-| 16 | Recipe Detail | ☐ | ☐ | ☐ |
-| 17 | Meal Plan Generator | ☐ | ☐ | ☐ |
-| 18 | Grocery List | ☐ | ☐ | ☐ |
-| 19 | Coach Chat | ☐ | ☐ | ☐ |
-| 20 | Learn home | ☐ | ☐ | ☐ |
-| 21 | Article Detail | ☐ | ☐ | ☐ |
-| 22 | Progress overview | ☐ | ☐ | ☐ |
-| 23 | Your Plan / Profile | ☐ | ☐ | ☐ |
-| 24 | Settings | ☐ | ☐ | ☐ |
-| 25 | Entry sheets (Photo / Measurements / Mood) | ☐ | ☐ | ☐ |
+| 6 | Onboarding — **Lifestyle (NEW)** | ☐ | ☐ | ☐ |
+| 7 | Onboarding — HealthKit permission | ☐ | ☐ | ☐ |
+| 8 | Onboarding — Notification permission | ☐ | ☐ | ☐ |
+| 9 | Onboarding — Your Plan reveal | ☐ | ☐ | ☐ |
+| 10 | Dashboard *(major revision per Max)* | ☐ | ☐ | ☐ |
+| 11 | Meal Log day view | ☐ | ☐ | ☐ |
+| 12 | Add Meal sheet *(Photo default)* | ☐ | ☐ | ☐ |
+| 13 | Food Detail sheet | ☐ | ☐ | ☐ |
+| 14 | Restaurant Guidance *(Dashboard-entry + browse states)* | ☐ | ☐ | ☐ |
+| 15 | Restaurant Detail | ☐ | ☐ | ☐ |
+| 16 | Recipe Browser *(remaining-macros lead)* | ☐ | ☐ | ☐ |
+| 17 | Recipe Detail | ☐ | ☐ | ☐ |
+| 18 | Meal Plan Generator *(single-line summaries)* | ☐ | ☐ | ☐ |
+| 19 | Grocery List *(grouped by category)* | ☐ | ☐ | ☐ |
+| 20 | Coach Chat | ☐ | ☐ | ☐ |
+| 21 | Learn home | ☐ | ☐ | ☐ |
+| 22 | Article Detail *(takeaway card)* | ☐ | ☐ | ☐ |
+| 23 | Progress overview *(weekly default)* | ☐ | ☐ | ☐ |
+| 24 | Your Plan / Profile *(recalc confirm modal)* | ☐ | ☐ | ☐ |
+| 25 | Settings | ☐ | ☐ | ☐ |
+| 26 | **Daily Recap / Coach Summary (NEW)** | ☐ | ☐ | ☐ |
+| 27 | Entry sheets (Photo / Measurements / Mood) | ☐ | ☐ | ☐ |
 
-25 wireframes total — the App Map's 13 top-level screens plus 8 onboarding sub-screens, 4 sheets/modals. Plan's "~15" estimate was conservative.
+27 wireframes total — App Map's 14 top-level screens + 9 onboarding sub-screens + 4 sheets/modals. Up from the original 25 due to Lifestyle and Daily Recap additions.
 
 ## 5. Review rubric — what to check before approving each wireframe
 

@@ -1,6 +1,6 @@
 # FuelWell — Flow Chart (Phase 0.5 · Step 2)
 
-**Status:** DRAFT — builds on the draft `APP-MAP.md`. If Max changes the App Map during reconciliation, this document needs to follow.
+**Status:** ✅ APPROVED — incorporates Max's review of Step 1. Updated 2026-05-13 with Daily Recap (#14), Lifestyle onboarding step, eating-out Dashboard CTA, and per-screen modifications.
 
 **Purpose:** every screen from the App Map, now with navigation arrows and per-button behavior. Still black-and-white, still no visual opinions. Answers the question: *"What happens when I tap this?"* for every interactive element on every screen.
 
@@ -27,14 +27,19 @@ flowchart TD
   %% Home tab branches
   Dash -- tap avatar --> Plan[Your Plan]
   Plan -- tap gear --> Settings
+  Plan -- Recalculate --> RecalcConfirm[Recompute Plan confirm]
+  RecalcConfirm -- Confirm --> Plan
   Dash -- tap meal card --> FoodDetail[Food Detail]
-  Dash -- tap verdict CTA --> Log
+  Dash -- tap verdict CTA --> AddMeal[Add Meal]
+  Dash -- tap eating-out CTA --> Rest[Restaurant Guidance]
+  Dash -- tap recap card --> Recap[Daily Recap]
+  Dash -- 8pm push --> Recap
 
   %% Log tab branches
-  Log -- tap Add Meal --> AddMeal[Add Meal -- Search/Photo/Scan]
+  Log -- tap Add Meal --> AddMeal
   AddMeal --> FoodDetail
   FoodDetail -- Save --> Log
-  Log -- tap Restaurants --> Rest[Restaurant Guidance]
+  Log -- tap Restaurants --> Rest
   Rest --> RestDetail[Restaurant Detail]
   RestDetail -- Log this --> FoodDetail
   Log -- tap Recipes --> Recipes[Recipe Browser]
@@ -76,13 +81,14 @@ flowchart LR
   A --> G[Goal selection]
   G --> B[Body baseline]
   B --> D[Dietary constraints]
-  D --> H[HealthKit permission]
+  D --> L[Lifestyle]
+  L --> H[HealthKit permission]
   H --> N[Notification permission]
   N --> P[Your Plan reveal]
   P --> Dash([Enter Dashboard])
 ```
 
-Each step has **Next** (advances) and **Back** (returns to previous). HealthKit and Notification prompts are skippable but log the skip for later prompting in-app.
+Nine steps total. Each step has **Next** (advances) and **Back** (returns to previous). HealthKit and Notification prompts are skippable but log the skip for later prompting in-app. The Lifestyle step is a single 3-option chooser (cook at home / eat out / both); it tunes recipe and restaurant ranking from the first session forward.
 
 ---
 
@@ -90,23 +96,30 @@ Each step has **Next** (advances) and **Back** (returns to previous). HealthKit 
 
 ### 3.1 Dashboard (Home tab root)
 
+**Above-the-fold contract (Max):** macro ring + next recommended meal + one coach nudge (if triggered) + mood/energy one-tap + "I'm eating out right now" quick action — all visible without scrolling.
+
 | Element | Tap behavior |
 |---|---|
-| Verdict banner CTA (e.g. "Log lunch") | → Meal Log → Add Meal pre-routed to most-likely meal slot |
+| Verdict banner CTA (e.g. "Log lunch") | → Add Meal sheet pre-routed to the predicted meal slot |
+| "I'm eating out right now" quick action | → Restaurant Guidance with today's remaining macros pre-loaded as filter |
 | Macro ring | → Progress tab, scrolled to today's macros |
+| Mood/energy one-tap row | → Inline scale picker (no full sheet); on selection logs and dismisses |
 | "Today's meals" card row | → Food Detail for the tapped meal |
-| Quick-add (+) FAB | → Add Meal sheet |
+| Quick-add (+) FAB | → Add Meal sheet (Photo as default tab) |
 | Avatar (top-right) | → Your Plan |
-| Coach prompt card (if present) | → Coach Chat with prompt context preloaded |
+| Coach nudge card (when triggered) | → Coach Chat with prompt context preloaded |
+| Daily Recap card (after 8pm, or always-accessible footer link) | → Daily Recap screen |
 
 ### 3.2 Your Plan / Profile (Home child)
 
 | Element | Tap behavior |
 |---|---|
 | "Why this plan" expander | Reveals reasoning inline |
-| "Recalculate My Plan" button | → Recompute confirm sheet → recomputes macros |
+| "Recalculate My Plan" button | → **Recompute confirm modal** (intentional, slightly weighty — prevents accidental triggers per Max) → recomputes macros |
 | Edit goal | → Goal selection screen (single-step, returns here) |
 | Edit body baseline | → Body baseline screen (returns here) |
+| Edit dietary | → Dietary constraints screen (returns here) |
+| Edit lifestyle | → Lifestyle screen (returns here) |
 | Settings gear (top-right) | → Settings |
 
 ### 3.3 Settings (Home child)
@@ -125,19 +138,21 @@ Each step has **Next** (advances) and **Back** (returns to previous). HealthKit 
 |---|---|
 | Day selector (today ± swipe) | Changes the day's entries |
 | Meal row | → Food Detail (editable) |
-| Add Meal button | → Add Meal sheet |
+| **Persistent floating add button** (Max: high-frequency surface, must be fast) | → Add Meal sheet (Photo default) |
 | Restaurants shortcut | → Restaurant Guidance |
 | Recipes shortcut | → Recipe Browser |
 | Meal Plan shortcut | → Meal Plan Generator |
 | Grocery shortcut | → Grocery List |
 
-### 3.5 Add Meal — Search / Photo / Scan (Log child)
+### 3.5 Add Meal — Photo / Search / Scan (Log child)
+
+**Default tab: Photo** (Max — most frictionless for real life).
 
 | Element | Tap behavior |
 |---|---|
-| Segmented control | Switches input mode (Search / Photo / Scan) |
+| Segmented control | Switches input mode (**Photo** / Search / Scan) |
+| Photo capture button (default view) | Opens camera → AI parse → Food Detail with parsed items |
 | Search result row | → Food Detail with portion editor |
-| Photo capture button | Opens camera → AI parse → Food Detail with parsed items |
 | Barcode scan | Opens camera in scan mode → resolves → Food Detail |
 | Recent foods chip | One-tap log with last-used portion |
 
@@ -150,12 +165,15 @@ Each step has **Next** (advances) and **Back** (returns to previous). HealthKit 
 | Save | Persists meal → returns to caller (Log or Dashboard) |
 | Delete (if editing existing) | Confirm → removes meal |
 
-### 3.7 Restaurant Guidance (Log child)
+### 3.7 Restaurant Guidance (Log child — also Dashboard quick-action target)
+
+When entered via Dashboard's "I'm eating out right now" CTA, today's remaining macros are pre-loaded as a filter and the **top 3 chain picks show macros immediately** (Max).
 
 | Element | Tap behavior |
 |---|---|
 | Search restaurant | Filters curated list |
 | Restaurant row | → Restaurant Detail |
+| Top 3 featured cards (when entered from Dashboard CTA) | Each pre-shows a coach-recommended menu item with macro fit |
 | Nearby toggle | (Pilot: location optional; if granted, sorts by distance) |
 
 ### 3.8 Restaurant Detail (Log child of child)
@@ -168,9 +186,12 @@ Each step has **Next** (advances) and **Back** (returns to previous). HealthKit 
 
 ### 3.9 Recipe Browser (Log child)
 
+**Default view leads with "Based on your remaining macros today" section** (Max — that's the differentiator). Generic browse sits below.
+
 | Element | Tap behavior |
 |---|---|
-| "Use remaining macros" toggle | Filters recipes to fit today's remaining budget |
+| "For your remaining macros" section (default) | Recipes ranked to fit today's remaining budget; tap → Recipe Detail |
+| "Browse all" toggle | Switches to generic browse |
 | Category filter | Cuisine / time / difficulty |
 | Recipe card | → Recipe Detail |
 
@@ -187,21 +208,25 @@ Each step has **Next** (advances) and **Back** (returns to previous). HealthKit 
 | Element | Tap behavior |
 |---|---|
 | Generate button | Calls AI → returns three plan options |
-| Plan option card (×3) | → Plan Detail |
+| Plan option card (×3) | Each card displays a **single-line summary** (e.g. "Higher protein, lighter dinners") — Max wants the choice to feel easy; tap → Plan Detail |
 | Accept this plan | Persists plan; auto-populates Grocery List; returns to Log |
 | Regenerate | New three options (counts against AI cost) |
 
 ### 3.12 Grocery List (Log child)
 
+**Grouped by category** (Max — produce, protein, pantry, etc.). Clean and minimal, not a spreadsheet.
+
 | Element | Tap behavior |
 |---|---|
 | Checkbox | Marks item bought (struck through) |
 | Item row long-press | Edit / delete |
-| Add item (manual) | Inline text entry |
+| Add item (manual) | Inline text entry (added to inferred or chosen category) |
 | Clear bought | Removes all checked items |
 | Share | iOS share sheet (export as text) |
 
 ### 3.13 Coach Chat (Coach tab root)
+
+Input placeholder copy: *"Ask me anything about today…"* (Max — should feel like asking an expert, not texting a bot).
 
 | Element | Tap behavior |
 |---|---|
@@ -231,9 +256,11 @@ Each step has **Next** (advances) and **Back** (returns to previous). HealthKit 
 
 ### 3.16 Progress overview (Progress tab root)
 
+**Default view: Weekly** (Max — daily fluctuations are noisy and discouraging; weekly trends tell the real story).
+
 | Element | Tap behavior |
 |---|---|
-| Time range selector | 7d / 30d / 90d / all |
+| Time range selector | **Weekly (default)** / Monthly / 90-day / All |
 | Weight card | → Weight history full screen |
 | Macro adherence card | → Macro history full screen |
 | Add Photo button | → Photo Capture sheet |
@@ -241,7 +268,27 @@ Each step has **Next** (advances) and **Back** (returns to previous). HealthKit 
 | Log Mood button | → Mood Entry sheet |
 | Photo grid thumbnail | → Photo viewer (swipe through history) |
 
-### 3.17 Sheets (no screen-level navigation)
+### 3.17 Daily Recap / Coach Summary (Home child — NEW per Max)
+
+Closes the loop on event-driven notifications. Triggered as a push at 8pm; also reachable from a Dashboard card and from the avatar menu.
+
+| Element | Tap behavior |
+|---|---|
+| Hero verdict | "Here's what I noticed today" — one-paragraph summary in coach voice |
+| Highlight rows | Each row covers one signal: macro adherence, sleep, mood/energy, training, weight trend |
+| Tomorrow card | One concrete suggestion for tomorrow ("Try a higher-protein breakfast") |
+| "Reply to coach" | → Coach Chat with recap context preloaded |
+| Close (X) | → Dashboard |
+
+### 3.18 Lifestyle (Onboarding step — NEW per Max)
+
+| Element | Tap behavior |
+|---|---|
+| Three selectable cards: Cook at home / Eat out mostly / Both | Single-select; Continue advances |
+| Continue | → HealthKit permission |
+| Back | → Dietary constraints |
+
+### 3.19 Sheets (no screen-level navigation)
 
 | Sheet | Buttons |
 |---|---|
@@ -268,29 +315,30 @@ These apply globally, not per screen:
 
 ---
 
-## 5. Open questions / decisions deferred to Step 3
+## 5. Layout decisions deferred to Step 3 (Wireframes)
 
-Things this flow chart cannot answer because they're layout/visual:
+Pure visual/layout calls — answered when wireframes are generated:
 
-1. **Verdict placement on Dashboard** — above macros or below? *(Step 3 wireframe call.)*
-2. **Meal Log: list vs. timeline vs. cards** — pure layout. *(Step 3.)*
-3. **Coach Chat: bottom input or floating?** — *(Step 3.)*
-4. **Progress: scroll-snap sections or scrollable single view?** — *(Step 3.)*
-5. **Tab bar labels visible always, or icon-only with active label?** — *(Step 3.)*
+1. Verdict placement on Dashboard (above macros confirmed by Max's "above the fold" requirement).
+2. Meal Log: list vs. timeline vs. cards.
+3. Coach Chat: bottom input or floating.
+4. Progress: scroll-snap sections vs. scrollable single view.
+5. Tab bar labels always-visible vs. active-only.
 
-Items that still need Max's product call:
+## 6. Product decisions — resolved
 
-6. **Does the verdict CTA on Dashboard pre-route to a meal slot, or open Add Meal generic?** (I drafted: pre-routed.)
-7. **Does the meal plan auto-populate the grocery list on Accept, or prompt the user?** (I drafted: auto.)
-8. **On sign-out, do we wipe local SQLiteData cache?** (I drafted: not specified — needs decision.)
+| # | Question | Resolution |
+|---|---|---|
+| 1 | Does Dashboard verdict CTA pre-route to a meal slot? | **Yes — pre-routed** to the predicted next meal slot. |
+| 2 | Does Meal Plan auto-populate Grocery on Accept? | **Yes — auto.** |
+| 3 | On sign-out, wipe local SQLiteData cache? | **Yes — wipe.** Avoids any next-user data leakage on shared devices. |
 
 ---
 
-## 6. Gate criteria
+## 7. Status
 
-Before moving to Step 3 (Wireframes), this document needs:
-- [ ] Max review of all navigation arrows and button behaviors
-- [ ] Resolution of the 3 product questions in section 5
+- [x] Max review of navigation arrows and per-button behavior (2026-05-13)
+- [x] Resolution of all product questions
 - [ ] Sign-off recorded in `docs/ios-guide/decisions.md`
 
 ---
