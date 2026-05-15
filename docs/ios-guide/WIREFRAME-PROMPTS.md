@@ -38,7 +38,7 @@ CANVAS
 - Where the screen is a tab root, show a 5-tab bottom bar above the home indicator with these labels: Home, Log, Coach, Learn, Progress
 
 STYLE
-- Pure grayscale only. No color. Use shades: white background, light gray (#EEE) for surfaces, medium gray (#999) for borders, dark gray (#333) for primary text, black for emphasis.
+- Wireframes are pure grayscale only (this step is structural). Color enters in Step 4 (Mockups) per DESIGN.md. Use shades: WHITE background (#FFFFFF), light gray (#EEE) for cards, medium gray (#999) for borders, dark gray (#333) for primary text, black for emphasis and the inverted-row band placeholder.
 - No photography. Where an image would go, draw a rectangle with a diagonal-line pattern and the label "IMAGE" inside.
 - No custom fonts. Use a generic sans-serif. Final typography comes later.
 - No brand marks, no logos, no color accents.
@@ -299,42 +299,75 @@ Generate 3 variations:
 3. Ring/dial visual for calories, macros as breakdown legend
 ```
 
-### 3.9 Dashboard (Home tab root) — UPDATED per Max
+### 3.9 Dashboard (Home tab root) — REVISED 2026-05-14 per canonical DESIGN.md + Robert's "include all features" decision
 
 ```
-Wireframe: DASHBOARD (Home tab root)
+Wireframe: DASHBOARD (Home tab root) — LIGHT, DENSE, INFORMATION-FORWARD
 
-Tab bar visible at bottom (Home tab selected).
+VISUAL LANGUAGE: per docs/ios-guide/DESIGN.md (light-mode native).
+- Light background (#F4F5F7), white cards, full-saturation semantic + macro accents.
+- ONE inverted-row band (#0F1117) used for the macros pill — sole dark element on the screen, that's the emphasis device.
+- NO streak chip, NO badges, NO celebratory chrome (DESIGN.md anti-pattern).
+- NO aggressive gradients on cards. Gradients reserved for CTA, verdict ring, gradient-text emphasis only.
 
-ABOVE THE FOLD CONTRACT (CRITICAL — all FIVE elements must be visible without scrolling):
-1. Verdict banner / next recommended meal
-2. Macro ring
-3. One coach nudge card (only when triggered; otherwise empty space stays for the row but the card is hidden)
-4. Mood/energy one-tap row (1-5 dots for mood, 1-5 dots for energy, inline — NOT a sheet)
-5. "I'm eating out right now" quick action button — prominent, easily tappable
+Tab bar visible at bottom (Home tab selected). Tabs: Home / Log / Coach / Learn / Progress.
 
-Layout, top to bottom:
-- Top bar: greeting on left ("[Greeting: Good afternoon, Robert]" with date subline), avatar circle on right with streak badge overlay
-- VERDICT BANNER (full-width card): one-line verdict ("[Verdict: You've got 612 kcal and 38g protein left]") + reasoning subtitle + primary CTA "[Primary Action: Log dinner]"
-- Macro ring + horizontal P/C/F bars (compact — ring smaller than original spec to make room above the fold)
-- "I'M EATING OUT RIGHT NOW" QUICK ACTION: full-width pill button with restaurant-fork icon — visually distinct from the verdict CTA, sits directly below macros
-- Coach nudge card (shown only when a trigger fires; collapsible to a 1-line strip if not actively triggered)
-- Mood/energy row: two inline 1-5 dot scales side by side, labeled "Mood" and "Energy" — single-tap logs
+ABOVE-THE-FOLD STACK (densely packed — Claude Design's Core Dashboard composition is the visual reference):
+1. Header strip: hamburger (left), title "[Screen Title: Core]" centered with secondary "Chat" sibling like a segmented header, mail icon (right) with red unread dot
+2. HEALTH SCORE hero card (white surface, rounded):
+   - Eyebrow caption "[Label: HEALTH SCORE]"
+   - Massive number "[Stat: 86.4]" using font.numeric at text.display weight
+   - Up-arrow delta pill "[Delta: ▲ 4.2 LAST 30 DAYS]" in success green
+   - Hero food image placeholder right side (e.g. salad bowl with green-heart accents) — sourced from ChatGPT Images 2.0
+3. CALORIES TODAY card (white surface):
+   - Eyebrow "[Label: CALORIES · TODAY]"
+   - Big stat "[Stat: 1,546 / 2,000 kcal]" font.numeric
+   - Vertical bar histogram showing hourly intake distribution
+4. INVERTED-ROW MACROS BAND (background #0F1117, white text):
+   - Three columns: PROTEINS / CARBOHYDRATES / FATS
+   - Each column: small caps label + huge font.numeric value + unit ("128g" etc.)
+   - Macro channel colors on tiny accent strips per column (protein #00D278, carbs #F59E0B, fat #A855F7)
+5. WEEK SCHEDULE day-tile row (white surfaces, 3 visible, horizontally scrollable):
+   - Today · Friday "[Stat: 120 min]" + stick-figure icon
+   - Saturday "[Stat: 120 min]" + stick-figure icon
+   - Sunday "[Stat: —]" + rest-day stick-figure icon
+6. WORKOUT TO-DO'S list (white card, left half of a 2-column row):
+   - Eyebrow "[Label: WORKOUT TO-DO'S]"
+   - Checkbox rows, completed items show strikethrough:
+     ☑ Bench (struck)
+     ☑ Dumbbell Press (struck)
+     ☐ Lateral Raise
+     ☐ Sauna
+     ☐ 2 mile run
+     ☐ Tricep Pulldown
+     ☐ Stretch
+7. HABIT TRACKING dot grid (white card, right half of the 2-column row):
+   - Eyebrow "[Label: HABIT TRACKING]"
+   - 10×7 dot grid (rows = habits, cols = days) — mostly success-green dots, sparse red dots for misses
+   - Floating "+ Add habit" button bottom-right of card
+8. "I'M EATING OUT RIGHT NOW" quick action pill (full-width, brand-CTA gradient OR orange accent pill — Claude Design didn't show this; place it after the dual workout/habit row)
+9. COACH NUDGE card (only when triggered) — light card with violet accent bar
+10. MOOD/ENERGY one-tap row (light card) — two 1-to-5 dot scales side by side
 
 BELOW THE FOLD:
-- Today's meals list (logged meals so far + pending meal slot rows)
-- Daily Recap card (appears after 8pm or as a persistent always-accessible link)
-- Quick stats row (steps / hydration / active kcal — small tiles)
-- Floating Action Button (FAB) at bottom-right: "[FAB: Quick Add +]"
+- Verdict / next-meal card ("[Verdict: A grilled chicken bowl puts you on target tonight]" + primary CTA)
+- Today's meals list (logged + pending dinner slot)
+- Daily Recap card (after 8pm)
+- Quick stats row (hydration / steps / active kcal)
+- Floating Action Button (FAB) bottom-right: "[FAB: Quick Add +]"
 
-EMPTY STATE (first-time user, no meals logged):
-- Verdict says: "[Empty verdict: Welcome — your day starts here. Log your first meal whenever you're ready.]"
-- "Today's meals" section reads: "[Empty: You haven't logged a meal yet today — want a suggestion based on your plan?]" with a primary CTA "[Suggest a meal]"
+NO STREAK CHIP. NO BADGES. The Health Score is a diagnostic, not a score-to-beat — copy and color cues must treat it as neutral information, not a trophy.
+
+EMPTY STATE (first-time user):
+- Health Score reads "[Empty: 7-day baseline]" with a thin sparkline placeholder
+- Workout to-do's reads "[Empty: No workout planned today — add one or take a rest day]"
+- Habit grid reads "[Empty: Pick 3 habits to start tracking]"
+- Today's meals reads "[Empty: You haven't logged a meal yet today — want a suggestion based on your plan?]"
 
 Generate 3 variations of the populated state:
-1. Verdict + ring + eating-out CTA + nudge + mood — clean vertical stack (above the fold density-optimized)
-2. Verdict integrated with ring (verdict text overlays the ring's center) to save vertical space — eating-out CTA gets more prominence
-3. Card-based — each above-the-fold element in its own elevated card with consistent rhythm
+1. Vertical scroll, density-optimized (matches Claude Design Core Dashboard composition closely)
+2. Health Score becomes a sticky compact bar after scroll begins, freeing space for meals/coach context
+3. Two-column main grid below the Health Score hero (calories+macros left, schedule+habits right)
 ```
 
 ### 3.10 Meal Log day view (Log tab root) — UPDATED per Max
@@ -762,6 +795,98 @@ Generate 3 variations:
 1. iOS-standard grouped list (as described)
 2. Card-based settings (each group in a rounded card)
 3. Search-prominent — search bar at top + flat list of all settings
+```
+
+### 3.24b Workout Detail / Workout Plan *(NEW — Log child)*
+
+```
+Wireframe: WORKOUT DETAIL (Log child) — LIGHT, DENSE per DESIGN.md
+
+Mirrors Claude Design "Push day" workout reference. Manual-entry only — no adaptive prescription at Pilot.
+
+ABOVE THE FOLD:
+- Header: back chevron (left), title "[Screen Title: Today · 9:41 AM]" with day label, more-actions menu (right)
+- Page title: "[Title: Push day]" (font.display, text.title.lg)
+- Meta strip: "[Meta: 7 exercises · ~55 min · Upper body]" small secondary
+- Right-aligned big stat: "[Stat: 320 EST. KCAL]"
+- Hero image placeholder (16:9, rounded, labeled "PUSH-DAY HERO · CHATGPT IMAGES 2.0")
+- VERDICT CARD (white surface with success green accent bar on left edge):
+  - Eyebrow "[Label: ENGINE · VERDICT]"
+  - Verdict title "[Verdict: Match yesterday's intensity.]"
+  - Body "[Body: Morning protein at 128 g and 7 hours of sleep last night put you in range. No reason to back off.]"
+- Three-tile stat row: VOLUME TARGET / SETS / EST. TIME — each white card with eyebrow + big font.numeric value
+- Exercise list card (white surface, eyebrow "[Label: EXERCISES]", right-aligned count "1/7"):
+  - Row 1: "01 · Bench press · Last 4×8 @ 180 lb" left, "4 × 8 · 185 lb" right
+  - Row 2 (partial below fold): "Incline DB press"
+
+BELOW THE FOLD:
+- Remaining exercise rows (Lateral raise, Pec deck, Triceps cable, etc.)
+- Week schedule pill strip (M T W T F S S)
+
+STICKY BOTTOM: black "[Primary Action: ▶ Start workout]" pill button, full width.
+
+EMPTY STATE (no workout planned today):
+- "[Empty: No workout planned today. Pick a template or build your own.]"
+- Two CTAs: [Browse templates] [Add custom workout]
+
+Generate 3 variations:
+1. Hero image dominant, exercise list below (as described — matches Claude Design reference)
+2. Hero compressed to a thin banner; exercise list takes more vertical space
+3. No hero image — text-first; verdict and stat tiles get more prominence
+```
+
+### 3.24c Health Score detail *(NEW — Progress child)*
+
+```
+Wireframe: HEALTH SCORE DETAIL (Progress child) — LIGHT
+
+ABOVE THE FOLD:
+- Header: back chevron, title "[Screen Title: Health Score]"
+- Hero card: composite score "[Stat: 86.4]" with delta pill "[Delta: ▲ 4.2 LAST 30 DAYS]" in success green; 30-day sparkline area chart
+- "Why this score" expander row
+
+BELOW THE FOLD:
+- Five component cards (each white surface, eyebrow + score + delta + mini sparkline):
+  - Nutrition adherence
+  - Training consistency
+  - Sleep
+  - Recovery (HRV / RHR)
+  - Body composition
+- Each component card tappable → drills into the Progress section it summarizes
+
+EMPTY STATE: "[Empty: 7 days of logging unlocks your Health Score.]"
+
+Generate 3 variations:
+1. Single hero + 5 component cards stacked (as described)
+2. Hero + 2×2 component grid (5th component pinned full-width below)
+3. Hero with five component arcs around it (radial breakdown), cards below as backup
+```
+
+### 3.24d Habit Tracking detail *(NEW — Progress child)*
+
+```
+Wireframe: HABIT TRACKING DETAIL (Progress child) — LIGHT
+
+The dot grid is a VISUALIZATION, not a reward. No celebratory chrome, no streak counts as their own metric.
+
+ABOVE THE FOLD:
+- Header: back chevron, title "[Screen Title: Habits]", "+ Add habit" trailing action
+- Time-range selector: [Weekly (default)] [30-day] [All]
+- Full habit dot grid (rows = habits, cols = days). Cell states: filled success green = completed, filled error red = missed, empty = not yet logged, dimmed gray = future.
+
+BELOW THE FOLD:
+- Habit row list (one row per habit):
+  - Habit name + definition (small)
+  - This-week count "X / 7"
+  - Tap toggle (today's mark)
+- Edit habits link bottom
+
+EMPTY STATE: "[Empty: Pick 3 habits to start. Coach can suggest some.]" with primary CTA [Coach suggestions]
+
+Generate 3 variations:
+1. Grid + list below (as described)
+2. Grid only — habits as labels on the left side of the grid, no separate list
+3. Habit detail focus — tap a row to expand its own per-day strip, grid lives at top as overview
 ```
 
 ### 3.25 Daily Recap / Coach Summary *(NEW per Max)*

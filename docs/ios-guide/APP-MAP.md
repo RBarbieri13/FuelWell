@@ -90,34 +90,42 @@ graph TD
 
 ---
 
-## 3. Screen inventory (14 top-level)
+## 3. Screen inventory (17 top-level)
 
 Grouping sub-sheets under their parent screen. Modals/sheets (capture, entry, confirm) are not counted as standalone screens.
 
 | # | Top-level screen | Tab | Notes |
 |---|---|---|---|
-| 1 | Dashboard | Home | Root of Daily Loop. Verdict-first. Above the fold: macro ring + next recommended meal + one coach nudge + mood/energy one-tap + **"I'm eating out right now" quick action**. |
-| 2 | Your Plan / Profile | Home | Includes "why this plan" + manual recalc trigger (with confirm modal — Max wants intentional, slightly weighty feel). |
+| 1 | Dashboard | Home | Root of Daily Loop. Verdict-first. Above the fold: **Health Score hero** + macro ring + next recommended meal + "I'm eating out right now" quick action + week-schedule day tiles (workout/rest) + workout to-do checklist + habit-tracking dot grid + coach nudge + mood/energy one-tap. |
+| 2 | Your Plan / Profile | Home | Includes "why this plan" + manual recalc trigger with confirm modal. |
 | 3 | Settings | Home | Account, export, sign-out, notification prefs. |
-| 4 | Meal Log (day view) | Log | Day's entries + **persistent floating add button** (high frequency surface — must be fast). |
-| 5 | Add Meal (Search / Photo / Scan) | Log | Three modes via segmented control. **Photo is the default tab** — most frictionless for real life. |
-| 6 | Restaurant Guidance | Log | Curated DB of top chains. **Surfaceable from Dashboard in one tap.** Top 3 picks show macros immediately. |
-| 7 | Recipe Browser + Detail | Log | **Leads with "based on your remaining macros today"** — not generic browse. |
-| 8 | Meal Plan Generator | Log | Three options per generation; **each card has a single-line summary** (e.g. "Higher protein, lighter dinners"). |
-| 9 | Grocery List | Log | Auto from recipes + manual additions. **Grouped by category** (produce, protein, pantry, etc.). |
-| 10 | Coach Chat | Coach | AI conversation with inline Learn cards. Input placeholder: *"Ask me anything about today…"*. |
-| 11 | Learn (search + categories) | Learn | Browseable education + Article Detail. **3-minute reads max; each article ends with one actionable takeaway**; smart-friend tone. |
-| 12 | Progress overview | Progress | Weight, macros, photos, measurements, mood. **Default view: weekly, not daily.** |
-| 13 | Onboarding flow | (pre-tab) | Welcome → Sign-in → Goal → Body → Dietary → **Lifestyle** → HealthKit → Notifications → Plan reveal. Runs once. |
-| 14 | Daily Recap / Coach Summary | Home child | **NEW per Max.** What the coach noticed today; closes the loop on event-driven notifications. Triggered at 8pm and accessible from Dashboard. |
+| 4 | Meal Log (day view) | Log | Day's entries + persistent floating add button. |
+| 5 | Add Meal (Photo / Search / Scan) | Log | Three modes via segmented control. Photo is the default tab. |
+| 6 | Restaurant Guidance | Log | Curated DB. Surfaceable from Dashboard in one tap; top 3 picks show macros immediately. |
+| 7 | Recipe Browser + Detail | Log | Leads with "based on your remaining macros today." |
+| 8 | Meal Plan Generator | Log | Three options per generation; each card has a single-line summary. |
+| 9 | Grocery List | Log | Auto from recipes + manual additions. Grouped by category. |
+| 10 | **Workout Plan / Workout Detail** | Log | NEW. Today's workout (exercises, sets, reps, target weight, est. time), plus the week's schedule. Manual-entry-only at Pilot — no adaptive prescription. |
+| 11 | Coach Chat | Coach | AI conversation with inline Learn cards. Input placeholder: "Ask me anything about today…". |
+| 12 | Learn (search + categories) | Learn | 3-minute reads max; each article ends with one actionable takeaway. |
+| 13 | Progress overview | Progress | Weight, macros, photos, measurements, mood, **habit-tracking heatmap**, **Health Score trend**. Default view: weekly. |
+| 14 | **Health Score detail** | Progress child | NEW. Breakdown of the composite Health Score (nutrition adherence + training + sleep + recovery + body comp). Tappable from Dashboard hero. |
+| 15 | **Habit Tracking detail** | Progress child | NEW. Full habit grid with definitions, streaks-as-visualization-only (no celebratory chrome), edit habits. |
+| 16 | Onboarding flow | (pre-tab) | Welcome → Sign-in → Goal → Body → Dietary → Lifestyle → HealthKit → Notifications → Plan reveal. |
+| 17 | Daily Recap / Coach Summary | Home child | What the coach noticed today; triggered at 8pm or reachable from Dashboard. |
 
-**Sheets / modals (not counted as screens):** Food Detail editor, Recipe → Grocery confirm, Photo Capture, Measurements Entry, Mood Entry, Recompute Plan confirm, permission prompts.
+**Sheets / modals (not counted as screens):** Food Detail editor, Recipe → Grocery confirm, Photo Capture, Measurements Entry, Mood Entry, Recompute Plan confirm, Workout Set Logger, Habit Toggle, permission prompts.
 
 **Dashboard affordances (not standalone screens):**
-- **"I'm eating out right now" quick action** — Dashboard CTA → Restaurant Guidance with today's remaining macros pre-loaded. The highest-frequency real-life moment FuelWell exists for. One tap.
-- **Coach nudge card** — appears only when an event is triggered (skipped meal, off-target macros, etc.). Otherwise hidden.
+- **"I'm eating out right now" quick action** — Dashboard CTA → Restaurant Guidance with today's remaining macros pre-loaded.
+- **Week-schedule day tiles** — horizontal row showing the next 3–7 days, each tile marks rest day / workout type and duration. Tap → Workout Detail.
+- **Workout to-do checklist** — today's planned exercises as a checkbox list. Inline tap completes a set; long-press logs detail.
+- **Habit-tracking dot grid** — compact heatmap of habits over recent weeks. Tap → Habit Tracking detail.
+- **Coach nudge card** — appears only when an event is triggered.
 
-**Every screen requires a thoughtful empty state.** Max calls these "brand moments" — empty Meal Log, no saved recipes, no progress data yet are all coaching opportunities, not blank lists.
+**Anti-pattern reminder (DESIGN.md):** no celebratory streak chips, badges, or gamification. The habit grid is a *visualization*, not a reward. The Health Score is a *diagnostic*, not a score-to-beat.
+
+**Every screen requires a thoughtful empty state.**
 
 ---
 

@@ -34,6 +34,9 @@ flowchart TD
   Dash -- tap eating-out CTA --> Rest[Restaurant Guidance]
   Dash -- tap recap card --> Recap[Daily Recap]
   Dash -- 8pm push --> Recap
+  Dash -- tap Health Score hero --> Health[Health Score detail]
+  Dash -- tap day tile or to-do row --> Workout[Workout Detail]
+  Dash -- tap habit grid --> Habits[Habit Tracking detail]
 
   %% Log tab branches
   Log -- tap Add Meal --> AddMeal
@@ -96,19 +99,23 @@ Nine steps total. Each step has **Next** (advances) and **Back** (returns to pre
 
 ### 3.1 Dashboard (Home tab root)
 
-**Above-the-fold contract (Max):** macro ring + next recommended meal + one coach nudge (if triggered) + mood/energy one-tap + "I'm eating out right now" quick action — all visible without scrolling.
+**Above-the-fold contract:** Health Score hero + macro ring + next-meal verdict + "I'm eating out right now" quick action + week-schedule day tiles + workout to-do checklist + habit-tracking dot grid + coach nudge (when triggered) + mood/energy one-tap — densely packed, light surface, full-saturation accents per DESIGN.md.
 
 | Element | Tap behavior |
 |---|---|
+| Health Score hero (big number + delta) | → Health Score detail |
 | Verdict banner CTA (e.g. "Log lunch") | → Add Meal sheet pre-routed to the predicted meal slot |
-| "I'm eating out right now" quick action | → Restaurant Guidance with today's remaining macros pre-loaded as filter |
-| Macro ring | → Progress tab, scrolled to today's macros |
-| Mood/energy one-tap row | → Inline scale picker (no full sheet); on selection logs and dismisses |
-| "Today's meals" card row | → Food Detail for the tapped meal |
-| Quick-add (+) FAB | → Add Meal sheet (Photo as default tab) |
+| "I'm eating out right now" quick action | → Restaurant Guidance with today's remaining macros pre-loaded |
+| Macro ring + inverted-row P/C/F band | → Progress, scrolled to today's macros |
+| Week-schedule day tile (Today / Sat / Sun…) | → Workout Detail for that day |
+| Workout to-do row | Tap checkbox = mark set complete; tap row = Workout Detail; long-press = Workout Set Logger sheet |
+| Habit-tracking dot grid | → Habit Tracking detail |
+| Mood/energy one-tap row | Inline scale; on selection logs and dismisses |
+| Today's meals row | → Food Detail for the tapped meal |
+| Quick-add (+) FAB | → Add Meal sheet (Photo default) |
 | Avatar (top-right) | → Your Plan |
 | Coach nudge card (when triggered) | → Coach Chat with prompt context preloaded |
-| Daily Recap card (after 8pm, or always-accessible footer link) | → Daily Recap screen |
+| Daily Recap card (after 8pm) | → Daily Recap screen |
 
 ### 3.2 Your Plan / Profile (Home child)
 
@@ -279,6 +286,36 @@ Closes the loop on event-driven notifications. Triggered as a push at 8pm; also 
 | Tomorrow card | One concrete suggestion for tomorrow ("Try a higher-protein breakfast") |
 | "Reply to coach" | → Coach Chat with recap context preloaded |
 | Close (X) | → Dashboard |
+
+### 3.17b Workout Detail / Workout Plan (Log child)
+
+Manual-entry-only at Pilot. No adaptive prescription. Shows today's planned workout + the week's schedule.
+
+| Element | Tap behavior |
+|---|---|
+| Hero strip (workout name, exercise count, est. time, est. kcal) | Decorative |
+| Volume / Sets / Est. time stat row | Decorative |
+| Exercise row (e.g. Bench press · last 4×8 @ 180 lb · target 4×8 @ 185 lb) | Tap → Workout Set Logger sheet |
+| Add exercise (+) | → Free-form exercise entry |
+| Sticky bottom: "Start workout" | Begins a workout session (in-app timer + logger) |
+| Week schedule pills | Tap → switch to that day's plan |
+
+### 3.17c Health Score detail (Progress child)
+
+| Element | Tap behavior |
+|---|---|
+| Hero: composite Health Score + 30-day delta | Decorative |
+| Component cards (Nutrition / Training / Sleep / Recovery / Body comp), each with its own score and trend sparkline | Tap → relevant Progress section |
+| "Why this score" expander | Coach-voice explainer of weights and recent contributors |
+
+### 3.17d Habit Tracking detail (Progress child)
+
+| Element | Tap behavior |
+|---|---|
+| Full habit dot grid (weeks × habits) | Decorative |
+| Habit row (name, definition, this-week count) | Tap → toggle today's mark |
+| Add habit / Edit habits | → Habit editor sheet |
+| Time-range selector | Weekly (default) / 30-day / All |
 
 ### 3.18 Lifestyle (Onboarding step — NEW per Max)
 
