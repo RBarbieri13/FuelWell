@@ -1,6 +1,6 @@
-# FuelWell — DESIGN.md *(DRAFT — premature, do not use)*
+# FuelWell — DESIGN.md *(SUPERSEDED — do not use)*
 
-> ⚠️ **This file is not authoritative.** It was written before Phase 0 of the Master Plan was complete and before Chapter 3 of the iOS Production Guide was read. It exists here as a starting point for Phase 1, when DESIGN.md is the correct deliverable. **Until Phase 1 begins, do not feed this file to Claude Design or treat any value in it as final.** When Phase 1 starts, this file should be re-derived from Chapter 3's template, the Inspiration Guide's voice section, and the resolved Gap Analysis decisions — not adopted wholesale from this draft.
+> 🛑 **SUPERSEDED 2026-05-14.** The canonical DESIGN.md lives at `docs/ios-guide/DESIGN.md`. Robert generated it in Claude Design (project URL: `https://claude.ai/design/p/019ddbc6-73f6-7d05-b865-d559378d48fa`). The canonical file is **light-mode native** with full-saturation semantic accents and an inverted-row macros band — the opposite direction from this draft's dark / gradient-heavy aesthetic. This draft is preserved only as a historical record of the early direction. **Do not feed this file to any AI tool.** Read `docs/ios-guide/DESIGN.md` instead.
 >
 > See `docs/MASTER-PLAN.md` for where this fits.
 
