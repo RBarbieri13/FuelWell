@@ -15,9 +15,10 @@
 - ✅ Q&A log preserved (`docs/FuelWell-Gap-Analysis-Log.md`) — verbatim Robert + Max
 - ✅ `PRINCIPLES.md` written (`docs/ios-guide/PRINCIPLES.md`) — 13 binding rules + Daily Loop from Vision + Inspiration + Blueprint
 - ✅ Product context aggregated (`docs/ios-guide/PRODUCT-CONTEXT.md`) — single in-repo reference for the Drive sources
-- ✅ DESIGN.md rolled back to draft (`docs/ios-guide/drafts/DESIGN.md.draft`)
+- ✅ Canonical `DESIGN.md` promoted from draft (2026-05-14) — light-mode native, Robert generated in Claude Design (project `019ddbc6-73f6-7d05-b865-d559378d48fa`). Old draft is now marked SUPERSEDED.
+- ✅ `src/lib/design-tokens.ts` updated to retire `#3D9B2F` and adopt the canonical `#47E7B0` brand green (2026-05-14).
 - ⏳ iOS guide chapters 1–3 detailed read — Robert, deferred to Phase 1 prep
-- ⏳ Account confirmations (Apple Developer Individual, Anthropic, Supabase, Sentry, PostHog) — Robert, partial (Apple Developer confirmed Individual)
+- ⏳ Account confirmations — Apple Developer ✅ Individual confirmed. **Anthropic / Supabase / Sentry / PostHog still pending — Robert.**
 - ⏳ Editor decision (Cursor or Xcode) — Robert
 - ✅ Open scope deltas resolved — see table below
 
@@ -36,7 +37,17 @@ These surfaced from the Execution Blueprint and the Inspiration Deep Dive. Resol
 | S7 | Education system delivery | **Dual-surface** (resolved via Gap #1): full Learn tab with search + categories, plus inline contextual cards inside Coach Chat. One content store. |
 | S8 | Personal recipe bank + "repeat last meal" shortcut | **IN.** Recipe Browser leads with "based on your remaining macros today." Recent meals appear as one-tap chips in Add Meal. |
 
-Master Plan §"Phase 3 — Craft" is updated to reflect the real Pilot scope: **14 top-level screens** (added Daily Recap per Max), 9 onboarding sub-screens (added Lifestyle per Max), plus the Dashboard "I'm eating out right now" quick action and empty-state coaching across every screen.
+Master Plan §"Phase 3 — Craft" is updated to reflect the real Pilot scope: **17 top-level screens** (added Daily Recap per Max in v1, then Health Score detail / Workout Plan / Habit Tracking detail in v2 per Robert), 9 onboarding sub-screens (added Lifestyle per Max), plus the Dashboard "I'm eating out right now" quick action and empty-state coaching across every screen.
+
+## ⚠️ Open scope flag — Workout Detail
+
+The Workout Detail screen added 2026-05-14 has an in-app "Start workout" button and exercise-by-exercise set logging. This exceeds the "manual entry only" resolution of scope delta S1. Three options on the table:
+
+- **(a) Keep as designed** — workouts become a real Pilot feature with in-session logging.
+- **(b) Restrict to passive view** — show the plan, log only after the fact (no Start-workout button, no in-session timer).
+- **(c) Defer Workout Detail to v1.5** — keep the Dashboard widgets (day tiles + workout to-do checklist) but no detail screen at Pilot.
+
+Needs Robert + Max sign-off before Phase 1 begins. See `docs/ios-guide/decisions.md` entry "2026-05-14 — Pilot scope expansion."
 
 This is the binding plan for building the FuelWell iOS app to Pilot, Founding 100, and Public launch. It supersedes `docs/FuelWell-Phase-Plan.md` (which remains as the simpler partner-facing summary).
 

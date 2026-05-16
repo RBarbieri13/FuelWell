@@ -9,8 +9,8 @@
 export const colors = {
   // Primary brand
   orange: "#E87A1D",
-  green: "#3D9B2F",
-  accent: "#00D278",
+  green: "#47E7B0", // canonical brand mark, resolved May '26 (was #3D9B2F)
+  accent: "#00D278", // action / success green — separate token, see docs/ios-guide/DESIGN.md
 
   // Backgrounds
   background: "#0A0A0F",
