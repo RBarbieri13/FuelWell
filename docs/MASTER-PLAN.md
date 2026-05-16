@@ -18,8 +18,8 @@
 - ✅ Canonical `DESIGN.md` promoted from draft (2026-05-14) — light-mode native, Robert generated in Claude Design (project `019ddbc6-73f6-7d05-b865-d559378d48fa`). Old draft is now marked SUPERSEDED.
 - ✅ `src/lib/design-tokens.ts` updated to retire `#3D9B2F` and adopt the canonical `#47E7B0` brand green (2026-05-14).
 - ⏳ iOS guide chapters 1–3 detailed read — Robert, deferred to Phase 1 prep
-- ⏳ Account confirmations — Apple Developer ✅ Individual confirmed. **Anthropic / Supabase / Sentry / PostHog still pending — Robert.**
-- ⏳ Editor decision (Cursor or Xcode) — Robert
+- ✅ Account confirmations: Apple Developer Individual, Anthropic API key, Supabase project (ID + secret in hand). Sentry + PostHog deferred to later phases.
+- ✅ Editor decision: **Xcode** (with Claude Code as the AI coding agent alongside)
 - ✅ Open scope deltas resolved — see table below
 
 ## Scope deltas — resolved
@@ -28,7 +28,7 @@ These surfaced from the Execution Blueprint and the Inspiration Deep Dive. Resol
 
 | # | Delta | Resolution |
 |---|---|---|
-| S1 | Workouts at Pilot (Screens 22–23) | **Manual workout entry IN**; no adaptive logic. Trainer enhancement, not replacement. |
+| S1 | Workouts at Pilot (Screens 22–23) | **Superseded 2026-05-14:** workouts are a first-class Pilot feature with in-session logging (Workout Detail screen with per-day exercise list, Start-workout CTA, set-by-set logger). Trainer plans still log as manual entry; the in-app workout flow is for FuelWell-prescribed or user-built workouts. |
 | S2 | Water tracking (Screen 27) | **IN** — surfaces as a passive HealthKit-style tile on Dashboard. Low friction, high engagement. |
 | S3 | Meal Plan Generator (Screen 25) | **IN at Pilot.** Three plan options per generation, each with a single-line summary. Auto-populates Grocery List on Accept. |
 | S4 | Streaks / consistency score | **IN** — gentle vocabulary only (e.g. "X-day logging streak"). No public leaderboards. Per Max's "no guilt" principle. |
@@ -39,15 +39,9 @@ These surfaced from the Execution Blueprint and the Inspiration Deep Dive. Resol
 
 Master Plan §"Phase 3 — Craft" is updated to reflect the real Pilot scope: **17 top-level screens** (added Daily Recap per Max in v1, then Health Score detail / Workout Plan / Habit Tracking detail in v2 per Robert), 9 onboarding sub-screens (added Lifestyle per Max), plus the Dashboard "I'm eating out right now" quick action and empty-state coaching across every screen.
 
-## ⚠️ Open scope flag — Workout Detail
+## Workout Detail scope — resolved 2026-05-14
 
-The Workout Detail screen added 2026-05-14 has an in-app "Start workout" button and exercise-by-exercise set logging. This exceeds the "manual entry only" resolution of scope delta S1. Three options on the table:
-
-- **(a) Keep as designed** — workouts become a real Pilot feature with in-session logging.
-- **(b) Restrict to passive view** — show the plan, log only after the fact (no Start-workout button, no in-session timer).
-- **(c) Defer Workout Detail to v1.5** — keep the Dashboard widgets (day tiles + workout to-do checklist) but no detail screen at Pilot.
-
-Needs Robert + Max sign-off before Phase 1 begins. See `docs/ios-guide/decisions.md` entry "2026-05-14 — Pilot scope expansion."
+Robert chose option (a): workouts are a first-class Pilot feature with in-session logging. See `docs/ios-guide/decisions.md`.
 
 This is the binding plan for building the FuelWell iOS app to Pilot, Founding 100, and Public launch. It supersedes `docs/FuelWell-Phase-Plan.md` (which remains as the simpler partner-facing summary).
 

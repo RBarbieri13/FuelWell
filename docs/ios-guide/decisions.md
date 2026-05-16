@@ -47,4 +47,20 @@ Blake Anderson social-feed toast from the Claude Design reference is **excluded*
   (b) Restrict to passive view + post-workout manual log (no Start-workout button).
   (c) Defer Workout Detail to v1.5; Dashboard widgets stay (day tiles + to-do list) but no detail screen at Pilot.
 
+**Resolution 2026-05-14:** Robert chose **(a)**. Workouts are now a first-class Pilot feature with in-session logging (Start workout → per-set timer + logger → finish summary). Scope delta S1 is superseded by this decision. Max confirmation pending but Robert is empowered to make this call solo (no business-rule impact, pure product scope).
+
 References: `docs/ios-guide/APP-MAP.md`, `docs/ios-guide/FLOW-CHART.md`, `docs/ios-guide/WIREFRAME-PROMPTS.md`.
+
+## 2026-05-14 — External account confirmations
+
+- ✅ Apple Developer (Individual)
+- ✅ Anthropic API key
+- ✅ Supabase project (project ID + service-role secret in hand)
+- ⏳ Sentry — not yet set up (deferrable to Phase 5 Quality)
+- ⏳ PostHog — not yet set up (deferrable to Phase 6 Pilot ship)
+
+Sentry + PostHog do not block Phase 1; both can be wired in later phases when they actually carry weight.
+
+## 2026-05-14 — Editor decision: Xcode
+
+Robert chose **Xcode** over Cursor for Phase 1 iOS work. Aligned with the iOS Production Guide's default. Claude Code remains the primary AI coding agent (CLI / web), running alongside Xcode.
