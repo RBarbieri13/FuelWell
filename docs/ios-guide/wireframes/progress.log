@@ -1,0 +1,27 @@
+01 | onboarding-welcome | variation chosen 1 | 2026-05-16T18:25:31 | wordmark-first is clearest and keeps the primary action anchored without crowding
+02 | sign-in-sign-up | variation chosen 1 | 2026-05-16T18:25:31 | Apple-led stack gives the lowest-friction auth path while preserving email fallback
+03 | goal-selection | variation chosen 1 | 2026-05-16T18:25:31 | stacked cards are most legible and preserve descriptions, radio state, and disabled/empty state guidance
+04 | body-baseline | variation chosen 1 | 2026-05-16T18:31:12 | traditional form is clearest and matches the requested fold behavior with activity discoverable below
+05 | dietary-constraints | variation chosen 1 | 2026-05-16T18:35:40 | chip rows plus free text best matches the prompt and keeps optional skip visible
+06 | lifestyle | variation chosen 1 | 2026-05-16T18:40:15 | stacked cards preserve onboarding pattern continuity and make the mutually exclusive choice clear
+07 | healthkit-permission | variation chosen 1 | 2026-05-16T18:45:21 | clinical bullet list is clearest about read-only scope and keeps Continue plus Skip unmistakable
+08 | notification-permission | variation chosen 1 | 2026-05-16T18:49:59 | clinical list mirrors HealthKit and makes quiet hours plus trigger types explicit
+09 | plan-reveal | variation chosen 1 | 2026-05-16T18:58:17 | 2x2 macro target grid best matches the magic-moment prompt and keeps the why-this-plan expander intact
+10 | dashboard | variation chosen 2 | 2026-05-16T19:11:40 | sticky health-bar variation keeps the explicit verdict above the fold and is grayscale after correction
+11 | meal-log-day-view | variation chosen 1 | 2026-05-16T19:18:21 | meal-type sections are clearest for repeated daily scanning and preserve the persistent FAB
+12 | add-meal-sheet | variation chosen 1 | 2026-05-16T19:24:32 | full-bleed photo mode is fastest for real-life logging and includes search scan and empty alternate states
+13 | food-detail-portion-editor | variation chosen 1 | 2026-05-16T19:29:04 | side-by-side image and macro grid is conventional and keeps portion controls immediately visible
+14 | restaurant-guidance | variation chosen 1 | 2026-05-16T19:36:34 | stacked picks make the top three recommendations scannable and keep why-this-fits above macro details
+15 | restaurant-detail | variation chosen 1 | 2026-05-16T19:42:02 | coach-picks-at-top keeps recommendation before the full menu and avoids badge-driven ranking
+16 | recipe-browser | variation chosen 1 | 2026-05-16T19:47:20 | remaining-macros hero leads before browse grid while preserving empty-state path
+17 | recipe-detail | variation chosen 1 | 2026-05-16T19:53:14 | stacked actions provide the clearest scan order and corrected empty/error state is present
+18 | meal-plan-generator | variation chosen 1 | 2026-05-16T19:58:07 | vertical results stack makes the single-line plan summaries easiest to compare and initial empty state is present
+19 | grocery-list | variation chosen 1 | 2026-05-16T20:02:09 | minimal category sections preserve grocery grouping without turning into a spreadsheet
+20 | coach-chat | variation chosen 1 | 2026-05-16T20:06:28 | standard bubbles preserve familiar chat while keeping expert prompt input prominent
+21 | learn-home | variation chosen 1 | 2026-05-16T20:11:59 | balanced carousel and featured-list layout keeps search, categories, and reading progress visible
+22 | article-detail | variation chosen 1 | 2026-05-16T20:16:29 | hero-body-takeaway structure best matches the article prompt and keeps article-unavailable empty state present
+23 | progress-overview | variation chosen 1 | 2026-05-16T20:21:39 | weekly card stack leads with trend stats above supporting charts and keeps empty state present
+24 | your-plan-profile | variation chosen 1 | 2026-05-16T20:28:14 | profile-plus-targets hierarchy makes the recalculation action deliberate and confirm modal is present
+25 | workout-detail | variation chosen 1 | 2026-05-16T20:32:53 | canonical hero-plus-verdict workout layout keeps start action sticky and no-workout empty state present
+26 | health-score-detail | variation chosen 1 | 2026-05-16T20:37:18 | stacked component cards explain the composite score without badge-like reward treatment
+27 | habit-tracking-detail | variation chosen 1 | 2026-05-16T20:42:00 | grid plus habit rows treats dots as neutral visualization without streak or reward framing
