@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>FuelWell · M22 Article Detail · Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-base:#F4F5F7; --bg-surface:#FFFFFF; --bg-elevated:#0F1117;
+    --bg-border:#E5E7EB; --bg-border-soft:#EEF0F3;
+    --text-primary:#0A0A0F; --text-body:#1F2937; --text-secondary:#6B7280;
+    --text-muted:#9CA3AF; --text-disabled:#C7CCD3; --text-on-dark:#FFFFFF; --text-on-dark-muted:#9AA0AC;
+    --brand-green:#47E7B0; --semantic-success:#00D278; --semantic-warning:#F59E0B; --semantic-info:#00B4D8; --semantic-premium:#A855F7;
+    --gradient-brand: linear-gradient(135deg, #00D278 0%, #47E7B0 100%);
+    --radius-md:12px; --radius-lg:20px; --radius-pill:999px;
+    --elev-1: 0 1px 2px rgba(15,17,23,.04), 0 1px 0 rgba(15,17,23,.02);
+    --elev-2: 0 4px 14px rgba(15,17,23,.06), 0 1px 2px rgba(15,17,23,.04);
+    --elev-cta: 0 8px 24px rgba(0,210,120,.22);
+    --font-display:'Outfit', system-ui, sans-serif;
+    --font-body:'Inter', system-ui, sans-serif;
+    --font-reading:'Lora', Georgia, serif;
+    --font-system: -apple-system, 'SF Pro Display', system-ui, sans-serif;
+    --font-numeric:'DM Sans', 'Inter', sans-serif;
+  }
+  *{box-sizing:border-box;} html,body{margin:0;padding:0;}
+  body{background:#ECEDF0;color:var(--text-primary);font-family:var(--font-body);padding:56px 48px 96px;min-width:1380px;}
+  .doc-header{max-width:1320px;margin:0 auto 48px;display:flex;align-items:flex-end;justify-content:space-between;gap:32px;border-bottom:1px solid #D6D8DD;padding-bottom:24px;}
+  .doc-eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--text-muted);margin:0 0 8px;font-weight:600;}
+  .doc-title{font-family:var(--font-display);font-size:28px;font-weight:700;margin:0;letter-spacing:-.018em;}
+  .doc-sub{font-size:13px;color:var(--text-secondary);margin:8px 0 0;max-width:760px;line-height:1.55;}
+  .doc-meta{font-family:var(--font-numeric);font-size:11px;color:var(--text-muted);text-align:right;letter-spacing:.04em;line-height:1.7;}
+  .frames-row{display:flex;gap:64px;justify-content:center;align-items:flex-start;}
+  .variation{display:flex;flex-direction:column;align-items:center;width:393px;}
+  .v-label{margin-bottom:18px;text-align:center;width:100%;}
+  .v-num{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--text-muted);font-weight:600;}
+  .v-name{font-family:var(--font-display);font-size:16px;font-weight:600;color:var(--text-primary);margin-top:4px;}
+  .v-cap{font-size:12px;color:var(--text-secondary);margin-top:4px;line-height:1.45;max-width:340px;}
+  .device{position:relative;width:393px;height:852px;background:var(--bg-base);border-radius:56px;overflow:hidden;box-shadow:0 0 0 12px #0A0A0F,0 0 0 13px #2A2A30,0 30px 80px rgba(15,17,23,.28),0 12px 32px rgba(15,17,23,.16);}
+  .status-bar{position:absolute;top:0;left:0;right:0;height:54px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 28px 9px;z-index:30;}
+  .status-bar .time{font-family:var(--font-system);font-size:17px;font-weight:600;color:var(--text-primary);}
+  .status-bar .signals{display:inline-flex;gap:6px;align-items:center;}
+  .signal-bat{display:inline-block;width:26px;height:12px;border:1.2px solid var(--text-primary);border-radius:3px;position:relative;}
+  .signal-bat::after{content:"";position:absolute;right:-3px;top:3px;width:2px;height:5px;background:var(--text-primary);border-radius:0 1.5px 1.5px 0;}
+  .signal-bat::before{content:"";position:absolute;left:1px;top:1px;bottom:1px;width:78%;background:var(--text-primary);border-radius:1.5px;}
+  .dynamic-island{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:124px;height:36px;background:#0A0A0F;border-radius:22px;z-index:31;}
+  .home-indicator{position:absolute;bottom:9px;left:50%;transform:translateX(-50%);width:134px;height:5px;background:var(--text-primary);border-radius:3px;opacity:.7;z-index:32;}
+  .screen{position:absolute;top:0;left:0;right:0;bottom:0;padding:54px 0 0;display:flex;flex-direction:column;}
+
+  .reading-progress {
+    position: absolute;
+    top: 54px; left: 0; right: 0;
+    height: 2px;
+    background: rgba(15,17,23,0.06);
+    z-index: 8;
+  }
+  .reading-progress .fill { height: 100%; background: var(--gradient-brand); border-radius: 0 999px 999px 0; }
+
+  /* Hero image */
+  .hero-img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background:
+      radial-gradient(80% 60% at 25% 30%, rgba(255,255,255,0.25) 0%, transparent 50%),
+      linear-gradient(135deg, #FCD34D 0%, #F59E0B 60%, #B45309 100%);
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .hero-img .meat {
+    position: absolute;
+    bottom: 12%; left: 50%;
+    transform: translateX(-50%);
+    width: 56%; height: 60%;
+    background:
+      radial-gradient(40% 40% at 30% 30%, rgba(255,255,255,0.30) 0%, transparent 60%),
+      linear-gradient(135deg, #FDA4AF 0%, #DC2626 60%, #7F1D1D 100%);
+    border-radius: 40% 50% 50% 40% / 50% 50% 50% 50%;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.20);
+  }
+  .hero-img .plate {
+    position: absolute; bottom: 4%; left: 50%;
+    transform: translateX(-50%);
+    width: 70%; height: 14%;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.18);
+    filter: blur(8px);
+  }
+  .hero-img .cat-tag {
+    position: absolute; top: 14px; left: 16px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: rgba(15,17,23,0.78);
+    color: var(--text-on-dark);
+    font-family: var(--font-body);
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    backdrop-filter: blur(4px);
+  }
+
+  /* Floating nav over hero */
+  .nav-float {
+    position: absolute; top: 54px; left: 0; right: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 6px 12px 0;
+    z-index: 6;
+  }
+  .nav-float.opaque {
+    position: relative;
+    top: 0;
+    background: rgba(255,255,255,0.94);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--bg-border);
+    height: 48px;
+    padding: 0 12px;
+  }
+  .nav-float .actions { display: flex; gap: 8px; }
+  .nav-glass {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(8px);
+    color: var(--text-primary);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,.12);
+  }
+  .nav-float.opaque .nav-glass {
+    background: var(--bg-base);
+    box-shadow: none;
+  }
+  .nav-glass.saved { color: var(--semantic-error, #EF4444); }
+  .nav-float.opaque .sticky-title {
+    flex: 1;
+    text-align: center;
+    font-family: var(--font-body);
+    font-size: 14px; font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.003em;
+    padding: 0 8px;
+    display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;
+  }
+
+  .content { flex: 1; overflow: hidden; }
+
+  /* Body */
+  .body { padding: 18px 22px 100px; }
+  .article-title {
+    font-family: var(--font-display);
+    font-size: 24px; font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.022em;
+    line-height: 1.18;
+  }
+  .article-title.large { font-size: 28px; }
+  .meta-row {
+    margin-top: 10px;
+    display: flex; flex-wrap: wrap; gap: 6px 10px;
+    font-family: var(--font-body);
+    font-size: 11.5px; font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 0.04em;
+    align-items: center;
+  }
+  .meta-row .dot { color: var(--text-disabled); }
+  .meta-row .cat-pill {
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: rgba(245,158,11,0.12);
+    border: 1px solid rgba(245,158,11,0.32);
+    color: var(--semantic-warning);
+    font-size: 10px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+  }
+  .author-row {
+    margin-top: 14px;
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 0;
+    border-top: 1px solid var(--bg-border-soft);
+    border-bottom: 1px solid var(--bg-border-soft);
+  }
+  .author-row .av {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #A855F7, #6B21A8);
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display);
+    font-weight: 700; font-size: 13px;
+    flex-shrink: 0;
+  }
+  .author-row .name {
+    flex: 1;
+    font-family: var(--font-body);
+    font-size: 12.5px; font-weight: 700;
+    color: var(--text-primary);
+  }
+  .author-row .name .sub {
+    display: block;
+    font-weight: 500;
+    color: var(--text-secondary);
+    font-size: 11px;
+    margin-top: 1px;
+  }
+
+  /* Article body */
+  .article-body { margin-top: 18px; }
+  .article-body p {
+    font-family: var(--font-body);
+    font-size: 15.5px; font-weight: 400;
+    color: var(--text-body);
+    line-height: 1.62;
+    letter-spacing: -0.003em;
+    margin: 0 0 16px;
+  }
+  .article-body p.lead {
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--text-primary);
+    line-height: 1.5;
+  }
+  .article-body p b { color: var(--text-primary); font-weight: 700; }
+  .article-body p i { color: var(--text-secondary); }
+  .article-body h2 {
+    margin: 22px 0 12px;
+    font-family: var(--font-display);
+    font-size: 19px; font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.014em;
+    line-height: 1.25;
+  }
+  .article-body.reading p {
+    font-family: var(--font-reading);
+    font-size: 17px;
+    line-height: 1.65;
+    letter-spacing: 0;
+  }
+  .article-body.reading p.lead { font-size: 18.5px; font-style: italic; }
+  .article-body.reading h2 { font-family: var(--font-reading); font-style: italic; font-weight: 600; font-size: 21px; }
+  .pull-quote {
+    margin: 22px -4px;
+    padding: 14px 18px 14px 14px;
+    border-left: 3px solid var(--semantic-success);
+    background: rgba(0,210,120,0.05);
+    border-radius: 0 12px 12px 0;
+    font-family: var(--font-body);
+    font-size: 16px; font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.4;
+    letter-spacing: -0.005em;
+  }
+  .pull-quote .accent {
+    background: linear-gradient(90deg, #00D278, #00B4D8);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  }
+
+  /* Inline number callout */
+  .num-callout {
+    margin: 18px 0;
+    padding: 14px 16px;
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--elev-1);
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 14px;
+    align-items: center;
+  }
+  .num-callout .n {
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 40px; font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.025em;
+    line-height: 1;
+  }
+  .num-callout .n .u {
+    font-family: var(--font-body);
+    font-size: 11px; font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.14em; text-transform: uppercase;
+    display: block;
+    margin-top: 4px;
+  }
+  .num-callout .txt {
+    font-family: var(--font-body);
+    font-size: 12.5px; font-weight: 500;
+    color: var(--text-body);
+    line-height: 1.45;
+    letter-spacing: -0.003em;
+  }
+  .num-callout .txt b { color: var(--text-primary); font-weight: 700; }
+
+  /* Inline image */
+  .inline-img {
+    margin: 18px 0;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border-radius: 16px;
+    background:
+      radial-gradient(80% 60% at 70% 30%, rgba(255,255,255,0.20) 0%, transparent 50%),
+      linear-gradient(135deg, #BBF7D0 0%, #34D399 50%, #14532D 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .inline-img .ing {
+    position: absolute;
+    border-radius: 50%;
+  }
+  .inline-img .ing.a { top: 22%; left: 24%; width: 40%; height: 40%; background: linear-gradient(135deg, #FDA4AF, #DC2626); }
+  .inline-img .ing.b { bottom: 18%; right: 18%; width: 30%; height: 30%; background: linear-gradient(135deg, #FCD34D, #F59E0B); }
+  .inline-img .cap {
+    position: absolute;
+    bottom: 8px; left: 50%; transform: translateX(-50%);
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: rgba(15,17,23,0.72);
+    backdrop-filter: blur(6px);
+    color: var(--text-on-dark);
+    font-family: var(--font-body);
+    font-size: 10px; font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+
+  /* Takeaway card */
+  .takeaway {
+    margin: 22px -4px;
+    background: var(--bg-elevated);
+    color: var(--text-on-dark);
+    border-radius: var(--radius-lg);
+    padding: 18px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 12px 32px rgba(15,17,23,.18);
+  }
+  .takeaway::before {
+    content: ""; position: absolute;
+    top: 0; right: 0; width: 50%; height: 100%;
+    background: radial-gradient(60% 50% at 80% 50%, rgba(71,231,176,0.22) 0%, transparent 60%);
+  }
+  .takeaway .lbl {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--font-body);
+    font-size: 10px; font-weight: 700;
+    color: var(--text-on-dark-muted);
+    letter-spacing: 0.22em; text-transform: uppercase;
+    position: relative; z-index: 1;
+  }
+  .takeaway .lbl .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--brand-green); box-shadow: 0 0 0 3px rgba(71,231,176,0.32); }
+  .takeaway .body {
+    margin-top: 10px;
+    font-family: var(--font-display);
+    font-size: 19px; font-weight: 600;
+    color: var(--text-on-dark);
+    line-height: 1.28;
+    letter-spacing: -0.014em;
+    position: relative; z-index: 1;
+  }
+  .takeaway .body .accent {
+    background: linear-gradient(90deg, #47E7B0, #00B4D8);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .takeaway .row {
+    margin-top: 14px;
+    display: flex; gap: 8px;
+    position: relative; z-index: 1;
+  }
+  .takeaway .cta {
+    flex: 1;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--gradient-brand);
+    color: var(--text-on-dark);
+    font-family: var(--font-body);
+    font-size: 14px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    box-shadow: var(--elev-cta);
+  }
+  .takeaway .skip {
+    padding: 0 14px; height: 44px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.08);
+    color: var(--text-on-dark);
+    border: 1px solid rgba(255,255,255,0.16);
+    font-family: var(--font-body);
+    font-size: 13px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* Sticky takeaway (V2) */
+  .sticky-takeaway {
+    position: absolute;
+    left: 12px; right: 12px; bottom: 100px;
+    background: var(--bg-elevated);
+    color: var(--text-on-dark);
+    border-radius: var(--radius-lg);
+    padding: 12px 14px;
+    box-shadow: 0 12px 32px rgba(15,17,23,.32);
+    z-index: 21;
+    overflow: hidden;
+  }
+  .sticky-takeaway::before {
+    content: ""; position: absolute;
+    top: 0; right: 0; width: 50%; height: 100%;
+    background: radial-gradient(60% 50% at 80% 50%, rgba(71,231,176,0.22) 0%, transparent 60%);
+  }
+  .sticky-takeaway .row {
+    position: relative; z-index: 1;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .sticky-takeaway .body { flex: 1; min-width: 0; }
+  .sticky-takeaway .lbl {
+    font-family: var(--font-body);
+    font-size: 9px; font-weight: 700;
+    color: var(--text-on-dark-muted);
+    letter-spacing: 0.22em; text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+  .sticky-takeaway .nm {
+    font-family: var(--font-display);
+    font-size: 14px; font-weight: 600;
+    color: var(--text-on-dark);
+    letter-spacing: -0.005em;
+    line-height: 1.25;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .sticky-takeaway .cta-sm {
+    flex-shrink: 0;
+    padding: 0 14px; height: 38px;
+    border-radius: 999px;
+    background: var(--gradient-brand);
+    color: var(--text-on-dark);
+    font-family: var(--font-body);
+    font-size: 12.5px; font-weight: 700;
+    display: inline-flex; align-items: center; gap: 4px;
+    box-shadow: 0 4px 12px rgba(0,210,120,0.36);
+  }
+
+  /* Related */
+  .related-h {
+    margin: 24px 0 10px;
+    font-family: var(--font-display);
+    font-size: 14px; font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.005em;
+  }
+  .rel-list { display: flex; flex-direction: column; gap: 8px; }
+  .rel {
+    display: grid; grid-template-columns: 52px 1fr;
+    gap: 12px;
+    padding: 10px;
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: 14px;
+    box-shadow: var(--elev-1);
+    align-items: center;
+  }
+  .rel .th {
+    width: 52px; height: 52px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--c1, #FCD34D), var(--c2, #F59E0B));
+    flex-shrink: 0;
+  }
+  .rel .ttl {
+    font-family: var(--font-body);
+    font-size: 13px; font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.003em;
+    line-height: 1.3;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .rel .met {
+    margin-top: 2px;
+    font-family: var(--font-body);
+    font-size: 11px; font-weight: 500;
+    color: var(--text-secondary);
+  }
+
+  /* Tabbar */
+  .tabbar { position: absolute; left: 0; right: 0; bottom: 0; height: 88px; background: rgba(255,255,255,0.92); backdrop-filter: blur(18px); border-top: 1px solid var(--bg-border); display: grid; grid-template-columns: repeat(5, 1fr); padding: 8px 6px 30px; z-index: 22; }
+  .tab { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: var(--text-muted); }
+  .tab.active { color: var(--text-primary); }
+  .tab-glyph { width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; }
+  .tab-label { font-family: var(--font-body); font-size: 10px; font-weight: 600; }
+
+  /* Legend */
+  .legend{max-width:1320px;margin:56px auto 0;padding:22px 26px;background:#FFFFFF;border:1px solid var(--bg-border);border-radius:var(--radius-lg);display:grid;grid-template-columns:220px 1fr;gap:14px 28px;font-size:12px;color:var(--text-secondary);line-height:1.55;}
+  .legend h3{grid-column:1 / -1;margin:0 0 6px;font-family:var(--font-display);font-size:12px;font-weight:600;color:var(--text-muted);letter-spacing:.18em;text-transform:uppercase;}
+  .legend dt{grid-column:1;font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:.04em;text-transform:uppercase;}
+  .legend dd{grid-column:2;margin:0;}
+  .legend code{background:#F4F5F7;border:1px solid var(--bg-border);padding:1px 6px;border-radius:4px;font-family:var(--font-numeric);font-size:11px;color:var(--text-primary);}
+</style>
+</head>
+<body>
+
+  <header class="doc-header">
+    <div>
+      <p class="doc-eyebrow">FuelWell · Phase 0.5 · Step 4 — Mockups</p>
+      <h1 class="doc-title">M22 Article Detail · "The 1g protein rule"</h1>
+      <p class="doc-sub">Promoted from approved wireframe § 3.22 V1 (hero + body + takeaway). Three states: default top of article, mid-scroll with sticky takeaway, and the typographic Reading mode with the takeaway as a centered moment.</p>
+    </div>
+    <div class="doc-meta">
+      iPhone 15 Pro · 393 × 852 pt<br>
+      Pushed · tab Learn active<br>
+      Article · 3 min read
+    </div>
+  </header>
+
+  <div class="frames-row" id="frames"></div>
+
+  <section class="legend">
+    <h3>Mockup notes · Step 4</h3>
+
+    <dt>Hero · V1</dt>
+    <dd>16:9 photo with the category pill ("MACROS") in the top-left. Floating glass back / share / heart-saved nav overlays the hero — they collapse into the frosted compact nav as the user scrolls.</dd>
+
+    <dt>Title + meta</dt>
+    <dd>Outfit 700 24pt title, 1.18 line-height. Meta row: read time (DM Sans), category pill, publish date · author. Reading-progress hairline lives just under the status bar and fills <code>gradient.brand</code> as the user scrolls.</dd>
+
+    <dt>Body type</dt>
+    <dd>V1/V2 use <strong>Inter 400</strong> 15.5pt at 1.62 line-height — the smart-friend body voice. The lead paragraph bumps to 17pt 500 to set the tone. V3 switches to <strong>Lora 400</strong> 17pt 1.65 with italic h2s — the immersive Reading mode.</dd>
+
+    <dt>Pull quote + number callout</dt>
+    <dd>Pull quote: 3pt success-green left accent on a 5% green tint, with one phrase getting the green→blue gradient-text accent. Number callout: white card with the standout figure in DM Sans 700 40pt + a one-sentence explanation — used once per article max to surface "the number" the article is built around.</dd>
+
+    <dt>Inline image</dt>
+    <dd>4:3 ratio, 16pt radius. One per article max per spec. Captions sit as small glass pills inside the image.</dd>
+
+    <dt>Takeaway card · core moment</dt>
+    <dd>Dark elevated card, "ONE THING TO TRY TODAY" eyebrow with the brand-green pulse, the action statement in Outfit 600 19pt with the operative phrase in gradient-text. Primary "Try it · log a 30g lunch" gradient-brand CTA + ghost "Skip for now" button. The single mandatory element of every article.</dd>
+
+    <dt>Sticky takeaway · V2</dt>
+    <dd>Mid-scroll, the dark takeaway pins above the tab bar in a compact form — label + action + small gradient pill CTA — so the "one thing to try" is never out of reach. Returns to inline-card form once the user reaches the end of the article.</dd>
+
+    <dt>Reading mode · V3</dt>
+    <dd>No hero; an opaque sticky title bar replaces it. Body type swaps to Lora, drop-cap on the lead paragraph. Takeaway breaks out of the narrow column slightly with a wider full-width card — designed to read as a beat in the article rather than a CTA add-on.</dd>
+  </section>
+
+<script>
+  const statusBar = `<div class="status-bar">
+    <div class="time">9:41</div>
+    <div class="signals">
+      <svg width="17" height="11" viewBox="0 0 17 11" fill="none"><rect x="0" y="7" width="3" height="4" rx="0.5" fill="#0A0A0F"/><rect x="4" y="5" width="3" height="6" rx="0.5" fill="#0A0A0F"/><rect x="8" y="3" width="3" height="8" rx="0.5" fill="#0A0A0F"/><rect x="12" y="0" width="3" height="11" rx="0.5" fill="#0A0A0F"/></svg>
+      <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><path d="M8 11l-2.5-2.5a3.5 3.5 0 014.9 0L8 11z" fill="#0A0A0F"/><path d="M2 5a8.5 8.5 0 0112 0l-1.5 1.5a6 6 0 00-9 0L2 5z" fill="#0A0A0F"/><path d="M5 8a4.5 4.5 0 016 0l-1.5 1.5a2.5 2.5 0 00-3 0L5 8z" fill="#0A0A0F"/></svg>
+      <span class="signal-bat"></span>
+    </div>
+  </div>`;
+  const island = `<div class="dynamic-island"></div>`;
+
+  const ic = {
+    back:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    share:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 4v12M8 8l4-4 4 4M5 14v4a2 2 0 002 2h10a2 2 0 002-2v-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    heart:`<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7-4.6-9-9.5C1.5 7 4.5 3.5 8 3.5c2 0 3.4 1 4 2 .6-1 2-2 4-2 3.5 0 6.5 3.5 5 8C19 16.4 12 21 12 21Z"/></svg>`,
+    bookmark:`<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4a2 2 0 012-2h8a2 2 0 012 2v18l-6-3.5L6 22V4Z"/></svg>`,
+    arrR:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    sparkle:`<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2 6 6 2-6 2-2 6-2-6-6-2 6-2 2-6Z"/></svg>`,
+    tabHome:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11l8-7 8 7v8a1 1 0 01-1 1h-4v-6h-6v6H5a1 1 0 01-1-1v-8Z"/></svg>`,
+    tabLog:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M9 8h6M9 12h6M9 16h3" stroke-linecap="round"/></svg>`,
+    tabCoach:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11a8 8 0 1116 0v3a3 3 0 01-3 3h-1v-7h4M4 11v3a3 3 0 003 3h1v-7H4"/></svg>`,
+    tabLearnA:`<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M4 5.5C4 4.7 4.7 4 5.5 4H10a3 3 0 013 3v14a2 2 0 00-2-2H5.5A1.5 1.5 0 014 17.5v-12ZM20 5.5C20 4.7 19.3 4 18.5 4H14a3 3 0 00-3 3v14a2 2 0 012-2h5.5a1.5 1.5 0 001.5-1.5v-12Z"/></svg>`,
+    tabProg:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg>`,
+  };
+
+  function tabbar() {
+    return `<div class="tabbar">
+      <div class="tab"><div class="tab-glyph">${ic.tabHome}</div><div class="tab-label">Home</div></div>
+      <div class="tab"><div class="tab-glyph">${ic.tabLog}</div><div class="tab-label">Log</div></div>
+      <div class="tab"><div class="tab-glyph">${ic.tabCoach}</div><div class="tab-label">Coach</div></div>
+      <div class="tab active"><div class="tab-glyph">${ic.tabLearnA}</div><div class="tab-label">Learn</div></div>
+      <div class="tab"><div class="tab-glyph">${ic.tabProg}</div><div class="tab-label">Progress</div></div>
+    </div>`;
+  }
+
+  function progress(pct) {
+    return `<div class="reading-progress"><div class="fill" style="width: ${pct}%"></div></div>`;
+  }
+
+  function hero() {
+    return `<div class="hero-img">
+      <span class="cat-tag">Macros</span>
+      <div class="plate"></div>
+      <div class="meat"></div>
+    </div>`;
+  }
+
+  function floatNav(saved) {
+    return `<div class="nav-float">
+      <div class="nav-glass">${ic.back}</div>
+      <div class="actions">
+        <div class="nav-glass">${ic.share}</div>
+        <div class="nav-glass ${saved?'saved':''}">${saved?ic.heart:ic.bookmark}</div>
+      </div>
+    </div>`;
+  }
+
+  function stickyNav(title) {
+    return `<div class="nav-float opaque">
+      <div class="nav-glass">${ic.back}</div>
+      <div class="sticky-title">${title}</div>
+      <div class="actions">
+        <div class="nav-glass">${ic.share}</div>
+        <div class="nav-glass saved">${ic.heart}</div>
+      </div>
+    </div>`;
+  }
+
+  function takeaway() {
+    return `<div class="takeaway">
+      <div class="lbl"><span class="dot"></span>One thing to try today</div>
+      <div class="body">Aim for <span class="accent">30 g of protein at lunch</span> — your evening macros will take care of themselves.</div>
+      <div class="row">
+        <div class="cta">${ic.sparkle} Try it · log a 30g lunch</div>
+        <div class="skip">Later</div>
+      </div>
+    </div>`;
+  }
+
+  function related() {
+    return `
+      <div class="related-h">Read next</div>
+      <div class="rel-list">
+        <div class="rel">
+          <div class="th" style="--c1: #BBF7D0; --c2: #22C55E;"></div>
+          <div>
+            <div class="ttl">Why a 30g lunch beats a 60g dinner — distribution beats total</div>
+            <div class="met">Macros<span style="color: var(--text-disabled); margin: 0 5px;">·</span>2 min read</div>
+          </div>
+        </div>
+        <div class="rel">
+          <div class="th" style="--c1: #DDD6FE; --c2: #A78BFA;"></div>
+          <div>
+            <div class="ttl">Recovery is protein's second job</div>
+            <div class="met">Recovery<span style="color: var(--text-disabled); margin: 0 5px;">·</span>3 min read</div>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  // ===== V1 default top =====
+  function v1() {
+    return `
+      ${progress(8)}
+      ${hero()}
+      ${floatNav(false)}
+      <div class="content">
+        <div class="body">
+          <h1 class="article-title">The 1g-per-pound protein rule: where it came from, when to break it.</h1>
+          <div class="meta-row">
+            <span>3 min read</span>
+            <span class="dot">·</span>
+            <span class="cat-pill">Macros</span>
+            <span class="dot">·</span>
+            <span>May 14, 2026</span>
+          </div>
+          <div class="author-row">
+            <div class="av">F</div>
+            <div class="name">Coach<span class="sub">FuelWell editorial</span></div>
+          </div>
+          <div class="article-body">
+            <p class="lead">If you've spent any time around lifting or macros, you've heard it: <b>one gram of protein per pound of bodyweight, every day.</b> It's clean, memorable, and broadly correct — but it isn't actually the math.</p>
+            <p>The number traces back to a 1990s bodybuilding heuristic that doubled the most generous protein-synthesis recommendation of the day, then converted to imperial. It stuck because it's easy to remember and because it works for most people who lift consistently.</p>
+            <h2>What the research actually says</h2>
+            <p>Meta-analyses on hypertrophy converge somewhere between <b>0.7 and 1.0 g/lb</b> for trained lifters. The high end of that range is what your plan is built around — close to the rule, but anchored to your actual lean mass, your activity, and your weekly trend.</p>
+          </div>
+        </div>
+      </div>
+      ${tabbar()}`;
+  }
+
+  // ===== V2 scrolled with sticky takeaway =====
+  function v2() {
+    return `
+      ${progress(42)}
+      ${stickyNav('The 1g-per-pound protein rule')}
+      <div class="content">
+        <div class="body" style="padding-top: 14px;">
+          <h2 style="margin-top: 0;">Distribution beats total</h2>
+          <p>Here's the part the rule misses: <b>how you spread protein across the day</b> matters more than your end-of-day total. The body can only put a finite amount toward muscle protein synthesis at any one sitting — roughly 30 to 40 g at a time for most adults.</p>
+          <div class="num-callout">
+            <div class="n">30<span class="u">grams</span></div>
+            <div class="txt">The synthesis-saturating dose at one sitting for most adults. Above this, the surplus is oxidized for energy rather than building muscle.</div>
+          </div>
+          <p>That means a 160-pound lifter who eats <b>40 g, 40 g, and 80 g</b> across three meals isn't getting the same outcome as someone who hits <b>40, 40, 40, 40</b> across four. Both are at the same daily total. Only one is using it.</p>
+          <div class="pull-quote">A <span class="accent">30 g lunch</span> isn't just easier — it's where most people leave protein on the table.</div>
+          <p>This is also why "I'll catch up at dinner" doesn't work as a strategy. A 90 g dinner doesn't undo a 10 g lunch — it just gives your body more than it can use, and the rest gets burned for energy or stored.</p>
+          <div class="inline-img">
+            <span class="ing a"></span>
+            <span class="ing b"></span>
+            <span class="cap">A 4-meal day clears the synthesis bar four times.</span>
+          </div>
+          <h2>When to break it</h2>
+          <p>If you're cutting hard, the rule's <i>floor</i> matters more than the <i>target</i> — protein protects lean mass under deficit. If you're maintaining and not lifting, you can land 20% lower without losing anything. And if you're 70+, the threshold per meal climbs to about 40 g.</p>
+          <p>The rule is a useful default. Distribution is the actual lever.</p>
+        </div>
+      </div>
+      <div class="sticky-takeaway">
+        <div class="row">
+          <div class="body">
+            <div class="lbl">One thing to try today</div>
+            <div class="nm">Aim for 30 g of protein at lunch.</div>
+          </div>
+          <div class="cta-sm">${ic.sparkle} Try it</div>
+        </div>
+      </div>
+      ${tabbar()}`;
+  }
+
+  // ===== V3 reading mode =====
+  function v3() {
+    return `
+      ${progress(78)}
+      ${stickyNav('The 1g-per-pound protein rule')}
+      <div class="content">
+        <div class="body" style="padding-top: 16px;">
+          <h1 class="article-title large" style="font-family: var(--font-reading); font-style: italic; font-weight: 600; font-size: 27px; letter-spacing: -0.01em;">The 1g rule, in practice.</h1>
+          <div class="meta-row">
+            <span>Reading mode</span>
+            <span class="dot">·</span>
+            <span class="cat-pill">Macros</span>
+            <span class="dot">·</span>
+            <span>3 min</span>
+          </div>
+          <div class="article-body reading">
+            <p class="lead">By now you know the rule and you know why it falls apart. Here's what to actually do tomorrow — not as a rewrite of your plan, but as one small move.</p>
+            <h2>The lunch fix</h2>
+            <p>If you eat three meals and a snack, the lunch slot is almost always the one carrying the lightest protein. People plan dinner. They post-rationalize breakfast. They forget lunch.</p>
+            <p>So set a <i>floor</i>, not a <i>target</i>: every lunch hits 30 grams. Anchor on a single ingredient — a chicken breast, a yogurt, two eggs and turkey — and let the rest of the meal fall around it.</p>
+          </div>
+          <div class="takeaway">
+            <div class="lbl"><span class="dot"></span>One thing to try today</div>
+            <div class="body">Aim for <span class="accent">30 g of protein at lunch</span> — your evening macros will take care of themselves.</div>
+            <div class="row">
+              <div class="cta">${ic.sparkle} Try it · log a 30g lunch</div>
+              <div class="skip">Later</div>
+            </div>
+          </div>
+          <div class="article-body reading">
+            <p>That's it. No total to count. No new rule. One slot, one floor, every day for a week. If it helps, the rest of the plan stays. If it doesn't, you've lost nothing.</p>
+          </div>
+          ${related()}
+        </div>
+      </div>
+      ${tabbar()}`;
+  }
+
+  const variations = [
+    { num:'Variation 01 · State', name:'Default · top of article', cap:'Reader just arrived. 16:9 hero with the food image and category pill, floating glass nav, lead paragraph + author-row underneath. Reading-progress hairline at 8%.', body: v1() },
+    { num:'Variation 02 · State', name:'Mid-scroll · sticky takeaway', cap:'42% through. Hero scrolled off, frosted sticky title bar live. Number callout for "30 g", pull quote with gradient-text accent, inline image. Compact takeaway pinned above the tab bar.', body: v2() },
+    { num:'Variation 03 · State', name:'Reading mode · ending', cap:'78% through. Lora body type, italic section headers, the full takeaway card breaks out into the page as a centered "beat" before the Read-next list closes the article.', body: v3() }
+  ];
+
+  const root = document.getElementById('frames');
+  root.innerHTML = variations.map(v => `
+    <section class="variation">
+      <div class="v-label">
+        <div class="v-num">${v.num}</div>
+        <div class="v-name">${v.name}</div>
+        <div class="v-cap">${v.cap}</div>
+      </div>
+      <div class="device">
+        ${statusBar}${island}
+        <div class="screen">${v.body}</div>
+        <div class="home-indicator"></div>
+      </div>
+    </section>
+  `).join('');
+</script>
+</body>
+</html>

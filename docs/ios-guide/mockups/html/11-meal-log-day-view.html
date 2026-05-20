@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>FuelWell · M11 Meal Log day view · Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-base: #F4F5F7;
+    --bg-surface: #FFFFFF;
+    --bg-elevated: #0F1117;
+    --bg-border: #E5E7EB;
+    --bg-border-soft: #EEF0F3;
+    --bg-border-dark: #2A2A3A;
+
+    --text-primary: #0A0A0F;
+    --text-body: #1F2937;
+    --text-secondary: #6B7280;
+    --text-muted: #9CA3AF;
+    --text-disabled: #C7CCD3;
+    --text-on-dark: #FFFFFF;
+    --text-on-dark-muted: #9AA0AC;
+
+    --brand-green: #47E7B0;
+    --action-green: #00D278;
+
+    --semantic-success: #00D278;
+    --semantic-warning: #F59E0B;
+    --semantic-error: #EF4444;
+    --semantic-info: #00B4D8;
+    --semantic-premium: #A855F7;
+
+    --macro-protein: #00D278;
+    --macro-carbs: #F59E0B;
+    --macro-fat: #A855F7;
+    --macro-calories: #00D278;
+
+    --gradient-brand: linear-gradient(135deg, #00D278 0%, #47E7B0 100%);
+
+    --radius-sm: 6px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+    --radius-pill: 999px;
+
+    --elev-1: 0 1px 2px rgba(15,17,23,.04), 0 1px 0 rgba(15,17,23,.02);
+    --elev-2: 0 4px 14px rgba(15,17,23,.06), 0 1px 2px rgba(15,17,23,.04);
+    --elev-cta: 0 8px 24px rgba(0,210,120,.22), 0 2px 4px rgba(15,17,23,.10);
+
+    --font-display: 'Outfit', system-ui, -apple-system, sans-serif;
+    --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-system: -apple-system, 'SF Pro Display', system-ui, sans-serif;
+    --font-numeric: 'DM Sans', 'Inter', sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: #ECEDF0;
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    padding: 56px 48px 96px;
+    min-width: 1380px;
+  }
+
+  .doc-header {
+    max-width: 1320px; margin: 0 auto 48px;
+    display: flex; align-items: flex-end; justify-content: space-between;
+    gap: 32px; border-bottom: 1px solid #D6D8DD; padding-bottom: 24px;
+  }
+  .doc-eyebrow { font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-muted); margin: 0 0 8px; font-weight: 600; }
+  .doc-title { font-family: var(--font-display); font-size: 28px; font-weight: 700; margin: 0; color: var(--text-primary); letter-spacing: -0.018em; }
+  .doc-sub { font-size: 13px; color: var(--text-secondary); margin: 8px 0 0; max-width: 760px; line-height: 1.55; }
+  .doc-meta { font-family: var(--font-numeric); font-size: 11px; color: var(--text-muted); text-align: right; letter-spacing: 0.04em; line-height: 1.7; }
+
+  .frames-row { display: flex; gap: 64px; justify-content: center; align-items: flex-start; }
+  .variation { display: flex; flex-direction: column; align-items: center; width: 393px; }
+  .v-label { margin-bottom: 18px; text-align: center; width: 100%; }
+  .v-num { font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-muted); font-weight: 600; }
+  .v-name { font-family: var(--font-display); font-size: 16px; font-weight: 600; color: var(--text-primary); margin-top: 4px; letter-spacing: -0.005em; }
+  .v-cap { font-size: 12px; color: var(--text-secondary); margin-top: 4px; line-height: 1.45; max-width: 340px; }
+
+  /* Device */
+  .device {
+    position: relative; width: 393px; height: 852px;
+    background: var(--bg-base);
+    border-radius: 56px; overflow: hidden;
+    box-shadow: 0 0 0 12px #0A0A0F, 0 0 0 13px #2A2A30, 0 30px 80px rgba(15,17,23,.28), 0 12px 32px rgba(15,17,23,.16);
+  }
+  .status-bar { position: absolute; top: 0; left: 0; right: 0; height: 54px; display: flex; align-items: flex-end; justify-content: space-between; padding: 0 28px 9px; z-index: 30; pointer-events: none; }
+  .status-bar .time { font-family: var(--font-system); font-size: 17px; font-weight: 600; color: var(--text-primary); letter-spacing: -0.01em; }
+  .status-bar .signals { display: inline-flex; gap: 6px; align-items: center; }
+  .signal-bat { display: inline-block; width: 26px; height: 12px; border: 1.2px solid var(--text-primary); border-radius: 3px; position: relative; }
+  .signal-bat::after { content: ""; position: absolute; right: -3px; top: 3px; width: 2px; height: 5px; background: var(--text-primary); border-radius: 0 1.5px 1.5px 0; }
+  .signal-bat::before { content: ""; position: absolute; left: 1px; top: 1px; bottom: 1px; width: 78%; background: var(--text-primary); border-radius: 1.5px; }
+  .dynamic-island { position: absolute; top: 11px; left: 50%; transform: translateX(-50%); width: 124px; height: 36px; background: #0A0A0F; border-radius: 22px; z-index: 31; }
+  .home-indicator { position: absolute; bottom: 9px; left: 50%; transform: translateX(-50%); width: 134px; height: 5px; background: var(--text-primary); border-radius: 3px; opacity: 0.7; z-index: 32; }
+
+  .screen { position: absolute; top: 0; left: 0; right: 0; bottom: 0; padding: 54px 0 0; display: flex; flex-direction: column; }
+
+  /* Top bar */
+  .top {
+    height: 48px;
+    display: grid;
+    grid-template-columns: 56px 1fr 56px;
+    align-items: center;
+    padding: 0 12px;
+    flex-shrink: 0;
+  }
+  .top-h {
+    text-align: center;
+    font-family: var(--font-display);
+    font-size: 18px; font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.015em;
+  }
+  .top-h .sub {
+    display: block;
+    margin-top: 1px;
+    font-family: var(--font-body);
+    font-size: 11px; font-weight: 500;
+    color: var(--text-secondary);
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .icon-btn {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-body);
+    box-shadow: var(--elev-1);
+    cursor: pointer;
+    margin: 0 auto;
+  }
+
+  /* Day strip */
+  .days {
+    padding: 6px 14px 0;
+    display: grid; grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .day-pill {
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: 14px;
+    padding: 8px 4px;
+    text-align: center;
+    box-shadow: var(--elev-1);
+    cursor: pointer;
+    position: relative;
+  }
+  .day-pill.selected {
+    background: var(--text-primary);
+    border-color: var(--text-primary);
+    color: var(--text-on-dark);
+  }
+  .day-pill.future {
+    background: var(--bg-base);
+    box-shadow: none;
+  }
+  .day-pill .dow {
+    font-family: var(--font-body);
+    font-size: 9px; font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .day-pill.selected .dow { color: var(--text-on-dark-muted); }
+  .day-pill .dnum {
+    margin-top: 2px;
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 16px; font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+  .day-pill.selected .dnum { color: var(--text-on-dark); }
+  .day-pill.future .dnum { color: var(--text-disabled); }
+  .day-pill .ind {
+    margin: 5px auto 0;
+    width: 4px; height: 4px; border-radius: 50%;
+    background: var(--semantic-success);
+  }
+  .day-pill .ind.miss { background: var(--bg-border); }
+  .day-pill .ind.warn { background: var(--semantic-warning); }
+  .day-pill.selected .ind { background: var(--brand-green); box-shadow: 0 0 0 2px rgba(71,231,176,0.30); }
+
+  /* Day summary bar */
+  .summary {
+    margin: 12px 14px 0;
+    background: var(--bg-elevated);
+    border-radius: var(--radius-lg);
+    padding: 14px 16px;
+    color: var(--text-on-dark);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    align-items: center;
+  }
+  .summary .lbl {
+    font-family: var(--font-body);
+    font-size: 10.5px; font-weight: 600;
+    color: var(--text-on-dark-muted);
+    letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .summary .kcal {
+    margin-top: 4px;
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 26px; font-weight: 600;
+    color: var(--text-on-dark);
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .summary .kcal .of {
+    font-size: 12px; font-weight: 500;
+    color: var(--text-on-dark-muted);
+    margin-left: 4px;
+  }
+  .summary .kcal .u {
+    font-family: var(--font-body);
+    font-size: 10px; font-weight: 600;
+    color: var(--text-on-dark-muted);
+    letter-spacing: 0.14em; text-transform: uppercase;
+    margin-left: 6px;
+  }
+  .ring {
+    width: 56px; height: 56px;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .ring svg { transform: rotate(-90deg); }
+  .ring .pct {
+    position: absolute;
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 13px; font-weight: 600;
+    color: var(--text-on-dark);
+    letter-spacing: -0.01em;
+  }
+  .summary .mac-row {
+    grid-column: 1 / -1;
+    margin-top: 4px;
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    border-top: 1px solid var(--bg-border-dark);
+    padding-top: 10px;
+  }
+  .summary .mac {
+    display: flex; align-items: center; gap: 6px;
+    font-family: var(--font-body);
+    font-size: 11px; font-weight: 500;
+    color: var(--text-on-dark-muted);
+    letter-spacing: -0.002em;
+  }
+  .summary .mac .sw {
+    width: 6px; height: 6px; border-radius: 1.5px;
+  }
+  .summary .mac .v {
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    color: var(--text-on-dark);
+    font-weight: 600;
+    letter-spacing: -0.003em;
+    margin-right: 2px;
+  }
+
+  /* Content */
+  .content {
+    flex: 1;
+    padding: 0 14px 120px;
+    overflow: hidden;
+  }
+  .section-h-row {
+    margin: 18px 4px 8px;
+    display: flex; align-items: baseline; justify-content: space-between;
+  }
+  .section-h {
+    display: flex; align-items: center; gap: 8px;
+    font-family: var(--font-display);
+    font-size: 15px; font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.005em;
+  }
+  .section-h .pip {
+    width: 4px; height: 12px;
+    border-radius: 2px;
+    background: var(--text-primary);
+  }
+  .section-h .pip.b { background: var(--macro-carbs); }
+  .section-h .pip.l { background: var(--macro-protein); }
+  .section-h .pip.s { background: var(--semantic-info); }
+  .section-h .pip.d { background: var(--macro-fat); }
+  .section-meta {
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 12px; font-weight: 500;
+    color: var(--text-secondary);
+    letter-spacing: -0.003em;
+  }
+  .section-meta.pending { color: var(--text-muted); font-style: italic; }
+
+  /* Meal card list */
+  .meals { display: flex; flex-direction: column; gap: 8px; }
+  .meal {
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-md);
+    padding: 12px 12px;
+    display: flex; align-items: center; gap: 12px;
+    box-shadow: var(--elev-1);
+  }
+  .meal .thumb {
+    width: 48px; height: 48px;
+    border-radius: 10px;
+    background: var(--bg-base);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-body);
+    flex-shrink: 0;
+    overflow: hidden;
+    position: relative;
+  }
+  .meal .thumb.gradient {
+    background: linear-gradient(135deg, var(--c1, #FCD34D), var(--c2, #F59E0B));
+    color: #fff;
+  }
+  .meal .body { flex: 1; min-width: 0; }
+  .meal .name {
+    font-family: var(--font-body);
+    font-size: 14.5px; font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.003em;
+    line-height: 1.25;
+  }
+  .meal .meta {
+    margin-top: 2px;
+    display: flex; flex-wrap: wrap; gap: 4px 7px;
+    font-family: var(--font-body);
+    font-size: 11.5px; font-weight: 400;
+    color: var(--text-secondary);
+    letter-spacing: -0.002em;
+  }
+  .meal .meta .pipe { color: var(--text-disabled); }
+  .meal .meta .mac {
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-weight: 500;
+  }
+  .meal .meta .mac .l {
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-right: 2px;
+  }
+  .meal .right {
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .meal .kcal {
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 16px; font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+    line-height: 1;
+  }
+  .meal .kcal-u {
+    margin-top: 2px;
+    font-family: var(--font-body);
+    font-size: 9px; font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .meal .source-tag {
+    display: inline-block;
+    padding: 2px 6px;
+    margin-right: 4px;
+    border-radius: 4px;
+    font-family: var(--font-body);
+    font-size: 10px; font-weight: 600;
+    letter-spacing: 0.04em;
+    background: var(--bg-base);
+    color: var(--text-secondary);
+    border: 1px solid var(--bg-border);
+  }
+  .meal .source-tag.recipe { color: var(--semantic-success); background: rgba(0,210,120,0.08); border-color: rgba(0,210,120,0.30); }
+  .meal .source-tag.rest   { color: var(--semantic-info); background: rgba(0,180,216,0.08); border-color: rgba(0,180,216,0.30); }
+  .meal .source-tag.pantry { color: var(--text-body); }
+  .meal .source-tag.plan   { color: var(--semantic-premium); background: rgba(168,85,247,0.08); border-color: rgba(168,85,247,0.30); }
+
+  .meal.pending {
+    border-style: dashed;
+    background: transparent;
+    box-shadow: none;
+    color: var(--text-secondary);
+  }
+  .meal.pending .thumb {
+    background: transparent;
+    border: 1.5px dashed var(--bg-border);
+    color: var(--text-muted);
+  }
+  .meal.pending .name { color: var(--text-secondary); font-weight: 500; }
+  .meal.pending .kcal { color: var(--text-muted); font-weight: 500; }
+
+  .add-button {
+    padding: 10px 14px;
+    border-radius: var(--radius-md);
+    background: var(--bg-base);
+    border: 1px dashed var(--bg-border);
+    display: flex; align-items: center; gap: 8px;
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-size: 13px; font-weight: 500;
+    color: var(--text-secondary);
+    letter-spacing: -0.003em;
+  }
+  .add-button .ic {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-body);
+  }
+
+  /* FAB */
+  .fab {
+    position: absolute;
+    bottom: 102px; right: 18px;
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: var(--gradient-brand);
+    color: var(--text-on-dark);
+    box-shadow: 0 12px 28px rgba(0,210,120,.36), 0 4px 8px rgba(15,17,23,.18);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 25;
+  }
+
+  /* Tab bar */
+  .tabbar {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 88px;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(18px);
+    border-top: 1px solid var(--bg-border);
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    padding: 8px 6px 30px;
+    z-index: 22;
+  }
+  .tab {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 3px;
+    color: var(--text-muted);
+  }
+  .tab.active { color: var(--text-primary); }
+  .tab-glyph {
+    width: 26px; height: 26px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .tab-label {
+    font-family: var(--font-body);
+    font-size: 10px; font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  /* Plan call-out (V3) */
+  .plan-callout {
+    margin: 14px 14px 0;
+    background: linear-gradient(135deg, #1A1F2E 0%, #2A2A3A 100%);
+    border-radius: var(--radius-md);
+    padding: 12px 14px;
+    color: var(--text-on-dark);
+    display: flex; align-items: center; gap: 12px;
+    box-shadow: 0 6px 18px rgba(15,17,23,.18);
+  }
+  .plan-callout .gl {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    background: rgba(168,85,247,0.20);
+    color: var(--semantic-premium);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .plan-callout .body { flex: 1; }
+  .plan-callout .h {
+    font-family: var(--font-body);
+    font-size: 13px; font-weight: 600;
+    letter-spacing: -0.003em;
+  }
+  .plan-callout .s {
+    margin-top: 1px;
+    font-family: var(--font-body);
+    font-size: 11.5px;
+    color: var(--text-on-dark-muted);
+    letter-spacing: -0.002em;
+  }
+  .plan-callout .cta {
+    font-family: var(--font-body);
+    font-size: 12px; font-weight: 600;
+    color: var(--brand-green);
+    letter-spacing: -0.003em;
+    flex-shrink: 0;
+  }
+
+  /* Closed-day strap (V2) */
+  .closed {
+    margin: 14px 14px 0;
+    padding: 12px 14px;
+    background: rgba(0, 210, 120, 0.08);
+    border: 1px solid rgba(0, 210, 120, 0.28);
+    border-radius: var(--radius-md);
+    display: flex; align-items: center; gap: 10px;
+    color: var(--semantic-success);
+    font-family: var(--font-body);
+    font-size: 13px; font-weight: 600;
+    letter-spacing: -0.003em;
+  }
+  .closed b { font-weight: 700; color: var(--text-primary); }
+
+  /* Legend */
+  .legend {
+    max-width: 1320px;
+    margin: 56px auto 0;
+    padding: 22px 26px;
+    background: #FFFFFF;
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-lg);
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 14px 28px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.55;
+  }
+  .legend h3 {
+    grid-column: 1 / -1; margin: 0 0 6px;
+    font-family: var(--font-display);
+    font-size: 12px; font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.18em; text-transform: uppercase;
+  }
+  .legend dt { grid-column: 1; font-size: 11px; font-weight: 600; color: var(--text-muted); letter-spacing: 0.04em; text-transform: uppercase; }
+  .legend dd { grid-column: 2; margin: 0; }
+  .legend code { background: #F4F5F7; border: 1px solid var(--bg-border); padding: 1px 6px; border-radius: 4px; font-family: var(--font-numeric); font-size: 11px; color: var(--text-primary); }
+</style>
+</head>
+<body>
+
+  <header class="doc-header">
+    <div>
+      <p class="doc-eyebrow">FuelWell · Phase 0.5 · Step 4 — Mockups</p>
+      <h1 class="doc-title">M11 Meal Log day view · Log tab</h1>
+      <p class="doc-sub">Promoted from approved wireframe § 3.11 V1 (meal-type sections — easiest to scan). Three lifecycle states: today partial, yesterday closed, tomorrow planned-from-Plan-Generator. The dark day summary band sits above the breakfast/lunch/snack/dinner sections; macro fingerprint always under the calorie total.</p>
+    </div>
+    <div class="doc-meta">
+      iPhone 15 Pro · 393 × 852 pt<br>
+      Light · <code>color.bg.base #F4F5F7</code><br>
+      Tab · Log
+    </div>
+  </header>
+
+  <div class="frames-row" id="frames"></div>
+
+  <section class="legend">
+    <h3>Mockup notes · Step 4</h3>
+
+    <dt>Day strip</dt>
+    <dd>Seven 14pt-radius pills on white, today's date stays inverted with the brand-green pulse dot. Tap to switch day; swipe past for older. Past days carry verdict-color dots; future days are flat.</dd>
+
+    <dt>Summary band</dt>
+    <dd>The DESIGN.md inverted-row carried up from the Dashboard. Calorie total + remaining wrapped around a 56pt ring (progress in green, error-red on over). Macro fingerprint beneath in a divided row — same swatches as M09 & M10. On past days the ring fills to 100%; on future days it shows the <em>planned</em> total.</dd>
+
+    <dt>Section headers</dt>
+    <dd>Outfit 600 15pt with a 4pt color pip per meal type — carbs-amber for breakfast, protein-green for lunch, info-blue for snacks, fat-purple for dinner. Right side shows the section total (or "pending", italicized) in DM Sans tabular.</dd>
+
+    <dt>Meal rows</dt>
+    <dd>48pt thumbnail tile (gradient placeholder per food type), name in Inter 600, meta line with time + source tag (Recipe / Rest. / Pantry / Plan) + macro fingerprint. Trailing kcal in DM Sans 600 16pt tabular. Tap row → 3.13 Food Detail; long-press → quick-edit popover.</dd>
+
+    <dt>Pending rows</dt>
+    <dd>Dashed border, transparent fill, no shadow. Name reads "Add &lt;mealtype&gt;"; meta shows the coach's projection ("Coach suggestion ready") or the planned meal name when from Meal Plan. Tapping opens 3.12 Add Meal sheet.</dd>
+
+    <dt>Closed-day strap · V2</dt>
+    <dd>Once the day closes (midnight rollover), the dark summary band stays but a green confirmation strap sits beneath the day strip: "Closed at 1,932 kcal — within plan." Quietly informational, not celebratory.</dd>
+
+    <dt>Plan callout · V3</dt>
+    <dd>Future days where the Plan Generator has filled meals get a single dark plan-strap above the sections: "<strong>From your plan</strong> · Generated Wed · Edit". Each meal row carries the purple <code>Plan</code> source tag to make the provenance obvious.</dd>
+  </section>
+
+<script>
+  const statusBar = `
+    <div class="status-bar">
+      <div class="time">9:41</div>
+      <div class="signals">
+        <svg width="17" height="11" viewBox="0 0 17 11" fill="none"><rect x="0" y="7" width="3" height="4" rx="0.5" fill="#0A0A0F"/><rect x="4" y="5" width="3" height="6" rx="0.5" fill="#0A0A0F"/><rect x="8" y="3" width="3" height="8" rx="0.5" fill="#0A0A0F"/><rect x="12" y="0" width="3" height="11" rx="0.5" fill="#0A0A0F"/></svg>
+        <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><path d="M8 11l-2.5-2.5a3.5 3.5 0 014.9 0L8 11z" fill="#0A0A0F"/><path d="M2 5a8.5 8.5 0 0112 0l-1.5 1.5a6 6 0 00-9 0L2 5z" fill="#0A0A0F"/><path d="M5 8a4.5 4.5 0 016 0l-1.5 1.5a2.5 2.5 0 00-3 0L5 8z" fill="#0A0A0F"/></svg>
+        <span class="signal-bat"></span>
+      </div>
+    </div>`;
+  const islandHTML = `<div class="dynamic-island"></div>`;
+
+  const ic = {
+    cal: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="16" rx="2.5" stroke="currentColor" stroke-width="1.8"/><path d="M3 9h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`,
+    search: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M16 16l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`,
+    plus: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 4v16M4 12h16" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>`,
+    plusSm: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 4v16M4 12h16" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>`,
+    check: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12.5l5 5L19.5 7.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    chev: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    brew: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M5 8h12a4 4 0 010 8h-1v3H6V12a4 4 0 010-4Z" stroke="currentColor" stroke-width="1.8" fill="currentColor" opacity=".22"/><path d="M9 5c0 1.5 1 1.5 1 3M13 4c0 1.5 1 1.5 1 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`,
+    plate: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.8" fill="currentColor" opacity=".22"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/></svg>`,
+    snack: `<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" opacity=".88"><circle cx="9" cy="10" r="2"/><circle cx="15" cy="13" r="2"/><circle cx="11" cy="15" r="1.4"/></svg>`,
+    fork: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M6 4v16M9 4v6a3 3 0 01-6 0V4M19 4c-2 0-3 2-3 5s1 5 3 5v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    sparkle: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2 6 6 2-6 2-2 6-2-6-6-2 6-2 2-6Z"/></svg>`,
+    tabHome: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11l8-7 8 7v8a1 1 0 01-1 1h-4v-6h-6v6H5a1 1 0 01-1-1v-8Z"/></svg>`,
+    tabLog: (a) => a ? `<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M9 8h6M9 12h6M9 16h3" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></svg>` : `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M9 8h6M9 12h6M9 16h3" stroke-linecap="round"/></svg>`,
+    tabCoach: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11a8 8 0 1116 0v3a3 3 0 01-3 3h-1v-7h4M4 11v3a3 3 0 003 3h1v-7H4"/></svg>`,
+    tabLearn: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5.5C4 4.7 4.7 4 5.5 4H10a3 3 0 013 3v14a2 2 0 00-2-2H5.5A1.5 1.5 0 014 17.5v-12ZM20 5.5C20 4.7 19.3 4 18.5 4H14a3 3 0 00-3 3v14a2 2 0 012-2h5.5a1.5 1.5 0 001.5-1.5v-12Z"/></svg>`,
+    tabProgress: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg>`,
+  };
+
+  function tabbar() {
+    return `<div class="tabbar">
+      <div class="tab"><div class="tab-glyph">${ic.tabHome}</div><div class="tab-label">Home</div></div>
+      <div class="tab active"><div class="tab-glyph">${ic.tabLog(true)}</div><div class="tab-label">Log</div></div>
+      <div class="tab"><div class="tab-glyph">${ic.tabCoach}</div><div class="tab-label">Coach</div></div>
+      <div class="tab"><div class="tab-glyph">${ic.tabLearn}</div><div class="tab-label">Learn</div></div>
+      <div class="tab"><div class="tab-glyph">${ic.tabProgress}</div><div class="tab-label">Progress</div></div>
+    </div>`;
+  }
+
+  // Day strip — Fri 16 is "today" in our model; selected differs per variation
+  function daysStrip(selectedDow) {
+    const data = [
+      ['Mon', 12, 'done'],
+      ['Tue', 13, 'done'],
+      ['Wed', 14, 'done'],
+      ['Thu', 15, 'done'],
+      ['Fri', 16, 'today'],
+      ['Sat', 17, 'future'],
+      ['Sun', 18, 'future'],
+    ];
+    return `<div class="days">${data.map(([dow, num, kind]) => {
+      const sel = dow === selectedDow;
+      let cls = 'day-pill';
+      if (sel) cls += ' selected';
+      else if (kind === 'future') cls += ' future';
+      let ind = '';
+      if (kind === 'done') ind = '<div class="ind"></div>';
+      else if (kind === 'today') ind = '<div class="ind"></div>';
+      else ind = '<div class="ind miss"></div>';
+      if (dow === 'Thu') ind = '<div class="ind warn"></div>';
+      return `<div class="${cls}"><div class="dow">${dow}</div><div class="dnum">${num}</div>${ind}</div>`;
+    }).join('')}</div>`;
+  }
+
+  function ring(pct, color) {
+    const r = 22; const c = 2 * Math.PI * r;
+    const dash = (Math.min(pct, 100) / 100) * c;
+    return `
+      <div class="ring">
+        <svg width="56" height="56" viewBox="0 0 56 56">
+          <circle cx="28" cy="28" r="22" stroke="rgba(255,255,255,0.10)" stroke-width="5" fill="none"/>
+          <circle cx="28" cy="28" r="22" stroke="${color}" stroke-width="5" fill="none" stroke-linecap="round" stroke-dasharray="${dash} ${c}"/>
+        </svg>
+        <div class="pct">${pct}%</div>
+      </div>`;
+  }
+
+  function summary({ remaining, total, ringPct, ringColor, macros, label }) {
+    return `
+      <div class="summary">
+        <div>
+          <div class="lbl">${label}</div>
+          <div class="kcal">${remaining}<span class="of">/ ${total}</span><span class="u">kcal</span></div>
+        </div>
+        ${ring(ringPct, ringColor)}
+        <div class="mac-row">
+          <div class="mac"><span class="sw" style="background:var(--macro-protein)"></span><span class="v">${macros.p[0]}</span>/ ${macros.p[1]}g P</div>
+          <div class="mac"><span class="sw" style="background:var(--macro-carbs)"></span><span class="v">${macros.c[0]}</span>/ ${macros.c[1]}g C</div>
+          <div class="mac"><span class="sw" style="background:var(--macro-fat)"></span><span class="v">${macros.f[0]}</span>/ ${macros.f[1]}g F</div>
+        </div>
+      </div>`;
+  }
+
+  function mealRow(meal) {
+    const macStr = meal.mac ? `<span class="mac"><span class="l">P</span>${meal.mac.p}g</span><span class="pipe">·</span><span class="mac"><span class="l">C</span>${meal.mac.c}g</span><span class="pipe">·</span><span class="mac"><span class="l">F</span>${meal.mac.f}g</span>` : '';
+    const src = meal.source ? `<span class="source-tag ${meal.sourceKind}">${meal.source}</span>` : '';
+    return `
+      <div class="meal">
+        <div class="thumb gradient" style="--c1:${meal.c1}; --c2:${meal.c2}">${meal.glyph}</div>
+        <div class="body">
+          <div class="name">${meal.name}</div>
+          <div class="meta">${src}${meal.time}<span class="pipe">·</span>${macStr}</div>
+        </div>
+        <div class="right">
+          <div class="kcal">${meal.kcal}</div>
+          <div class="kcal-u">kcal</div>
+        </div>
+      </div>`;
+  }
+
+  function pendingRow(label, sub, projKcal, glyph) {
+    return `
+      <div class="meal pending">
+        <div class="thumb">${glyph}</div>
+        <div class="body">
+          <div class="name">${label}</div>
+          <div class="meta">${sub}</div>
+        </div>
+        <div class="right">
+          <div class="kcal">~${projKcal}</div>
+          <div class="kcal-u">kcal</div>
+        </div>
+      </div>`;
+  }
+
+  function section(label, pip, totalText, totalPending, content) {
+    return `
+      <div class="section-h-row">
+        <div class="section-h"><span class="pip ${pip}"></span>${label}</div>
+        <div class="section-meta ${totalPending ? 'pending' : ''}">${totalText}</div>
+      </div>
+      <div class="meals">${content}</div>`;
+  }
+
+  // ===== Variation builders =====
+  function v1_today() {
+    return `
+      <div class="top">
+        <div class="icon-btn">${ic.cal}</div>
+        <div class="top-h">Today<span class="sub">Fri · May 16</span></div>
+        <div class="icon-btn">${ic.search}</div>
+      </div>
+      ${daysStrip('Fri')}
+      ${summary({
+        remaining: '1,546',
+        total: '2,260',
+        ringPct: 68,
+        ringColor: 'var(--brand-green)',
+        macros: { p:[128,160], c:[172,245], f:[54,70] },
+        label: 'Eaten today · 714 kcal left'
+      })}
+      <div class="content">
+        ${section('Breakfast', 'b', '438 kcal', false, `
+          ${mealRow({
+            name: 'Oats, berries, peanut butter',
+            time: '8:14 AM',
+            source: 'Recipe', sourceKind: 'recipe',
+            mac: {p:18, c:62, f:14}, kcal: 438,
+            c1:'#FCD34D', c2:'#F59E0B', glyph: ic.brew
+          })}`)}
+        ${section('Lunch', 'l', '732 kcal', false, `
+          ${mealRow({
+            name: 'Chicken & rice bowl',
+            time: '12:34 PM',
+            source: 'Rest.', sourceKind: 'rest',
+            mac: {p:62, c:78, f:18}, kcal: 732,
+            c1:'#34D399', c2:'#00D278', glyph: ic.plate
+          })}`)}
+        ${section('Snacks', 's', '376 kcal', false, `
+          ${mealRow({
+            name: 'Greek yogurt + honey',
+            time: '3:08 PM',
+            source: 'Pantry', sourceKind: 'pantry',
+            mac: {p:18, c:32, f:12}, kcal: 376,
+            c1:'#7DD3FC', c2:'#00B4D8', glyph: ic.snack
+          })}`)}
+        ${section('Dinner', 'd', 'pending', true, `
+          ${pendingRow('Add dinner', 'Coach suggestion ready · grilled chicken bowl', 714, ic.fork)}`)}
+      </div>
+      <div class="fab">${ic.plus}</div>
+      ${tabbar()}`;
+  }
+
+  function v2_yesterday() {
+    return `
+      <div class="top">
+        <div class="icon-btn">${ic.cal}</div>
+        <div class="top-h">Thursday<span class="sub">May 15 · closed</span></div>
+        <div class="icon-btn">${ic.search}</div>
+      </div>
+      ${daysStrip('Thu')}
+      <div class="closed">${ic.check}<span>Closed at <b>1,932 kcal</b> — within plan.</span></div>
+      ${summary({
+        remaining: '1,932',
+        total: '2,260',
+        ringPct: 86,
+        ringColor: 'var(--brand-green)',
+        macros: { p:[154,160], c:[218,245], f:[64,70] },
+        label: 'Eaten yesterday · 328 under'
+      })}
+      <div class="content">
+        ${section('Breakfast', 'b', '462 kcal', false, `
+          ${mealRow({
+            name: 'Avocado toast + 2 eggs',
+            time: '7:48 AM',
+            source: 'Recipe', sourceKind: 'recipe',
+            mac: {p:24, c:38, f:22}, kcal: 462,
+            c1:'#FCD34D', c2:'#F59E0B', glyph: ic.brew
+          })}`)}
+        ${section('Lunch', 'l', '618 kcal', false, `
+          ${mealRow({
+            name: 'Turkey salad bowl',
+            time: '12:18 PM',
+            source: 'Recipe', sourceKind: 'recipe',
+            mac: {p:48, c:52, f:18}, kcal: 618,
+            c1:'#34D399', c2:'#00D278', glyph: ic.plate
+          })}`)}
+        ${section('Snacks', 's', '184 kcal', false, `
+          ${mealRow({
+            name: 'Apple + almonds',
+            time: '3:40 PM',
+            source: 'Pantry', sourceKind: 'pantry',
+            mac: {p:6, c:24, f:8}, kcal: 184,
+            c1:'#7DD3FC', c2:'#00B4D8', glyph: ic.snack
+          })}`)}
+        ${section('Dinner', 'd', '668 kcal', false, `
+          ${mealRow({
+            name: 'Salmon, rice, broccoli',
+            time: '7:12 PM',
+            source: 'Recipe', sourceKind: 'recipe',
+            mac: {p:76, c:104, f:16}, kcal: 668,
+            c1:'#C084FC', c2:'#A855F7', glyph: ic.fork
+          })}`)}
+      </div>
+      ${tabbar()}`;
+  }
+
+  function v3_tomorrow() {
+    return `
+      <div class="top">
+        <div class="icon-btn">${ic.cal}</div>
+        <div class="top-h">Saturday<span class="sub">May 17 · planned</span></div>
+        <div class="icon-btn">${ic.search}</div>
+      </div>
+      ${daysStrip('Sat')}
+      <div class="plan-callout">
+        <div class="gl">${ic.sparkle}</div>
+        <div class="body">
+          <div class="h">From your meal plan</div>
+          <div class="s">Generated Wed · 4 meals · grocery already saved</div>
+        </div>
+        <div class="cta">Edit ${ic.chev}</div>
+      </div>
+      ${summary({
+        remaining: '0',
+        total: '2,260',
+        ringPct: 0,
+        ringColor: 'rgba(168,85,247,0.55)',
+        macros: { p:[0,160], c:[0,245], f:[0,70] },
+        label: 'Tomorrow · 2,260 planned'
+      })}
+      <div class="content">
+        ${section('Breakfast', 'b', '~ 480 kcal', false, `
+          ${mealRow({
+            name: 'Banana protein smoothie',
+            time: '8:30 AM',
+            source: 'Plan', sourceKind: 'plan',
+            mac: {p:36, c:62, f:8}, kcal: 480,
+            c1:'#FCD34D', c2:'#F59E0B', glyph: ic.brew
+          })}`)}
+        ${section('Lunch', 'l', '~ 720 kcal', false, `
+          ${mealRow({
+            name: 'Steak salad, sourdough',
+            time: '12:30 PM',
+            source: 'Plan', sourceKind: 'plan',
+            mac: {p:54, c:62, f:24}, kcal: 720,
+            c1:'#34D399', c2:'#00D278', glyph: ic.plate
+          })}`)}
+        ${section('Snacks', 's', '~ 220 kcal', false, `
+          ${mealRow({
+            name: 'Cottage cheese + pineapple',
+            time: '4:00 PM',
+            source: 'Plan', sourceKind: 'plan',
+            mac: {p:24, c:18, f:4}, kcal: 220,
+            c1:'#7DD3FC', c2:'#00B4D8', glyph: ic.snack
+          })}`)}
+        ${section('Dinner', 'd', '~ 840 kcal', false, `
+          ${mealRow({
+            name: 'Chicken tikka, rice',
+            time: '7:00 PM',
+            source: 'Plan', sourceKind: 'plan',
+            mac: {p:62, c:88, f:24}, kcal: 840,
+            c1:'#C084FC', c2:'#A855F7', glyph: ic.fork
+          })}`)}
+      </div>
+      <div class="fab">${ic.plus}</div>
+      ${tabbar()}`;
+  }
+
+  const variations = [
+    { num: 'Variation 01 · State', name: 'Today · partial', cap: 'Friday 3:42 PM. Breakfast / lunch / snack logged; dinner sits in the dashed pending row with the coach\u2019s projected grilled chicken bowl.', body: v1_today() },
+    { num: 'Variation 02 · State', name: 'Yesterday · closed', cap: 'Day closed at 1,932 / 2,260 — green strap acknowledges within-plan finish. All four sections show real logs; no FAB (past day, log frozen).', body: v2_yesterday() },
+    { num: 'Variation 03 · State', name: 'Tomorrow · planned', cap: 'Saturday\u2019s slots already filled by the Meal Plan Generator. Each meal carries the purple Plan source tag; plan-strap up top offers an Edit shortcut. Ring shown in fat-purple at 0% to signal "planned, not eaten yet."', body: v3_tomorrow() }
+  ];
+
+  const root = document.getElementById('frames');
+  root.innerHTML = variations.map(v => `
+    <section class="variation">
+      <div class="v-label">
+        <div class="v-num">${v.num}</div>
+        <div class="v-name">${v.name}</div>
+        <div class="v-cap">${v.cap}</div>
+      </div>
+      <div class="device">
+        ${statusBar}
+        ${islandHTML}
+        <div class="screen">${v.body}</div>
+        <div class="home-indicator"></div>
+      </div>
+    </section>
+  `).join('');
+</script>
+</body>
+</html>

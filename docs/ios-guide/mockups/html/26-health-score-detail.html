@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>FuelWell · M26 Health Score detail · Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-base:#F4F5F7; --bg-surface:#FFFFFF; --bg-elevated:#0F1117;
+    --bg-border:#E5E7EB; --bg-border-soft:#EEF0F3; --bg-border-dark:#2A2A3A;
+    --text-primary:#0A0A0F; --text-body:#1F2937; --text-secondary:#6B7280;
+    --text-muted:#9CA3AF; --text-disabled:#C7CCD3; --text-on-dark:#FFFFFF; --text-on-dark-muted:#9AA0AC;
+    --brand-green:#47E7B0; --semantic-success:#00D278; --semantic-warning:#F59E0B; --semantic-info:#00B4D8; --semantic-premium:#A855F7;
+    --macro-protein:#00D278; --macro-carbs:#F59E0B; --macro-fat:#A855F7;
+    --gradient-brand: linear-gradient(135deg, #00D278 0%, #47E7B0 100%);
+    --radius-md:12px; --radius-lg:20px; --radius-pill:999px;
+    --elev-1: 0 1px 2px rgba(15,17,23,.04), 0 1px 0 rgba(15,17,23,.02);
+    --elev-2: 0 4px 14px rgba(15,17,23,.06), 0 1px 2px rgba(15,17,23,.04);
+    --elev-cta: 0 8px 24px rgba(0,210,120,.22);
+    --font-display:'Outfit', system-ui, sans-serif;
+    --font-body:'Inter', system-ui, sans-serif;
+    --font-system: -apple-system, 'SF Pro Display', system-ui, sans-serif;
+    --font-numeric:'DM Sans', 'Inter', sans-serif;
+  }
+  *{box-sizing:border-box;} html,body{margin:0;padding:0;}
+  body{background:#ECEDF0;color:var(--text-primary);font-family:var(--font-body);padding:56px 48px 96px;min-width:1380px;}
+  .doc-header{max-width:1320px;margin:0 auto 48px;display:flex;align-items:flex-end;justify-content:space-between;gap:32px;border-bottom:1px solid #D6D8DD;padding-bottom:24px;}
+  .doc-eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--text-muted);margin:0 0 8px;font-weight:600;}
+  .doc-title{font-family:var(--font-display);font-size:28px;font-weight:700;margin:0;letter-spacing:-.018em;}
+  .doc-sub{font-size:13px;color:var(--text-secondary);margin:8px 0 0;max-width:760px;line-height:1.55;}
+  .doc-meta{font-family:var(--font-numeric);font-size:11px;color:var(--text-muted);text-align:right;letter-spacing:.04em;line-height:1.7;}
+  .frames-row{display:flex;gap:64px;justify-content:center;align-items:flex-start;}
+  .variation{display:flex;flex-direction:column;align-items:center;width:393px;}
+  .v-label{margin-bottom:18px;text-align:center;width:100%;}
+  .v-num{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--text-muted);font-weight:600;}
+  .v-name{font-family:var(--font-display);font-size:16px;font-weight:600;color:var(--text-primary);margin-top:4px;}
+  .v-cap{font-size:12px;color:var(--text-secondary);margin-top:4px;line-height:1.45;max-width:340px;}
+  .device{position:relative;width:393px;height:852px;background:var(--bg-base);border-radius:56px;overflow:hidden;box-shadow:0 0 0 12px #0A0A0F,0 0 0 13px #2A2A30,0 30px 80px rgba(15,17,23,.28),0 12px 32px rgba(15,17,23,.16);}
+  .status-bar{position:absolute;top:0;left:0;right:0;height:54px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 28px 9px;z-index:30;}
+  .status-bar .time{font-family:var(--font-system);font-size:17px;font-weight:600;color:var(--text-primary);}
+  .status-bar .signals{display:inline-flex;gap:6px;align-items:center;}
+  .signal-bat{display:inline-block;width:26px;height:12px;border:1.2px solid var(--text-primary);border-radius:3px;position:relative;}
+  .signal-bat::after{content:"";position:absolute;right:-3px;top:3px;width:2px;height:5px;background:var(--text-primary);border-radius:0 1.5px 1.5px 0;}
+  .signal-bat::before{content:"";position:absolute;left:1px;top:1px;bottom:1px;width:78%;background:var(--text-primary);border-radius:1.5px;}
+  .dynamic-island{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:124px;height:36px;background:#0A0A0F;border-radius:22px;z-index:31;}
+  .home-indicator{position:absolute;bottom:9px;left:50%;transform:translateX(-50%);width:134px;height:5px;background:var(--text-primary);border-radius:3px;opacity:.7;z-index:32;}
+  .screen{position:absolute;top:0;left:0;right:0;bottom:0;padding:54px 0 0;display:flex;flex-direction:column;}
+
+  .nav{height:48px;display:grid;grid-template-columns:56px 1fr 56px;align-items:center;padding:4px 12px 0;flex-shrink:0;}
+  .nav-btn{width:38px;height:38px;border-radius:50%;background:var(--bg-surface);border:1px solid var(--bg-border);display:flex;align-items:center;justify-content:center;color:var(--text-body);box-shadow:var(--elev-1);margin:0 auto;}
+  .nav-title{text-align:center;font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--text-primary);letter-spacing:-.012em;}
+
+  .content{flex:1;padding:0 16px 24px;overflow:hidden;}
+
+  /* Hero card */
+  .hero-card {
+    margin-top: 10px;
+    background: var(--bg-elevated);
+    color: var(--text-on-dark);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-card::before {
+    content: ""; position: absolute;
+    top: -30%; right: -20%; width: 60%; height: 160%;
+    background: radial-gradient(60% 60% at 50% 50%, rgba(71,231,176,0.26) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .hero-card .lbl {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--font-body);
+    font-size: 10.5px; font-weight: 700;
+    color: var(--text-on-dark-muted);
+    letter-spacing: 0.20em; text-transform: uppercase;
+    position: relative; z-index: 1;
+  }
+  .hero-card .lbl .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--brand-green); box-shadow: 0 0 0 3px rgba(71,231,176,0.32); }
+  .hero-card .score-row {
+    margin-top: 10px;
+    display: flex; align-items: baseline; gap: 14px;
+    position: relative; z-index: 1;
+  }
+  .hero-card .score {
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 64px; font-weight: 700;
+    color: var(--text-on-dark);
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .hero-card .score .deci {
+    font-size: 32px;
+    color: var(--text-on-dark-muted);
+    font-weight: 600;
+  }
+  .hero-card .of {
+    font-family: var(--font-numeric);
+    font-size: 14px; font-weight: 600;
+    color: var(--text-on-dark-muted);
+  }
+  .hero-card .delta-pill {
+    margin-top: 8px;
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(0,210,120,0.18);
+    color: var(--brand-green);
+    border: 1px solid rgba(71,231,176,0.32);
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 12px; font-weight: 700;
+    letter-spacing: -0.003em;
+    position: relative; z-index: 1;
+  }
+  .hero-card .chart {
+    margin-top: 12px;
+    height: 56px;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-card .chart svg { width: 100%; height: 100%; }
+  .hero-card .axis {
+    margin-top: 6px;
+    display: flex; justify-content: space-between;
+    font-family: var(--font-body);
+    font-size: 9.5px; color: var(--text-on-dark-muted);
+    letter-spacing: 0.08em; text-transform: uppercase;
+    position: relative; z-index: 1;
+  }
+
+  /* Why expander */
+  .why {
+    margin-top: 12px;
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--elev-1);
+    overflow: hidden;
+  }
+  .why .head {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 14px;
+    cursor: pointer;
+  }
+  .why .ic {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    background: rgba(0,180,216,0.12);
+    color: var(--semantic-info);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .why .l {
+    flex: 1;
+    font-family: var(--font-body);
+    font-size: 13.5px; font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.003em;
+  }
+  .why .chev { color: var(--text-muted); transition: transform 0.2s; }
+  .why.open .chev { transform: rotate(90deg); }
+  .why .body {
+    border-top: 1px solid var(--bg-border-soft);
+    padding: 12px 14px;
+  }
+  .why .body p {
+    margin: 0 0 8px;
+    font-family: var(--font-body);
+    font-size: 12.5px; font-weight: 400;
+    color: var(--text-body);
+    line-height: 1.5;
+    letter-spacing: -0.003em;
+  }
+  .why .body p:last-child { margin: 0; }
+  .why .body p b { color: var(--text-primary); font-weight: 700; }
+
+  /* Section head */
+  .sec-h { display: flex; justify-content: space-between; align-items: baseline; margin: 18px 4px 8px; }
+  .sec-h .l { font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.005em; }
+  .sec-h .r { font-family: var(--font-body); font-size: 12px; font-weight: 500; color: var(--text-secondary); }
+
+  /* Component card */
+  .comp-list { display: flex; flex-direction: column; gap: 10px; }
+  .comp {
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--elev-1);
+    padding: 14px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 12px;
+    align-items: center;
+    cursor: pointer;
+  }
+  .comp .ic {
+    width: 40px; height: 40px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .comp .ic.nut { background: rgba(0,210,120,0.12); color: var(--semantic-success); }
+  .comp .ic.tra { background: rgba(0,180,216,0.12); color: var(--semantic-info); }
+  .comp .ic.sle { background: rgba(168,85,247,0.12); color: var(--semantic-premium); }
+  .comp .ic.rec { background: rgba(254,45,85,0.10); color: #FE2D55; }
+  .comp .ic.bod { background: rgba(245,158,11,0.12); color: var(--semantic-warning); }
+  .comp .body { min-width: 0; }
+  .comp .eb {
+    font-family: var(--font-body);
+    font-size: 11px; font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .comp .stat-row {
+    margin-top: 4px;
+    display: flex; align-items: baseline; gap: 8px;
+  }
+  .comp .score {
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 22px; font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.018em;
+    line-height: 1;
+  }
+  .comp .delta {
+    font-family: var(--font-numeric);
+    font-size: 11px; font-weight: 700;
+    color: var(--semantic-success);
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: rgba(0,210,120,0.10);
+    border: 1px solid rgba(0,210,120,0.32);
+  }
+  .comp .delta.warn { color: var(--semantic-warning); background: rgba(245,158,11,0.10); border-color: rgba(245,158,11,0.36); }
+  .comp .delta.down { color: var(--semantic-error, #EF4444); background: rgba(239,68,68,0.10); border-color: rgba(239,68,68,0.32); }
+  .comp .spark { width: 70px; height: 28px; }
+  .comp .arr { color: var(--text-muted); }
+
+  /* ===== V2 radial ===== */
+  .radial-card {
+    margin-top: 10px;
+    background: var(--bg-elevated);
+    color: var(--text-on-dark);
+    border-radius: var(--radius-lg);
+    padding: 24px 16px 14px;
+    position: relative;
+    overflow: hidden;
+  }
+  .radial-card::before {
+    content: ""; position: absolute;
+    inset: 0;
+    background: radial-gradient(40% 40% at 50% 45%, rgba(71,231,176,0.18) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .radial-stage {
+    height: 300px;
+    position: relative;
+    margin: 0 auto;
+    max-width: 320px;
+  }
+  .radial-stage .center-card {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    width: 130px; height: 130px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.10);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    z-index: 4;
+  }
+  .radial-stage .center-card .lbl {
+    font-family: var(--font-body);
+    font-size: 9px; font-weight: 700;
+    color: var(--text-on-dark-muted);
+    letter-spacing: 0.20em; text-transform: uppercase;
+  }
+  .radial-stage .center-card .score {
+    margin-top: 4px;
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 38px; font-weight: 700;
+    color: var(--text-on-dark);
+    letter-spacing: -0.025em;
+    line-height: 1;
+  }
+  .radial-stage .center-card .score .deci { font-size: 20px; color: var(--text-on-dark-muted); }
+  .radial-stage .center-card .pill {
+    margin-top: 6px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(0,210,120,0.20);
+    color: var(--brand-green);
+    border: 1px solid rgba(71,231,176,0.32);
+    font-family: var(--font-numeric);
+    font-size: 10px; font-weight: 700;
+  }
+  .radial-stage .orbit {
+    position: absolute;
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.08);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    z-index: 3;
+  }
+  .radial-stage .orbit .ic-mini {
+    width: 22px; height: 22px;
+    border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .radial-stage .orbit .v {
+    margin-top: 3px;
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 14px; font-weight: 700;
+    color: var(--text-on-dark);
+    line-height: 1;
+  }
+  .radial-stage .orbit-label {
+    position: absolute;
+    font-family: var(--font-body);
+    font-size: 9.5px; font-weight: 700;
+    color: var(--text-on-dark-muted);
+    letter-spacing: 0.08em; text-transform: uppercase;
+    text-align: center;
+    width: 80px;
+    pointer-events: none;
+  }
+  .orbit.top { top: 0; left: 50%; transform: translateX(-50%); }
+  .orbit-label.top { top: -16px; left: 50%; transform: translateX(-50%); }
+  .orbit.tr { top: 24%; right: 0; }
+  .orbit-label.tr { top: 28%; right: -2px; transform: translateX(50%); width: 60px; text-align: left; }
+  .orbit.tl { top: 24%; left: 0; }
+  .orbit-label.tl { top: 28%; left: -2px; transform: translateX(-50%); width: 60px; text-align: right; }
+  .orbit.br { bottom: 0; right: 16%; }
+  .orbit-label.br { bottom: -16px; right: 12%; }
+  .orbit.bl { bottom: 0; left: 16%; }
+  .orbit-label.bl { bottom: -16px; left: 12%; }
+  .orbit-svg {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+  }
+
+  /* Empty progress */
+  .empty-promise {
+    margin-top: 10px;
+    background: var(--bg-elevated);
+    color: var(--text-on-dark);
+    border-radius: var(--radius-lg);
+    padding: 18px;
+    position: relative;
+    overflow: hidden;
+  }
+  .empty-promise::before {
+    content: ""; position: absolute;
+    top: -20%; right: -10%; width: 60%; height: 140%;
+    background: radial-gradient(60% 60% at 50% 50%, rgba(0,180,216,0.22) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .empty-promise .lbl {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--font-body);
+    font-size: 10px; font-weight: 700;
+    color: var(--text-on-dark-muted);
+    letter-spacing: 0.22em; text-transform: uppercase;
+    position: relative; z-index: 1;
+  }
+  .empty-promise .h {
+    margin-top: 10px;
+    font-family: var(--font-display);
+    font-size: 22px; font-weight: 700;
+    color: var(--text-on-dark);
+    letter-spacing: -0.018em;
+    line-height: 1.2;
+    position: relative; z-index: 1;
+  }
+  .empty-promise .h .accent {
+    background: linear-gradient(90deg, #47E7B0, #00B4D8);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .empty-promise .s {
+    margin-top: 8px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--text-on-dark-muted);
+    line-height: 1.5;
+    position: relative; z-index: 1;
+  }
+
+  .day-grid {
+    margin-top: 16px;
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--elev-1);
+    padding: 14px;
+  }
+  .day-grid .h {
+    font-family: var(--font-body);
+    font-size: 11px; font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 0.16em; text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .day-row {
+    display: grid; grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+  }
+  .day-cell {
+    text-align: center;
+    padding: 6px 0 4px;
+    border-radius: 10px;
+    background: var(--bg-base);
+    border: 1px solid var(--bg-border-soft);
+  }
+  .day-cell .dl {
+    font-family: var(--font-body);
+    font-size: 9px; font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .day-cell .check {
+    margin: 6px auto 0;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--bg-surface);
+    border: 1.5px solid var(--bg-border);
+    display: flex; align-items: center; justify-content: center;
+    color: transparent;
+  }
+  .day-cell.done .check { background: var(--semantic-success); border-color: var(--semantic-success); color: #fff; }
+  .day-cell.active .check { background: var(--bg-elevated); border-color: var(--bg-elevated); color: var(--text-on-dark); }
+  .day-cell.active { background: var(--bg-surface); border: 1px solid var(--bg-border); box-shadow: var(--elev-1); }
+  .day-cell .num {
+    margin-top: 3px;
+    font-family: var(--font-numeric);
+    font-size: 9.5px; font-weight: 700;
+    color: var(--text-muted);
+  }
+  .day-cell.done .num { color: var(--text-primary); }
+  .progress-strap {
+    margin-top: 12px;
+    padding: 10px 12px;
+    background: var(--bg-base);
+    border: 1px solid var(--bg-border-soft);
+    border-radius: var(--radius-md);
+    display: flex; align-items: center; gap: 10px;
+    font-family: var(--font-body);
+    font-size: 12px; font-weight: 600;
+    color: var(--text-body);
+  }
+  .progress-strap .v {
+    font-family: var(--font-numeric);
+    color: var(--text-primary);
+    font-weight: 700;
+  }
+  .progress-strap .bar {
+    flex: 1; height: 4px;
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .progress-strap .bar .fill {
+    height: 100%; background: var(--gradient-brand);
+    width: 57%;
+    border-radius: 999px;
+  }
+
+  /* Legend */
+  .legend{max-width:1320px;margin:56px auto 0;padding:22px 26px;background:#FFFFFF;border:1px solid var(--bg-border);border-radius:var(--radius-lg);display:grid;grid-template-columns:220px 1fr;gap:14px 28px;font-size:12px;color:var(--text-secondary);line-height:1.55;}
+  .legend h3{grid-column:1 / -1;margin:0 0 6px;font-family:var(--font-display);font-size:12px;font-weight:600;color:var(--text-muted);letter-spacing:.18em;text-transform:uppercase;}
+  .legend dt{grid-column:1;font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:.04em;text-transform:uppercase;}
+  .legend dd{grid-column:2;margin:0;}
+  .legend code{background:#F4F5F7;border:1px solid var(--bg-border);padding:1px 6px;border-radius:4px;font-family:var(--font-numeric);font-size:11px;color:var(--text-primary);}
+</style>
+</head>
+<body>
+
+  <header class="doc-header">
+    <div>
+      <p class="doc-eyebrow">FuelWell · Phase 0.5 · Step 4 — Mockups</p>
+      <h1 class="doc-title">M26 Health Score detail</h1>
+      <p class="doc-sub">Promoted from approved wireframe § 3.26 V1 (stacked component cards). Three states: composite hero with the 5-component breakdown, the radial breakdown layout, and the locked-until-day-7 empty state.</p>
+    </div>
+    <div class="doc-meta">
+      iPhone 15 Pro · 393 × 852 pt<br>
+      Pushed · from Progress<br>
+      Diagnostic · not a trophy
+    </div>
+  </header>
+
+  <div class="frames-row" id="frames"></div>
+
+  <section class="legend">
+    <h3>Mockup notes · Step 4</h3>
+
+    <dt>Hero card</dt>
+    <dd>Dark elevated card with the brand-green pulse. "HEALTH SCORE" eyebrow, <strong>DM Sans 700</strong> 64pt composite (86<span style="color:#9AA0AC">.4</span>) + "of 100" sub. Brand-green delta pill ("▲ 4.2 · 30 d") in factual phrasing per Max — diagnostic, never celebratory. 30-day sparkline beneath with the today-dot in success-green.</dd>
+
+    <dt>Why-this-score expander</dt>
+    <dd>White info-blue card listing the engine's reasoning: <em>"Training consistency climbed 5.4, sleep slipped 1.2 — net positive."</em></dd>
+
+    <dt>Five components</dt>
+    <dd>Nutrition (success-green) · Training (info-blue) · Sleep (premium-purple) · Recovery (Apple-Health red) · Body composition (warning-amber). Each card carries a 40pt tinted icon square, eyebrow, DM Sans score, delta pill (success / warn / down — directional only), and a 70×28 sparkline. Trailing chevron pushes to that Progress section.</dd>
+
+    <dt>Radial · V2</dt>
+    <dd>Composite stays the center disc (130pt circle on the inverted card). Five 60pt component bubbles orbit around it in clockwise order from the top: Nutrition / Training / Recovery / Body / Sleep. Connecting hairlines drawn in SVG; each bubble shows its score in DM Sans tabular with the small tinted icon. Backup list of 2 components beneath catches users who can't decode the radial.</dd>
+
+    <dt>Empty · V3</dt>
+    <dd>Dark promise card with gradient-text accent ("<span style="background:linear-gradient(90deg,#47E7B0,#00B4D8); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;">7 days</span> unlocks your score.") + the 5-component explanation. 7-day grid below shows 3 days done with success-green checks, today active in dark, three more pending. Progress strap with a brand-green fill bar shows "<strong>4 of 7</strong> days banked."</dd>
+  </section>
+
+<script>
+  const statusBar = `<div class="status-bar">
+    <div class="time">9:41</div>
+    <div class="signals">
+      <svg width="17" height="11" viewBox="0 0 17 11" fill="none"><rect x="0" y="7" width="3" height="4" rx="0.5" fill="#0A0A0F"/><rect x="4" y="5" width="3" height="6" rx="0.5" fill="#0A0A0F"/><rect x="8" y="3" width="3" height="8" rx="0.5" fill="#0A0A0F"/><rect x="12" y="0" width="3" height="11" rx="0.5" fill="#0A0A0F"/></svg>
+      <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><path d="M8 11l-2.5-2.5a3.5 3.5 0 014.9 0L8 11z" fill="#0A0A0F"/><path d="M2 5a8.5 8.5 0 0112 0l-1.5 1.5a6 6 0 00-9 0L2 5z" fill="#0A0A0F"/><path d="M5 8a4.5 4.5 0 016 0l-1.5 1.5a2.5 2.5 0 00-3 0L5 8z" fill="#0A0A0F"/></svg>
+      <span class="signal-bat"></span>
+    </div>
+  </div>`;
+  const island = `<div class="dynamic-island"></div>`;
+
+  const ic = {
+    back:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    info:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 11v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="7.5" r="1.25" fill="currentColor"/></svg>`,
+    chev:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    apple:`<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 5c-1-2-3-3-5-3 0 2 1 3 2 4-2 0-4 2-4 5 0 3 2 6 4 8 1 1 2 2 3 1 1-1 2-1 3 0s2 0 3-1c2-2 4-5 4-8s-2-5-4-5c-2 0-3 1-4-1Z"/></svg>`,
+    dumb:`<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="9" width="3" height="6" rx="1"/><rect x="5" y="7" width="3" height="10" rx="1"/><rect x="8" y="11" width="8" height="2"/><rect x="16" y="7" width="3" height="10" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/></svg>`,
+    moon:`<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20 14.5A8 8 0 119.5 4a6.5 6.5 0 0010.5 10.5Z"/></svg>`,
+    heart:`<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7-4.6-9-9.5C1.5 7 4.5 3.5 8 3.5c2 0 3.4 1 4 2 .6-1 2-2 4-2 3.5 0 6.5 3.5 5 8C19 16.4 12 21 12 21Z"/></svg>`,
+    scale:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="16" rx="3" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="11" r="3" stroke="currentColor" stroke-width="1.8"/><path d="M12 13v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`,
+    check:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12.5l5 5L19.5 7.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    share:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 4v12M8 8l4-4 4 4M5 14v4a2 2 0 002 2h10a2 2 0 002-2v-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  };
+
+  function navBar() {
+    return `<div class="nav">
+      <div class="nav-btn">${ic.back}</div>
+      <div class="nav-title">Health Score</div>
+      <div class="nav-btn">${ic.share}</div>
+    </div>`;
+  }
+
+  // Spark / line chart helper
+  function linePoints(values, width, height, padding=4) {
+    const n = values.length;
+    const min = Math.min(...values), max = Math.max(...values);
+    const span = (max - min) || 1;
+    return values.map((v, i) => {
+      const x = padding + (i / (n - 1)) * (width - padding * 2);
+      const y = (height - padding) - ((v - min) / span) * (height - padding * 2);
+      return [x, y];
+    });
+  }
+  function spark(values, opts = {}) {
+    const w = opts.w || 320, h = opts.h || 56;
+    const pts = linePoints(values, w, h, opts.padding || 4);
+    const path = 'M ' + pts.map(p => `${p[0]} ${p[1]}`).join(' L ');
+    const last = pts[pts.length - 1];
+    const color = opts.color || 'rgba(255,255,255,0.92)';
+    const dot = opts.dot || '#47E7B0';
+    return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+      <path d="${path}" fill="none" stroke="${color}" stroke-width="${opts.sw||2.2}" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="${last[0]}" cy="${last[1]}" r="${opts.dotR||5}" fill="rgba(71,231,176,0.32)"/>
+      <circle cx="${last[0]}" cy="${last[1]}" r="${opts.dotR2||3}" fill="${dot}" stroke="#0F1117" stroke-width="1"/>
+    </svg>`;
+  }
+  function miniSpark(values, color) {
+    const w = 70, h = 28;
+    const pts = linePoints(values, w, h, 3);
+    const path = 'M ' + pts.map(p => `${p[0]} ${p[1]}`).join(' L ');
+    return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" class="spark">
+      <path d="${path}" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>`;
+  }
+
+  function heroCard() {
+    const values = [82.0, 82.8, 83.2, 83.6, 83.9, 84.3, 84.7, 85.0, 85.4, 85.8, 86.0, 86.2, 86.4];
+    return `<div class="hero-card">
+      <div class="lbl"><span class="dot"></span>Health Score · weekly</div>
+      <div class="score-row">
+        <div class="score">86<span class="deci">.4</span></div>
+        <div class="of">of 100</div>
+      </div>
+      <div class="delta-pill">▲ 4.2 · last 30 d</div>
+      <div class="chart">${spark(values)}</div>
+      <div class="axis"><span>Apr 17</span><span>May 1</span><span>May 18</span></div>
+    </div>`;
+  }
+
+  function whyExpander() {
+    return `<div class="why open">
+      <div class="head">
+        <div class="ic">${ic.info}</div>
+        <div class="l">Why this score</div>
+        <div class="chev">${ic.chev}</div>
+      </div>
+      <div class="body">
+        <p>Your composite climbed because <b>training consistency rose 5.4 points</b> (you hit every Push / Pull / Legs slot for two weeks) and <b>nutrition adherence rose 2.1</b> (fewer over-fat evenings).</p>
+        <p>Sleep dipped <b>1.2</b> — two short nights last week — but recovery (HRV / RHR) held flat. Net positive.</p>
+      </div>
+    </div>`;
+  }
+
+  function compCard(kind, glyph, name, score, delta, deltaKind, sparkVals, sparkColor) {
+    return `<div class="comp">
+      <div class="ic ${kind}">${glyph}</div>
+      <div class="body">
+        <div class="eb">${name}</div>
+        <div class="stat-row">
+          <div class="score">${score}</div>
+          <div class="delta ${deltaKind||''}">${delta}</div>
+        </div>
+      </div>
+      ${miniSpark(sparkVals, sparkColor)}
+      <div class="arr">${ic.chev}</div>
+    </div>`;
+  }
+
+  // ===== V1 stacked =====
+  function v1() {
+    return `
+      ${navBar()}
+      <div class="content">
+        ${heroCard()}
+        ${whyExpander()}
+        <div class="sec-h">
+          <div class="l">Breakdown · 5 components</div>
+          <div class="r">Last 30 d</div>
+        </div>
+        <div class="comp-list">
+          ${compCard('nut', ic.apple,  'Nutrition adherence',   88, '▲ 2.1', '',     [82,83,84,82,85,86,87,88,87,88,88], 'var(--macro-protein)')}
+          ${compCard('tra', ic.dumb,   'Training consistency',  92, '▲ 5.4', '',     [82,84,85,86,86,88,89,90,91,92,92], 'var(--semantic-info)')}
+          ${compCard('sle', ic.moon,   'Sleep',                 78, '▼ 1.2', 'down', [80,82,80,82,79,80,78,79,78,77,78], 'var(--semantic-premium)')}
+          ${compCard('rec', ic.heart,  'Recovery · HRV / RHR',  84, '▲ 0.6', '',     [83,83,82,84,83,84,84,85,84,84,84], '#FE2D55')}
+          ${compCard('bod', ic.scale,  'Body composition',      81, '▲ 0.8', '',     [78,79,79,80,80,80,80,81,81,81,81], 'var(--semantic-warning)')}
+        </div>
+      </div>`;
+  }
+
+  // ===== V2 radial =====
+  function v2() {
+    return `
+      ${navBar()}
+      <div class="content">
+        <div class="radial-card">
+          <div style="font-family: var(--font-body); font-size: 10.5px; font-weight: 700; color: var(--text-on-dark-muted); letter-spacing: 0.20em; text-transform: uppercase; text-align: center; display: inline-flex; align-items: center; gap: 6px; padding-left: 12px;">
+            <span style="width: 5px; height: 5px; border-radius: 50%; background: var(--brand-green); box-shadow: 0 0 0 3px rgba(71,231,176,0.32);"></span>
+            Health Score · weekly
+          </div>
+          <div class="radial-stage">
+            <svg class="orbit-svg" viewBox="0 0 320 300" preserveAspectRatio="xMidYMid meet">
+              <defs>
+                <radialGradient id="ringGrad" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stop-color="rgba(71,231,176,0.10)"/>
+                  <stop offset="100%" stop-color="rgba(71,231,176,0)"/>
+                </radialGradient>
+              </defs>
+              <circle cx="160" cy="150" r="110" fill="url(#ringGrad)"/>
+              <circle cx="160" cy="150" r="95" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1" stroke-dasharray="2 4"/>
+              <line x1="160" y1="55" x2="160" y2="80" stroke="rgba(255,255,255,0.10)" stroke-width="1"/>
+              <line x1="248" y1="110" x2="220" y2="125" stroke="rgba(255,255,255,0.10)" stroke-width="1"/>
+              <line x1="72" y1="110" x2="100" y2="125" stroke="rgba(255,255,255,0.10)" stroke-width="1"/>
+              <line x1="222" y1="226" x2="205" y2="200" stroke="rgba(255,255,255,0.10)" stroke-width="1"/>
+              <line x1="98" y1="226" x2="115" y2="200" stroke="rgba(255,255,255,0.10)" stroke-width="1"/>
+            </svg>
+            <div class="center-card">
+              <div class="lbl">Composite</div>
+              <div class="score">86<span class="deci">.4</span></div>
+              <div class="pill">▲ 4.2</div>
+            </div>
+            <div class="orbit-label top">Nutrition</div>
+            <div class="orbit top"><div class="ic-mini" style="background: rgba(0,210,120,0.16); color: var(--semantic-success);">${ic.apple}</div><div class="v">88</div></div>
+            <div class="orbit-label tr">Training</div>
+            <div class="orbit tr"><div class="ic-mini" style="background: rgba(0,180,216,0.18); color: var(--semantic-info);">${ic.dumb}</div><div class="v">92</div></div>
+            <div class="orbit-label br">Recovery</div>
+            <div class="orbit br"><div class="ic-mini" style="background: rgba(254,45,85,0.18); color: #FE2D55;">${ic.heart}</div><div class="v">84</div></div>
+            <div class="orbit-label bl">Body</div>
+            <div class="orbit bl"><div class="ic-mini" style="background: rgba(245,158,11,0.20); color: var(--semantic-warning);">${ic.scale}</div><div class="v">81</div></div>
+            <div class="orbit-label tl">Sleep</div>
+            <div class="orbit tl"><div class="ic-mini" style="background: rgba(168,85,247,0.18); color: var(--semantic-premium);">${ic.moon}</div><div class="v">78</div></div>
+          </div>
+        </div>
+        ${whyExpander()}
+        <div class="sec-h">
+          <div class="l">Tap any to drill in</div>
+        </div>
+        <div class="comp-list">
+          ${compCard('sle', ic.moon,   'Sleep',           78, '▼ 1.2', 'down', [80,82,80,82,79,80,78,79,78,77,78], 'var(--semantic-premium)')}
+          ${compCard('bod', ic.scale,  'Body composition', 81, '▲ 0.8', '',     [78,79,79,80,80,80,80,81,81,81,81], 'var(--semantic-warning)')}
+        </div>
+      </div>`;
+  }
+
+  // ===== V3 empty =====
+  function v3() {
+    return `
+      ${navBar()}
+      <div class="content">
+        <div class="empty-promise">
+          <div class="lbl">Locked · day 4 of 7</div>
+          <div class="h"><span class="accent">7 days</span> unlocks your Health Score.</div>
+          <div class="s">The score blends <b>nutrition, training, sleep, recovery, and body comp</b> into one weekly diagnostic. We need a week of signal to be honest about it.</div>
+        </div>
+        <div class="day-grid">
+          <div class="h">Days banked</div>
+          <div class="day-row">
+            <div class="day-cell done"><div class="dl">Mon</div><div class="check">${ic.check}</div><div class="num">12</div></div>
+            <div class="day-cell done"><div class="dl">Tue</div><div class="check">${ic.check}</div><div class="num">13</div></div>
+            <div class="day-cell done"><div class="dl">Wed</div><div class="check">${ic.check}</div><div class="num">14</div></div>
+            <div class="day-cell active"><div class="dl">Thu</div><div class="check">${ic.check}</div><div class="num">15</div></div>
+            <div class="day-cell"><div class="dl">Fri</div><div class="check"></div><div class="num">16</div></div>
+            <div class="day-cell"><div class="dl">Sat</div><div class="check"></div><div class="num">17</div></div>
+            <div class="day-cell"><div class="dl">Sun</div><div class="check"></div><div class="num">18 ★</div></div>
+          </div>
+          <div class="progress-strap">
+            <span><span class="v">4</span> of 7 days</span>
+            <div class="bar"><div class="fill"></div></div>
+            <span style="color: var(--text-secondary); font-family: var(--font-body); font-size: 11.5px; font-weight: 600;">3 to unlock</span>
+          </div>
+        </div>
+        <div class="sec-h">
+          <div class="l">What you'll see Sunday</div>
+        </div>
+        <div class="comp-list">
+          ${compCard('nut', ic.apple, 'Nutrition adherence',  '—', 'preview', 'warn', [60,62,64,66,68,70,72], 'var(--macro-protein)')}
+          ${compCard('tra', ic.dumb,  'Training consistency', '—', 'preview', 'warn', [60,62,64,66,68,70,72], 'var(--semantic-info)')}
+          ${compCard('sle', ic.moon,  'Sleep',                '—', 'preview', 'warn', [60,62,64,66,68,70,72], 'var(--semantic-premium)')}
+        </div>
+      </div>`;
+  }
+
+  const variations = [
+    { num:'Variation 01 · State', name:'Composite · stacked', cap:'Dark hero card with 86.4 composite, brand-green delta pill, 30-day sparkline. Why-this-score expanded. Five component cards stacked below, each with tinted icon, score, delta, and a 70pt sparkline.', body: v1() },
+    { num:'Variation 02 · State', name:'Radial breakdown', cap:'Composite at the center; 5 component bubbles orbit around it in clockwise order (Nutrition, Training, Recovery, Body, Sleep). Backup card list beneath for users who can\u2019t decode the radial.', body: v2() },
+    { num:'Variation 03 · State', name:'Locked · day 4 / 7', cap:'Composite not yet computable. Dark promise card with gradient-text accent, 7-day check grid (3 done, today active), brand-green progress fill bar. Component cards rendered in dimmed preview state.', body: v3() }
+  ];
+
+  const root = document.getElementById('frames');
+  root.innerHTML = variations.map(v => `
+    <section class="variation">
+      <div class="v-label">
+        <div class="v-num">${v.num}</div>
+        <div class="v-name">${v.name}</div>
+        <div class="v-cap">${v.cap}</div>
+      </div>
+      <div class="device">
+        ${statusBar}${island}
+        <div class="screen">${v.body}</div>
+        <div class="home-indicator"></div>
+      </div>
+    </section>
+  `).join('');
+</script>
+</body>
+</html>

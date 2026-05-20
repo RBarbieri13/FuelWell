@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>FuelWell · M19 Grocery List · Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-base:#F4F5F7; --bg-surface:#FFFFFF; --bg-elevated:#0F1117;
+    --bg-border:#E5E7EB; --bg-border-soft:#EEF0F3;
+    --text-primary:#0A0A0F; --text-body:#1F2937; --text-secondary:#6B7280;
+    --text-muted:#9CA3AF; --text-disabled:#C7CCD3; --text-on-dark:#FFFFFF; --text-on-dark-muted:#9AA0AC;
+    --brand-green:#47E7B0; --semantic-success:#00D278; --semantic-warning:#F59E0B; --semantic-info:#00B4D8; --semantic-premium:#A855F7; --semantic-error:#EF4444;
+    --gradient-brand: linear-gradient(135deg, #00D278 0%, #47E7B0 100%);
+    --radius-md:12px; --radius-lg:20px; --radius-pill:999px;
+    --elev-1: 0 1px 2px rgba(15,17,23,.04), 0 1px 0 rgba(15,17,23,.02);
+    --elev-2: 0 4px 14px rgba(15,17,23,.06), 0 1px 2px rgba(15,17,23,.04);
+    --elev-cta: 0 8px 24px rgba(0,210,120,.22);
+    --font-display:'Outfit', system-ui, sans-serif;
+    --font-body:'Inter', system-ui, sans-serif;
+    --font-system: -apple-system, 'SF Pro Display', system-ui, sans-serif;
+    --font-numeric:'DM Sans', 'Inter', sans-serif;
+  }
+  *{box-sizing:border-box;} html,body{margin:0;padding:0;}
+  body{background:#ECEDF0;color:var(--text-primary);font-family:var(--font-body);padding:56px 48px 96px;min-width:1380px;}
+  .doc-header{max-width:1320px;margin:0 auto 48px;display:flex;align-items:flex-end;justify-content:space-between;gap:32px;border-bottom:1px solid #D6D8DD;padding-bottom:24px;}
+  .doc-eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--text-muted);margin:0 0 8px;font-weight:600;}
+  .doc-title{font-family:var(--font-display);font-size:28px;font-weight:700;margin:0;letter-spacing:-.018em;}
+  .doc-sub{font-size:13px;color:var(--text-secondary);margin:8px 0 0;max-width:760px;line-height:1.55;}
+  .doc-meta{font-family:var(--font-numeric);font-size:11px;color:var(--text-muted);text-align:right;letter-spacing:.04em;line-height:1.7;}
+  .frames-row{display:flex;gap:64px;justify-content:center;align-items:flex-start;}
+  .variation{display:flex;flex-direction:column;align-items:center;width:393px;}
+  .v-label{margin-bottom:18px;text-align:center;width:100%;}
+  .v-num{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--text-muted);font-weight:600;}
+  .v-name{font-family:var(--font-display);font-size:16px;font-weight:600;color:var(--text-primary);margin-top:4px;}
+  .v-cap{font-size:12px;color:var(--text-secondary);margin-top:4px;line-height:1.45;max-width:340px;}
+  .device{position:relative;width:393px;height:852px;background:var(--bg-base);border-radius:56px;overflow:hidden;box-shadow:0 0 0 12px #0A0A0F,0 0 0 13px #2A2A30,0 30px 80px rgba(15,17,23,.28),0 12px 32px rgba(15,17,23,.16);}
+  .status-bar{position:absolute;top:0;left:0;right:0;height:54px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 28px 9px;z-index:30;}
+  .status-bar .time{font-family:var(--font-system);font-size:17px;font-weight:600;color:var(--text-primary);}
+  .status-bar .signals{display:inline-flex;gap:6px;align-items:center;}
+  .signal-bat{display:inline-block;width:26px;height:12px;border:1.2px solid var(--text-primary);border-radius:3px;position:relative;}
+  .signal-bat::after{content:"";position:absolute;right:-3px;top:3px;width:2px;height:5px;background:var(--text-primary);border-radius:0 1.5px 1.5px 0;}
+  .signal-bat::before{content:"";position:absolute;left:1px;top:1px;bottom:1px;width:78%;background:var(--text-primary);border-radius:1.5px;}
+  .dynamic-island{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:124px;height:36px;background:#0A0A0F;border-radius:22px;z-index:31;}
+  .home-indicator{position:absolute;bottom:9px;left:50%;transform:translateX(-50%);width:134px;height:5px;background:var(--text-primary);border-radius:3px;opacity:.7;z-index:32;}
+  .screen{position:absolute;top:0;left:0;right:0;bottom:0;padding:54px 0 0;display:flex;flex-direction:column;}
+
+  .nav{height:48px;display:grid;grid-template-columns:56px 1fr 56px 56px;align-items:center;padding:4px 12px 0;flex-shrink:0;}
+  .nav-btn{width:38px;height:38px;border-radius:50%;background:var(--bg-surface);border:1px solid var(--bg-border);display:flex;align-items:center;justify-content:center;color:var(--text-body);box-shadow:var(--elev-1);margin:0 auto;}
+  .nav-title{text-align:center;font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--text-primary);letter-spacing:-.012em;}
+  .nav-title .sub{display:block;margin-top:1px;font-family:var(--font-body);font-size:11px;font-weight:500;color:var(--text-secondary);letter-spacing:.06em;text-transform:uppercase;}
+
+  /* Progress strap */
+  .prog-strap {
+    margin: 8px 16px 0;
+    background: var(--bg-elevated);
+    color: var(--text-on-dark);
+    border-radius: var(--radius-md);
+    padding: 12px 14px;
+    display: flex; align-items: center; gap: 12px;
+    overflow: hidden;
+    position: relative;
+  }
+  .prog-strap .ring {
+    width: 44px; height: 44px;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .prog-strap .ring .pct {
+    position: absolute;
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 12px; font-weight: 700;
+    color: var(--text-on-dark);
+  }
+  .prog-strap .body { flex: 1; min-width: 0; }
+  .prog-strap .lbl {
+    font-family: var(--font-body);
+    font-size: 10px; font-weight: 600;
+    color: var(--text-on-dark-muted);
+    letter-spacing: 0.18em; text-transform: uppercase;
+  }
+  .prog-strap .v {
+    margin-top: 2px;
+    font-family: var(--font-body);
+    font-size: 13.5px; font-weight: 600;
+    color: var(--text-on-dark);
+    letter-spacing: -0.003em;
+  }
+  .prog-strap .v .a {
+    font-family: var(--font-numeric);
+    color: var(--brand-green);
+    font-weight: 700;
+  }
+  .prog-strap .src {
+    font-family: var(--font-body);
+    font-size: 11px; font-weight: 600;
+    color: var(--text-on-dark);
+    padding: 5px 10px;
+    background: rgba(255,255,255,0.10);
+    border: 1px solid rgba(255,255,255,0.16);
+    border-radius: 999px;
+    flex-shrink: 0;
+  }
+
+  .content { flex: 1; overflow: hidden; padding: 0 18px 100px; position: relative; }
+
+  /* Filter chips */
+  .filter-row {
+    margin: 14px -18px 0;
+    padding: 0 18px;
+    display: flex; gap: 6px;
+    overflow: hidden;
+  }
+  .chip {
+    flex-shrink: 0; height: 32px;
+    padding: 0 12px;
+    border-radius: 999px;
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    box-shadow: var(--elev-1);
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--font-body);
+    font-size: 12.5px; font-weight: 500;
+    color: var(--text-body);
+  }
+  .chip.on { background: var(--bg-elevated); color: var(--text-on-dark); border-color: var(--bg-elevated); font-weight: 600; }
+  .chip .c { font-family: var(--font-numeric); color: var(--text-muted); font-weight: 600; }
+  .chip.on .c { color: var(--text-on-dark-muted); }
+
+  /* Category heads */
+  .cat-h {
+    margin: 18px 4px 6px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .cat-h .l {
+    display: flex; align-items: center; gap: 8px;
+    font-family: var(--font-body);
+    font-size: 11px; font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 0.18em; text-transform: uppercase;
+  }
+  .cat-h .l .dot { width: 8px; height: 8px; border-radius: 2px; }
+  .cat-h .r {
+    font-family: var(--font-numeric);
+    font-size: 11px; font-weight: 600;
+    color: var(--text-muted);
+  }
+  .cat-h .r .of { color: var(--text-disabled); }
+  .cat-h.collapsed { cursor: pointer; padding: 12px 14px; background: var(--bg-surface); border: 1px solid var(--bg-border); border-radius: var(--radius-md); margin: 8px 0 0; box-shadow: var(--elev-1); }
+  .cat-h.collapsed .l { color: var(--text-body); font-weight: 700; letter-spacing: 0.06em; text-transform: none; font-size: 14px; }
+  .cat-h.collapsed .r .v { color: var(--text-primary); font-weight: 700; }
+  .cat-h.collapsed .chev { color: var(--text-muted); margin-left: 8px; }
+  .cat-h.collapsed.open .chev { transform: rotate(90deg); }
+
+  /* Item list */
+  .item-list { background: var(--bg-surface); border: 1px solid var(--bg-border); border-radius: var(--radius-lg); box-shadow: var(--elev-1); overflow: hidden; }
+  .item {
+    display: grid;
+    grid-template-columns: 24px 1fr auto;
+    gap: 10px;
+    align-items: center;
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--bg-border-soft);
+    cursor: pointer;
+  }
+  .item:last-child { border-bottom: 0; }
+  .item .check {
+    width: 22px; height: 22px;
+    border-radius: 7px;
+    border: 1.5px solid var(--bg-border);
+    background: var(--bg-surface);
+    display: flex; align-items: center; justify-content: center;
+    color: transparent;
+  }
+  .item.done .check { background: var(--semantic-success); border-color: var(--semantic-success); color: #fff; }
+  .item .body { min-width: 0; }
+  .item .name {
+    font-family: var(--font-body);
+    font-size: 14px; font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.003em;
+    line-height: 1.3;
+  }
+  .item.done .name { color: var(--text-muted); text-decoration: line-through; }
+  .item .source {
+    margin-top: 1px;
+    font-family: var(--font-body);
+    font-size: 11.5px; font-weight: 500;
+    color: var(--text-secondary);
+  }
+  .item .source .dot { color: var(--text-disabled); margin: 0 4px; }
+  .item.done .source { color: var(--text-disabled); }
+  .item .qty {
+    text-align: right;
+    flex-shrink: 0;
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 13px; font-weight: 700;
+    color: var(--text-primary);
+  }
+  .item .qty .u { font-family: var(--font-body); font-size: 10px; font-weight: 600; color: var(--text-secondary); margin-left: 2px; }
+  .item.done .qty { color: var(--text-muted); text-decoration: line-through; }
+
+  /* Custom +Add row */
+  .add-row {
+    margin-top: 10px;
+    padding: 12px 14px;
+    border-radius: var(--radius-md);
+    background: var(--bg-surface);
+    border: 1px dashed var(--bg-border);
+    display: flex; align-items: center; gap: 10px;
+    color: var(--text-secondary);
+    font-family: var(--font-body);
+    font-size: 13px; font-weight: 500;
+    letter-spacing: -0.003em;
+  }
+  .add-row .plus {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--bg-base);
+    color: var(--text-body);
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* Empty state */
+  .empty-stage {
+    flex: 1;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 0 32px;
+    text-align: center;
+  }
+  .empty-ill {
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(0,210,120,0.10) 0%, rgba(0,180,216,0.06) 100%);
+    border: 1px solid var(--bg-border);
+    position: relative;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: var(--elev-2);
+  }
+  .empty-ill .basket {
+    width: 80px; height: 60px;
+    border-radius: 0 0 22px 22px;
+    background: var(--bg-surface);
+    border: 1.5px solid var(--text-primary);
+    border-top: 0;
+    position: relative;
+  }
+  .empty-ill .basket::before {
+    content: ""; position: absolute;
+    top: -12px; left: -8px; right: -8px;
+    height: 12px;
+    border-radius: 12px 12px 0 0;
+    border: 1.5px solid var(--text-primary);
+    background: var(--bg-surface);
+  }
+  .empty-ill .basket::after {
+    content: ""; position: absolute;
+    top: 2px; left: 0; right: 0; bottom: 0;
+    background:
+      repeating-linear-gradient(45deg, transparent 0 6px, rgba(15,17,23,0.12) 6px 7px),
+      repeating-linear-gradient(-45deg, transparent 0 6px, rgba(15,17,23,0.12) 6px 7px);
+  }
+  .empty-h {
+    margin-top: 24px;
+    font-family: var(--font-display);
+    font-size: 22px; font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.018em;
+    line-height: 1.18;
+  }
+  .empty-s {
+    margin-top: 8px;
+    font-family: var(--font-body);
+    font-size: 14px; font-weight: 400;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    max-width: 280px;
+  }
+  .empty-actions {
+    margin-top: 22px;
+    display: flex; flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    max-width: 300px;
+  }
+  .e-pri {
+    height: 50px;
+    border-radius: 14px;
+    background: var(--gradient-brand);
+    color: var(--text-on-dark);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    font-family: var(--font-body);
+    font-size: 14.5px; font-weight: 700;
+    box-shadow: var(--elev-cta);
+    letter-spacing: -0.003em;
+  }
+  .e-sec {
+    height: 46px;
+    border-radius: 14px;
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    color: var(--text-body);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    font-family: var(--font-body);
+    font-size: 13.5px; font-weight: 600;
+  }
+  .empty-quick {
+    margin-top: 22px;
+    width: 100%;
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--elev-1);
+    padding: 14px;
+  }
+  .empty-quick .h {
+    font-family: var(--font-body);
+    font-size: 11px; font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 0.16em; text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .empty-quick .row {
+    padding: 10px 12px;
+    background: var(--bg-base);
+    border-radius: 10px;
+    border: 1px solid var(--bg-border-soft);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .empty-quick .row .ic {
+    width: 26px; height: 26px;
+    border-radius: 8px;
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    color: var(--text-body);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .empty-quick .row .text { flex: 1; }
+  .empty-quick .row .nm { font-family: var(--font-body); font-size: 13px; font-weight: 600; color: var(--text-primary); letter-spacing: -0.003em; }
+  .empty-quick .row .sub { font-family: var(--font-body); font-size: 11px; color: var(--text-secondary); }
+  .empty-quick .row .arr { color: var(--text-muted); }
+
+  /* Bottom bar */
+  .bottom-bar {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    padding: 14px 18px 30px;
+    background: linear-gradient(180deg, rgba(244,245,247,0) 0%, var(--bg-base) 36%);
+    display: flex; gap: 8px;
+    z-index: 22;
+  }
+  .bb-btn {
+    flex: 1;
+    height: 48px;
+    border-radius: 14px;
+    background: var(--bg-elevated);
+    color: var(--text-on-dark);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    font-family: var(--font-body);
+    font-size: 14px; font-weight: 700;
+    letter-spacing: -0.003em;
+  }
+  .bb-btn.primary { background: var(--gradient-brand); color: var(--text-on-dark); box-shadow: var(--elev-cta); }
+  .bb-btn.ghost { background: var(--bg-surface); border: 1px solid var(--bg-border); color: var(--text-body); font-weight: 600; }
+  .bb-btn.w { flex: 0 0 56px; padding: 0; }
+
+  /* Legend */
+  .legend{max-width:1320px;margin:56px auto 0;padding:22px 26px;background:#FFFFFF;border:1px solid var(--bg-border);border-radius:var(--radius-lg);display:grid;grid-template-columns:220px 1fr;gap:14px 28px;font-size:12px;color:var(--text-secondary);line-height:1.55;}
+  .legend h3{grid-column:1 / -1;margin:0 0 6px;font-family:var(--font-display);font-size:12px;font-weight:600;color:var(--text-muted);letter-spacing:.18em;text-transform:uppercase;}
+  .legend dt{grid-column:1;font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:.04em;text-transform:uppercase;}
+  .legend dd{grid-column:2;margin:0;}
+  .legend code{background:#F4F5F7;border:1px solid var(--bg-border);padding:1px 6px;border-radius:4px;font-family:var(--font-numeric);font-size:11px;color:var(--text-primary);}
+</style>
+</head>
+<body>
+
+  <header class="doc-header">
+    <div>
+      <p class="doc-eyebrow">FuelWell · Phase 0.5 · Step 4 — Mockups</p>
+      <h1 class="doc-title">M19 Grocery List</h1>
+      <p class="doc-sub">Promoted from approved wireframe § 3.19 V1 (standard category sections — safest default). Three states: mid-shop with items partially checked, post-onboarding empty state with quick-start options, and the long-list collapsed view.</p>
+    </div>
+    <div class="doc-meta">
+      iPhone 15 Pro · 393 × 852 pt<br>
+      Pushed · tab Log active<br>
+      Source · Meal Plan A
+    </div>
+  </header>
+
+  <div class="frames-row" id="frames"></div>
+
+  <section class="legend">
+    <h3>Mockup notes · Step 4</h3>
+
+    <dt>Header</dt>
+    <dd>Back / Title / Share / ⋯. Title carries the source ("From Plan A — 5 days") and the inverted progress strap below shows mid-shop status with a 44pt brand-green ring + check count + source pill.</dd>
+
+    <dt>Filter chips</dt>
+    <dd>"All / To-buy / Got it / Pantry" — pivot the list by check state. Default lands on "All"; tapping "To-buy" hides checked items.</dd>
+
+    <dt>Category heads</dt>
+    <dd>Small-caps section headers with a 8pt color dot per category: Produce → success-green, Protein → error-red, Dairy → info-blue, Pantry → warning-amber, Other → text-secondary neutral. Count on the right shows N of M done (DM Sans tabular).</dd>
+
+    <dt>Item rows</dt>
+    <dd>Checkbox + name + sub-source line (recipe / plan that contributed it) + trailing qty. Tap a row anywhere → toggle done; done items strike through and drop to muted text. Long-press → quick-edit popover with delete / move category / change qty.</dd>
+
+    <dt>Add row</dt>
+    <dd>Dashed-border "+ Add item" row appears at the bottom of every populated category for quick custom additions.</dd>
+
+    <dt>Empty state · V2</dt>
+    <dd>Centered CSS basket illustration on a soft brand-tinted gradient. Headline "Nothing on your list yet." with a two-button stack (gradient-brand "Pull from this week's plan" + ghost "Build from scratch"). Below: quick-start chip listing prior grocery lists with item counts — one-tap restore. No tab bar — keeps focus on the action.</dd>
+
+    <dt>Collapsed · V3</dt>
+    <dd>Category headers render as tappable cards with the dot, name, "N of M done" count, and a chevron. Tap to expand inline. Best for long lists (>30 items) where the user wants to swipe section by section. The "Produce" section shows open state; the others stay closed.</dd>
+
+    <dt>Bottom bar</dt>
+    <dd>Sticky two-button bar: gradient-brand primary "Check out" (exports as text or sends to grocery app integration at Phase 2) + ghost "Share" (sends as iMessage / WhatsApp). On V3 it adds a "Bulk check" button for power users.</dd>
+  </section>
+
+<script>
+  const statusBar = `
+    <div class="status-bar">
+      <div class="time">9:41</div>
+      <div class="signals">
+        <svg width="17" height="11" viewBox="0 0 17 11" fill="none"><rect x="0" y="7" width="3" height="4" rx="0.5" fill="#0A0A0F"/><rect x="4" y="5" width="3" height="6" rx="0.5" fill="#0A0A0F"/><rect x="8" y="3" width="3" height="8" rx="0.5" fill="#0A0A0F"/><rect x="12" y="0" width="3" height="11" rx="0.5" fill="#0A0A0F"/></svg>
+        <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><path d="M8 11l-2.5-2.5a3.5 3.5 0 014.9 0L8 11z" fill="#0A0A0F"/><path d="M2 5a8.5 8.5 0 0112 0l-1.5 1.5a6 6 0 00-9 0L2 5z" fill="#0A0A0F"/><path d="M5 8a4.5 4.5 0 016 0l-1.5 1.5a2.5 2.5 0 00-3 0L5 8z" fill="#0A0A0F"/></svg>
+        <span class="signal-bat"></span>
+      </div>
+    </div>`;
+  const island = `<div class="dynamic-island"></div>`;
+
+  const ic = {
+    back:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    share:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 4v12M8 8l4-4 4 4M5 14v4a2 2 0 002 2h10a2 2 0 002-2v-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    more:`<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="6" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="18" cy="12" r="1.8"/></svg>`,
+    check:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12.5l5 5L19.5 7.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    plus:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>`,
+    plusLg:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>`,
+    chev:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    sparkle:`<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2 6 6 2-6 2-2 6-2-6-6-2 6-2 2-6Z"/></svg>`,
+    history:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`,
+    edit:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M14 4l6 6L10 20H4v-6L14 4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>`,
+    cart:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 4h2l2.5 12a2 2 0 002 1.5h8a2 2 0 002-1.6L21 7H6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.5" r="1.5" fill="currentColor"/><circle cx="17" cy="20.5" r="1.5" fill="currentColor"/></svg>`,
+    arrR:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  };
+
+  function navBar() {
+    return `<div class="nav">
+      <div class="nav-btn">${ic.back}</div>
+      <div class="nav-title">Grocery list<span class="sub">From Plan A · 5 days</span></div>
+      <div class="nav-btn">${ic.share}</div>
+      <div class="nav-btn">${ic.more}</div>
+    </div>`;
+  }
+
+  function ring(pct) {
+    const r = 18, c = 2 * Math.PI * r, dash = (pct/100) * c;
+    return `<div class="ring">
+      <svg width="44" height="44" viewBox="0 0 44 44" style="transform: rotate(-90deg);">
+        <circle cx="22" cy="22" r="${r}" stroke="rgba(255,255,255,0.10)" stroke-width="4" fill="none"/>
+        <circle cx="22" cy="22" r="${r}" stroke="${'var(--brand-green)'}" stroke-width="4" fill="none" stroke-linecap="round" stroke-dasharray="${dash} ${c}"/>
+      </svg>
+      <div class="pct">${pct}%</div>
+    </div>`;
+  }
+
+  function progStrap(done, total, pct) {
+    return `<div class="prog-strap">
+      ${ring(pct)}
+      <div class="body">
+        <div class="lbl">Shop progress</div>
+        <div class="v"><span class="a">${done}</span> of ${total} items done</div>
+      </div>
+      <div class="src">Plan A</div>
+    </div>`;
+  }
+
+  function catHead(name, dot, done, total) {
+    return `<div class="cat-h">
+      <div class="l"><span class="dot" style="background:${dot}"></span>${name}</div>
+      <div class="r"><span style="color:var(--text-primary); font-weight:700;">${done}</span><span class="of"> / ${total}</span></div>
+    </div>`;
+  }
+
+  function item(qty, unit, name, source, done) {
+    return `<div class="item ${done?'done':''}">
+      <div class="check">${ic.check}</div>
+      <div class="body">
+        <div class="name">${name}</div>
+        <div class="source">${source}</div>
+      </div>
+      <div class="qty">${qty}<span class="u"> ${unit}</span></div>
+    </div>`;
+  }
+
+  // ===== V1 mid-shop =====
+  function v1() {
+    return `
+      ${navBar()}
+      ${progStrap(8, 26, 31)}
+      <div class="content">
+        <div class="filter-row">
+          <div class="chip on">All <span class="c">26</span></div>
+          <div class="chip">To buy <span class="c">18</span></div>
+          <div class="chip">Got it <span class="c">8</span></div>
+          <div class="chip">Pantry</div>
+        </div>
+        ${catHead('Produce', 'var(--semantic-success)', 3, 7)}
+        <div class="item-list">
+          ${item('1','large','Sweet potato','Sheet-pan chicken<span class="dot">·</span>+1', true)}
+          ${item('2','cups','Broccoli florets','Sheet-pan chicken', true)}
+          ${item('1','bunch','Kale, lacinato','Harvest bowl<span class="dot">·</span>+1', true)}
+          ${item('3','','Avocado','Breakfast toast<span class="dot">·</span>x3', false)}
+          ${item('1','pint','Cherry tomatoes','Mediterranean plate', false)}
+          ${item('1','head','Garlic','Used across 4 meals', false)}
+          ${item('2','','Lemons','Salmon, dressings', false)}
+        </div>
+        ${catHead('Protein', 'var(--semantic-error)', 2, 5)}
+        <div class="item-list">
+          ${item('2','lb','Chicken thighs','Sheet-pan x2', true)}
+          ${item('1','lb','Salmon fillets','Honey-mustard salmon', true)}
+          ${item('1','lb','Ground turkey','Meatballs', false)}
+          ${item('1','dozen','Eggs','Breakfasts<span class="dot">·</span>5 ct used', false)}
+          ${item('1','block','Extra-firm tofu','Pad see ew', false)}
+        </div>
+        ${catHead('Dairy', 'var(--semantic-info)', 1, 4)}
+        <div class="item-list">
+          ${item('1','qt','Greek yogurt','Snacks<span class="dot">·</span>x4', true)}
+          ${item('1','block','Halloumi','Halloumi salad', false)}
+          ${item('1','cup','Heavy cream','Carbonara', false)}
+          ${item('1','wedge','Parmesan','Pasta nights', false)}
+        </div>
+        ${catHead('Pantry', 'var(--semantic-warning)', 2, 7)}
+        <div class="item-list">
+          ${item('1','can','Coconut milk','Curry shrimp', false)}
+          ${item('1','jar','Tahini','Dressing', false)}
+        </div>
+        <div class="add-row"><div class="plus">${ic.plus}</div>Add custom item</div>
+      </div>
+      <div class="bottom-bar">
+        <div class="bb-btn ghost">${ic.share} Share</div>
+        <div class="bb-btn primary">${ic.cart} Check out</div>
+      </div>`;
+  }
+
+  // ===== V2 empty =====
+  function v2() {
+    return `
+      ${navBar()}
+      <div class="content" style="padding-bottom: 24px;">
+        <div class="empty-stage">
+          <div class="empty-ill"><div class="basket"></div></div>
+          <h1 class="empty-h">Nothing on your list yet.</h1>
+          <p class="empty-s">Pull this week's plan into a list, or build one from scratch — categories happen automatically.</p>
+          <div class="empty-actions">
+            <div class="e-pri">${ic.sparkle} Pull from this week's plan</div>
+            <div class="e-sec">${ic.plusLg} Build from scratch</div>
+          </div>
+          <div class="empty-quick">
+            <div class="h">Recent lists</div>
+            <div class="row" style="margin-bottom: 6px;">
+              <div class="ic">${ic.history}</div>
+              <div class="text">
+                <div class="nm">Last week — Plan B</div>
+                <div class="sub">22 items · ended Sun</div>
+              </div>
+              <div class="arr">${ic.arrR}</div>
+            </div>
+            <div class="row">
+              <div class="ic">${ic.history}</div>
+              <div class="text">
+                <div class="nm">May 5 — Plan A</div>
+                <div class="sub">31 items · ended Sat</div>
+              </div>
+              <div class="arr">${ic.arrR}</div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  // ===== V3 collapsed =====
+  function v3() {
+    return `
+      ${navBar()}
+      ${progStrap(14, 42, 33)}
+      <div class="content">
+        <div class="filter-row">
+          <div class="chip on">All <span class="c">42</span></div>
+          <div class="chip">To buy <span class="c">28</span></div>
+          <div class="chip">Got it <span class="c">14</span></div>
+        </div>
+        <div class="cat-h collapsed open">
+          <div class="l"><span class="dot" style="background: var(--semantic-success)"></span>Produce</div>
+          <div class="r"><span class="v">5</span> of 12 done<span class="chev" style="transform: rotate(90deg); display:inline-block;">${ic.chev}</span></div>
+        </div>
+        <div class="item-list" style="margin-top: 8px;">
+          ${item('1','large','Sweet potato','Sheet-pan chicken', true)}
+          ${item('2','cups','Broccoli florets','Sheet-pan chicken', true)}
+          ${item('1','bunch','Kale, lacinato','Harvest bowl', true)}
+          ${item('3','','Avocado','Breakfast toast x3', true)}
+          ${item('1','pint','Cherry tomatoes','Mediterranean plate', true)}
+          ${item('1','head','Garlic','Used across 4 meals', false)}
+          ${item('2','','Lemons','Salmon, dressings', false)}
+          ${item('1','bunch','Cilantro','Stir-fry, salsa', false)}
+        </div>
+        <div class="cat-h collapsed">
+          <div class="l"><span class="dot" style="background: var(--semantic-error)"></span>Protein</div>
+          <div class="r"><span class="v">4</span> of 8 done<span class="chev">${ic.chev}</span></div>
+        </div>
+        <div class="cat-h collapsed">
+          <div class="l"><span class="dot" style="background: var(--semantic-info)"></span>Dairy</div>
+          <div class="r"><span class="v">2</span> of 6 done<span class="chev">${ic.chev}</span></div>
+        </div>
+        <div class="cat-h collapsed">
+          <div class="l"><span class="dot" style="background: var(--semantic-warning)"></span>Pantry</div>
+          <div class="r"><span class="v">3</span> of 10 done<span class="chev">${ic.chev}</span></div>
+        </div>
+        <div class="cat-h collapsed">
+          <div class="l"><span class="dot" style="background: var(--text-secondary)"></span>Other</div>
+          <div class="r"><span class="v">0</span> of 6 done<span class="chev">${ic.chev}</span></div>
+        </div>
+      </div>
+      <div class="bottom-bar">
+        <div class="bb-btn ghost w">${ic.share}</div>
+        <div class="bb-btn ghost">Bulk check</div>
+        <div class="bb-btn primary">${ic.cart} Check out</div>
+      </div>`;
+  }
+
+  const variations = [
+    { num:'Variation 01 · State', name:'Mid-shop · partial', cap:'31% complete. 8 of 26 items checked across four categories. Active "All" filter, Produce category top with three items struck through.', body: v1() },
+    { num:'Variation 02 · State', name:'Empty · first-time', cap:'Post-onboarding, no plan yet committed. Centered basket illustration, two-button stack offers either pull-from-plan or build-from-scratch, recent lists exposed beneath.', body: v2() },
+    { num:'Variation 03 · State', name:'Long list · collapsed', cap:'42-item list from a 7-day plan. Categories render as tappable cards with live counts; Produce expanded shows the open state. Bulk-check button joins the bottom bar.', body: v3() }
+  ];
+
+  const root = document.getElementById('frames');
+  root.innerHTML = variations.map(v => `
+    <section class="variation">
+      <div class="v-label">
+        <div class="v-num">${v.num}</div>
+        <div class="v-name">${v.name}</div>
+        <div class="v-cap">${v.cap}</div>
+      </div>
+      <div class="device">
+        ${statusBar}${island}
+        <div class="screen">${v.body}</div>
+        <div class="home-indicator"></div>
+      </div>
+    </section>
+  `).join('');
+</script>
+</body>
+</html>

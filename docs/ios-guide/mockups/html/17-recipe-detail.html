@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>FuelWell · M17 Recipe Detail · Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-base:#F4F5F7; --bg-surface:#FFFFFF; --bg-elevated:#0F1117;
+    --bg-border:#E5E7EB; --bg-border-soft:#EEF0F3; --bg-border-dark:#2A2A3A;
+    --text-primary:#0A0A0F; --text-body:#1F2937; --text-secondary:#6B7280;
+    --text-muted:#9CA3AF; --text-disabled:#C7CCD3; --text-on-dark:#FFFFFF; --text-on-dark-muted:#9AA0AC;
+    --brand-green:#47E7B0; --semantic-success:#00D278; --semantic-warning:#F59E0B; --semantic-info:#00B4D8;
+    --semantic-premium:#A855F7; --semantic-error:#EF4444;
+    --macro-protein:#00D278; --macro-carbs:#F59E0B; --macro-fat:#A855F7;
+    --gradient-brand: linear-gradient(135deg, #00D278 0%, #47E7B0 100%);
+    --radius-md:12px; --radius-lg:20px; --radius-xl:28px; --radius-pill:999px;
+    --elev-1: 0 1px 2px rgba(15,17,23,.04), 0 1px 0 rgba(15,17,23,.02);
+    --elev-2: 0 4px 14px rgba(15,17,23,.06), 0 1px 2px rgba(15,17,23,.04);
+    --elev-cta: 0 8px 24px rgba(0,210,120,.22);
+    --font-display:'Outfit', system-ui, sans-serif;
+    --font-body:'Inter', system-ui, sans-serif;
+    --font-system: -apple-system, 'SF Pro Display', system-ui, sans-serif;
+    --font-numeric:'DM Sans', 'Inter', sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:#ECEDF0;color:var(--text-primary);font-family:var(--font-body);padding:56px 48px 96px;min-width:1380px;}
+
+  .doc-header{max-width:1320px;margin:0 auto 48px;display:flex;align-items:flex-end;justify-content:space-between;gap:32px;border-bottom:1px solid #D6D8DD;padding-bottom:24px;}
+  .doc-eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--text-muted);margin:0 0 8px;font-weight:600;}
+  .doc-title{font-family:var(--font-display);font-size:28px;font-weight:700;margin:0;letter-spacing:-.018em;}
+  .doc-sub{font-size:13px;color:var(--text-secondary);margin:8px 0 0;max-width:760px;line-height:1.55;}
+  .doc-meta{font-family:var(--font-numeric);font-size:11px;color:var(--text-muted);text-align:right;letter-spacing:.04em;line-height:1.7;}
+
+  .frames-row{display:flex;gap:64px;justify-content:center;align-items:flex-start;}
+  .variation{display:flex;flex-direction:column;align-items:center;width:393px;}
+  .v-label{margin-bottom:18px;text-align:center;width:100%;}
+  .v-num{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--text-muted);font-weight:600;}
+  .v-name{font-family:var(--font-display);font-size:16px;font-weight:600;color:var(--text-primary);margin-top:4px;letter-spacing:-.005em;}
+  .v-cap{font-size:12px;color:var(--text-secondary);margin-top:4px;line-height:1.45;max-width:340px;}
+
+  .device{position:relative;width:393px;height:852px;background:var(--bg-base);border-radius:56px;overflow:hidden;box-shadow:0 0 0 12px #0A0A0F,0 0 0 13px #2A2A30,0 30px 80px rgba(15,17,23,.28),0 12px 32px rgba(15,17,23,.16);}
+  .status-bar{position:absolute;top:0;left:0;right:0;height:54px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 28px 9px;z-index:30;pointer-events:none;}
+  .status-bar .time{font-family:var(--font-system);font-size:17px;font-weight:600;color:var(--text-primary);}
+  .status-bar.on-dark .time{color:var(--text-on-dark);}
+  .status-bar .signals{display:inline-flex;gap:6px;align-items:center;}
+  .status-bar.on-dark .signals svg rect, .status-bar.on-dark .signals svg path{fill:var(--text-on-dark)!important;}
+  .status-bar.on-dark .signal-bat{border-color:var(--text-on-dark);}
+  .status-bar.on-dark .signal-bat::before, .status-bar.on-dark .signal-bat::after{background:var(--text-on-dark);}
+  .signal-bat{display:inline-block;width:26px;height:12px;border:1.2px solid var(--text-primary);border-radius:3px;position:relative;}
+  .signal-bat::after{content:"";position:absolute;right:-3px;top:3px;width:2px;height:5px;background:var(--text-primary);border-radius:0 1.5px 1.5px 0;}
+  .signal-bat::before{content:"";position:absolute;left:1px;top:1px;bottom:1px;width:78%;background:var(--text-primary);border-radius:1.5px;}
+  .dynamic-island{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:124px;height:36px;background:#0A0A0F;border-radius:22px;z-index:31;}
+  .home-indicator{position:absolute;bottom:9px;left:50%;transform:translateX(-50%);width:134px;height:5px;background:var(--text-primary);border-radius:3px;opacity:.7;z-index:32;}
+  .screen{position:absolute;top:0;left:0;right:0;bottom:0;padding:54px 0 0;display:flex;flex-direction:column;}
+
+  /* Hero image */
+  .hero {
+    width:100%;
+    aspect-ratio: 4 / 3;
+    background:
+      radial-gradient(circle at 25% 30%, rgba(255,255,255,.30) 0%, transparent 30%),
+      radial-gradient(circle at 75% 70%, rgba(0,0,0,.22) 0%, transparent 32%),
+      linear-gradient(135deg, #FCD34D 0%, #F59E0B 50%, #D97706 100%);
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .hero .ing-shape { position: absolute; border-radius: 50%; }
+  .hero .b1 { top: 24%; left: 18%; width: 84px; height: 84px; background: linear-gradient(135deg, #F1F5F9, #E2E8F0); box-shadow: 0 6px 18px rgba(0,0,0,.18);}
+  .hero .b2 { top: 12%; right: 24%; width: 70px; height: 70px; background: linear-gradient(135deg, #FED7AA, #F97316); }
+  .hero .b3 { bottom: 18%; left: 35%; width: 100px; height: 60px; border-radius: 30px; background: linear-gradient(135deg, #86EFAC, #16A34A); }
+  .hero .b4 { bottom: 26%; right: 16%; width: 60px; height: 60px; background: linear-gradient(135deg, #DDD6FE, #A78BFA); }
+
+  /* Floating nav over hero */
+  .nav-float {
+    position: absolute; top: 54px; left: 0; right: 0;
+    display: grid; grid-template-columns: 56px 1fr 56px 56px;
+    padding: 4px 12px 0;
+    align-items: center;
+    z-index: 6;
+  }
+  .nav-btn-glass {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(8px);
+    color: var(--text-primary);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto;
+    box-shadow: 0 2px 6px rgba(0,0,0,.12);
+  }
+  .nav-btn-glass.heart-on { color: var(--semantic-error); }
+
+  /* Sticky compact nav (V2 scrolled) */
+  .sticky-nav {
+    position: absolute;
+    top: 54px; left: 0; right: 0;
+    height: 56px;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--bg-border);
+    display: grid; grid-template-columns: 56px 1fr 56px;
+    align-items: center;
+    padding: 0 12px;
+    z-index: 5;
+  }
+  .sticky-nav .nm {
+    text-align: center;
+    font-family: var(--font-display);
+    font-size: 15px; font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.005em;
+    display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .sticky-nav .nav-btn {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: var(--bg-base);
+    color: var(--text-body);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto;
+  }
+
+  .content { flex: 1; overflow: hidden; }
+
+  /* Body */
+  .body { padding: 18px 18px 100px; }
+  .recipe-title {
+    font-family: var(--font-display);
+    font-size: 22px; font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.018em;
+    line-height: 1.18;
+  }
+  .meta-row {
+    margin-top: 8px;
+    display: flex; flex-wrap: wrap; gap: 6px 10px;
+    font-family: var(--font-body);
+    font-size: 12.5px; font-weight: 500;
+    color: var(--text-secondary);
+    align-items: center;
+  }
+  .meta-row .item { display: inline-flex; align-items: center; gap: 4px; }
+  .meta-row .dot { color: var(--text-disabled); }
+  .meta-row .v { color: var(--text-primary); font-weight: 600; font-family: var(--font-numeric); }
+
+  /* Fit strap */
+  .fit-strap {
+    margin-top: 14px;
+    background: var(--bg-elevated);
+    color: var(--text-on-dark);
+    border-radius: var(--radius-md);
+    padding: 12px 14px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    align-items: center;
+  }
+  .fit-strap .l { display: flex; align-items: center; gap: 10px; }
+  .fit-strap .ring {
+    width: 44px; height: 44px;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .fit-strap .ring .pct {
+    position: absolute;
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 12px; font-weight: 700;
+    color: var(--text-on-dark);
+  }
+  .fit-strap .txt {
+    font-family: var(--font-body);
+    font-size: 12.5px; font-weight: 500;
+    color: var(--text-on-dark-muted);
+    letter-spacing: -0.003em;
+    line-height: 1.4;
+  }
+  .fit-strap .txt b { font-weight: 700; color: var(--text-on-dark); }
+
+  /* Macros 4-cell */
+  .mac4 {
+    margin-top: 12px;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
+  }
+  .mac4 .cell {
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: 10px;
+    padding: 8px 8px 10px;
+    text-align: center;
+    box-shadow: var(--elev-1);
+  }
+  .mac4 .lbl { font-family: var(--font-body); font-size: 9.5px; font-weight: 600; color: var(--text-secondary); letter-spacing: 0.10em; text-transform: uppercase; }
+  .mac4 .v { margin-top: 3px; font-family: var(--font-numeric); font-feature-settings: "tnum" 1; font-size: 17px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.015em; line-height: 1; }
+  .mac4 .v .u { font-family: var(--font-body); font-size: 9px; font-weight: 500; color: var(--text-muted); margin-left: 1px; }
+
+  /* Actions row */
+  .actions {
+    margin-top: 14px;
+    display: grid;
+    grid-template-columns: 1fr auto auto auto;
+    gap: 8px;
+  }
+  .btn-pri {
+    height: 46px;
+    border-radius: 12px;
+    background: var(--gradient-brand);
+    color: var(--text-on-dark);
+    font-family: var(--font-body);
+    font-size: 14px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    box-shadow: var(--elev-cta);
+    letter-spacing: -0.003em;
+  }
+  .btn-ghost {
+    height: 46px; width: 46px;
+    border-radius: 12px;
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    color: var(--text-body);
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* Sec head */
+  .sec-h { display: flex; align-items: center; justify-content: space-between; margin: 22px 0 10px; }
+  .sec-h .l { font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.005em; }
+  .sec-h .r { font-family: var(--font-body); font-size: 12px; font-weight: 500; color: var(--text-secondary); }
+
+  /* Servings stepper */
+  .serv-step {
+    display: inline-flex; align-items: center; gap: 2px;
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: 999px;
+    padding: 3px;
+    box-shadow: var(--elev-1);
+  }
+  .serv-step .s {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--bg-base);
+    color: var(--text-body);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .serv-step .v {
+    padding: 0 10px;
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 13px; font-weight: 700;
+    color: var(--text-primary);
+  }
+  .serv-step .v .u { font-family: var(--font-body); font-size: 10px; color: var(--text-secondary); font-weight: 500; margin-left: 2px; }
+
+  /* Ingredient list */
+  .ing-list {
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--elev-1);
+    overflow: hidden;
+  }
+  .ing-row {
+    display: grid; grid-template-columns: 24px 64px 1fr auto;
+    gap: 10px; align-items: center;
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--bg-border-soft);
+  }
+  .ing-row:last-child { border-bottom: 0; }
+  .ing-row .check {
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    border: 1.5px solid var(--bg-border);
+    background: var(--bg-surface);
+    display: flex; align-items: center; justify-content: center;
+    color: transparent;
+  }
+  .ing-row.checked .check {
+    background: var(--text-primary);
+    border-color: var(--text-primary);
+    color: var(--text-on-dark);
+  }
+  .ing-row.checked .name { color: var(--text-muted); text-decoration: line-through; }
+  .ing-row .qty {
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 13px; font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.005em;
+  }
+  .ing-row .qty .u { font-family: var(--font-body); font-size: 10.5px; font-weight: 600; color: var(--text-secondary); margin-left: 1px; }
+  .ing-row .name {
+    font-family: var(--font-body);
+    font-size: 13.5px; font-weight: 500;
+    color: var(--text-body);
+    letter-spacing: -0.003em;
+    line-height: 1.3;
+  }
+  .ing-row .pantry-pill {
+    padding: 2px 6px;
+    border-radius: 999px;
+    background: var(--bg-base);
+    border: 1px solid var(--bg-border);
+    color: var(--text-secondary);
+    font-family: var(--font-body);
+    font-size: 9.5px; font-weight: 600;
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .ing-row .pantry-pill.have { background: rgba(0,210,120,0.10); color: var(--semantic-success); border-color: rgba(0,210,120,0.32); }
+
+  /* Steps list */
+  .step-list {
+    display: flex; flex-direction: column;
+    gap: 10px;
+  }
+  .step {
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--elev-1);
+    padding: 14px;
+    display: grid; grid-template-columns: 36px 1fr; gap: 12px;
+  }
+  .step .n {
+    width: 32px; height: 32px;
+    border-radius: 10px;
+    background: var(--bg-elevated);
+    color: var(--text-on-dark);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display);
+    font-weight: 700; font-size: 14px;
+    letter-spacing: -0.02em;
+    flex-shrink: 0;
+  }
+  .step.done .n { background: var(--semantic-success); }
+  .step .body-step .txt {
+    font-family: var(--font-body);
+    font-size: 13.5px; font-weight: 500;
+    color: var(--text-body);
+    letter-spacing: -0.003em;
+    line-height: 1.5;
+  }
+  .step .body-step .meta {
+    margin-top: 6px;
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: rgba(0,180,216,0.10);
+    border: 1px solid rgba(0,180,216,0.32);
+    color: var(--semantic-info);
+    font-family: var(--font-numeric);
+    font-size: 11px; font-weight: 600;
+  }
+  .step.done .txt { color: var(--text-muted); }
+
+  /* Cooking mode (V3) - dark immersive */
+  .cook-mode {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, #0F1117 0%, #1A1F2E 100%);
+    color: var(--text-on-dark);
+    padding: 54px 0 0;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+  .cook-header {
+    padding: 8px 16px;
+    display: grid; grid-template-columns: 40px 1fr 40px;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .cook-header .ttl {
+    text-align: center;
+    font-family: var(--font-body);
+    font-size: 12px; font-weight: 600;
+    color: var(--text-on-dark-muted);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .cook-header .close, .cook-header .menu {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto;
+  }
+  .step-progress {
+    margin: 8px 16px 0;
+    display: flex; gap: 4px;
+    flex-shrink: 0;
+  }
+  .step-progress .bar { flex: 1; height: 4px; border-radius: 999px; background: rgba(255,255,255,0.10); }
+  .step-progress .bar.done { background: var(--brand-green); }
+  .step-progress .bar.active { background: linear-gradient(90deg, var(--brand-green) 65%, rgba(255,255,255,0.10) 65%); }
+
+  .cook-body {
+    flex: 1;
+    padding: 26px 20px 20px;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+  .step-num {
+    font-family: var(--font-body);
+    font-size: 11px; font-weight: 700;
+    color: var(--text-on-dark-muted);
+    letter-spacing: 0.18em; text-transform: uppercase;
+  }
+  .step-num .of {
+    color: var(--text-disabled);
+    margin-left: 4px;
+  }
+  .step-h1 {
+    margin-top: 6px;
+    font-family: var(--font-display);
+    font-size: 26px; font-weight: 700;
+    color: var(--text-on-dark);
+    letter-spacing: -0.022em;
+    line-height: 1.18;
+  }
+  .step-detail {
+    margin-top: 14px;
+    font-family: var(--font-body);
+    font-size: 15px; font-weight: 400;
+    color: var(--text-on-dark-muted);
+    line-height: 1.5;
+    letter-spacing: -0.003em;
+  }
+  .step-detail b { color: var(--text-on-dark); font-weight: 600; }
+
+  /* Timer card */
+  .timer-card {
+    margin: 20px 0 0;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: var(--radius-lg);
+    padding: 18px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .timer-card .ring-big {
+    width: 86px; height: 86px;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .timer-card .ring-big svg { transform: rotate(-90deg); }
+  .timer-card .ring-big .digit {
+    position: absolute;
+    inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 18px; font-weight: 700;
+    color: var(--text-on-dark);
+    letter-spacing: -0.01em;
+  }
+  .timer-card .text { flex: 1; }
+  .timer-card .lbl {
+    font-family: var(--font-body);
+    font-size: 10.5px; font-weight: 700;
+    color: var(--text-on-dark-muted);
+    letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .timer-card .v {
+    margin-top: 2px;
+    font-family: var(--font-body);
+    font-size: 13.5px; font-weight: 600;
+    color: var(--text-on-dark);
+    line-height: 1.35;
+    letter-spacing: -0.003em;
+  }
+  .timer-card .v .a {
+    color: var(--brand-green);
+    font-weight: 700;
+  }
+  .timer-card .pause {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.10);
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .ingredients-mini {
+    margin-top: 16px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: var(--radius-md);
+    padding: 12px 14px;
+  }
+  .ingredients-mini .lbl {
+    font-family: var(--font-body);
+    font-size: 10px; font-weight: 700;
+    color: var(--text-on-dark-muted);
+    letter-spacing: 0.18em; text-transform: uppercase;
+  }
+  .ingredients-mini .items {
+    margin-top: 6px;
+    font-family: var(--font-body);
+    font-size: 13px; font-weight: 500;
+    color: var(--text-on-dark);
+    line-height: 1.5;
+    letter-spacing: -0.003em;
+  }
+  .ingredients-mini .items .v { font-family: var(--font-numeric); color: var(--brand-green); font-weight: 700; }
+
+  /* Cook bottom */
+  .cook-bottom {
+    margin-top: auto;
+    padding-top: 16px;
+    display: grid;
+    grid-template-columns: 64px 1fr 64px;
+    gap: 8px;
+    align-items: center;
+  }
+  .cook-bottom .nav-side {
+    height: 56px;
+    border-radius: 18px;
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .cook-bottom .nav-side.disabled { color: rgba(255,255,255,0.30); }
+  .cook-bottom .next {
+    height: 56px;
+    border-radius: 18px;
+    background: var(--gradient-brand);
+    color: var(--text-on-dark);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    font-family: var(--font-body);
+    font-size: 16px; font-weight: 700;
+    letter-spacing: -0.003em;
+    box-shadow: var(--elev-cta);
+  }
+
+  /* Legend */
+  .legend{max-width:1320px;margin:56px auto 0;padding:22px 26px;background:#FFFFFF;border:1px solid var(--bg-border);border-radius:var(--radius-lg);display:grid;grid-template-columns:220px 1fr;gap:14px 28px;font-size:12px;color:var(--text-secondary);line-height:1.55;}
+  .legend h3{grid-column:1 / -1;margin:0 0 6px;font-family:var(--font-display);font-size:12px;font-weight:600;color:var(--text-muted);letter-spacing:.18em;text-transform:uppercase;}
+  .legend dt{grid-column:1;font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:.04em;text-transform:uppercase;}
+  .legend dd{grid-column:2;margin:0;}
+  .legend code{background:#F4F5F7;border:1px solid var(--bg-border);padding:1px 6px;border-radius:4px;font-family:var(--font-numeric);font-size:11px;color:var(--text-primary);}
+</style>
+</head>
+<body>
+
+  <header class="doc-header">
+    <div>
+      <p class="doc-eyebrow">FuelWell · Phase 0.5 · Step 4 — Mockups</p>
+      <h1 class="doc-title">M17 Recipe Detail · Sheet-pan chicken</h1>
+      <p class="doc-sub">Promoted from approved wireframe § 3.17 V1 (stacked actions). Three states: top-of-recipe default, scrolled into instructions with the compact sticky title bar, and the dark Cooking-mode immersive step-by-step with a live timer.</p>
+    </div>
+    <div class="doc-meta">
+      iPhone 15 Pro · 393 × 852 pt<br>
+      Pushed · tab Log active<br>
+      Recipe · 94% fit
+    </div>
+  </header>
+
+  <div class="frames-row" id="frames"></div>
+
+  <section class="legend">
+    <h3>Mockup notes · Step 4</h3>
+
+    <dt>Hero</dt>
+    <dd>4:3 photo placeholder with the four-ingredient blob pattern (chicken, sweet potato, broccoli, balsamic). Glassy nav row floats top — back, share, heart, ⋯.</dd>
+
+    <dt>Title block + meta</dt>
+    <dd>Recipe title in Outfit 700 22pt with -0.018em. Meta row: 25 min · 4 servings · 540 kcal/serving in <code>color.text.secondary</code> with each numeric value bumped to <code>color.text.primary</code> DM Sans tabular.</dd>
+
+    <dt>Fit strap</dt>
+    <dd>Dark band under the meta: 44pt brand-green progress ring + "<strong>94% fit</strong> for tonight — lands your protein gap and 32 kcal under budget." Tap → expanded breakdown that mirrors M15's pick-detail card. Replaces the wireframe's plain meta line with engine context.</dd>
+
+    <dt>4-cell macros</dt>
+    <dd>Kcal · Protein · Carbs · Fat each in a small white card. <strong>DM Sans 700</strong> tabular. These render <em>per serving</em>; the serving stepper in the next section is what scales them in the log.</dd>
+
+    <dt>Actions</dt>
+    <dd>Gradient-brand "Log this meal" primary + three ghost square buttons (Add to grocery, Add to plan, ⋯ more). Long-press primary → portion-editor sheet (3.13) with quantity pre-bound.</dd>
+
+    <dt>Ingredients</dt>
+    <dd>Right-aligned servings stepper inside the section header. List shows checkbox + qty + name with a tiny "Have it" pantry pill in success-green for items already in your pantry. Tap a row → strikethrough + checkbox fills with inverted-dark (the "I have this" state).</dd>
+
+    <dt>Steps</dt>
+    <dd>Each step is a card with a 32pt dark numbered tile. Time-bound steps carry a blue info pill ("28 min"). Tapping a card promotes it into Cooking mode (V3).</dd>
+
+    <dt>Sticky compact nav · V2</dt>
+    <dd>Once the user scrolls past the hero, a frosted-glass bar slides in with back, the recipe name in Outfit 700 15pt (1-line clamp), and the heart. The hero photo scrolls away underneath; the page reads as a long-scroll recipe.</dd>
+
+    <dt>Cooking mode · V3</dt>
+    <dd>Dark immersive overlay launched from "Start cooking" or any step tap. Top: step progress bars (one per step, current segmented). Body: STEP 3 / 6 eyebrow, the full instruction headline in Outfit 700 26pt + a supporting detail paragraph. Below: a live 28-min timer card (ring shows remaining), then the ingredients-for-this-step mini-card. Bottom: prev / next nav with the gradient-brand "Next step →" primary.</dd>
+  </section>
+
+<script>
+  const statusBar = (onDark) => `
+    <div class="status-bar ${onDark?'on-dark':''}">
+      <div class="time">9:41</div>
+      <div class="signals">
+        <svg width="17" height="11" viewBox="0 0 17 11" fill="none"><rect x="0" y="7" width="3" height="4" rx="0.5" fill="#0A0A0F"/><rect x="4" y="5" width="3" height="6" rx="0.5" fill="#0A0A0F"/><rect x="8" y="3" width="3" height="8" rx="0.5" fill="#0A0A0F"/><rect x="12" y="0" width="3" height="11" rx="0.5" fill="#0A0A0F"/></svg>
+        <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><path d="M8 11l-2.5-2.5a3.5 3.5 0 014.9 0L8 11z" fill="#0A0A0F"/><path d="M2 5a8.5 8.5 0 0112 0l-1.5 1.5a6 6 0 00-9 0L2 5z" fill="#0A0A0F"/><path d="M5 8a4.5 4.5 0 016 0l-1.5 1.5a2.5 2.5 0 00-3 0L5 8z" fill="#0A0A0F"/></svg>
+        <span class="signal-bat"></span>
+      </div>
+    </div>`;
+  const island = `<div class="dynamic-island"></div>`;
+
+  const ic = {
+    back: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    share: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 4v12M8 8l4-4 4 4M5 14v4a2 2 0 002 2h10a2 2 0 002-2v-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    heart: `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7-4.6-9-9.5C1.5 7 4.5 3.5 8 3.5c2 0 3.4 1 4 2 .6-1 2-2 4-2 3.5 0 6.5 3.5 5 8C19 16.4 12 21 12 21Z"/></svg>`,
+    more: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="6" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="18" cy="12" r="1.8"/></svg>`,
+    plus: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>`,
+    minus: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>`,
+    cart: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 4h2l2.5 12a2 2 0 002 1.5h8a2 2 0 002-1.6L21 7H6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.5" r="1.5" fill="currentColor"/><circle cx="17" cy="20.5" r="1.5" fill="currentColor"/></svg>`,
+    cal: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="16" rx="2.5" stroke="currentColor" stroke-width="1.8"/><path d="M3 9h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`,
+    check: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12.5l5 5L19.5 7.5" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    chef: `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4a4 4 0 014 4c1.5 0 3 1.5 3 3.5S17.5 15 16 15v3H8v-3c-1.5 0-3-1.5-3-3.5S6.5 8 8 8a4 4 0 014-4Z"/></svg>`,
+    clock: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`,
+    fire: `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c1 4 5 4 5 9a5 5 0 11-10 0c0-3 3-3 3-6 0-1 1-2 2-3Z"/></svg>`,
+    arrowR: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    arrowL: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M19 12H5M11 6l-6 6 6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    pause: `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="7" y="5" width="3" height="14" rx="1"/><rect x="14" y="5" width="3" height="14" rx="1"/></svg>`,
+    x: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`,
+  };
+
+  function hero() {
+    return `
+      <div class="hero">
+        <span class="ing-shape b1"></span>
+        <span class="ing-shape b2"></span>
+        <span class="ing-shape b3"></span>
+        <span class="ing-shape b4"></span>
+      </div>`;
+  }
+
+  function navFloat(stickyHeartOn) {
+    return `<div class="nav-float">
+      <div class="nav-btn-glass">${ic.back}</div>
+      <div></div>
+      <div class="nav-btn-glass">${ic.share}</div>
+      <div class="nav-btn-glass ${stickyHeartOn?'heart-on':''}">${ic.heart}</div>
+    </div>`;
+  }
+
+  function fitRing(pct) {
+    const r = 18, c = 2 * Math.PI * r, dash = (pct/100) * c;
+    return `
+      <div class="ring">
+        <svg width="44" height="44" viewBox="0 0 44 44" style="transform: rotate(-90deg);">
+          <circle cx="22" cy="22" r="${r}" stroke="rgba(255,255,255,0.10)" stroke-width="4" fill="none"/>
+          <circle cx="22" cy="22" r="${r}" stroke="${'var(--brand-green)'}" stroke-width="4" fill="none" stroke-linecap="round" stroke-dasharray="${dash} ${c}"/>
+        </svg>
+        <div class="pct">${pct}%</div>
+      </div>`;
+  }
+
+  function ingRow(qty, name, checked, have) {
+    const q = qty.split(' ');
+    return `<div class="ing-row ${checked?'checked':''}">
+      <div class="check">${ic.check}</div>
+      <div class="qty">${q[0]}<span class="u"> ${q.slice(1).join(' ')}</span></div>
+      <div class="name">${name}</div>
+      <div class="pantry-pill ${have?'have':''}">${have?'Have':'Need'}</div>
+    </div>`;
+  }
+
+  function step(n, text, time, done) {
+    const timePill = time ? `<div class="meta">${ic.clock} ${time}</div>` : '';
+    return `<div class="step ${done?'done':''}">
+      <div class="n">${done?ic.check:n}</div>
+      <div class="body-step">
+        <div class="txt">${text}</div>
+        ${timePill}
+      </div>
+    </div>`;
+  }
+
+  // ===== V1 default =====
+  function v1() {
+    return `
+      ${hero()}
+      ${navFloat(false)}
+      <div class="content">
+        <div class="body">
+          <h1 class="recipe-title">Sheet-pan chicken, sweet potato &amp; broccoli</h1>
+          <div class="meta-row">
+            <span class="item">${ic.clock}<span class="v">25</span> min</span>
+            <span class="dot">·</span>
+            <span class="item">${ic.chef}<span class="v">4</span> servings</span>
+            <span class="dot">·</span>
+            <span class="item">${ic.fire}<span class="v">540</span> kcal/serv</span>
+          </div>
+          <div class="fit-strap">
+            <div class="l">
+              ${fitRing(94)}
+              <div class="txt"><b>94% fit</b> for tonight — protein gap closed, 32 kcal under budget.</div>
+            </div>
+          </div>
+          <div class="mac4">
+            <div class="cell"><div class="lbl">Kcal</div><div class="v">540</div></div>
+            <div class="cell"><div class="lbl">Protein</div><div class="v">42<span class="u">g</span></div></div>
+            <div class="cell"><div class="lbl">Carbs</div><div class="v">54<span class="u">g</span></div></div>
+            <div class="cell"><div class="lbl">Fat</div><div class="v">14<span class="u">g</span></div></div>
+          </div>
+          <div class="actions">
+            <div class="btn-pri">${ic.plus} Log this meal</div>
+            <div class="btn-ghost">${ic.cart}</div>
+            <div class="btn-ghost">${ic.cal}</div>
+            <div class="btn-ghost">${ic.more}</div>
+          </div>
+          <div class="sec-h">
+            <div class="l">Ingredients</div>
+            <div class="serv-step">
+              <div class="s">${ic.minus}</div>
+              <div class="v">2<span class="u">servings</span></div>
+              <div class="s">${ic.plus}</div>
+            </div>
+          </div>
+          <div class="ing-list">
+            ${ingRow('1 lb', 'Chicken thighs, boneless', false, false)}
+            ${ingRow('1 large', 'Sweet potato, diced', false, true)}
+            ${ingRow('2 cups', 'Broccoli florets', false, false)}
+            ${ingRow('2 tbsp', 'Olive oil', true, true)}
+            ${ingRow('1 tbsp', 'Balsamic vinegar', false, true)}
+            ${ingRow('1 tsp', 'Smoked paprika', false, true)}
+            ${ingRow('to taste', 'Salt &amp; black pepper', true, true)}
+          </div>
+        </div>
+      </div>`;
+  }
+
+  // ===== V2 scrolled =====
+  function v2() {
+    return `
+      ${hero()}
+      ${navFloat(true)}
+      <div class="sticky-nav">
+        <div class="nav-btn">${ic.back}</div>
+        <div class="nm">Sheet-pan chicken &amp; sweet potato</div>
+        <div class="nav-btn" style="color: var(--semantic-error)">${ic.heart}</div>
+      </div>
+      <div class="content">
+        <div class="body" style="padding-top: 8px;">
+          <div class="sec-h" style="margin-top: 8px;">
+            <div class="l">Ingredients</div>
+            <div class="serv-step">
+              <div class="s">${ic.minus}</div>
+              <div class="v">2<span class="u">servings</span></div>
+              <div class="s">${ic.plus}</div>
+            </div>
+          </div>
+          <div class="ing-list">
+            ${ingRow('1 lb', 'Chicken thighs, boneless', true, false)}
+            ${ingRow('1 large', 'Sweet potato, diced', true, true)}
+            ${ingRow('2 cups', 'Broccoli florets', false, false)}
+            ${ingRow('2 tbsp', 'Olive oil', true, true)}
+          </div>
+          <div class="sec-h">
+            <div class="l">Method · 6 steps</div>
+            <div style="font-family: var(--font-body); font-size: 12px; font-weight: 600; color: var(--semantic-success);">Start cooking →</div>
+          </div>
+          <div class="step-list">
+            ${step(1, 'Preheat oven to <b>425°F</b>. Line a sheet pan with parchment.', '', true)}
+            ${step(2, 'Toss diced sweet potato with 1 tbsp olive oil, smoked paprika, salt and pepper. Spread on the pan and roast.', '10 min head-start', true)}
+            ${step(3, 'Pat chicken dry, season with salt, pepper and remaining paprika. Add to pan alongside the sweet potato.', '', false)}
+            ${step(4, 'Roast until chicken reads <b>165°F internal</b> and sweet potato is tender — about 18 min more.', '18 min', false)}
+            ${step(5, 'Add broccoli florets in the last 8 min so they char but stay crisp. Drizzle with balsamic vinegar before pulling.', '8 min', false)}
+            ${step(6, 'Rest chicken 3 min before slicing. Plate, divide into 4, and log against your evening macros.', '', false)}
+          </div>
+        </div>
+      </div>`;
+  }
+
+  // ===== V3 cooking mode =====
+  function v3() {
+    const r = 38, c = 2 * Math.PI * r, dash = (0.62) * c;
+    return `
+      <div class="cook-mode">
+        <div class="cook-header">
+          <div class="close">${ic.x}</div>
+          <div class="ttl">Cooking · sheet-pan chicken</div>
+          <div class="menu">${ic.more}</div>
+        </div>
+        <div class="step-progress">
+          <div class="bar done"></div>
+          <div class="bar done"></div>
+          <div class="bar active"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+        </div>
+        <div class="cook-body">
+          <div class="step-num">Step 3<span class="of">/ 6</span></div>
+          <h2 class="step-h1">Roast until 165°F.</h2>
+          <div class="step-detail">
+            Pat chicken dry, season with salt, pepper and the remaining paprika. Add it to the pan alongside the sweet potato. Roast until the chicken reads <b>165 °F internal</b> and sweet potato is fork-tender — about <b>18 minutes</b> more.
+          </div>
+          <div class="timer-card">
+            <div class="ring-big">
+              <svg width="86" height="86" viewBox="0 0 86 86">
+                <circle cx="43" cy="43" r="${r}" stroke="rgba(255,255,255,0.08)" stroke-width="6" fill="none"/>
+                <circle cx="43" cy="43" r="${r}" stroke="var(--brand-green)" stroke-width="6" fill="none" stroke-linecap="round" stroke-dasharray="${dash} ${c}"/>
+              </svg>
+              <div class="digit">11:24</div>
+            </div>
+            <div class="text">
+              <div class="lbl">Timer · roasting</div>
+              <div class="v"><span class="a">11:24</span> left of 18:00 · oven 425°F</div>
+            </div>
+            <div class="pause">${ic.pause}</div>
+          </div>
+          <div class="ingredients-mini">
+            <div class="lbl">For this step</div>
+            <div class="items">Chicken thighs<span class="v"> 1 lb</span>, smoked paprika<span class="v"> 1 tsp</span>, salt &amp; pepper, the prepped sweet potato from step 2.</div>
+          </div>
+          <div class="cook-bottom">
+            <div class="nav-side">${ic.arrowL}</div>
+            <div class="next">Next step ${ic.arrowR}</div>
+            <div class="nav-side disabled">${ic.arrowR}</div>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  const variations = [
+    { num:'Variation 01 · State', name:'Default · top of recipe', cap:'First render. Hero photo, fit-ring strap below the title meta, 4-cell macros, gradient-brand "Log this meal" action row, then the servings stepper + ingredients list.', body: v1(), onDark:false },
+    { num:'Variation 02 · State', name:'Scrolled · sticky title', cap:'User scrolled past the hero. Frosted sticky bar carries the recipe name. Method section visible — first two steps marked done. "Start cooking" link in the section header.', body: v2(), onDark:false },
+    { num:'Variation 03 · State', name:'Cooking mode · timer', cap:'Dark immersive overlay. Step 3 of 6 with a 18-min roast timer running (11:24 remaining, green progress arc), the for-this-step ingredient mini, and prev/next bottom controls.', body: v3(), onDark:true }
+  ];
+
+  const root = document.getElementById('frames');
+  root.innerHTML = variations.map(v => `
+    <section class="variation">
+      <div class="v-label">
+        <div class="v-num">${v.num}</div>
+        <div class="v-name">${v.name}</div>
+        <div class="v-cap">${v.cap}</div>
+      </div>
+      <div class="device">
+        ${statusBar(v.onDark)}${island}
+        <div class="screen">${v.body}</div>
+        <div class="home-indicator"></div>
+      </div>
+    </section>
+  `).join('');
+</script>
+</body>
+</html>

@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>FuelWell · M16 Recipe Browser · Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-base: #F4F5F7; --bg-surface: #FFFFFF; --bg-elevated: #0F1117;
+    --bg-border: #E5E7EB; --bg-border-soft: #EEF0F3; --bg-border-dark: #2A2A3A;
+    --text-primary: #0A0A0F; --text-body: #1F2937; --text-secondary: #6B7280;
+    --text-muted: #9CA3AF; --text-disabled: #C7CCD3; --text-on-dark: #FFFFFF; --text-on-dark-muted: #9AA0AC;
+    --brand-green: #47E7B0; --action-green: #00D278;
+    --semantic-success: #00D278; --semantic-warning: #F59E0B; --semantic-info: #00B4D8; --semantic-premium: #A855F7;
+    --macro-protein: #00D278; --macro-carbs: #F59E0B; --macro-fat: #A855F7;
+    --gradient-brand: linear-gradient(135deg, #00D278 0%, #47E7B0 100%);
+    --radius-md: 12px; --radius-lg: 20px; --radius-xl: 28px; --radius-pill: 999px;
+    --elev-1: 0 1px 2px rgba(15,17,23,.04), 0 1px 0 rgba(15,17,23,.02);
+    --elev-2: 0 4px 14px rgba(15,17,23,.06), 0 1px 2px rgba(15,17,23,.04);
+    --font-display: 'Outfit', system-ui, sans-serif;
+    --font-body: 'Inter', system-ui, sans-serif;
+    --font-system: -apple-system, 'SF Pro Display', system-ui, sans-serif;
+    --font-numeric: 'DM Sans', 'Inter', sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { background: #ECEDF0; color: var(--text-primary); font-family: var(--font-body); padding: 56px 48px 96px; min-width: 1380px; }
+
+  .doc-header { max-width: 1320px; margin: 0 auto 48px; display: flex; align-items: flex-end; justify-content: space-between; gap: 32px; border-bottom: 1px solid #D6D8DD; padding-bottom: 24px; }
+  .doc-eyebrow { font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-muted); margin: 0 0 8px; font-weight: 600; }
+  .doc-title { font-family: var(--font-display); font-size: 28px; font-weight: 700; margin: 0; letter-spacing: -0.018em; }
+  .doc-sub { font-size: 13px; color: var(--text-secondary); margin: 8px 0 0; max-width: 760px; line-height: 1.55; }
+  .doc-meta { font-family: var(--font-numeric); font-size: 11px; color: var(--text-muted); text-align: right; letter-spacing: 0.04em; line-height: 1.7; }
+
+  .frames-row { display: flex; gap: 64px; justify-content: center; align-items: flex-start; }
+  .variation { display: flex; flex-direction: column; align-items: center; width: 393px; }
+  .v-label { margin-bottom: 18px; text-align: center; width: 100%; }
+  .v-num { font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-muted); font-weight: 600; }
+  .v-name { font-family: var(--font-display); font-size: 16px; font-weight: 600; color: var(--text-primary); margin-top: 4px; letter-spacing: -0.005em; }
+  .v-cap { font-size: 12px; color: var(--text-secondary); margin-top: 4px; line-height: 1.45; max-width: 340px; }
+
+  .device { position: relative; width: 393px; height: 852px; background: var(--bg-base); border-radius: 56px; overflow: hidden; box-shadow: 0 0 0 12px #0A0A0F, 0 0 0 13px #2A2A30, 0 30px 80px rgba(15,17,23,.28), 0 12px 32px rgba(15,17,23,.16); }
+  .status-bar { position: absolute; top: 0; left: 0; right: 0; height: 54px; display: flex; align-items: flex-end; justify-content: space-between; padding: 0 28px 9px; z-index: 30; pointer-events: none; }
+  .status-bar .time { font-family: var(--font-system); font-size: 17px; font-weight: 600; color: var(--text-primary); }
+  .status-bar .signals { display: inline-flex; gap: 6px; align-items: center; }
+  .signal-bat { display: inline-block; width: 26px; height: 12px; border: 1.2px solid var(--text-primary); border-radius: 3px; position: relative; }
+  .signal-bat::after { content: ""; position: absolute; right: -3px; top: 3px; width: 2px; height: 5px; background: var(--text-primary); border-radius: 0 1.5px 1.5px 0; }
+  .signal-bat::before { content: ""; position: absolute; left: 1px; top: 1px; bottom: 1px; width: 78%; background: var(--text-primary); border-radius: 1.5px; }
+  .dynamic-island { position: absolute; top: 11px; left: 50%; transform: translateX(-50%); width: 124px; height: 36px; background: #0A0A0F; border-radius: 22px; z-index: 31; }
+  .home-indicator { position: absolute; bottom: 9px; left: 50%; transform: translateX(-50%); width: 134px; height: 5px; background: var(--text-primary); border-radius: 3px; opacity: 0.7; z-index: 32; }
+  .screen { position: absolute; top: 0; left: 0; right: 0; bottom: 0; padding: 54px 0 0; display: flex; flex-direction: column; }
+
+  /* Nav */
+  .nav { height: 44px; display: grid; grid-template-columns: 56px 1fr 56px; align-items: center; padding: 4px 8px 0; flex-shrink: 0; }
+  .nav-btn { width: 38px; height: 38px; border-radius: 50%; background: var(--bg-surface); border: 1px solid var(--bg-border); display: flex; align-items: center; justify-content: center; color: var(--text-body); box-shadow: var(--elev-1); margin: 0 auto; }
+  .nav-title { text-align: center; font-family: var(--font-display); font-size: 18px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.012em; }
+  .nav-title .sub { display: block; margin-top: 1px; font-family: var(--font-body); font-size: 11px; font-weight: 500; color: var(--text-secondary); letter-spacing: 0.06em; text-transform: uppercase; }
+
+  .content { flex: 1; padding: 0 16px 100px; overflow: hidden; position: relative; }
+
+  /* Segmented tabs */
+  .top-seg {
+    margin-top: 12px;
+    display: flex;
+    background: var(--bg-border-soft);
+    border: 1px solid var(--bg-border);
+    border-radius: 12px;
+    padding: 3px;
+    height: 40px;
+    gap: 2px;
+  }
+  .top-seg .opt {
+    flex: 1;
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    font-family: var(--font-body);
+    font-size: 13.5px; font-weight: 500;
+    color: var(--text-body);
+    letter-spacing: -0.003em;
+  }
+  .top-seg .opt.active {
+    background: var(--bg-elevated);
+    color: var(--text-on-dark);
+    font-weight: 600;
+    box-shadow: 0 1px 2px rgba(15,17,23,.20);
+  }
+  .top-seg .opt .badge {
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: rgba(0,210,120,0.18);
+    color: var(--semantic-success);
+    font-family: var(--font-numeric);
+    font-size: 10px; font-weight: 700;
+  }
+  .top-seg .opt.active .badge { background: var(--brand-green); color: var(--text-primary); }
+
+  /* Remaining-macros banner */
+  .rm-band {
+    margin-top: 12px;
+    background: var(--bg-elevated);
+    color: var(--text-on-dark);
+    border-radius: var(--radius-lg);
+    padding: 14px 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .rm-band::before {
+    content: ""; position: absolute; top: 0; right: 0; width: 50%; height: 100%;
+    background: radial-gradient(60% 60% at 80% 50%, rgba(71,231,176,0.22) 0%, transparent 60%);
+  }
+  .rm-band .lbl { display: flex; align-items: center; gap: 6px; font-family: var(--font-body); font-size: 10.5px; font-weight: 600; color: var(--text-on-dark-muted); letter-spacing: 0.14em; text-transform: uppercase; }
+  .rm-band .lbl .pulse { width: 5px; height: 5px; border-radius: 50%; background: var(--brand-green); box-shadow: 0 0 0 3px rgba(71,231,176,0.30); }
+  .rm-band .kcal-line { margin-top: 5px; font-family: var(--font-display); font-size: 20px; font-weight: 600; letter-spacing: -0.015em; line-height: 1.18; }
+  .rm-band .kcal-line .accent { background: linear-gradient(90deg, #47E7B0, #00B4D8); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+  .rm-band .row {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--bg-border-dark);
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+  }
+  .rm-band .row .m { display: flex; align-items: center; gap: 5px; font-family: var(--font-body); font-size: 11px; color: var(--text-on-dark-muted); }
+  .rm-band .row .m .sw { width: 6px; height: 6px; border-radius: 1.5px; }
+  .rm-band .row .m .v { font-family: var(--font-numeric); font-feature-settings: "tnum" 1; color: var(--text-on-dark); font-weight: 600; }
+
+  /* Section head */
+  .sec-h { display: flex; align-items: baseline; justify-content: space-between; margin: 18px 4px 8px; }
+  .sec-h .l { font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.005em; }
+  .sec-h .r { font-family: var(--font-body); font-size: 12px; font-weight: 500; color: var(--text-secondary); }
+
+  /* Top-3 horizontal carousel */
+  .top3-row {
+    margin: 0 -16px;
+    padding: 0 16px;
+    display: flex; gap: 10px;
+    overflow: hidden;
+  }
+  .top3-card {
+    flex-shrink: 0;
+    width: 220px;
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--elev-1);
+    overflow: hidden;
+  }
+  .top3-card.top { border: 1.5px solid var(--semantic-success); box-shadow: 0 8px 24px rgba(0,210,120,0.12), var(--elev-1); }
+  .top3-card .img {
+    height: 120px;
+    position: relative;
+    background: linear-gradient(135deg, var(--c1, #FCD34D), var(--c2, #F59E0B));
+    overflow: hidden;
+  }
+  .top3-card .img::before {
+    content: ""; position: absolute; inset: 0;
+    background:
+      radial-gradient(circle at 25% 30%, rgba(255,255,255,0.20) 0%, transparent 30%),
+      radial-gradient(circle at 75% 75%, rgba(0,0,0,0.18) 0%, transparent 30%);
+  }
+  .top3-card .img .fit-badge {
+    position: absolute; top: 10px; left: 10px;
+    padding: 4px 9px;
+    border-radius: 999px;
+    background: rgba(15,17,23,0.78);
+    backdrop-filter: blur(8px);
+    color: var(--text-on-dark);
+    font-family: var(--font-numeric);
+    font-size: 11px; font-weight: 700;
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .top3-card.top .img .fit-badge { background: var(--gradient-brand); color: var(--text-primary); }
+  .top3-card .img .save {
+    position: absolute; top: 8px; right: 8px;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(6px);
+    color: var(--text-body);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .top3-card .body { padding: 12px; }
+  .top3-card .name {
+    font-family: var(--font-body);
+    font-size: 14px; font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.003em;
+    line-height: 1.25;
+    /* clamp */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .top3-card .meta { margin-top: 4px; display: flex; gap: 8px; font-family: var(--font-body); font-size: 11.5px; font-weight: 500; color: var(--text-secondary); }
+  .top3-card .meta .dot { color: var(--text-disabled); }
+  .top3-card .macs { margin-top: 8px; display: flex; gap: 8px; font-family: var(--font-body); font-size: 11px; color: var(--text-body); }
+  .top3-card .macs .m { display: flex; align-items: center; gap: 4px; }
+  .top3-card .macs .m .sw { width: 6px; height: 6px; border-radius: 1.5px; }
+  .top3-card .macs .m .v { font-family: var(--font-numeric); color: var(--text-primary); font-weight: 600; }
+
+  /* Filter chips */
+  .filter-row {
+    display: flex; gap: 6px;
+    margin: 8px -16px 0;
+    padding: 4px 16px 8px;
+    overflow: hidden;
+  }
+  .chip {
+    flex-shrink: 0; height: 32px; padding: 0 12px;
+    border-radius: 999px;
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    box-shadow: var(--elev-1);
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--font-body);
+    font-size: 12.5px; font-weight: 500;
+    color: var(--text-body);
+    letter-spacing: -0.003em;
+  }
+  .chip.on { background: var(--bg-elevated); color: var(--text-on-dark); border-color: var(--bg-elevated); font-weight: 600; }
+  .chip.success { background: rgba(0,210,120,0.10); color: var(--semantic-success); border-color: rgba(0,210,120,0.32); font-weight: 700; }
+
+  /* Recipe grid */
+  .recipe-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .rc {
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--elev-1);
+    overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+  .rc .img {
+    aspect-ratio: 1 / 0.78;
+    background: linear-gradient(135deg, var(--c1, #FCD34D), var(--c2, #F59E0B));
+    position: relative;
+    overflow: hidden;
+  }
+  .rc .img::before {
+    content: ""; position: absolute; inset: 0;
+    background:
+      radial-gradient(circle at 30% 30%, rgba(255,255,255,0.18) 0%, transparent 28%),
+      radial-gradient(circle at 70% 70%, rgba(0,0,0,0.20) 0%, transparent 28%);
+  }
+  .rc .save {
+    position: absolute; top: 8px; right: 8px;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(6px);
+    color: var(--text-body);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .rc .save.on { color: var(--semantic-error, #EF4444); }
+  .rc .badge-tl {
+    position: absolute; top: 8px; left: 8px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: rgba(15,17,23,0.80);
+    color: var(--text-on-dark);
+    font-family: var(--font-body);
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.06em;
+  }
+  .rc .badge-tl.success { background: var(--semantic-success); color: var(--text-on-dark); }
+  .rc .body { padding: 10px 12px 12px; flex: 1; display: flex; flex-direction: column; }
+  .rc .name {
+    font-family: var(--font-body);
+    font-size: 13px; font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.003em;
+    line-height: 1.25;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .rc .meta { margin-top: 3px; font-family: var(--font-body); font-size: 11px; color: var(--text-secondary); letter-spacing: -0.002em; }
+  .rc .footer {
+    margin-top: auto;
+    padding-top: 8px;
+    display: flex; justify-content: space-between; align-items: center; gap: 4px;
+  }
+  .rc .kcal {
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 13px; font-weight: 700;
+    color: var(--text-primary);
+  }
+  .rc .kcal .u { font-family: var(--font-body); font-size: 9px; font-weight: 600; color: var(--text-muted); letter-spacing: 0.12em; text-transform: uppercase; margin-left: 2px; }
+  .rc .fit-mini {
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: rgba(0,210,120,0.10);
+    color: var(--semantic-success);
+    border: 1px solid rgba(0,210,120,0.32);
+    font-family: var(--font-numeric);
+    font-size: 10.5px; font-weight: 600;
+  }
+  .rc .fit-mini.warn { background: rgba(245,158,11,0.10); color: var(--semantic-warning); border-color: rgba(245,158,11,0.36); }
+  .rc .protein-tag {
+    margin-top: 4px;
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 1px 6px;
+    background: rgba(0,210,120,0.10);
+    border: 1px solid rgba(0,210,120,0.30);
+    border-radius: 6px;
+    font-family: var(--font-body);
+    font-size: 10px; font-weight: 600;
+    color: var(--semantic-success);
+    align-self: flex-start;
+  }
+  .rc .protein-tag .v {
+    font-family: var(--font-numeric);
+    font-size: 11px; font-weight: 700;
+  }
+
+  /* Saved-tab: collection rows */
+  .collection-row {
+    display: flex; gap: 12px;
+    padding: 12px;
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--elev-1);
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .collection-row .stack {
+    width: 88px; height: 64px;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .collection-row .stack .l {
+    position: absolute;
+    width: 64px; height: 64px;
+    border-radius: 12px;
+    border: 2px solid #fff;
+    box-shadow: 0 4px 10px rgba(15,17,23,0.10);
+  }
+  .collection-row .stack .l.b { left: 24px; transform: rotate(6deg); }
+  .collection-row .stack .l.m { left: 12px; transform: rotate(-3deg); z-index: 1; }
+  .collection-row .stack .l.t { left: 0; z-index: 2; }
+  .collection-row .body { flex: 1; min-width: 0; }
+  .collection-row .nm {
+    font-family: var(--font-body);
+    font-size: 15px; font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.005em;
+    line-height: 1.2;
+  }
+  .collection-row .meta {
+    margin-top: 2px;
+    font-family: var(--font-body);
+    font-size: 12px; font-weight: 500;
+    color: var(--text-secondary);
+  }
+  .collection-row .chev { color: var(--text-muted); }
+
+  /* Search field */
+  .search-field {
+    margin-top: 12px;
+    height: 42px;
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: 14px;
+    box-shadow: var(--elev-1);
+    padding: 0 12px 0 38px;
+    display: flex; align-items: center;
+    position: relative;
+    font-family: var(--font-body);
+    font-size: 14px; font-weight: 500;
+    color: var(--text-muted);
+  }
+  .search-field .glyph { position: absolute; left: 12px; color: var(--text-muted); }
+
+  /* FAB */
+  .fab {
+    position: absolute;
+    bottom: 102px; right: 18px;
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: var(--gradient-brand);
+    color: var(--text-on-dark);
+    box-shadow: 0 12px 28px rgba(0,210,120,.36), 0 4px 8px rgba(15,17,23,.18);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 25;
+  }
+
+  /* Tab bar */
+  .tabbar { position: absolute; left: 0; right: 0; bottom: 0; height: 88px; background: rgba(255,255,255,0.92); backdrop-filter: blur(18px); border-top: 1px solid var(--bg-border); display: grid; grid-template-columns: repeat(5, 1fr); padding: 8px 6px 30px; z-index: 22; }
+  .tab { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: var(--text-muted); }
+  .tab.active { color: var(--text-primary); }
+  .tab-glyph { width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; }
+  .tab-label { font-family: var(--font-body); font-size: 10px; font-weight: 600; letter-spacing: 0.02em; }
+
+  /* Legend */
+  .legend { max-width: 1320px; margin: 56px auto 0; padding: 22px 26px; background: #FFFFFF; border: 1px solid var(--bg-border); border-radius: var(--radius-lg); display: grid; grid-template-columns: 220px 1fr; gap: 14px 28px; font-size: 12px; color: var(--text-secondary); line-height: 1.55; }
+  .legend h3 { grid-column: 1 / -1; margin: 0 0 6px; font-family: var(--font-display); font-size: 12px; font-weight: 600; color: var(--text-muted); letter-spacing: 0.18em; text-transform: uppercase; }
+  .legend dt { grid-column: 1; font-size: 11px; font-weight: 600; color: var(--text-muted); letter-spacing: 0.04em; text-transform: uppercase; }
+  .legend dd { grid-column: 2; margin: 0; }
+  .legend code { background: #F4F5F7; border: 1px solid var(--bg-border); padding: 1px 6px; border-radius: 4px; font-family: var(--font-numeric); font-size: 11px; color: var(--text-primary); }
+</style>
+</head>
+<body>
+
+  <header class="doc-header">
+    <div>
+      <p class="doc-eyebrow">FuelWell · Phase 0.5 · Step 4 — Mockups</p>
+      <h1 class="doc-title">M16 Recipe Browser</h1>
+      <p class="doc-sub">Promoted from approved wireframe § 3.16 V1 (hero strip + grid below — leads with remaining-macros ranking, the FuelWell differentiator). Three states: macro-ranked default, browse-all with filter chips, and the Saved collections tab.</p>
+    </div>
+    <div class="doc-meta">
+      iPhone 15 Pro · 393 × 852 pt<br>
+      Pushed · tab Log active<br>
+      Section · Recipes
+    </div>
+  </header>
+
+  <div class="frames-row" id="frames"></div>
+
+  <section class="legend">
+    <h3>Mockup notes · Step 4</h3>
+
+    <dt>Top segmented</dt>
+    <dd>Three options: <strong>For your macros</strong> (default) · Browse all · Saved. Active cell uses <code>bg.elevated</code>. The "For your macros" tab carries a small green count badge showing how many fits the engine found ("12").</dd>
+
+    <dt>Remaining-macros banner</dt>
+    <dd>Inverted dark band with the "WHAT'S LEFT" eyebrow, a 20pt headline ("<strong>714 kcal</strong>, lean protein needed") with a gradient-text accent on the operative phrase, and the three macro fingerprints beneath. Same vocabulary as M14's strap.</dd>
+
+    <dt>Top-3 carousel · V1</dt>
+    <dd>Three larger cards horizontally — recipe photo with a glassy fit-percentage badge top-left (gradient-brand on top pick, dark glass on the others) and a heart save-button top-right. Card body carries the name (Outfit/Inter 700 14pt, 2-line clamp), time · servings meta, and a macro fingerprint with the protein number bumped.</dd>
+
+    <dt>"More fits" grid</dt>
+    <dd>2-column grid beneath the carousel — same recipe-card vocabulary but trimmed: 1:0.78 image, name, time meta, footer with kcal stack and a green fit-mini chip showing the kcal-budget delta. Cards carry an optional left-corner protein tag for recipes that close the protein gap specifically.</dd>
+
+    <dt>Browse-all · V2</dt>
+    <dd>Banner collapses; search field appears up top. Filter chip row goes wide — All / Hi-protein / Lower carb / 30-min / Vegetarian / Pantry-only. First chip stays selected. Grid drops the fit-mini chip and the engine ranking; results sort by relevance to filter set.</dd>
+
+    <dt>Saved · V3</dt>
+    <dd>Three collection rows up top (stacked 64pt thumb stacks): Weeknight wins / Hi-protein staples / Sam-approved. Below: 2-col grid of individually-saved recipes with the heart filled. Search reduces scope to saved-only.</dd>
+
+    <dt>FAB</dt>
+    <dd>"+" FAB in the bottom-right opens the "Add custom recipe" sheet (out of scope for Pilot, but the entry exists from day 1).</dd>
+  </section>
+
+<script>
+  const statusBar = `
+    <div class="status-bar">
+      <div class="time">9:41</div>
+      <div class="signals">
+        <svg width="17" height="11" viewBox="0 0 17 11" fill="none"><rect x="0" y="7" width="3" height="4" rx="0.5" fill="#0A0A0F"/><rect x="4" y="5" width="3" height="6" rx="0.5" fill="#0A0A0F"/><rect x="8" y="3" width="3" height="8" rx="0.5" fill="#0A0A0F"/><rect x="12" y="0" width="3" height="11" rx="0.5" fill="#0A0A0F"/></svg>
+        <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><path d="M8 11l-2.5-2.5a3.5 3.5 0 014.9 0L8 11z" fill="#0A0A0F"/><path d="M2 5a8.5 8.5 0 0112 0l-1.5 1.5a6 6 0 00-9 0L2 5z" fill="#0A0A0F"/><path d="M5 8a4.5 4.5 0 016 0l-1.5 1.5a2.5 2.5 0 00-3 0L5 8z" fill="#0A0A0F"/></svg>
+        <span class="signal-bat"></span>
+      </div>
+    </div>`;
+  const island = `<div class="dynamic-island"></div>`;
+
+  const ic = {
+    back: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    search: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M16 16l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`,
+    plus: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 4v16M4 12h16" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>`,
+    heart: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 21s-7-4.6-9-9.5C1.5 7 4.5 3.5 8 3.5c2 0 3.4 1 4 2 .6-1 2-2 4-2 3.5 0 6.5 3.5 5 8C19 16.4 12 21 12 21Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>`,
+    heartF: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7-4.6-9-9.5C1.5 7 4.5 3.5 8 3.5c2 0 3.4 1 4 2 .6-1 2-2 4-2 3.5 0 6.5 3.5 5 8C19 16.4 12 21 12 21Z"/></svg>`,
+    chev: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    sparkle: `<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2 6 6 2-6 2-2 6-2-6-6-2 6-2 2-6Z"/></svg>`,
+    filter: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M7 12h10M10 18h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`,
+    tabHome: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11l8-7 8 7v8a1 1 0 01-1 1h-4v-6h-6v6H5a1 1 0 01-1-1v-8Z"/></svg>`,
+    tabLogA: `<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M9 8h6M9 12h6M9 16h3" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></svg>`,
+    tabCoach: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11a8 8 0 1116 0v3a3 3 0 01-3 3h-1v-7h4M4 11v3a3 3 0 003 3h1v-7H4"/></svg>`,
+    tabLearn: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5.5C4 4.7 4.7 4 5.5 4H10a3 3 0 013 3v14a2 2 0 00-2-2H5.5A1.5 1.5 0 014 17.5v-12ZM20 5.5C20 4.7 19.3 4 18.5 4H14a3 3 0 00-3 3v14a2 2 0 012-2h5.5a1.5 1.5 0 001.5-1.5v-12Z"/></svg>`,
+    tabProg: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg>`,
+  };
+
+  function tabbar() {
+    return `<div class="tabbar">
+      <div class="tab"><div class="tab-glyph">${ic.tabHome}</div><div class="tab-label">Home</div></div>
+      <div class="tab active"><div class="tab-glyph">${ic.tabLogA}</div><div class="tab-label">Log</div></div>
+      <div class="tab"><div class="tab-glyph">${ic.tabCoach}</div><div class="tab-label">Coach</div></div>
+      <div class="tab"><div class="tab-glyph">${ic.tabLearn}</div><div class="tab-label">Learn</div></div>
+      <div class="tab"><div class="tab-glyph">${ic.tabProg}</div><div class="tab-label">Progress</div></div>
+    </div>`;
+  }
+
+  function navBar() {
+    return `<div class="nav">
+      <div class="nav-btn">${ic.back}</div>
+      <div class="nav-title">Recipes<span class="sub">Pulled from your saved sources</span></div>
+      <div class="nav-btn">${ic.filter}</div>
+    </div>`;
+  }
+
+  function topSeg(active) {
+    return `<div class="top-seg">
+      <div class="opt ${active==='macros'?'active':''}">For your macros <span class="badge">12</span></div>
+      <div class="opt ${active==='browse'?'active':''}">Browse all</div>
+      <div class="opt ${active==='saved'?'active':''}">Saved</div>
+    </div>`;
+  }
+
+  function rmBand() {
+    return `
+      <div class="rm-band">
+        <div class="lbl"><span class="pulse"></span>What's left tonight</div>
+        <div class="kcal-line"><span class="accent">714 kcal</span>, lean protein needed</div>
+        <div class="row">
+          <div class="m"><span class="sw" style="background:var(--macro-protein)"></span><span class="v">32g</span> protein</div>
+          <div class="m"><span class="sw" style="background:var(--macro-carbs)"></span><span class="v">73g</span> carbs</div>
+          <div class="m"><span class="sw" style="background:var(--macro-fat)"></span><span class="v">16g</span> fat</div>
+        </div>
+      </div>`;
+  }
+
+  function top3() {
+    const cards = [
+      { fit:'94% fit', top:true, name:'Sheet-pan chicken, sweet potato & broccoli', meta:'25 min · serves 2', kcal:540, p:42, c:54, f:14, c1:'#FCD34D', c2:'#F59E0B' },
+      { fit:'89% fit', top:false, name:'Spicy chicken stir-fry over brown rice', meta:'18 min · serves 2', kcal:580, p:48, c:48, f:18, c1:'#FECACA', c2:'#EF4444' },
+      { fit:'82% fit', top:false, name:'Turkey & quinoa stuffed peppers', meta:'30 min · serves 4', kcal:480, p:38, c:52, f:14, c1:'#BAE6FD', c2:'#0284C7' },
+    ];
+    return `<div class="top3-row">${cards.map(c => `
+      <div class="top3-card ${c.top?'top':''}">
+        <div class="img" style="--c1:${c.c1}; --c2:${c.c2}">
+          <div class="fit-badge">${ic.sparkle}${c.fit}</div>
+          <div class="save">${ic.heart}</div>
+        </div>
+        <div class="body">
+          <div class="name">${c.name}</div>
+          <div class="meta">${c.meta}</div>
+          <div class="macs">
+            <div class="m"><span class="sw" style="background:var(--macro-protein)"></span><span class="v">${c.p}</span>P</div>
+            <div class="m"><span class="sw" style="background:var(--macro-carbs)"></span><span class="v">${c.c}</span>C</div>
+            <div class="m"><span class="sw" style="background:var(--macro-fat)"></span><span class="v">${c.f}</span>F</div>
+          </div>
+        </div>
+      </div>`).join('')}</div>`;
+  }
+
+  function rcCard(r) {
+    const protTag = r.protein ? `<div class="protein-tag">${ic.sparkle}<span class="v">${r.protein}g</span> protein</div>` : '';
+    const badge = r.badge ? `<div class="badge-tl ${r.badgeKind||''}">${r.badge}</div>` : '';
+    const fit = r.fit ? `<span class="fit-mini ${r.fitWarn?'warn':''}">${r.fit}</span>` : '';
+    return `
+      <div class="rc">
+        <div class="img" style="--c1:${r.c1}; --c2:${r.c2}">
+          ${badge}
+          <div class="save ${r.saved?'on':''}">${r.saved?ic.heartF:ic.heart}</div>
+        </div>
+        <div class="body">
+          <div class="name">${r.name}</div>
+          <div class="meta">${r.meta}</div>
+          ${protTag}
+          <div class="footer">
+            <div class="kcal">${r.kcal}<span class="u">kcal</span></div>
+            ${fit}
+          </div>
+        </div>
+      </div>`;
+  }
+
+  // ===== V1 =====
+  function v1() {
+    return `
+      ${navBar()}
+      <div class="content">
+        ${topSeg('macros')}
+        ${rmBand()}
+        <div class="sec-h"><div class="l">Top picks · ranked for tonight</div><div class="r">Updates live</div></div>
+        ${top3()}
+        <div class="sec-h"><div class="l">More that fit</div><div class="r">9 more</div></div>
+        <div class="recipe-grid">
+          ${rcCard({ name:'Honey-mustard salmon with rice', meta:'22 min · serves 2', kcal:610, c1:'#FECDD3', c2:'#FB7185', fit:'+104', protein:38 })}
+          ${rcCard({ name:'Korean beef bowl with greens', meta:'30 min · serves 2', kcal:540, c1:'#DDD6FE', c2:'#A78BFA', fit:'+174', protein:36, saved:true })}
+          ${rcCard({ name:'Tofu pad see ew', meta:'25 min · serves 2', kcal:640, c1:'#FED7AA', c2:'#FB923C', fit:'+74', protein:30 })}
+          ${rcCard({ name:'Greek chicken meatballs', meta:'35 min · serves 4', kcal:480, c1:'#BBF7D0', c2:'#22C55E', fit:'+234', protein:42 })}
+        </div>
+      </div>
+      <div class="fab">${ic.plus}</div>
+      ${tabbar()}`;
+  }
+
+  // ===== V2 browse =====
+  function v2() {
+    return `
+      ${navBar()}
+      <div class="content">
+        ${topSeg('browse')}
+        <div class="search-field">
+          <span class="glyph">${ic.search}</span>
+          Search recipes
+        </div>
+        <div class="filter-row">
+          <div class="chip on">All</div>
+          <div class="chip success">${ic.sparkle}Hi-protein</div>
+          <div class="chip">Lower carb</div>
+          <div class="chip">≤30 min</div>
+          <div class="chip">Vegetarian</div>
+          <div class="chip">Pantry-only</div>
+        </div>
+        <div class="sec-h"><div class="l">All recipes</div><div class="r">142 · sort: New</div></div>
+        <div class="recipe-grid">
+          ${rcCard({ name:'Sheet-pan chicken & vegetables', meta:'25 min · serves 2', kcal:540, c1:'#FCD34D', c2:'#F59E0B', badge:'NEW', badgeKind:'success' })}
+          ${rcCard({ name:'Brown butter gnocchi', meta:'20 min · serves 2', kcal:620, c1:'#FED7AA', c2:'#FB923C' })}
+          ${rcCard({ name:'Coconut curry shrimp', meta:'25 min · serves 2', kcal:580, c1:'#FECACA', c2:'#EF4444' })}
+          ${rcCard({ name:'Quinoa harvest bowl', meta:'30 min · serves 2', kcal:480, c1:'#BBF7D0', c2:'#22C55E', saved:true })}
+          ${rcCard({ name:'Turkey chili, slow', meta:'4 hr · serves 6', kcal:420, c1:'#FECDD3', c2:'#F87171' })}
+          ${rcCard({ name:'Honey-mustard salmon', meta:'22 min · serves 2', kcal:610, c1:'#BAE6FD', c2:'#0284C7' })}
+          ${rcCard({ name:'Halloumi & lentil salad', meta:'25 min · serves 2', kcal:520, c1:'#DDD6FE', c2:'#A78BFA' })}
+          ${rcCard({ name:'Korean beef bowl', meta:'30 min · serves 2', kcal:540, c1:'#FCA5A5', c2:'#DC2626' })}
+        </div>
+      </div>
+      <div class="fab">${ic.plus}</div>
+      ${tabbar()}`;
+  }
+
+  // ===== V3 saved =====
+  function v3() {
+    return `
+      ${navBar()}
+      <div class="content">
+        ${topSeg('saved')}
+        <div class="search-field">
+          <span class="glyph">${ic.search}</span>
+          Search your saved recipes
+        </div>
+        <div class="sec-h"><div class="l">Collections</div><div class="r">3</div></div>
+        <div class="collection-row">
+          <div class="stack">
+            <div class="l b" style="background: linear-gradient(135deg, #FCD34D, #F59E0B)"></div>
+            <div class="l m" style="background: linear-gradient(135deg, #BBF7D0, #22C55E)"></div>
+            <div class="l t" style="background: linear-gradient(135deg, #DDD6FE, #A78BFA)"></div>
+          </div>
+          <div class="body">
+            <div class="nm">Weeknight wins</div>
+            <div class="meta">14 recipes · all under 30 min</div>
+          </div>
+          <div class="chev">${ic.chev}</div>
+        </div>
+        <div class="collection-row">
+          <div class="stack">
+            <div class="l b" style="background: linear-gradient(135deg, #FECACA, #DC2626)"></div>
+            <div class="l m" style="background: linear-gradient(135deg, #BAE6FD, #0284C7)"></div>
+            <div class="l t" style="background: linear-gradient(135deg, #BBF7D0, #22C55E)"></div>
+          </div>
+          <div class="body">
+            <div class="nm">Hi-protein staples</div>
+            <div class="meta">9 recipes · 40g+ protein each</div>
+          </div>
+          <div class="chev">${ic.chev}</div>
+        </div>
+        <div class="collection-row">
+          <div class="stack">
+            <div class="l b" style="background: linear-gradient(135deg, #FED7AA, #EA580C)"></div>
+            <div class="l m" style="background: linear-gradient(135deg, #FECDD3, #F87171)"></div>
+            <div class="l t" style="background: linear-gradient(135deg, #FDE68A, #F59E0B)"></div>
+          </div>
+          <div class="body">
+            <div class="nm">Sam-approved</div>
+            <div class="meta">22 recipes · partner-tested</div>
+          </div>
+          <div class="chev">${ic.chev}</div>
+        </div>
+        <div class="sec-h"><div class="l">All saved</div><div class="r">36 · latest first</div></div>
+        <div class="recipe-grid">
+          ${rcCard({ name:'Korean beef bowl with greens', meta:'30 min · serves 2', kcal:540, c1:'#DDD6FE', c2:'#A78BFA', saved:true })}
+          ${rcCard({ name:'Greek chicken meatballs', meta:'35 min · serves 4', kcal:480, c1:'#BBF7D0', c2:'#22C55E', saved:true })}
+          ${rcCard({ name:'Quinoa harvest bowl', meta:'30 min · serves 2', kcal:480, c1:'#FCD34D', c2:'#F59E0B', saved:true })}
+          ${rcCard({ name:'Spicy chicken stir-fry', meta:'18 min · serves 2', kcal:580, c1:'#FECACA', c2:'#EF4444', saved:true })}
+          ${rcCard({ name:'Honey-mustard salmon', meta:'22 min · serves 2', kcal:610, c1:'#BAE6FD', c2:'#0284C7', saved:true })}
+          ${rcCard({ name:'Halloumi & lentil salad', meta:'25 min · serves 2', kcal:520, c1:'#FED7AA', c2:'#FB923C', saved:true })}
+        </div>
+      </div>
+      <div class="fab">${ic.plus}</div>
+      ${tabbar()}`;
+  }
+
+  const variations = [
+    { num:'Variation 01 · State', name:'For your macros · default', cap:'Engine ranks recipes against the remaining macros. Top 3 in a horizontal carousel; the rest in the grid with fit-mini deltas in green.', body: v1() },
+    { num:'Variation 02 · State', name:'Browse all · Hi-protein filter', cap:'Macros band collapses. Filter chips replace the engine ranking — "Hi-protein" is the green primary filter; results sort by relevance and surface fresh recipes.', body: v2() },
+    { num:'Variation 03 · State', name:'Saved · collections', cap:'Three collection rows up top with stacked thumbnail previews, then a grid of individually-saved recipes (hearts filled). Search narrows to saved-only.', body: v3() }
+  ];
+
+  const root = document.getElementById('frames');
+  root.innerHTML = variations.map(v => `
+    <section class="variation">
+      <div class="v-label">
+        <div class="v-num">${v.num}</div>
+        <div class="v-name">${v.name}</div>
+        <div class="v-cap">${v.cap}</div>
+      </div>
+      <div class="device">
+        ${statusBar}${island}
+        <div class="screen">${v.body}</div>
+        <div class="home-indicator"></div>
+      </div>
+    </section>
+  `).join('');
+</script>
+</body>
+</html>

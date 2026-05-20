@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>FuelWell · M01 Onboarding — Welcome · Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-base: #F4F5F7;
+    --bg-surface: #FFFFFF;
+    --bg-border: #E5E7EB;
+    --text-primary: #0A0A0F;
+    --text-secondary: #4B5563;
+    --text-muted: #6B7280;
+    --text-on-dark: #FFFFFF;
+    --brand-green: #47E7B0;
+    --action-green: #00D278;
+    --gradient-brand: linear-gradient(135deg, #00D278 0%, #47E7B0 100%);
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --elev-cta: 0 10px 28px rgba(0,210,120,.28), 0 2px 6px rgba(0,210,120,.18);
+    --elev-hero: 0 28px 56px -16px rgba(15,17,23,.20), 0 8px 16px -4px rgba(15,17,23,.08);
+    --font-display: 'Outfit', system-ui, -apple-system, sans-serif;
+    --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-numeric: 'DM Sans', 'Inter', sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: #ECEDF0;
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    padding: 56px 48px 96px;
+    min-width: 1380px;
+  }
+
+  .doc-header {
+    max-width: 1320px; margin: 0 auto 48px;
+    display: flex; align-items: flex-end; justify-content: space-between;
+    gap: 32px;
+    border-bottom: 1px solid #D6D8DD;
+    padding-bottom: 24px;
+  }
+  .doc-eyebrow {
+    font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--text-muted); margin: 0 0 8px; font-weight: 600;
+  }
+  .doc-title {
+    font-family: var(--font-display);
+    font-size: 28px; font-weight: 700;
+    margin: 0; color: var(--text-primary);
+    letter-spacing: -0.018em;
+  }
+  .doc-sub {
+    font-size: 13px; color: var(--text-secondary);
+    margin: 8px 0 0; max-width: 720px; line-height: 1.55;
+  }
+  .doc-meta {
+    font-family: var(--font-numeric);
+    font-size: 11px; color: var(--text-muted);
+    text-align: right; letter-spacing: 0.04em; line-height: 1.7;
+  }
+
+  .frames-row {
+    display: flex; gap: 64px;
+    justify-content: center; align-items: flex-start;
+  }
+  .variation {
+    display: flex; flex-direction: column; align-items: center;
+    width: 393px;
+  }
+  .v-label { margin-bottom: 18px; text-align: center; width: 100%; }
+  .v-num {
+    font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--text-muted); font-weight: 600;
+  }
+  .v-name {
+    font-family: var(--font-display);
+    font-size: 16px; font-weight: 600;
+    color: var(--text-primary);
+    margin-top: 4px; letter-spacing: -0.005em;
+  }
+  .v-cap {
+    font-size: 12px; color: var(--text-secondary);
+    margin-top: 4px; line-height: 1.45; max-width: 340px;
+  }
+
+  .device {
+    position: relative;
+    width: 393px; height: 852px;
+    background: var(--bg-surface);
+    border-radius: 56px;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 12px #0A0A0F,
+      0 0 0 13px #2A2A30,
+      0 30px 80px rgba(15,17,23,.28),
+      0 12px 32px rgba(15,17,23,.16);
+  }
+
+  .status-bar {
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 54px;
+    display: flex; align-items: flex-end; justify-content: space-between;
+    padding: 0 28px 9px; z-index: 10;
+  }
+  .status-bar .time {
+    font-family: 'SF Pro Display', system-ui, sans-serif;
+    font-size: 17px; font-weight: 600;
+    color: var(--text-primary); letter-spacing: -0.01em;
+  }
+  .status-bar .signals { display: inline-flex; gap: 6px; align-items: center; }
+  .signal-bat {
+    display: inline-block; width: 26px; height: 12px;
+    border: 1.2px solid var(--text-primary); border-radius: 3px;
+    position: relative;
+  }
+  .signal-bat::after {
+    content: ""; position: absolute; right: -3px; top: 3px;
+    width: 2px; height: 5px; background: var(--text-primary);
+    border-radius: 0 1.5px 1.5px 0;
+  }
+  .signal-bat::before {
+    content: ""; position: absolute; left: 1px; top: 1px; bottom: 1px;
+    width: 78%; background: var(--text-primary); border-radius: 1.5px;
+  }
+  .dynamic-island {
+    position: absolute; top: 11px; left: 50%; transform: translateX(-50%);
+    width: 124px; height: 36px;
+    background: #0A0A0F; border-radius: 22px;
+  }
+
+  .home-indicator {
+    position: absolute; bottom: 9px; left: 50%; transform: translateX(-50%);
+    width: 134px; height: 5px;
+    background: var(--text-primary); border-radius: 3px;
+    opacity: 0.7; z-index: 10;
+  }
+
+  .screen {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    padding: 54px 32px 36px;
+  }
+
+  .wordmark-block {
+    padding-top: 76px; text-align: center;
+  }
+  .wordmark {
+    font-family: var(--font-display);
+    font-weight: 700; font-size: 36px;
+    letter-spacing: -0.025em;
+    color: var(--text-primary);
+    line-height: 1;
+    display: inline-block;
+  }
+  .tagline {
+    font-family: var(--font-display);
+    font-weight: 500; font-size: 15px;
+    color: var(--text-secondary);
+    letter-spacing: -0.003em;
+    margin-top: 14px; line-height: 1.45;
+  }
+
+  .hero-wrap {
+    flex: 1;
+    display: flex; align-items: center; justify-content: center;
+    padding: 32px 0 8px;
+  }
+  .hero {
+    width: 296px; height: 332px;
+    border-radius: 28px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--elev-hero);
+  }
+  .hero svg.food-photo {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    display: block;
+  }
+  .hero-caption {
+    position: absolute;
+    bottom: 12px; left: 12px;
+    background: rgba(15,17,23,0.72);
+    backdrop-filter: blur(12px);
+    color: rgba(255,255,255,0.9);
+    padding: 5px 9px;
+    border-radius: 5px;
+    font-family: var(--font-body);
+    font-size: 8.5px; font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    z-index: 2;
+  }
+
+  .cta-area { padding-bottom: 24px; }
+  .btn-primary {
+    width: 100%; height: 48px;
+    border-radius: var(--radius-md);
+    background: var(--gradient-brand);
+    box-shadow: var(--elev-cta);
+    color: var(--text-on-dark);
+    font-family: var(--font-body);
+    font-weight: 600; font-size: 17px;
+    letter-spacing: -0.005em;
+    display: flex; align-items: center; justify-content: center;
+    border: 0; cursor: pointer;
+  }
+  .text-link {
+    margin-top: 18px; text-align: center;
+    font-family: var(--font-body);
+    font-weight: 500; font-size: 14px;
+    color: var(--text-secondary);
+  }
+  .text-link .underline {
+    color: var(--text-primary);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1.2px;
+    margin-left: 4px;
+  }
+
+  .legend {
+    max-width: 1320px; margin: 56px auto 0;
+    padding: 22px 26px;
+    background: #FFFFFF;
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-lg);
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 14px 28px;
+    font-size: 12px; color: var(--text-secondary);
+    line-height: 1.55;
+  }
+  .legend h3 {
+    grid-column: 1 / -1; margin: 0 0 6px;
+    font-family: var(--font-display);
+    font-size: 12px; font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.18em; text-transform: uppercase;
+  }
+  .legend dt {
+    font-size: 11px; font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .legend dd { margin: 0; }
+  .legend code {
+    background: #F4F5F7; border: 1px solid var(--bg-border);
+    padding: 1px 6px; border-radius: 4px;
+    font-family: var(--font-numeric);
+    font-size: 11px; color: var(--text-primary);
+  }
+</style>
+</head>
+<body>
+
+  <header class="doc-header">
+    <div>
+      <p class="doc-eyebrow">FuelWell · Phase 0.5 · Step 4 — Mockups</p>
+      <h1 class="doc-title">M01 Onboarding — Welcome</h1>
+      <p class="doc-sub">Hero redo (round 3). Literal, recognizable food at a glance — visible greens, grains, tomato, citrus. Premium editorial lighting and depth, but never abstract plating. Wordmark + CTA hierarchy locked.</p>
+    </div>
+    <div class="doc-meta">
+      iPhone 15 Pro · 393 × 852 pt<br>
+      Light · <code style="background:#F4F5F7;padding:1px 6px;border-radius:4px;font-family:'DM Sans',sans-serif;font-size:11px;">color.bg.surface #FFFFFF</code><br>
+      Recognizable food photography
+    </div>
+  </header>
+
+  <div class="frames-row">
+
+    <!-- ============================================================ -->
+    <!-- V1 · Grain bowl on linen — overhead                           -->
+    <!-- ============================================================ -->
+    <section class="variation">
+      <div class="v-label">
+        <div class="v-num">Variation 01</div>
+        <div class="v-name">Grain bowl · overhead on linen</div>
+        <div class="v-cap">Top-down grain bowl: visible quinoa base, kale leaves, avocado wedges, cherry tomato halves, chickpeas. Warm linen surface.</div>
+      </div>
+
+      <div class="device">
+        <div class="status-bar">
+          <div class="time">9:41</div>
+          <div class="dynamic-island"></div>
+          <div class="signals">
+            <svg width="17" height="11" viewBox="0 0 17 11" fill="none" aria-hidden="true">
+              <rect x="0" y="7" width="3" height="4" rx="0.5" fill="#0A0A0F"/>
+              <rect x="4" y="5" width="3" height="6" rx="0.5" fill="#0A0A0F"/>
+              <rect x="8" y="3" width="3" height="8" rx="0.5" fill="#0A0A0F"/>
+              <rect x="12" y="0" width="3" height="11" rx="0.5" fill="#0A0A0F"/>
+            </svg>
+            <svg width="16" height="11" viewBox="0 0 16 11" fill="none" aria-hidden="true">
+              <path d="M8 11l-2.5-2.5a3.5 3.5 0 014.9 0L8 11z" fill="#0A0A0F"/>
+              <path d="M2 5a8.5 8.5 0 0112 0l-1.5 1.5a6 6 0 00-9 0L2 5z" fill="#0A0A0F"/>
+              <path d="M5 8a4.5 4.5 0 016 0l-1.5 1.5a2.5 2.5 0 00-3 0L5 8z" fill="#0A0A0F"/>
+            </svg>
+            <span class="signal-bat"></span>
+          </div>
+        </div>
+
+        <div class="screen">
+          <div class="wordmark-block">
+            <div class="wordmark">FuelWell</div>
+            <div class="tagline">Smarter nutrition.<br/>Built around your day.</div>
+          </div>
+
+          <div class="hero-wrap">
+            <div class="hero">
+              <svg class="food-photo" viewBox="0 0 296 332" preserveAspectRatio="xMidYMid slice" aria-label="Grain bowl with kale, avocado, cherry tomatoes, and chickpeas">
+                <defs>
+                  <!-- Linen tablecloth -->
+                  <linearGradient id="linen1" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0" stop-color="#F2E6CC"/>
+                    <stop offset="0.6" stop-color="#E5D2A8"/>
+                    <stop offset="1" stop-color="#D2BC85"/>
+                  </linearGradient>
+                  <radialGradient id="linenLight1" cx="0.3" cy="0.15" r="0.7">
+                    <stop offset="0" stop-color="#FFF8E8" stop-opacity="0.7"/>
+                    <stop offset="1" stop-color="#FFF8E8" stop-opacity="0"/>
+                  </radialGradient>
+                  <!-- Bowl rim ceramic -->
+                  <radialGradient id="bowlRim1" cx="0.5" cy="0.42" r="0.6">
+                    <stop offset="0.62" stop-color="#FFFFFF"/>
+                    <stop offset="0.78" stop-color="#F0EFEA"/>
+                    <stop offset="1" stop-color="#C9C4B5"/>
+                  </radialGradient>
+                  <!-- Bowl interior shadow -->
+                  <radialGradient id="bowlInner1" cx="0.5" cy="0.55" r="0.5">
+                    <stop offset="0" stop-color="#E8DCC0"/>
+                    <stop offset="0.7" stop-color="#C8A872"/>
+                    <stop offset="1" stop-color="#6E4F22"/>
+                  </radialGradient>
+                  <!-- Avocado -->
+                  <linearGradient id="avo1" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#C6E07E"/>
+                    <stop offset="0.55" stop-color="#8FB845"/>
+                    <stop offset="1" stop-color="#5A7E22"/>
+                  </linearGradient>
+                  <!-- Tomato -->
+                  <radialGradient id="tom1" cx="0.4" cy="0.35" r="0.7">
+                    <stop offset="0" stop-color="#FF8866"/>
+                    <stop offset="0.5" stop-color="#E14A2C"/>
+                    <stop offset="1" stop-color="#9E2A18"/>
+                  </radialGradient>
+                  <!-- Kale -->
+                  <radialGradient id="kale1" cx="0.5" cy="0.4" r="0.7">
+                    <stop offset="0" stop-color="#5C8C3A"/>
+                    <stop offset="0.7" stop-color="#3E6422"/>
+                    <stop offset="1" stop-color="#22380E"/>
+                  </radialGradient>
+                  <!-- Chickpea -->
+                  <radialGradient id="chick1" cx="0.35" cy="0.3" r="0.7">
+                    <stop offset="0" stop-color="#F4DB9C"/>
+                    <stop offset="0.6" stop-color="#D5B26C"/>
+                    <stop offset="1" stop-color="#8E6E2C"/>
+                  </radialGradient>
+                  <!-- Quinoa specks -->
+                  <pattern id="quinoa1" x="0" y="0" width="6" height="6" patternUnits="userSpaceOnUse">
+                    <circle cx="2" cy="2" r="0.9" fill="#F0E2B0" opacity="0.85"/>
+                    <circle cx="5" cy="4.5" r="0.7" fill="#E6D292" opacity="0.7"/>
+                    <circle cx="0.5" cy="5" r="0.6" fill="#D7BC76" opacity="0.55"/>
+                  </pattern>
+                  <filter id="soft1" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="0.4"/>
+                  </filter>
+                </defs>
+
+                <!-- Linen background -->
+                <rect width="296" height="332" fill="url(#linen1)"/>
+                <rect width="296" height="332" fill="url(#linenLight1)"/>
+                <!-- Linen texture -->
+                <g opacity="0.18">
+                  <line x1="0" y1="42" x2="296" y2="38" stroke="#A88B58" stroke-width="0.4"/>
+                  <line x1="0" y1="84" x2="296" y2="82" stroke="#A88B58" stroke-width="0.4"/>
+                  <line x1="0" y1="118" x2="296" y2="120" stroke="#A88B58" stroke-width="0.3"/>
+                  <line x1="0" y1="172" x2="296" y2="168" stroke="#A88B58" stroke-width="0.4"/>
+                  <line x1="0" y1="244" x2="296" y2="248" stroke="#A88B58" stroke-width="0.4"/>
+                  <line x1="0" y1="292" x2="296" y2="290" stroke="#A88B58" stroke-width="0.3"/>
+                </g>
+
+                <!-- Bowl drop shadow -->
+                <ellipse cx="148" cy="190" rx="116" ry="34" fill="#6A4A20" opacity="0.25" filter="url(#soft1)"/>
+
+                <!-- Bowl rim -->
+                <circle cx="148" cy="166" r="118" fill="url(#bowlRim1)"/>
+                <!-- Inner well rim -->
+                <circle cx="148" cy="166" r="106" fill="#F5F1E6"/>
+                <!-- Bowl interior (food bed) -->
+                <circle cx="148" cy="166" r="100" fill="url(#bowlInner1)"/>
+                <!-- Quinoa surface -->
+                <circle cx="148" cy="166" r="100" fill="url(#quinoa1)" opacity="0.85"/>
+
+                <!-- KALE — back layer -->
+                <g>
+                  <path d="M70 110 Q88 92 110 100 Q120 116 100 132 Q80 138 64 124 Q60 116 70 110Z" fill="url(#kale1)"/>
+                  <path d="M170 92 Q198 84 220 102 Q220 122 198 130 Q174 130 162 114 Q160 100 170 92Z" fill="url(#kale1)"/>
+                  <path d="M188 144 Q214 140 224 158 Q220 178 204 184 Q186 184 174 168 Q172 152 188 144Z" fill="url(#kale1)" opacity="0.94"/>
+                  <path d="M60 168 Q72 156 96 162 Q102 178 88 192 Q70 196 58 184 Q54 174 60 168Z" fill="url(#kale1)"/>
+                  <!-- Kale rib highlights -->
+                  <g opacity="0.5">
+                    <path d="M76 116 Q92 110 102 122" stroke="#9CC36A" stroke-width="0.9" fill="none" stroke-linecap="round"/>
+                    <path d="M178 100 Q198 98 212 110" stroke="#9CC36A" stroke-width="0.9" fill="none" stroke-linecap="round"/>
+                    <path d="M194 152 Q210 152 218 168" stroke="#9CC36A" stroke-width="0.9" fill="none" stroke-linecap="round"/>
+                    <path d="M66 172 Q82 168 92 180" stroke="#9CC36A" stroke-width="0.9" fill="none" stroke-linecap="round"/>
+                  </g>
+                </g>
+
+                <!-- TOMATO — cherry halves -->
+                <g>
+                  <ellipse cx="118" cy="148" rx="18" ry="16" fill="url(#tom1)"/>
+                  <ellipse cx="118" cy="148" rx="10" ry="8" fill="#FFC2A6" opacity="0.6"/>
+                  <ellipse cx="118" cy="148" rx="5" ry="3" fill="#FFFFFF" opacity="0.45"/>
+                  <ellipse cx="113" cy="143" rx="2" ry="1.4" fill="#FFFFFF" opacity="0.75"/>
+
+                  <ellipse cx="166" cy="190" rx="16" ry="14" fill="url(#tom1)"/>
+                  <ellipse cx="166" cy="190" rx="9" ry="7" fill="#FFC2A6" opacity="0.55"/>
+                  <ellipse cx="162" cy="186" rx="1.8" ry="1.2" fill="#FFFFFF" opacity="0.7"/>
+
+                  <ellipse cx="92" cy="200" rx="14" ry="12" fill="url(#tom1)"/>
+                  <ellipse cx="92" cy="200" rx="7" ry="6" fill="#FFC2A6" opacity="0.55"/>
+                  <ellipse cx="89" cy="196" rx="1.4" ry="1" fill="#FFFFFF" opacity="0.7"/>
+                </g>
+
+                <!-- AVOCADO wedges -->
+                <g>
+                  <path d="M170 144 Q204 130 220 156 Q210 178 188 178 Q170 170 168 158 Q166 148 170 144Z" fill="url(#avo1)"/>
+                  <path d="M174 150 Q204 138 216 158" stroke="#D5E8A0" stroke-width="1.2" fill="none" opacity="0.75"/>
+                  <path d="M178 156 Q204 146 212 162" stroke="#E5F1B8" stroke-width="0.9" fill="none" opacity="0.55"/>
+
+                  <path d="M118 200 Q146 188 158 212 Q146 232 124 230 Q108 222 110 210 Q110 204 118 200Z" fill="url(#avo1)"/>
+                  <path d="M122 206 Q146 196 154 214" stroke="#D5E8A0" stroke-width="1.2" fill="none" opacity="0.75"/>
+                  <path d="M126 212 Q146 204 150 218" stroke="#E5F1B8" stroke-width="0.9" fill="none" opacity="0.55"/>
+                </g>
+
+                <!-- CHICKPEAS -->
+                <g>
+                  <ellipse cx="80" cy="178" rx="6" ry="5" fill="url(#chick1)"/>
+                  <ellipse cx="80" cy="176" rx="3" ry="2" fill="#FFFFFF" opacity="0.55"/>
+                  <ellipse cx="138" cy="226" rx="6.5" ry="5.5" fill="url(#chick1)"/>
+                  <ellipse cx="138" cy="224" rx="3" ry="2" fill="#FFFFFF" opacity="0.55"/>
+                  <ellipse cx="206" cy="204" rx="7" ry="6" fill="url(#chick1)"/>
+                  <ellipse cx="206" cy="201" rx="3.4" ry="2.2" fill="#FFFFFF" opacity="0.55"/>
+                  <ellipse cx="100" cy="148" rx="5.5" ry="4.8" fill="url(#chick1)"/>
+                  <ellipse cx="100" cy="146" rx="2.8" ry="1.9" fill="#FFFFFF" opacity="0.5"/>
+                  <ellipse cx="156" cy="124" rx="6" ry="5" fill="url(#chick1)"/>
+                  <ellipse cx="156" cy="122" rx="3" ry="2" fill="#FFFFFF" opacity="0.5"/>
+                </g>
+
+                <!-- SEEDS / herbs garnish -->
+                <g opacity="0.85">
+                  <circle cx="148" cy="174" r="1.4" fill="#F4F1DC"/>
+                  <circle cx="146" cy="190" r="1.2" fill="#F4F1DC"/>
+                  <circle cx="200" cy="178" r="1.2" fill="#F4F1DC"/>
+                  <circle cx="112" cy="222" r="1.3" fill="#F4F1DC"/>
+                </g>
+                <g fill="#62A436" opacity="0.85">
+                  <circle cx="132" cy="160" r="1.1"/>
+                  <circle cx="172" cy="156" r="1"/>
+                  <circle cx="186" cy="194" r="1"/>
+                  <circle cx="104" cy="186" r="0.9"/>
+                </g>
+
+                <!-- Top light highlight on rim -->
+                <ellipse cx="120" cy="78" rx="56" ry="14" fill="#FFFFFF" opacity="0.36"/>
+
+                <!-- Subtle wooden spoon edge bottom-right -->
+                <g opacity="0.85">
+                  <rect x="252" y="244" width="56" height="14" rx="7" fill="#8E5E36" transform="rotate(28 252 244)"/>
+                  <ellipse cx="280" cy="278" rx="16" ry="11" fill="#9E6E40" transform="rotate(28 280 278)"/>
+                </g>
+
+                <!-- Photo vignette -->
+                <radialGradient id="vig1" cx="0.5" cy="0.5" r="0.7">
+                  <stop offset="0.55" stop-color="#000000" stop-opacity="0"/>
+                  <stop offset="1" stop-color="#000000" stop-opacity="0.28"/>
+                </radialGradient>
+                <rect width="296" height="332" fill="url(#vig1)"/>
+              </svg>
+              <div class="hero-caption">Welcome Hero · ChatGPT Images 2.0</div>
+            </div>
+          </div>
+
+          <div class="cta-area">
+            <button class="btn-primary">Get Started</button>
+            <div class="text-link">
+              Already have an account?<span class="underline">Sign in</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="home-indicator"></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- V2 · Salad on white plate — overhead                          -->
+    <!-- ============================================================ -->
+    <section class="variation">
+      <div class="v-label">
+        <div class="v-num">Variation 02</div>
+        <div class="v-name">Garden salad · white plate</div>
+        <div class="v-cap">Crisp green salad with romaine leaves, cucumber slices, cherry tomatoes, red onion, and a lemon wedge. Cool marble surface.</div>
+      </div>
+
+      <div class="device">
+        <div class="status-bar">
+          <div class="time">9:41</div>
+          <div class="dynamic-island"></div>
+          <div class="signals">
+            <svg width="17" height="11" viewBox="0 0 17 11" fill="none" aria-hidden="true">
+              <rect x="0" y="7" width="3" height="4" rx="0.5" fill="#0A0A0F"/>
+              <rect x="4" y="5" width="3" height="6" rx="0.5" fill="#0A0A0F"/>
+              <rect x="8" y="3" width="3" height="8" rx="0.5" fill="#0A0A0F"/>
+              <rect x="12" y="0" width="3" height="11" rx="0.5" fill="#0A0A0F"/>
+            </svg>
+            <svg width="16" height="11" viewBox="0 0 16 11" fill="none" aria-hidden="true">
+              <path d="M8 11l-2.5-2.5a3.5 3.5 0 014.9 0L8 11z" fill="#0A0A0F"/>
+              <path d="M2 5a8.5 8.5 0 0112 0l-1.5 1.5a6 6 0 00-9 0L2 5z" fill="#0A0A0F"/>
+              <path d="M5 8a4.5 4.5 0 016 0l-1.5 1.5a2.5 2.5 0 00-3 0L5 8z" fill="#0A0A0F"/>
+            </svg>
+            <span class="signal-bat"></span>
+          </div>
+        </div>
+
+        <div class="screen">
+          <div class="wordmark-block">
+            <div class="wordmark">FuelWell</div>
+            <div class="tagline">The nutrition app<br/>that thinks ahead.</div>
+          </div>
+
+          <div class="hero-wrap">
+            <div class="hero">
+              <svg class="food-photo" viewBox="0 0 296 332" preserveAspectRatio="xMidYMid slice" aria-label="Garden salad with romaine, cucumber, tomato, and lemon">
+                <defs>
+                  <linearGradient id="marble2" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0" stop-color="#FAFAFB"/>
+                    <stop offset="0.6" stop-color="#EEEFF2"/>
+                    <stop offset="1" stop-color="#DCDFE4"/>
+                  </linearGradient>
+                  <radialGradient id="plate2" cx="0.5" cy="0.4" r="0.55">
+                    <stop offset="0.7" stop-color="#FFFFFF"/>
+                    <stop offset="0.88" stop-color="#F0F1F4"/>
+                    <stop offset="1" stop-color="#C8CCD3"/>
+                  </radialGradient>
+                  <radialGradient id="romaine2" cx="0.5" cy="0.3" r="0.7">
+                    <stop offset="0" stop-color="#C5E47E"/>
+                    <stop offset="0.5" stop-color="#7BAD3A"/>
+                    <stop offset="1" stop-color="#3F6818"/>
+                  </radialGradient>
+                  <radialGradient id="darkLeaf2" cx="0.5" cy="0.4" r="0.7">
+                    <stop offset="0" stop-color="#5C8C3A"/>
+                    <stop offset="0.7" stop-color="#3E6422"/>
+                    <stop offset="1" stop-color="#22380E"/>
+                  </radialGradient>
+                  <radialGradient id="cucum2" cx="0.5" cy="0.4" r="0.6">
+                    <stop offset="0.55" stop-color="#E2F0C8"/>
+                    <stop offset="0.7" stop-color="#B4D685"/>
+                    <stop offset="1" stop-color="#5E8830"/>
+                  </radialGradient>
+                  <radialGradient id="tom2" cx="0.35" cy="0.3" r="0.75">
+                    <stop offset="0" stop-color="#FF8866"/>
+                    <stop offset="0.5" stop-color="#E14A2C"/>
+                    <stop offset="1" stop-color="#8E2418"/>
+                  </radialGradient>
+                  <radialGradient id="onion2" cx="0.5" cy="0.5" r="0.6">
+                    <stop offset="0" stop-color="#E8AABF"/>
+                    <stop offset="0.6" stop-color="#B85A86"/>
+                    <stop offset="1" stop-color="#6E2A4A"/>
+                  </radialGradient>
+                  <radialGradient id="lemon2" cx="0.4" cy="0.3" r="0.7">
+                    <stop offset="0" stop-color="#FFF1A8"/>
+                    <stop offset="0.6" stop-color="#F2CC36"/>
+                    <stop offset="1" stop-color="#A88820"/>
+                  </radialGradient>
+                  <filter id="soft2"><feGaussianBlur stdDeviation="0.4"/></filter>
+                </defs>
+
+                <!-- Marble background -->
+                <rect width="296" height="332" fill="url(#marble2)"/>
+                <!-- Marble veins -->
+                <g opacity="0.18" stroke-linecap="round" fill="none">
+                  <path d="M0 60 Q90 50 180 80 Q250 100 296 88" stroke="#B5BAC4" stroke-width="0.7"/>
+                  <path d="M0 220 Q70 230 140 218 Q220 200 296 230" stroke="#B5BAC4" stroke-width="0.5"/>
+                  <path d="M40 0 Q60 40 50 100 Q40 160 70 220" stroke="#B5BAC4" stroke-width="0.5"/>
+                  <path d="M250 10 Q230 70 240 130 Q260 200 230 310" stroke="#B5BAC4" stroke-width="0.6"/>
+                </g>
+
+                <!-- Plate shadow -->
+                <ellipse cx="148" cy="190" rx="122" ry="36" fill="#7A8090" opacity="0.22" filter="url(#soft2)"/>
+
+                <!-- Plate -->
+                <circle cx="148" cy="166" r="124" fill="url(#plate2)"/>
+                <!-- Inner plate well -->
+                <circle cx="148" cy="166" r="108" fill="#FFFFFF"/>
+
+                <!-- Romaine — back layer -->
+                <g>
+                  <path d="M48 116 Q74 92 108 96 Q132 118 116 140 Q92 144 68 132 Q44 124 48 116Z" fill="url(#romaine2)"/>
+                  <path d="M58 86 Q88 70 122 80 Q142 102 122 116 Q98 112 76 102 Q58 96 58 86Z" fill="url(#darkLeaf2)"/>
+                  <path d="M178 76 Q210 70 234 96 Q236 116 212 122 Q188 116 174 102 Q170 84 178 76Z" fill="url(#romaine2)"/>
+                  <path d="M192 116 Q224 110 244 132 Q244 156 222 162 Q200 156 190 138 Q186 124 192 116Z" fill="url(#darkLeaf2)"/>
+                  <path d="M44 188 Q70 178 104 196 Q108 220 84 226 Q60 224 44 208 Q38 196 44 188Z" fill="url(#romaine2)"/>
+                  <path d="M198 196 Q230 188 250 214 Q250 232 222 240 Q198 234 184 218 Q180 204 198 196Z" fill="url(#romaine2)"/>
+
+                  <!-- Leaf veins -->
+                  <g stroke-linecap="round" fill="none" opacity="0.55">
+                    <path d="M70 90 Q98 92 116 110" stroke="#E5F1B8" stroke-width="0.9"/>
+                    <path d="M62 122 Q90 124 110 134" stroke="#E5F1B8" stroke-width="0.9"/>
+                    <path d="M188 86 Q210 90 228 108" stroke="#E5F1B8" stroke-width="0.9"/>
+                    <path d="M58 198 Q86 200 100 218" stroke="#E5F1B8" stroke-width="0.8"/>
+                    <path d="M208 206 Q230 212 244 226" stroke="#E5F1B8" stroke-width="0.8"/>
+                  </g>
+                </g>
+
+                <!-- CUCUMBER slices -->
+                <g>
+                  <ellipse cx="106" cy="170" rx="13" ry="11" fill="url(#cucum2)"/>
+                  <ellipse cx="106" cy="170" rx="10" ry="8" fill="#D4E8A8" opacity="0.7"/>
+                  <ellipse cx="106" cy="170" rx="6" ry="4.5" fill="#F2F8DC"/>
+                  <g fill="#9CB875" opacity="0.6">
+                    <circle cx="103" cy="167" r="0.7"/>
+                    <circle cx="108" cy="170" r="0.7"/>
+                    <circle cx="106" cy="173" r="0.6"/>
+                    <circle cx="109" cy="167" r="0.5"/>
+                  </g>
+
+                  <ellipse cx="186" cy="156" rx="12" ry="10" fill="url(#cucum2)"/>
+                  <ellipse cx="186" cy="156" rx="9" ry="7" fill="#D4E8A8" opacity="0.7"/>
+                  <ellipse cx="186" cy="156" rx="5" ry="4" fill="#F2F8DC"/>
+
+                  <ellipse cx="152" cy="208" rx="14" ry="11" fill="url(#cucum2)"/>
+                  <ellipse cx="152" cy="208" rx="10" ry="8" fill="#D4E8A8" opacity="0.7"/>
+                  <ellipse cx="152" cy="208" rx="6" ry="4.5" fill="#F2F8DC"/>
+                </g>
+
+                <!-- TOMATO halves -->
+                <g>
+                  <ellipse cx="138" cy="138" rx="16" ry="14" fill="url(#tom2)"/>
+                  <ellipse cx="138" cy="138" rx="9" ry="7" fill="#FFC2A6" opacity="0.65"/>
+                  <ellipse cx="134" cy="134" rx="2.4" ry="1.6" fill="#FFFFFF" opacity="0.75"/>
+                  <g fill="#FFDDB8" opacity="0.65">
+                    <ellipse cx="135" cy="137" rx="1.4" ry="2.6"/>
+                    <ellipse cx="141" cy="137" rx="1.4" ry="2.6"/>
+                  </g>
+
+                  <ellipse cx="216" cy="190" rx="14" ry="12" fill="url(#tom2)"/>
+                  <ellipse cx="216" cy="190" rx="8" ry="6" fill="#FFC2A6" opacity="0.65"/>
+                  <ellipse cx="213" cy="187" rx="2" ry="1.4" fill="#FFFFFF" opacity="0.7"/>
+
+                  <ellipse cx="84" cy="218" rx="13" ry="11" fill="url(#tom2)"/>
+                  <ellipse cx="84" cy="218" rx="7.5" ry="5.5" fill="#FFC2A6" opacity="0.65"/>
+                  <ellipse cx="81" cy="215" rx="1.8" ry="1.2" fill="#FFFFFF" opacity="0.7"/>
+                </g>
+
+                <!-- RED ONION rings -->
+                <g fill="none" stroke-linecap="round">
+                  <ellipse cx="172" cy="190" rx="20" ry="6" stroke="url(#onion2)" stroke-width="3"/>
+                  <ellipse cx="172" cy="190" rx="14" ry="4" stroke="#D69CB5" stroke-width="1.5"/>
+                  <ellipse cx="118" cy="222" rx="18" ry="5" stroke="url(#onion2)" stroke-width="2.6"/>
+                  <ellipse cx="118" cy="222" rx="12" ry="3.4" stroke="#D69CB5" stroke-width="1.3"/>
+                </g>
+
+                <!-- LEMON wedge -->
+                <g>
+                  <path d="M218 130 L240 108 A36 36 0 0 1 252 142 Z" fill="url(#lemon2)"/>
+                  <path d="M218 130 L240 108 A36 36 0 0 1 252 142 Z" fill="#FFF6C0" opacity="0.35"/>
+                  <g stroke="#E0B824" stroke-width="0.7" fill="none" opacity="0.7">
+                    <path d="M225 132 L240 116"/>
+                    <path d="M230 138 L246 122"/>
+                    <path d="M236 142 L250 128"/>
+                  </g>
+                  <path d="M218 130 L240 108" stroke="#FFFFFF" stroke-width="1" opacity="0.7"/>
+                </g>
+
+                <!-- Microgreens / herbs -->
+                <g>
+                  <circle cx="120" cy="160" r="1.4" fill="#62A436"/>
+                  <circle cx="160" cy="178" r="1.2" fill="#7BB94E"/>
+                  <circle cx="180" cy="206" r="1.3" fill="#62A436"/>
+                  <circle cx="100" cy="196" r="1" fill="#7BB94E"/>
+                  <circle cx="208" cy="166" r="1.2" fill="#62A436"/>
+                </g>
+
+                <!-- Olive oil drizzle highlights -->
+                <g opacity="0.5">
+                  <path d="M120 180 Q150 174 196 184" stroke="#F2D480" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+                  <path d="M104 218 Q140 212 178 222" stroke="#F2D480" stroke-width="1" fill="none" stroke-linecap="round"/>
+                </g>
+
+                <!-- Top light highlight -->
+                <ellipse cx="118" cy="76" rx="58" ry="14" fill="#FFFFFF" opacity="0.55"/>
+
+                <!-- Vignette -->
+                <radialGradient id="vig2" cx="0.5" cy="0.5" r="0.7">
+                  <stop offset="0.55" stop-color="#000000" stop-opacity="0"/>
+                  <stop offset="1" stop-color="#000000" stop-opacity="0.22"/>
+                </radialGradient>
+                <rect width="296" height="332" fill="url(#vig2)"/>
+              </svg>
+              <div class="hero-caption">Welcome Hero · ChatGPT Images 2.0</div>
+            </div>
+          </div>
+
+          <div class="cta-area">
+            <button class="btn-primary">Get Started</button>
+            <div class="text-link">
+              Already have an account?<span class="underline">Sign in</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="home-indicator"></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- V3 · Buddha bowl sectioned on walnut board                    -->
+    <!-- ============================================================ -->
+    <section class="variation">
+      <div class="v-label">
+        <div class="v-num">Variation 03</div>
+        <div class="v-name">Buddha bowl · sectioned</div>
+        <div class="v-cap">Sectioned plate: roasted sweet potato, salmon, quinoa, broccoli, kale, avocado wedges. Walnut board. Most editorial of the three.</div>
+      </div>
+
+      <div class="device">
+        <div class="status-bar">
+          <div class="time">9:41</div>
+          <div class="dynamic-island"></div>
+          <div class="signals">
+            <svg width="17" height="11" viewBox="0 0 17 11" fill="none" aria-hidden="true">
+              <rect x="0" y="7" width="3" height="4" rx="0.5" fill="#0A0A0F"/>
+              <rect x="4" y="5" width="3" height="6" rx="0.5" fill="#0A0A0F"/>
+              <rect x="8" y="3" width="3" height="8" rx="0.5" fill="#0A0A0F"/>
+              <rect x="12" y="0" width="3" height="11" rx="0.5" fill="#0A0A0F"/>
+            </svg>
+            <svg width="16" height="11" viewBox="0 0 16 11" fill="none" aria-hidden="true">
+              <path d="M8 11l-2.5-2.5a3.5 3.5 0 014.9 0L8 11z" fill="#0A0A0F"/>
+              <path d="M2 5a8.5 8.5 0 0112 0l-1.5 1.5a6 6 0 00-9 0L2 5z" fill="#0A0A0F"/>
+              <path d="M5 8a4.5 4.5 0 016 0l-1.5 1.5a2.5 2.5 0 00-3 0L5 8z" fill="#0A0A0F"/>
+            </svg>
+            <span class="signal-bat"></span>
+          </div>
+        </div>
+
+        <div class="screen">
+          <div class="wordmark-block">
+            <div class="wordmark">FuelWell</div>
+            <div class="tagline">Eat with intention.<br/>Track without obsession.</div>
+          </div>
+
+          <div class="hero-wrap">
+            <div class="hero">
+              <svg class="food-photo" viewBox="0 0 296 332" preserveAspectRatio="xMidYMid slice" aria-label="Buddha bowl with salmon, sweet potato, quinoa, broccoli, kale, avocado">
+                <defs>
+                  <linearGradient id="wood3" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#A87246"/>
+                    <stop offset="0.6" stop-color="#7A4A24"/>
+                    <stop offset="1" stop-color="#5C3818"/>
+                  </linearGradient>
+                  <radialGradient id="bowl3" cx="0.5" cy="0.4" r="0.6">
+                    <stop offset="0.55" stop-color="#FFFFFF"/>
+                    <stop offset="0.78" stop-color="#F0EFEA"/>
+                    <stop offset="1" stop-color="#C9C4B5"/>
+                  </radialGradient>
+                  <radialGradient id="bowlWell3" cx="0.5" cy="0.5" r="0.5">
+                    <stop offset="0" stop-color="#FAF6E8"/>
+                    <stop offset="1" stop-color="#E8DEC0"/>
+                  </radialGradient>
+                  <linearGradient id="salmon3" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#FFB088"/>
+                    <stop offset="0.6" stop-color="#E07A4E"/>
+                    <stop offset="1" stop-color="#A04A22"/>
+                  </linearGradient>
+                  <linearGradient id="sweetPot3" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#FFB868"/>
+                    <stop offset="0.6" stop-color="#E08230"/>
+                    <stop offset="1" stop-color="#8C4A10"/>
+                  </linearGradient>
+                  <radialGradient id="broc3" cx="0.5" cy="0.4" r="0.7">
+                    <stop offset="0" stop-color="#6F9D3E"/>
+                    <stop offset="0.6" stop-color="#436A2A"/>
+                    <stop offset="1" stop-color="#22380E"/>
+                  </radialGradient>
+                  <radialGradient id="kale3" cx="0.5" cy="0.4" r="0.7">
+                    <stop offset="0" stop-color="#5C8C3A"/>
+                    <stop offset="0.7" stop-color="#3E6422"/>
+                    <stop offset="1" stop-color="#22380E"/>
+                  </radialGradient>
+                  <linearGradient id="avo3" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#C6E07E"/>
+                    <stop offset="0.55" stop-color="#8FB845"/>
+                    <stop offset="1" stop-color="#5A7E22"/>
+                  </linearGradient>
+                  <pattern id="quinoa3" x="0" y="0" width="6" height="6" patternUnits="userSpaceOnUse">
+                    <circle cx="2" cy="2" r="0.9" fill="#F4E5B0"/>
+                    <circle cx="5" cy="4.5" r="0.7" fill="#E6D292"/>
+                    <circle cx="0.5" cy="5" r="0.6" fill="#D7BC76"/>
+                  </pattern>
+                  <filter id="soft3"><feGaussianBlur stdDeviation="0.4"/></filter>
+                </defs>
+
+                <!-- Wood board -->
+                <rect width="296" height="332" fill="url(#wood3)"/>
+                <!-- Wood grain -->
+                <g opacity="0.45" stroke-linecap="round" fill="none">
+                  <path d="M0 50 Q80 46 160 56 Q240 64 296 56" stroke="#48280C" stroke-width="1"/>
+                  <path d="M0 96 Q90 92 180 102 Q260 108 296 100" stroke="#48280C" stroke-width="0.8"/>
+                  <path d="M0 134 Q70 128 140 132 Q230 138 296 130" stroke="#603A18" stroke-width="0.6"/>
+                  <path d="M0 200 Q90 196 170 206 Q250 212 296 200" stroke="#48280C" stroke-width="0.8"/>
+                  <path d="M0 256 Q80 252 160 256 Q240 260 296 252" stroke="#48280C" stroke-width="1"/>
+                  <path d="M0 296 Q80 292 160 298 Q240 302 296 294" stroke="#48280C" stroke-width="0.7"/>
+                </g>
+                <g opacity="0.32">
+                  <ellipse cx="74" cy="80" rx="3" ry="9" fill="#3A1F08"/>
+                  <ellipse cx="226" cy="172" rx="2.4" ry="7" fill="#3A1F08"/>
+                  <ellipse cx="50" cy="252" rx="2.5" ry="8" fill="#3A1F08"/>
+                </g>
+
+                <!-- Bowl drop shadow -->
+                <ellipse cx="148" cy="194" rx="118" ry="36" fill="#2A1606" opacity="0.45" filter="url(#soft3)"/>
+
+                <!-- Bowl rim -->
+                <circle cx="148" cy="170" r="122" fill="url(#bowl3)"/>
+                <circle cx="148" cy="170" r="108" fill="url(#bowlWell3)"/>
+                <!-- Quinoa base -->
+                <circle cx="148" cy="170" r="108" fill="url(#quinoa3)" opacity="0.92"/>
+
+                <!-- SALMON fillet (top wedge) -->
+                <g>
+                  <path d="M148 70 A100 100 0 0 1 234 132 L216 144 A82 82 0 0 0 148 100 Z" fill="url(#salmon3)"/>
+                  <!-- Flesh lines -->
+                  <g stroke="#FFD2B0" stroke-width="0.9" fill="none" opacity="0.7">
+                    <path d="M158 100 Q186 96 220 124"/>
+                    <path d="M170 90 Q200 86 226 116"/>
+                    <path d="M150 116 Q176 110 210 138"/>
+                  </g>
+                  <!-- Dill garnish -->
+                  <g fill="#62A436">
+                    <circle cx="180" cy="106" r="1.6"/>
+                    <circle cx="184" cy="110" r="1"/>
+                    <circle cx="200" cy="122" r="1.4"/>
+                    <circle cx="205" cy="116" r="1"/>
+                  </g>
+                </g>
+
+                <!-- SWEET POTATO cubes (right) -->
+                <g>
+                  <rect x="206" y="158" width="18" height="18" rx="3" fill="url(#sweetPot3)" transform="rotate(8 215 167)"/>
+                  <rect x="218" y="178" width="18" height="16" rx="3" fill="url(#sweetPot3)" transform="rotate(-12 227 186)"/>
+                  <rect x="200" y="186" width="16" height="14" rx="3" fill="url(#sweetPot3)" transform="rotate(20 208 193)"/>
+                  <rect x="228" y="158" width="14" height="14" rx="3" fill="url(#sweetPot3)" transform="rotate(-6 235 165)"/>
+                  <!-- Highlights -->
+                  <g fill="#FFD2A0" opacity="0.55">
+                    <rect x="210" y="160" width="8" height="6" rx="2" transform="rotate(8 214 163)"/>
+                    <rect x="222" y="180" width="8" height="5" rx="2" transform="rotate(-12 226 182)"/>
+                  </g>
+                </g>
+
+                <!-- BROCCOLI florets (bottom-right) -->
+                <g>
+                  <g transform="translate(180 220)">
+                    <circle cx="0" cy="-4" r="9" fill="url(#broc3)"/>
+                    <circle cx="-6" cy="2" r="7" fill="url(#broc3)"/>
+                    <circle cx="6" cy="2" r="7" fill="url(#broc3)"/>
+                    <circle cx="0" cy="6" r="6" fill="url(#broc3)"/>
+                    <rect x="-3" y="8" width="6" height="8" rx="1.4" fill="#C5DC92"/>
+                  </g>
+                  <g transform="translate(210 230)">
+                    <circle cx="0" cy="-3" r="7" fill="url(#broc3)"/>
+                    <circle cx="-5" cy="2" r="6" fill="url(#broc3)"/>
+                    <circle cx="5" cy="2" r="6" fill="url(#broc3)"/>
+                    <rect x="-2" y="6" width="4" height="6" rx="1" fill="#C5DC92"/>
+                  </g>
+                  <g transform="translate(150 246)">
+                    <circle cx="0" cy="-3" r="8" fill="url(#broc3)"/>
+                    <circle cx="-5" cy="2" r="6" fill="url(#broc3)"/>
+                    <circle cx="5" cy="2" r="6" fill="url(#broc3)"/>
+                    <rect x="-2.5" y="6" width="5" height="7" rx="1.2" fill="#C5DC92"/>
+                  </g>
+                </g>
+
+                <!-- KALE (bottom-left section) -->
+                <g>
+                  <path d="M64 218 Q92 200 114 220 Q116 244 92 252 Q66 252 56 234 Q54 222 64 218Z" fill="url(#kale3)"/>
+                  <path d="M88 246 Q108 232 132 254 Q128 270 110 272 Q90 270 84 258 Q82 250 88 246Z" fill="url(#kale3)" opacity="0.92"/>
+                  <g stroke="#9CC36A" stroke-width="0.9" fill="none" opacity="0.55">
+                    <path d="M70 224 Q96 226 110 240"/>
+                    <path d="M92 252 Q110 252 128 264"/>
+                  </g>
+                </g>
+
+                <!-- AVOCADO wedges (left side) -->
+                <g>
+                  <path d="M48 140 Q72 122 92 144 Q84 168 64 168 Q44 158 44 148 Q44 142 48 140Z" fill="url(#avo3)"/>
+                  <g stroke="#D5E8A0" stroke-width="1.2" fill="none" opacity="0.75">
+                    <path d="M54 148 Q72 138 86 152"/>
+                    <path d="M58 156 Q72 150 82 160"/>
+                  </g>
+                  <path d="M58 178 Q82 162 100 184 Q92 204 76 206 Q60 198 56 188 Q54 180 58 178Z" fill="url(#avo3)"/>
+                  <g stroke="#D5E8A0" stroke-width="1.2" fill="none" opacity="0.75">
+                    <path d="M64 184 Q80 178 94 190"/>
+                    <path d="M68 192 Q82 188 90 198"/>
+                  </g>
+                </g>
+
+                <!-- Lemon wedge top-left -->
+                <g>
+                  <path d="M86 80 L106 60 A28 28 0 0 1 118 88 Z" fill="#F2CC36"/>
+                  <path d="M86 80 L106 60 A28 28 0 0 1 118 88 Z" fill="#FFF6C0" opacity="0.35"/>
+                  <g stroke="#E0B824" stroke-width="0.7" fill="none" opacity="0.7">
+                    <path d="M92 82 L106 66"/>
+                    <path d="M98 86 L112 72"/>
+                  </g>
+                </g>
+
+                <!-- Sesame seeds -->
+                <g fill="#FBEEC0" opacity="0.95">
+                  <circle cx="150" cy="170" r="1.1"/>
+                  <circle cx="156" cy="168" r="1"/>
+                  <circle cx="148" cy="178" r="1"/>
+                  <circle cx="158" cy="184" r="1.1"/>
+                  <circle cx="140" cy="180" r="1"/>
+                  <circle cx="166" cy="180" r="1"/>
+                  <circle cx="200" cy="158" r="1"/>
+                  <circle cx="208" cy="200" r="1.1"/>
+                </g>
+
+                <!-- Microgreens scattered -->
+                <g fill="#7BB94E">
+                  <circle cx="138" cy="152" r="1.4"/>
+                  <circle cx="172" cy="146" r="1.2"/>
+                  <circle cx="190" cy="180" r="1.3"/>
+                  <circle cx="118" cy="200" r="1.2"/>
+                  <circle cx="146" cy="216" r="1.2"/>
+                </g>
+
+                <!-- Top light highlight on bowl rim -->
+                <ellipse cx="116" cy="78" rx="56" ry="12" fill="#FFFFFF" opacity="0.42"/>
+
+                <!-- Vignette -->
+                <radialGradient id="vig3" cx="0.5" cy="0.5" r="0.7">
+                  <stop offset="0.55" stop-color="#000000" stop-opacity="0"/>
+                  <stop offset="1" stop-color="#000000" stop-opacity="0.34"/>
+                </radialGradient>
+                <rect width="296" height="332" fill="url(#vig3)"/>
+              </svg>
+              <div class="hero-caption">Welcome Hero · ChatGPT Images 2.0</div>
+            </div>
+          </div>
+
+          <div class="cta-area">
+            <button class="btn-primary">Get Started</button>
+            <div class="text-link">
+              Already have an account?<span class="underline">Sign in</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="home-indicator"></div>
+      </div>
+    </section>
+
+  </div>
+
+  <section class="legend">
+    <h3>Mockup notes · Hero redo (round 3)</h3>
+
+    <dt>V1 Grain bowl</dt>
+    <dd>Overhead shot, warm linen surface, white ceramic bowl over a quinoa base. Visible ingredients: <strong>kale leaves</strong> (four), <strong>cherry tomato halves</strong> (three), <strong>avocado wedges</strong> (two with score marks), <strong>chickpeas</strong> (five), sesame seeds and chopped herb garnish. Wooden spoon edge bottom-right. Top-light highlight on the rim.</dd>
+
+    <dt>V2 Garden salad</dt>
+    <dd>Overhead shot, white marble with subtle veining, white ceramic plate. Visible ingredients: <strong>romaine + dark leaves</strong> (six), <strong>cucumber slices</strong> with seed pattern (three), <strong>cherry tomato halves</strong> (three), <strong>red onion rings</strong> (two), <strong>lemon wedge</strong> with rind segments, microgreens, olive-oil drizzle highlights.</dd>
+
+    <dt>V3 Buddha bowl</dt>
+    <dd>Overhead shot, walnut wood board with grain and knots, white ceramic bowl, quinoa base. Sectioned ingredients: <strong>salmon fillet</strong> (top, with flesh lines + dill), <strong>roasted sweet potato cubes</strong> (right), <strong>broccoli florets</strong> (bottom-right, three clusters with stems), <strong>kale</strong> (bottom-left), <strong>avocado wedges</strong> (left, with score marks), lemon wedge corner, sesame seeds, microgreens.</dd>
+
+    <dt>Lighting</dt>
+    <dd>Top-light highlight on every bowl rim, soft drop shadow beneath, vignette overlay (22–34% alpha) at the edges. Reads as editorial photography rather than flat illustration.</dd>
+
+    <dt>Wordmark + CTA</dt>
+    <dd>Identical across all three. <strong>Outfit 700</strong> 36pt at -0.025em; gradient.brand CTA at 48pt with elevation.cta halo; Inter 500 secondary link. Brand-green appears only in the gradient.</dd>
+  </section>
+
+</body>
+</html>
