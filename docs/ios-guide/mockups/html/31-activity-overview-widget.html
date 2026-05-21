@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>FuelWell · M31 Activity overview widget · Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-base: #F4F5F7;
+    --bg-surface: #FFFFFF;
+    --bg-elevated: #0F1117;
+    --bg-border: #E5E7EB;
+    --bg-border-soft: #EEF0F3;
+
+    --text-primary: #0A0A0F;
+    --text-body: #1F2937;
+    --text-secondary: #6B7280;
+    --text-muted: #9CA3AF;
+    --text-disabled: #C7CCD3;
+    --text-on-dark: #FFFFFF;
+    --text-on-dark-muted: #9AA0AC;
+
+    --primary-orange: #E87A1D;
+    --action-green: #00D278;
+    --brand-green: #47E7B0;
+
+    --semantic-success: #00D278;
+    --semantic-warning: #F59E0B;
+    --semantic-error: #EF4444;
+    --semantic-info: #00B4D8;
+    --semantic-premium: #A855F7;
+
+    --src-bmr: #6B7280;
+    --src-activity: #00B4D8;
+    --src-workout: #E87A1D;
+
+    --gradient-brand: linear-gradient(135deg, #00D278 0%, #47E7B0 100%);
+
+    --radius-md: 12px;
+    --radius-lg: 20px;
+
+    --elev-1: 0 1px 2px rgba(15,17,23,.04), 0 1px 0 rgba(15,17,23,.02);
+    --elev-2: 0 4px 14px rgba(15,17,23,.06), 0 1px 2px rgba(15,17,23,.04);
+    --elev-cta: 0 8px 24px rgba(0,210,120,.22);
+
+    --font-display: 'Outfit', system-ui, -apple-system, sans-serif;
+    --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-system: -apple-system, 'SF Pro Display', system-ui, sans-serif;
+    --font-numeric: 'DM Sans', 'Inter', sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { background: #ECEDF0; color: var(--text-primary); font-family: var(--font-body); padding: 56px 48px 96px; min-width: 1380px; }
+
+  .doc-header { max-width: 1320px; margin: 0 auto 48px; display: flex; align-items: flex-end; justify-content: space-between; gap: 32px; border-bottom: 1px solid #D6D8DD; padding-bottom: 24px; }
+  .doc-eyebrow { font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-muted); margin: 0 0 8px; font-weight: 600; }
+  .doc-title { font-family: var(--font-display); font-size: 28px; font-weight: 700; margin: 0; color: var(--text-primary); letter-spacing: -0.018em; }
+  .doc-sub { font-size: 13px; color: var(--text-secondary); margin: 8px 0 0; max-width: 820px; line-height: 1.55; }
+  .doc-meta { font-family: var(--font-numeric); font-size: 11px; color: var(--text-muted); text-align: right; letter-spacing: 0.04em; line-height: 1.7; }
+
+  .variation { display: flex; flex-direction: column; align-items: center; width: 393px; }
+  .v-label { margin-bottom: 18px; text-align: center; width: 100%; }
+  .v-num { font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-muted); font-weight: 600; }
+  .v-name { font-family: var(--font-display); font-size: 16px; font-weight: 600; color: var(--text-primary); margin-top: 4px; letter-spacing: -0.005em; }
+  .v-cap { font-size: 12px; color: var(--text-secondary); margin-top: 4px; line-height: 1.45; max-width: 340px; }
+
+  .device { position: relative; width: 393px; height: 852px; background: var(--bg-base); border-radius: 56px; overflow: hidden; box-shadow: 0 0 0 12px #0A0A0F, 0 0 0 13px #2A2A30, 0 30px 80px rgba(15,17,23,.28), 0 12px 32px rgba(15,17,23,.16); }
+  .status-bar { position: absolute; top: 0; left: 0; right: 0; height: 54px; display: flex; align-items: flex-end; justify-content: space-between; padding: 0 28px 9px; z-index: 30; pointer-events: none; }
+  .status-bar .time { font-family: var(--font-system); font-size: 17px; font-weight: 600; color: var(--text-primary); letter-spacing: -0.01em; }
+  .signal-bat { display: inline-block; width: 26px; height: 12px; border: 1.2px solid var(--text-primary); border-radius: 3px; position: relative; }
+  .signal-bat::after { content: ""; position: absolute; right: -3px; top: 3px; width: 2px; height: 5px; background: var(--text-primary); border-radius: 0 1.5px 1.5px 0; }
+  .signal-bat::before { content: ""; position: absolute; left: 1px; top: 1px; bottom: 1px; width: 78%; background: var(--text-primary); border-radius: 1.5px; }
+  .dynamic-island { position: absolute; top: 11px; left: 50%; transform: translateX(-50%); width: 124px; height: 36px; background: #0A0A0F; border-radius: 22px; z-index: 31; }
+  .home-indicator { position: absolute; bottom: 9px; left: 50%; transform: translateX(-50%); width: 134px; height: 5px; background: var(--text-primary); border-radius: 3px; opacity: 0.7; z-index: 32; }
+
+  .screen { position: absolute; top: 0; left: 0; right: 0; bottom: 0; padding: 54px 0 0; display: flex; flex-direction: column; }
+  .content { flex: 1; padding: 0 16px 100px; }
+  .stack { display: flex; flex-direction: column; gap: 12px; padding-top: 10px; }
+
+  .topbar-v2 { display: flex; align-items: center; justify-content: space-between; padding: 2px 4px 4px; height: 38px; }
+  .icon-btn { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-primary); }
+  .wordmark { font-family: var(--font-display); font-size: 17px; font-weight: 700; letter-spacing: -0.02em; display: inline-flex; align-items: center; gap: 5px; }
+  .wordmark .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gradient-brand); }
+  .wordmark .sub { margin-left: 6px; font-family: var(--font-body); font-size: 11px; font-weight: 500; color: var(--text-muted); }
+
+  /* Sibling Tier-1 / Tier-2 surrounds (dimmed for context) */
+  .sibling { background: var(--bg-surface); border: 1px solid var(--bg-border); border-radius: var(--radius-lg); box-shadow: var(--elev-1); padding: 11px 14px; opacity: 0.45; display: flex; align-items: center; gap: 12px; }
+  .sibling .eb { font-family: var(--font-body); font-size: 9.5px; font-weight: 700; color: var(--text-secondary); letter-spacing: 0.18em; text-transform: uppercase; }
+  .sibling .num { margin-top: 3px; font-family: var(--font-numeric); font-feature-settings: "tnum" 1; font-size: 22px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.03em; line-height: 1; }
+  .sibling .left { flex: 1; min-width: 0; }
+  .sibling.ring {
+    height: 116px;
+    background: linear-gradient(180deg, #FFFFFF 0%, #F4F5F7 100%);
+    border-color: var(--bg-border);
+  }
+  .sibling.ring .ring-mock {
+    width: 70px; height: 70px;
+    border-radius: 50%;
+    border: 8px solid var(--macro-protein, #00D278);
+    border-right-color: var(--macro-carbs, #F59E0B);
+    border-bottom-color: var(--macro-fat, #A855F7);
+    flex-shrink: 0;
+  }
+  .sibling.nutrition .mini-bars { display: flex; gap: 3px; }
+  .sibling.nutrition .mini-bars div { width: 24px; height: 4px; background: var(--text-disabled); border-radius: 2px; }
+
+  /* FOCUS card */
+  .widget {
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--elev-2);
+    padding: 14px 16px 14px;
+    position: relative;
+    z-index: 2;
+  }
+  .widget.focus::before {
+    content: "";
+    position: absolute;
+    inset: -8px;
+    border: 1.5px solid rgba(0,180,216,0.30);
+    border-radius: calc(var(--radius-lg) + 8px);
+    pointer-events: none;
+    z-index: -1;
+  }
+  .widget.focus::after {
+    content: "FOCUS · WIDGET";
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    background: var(--semantic-info);
+    color: #fff;
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 8.5px; font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 999px;
+    letter-spacing: 0.16em;
+  }
+
+  .w-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .w-eyebrow { font-family: var(--font-body); font-size: 10.5px; font-weight: 700; color: var(--text-secondary); letter-spacing: 0.18em; text-transform: uppercase; display: inline-flex; align-items: center; gap: 7px; }
+  .w-eyebrow .glyph { width: 22px; height: 22px; border-radius: 7px; background: rgba(232,122,29,0.12); color: var(--primary-orange); display: flex; align-items: center; justify-content: center; }
+  .w-chev { font-family: var(--font-body); color: var(--text-muted); display: inline-flex; align-items: center; gap: 2px; font-size: 11px; font-weight: 600; }
+
+  /* ===== V1 — 2x2 grid + week bar chart ===== */
+  .grid2x2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .stat {
+    background: var(--bg-base);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-md);
+    padding: 10px 12px 11px;
+    display: flex; flex-direction: column;
+    min-height: 70px;
+    position: relative;
+  }
+  .stat .lbl { font-family: var(--font-body); font-size: 9.5px; font-weight: 700; color: var(--text-secondary); letter-spacing: 0.14em; text-transform: uppercase; }
+  .stat .lbl .iconlet { display: inline-flex; vertical-align: -2px; margin-right: 4px; color: var(--primary-orange); }
+  .stat .val {
+    margin-top: 4px;
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 24px; font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    display: inline-flex; align-items: baseline; gap: 3px;
+  }
+  .stat .val .of {
+    font-size: 12px; font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: -0.005em;
+  }
+  .stat .sub {
+    margin-top: 3px;
+    font-family: var(--font-body);
+    font-size: 10.5px; font-weight: 500;
+    color: var(--text-muted);
+  }
+  /* Track for active minutes */
+  .stat .track {
+    margin-top: 7px;
+    height: 4px;
+    background: var(--bg-border);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .stat .track .fill {
+    height: 100%;
+    background: var(--primary-orange);
+    border-radius: 999px;
+  }
+
+  /* Week bars (active minutes by day) */
+  .week-strip {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--bg-border-soft);
+  }
+  .week-strip .ws-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    font-family: var(--font-body);
+    font-size: 10px; font-weight: 700;
+    color: var(--text-secondary);
+    letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .week-strip .ws-head .m {
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 10.5px; font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  .week-bars {
+    margin-top: 8px;
+    display: grid; grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    height: 56px;
+    align-items: flex-end;
+  }
+  .week-bars .col {
+    display: flex; flex-direction: column;
+    align-items: center;
+    height: 100%;
+  }
+  .week-bars .col .bar {
+    width: 100%; max-width: 22px;
+    background: var(--text-disabled);
+    border-radius: 4px 4px 0 0;
+    margin-top: auto;
+  }
+  .week-bars .col.today .bar { background: var(--primary-orange); }
+  .week-bars .col.future .bar { background: var(--bg-border); }
+  .week-bars .col .d {
+    margin-top: 5px;
+    font-family: var(--font-body);
+    font-size: 9px; font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .week-bars .col.today .d { color: var(--text-primary); }
+
+  /* ===== V2 — single hero number + sparkline + chip row ===== */
+  .hero-num {
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-weight: 700;
+    font-size: 50px;
+    color: var(--text-primary);
+    letter-spacing: -0.035em;
+    line-height: 1;
+    display: inline-flex; align-items: baseline; gap: 6px;
+  }
+  .hero-num .of {
+    font-size: 16px; font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: -0.01em;
+  }
+  .hero-sub {
+    margin-top: 3px;
+    font-family: var(--font-body);
+    font-size: 11px; font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .hero-sub .pill {
+    display: inline-flex; align-items: center;
+    margin-left: 6px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: rgba(0,210,120,0.10);
+    color: var(--semantic-success);
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 10.5px; font-weight: 700;
+    letter-spacing: -0.003em;
+    text-transform: none;
+  }
+  .sparkline {
+    margin-top: 14px;
+    height: 60px;
+    width: 100%;
+  }
+  .chip-row {
+    margin-top: 12px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .chip-stat {
+    background: var(--bg-base);
+    border: 1px solid var(--bg-border);
+    border-radius: 10px;
+    padding: 8px 10px;
+  }
+  .chip-stat .l { font-family: var(--font-body); font-size: 9px; font-weight: 700; color: var(--text-secondary); letter-spacing: 0.14em; text-transform: uppercase; }
+  .chip-stat .v { margin-top: 3px; font-family: var(--font-numeric); font-feature-settings: "tnum" 1; font-size: 15px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.015em; }
+  .chip-stat .v .u { font-family: var(--font-body); font-size: 9.5px; font-weight: 500; color: var(--text-muted); margin-left: 2px; letter-spacing: 0.06em; text-transform: uppercase; }
+
+  /* ===== V3 — Apple-Fitness-inspired ring + stats column ===== */
+  .ring-row {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 14px;
+    align-items: center;
+  }
+  .move-ring {
+    width: 110px; height: 110px;
+    position: relative;
+  }
+  .move-ring .lbl {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
+  .move-ring .lbl .v {
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 22px; font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .move-ring .lbl .l {
+    margin-top: 2px;
+    font-family: var(--font-body);
+    font-size: 8.5px; font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 0.16em; text-transform: uppercase;
+  }
+  .stat-list { display: flex; flex-direction: column; gap: 5px; }
+  .stat-list .r { display: grid; grid-template-columns: 14px 1fr auto; column-gap: 8px; align-items: center; padding: 4px 0; border-bottom: 1px solid var(--bg-border-soft); }
+  .stat-list .r:last-child { border-bottom: 0; }
+  .stat-list .r .ic { width: 14px; height: 14px; color: var(--primary-orange); display: flex; align-items: center; justify-content: center; }
+  .stat-list .r .nm { font-family: var(--font-body); font-size: 11.5px; font-weight: 600; color: var(--text-body); letter-spacing: -0.003em; }
+  .stat-list .r .vl { font-family: var(--font-numeric); font-feature-settings: "tnum" 1; font-size: 13px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.005em; }
+  .stat-list .r .vl .of { font-family: var(--font-body); font-size: 10px; font-weight: 500; color: var(--text-muted); margin-left: 2px; }
+  /* Bottom mini-strip on V3 */
+  .v3-strip {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--bg-border-soft);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .v3-strip .l { font-family: var(--font-body); font-size: 10.5px; font-weight: 600; color: var(--text-secondary); }
+  .v3-strip .bars { display: flex; gap: 3px; align-items: flex-end; height: 22px; }
+  .v3-strip .bars div { width: 5px; background: var(--text-disabled); border-radius: 2px; }
+  .v3-strip .bars div.today { background: var(--primary-orange); }
+
+  /* ===== Empty state ===== */
+  .empty {
+    text-align: center;
+    padding: 18px 14px 12px;
+  }
+  .empty .glyph {
+    width: 44px; height: 44px;
+    margin: 0 auto 10px;
+    border-radius: 50%;
+    background: var(--bg-base);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--primary-orange);
+  }
+  .empty .ttl {
+    font-family: var(--font-display);
+    font-size: 15px; font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.005em;
+    line-height: 1.3;
+  }
+  .empty .sub {
+    margin-top: 5px;
+    font-family: var(--font-body);
+    font-size: 11.5px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+  }
+  .empty .cta-row {
+    margin-top: 12px;
+    display: flex; gap: 8px; justify-content: center;
+  }
+  .empty .cta {
+    height: 32px; padding: 0 12px;
+    border-radius: 8px;
+    border: 1px solid var(--bg-border);
+    background: var(--bg-surface);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 12px; font-weight: 600;
+  }
+  .empty .cta.primary {
+    background: var(--gradient-brand);
+    color: var(--text-primary);
+    border-color: transparent;
+    box-shadow: var(--elev-cta);
+  }
+
+  /* Tab bar */
+  .tabbar { position: absolute; left: 0; right: 0; bottom: 0; height: 88px; background: rgba(255,255,255,0.92); backdrop-filter: blur(18px); border-top: 1px solid var(--bg-border); display: grid; grid-template-columns: repeat(5, 1fr); padding: 8px 6px 30px; z-index: 22; }
+  .tab { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: var(--text-muted); position: relative; }
+  .tab.active { color: var(--text-primary); }
+  .tab .tab-glyph { width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; }
+  .tab .tab-label { font-family: var(--font-body); font-size: 10px; font-weight: 600; letter-spacing: 0.02em; }
+  .tab.coach { margin-top: -16px; }
+  .tab.coach .tab-bubble { position: relative; width: 52px; height: 52px; background: var(--bg-elevated); border-radius: 18px 18px 18px 6px; display: flex; align-items: center; justify-content: center; color: #fff; box-shadow: 0 8px 22px rgba(15,17,23,.34), 0 2px 4px rgba(15,17,23,.18); }
+  .tab.coach .tab-bubble::after { content: ""; position: absolute; left: 8px; bottom: -6px; width: 12px; height: 12px; background: var(--bg-elevated); border-radius: 2px; transform: rotate(45deg); }
+  .tab.coach .tab-label { margin-top: 4px; color: var(--text-primary); font-weight: 700; }
+
+  /* Legend doc */
+  .legend-doc { max-width: 1320px; margin: 56px auto 0; padding: 22px 26px; background: #FFFFFF; border: 1px solid var(--bg-border); border-radius: var(--radius-lg); display: grid; grid-template-columns: 220px 1fr; gap: 14px 28px; font-size: 12px; color: var(--text-secondary); line-height: 1.55; }
+  .legend-doc h3 { grid-column: 1 / -1; margin: 0 0 6px; font-family: var(--font-display); font-size: 12px; font-weight: 600; color: var(--text-muted); letter-spacing: 0.18em; text-transform: uppercase; }
+  .legend-doc dt { grid-column: 1; font-size: 11px; font-weight: 600; color: var(--text-muted); letter-spacing: 0.04em; text-transform: uppercase; }
+  .legend-doc dd { grid-column: 2; margin: 0; }
+  .legend-doc code { background: #F4F5F7; border: 1px solid var(--bg-border); padding: 1px 6px; border-radius: 4px; font-family: var(--font-numeric); font-size: 11px; color: var(--text-primary); }
+</style>
+</head>
+<body>
+  <header class="doc-header">
+    <div>
+      <p class="doc-eyebrow">FuelWell · Round 2 · Step 4 — Mockups</p>
+      <h1 class="doc-title">M31 Activity overview · Dashboard widget</h1>
+      <p class="doc-sub">Tier 2 widget on M28 Dashboard v2. Surfaces today's activity at a glance — workouts logged, active minutes vs target, calories burned, steps — and a week-strip of active minutes by day. Tap target: the whole card → Exercise & Activity tab landing (M32). Three layout studies of the same payload.</p>
+    </div>
+    <div class="doc-meta">
+      iPhone 15 Pro · 393 × 852 pt<br>
+      Tier 2 · routes to M32<br>
+      Focus · Tier-1 + Tier-2 sibling dimmed
+    </div>
+  </header>
+
+  <div class="frames-row" id="frames"></div>
+
+  <section class="legend-doc">
+    <h3>Mockup notes · M31 widget studies</h3>
+    <dt>Eyebrow & route</dt>
+    <dd><code>ACTIVITY · TODAY</code> in body 700 caption at <code>text.secondary</code>, with an orange figure-run iconlet at the left and a chevron-right at the right indicating the whole card is the tap target → Exercise & Activity tab landing.</dd>
+    <dt>Stat payload</dt>
+    <dd>Four numbers per spec: <strong>Workouts logged</strong> (n / n planned), <strong>Active minutes</strong> (n / 300 target), <strong>Calories burned</strong> (kcal), <strong>Steps</strong>. Active-minutes carries a 4pt fill bar against the target; the rest are bare numbers with caption sub-labels.</dd>
+    <dt>Week bar strip</dt>
+    <dd>Seven mini bars of active minutes Mon–Sun. <em>Today</em> in <code>color.primary.orange #E87A1D</code>, past days in <code>color.text.muted</code>, future days in <code>color.bg.border</code> (the "empty track" tone, so future days don't shout). Day-letter caption beneath each bar.</dd>
+    <dt>Variations</dt>
+    <dd><strong>V1</strong> 2×2 stat grid + week strip — the spec primary. <strong>V2</strong> single hero number (active minutes) with sparkline and 3 sub-stats chipped underneath — read-at-a-glance posture. <strong>V3</strong> Apple-Fitness-style move ring + vertical stat list + mini week strip at the bottom edge — most visually distinct, treats minutes-toward-target as a closing ring.</dd>
+    <dt>Empty state</dt>
+    <dd>Single panel inside the card with a "figure-walk" glyph, the coach copy <em>No movement logged yet today.</em>, and two CTAs: <code>Start workout</code> (primary) and <code>Connect Apple Health</code> (secondary). Keeps the card height so the dashboard layout doesn't reflow.</dd>
+  </section>
+
+<script>
+  const statusBar = `
+    <div class="status-bar">
+      <div class="time">9:41</div>
+      <div style="display:inline-flex; gap:6px; align-items:center;">
+        <svg width="17" height="11" viewBox="0 0 17 11" fill="none"><rect x="0" y="7" width="3" height="4" rx="0.5" fill="#0A0A0F"/><rect x="4" y="5" width="3" height="6" rx="0.5" fill="#0A0A0F"/><rect x="8" y="3" width="3" height="8" rx="0.5" fill="#0A0A0F"/><rect x="12" y="0" width="3" height="11" rx="0.5" fill="#0A0A0F"/></svg>
+        <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><path d="M8 11l-2.5-2.5a3.5 3.5 0 014.9 0L8 11z" fill="#0A0A0F"/><path d="M2 5a8.5 8.5 0 0112 0l-1.5 1.5a6 6 0 00-9 0L2 5z" fill="#0A0A0F"/><path d="M5 8a4.5 4.5 0 016 0l-1.5 1.5a2.5 2.5 0 00-3 0L5 8z" fill="#0A0A0F"/></svg>
+        <span class="signal-bat"></span>
+      </div>
+    </div>`;
+  const islandHTML = `<div class="dynamic-island"></div>`;
+
+  const ic = {
+    menu: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg>`,
+    help: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M9.3 9.5a2.7 2.7 0 015.4.2c0 1.5-2 1.8-2.7 3.3M12 17v.01" stroke-linecap="round"/></svg>`,
+    run: `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="15" cy="4" r="2"/><path d="M11 7l3 2-2 4-3 2v5h-2v-6l2-2-1-3-4 2v3H2v-4l5-3a3 3 0 014 2zM17 14l2 4h3l-3-5-2-1z"/></svg>`,
+    chev: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>`,
+    fire: `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c-1 4-5 5-5 9a5 5 0 0010 0c0-3-2-4-2-7-1 2-2 3-3 0z"/></svg>`,
+    foot: `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 2c2 0 3 2 3 5s-1 5-3 5-3-2-3-5 1-5 3-5zM14 4c1.5 0 2 2 2 4s-.5 4-2 4-2-2-2-4 .5-4 2-4zM18 7c1 0 1.5 1.5 1.5 3s-.5 3-1.5 3-1.5-1.5-1.5-3 .5-3 1.5-3zM7 14c2 0 4 1 4 4s-2 4-4 4-4-1-4-4 2-4 4-4z"/></svg>`,
+    dumb: `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="9" width="3" height="6" rx="1"/><rect x="5" y="7" width="3" height="10" rx="1"/><rect x="8" y="11" width="8" height="2"/><rect x="16" y="7" width="3" height="10" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/></svg>`,
+    figure: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="14" cy="4" r="1.5"/><path d="M14 7l-2 4 3 2v6M12 13l-3 1M14 7l3 3"/></svg>`,
+    tabHome: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11l8-7 8 7v8a1 1 0 01-1 1h-4v-6h-6v6H5a1 1 0 01-1-1v-8Z"/></svg>`,
+    tabHomeFill: `<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M4 11l8-7 8 7v8a1 1 0 01-1 1h-4v-6h-6v6H5a1 1 0 01-1-1v-8Z"/></svg>`,
+    tabMeals: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4v16M9 4v6a3 3 0 01-6 0V4M19 4c-2 0-3 2-3 5s1 5 3 5v6"/></svg>`,
+    tabCoach: `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a8 8 0 1116 0c0 4-3.6 7-8 7l-3 3v-3.2A8 8 0 014 11Z"/><path d="M9 10.5h6M9 13.5h4"/></svg>`,
+    tabExercise: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M2 12h2M20 12h2M5 9v6M19 9v6M8 8v8M16 8v8M8 12h8"/></svg>`,
+    tabProgress: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg>`,
+  };
+
+  function tabbar() {
+    return `<div class="tabbar">
+      <div class="tab active"><div class="tab-glyph">${ic.tabHomeFill}</div><div class="tab-label">Home</div></div>
+      <div class="tab"><div class="tab-glyph">${ic.tabMeals}</div><div class="tab-label">Meals</div></div>
+      <div class="tab coach"><div class="tab-bubble">${ic.tabCoach}</div><div class="tab-label">Coach</div></div>
+      <div class="tab"><div class="tab-glyph">${ic.tabExercise}</div><div class="tab-label">Exercise</div></div>
+      <div class="tab"><div class="tab-glyph">${ic.tabProgress}</div><div class="tab-label">Progress</div></div>
+    </div>`;
+  }
+
+  function topbarV2() {
+    return `<div class="topbar-v2">
+      <div class="icon-btn">${ic.menu}</div>
+      <div class="wordmark"><span class="dot"></span>FuelWell<span class="sub">· Fri May 16 · 3:42p</span></div>
+      <div class="icon-btn">${ic.help}</div>
+    </div>`;
+  }
+
+  /* Sibling cards — dimmed neighbors so the focus widget reads as the demo subject. */
+  function tier1Sibling() {
+    // A condensed Tier-1 row representing the I/O widget
+    return `<div class="sibling ring">
+      <div class="left">
+        <div class="eb">ENERGY BALANCE · TODAY</div>
+        <div class="num" style="margin-top: 6px;">+128<span style="font-size:13px; font-weight:500; color: var(--text-muted); margin-left:4px;">kcal</span></div>
+      </div>
+      <div class="ring-mock"></div>
+    </div>`;
+  }
+  function nutritionSibling() {
+    return `<div class="sibling nutrition">
+      <div class="left">
+        <div class="eb">NUTRITION · TODAY</div>
+        <div class="num">1,546<span style="font-size:13px; font-weight:500; color: var(--text-muted); margin-left:4px;">/ 2,260</span></div>
+      </div>
+      <div class="mini-bars"><div></div><div></div><div></div></div>
+    </div>`;
+  }
+
+  /* ===== Variation 1 — 2x2 grid ===== */
+  function v1Widget(state) {
+    if (state === 'empty') {
+      return `
+        <div class="widget focus">
+          <div class="w-head">
+            <div class="w-eyebrow"><span class="glyph">${ic.figure}</span>ACTIVITY · TODAY</div>
+            <div class="w-chev">${ic.chev}</div>
+          </div>
+          <div class="empty">
+            <div class="glyph">${ic.figure}</div>
+            <div class="ttl">No movement logged yet today.</div>
+            <div class="sub">Tap a workout to start, or it'll fill in passively from Apple Health.</div>
+            <div class="cta-row">
+              <button class="cta primary">Start workout</button>
+              <button class="cta">Connect Health</button>
+            </div>
+          </div>
+        </div>`;
+    }
+    return `
+      <div class="widget focus">
+        <div class="w-head">
+          <div class="w-eyebrow"><span class="glyph">${ic.figure}</span>ACTIVITY · TODAY</div>
+          <div class="w-chev">${ic.chev}</div>
+        </div>
+        <div class="grid2x2">
+          <div class="stat">
+            <div class="lbl"><span class="iconlet">${ic.dumb}</span>WORKOUTS</div>
+            <div class="val">1<span class="of">/ 1 planned</span></div>
+            <div class="sub">Strength · Push · 5pm</div>
+          </div>
+          <div class="stat">
+            <div class="lbl"><span class="iconlet">${ic.run}</span>ACTIVE MIN</div>
+            <div class="val">214<span class="of">/ 300</span></div>
+            <div class="track"><div class="fill" style="width: 71%"></div></div>
+          </div>
+          <div class="stat">
+            <div class="lbl"><span class="iconlet">${ic.fire}</span>BURNED</div>
+            <div class="val">486<span class="of">kcal</span></div>
+            <div class="sub">Activity + workout</div>
+          </div>
+          <div class="stat">
+            <div class="lbl"><span class="iconlet">${ic.foot}</span>STEPS</div>
+            <div class="val">8,432</div>
+            <div class="sub">+1.2k vs your avg</div>
+          </div>
+        </div>
+        <div class="week-strip">
+          <div class="ws-head">THIS WEEK · ACTIVE MIN<span class="m">avg <strong style="color:var(--text-primary); font-family:var(--font-numeric); font-weight:700;">238</strong>/day</span></div>
+          <div class="week-bars">
+            ${[212, 295, 198, 240, 214, 0, 0].map((m, i) => {
+              const today = i === 4;
+              const future = m === 0 && i > 4;
+              const h = m === 0 ? 6 : Math.max((m / 300) * 100, 12);
+              return `<div class="col ${today ? 'today' : ''} ${future ? 'future' : ''}">
+                <div class="bar" style="height:${h}%"></div>
+                <div class="d">${['M','T','W','T','F','S','S'][i]}</div>
+              </div>`;
+            }).join('')}
+          </div>
+        </div>
+      </div>`;
+  }
+
+  /* ===== Variation 2 — hero number + sparkline + chip row ===== */
+  function v2Widget(state) {
+    if (state === 'empty') {
+      return `
+        <div class="widget focus">
+          <div class="w-head">
+            <div class="w-eyebrow"><span class="glyph">${ic.figure}</span>ACTIVITY · TODAY</div>
+            <div class="w-chev">${ic.chev}</div>
+          </div>
+          <div class="empty">
+            <div class="glyph">${ic.figure}</div>
+            <div class="ttl">No movement logged yet today.</div>
+            <div class="sub">Tap a workout to start, or it'll fill in passively from Apple Health.</div>
+            <div class="cta-row">
+              <button class="cta primary">Start workout</button>
+              <button class="cta">Connect Health</button>
+            </div>
+          </div>
+        </div>`;
+    }
+    return `
+      <div class="widget focus">
+        <div class="w-head">
+          <div class="w-eyebrow"><span class="glyph">${ic.figure}</span>ACTIVITY · TODAY</div>
+          <div class="w-chev">${ic.chev}</div>
+        </div>
+        <div>
+          <div class="hero-num">214<span class="of">/ 300 active min</span></div>
+          <div class="hero-sub">ON PACE<span class="pill">+12% vs 7-day avg</span></div>
+          <svg class="sparkline" viewBox="0 0 280 60" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="m31grad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#E87A1D" stop-opacity="0.30"/>
+                <stop offset="100%" stop-color="#E87A1D" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <path d="M0 36 L40 24 L80 32 L120 18 L160 26 L200 14 L240 22 L280 16 L280 60 L0 60 Z" fill="url(#m31grad)"/>
+            <path d="M0 36 L40 24 L80 32 L120 18 L160 26 L200 14 L240 22 L280 16" stroke="#E87A1D" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="280" cy="16" r="4" fill="#E87A1D"/>
+            <circle cx="280" cy="16" r="8" fill="#E87A1D" fill-opacity="0.16"/>
+          </svg>
+        </div>
+        <div class="chip-row">
+          <div class="chip-stat"><div class="l">WORKOUTS</div><div class="v">1<span class="u">of 1</span></div></div>
+          <div class="chip-stat"><div class="l">BURNED</div><div class="v">486<span class="u">kcal</span></div></div>
+          <div class="chip-stat"><div class="l">STEPS</div><div class="v">8.4k<span class="u">today</span></div></div>
+        </div>
+      </div>`;
+  }
+
+  /* ===== Variation 3 — Move ring + vertical stat list ===== */
+  function v3Widget(state) {
+    if (state === 'empty') {
+      return `
+        <div class="widget focus">
+          <div class="w-head">
+            <div class="w-eyebrow"><span class="glyph">${ic.figure}</span>ACTIVITY · TODAY</div>
+            <div class="w-chev">${ic.chev}</div>
+          </div>
+          <div class="empty">
+            <div class="glyph">${ic.figure}</div>
+            <div class="ttl">No movement logged yet today.</div>
+            <div class="sub">Tap a workout to start, or it'll fill in passively from Apple Health.</div>
+            <div class="cta-row">
+              <button class="cta primary">Start workout</button>
+              <button class="cta">Connect Health</button>
+            </div>
+          </div>
+        </div>`;
+    }
+    // Move ring: 71% (214/300)
+    const PCT = 71;
+    const R = 46;
+    const C = 2 * Math.PI * R;
+    const dash = (PCT / 100) * C;
+    return `
+      <div class="widget focus">
+        <div class="w-head">
+          <div class="w-eyebrow"><span class="glyph">${ic.figure}</span>ACTIVITY · TODAY</div>
+          <div class="w-chev">${ic.chev}</div>
+        </div>
+        <div class="ring-row">
+          <div class="move-ring">
+            <svg width="110" height="110" viewBox="0 0 110 110">
+              <circle cx="55" cy="55" r="${R}" stroke="rgba(232,122,29,0.14)" stroke-width="12" fill="none"/>
+              <circle cx="55" cy="55" r="${R}" stroke="#E87A1D" stroke-width="12" fill="none"
+                stroke-dasharray="${dash} ${C}"
+                stroke-linecap="round"
+                transform="rotate(-90 55 55)"/>
+            </svg>
+            <div class="lbl">
+              <div class="v">71%</div>
+              <div class="l">OF GOAL</div>
+            </div>
+          </div>
+          <div class="stat-list">
+            <div class="r"><span class="ic">${ic.run}</span><span class="nm">Active min</span><span class="vl">214<span class="of">/ 300</span></span></div>
+            <div class="r"><span class="ic">${ic.fire}</span><span class="nm">Burned</span><span class="vl">486<span class="of">kcal</span></span></div>
+            <div class="r"><span class="ic">${ic.foot}</span><span class="nm">Steps</span><span class="vl">8,432</span></div>
+            <div class="r"><span class="ic">${ic.dumb}</span><span class="nm">Workouts</span><span class="vl">1<span class="of">/ 1</span></span></div>
+          </div>
+        </div>
+        <div class="v3-strip">
+          <div class="l">This week</div>
+          <div class="bars">
+            ${[212, 295, 198, 240, 214, 0, 0].map((m, i) => {
+              const today = i === 4;
+              const h = m === 0 ? 4 : Math.max((m/300) * 22, 4);
+              return `<div ${today ? 'class="today"' : ''} style="height:${h}px"></div>`;
+            }).join('')}
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function frame(spec) {
+    return `
+      <section class="variation">
+        <div class="v-label">
+          <div class="v-num">${spec.num}</div>
+          <div class="v-name">${spec.name}</div>
+          <div class="v-cap">${spec.cap}</div>
+        </div>
+        <div class="device">
+          ${statusBar}
+          ${islandHTML}
+          <div class="screen">
+            <div class="content">
+              ${topbarV2()}
+              <div class="stack">
+                ${tier1Sibling()}
+                ${spec.render}
+                ${nutritionSibling()}
+              </div>
+            </div>
+            ${tabbar()}
+          </div>
+          <div class="home-indicator"></div>
+        </div>
+      </section>`;
+  }
+
+  const populated = [
+    { num: 'Variation 01', name: '2×2 stat grid + week strip', cap: 'Spec primary. Four numbers in a tight grid; active-minutes carries the progress bar. Seven daily active-min bars beneath read the week.', render: v1Widget('populated') },
+    { num: 'Variation 02', name: 'Hero number · sparkline', cap: 'One big number (active minutes), a 7-day sparkline with the today point flagged. Workouts / burned / steps as three sub-chips. Posture: glance, decide, move on.', render: v2Widget('populated') },
+    { num: 'Variation 03', name: 'Move ring · vertical list', cap: 'Apple-Fitness-style closing ring shows progress to goal at a glance; stats stack as a clean vertical list to the right. Bottom strip carries the week\'s mini bars.', render: v3Widget('populated') },
+  ];
+  const empties = [
+    { num: 'Variation 01 · Empty', name: 'Day 1 · no movement', cap: 'V1 grid replaced by a single coach-voice empty panel. CTAs offered: Start workout (primary), Connect Health (secondary).', render: v1Widget('empty') },
+    { num: 'Variation 02 · Empty', name: 'V2 · no movement', cap: 'Same empty pattern — keeps the card height so the dashboard doesn\'t reflow.', render: v2Widget('empty') },
+    { num: 'Variation 03 · Empty', name: 'V3 · no movement', cap: 'Move ring + list collapsed into the empty panel — same copy across the three variations.', render: v3Widget('empty') },
+  ];
+
+  document.getElementById('frames').innerHTML = `
+    <div style="display:flex; flex-direction:column; gap: 64px;">
+      <div style="display:flex; gap: 72px; justify-content:center;">${populated.map(frame).join('')}</div>
+      <div style="display:flex; gap: 72px; justify-content:center;">${empties.map(frame).join('')}</div>
+    </div>`;
+</script>
+</body>
+</html>

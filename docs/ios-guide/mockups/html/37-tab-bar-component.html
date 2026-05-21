@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>FuelWell · M37 Tab bar isolation · Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-base:#F4F5F7; --bg-surface:#FFFFFF; --bg-elevated:#0F1117;
+    --bg-border:#E5E7EB; --bg-border-soft:#EEF0F3;
+    --text-primary:#0A0A0F; --text-body:#1F2937; --text-secondary:#6B7280;
+    --text-muted:#9CA3AF; --text-disabled:#C7CCD3;
+    --text-on-dark:#FFFFFF;
+    --primary-orange:#E87A1D;
+    --semantic-success:#00D278; --semantic-warning:#F59E0B; --semantic-info:#00B4D8; --semantic-premium:#A855F7;
+    --brand-green:#47E7B0;
+    --gradient-brand:linear-gradient(135deg,#00D278 0%,#47E7B0 100%);
+    --gradient-coach:linear-gradient(135deg,#A855F7 0%,#6B21A8 100%);
+    --radius-lg:20px;
+    --elev-1:0 1px 2px rgba(15,17,23,.04),0 1px 0 rgba(15,17,23,.02);
+    --elev-2:0 4px 14px rgba(15,17,23,.06),0 1px 2px rgba(15,17,23,.04);
+    --elev-coach:0 8px 22px rgba(15,17,23,.34),0 2px 4px rgba(15,17,23,.18);
+    --elev-coach-glow:0 10px 24px rgba(0,210,120,.40),0 2px 4px rgba(15,17,23,.16);
+    --font-display:'Outfit',system-ui,sans-serif;
+    --font-body:'Inter',system-ui,sans-serif;
+    --font-numeric:'DM Sans','Inter',sans-serif;
+  }
+  *{box-sizing:border-box;} html,body{margin:0;padding:0;}
+  body{background:#ECEDF0;color:var(--text-primary);font-family:var(--font-body);padding:56px 48px 96px;min-width:1100px;}
+
+  .doc-header{max-width:1320px;margin:0 auto 48px;display:flex;align-items:flex-end;justify-content:space-between;gap:32px;border-bottom:1px solid #D6D8DD;padding-bottom:24px;}
+  .doc-eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--text-muted);margin:0 0 8px;font-weight:600;}
+  .doc-title{font-family:var(--font-display);font-size:28px;font-weight:700;margin:0;letter-spacing:-.018em;}
+  .doc-sub{font-size:13px;color:var(--text-secondary);margin:8px 0 0;max-width:820px;line-height:1.55;}
+  .doc-meta{font-family:var(--font-numeric);font-size:11px;color:var(--text-muted);text-align:right;letter-spacing:.04em;line-height:1.7;}
+
+  .frames-wrap{display:flex;gap:120px;justify-content:center;align-items:flex-start;}
+  .variant-col{display:flex;flex-direction:column;align-items:center;width:480px;}
+  .var-label{margin-bottom:24px;text-align:center;width:100%;}
+  .var-num{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--text-muted);font-weight:600;}
+  .var-name{font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--text-primary);margin-top:6px;letter-spacing:-.01em;}
+  .var-cap{font-size:12.5px;color:var(--text-secondary);margin-top:6px;line-height:1.5;max-width:440px;}
+
+  .state-stack{display:flex;flex-direction:column;gap:30px;width:100%;}
+  .state-row{display:flex;align-items:center;gap:22px;}
+  .state-meta{
+    width:96px;
+    text-align:right;
+    flex-shrink:0;
+  }
+  .state-meta .si{
+    font-family:var(--font-numeric);font-feature-settings:"tnum" 1;
+    font-size:10px;font-weight:700;color:var(--text-muted);
+    letter-spacing:.22em;
+  }
+  .state-meta .sn{
+    margin-top:4px;
+    font-family:var(--font-display);font-size:13.5px;font-weight:600;
+    color:var(--text-primary);letter-spacing:-.005em;
+    line-height:1.25;
+  }
+  .state-meta .sc{
+    margin-top:4px;
+    font-family:var(--font-body);font-size:11px;font-weight:500;
+    color:var(--text-secondary);
+    line-height:1.4;
+  }
+
+  /* Tab bar render (standalone — no device frame around) */
+  .tabbar-host{
+    position:relative;
+    width:393px;
+    flex-shrink:0;
+    background:var(--bg-base);
+    border-radius:36px;
+    overflow:visible;
+    box-shadow:0 30px 60px rgba(15,17,23,.10),0 6px 16px rgba(15,17,23,.06);
+    padding-top:48px; /* leave room for raised Coach */
+  }
+  .tabbar{
+    position:relative;
+    width:393px;height:88px;
+    background:rgba(255,255,255,0.92);
+    backdrop-filter:blur(18px);
+    border-top:1px solid var(--bg-border);
+    border-bottom-left-radius:36px;
+    border-bottom-right-radius:36px;
+    display:grid;grid-template-columns:repeat(5,1fr);
+    padding:8px 6px 30px;
+  }
+  .tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--text-muted);position:relative;}
+  .tab.active{color:var(--text-primary);}
+  .tab .tab-glyph{width:26px;height:26px;display:flex;align-items:center;justify-content:center;}
+  .tab .tab-label{font-family:var(--font-body);font-size:10px;font-weight:600;letter-spacing:.02em;}
+
+  /* === Variation 1 — Speech bubble Coach === */
+  .tab.coach-bubble{margin-top:-22px;}
+  .tab.coach-bubble .tab-bubble{
+    position:relative;
+    width:54px;height:54px;
+    background:var(--bg-elevated);
+    border-radius:18px 18px 18px 6px;
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;
+    box-shadow:var(--elev-coach);
+  }
+  .tab.coach-bubble .tab-bubble::after{
+    content:"";
+    position:absolute;
+    left:8px;bottom:-6px;
+    width:12px;height:12px;
+    background:var(--bg-elevated);
+    border-radius:2px;
+    transform:rotate(45deg);
+  }
+  .tab.coach-bubble .tab-label{margin-top:6px;color:var(--text-primary);font-weight:700;}
+  /* When the bubble is the "active" tab, swap to gradient.brand fill */
+  .tab.coach-bubble.active .tab-bubble{
+    background:var(--gradient-brand);
+    color:var(--text-primary);
+    box-shadow:var(--elev-coach-glow);
+  }
+  .tab.coach-bubble.active .tab-bubble::after{background:#25E29C;}
+
+  /* === Variation 2 — Raised circle / FAB-style Coach === */
+  .tab.coach-fab{margin-top:-22px;}
+  .tab.coach-fab .tab-bubble{
+    position:relative;
+    width:54px;height:54px;
+    background:var(--gradient-brand);
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;
+    box-shadow:var(--elev-coach-glow);
+  }
+  .tab.coach-fab .tab-bubble svg path{stroke:#fff;}
+  .tab.coach-fab .tab-bubble svg{color:#fff;}
+  .tab.coach-fab .tab-label{margin-top:6px;color:var(--text-primary);font-weight:700;}
+  /* Inactive baseline: no gradient, dark-only */
+  .tab.coach-fab.muted .tab-bubble{
+    background:var(--bg-elevated);
+    box-shadow:0 8px 18px rgba(15,17,23,.30),0 2px 4px rgba(15,17,23,.16);
+  }
+  /* Active: keep gradient + add subtle ring */
+  .tab.coach-fab.active .tab-bubble{
+    box-shadow:var(--elev-coach-glow), 0 0 0 4px rgba(0,210,120,0.18);
+  }
+
+  /* Home indicator under bar */
+  .home-ind{
+    width:134px;height:5px;
+    background:var(--text-primary);
+    border-radius:3px;opacity:0.7;
+    margin:14px auto 18px;
+  }
+
+  /* Caption legend bar */
+  .tab-cap-strip{
+    margin-top:18px;
+    display:grid;grid-template-columns:repeat(5,1fr);
+    gap:6px;padding:0 6px;
+    font-family:var(--font-numeric);font-feature-settings:"tnum" 1;
+    font-size:8.5px;font-weight:700;
+    color:var(--text-muted);
+    letter-spacing:.16em;text-transform:uppercase;
+    text-align:center;
+  }
+  .tab-cap-strip span.on{color:var(--text-primary);}
+  .tab-cap-strip span.coach{color:var(--text-primary);}
+
+  .legend-doc{max-width:1320px;margin:64px auto 0;padding:22px 26px;background:#FFFFFF;border:1px solid var(--bg-border);border-radius:var(--radius-lg);display:grid;grid-template-columns:220px 1fr;gap:14px 28px;font-size:12px;color:var(--text-secondary);line-height:1.55;}
+  .legend-doc h3{grid-column:1 / -1;margin:0 0 6px;font-family:var(--font-display);font-size:12px;font-weight:600;color:var(--text-muted);letter-spacing:.18em;text-transform:uppercase;}
+  .legend-doc dt{grid-column:1;font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:.04em;text-transform:uppercase;}
+  .legend-doc dd{grid-column:2;margin:0;}
+  .legend-doc code{background:#F4F5F7;border:1px solid var(--bg-border);padding:1px 6px;border-radius:4px;font-family:var(--font-numeric);font-size:11px;color:var(--text-primary);}
+  .specs{
+    display:grid;grid-template-columns:repeat(2,1fr);gap:12px 24px;
+    margin-top:6px;
+    font-family:var(--font-numeric);font-feature-settings:"tnum" 1;
+    font-size:11px;color:var(--text-secondary);
+  }
+  .specs b{color:var(--text-primary);font-family:var(--font-body);font-weight:700;}
+</style>
+</head>
+<body>
+  <header class="doc-header">
+    <div>
+      <p class="doc-eyebrow">FuelWell · Round 2 · Step 4 — Mockups</p>
+      <h1 class="doc-title">M37 Tab bar · isolation lock</h1>
+      <p class="doc-sub">Standalone treatment study of the v2 tab bar, rendered at iPhone width on a neutral light background. Five tabs left-to-right: <strong>Home · Meals &amp; Nutrition · Coach · Exercise &amp; Activity · Progress</strong>. Coach is the focal point — visually distinct even when not the active tab. Two variations × four states (Home active, Coach active, Exercise active, inactive baseline).</p>
+    </div>
+    <div class="doc-meta">
+      iPhone 15 Pro · 393pt wide<br>
+      Tab bar · 88pt tall · 30pt safe inset<br>
+      Coach icon raised 22pt above row
+    </div>
+  </header>
+
+  <div class="frames-wrap" id="frames"></div>
+
+  <section class="legend-doc">
+    <h3>Mockup notes · M37 tab bar lock</h3>
+    <dt>Geometry</dt>
+    <dd>88pt tall standard iOS tab bar with a 30pt home-indicator safe-area inset at the bottom. Five equal columns. Coach column is the same width as the others — the visual prominence is achieved by lifting the icon, not by stretching the cell. Coach icon container is 54pt and rises 22pt above the row baseline so the bottom of the container still tucks behind the bar's blur surface.</dd>
+    <dt>Variation 1 · Speech bubble</dt>
+    <dd>The Round-2 canonical. 54pt rounded square with a 6pt bottom-left corner radius (the other three corners at 18pt) plus a 12pt rotated-square tail at the bottom-left, creating a chat-bubble silhouette. Inactive fill: <code>color.bg.elevated #0F1117</code>, white SF symbol glyph (<code>bubble.left.and.bubble.right.fill</code>). Active state swaps to <code>gradient.brand</code> fill with a green-glow shadow ramp — the chat bubble lights up.</dd>
+    <dt>Variation 2 · Raised circle (FAB-style)</dt>
+    <dd>54pt circle. Default fill is <code>gradient.brand</code> with a green-glow shadow — the FAB-style affordance reads as a primary action embedded in the bar, similar to Snapchat's old camera tab. Inactive baseline variant drops to dark <code>#0F1117</code> with a softer shadow (used during onboarding splashes / transitions). Active state keeps the gradient and adds a 4pt translucent green ring as the focus indicator.</dd>
+    <dt>Outer tabs (Home · Progress)</dt>
+    <dd>SF symbol line glyphs: <code>house</code> · <code>chart.line.uptrend.xyaxis</code>. Fill switches to <code>house.fill</code> / <code>chart.bar.fill</code> when active. Label color is <code>text.muted</code> when inactive, <code>text.primary</code> when active.</dd>
+    <dt>Second-tier tabs (Meals · Exercise)</dt>
+    <dd>Sit immediately left/right of Coach. SF symbols: <code>fork.knife</code> · <code>figure.run</code>. Same color/fill rules as the outer tabs. They borrow no visual prominence from Coach — the spacing alone signals their proximity to the centerpiece.</dd>
+    <dt>States rendered</dt>
+    <dd>Top to bottom: <strong>State 01</strong> Home active (default app launch). <strong>State 02</strong> Coach active — the centerpiece lights up. <strong>State 03</strong> Exercise active — second-tier tab. <strong>State 04</strong> Inactive baseline — no tab is "active" (splash / route transition). Coach retains its distinct shading across all four states.</dd>
+    <dt>Specs</dt>
+    <dd>
+      <div class="specs">
+        <span>Bar height — <b>88pt</b> (incl. 30pt safe inset)</span>
+        <span>Coach icon container — <b>54pt</b></span>
+        <span>Coach lift above row — <b>22pt</b></span>
+        <span>Coach corner radius — <b>18 18 18 6 pt</b> (V1) · <b>50%</b> (V2)</span>
+        <span>Standard tab glyph — <b>26pt</b> bounding box</span>
+        <span>Label type — <b>Inter 600 · 10pt · +0.02em</b></span>
+        <span>Active text — <b>color.text.primary</b></span>
+        <span>Inactive text — <b>color.text.muted</b></span>
+      </div>
+    </dd>
+  </section>
+
+<script>
+  const ic={
+    home:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11l8-7 8 7v8a1 1 0 01-1 1h-4v-6h-6v6H5a1 1 0 01-1-1v-8Z"/></svg>`,
+    homeF:`<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M4 11l8-7 8 7v8a1 1 0 01-1 1h-4v-6h-6v6H5a1 1 0 01-1-1v-8Z"/></svg>`,
+    meals:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4v16M9 4v6a3 3 0 01-6 0V4M19 4c-2 0-3 2-3 5s1 5 3 5v6"/></svg>`,
+    mealsF:`<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4v16M9 4v6a3 3 0 01-6 0V4M19 4c-2 0-3 2-3 5s1 5 3 5v6"/></svg>`,
+    coach:`<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a8 8 0 1116 0c0 4-3.6 7-8 7l-3 3v-3.2A8 8 0 014 11Z"/><path d="M9 10.5h6M9 13.5h4"/></svg>`,
+    coachAlt:`<svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M4 11a8 8 0 1116 0c0 4-3.6 7-8 7l-3 3v-3.2A8 8 0 014 11Z" fill-opacity="0.95"/><circle cx="9" cy="11.5" r="1" fill="#0A0A0F"/><circle cx="12" cy="11.5" r="1" fill="#0A0A0F"/><circle cx="15" cy="11.5" r="1" fill="#0A0A0F"/></svg>`,
+    exercise:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M2 12h2M20 12h2M5 9v6M19 9v6M8 8v8M16 8v8M8 12h8"/></svg>`,
+    exerciseF:`<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="11" width="2" height="2" rx="1"/><rect x="20" y="11" width="2" height="2" rx="1"/><rect x="5" y="9" width="2" height="6" rx="1"/><rect x="17" y="9" width="2" height="6" rx="1"/><rect x="8" y="8" width="2" height="8" rx="1"/><rect x="14" y="8" width="2" height="8" rx="1"/><rect x="10" y="11" width="4" height="2"/></svg>`,
+    progress:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg>`,
+    progressF:`<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="13" width="4" height="6" rx="1"/><rect x="9" y="5" width="4" height="14" rx="1"/><rect x="16" y="11" width="4" height="8" rx="1"/></svg>`,
+  };
+
+  /*
+    states: 'home' | 'coach' | 'exercise' | 'inactive'
+    coachVariant: 'bubble' | 'fab'
+  */
+  function tab(label, glyph, glyphFill, isActive){
+    return `<div class="tab ${isActive ? 'active' : ''}">
+      <div class="tab-glyph">${isActive ? glyphFill : glyph}</div>
+      <div class="tab-label">${label}</div>
+    </div>`;
+  }
+  function coachTab(variant, isActive, isMuted){
+    if (variant === 'bubble') {
+      return `<div class="tab coach-bubble ${isActive ? 'active' : ''}">
+        <div class="tab-bubble">${ic.coach}</div>
+        <div class="tab-label">Coach</div>
+      </div>`;
+    }
+    return `<div class="tab coach-fab ${isActive ? 'active' : ''} ${isMuted ? 'muted' : ''}">
+      <div class="tab-bubble">${ic.coach}</div>
+      <div class="tab-label">Coach</div>
+    </div>`;
+  }
+
+  function tabbar(state, variant) {
+    const active = {
+      home: state === 'home',
+      meals: false, // never demoed as active in these states
+      coach: state === 'coach',
+      exercise: state === 'exercise',
+      progress: false,
+    };
+    const muted = state === 'inactive';
+    return `
+      <div class="tabbar">
+        ${tab('Home',      ic.home,     ic.homeF,     active.home)}
+        ${tab('Meals',     ic.meals,    ic.mealsF,    active.meals)}
+        ${coachTab(variant, active.coach, muted)}
+        ${tab('Exercise',  ic.exercise, ic.exerciseF, active.exercise)}
+        ${tab('Progress',  ic.progress, ic.progressF, active.progress)}
+      </div>`;
+  }
+
+  function capStrip(state) {
+    const map = { home:'home', meals:'meals', coach:'coach', exercise:'exercise', progress:'progress' };
+    return `<div class="tab-cap-strip">
+      <span class="${state === 'home' ? 'on' : ''}">${state === 'home' ? '· ACTIVE' : 'HOME'}</span>
+      <span>${state === 'meals' ? '· ACTIVE' : 'MEALS'}</span>
+      <span class="coach">${state === 'coach' ? '· COACH ACTIVE' : 'COACH ·'}</span>
+      <span class="${state === 'exercise' ? 'on' : ''}">${state === 'exercise' ? '· ACTIVE' : 'EXERCISE'}</span>
+      <span>${state === 'progress' ? '· ACTIVE' : 'PROGRESS'}</span>
+    </div>`;
+  }
+
+  const STATES = [
+    { id: 'home',     si: 'STATE 01', sn: 'Home tab active',     sc: 'Default app launch · Dashboard root' },
+    { id: 'coach',    si: 'STATE 02', sn: 'Coach tab active',    sc: 'Speech bubble lights up · gradient.brand fill (V1) / green-glow ring (V2)' },
+    { id: 'exercise', si: 'STATE 03', sn: 'Exercise tab active', sc: 'Second-tier · standard line→fill swap' },
+    { id: 'inactive', si: 'STATE 04', sn: 'Inactive baseline',   sc: 'Splash / transition · no tab marked active. Coach retains its distinct shading.' },
+  ];
+
+  function stateRow(state, variant) {
+    return `
+      <div class="state-row">
+        <div class="state-meta">
+          <div class="si">${state.si}</div>
+          <div class="sn">${state.sn}</div>
+          <div class="sc">${state.sc}</div>
+        </div>
+        <div class="tabbar-host">
+          ${tabbar(state.id, variant)}
+          <div class="home-ind"></div>
+        </div>
+      </div>`;
+  }
+
+  function variant(spec) {
+    return `
+      <section class="variant-col">
+        <div class="var-label">
+          <div class="var-num">${spec.num}</div>
+          <div class="var-name">${spec.name}</div>
+          <div class="var-cap">${spec.cap}</div>
+        </div>
+        <div class="state-stack">
+          ${STATES.map(s => stateRow(s, spec.variant)).join('')}
+        </div>
+      </section>`;
+  }
+
+  const variants = [
+    {
+      num: 'Variation 01',
+      name: 'Speech-bubble Coach',
+      variant: 'bubble',
+      cap: 'Round-2 canonical. 54pt rounded-square bubble with a tail at bottom-left, dark #0F1117 inactive fill, white SF symbol. Active state swaps to gradient.brand fill + green-glow shadow — the bubble visually lights up.',
+    },
+    {
+      num: 'Variation 02',
+      name: 'Raised circle · FAB-style Coach',
+      variant: 'fab',
+      cap: '54pt circle treated like a primary FAB embedded in the bar. gradient.brand fill with a green-glow shadow at rest; active adds a 4pt translucent green ring; the splash/transition state falls back to dark #0F1117.',
+    },
+  ];
+
+  document.getElementById('frames').innerHTML = variants.map(variant).join('');
+</script>
+</body>
+</html>
