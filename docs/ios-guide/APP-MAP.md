@@ -1,8 +1,16 @@
-# FuelWell — App Map (Phase 0.5 · Step 1)
+# FuelWell — App Map v2 (Phase 0.5 · Step 1)
 
-**Status:** ✅ APPROVED — Max reviewed and reconciled 2026-05-13. All 6 open questions resolved; one new screen added (Daily Recap, #14); one new onboarding step added (Lifestyle).
+**Status:** ✅ APPROVED v2 — Robert reorganized the IA 2026-05-19 after the Round 1 mockup review. Max's Step 2 blockers resolved. All 27 Round 1 mockups stay; they're re-homed in the new tab/menu structure.
 
-**Purpose:** one-page sitemap showing every screen in the Pilot app, parent/child relationships, and the onboarding entry sequence. No navigation arrows yet (that's Step 2 — Flow Chart). No layout opinions yet (that's Step 3 — Wireframes).
+**What changed from v1 → v2:**
+- Tab bar: `Home · Log · Coach · Learn · Progress` → **`Home · Meals/Nutrition · Coach · Exercise & Activity · Progress`**
+- Coach is the centerpiece tab — visually distinct (speech-bubble icon, inverted shading)
+- "Learn" tab dissolved into the new **Help** screen, accessed from the Dashboard top bar
+- New top-level navigation surface: a **hierarchical Menu** (Tools / Coach / Settings / Help / About)
+- Dashboard adopts **Max's Tier 1/2/3 framework** — max 3 elements above the fold
+- New Dashboard widget: **Inflows/Outflows** (dual concentric ring with day/week/month/year toggle)
+- New per-tab landing pages: **Meals/Nutrition hub** and **Exercise & Activity hub** (the old "Meal Log day view" and "Workout Detail" are sub-pages under these)
+- Nothing is deleted — every Round 1 screen has a new home
 
 **Root principle (PRINCIPLES.md):** Dashboard is the root. Every other screen exists to serve the Daily Loop — *Dashboard → Log → Adjust → Continue → Repeat*.
 
@@ -10,163 +18,343 @@
 
 ## 1. Entry sequence — Onboarding (pre-tab)
 
-Runs once per user, ahead of the tab bar. Output: a profile, baseline macros, and a first plan.
+Unchanged from v1. Nine sequential steps; runs once per user.
 
 ```
-Welcome
-  → Sign in / Sign up        (Apple Sign-In + email/password)
-    → Goal selection         (lose / maintain / gain / recomp-deferred)
-      → Body baseline        (height, weight, age, sex, activity)
-        → Dietary constraints (allergies, preferences, dislikes)
-          → Lifestyle             (cook at home / eat out mostly / both)   ← NEW per Max
-            → HealthKit permission prompt   (read-only: weight, steps, workouts, active energy)
-              → Notification permission prompt (event-driven coaching)
-                → "Your Plan" reveal        (computed macros + why-this-plan explainer)
-                  → Dashboard (Daily Loop starts)
+FuelWell (splash)
+  → Sign in / Register
+      ├── First-time → Onboarding → existing 9-step flow
+      │     1. Welcome
+      │     2. Sign in / Sign up
+      │     3. Goal selection
+      │     4. Body baseline
+      │     5. Dietary constraints
+      │     6. Lifestyle
+      │     7. HealthKit permission
+      │     8. Notification permission
+      │     9. Your Plan reveal
+      │       → Dashboard (Daily Loop starts)
+      └── Returning → Dashboard direct
 ```
-
-The Lifestyle question immediately improves restaurant and recipe ranking. One tap, zero friction.
 
 ---
 
-## 2. Main app — bottom tab bar (5 tabs)
+## 2. Tab bar — five tabs, Coach centered
+
+| Order | Tab | Visual treatment | Tier |
+|---|---|---|---|
+| 1 (leftmost) | Home | Standard SF Symbol `house.fill` | Outer |
+| 2 | Meals & Nutrition | Standard SF Symbol `fork.knife` | Second |
+| 3 (center, prominent) | **Coach** | **Speech-bubble icon, inverted (`bg.elevated #0F1117`) container, slight elevation** | Centerpiece |
+| 4 | Exercise & Activity | Standard SF Symbol `figure.run` | Second |
+| 5 (rightmost) | Progress | Standard SF Symbol `chart.line.uptrend.xyaxis` | Outer |
+
+The Coach tab is always visually distinct, even when inactive. The rest follow iOS standard active/inactive coloring.
 
 ```mermaid
 graph TD
   Root[FuelWell App]
+  Root --> Splash[Splash / Sign in]
+  Splash --> Onboard[Onboarding · 9 steps]
+  Splash --> Dash[Dashboard]
+  Onboard --> Dash
 
-  Root --> Onboard[Onboarding flow]
-  Root --> Tabs[Bottom tab bar]
+  Dash --> TopBar((Top bar))
+  Dash --> Tier1[Tier 1 widgets]
+  Dash --> Tier2[Tier 2 widgets]
+  Dash --> Tier3[Tier 3 widgets]
+  TopBar --> Menu[Menu sheet]
+  TopBar --> Help[Help screen]
 
-  Tabs --> T1[1. Home]
-  Tabs --> T2[2. Log]
-  Tabs --> T3[3. Coach]
-  Tabs --> T4[4. Learn]
-  Tabs --> T5[5. Progress]
-
-  %% Home tab
-  T1 --> S1[Dashboard]
-  S1 --> S1a[Your Plan / Profile]
-  S1 --> S1b[Settings]
-  S1 --> S1c[Daily Recap / Coach Summary]
-  S1 -.eating out CTA.-> S2b[Restaurant Guidance]
-  S1a --> S1a1[Recompute Plan confirm]
-  S1b --> S1b1[Account]
-  S1b --> S1b2[Data export]
-  S1b --> S1b3[Sign out]
-
-  %% Log tab
-  T2 --> S2[Meal Log day view]
-  S2 --> S2a[Add Meal -- segmented: Search / Photo / Scan]
-  S2a --> S2a1[Food Detail / Portion editor]
-  S2 --> S2b[Restaurant Guidance]
-  S2b --> S2b1[Restaurant Detail -- curated menu + picks]
-  S2 --> S2c[Recipe Browser]
-  S2c --> S2c1[Recipe Detail]
-  S2c1 --> S2c2[Add to Grocery List]
-  S2 --> S2d[Meal Plan Generator -- 3 options]
-  S2d --> S2d1[Plan Detail / Accept]
-  S2 --> S2e[Grocery List]
-
-  %% Coach tab
-  T3 --> S3[Coach Chat]
-  S3 --> S3a[Inline Learn cards -- expandable]
-
-  %% Learn tab
-  T4 --> S4[Learn home -- search + categories]
-  S4 --> S4a[Article Detail]
-
-  %% Progress tab
-  T5 --> S5[Progress overview]
-  S5 --> S5a[Weight history]
-  S5 --> S5b[Macro adherence history]
-  S5 --> S5c[Body Photos]
-  S5c --> S5c1[Photo Capture sheet]
-  S5 --> S5d[Body Measurements]
-  S5d --> S5d1[Measurements Entry sheet]
-  S5 --> S5e[Mood & Energy log]
-  S5e --> S5e1[Mood Entry sheet]
+  Dash --> TabBar((Tab bar · 5 tabs))
+  TabBar --> THome[Home]
+  TabBar --> TMeals[Meals & Nutrition]
+  TabBar --> TCoach[Coach]
+  TabBar --> TExer[Exercise & Activity]
+  TabBar --> TProg[Progress]
 ```
 
 ---
 
-## 3. Screen inventory (17 top-level)
+## 3. Dashboard — Tier 1/2/3 framework (Max's blocker resolved)
 
-Grouping sub-sheets under their parent screen. Modals/sheets (capture, entry, confirm) are not counted as standalone screens.
+The Home tab root. Top bar carries Menu (left) and Help (right). Max's hard ceiling: **maximum 3 visual units above the fold.**
 
-| # | Top-level screen | Tab | Notes |
-|---|---|---|---|
-| 1 | Dashboard | Home | Root of Daily Loop. Verdict-first. Above the fold: **Health Score hero** + macro ring + next recommended meal + "I'm eating out right now" quick action + week-schedule day tiles (workout/rest) + workout to-do checklist + habit-tracking dot grid + coach nudge + mood/energy one-tap. |
-| 2 | Your Plan / Profile | Home | Includes "why this plan" + manual recalc trigger with confirm modal. |
-| 3 | Settings | Home | Account, export, sign-out, notification prefs. |
-| 4 | Meal Log (day view) | Log | Day's entries + persistent floating add button. |
-| 5 | Add Meal (Photo / Search / Scan) | Log | Three modes via segmented control. Photo is the default tab. |
-| 6 | Restaurant Guidance | Log | Curated DB. Surfaceable from Dashboard in one tap; top 3 picks show macros immediately. |
-| 7 | Recipe Browser + Detail | Log | Leads with "based on your remaining macros today." |
-| 8 | Meal Plan Generator | Log | Three options per generation; each card has a single-line summary. |
-| 9 | Grocery List | Log | Auto from recipes + manual additions. Grouped by category. |
-| 10 | **Workout Plan / Workout Detail** | Log | NEW. Today's workout (exercises, sets, reps, target weight, est. time), plus the week's schedule. Manual-entry-only at Pilot — no adaptive prescription. |
-| 11 | Coach Chat | Coach | AI conversation with inline Learn cards. Input placeholder: "Ask me anything about today…". |
-| 12 | Learn (search + categories) | Learn | 3-minute reads max; each article ends with one actionable takeaway. |
-| 13 | Progress overview | Progress | Weight, macros, photos, measurements, mood, **habit-tracking heatmap**, **Health Score trend**. Default view: weekly. |
-| 14 | **Health Score detail** | Progress child | NEW. Breakdown of the composite Health Score (nutrition adherence + training + sleep + recovery + body comp). Tappable from Dashboard hero. |
-| 15 | **Habit Tracking detail** | Progress child | NEW. Full habit grid with definitions, streaks-as-visualization-only (no celebratory chrome), edit habits. |
-| 16 | Onboarding flow | (pre-tab) | Welcome → Sign-in → Goal → Body → Dietary → Lifestyle → HealthKit → Notifications → Plan reveal. |
-| 17 | Daily Recap / Coach Summary | Home child | What the coach noticed today; triggered at 8pm or reachable from Dashboard. |
+### Tier 1 — always above fold
 
-**Sheets / modals (not counted as screens):** Food Detail editor, Recipe → Grocery confirm, Photo Capture, Measurements Entry, Mood Entry, Recompute Plan confirm, Workout Set Logger, Habit Toggle, permission prompts.
-
-**Dashboard affordances (not standalone screens):**
-- **"I'm eating out right now" quick action** — Dashboard CTA → Restaurant Guidance with today's remaining macros pre-loaded.
-- **Week-schedule day tiles** — horizontal row showing the next 3–7 days, each tile marks rest day / workout type and duration. Tap → Workout Detail.
-- **Workout to-do checklist** — today's planned exercises as a checkbox list. Inline tap completes a set; long-press logs detail.
-- **Habit-tracking dot grid** — compact heatmap of habits over recent weeks. Tap → Habit Tracking detail.
-- **Coach nudge card** — appears only when an event is triggered.
-
-**Anti-pattern reminder (DESIGN.md):** no celebratory streak chips, badges, or gamification. The habit grid is a *visualization*, not a reward. The Health Score is a *diagnostic*, not a score-to-beat.
-
-**Every screen requires a thoughtful empty state.**
-
----
-
-## 4. Open questions — resolved by Max (2026-05-13)
-
-| # | Question | Resolution |
-|---|---|---|
-| 1 | Where does Meal Plan Generator live? | **Log.** Food decision, not a coaching conversation. |
-| 2 | Restaurant Guidance under Log vs. Coach? | **Log.** Standing-outside-restaurant moments need fast frictionless answers, not chat. Coach is for reflection. |
-| 3 | Recipe Browser — Log or Learn? | **Log.** Recipes are decisional, not educational. |
-| 4 | "Your Plan" as its own tab? | **No — Home child.** Reference material, not a daily visit. Respects iOS HIG ≤ 5 tabs. |
-| 5 | Onboarding intake matches drafted 6-step? | **Yes, plus add Lifestyle step** (cook at home / eat out / both) after Dietary constraints. Improves restaurant + recipe ranking immediately. |
-| 6 | Is there a 13th top-level screen missing? | **Yes — add Daily Recap / Coach Summary as #14.** Closes the loop on event-driven notifications by giving users a place to review what the coach noticed today. |
-
-## 5. Per-screen modifications from Max's review
-
-These don't change the screen list — they shape each screen's design and are inputs to Step 2 (Flow Chart) and Step 3 (Wireframes).
-
-| Screen | Modification |
+| Element | Why Tier 1 |
 |---|---|
-| **Onboarding** | "Your Plan" reveal should feel like a payoff, not a confirmation. Don't cut the why-this-plan explainer. Add Lifestyle step after Dietary. |
-| **Dashboard** | All four essentials above the fold: macro ring, next recommended meal, one coach nudge if triggered, mood/energy one-tap. Add "I'm eating out right now" quick action that jumps to Restaurant Guidance with today's macros pre-loaded. |
-| **Your Plan** | Recalculate My Plan needs a confirm modal — intentional, slightly weighty feel. |
-| **Meal Log** | Persistent floating add button — opened multiple times per day, must be fast. |
-| **Add Meal** | Photo mode is the **default tab**, not Search. |
-| **Restaurant Guidance** | Surfaceable from Dashboard in one tap. Top 3 picks show macros immediately. Curated feel, not directory. |
-| **Recipe Browser** | Leads with "based on your remaining macros today" — that's the differentiator. |
-| **Meal Plan Generator** | Each option gets a single-line summary so users can choose without reading every macro. |
-| **Grocery List** | Grouped by category (produce, protein, pantry). Clean and minimal, not spreadsheet. |
-| **Coach Chat** | Soul of the app. Inline Learn cards expanding inside chat is the right pattern. Placeholder copy matters: *"Ask me anything about today…"*. |
-| **Learn** | 3-minute reads max. Every article ends with one actionable takeaway. Smart-friend tone, never academic. |
-| **Progress** | Default to **weekly view**, not daily. Daily fluctuations are noisy and discouraging. |
+| **Health Score hero** | Single most important signal of how the user is doing. Includes 30-day delta and "Why?" expander. |
+| **Inflows/Outflows widget** (dual concentric ring) | Creative energy-balance visual. Outer ring = calories in by macro; inner ring = calories out by source (BMR / activity / workout). Center = net. Toggles day/week/month/year. |
+| **Verdict-of-the-moment CTA** | One-line "what should I do right now" with a primary action. The Daily Loop's entry point. |
+
+### Tier 2 — visible on first scroll
+
+- Activity overview card (workouts logged, active minutes, calories burned, mini weekly bar)
+- Nutrition/Meals overview card (today's meals snapshot, remaining macros bar)
+- My day / week / month view (segmented timeline of intake vs. expenditure over the chosen window)
+
+### Tier 3 — progressive disclosure (deeper scroll or expanded states)
+
+- Progress overview summary (sparkline + trend line)
+- Daily Recap card (appears only after 8pm — also triggered as a push and accessible from the Menu)
+- Coach nudge card (event-driven — appears only when a trigger fires; otherwise hidden)
+
+**Habit Tracking is NOT on the Dashboard** in v2. It lives in the Progress tab and in the Menu under Tools › Tracking.
 
 ---
 
-## 6. Status
+## 4. Menu — hierarchical navigation (new in v2)
 
-- [x] Max review and reconciliation against the Execution Blueprint screen numbering (2026-05-13)
-- [x] Robert + Max agreement on the 6 open questions
-- [ ] Sign-off recorded in `docs/ios-guide/decisions.md`
+Opened from the hamburger icon top-left of Dashboard (and any screen via the universal Menu icon). Full-screen sheet with grouped sections.
+
+```
+USER HEADER (avatar · name · goal pill · today's Health Score)
+
+TOOLS
+├── Snapshot
+│   ├── Health Score
+│   ├── Daily Recap
+│   ├── Inflows / Outflows
+│   └── My day · week · month
+├── Tracking
+│   ├── Habits
+│   ├── Weight history
+│   ├── Body photos
+│   ├── Measurements
+│   └── Mood & energy
+├── Meals
+│   ├── Meal Log
+│   ├── Recipe Browser
+│   ├── Meal Plan Generator
+│   ├── Grocery List
+│   ├── Restaurant Guidance
+│   └── Macro history
+└── Training
+    ├── Workout Log
+    ├── Activity Tracker
+    ├── Workout Plans
+    ├── Exercise Library
+    └── Schedule
+
+COACH
+└── Coach Chat (link)
+
+SETTINGS
+├── Account
+├── Permissions
+├── Notification preferences
+├── Data export
+└── Sign out (destructive)
+
+HELP
+├── Learn articles (search + categories)
+├── Contact support
+└── Send feedback
+
+ABOUT
+├── About FuelWell
+├── Privacy
+├── Terms
+├── Share FuelWell
+└── Version
+```
 
 ---
 
-*Output of Phase 0.5 · Step 1 — Approved 2026-05-13. Next: Step 2 — Flow Chart (updated with new screens + Max's per-screen modifications).*
+## 5. Help screen — replaces the v1 Learn tab
+
+Accessed from the Help icon top-right of Dashboard. Single screen that combines:
+
+- **Search bar** — "Search articles, settings, or ask a question"
+- **Featured article today** — hero card with image, 3-min read pill
+- **Categories** — Nutrition basics · Macros explained · Eating out · Recovery · Training fundamentals · Sleep & energy · Mindset
+- **Continue reading** — articles started but not finished
+- **Quick settings** — Notifications, HealthKit, Account, plus "All settings →"
+- **Talk to coach** — small card linking to Coach Chat
+- **Send feedback** — text-link
+
+Article tone (carried over from v1 Learn): ≤3-minute reads, smart-friend voice, every article ends with a "One thing to try today" actionable takeaway card.
+
+---
+
+## 6. Tab landings (new in v2)
+
+Each non-Home tab opens a **hub landing page** that surfaces sub-pages, not a single screen.
+
+### 6.1 Meals & Nutrition tab landing
+
+| Section | Content |
+|---|---|
+| Hero | Today's plate — compact Inflows/Outflows ring + remaining macros bar |
+| Today's meals | Logged meal rows + pending dinner slot |
+| Quick access | Meal Log · Restaurant Guidance · Recipe Browser · Meal Plan Generator · Grocery List · Macro History |
+| Recent foods | Horizontal scroll of recent meal chips for one-tap re-log |
+
+### 6.2 Exercise & Activity tab landing
+
+| Section | Content |
+|---|---|
+| Hero | Today's workout card OR Rest day card |
+| This week | Day chips with workout/rest indicators and minutes |
+| Quick access | Workout Log · Activity Tracker · Workout Plans · Exercise Library · Schedule · Trainer workouts (manual entry) |
+| Recent workouts | Last 3 logged workouts |
+
+### 6.3 Progress tab landing (v2)
+
+Default time range: weekly.
+
+| Section | Content |
+|---|---|
+| Health Score trend | Current score + 30-day delta + sparkline. Tap → Health Score detail. |
+| Weight | Line chart of weekly averages + "Add weight" |
+| Macro adherence | Weekly bar chart + summary |
+| Body photos | Horizontal scroll + "Add photo" |
+| Measurements | List with weekly trend arrows |
+| Mood & energy | Weekly average + small heatmap |
+| Habit Tracking | Compact dot grid (last 14 days × 4 habits) + "View all habits" link |
+
+### 6.4 Coach tab
+
+Coach Chat. Inline Learn cards expand within the chat (the article surface remains in Help, but contextual cards are also surfaced inline).
+
+---
+
+## 7. Screen inventory v2 — 30 top-level screens (17 from v1 re-homed + 13 new/elevated)
+
+**New in v2** marked with ⭐. **Re-homed from v1** marked with ↻.
+
+### Home tab
+
+| # | Screen | Notes |
+|---|---|---|
+| 1 | Dashboard v2 ⭐ | Tier 1/2/3 layout per Max |
+| 2 | Daily Recap / Coach Summary ↻ | Reachable from Dashboard card, 8pm push, and Menu |
+| 3 | Your Plan / Profile ↻ | Recalc confirm modal |
+| 4 | Settings ↻ | Reachable from Menu and Help |
+| 5 | Menu (hierarchical sheet) ⭐ | New navigation surface |
+| 6 | Help screen ⭐ | Replaces v1 Learn tab |
+| 7 | Inflows/Outflows full screen ⭐ | Sankey-style flow diagram, daily/weekly/monthly/yearly |
+| 8 | Health Score detail ↻ | Composite breakdown |
+| 9 | Habit Tracking detail ↻ | Reached from Menu and Progress |
+
+### Meals & Nutrition tab
+
+| # | Screen | Notes |
+|---|---|---|
+| 10 | Meals & Nutrition hub ⭐ | Tab landing |
+| 11 | Meal Log day view ↻ | Persistent floating add button |
+| 12 | Add Meal sheet ↻ | Photo default |
+| 13 | Food Detail / Portion editor ↻ | Sheet |
+| 14 | Restaurant Guidance ↻ | Curated chain DB |
+| 15 | Restaurant Detail ↻ | Coach picks at top |
+| 16 | Recipe Browser ↻ | Leads with remaining-macros section |
+| 17 | Recipe Detail ↻ | Add to Grocery / Log as meal |
+| 18 | Meal Plan Generator ↻ | Three options, single-line summaries |
+| 19 | Grocery List ↻ | Grouped by category |
+| 20 | Macro History ⭐ | Detail charts for macro adherence |
+
+### Coach tab
+
+| # | Screen | Notes |
+|---|---|---|
+| 21 | Coach Chat ↻ | Soul of the app, "Ask me anything about today…" placeholder |
+| 22 | Article Detail ↻ | Reachable from Help and inline from Coach Chat |
+
+### Exercise & Activity tab
+
+| # | Screen | Notes |
+|---|---|---|
+| 23 | Exercise & Activity hub ⭐ | Tab landing |
+| 24 | Workout Detail ↻ | Active session: pre-workout + in-progress + summary |
+| 25 | Workout Log ⭐ | History view of past workouts |
+| 26 | Activity Tracker ⭐ | Passive activity from Apple Health |
+| 27 | Workout Plans ⭐ | Library / templates |
+| 28 | Exercise Library ⭐ | Searchable exercise reference |
+| 29 | Schedule ⭐ | Week / month view of planned workouts |
+
+### Progress tab
+
+| # | Screen | Notes |
+|---|---|---|
+| 30 | Progress overview v2 ↻ | Weekly default; surfaces Health Score, weight, macros, photos, measurements, mood, habits |
+
+**Sheets / modals (not counted as screens):** Food Detail editor, Recipe → Grocery confirm, Photo Capture, Measurements Entry, Mood Entry, Recompute Plan confirm, Workout Set Logger, Habit Toggle, permission prompts, Inflows/Outflows lane drill-down sheets.
+
+**Anti-pattern reminder (DESIGN.md):** no celebratory streak chips, badges, or gamification. The Habit grid is a *visualization*, not a reward. The Health Score is a *diagnostic*, not a score-to-beat.
+
+---
+
+## 8. Health Score v1 formula (Max's blocker resolved)
+
+| Component | Weight | Source |
+|---|---|---|
+| Nutrition adherence | 35% | % of days within macro targets, rolling 7-day window |
+| Training consistency | 25% | Workouts completed vs. planned, rolling 7-day window |
+| Sleep | 20% | Average sleep duration + consistency, rolling 7-day window |
+| Recovery (HRV / RHR) | 10% | HRV trend + resting HR vs. baseline, rolling 7-day window |
+| Body comp trend | 10% | Weight + body fat % movement vs. goal direction |
+
+- **Range:** 0–100
+- **Missing components:** *excluded* — remaining components re-weighted proportionally. No penalty zeros.
+- **Day-1 fallback:** display "Building your baseline — 7 days of data unlocks your Health Score" with a placeholder ring. No score number rendered.
+- **Score is a diagnostic, not a competition.** No leaderboards, no "your friends scored X" comparisons, ever.
+
+---
+
+## 9. Empty states — required on every screen (Max's blocker resolved)
+
+A thoughtful empty state is a brand moment, not a placeholder. Every screen below has an empty-state copy line in coach voice.
+
+| Screen | Trigger | Empty-state copy |
+|---|---|---|
+| Dashboard | Day 1, no data | "Welcome — your day starts here. Log your first meal whenever you're ready." |
+| Health Score | <7 days of data | "Building your baseline — 7 days of data unlocks your Health Score." |
+| Inflows/Outflows | No meals or workouts logged today | "Log your first meal or workout to see your energy flow." |
+| Meal Log | Day 1, no entries | "No meals logged yet. The fastest way is a photo — tap the + below." |
+| Add Meal (Search) | No recent foods | "Start typing — we'll pull from your previous meals and the food database." |
+| Recipe Browser (for-macros) | No saved recipes that fit today | "Nothing in your saved recipes fits today's remaining macros. Want a fresh meal plan, or browse all?" |
+| Meal Plan | No plan generated this week | "Tell us your week. We'll generate three options." |
+| Grocery List | Empty | "Your list is empty. Generate a meal plan or add items below." |
+| Restaurant Guidance | No location granted | "We can show top picks anywhere — grant location to sort by what's nearby, or browse the curated chain list." |
+| Coach Chat | First open | "Hi Robert. I'm here when you want a second opinion. What's on your mind?" |
+| Help / Learn | No saved articles | "Browse by category, or search for a question. Every article ends with one thing you can try today." |
+| Article Detail | Article unavailable | "We couldn't load this article. Try again, or browse another below." |
+| Progress overview | <7 days of data | "Progress fills in as you log. Weight, photos, mood — one entry kicks it off." |
+| Weight history | Empty | "Log a weight and we'll start your trend line." |
+| Body photos | Empty | "Photos make recomposition real. Add one when you're ready." |
+| Measurements | Empty | "Tape measurements catch what the scale misses." |
+| Mood & energy | Empty | "How are you feeling? One tap and we start to see the patterns." |
+| Habit Tracking | No habits chosen | "Pick 3 habits to start. Coach can suggest some." |
+| Daily Recap | <1 full day of data | "Tomorrow's the start of your recap. The more you log, the smarter this gets." |
+| Workout Detail | No workout planned today | "No workout planned today. Pick a template, or take a rest day." |
+| Workout Log | No history | "Your first logged workout shows up here." |
+| Activity Tracker | No Apple Health data | "Connect Apple Health to see your daily movement here." |
+| Workout Plans | No saved plans | "Browse plans or build your own — coach can suggest one based on your goals." |
+| Exercise Library | No favorites | "Tap an exercise for the form video and tip notes." |
+| Schedule | Empty week | "Plan a workout to start your week." |
+| Settings | n/a | n/a |
+
+---
+
+## 10. Daily Recap trigger (Max's blocker resolved)
+
+- **Trigger time:** 8pm **local device time.**
+- **Quiet hours:** 10pm–7am. 8pm clears the window by 2 hours.
+- **Future-state inheritance:** if the user customizes their notification schedule in a future release, Daily Recap inherits that schedule.
+- **Travel / timezone change:** trigger fires at 8pm in the new local time after the device switches zones. No retro-fire.
+
+---
+
+## 11. Status
+
+- [x] Max review of v1 (2026-05-13)
+- [x] App Map v2 reorganization (Robert, 2026-05-19)
+- [x] All 5 of Max's Step 2 blockers resolved
+- [ ] Round 2 mockups generated (Dashboard v2, Inflows/Outflows widget + full, Activity overview, Meals/Nutrition hub, Exercise & Activity hub, Progress v2, Menu, Help, Tab bar component)
+- [ ] Combined review PDF compiled for final round
+- [ ] Sign-off recorded in `decisions.md`
+
+---
+
+*Output of Phase 0.5 · Step 1 v2 — Updated 2026-05-19. Next: regenerate Step 2 (Flow Chart) and Step 4 (Mockups Round 2) against this IA.*

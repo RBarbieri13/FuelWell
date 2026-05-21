@@ -64,3 +64,69 @@ Sentry + PostHog do not block Phase 1; both can be wired in later phases when th
 ## 2026-05-14 — Editor decision: Xcode
 
 Robert chose **Xcode** over Cursor for Phase 1 iOS work. Aligned with the iOS Production Guide's default. Claude Code remains the primary AI coding agent (CLI / web), running alongside Xcode.
+
+## 2026-05-19 — App Map v2 reorganization
+
+Robert reorganized the IA after reviewing the Round 1 mockups. Max's Phase 0.5 Step 2 review provided five blockers; all are resolved below. **All 27 Round 1 mockups stay** — they're re-homed in the new tab/menu structure, not replaced.
+
+### Tab bar — Coach-centered
+
+Tab order: **Home · Meals & Nutrition · Coach · Exercise & Activity · Progress**.
+
+- "Log" tab renamed to **Meals & Nutrition**.
+- "Learn" tab dissolved into the new **Help screen** (accessed from Dashboard top bar). Article content unchanged; surface relocated.
+- New tab: **Exercise & Activity** — hub landing for Workout Detail, Workout Log, Activity Tracker, Workout Plans, Exercise Library, Schedule.
+- **Coach tab is the centerpiece.** Distinct visual treatment: speech-bubble icon, inverted `bg.elevated #0F1117` container, slight elevation. Treated as a featured action even when inactive.
+
+### New navigation surface — hierarchical Menu
+
+Opened from the hamburger top-left of Dashboard (and any screen). Sections: **Tools** (Snapshot · Tracking · Meals · Training subgroups) · **Coach** · **Settings** · **Help** · **About**. Every Pilot screen is reachable from the Menu.
+
+### Help screen — replaces v1 Learn tab
+
+Top-right Dashboard icon. Combines: search bar, featured article, categories, continue-reading, quick settings rows, talk-to-coach link, send feedback. Article tone unchanged (≤3 min reads, "One thing to try today" takeaway).
+
+### Resolved blockers from Max's Step 2 review (2026-05-19)
+
+**1. Dashboard above-the-fold density — RESOLVED with Tier 1/2/3 framework.** Max's hard ceiling: max 3 visual units above the fold.
+
+- **Tier 1 (above fold):** Health Score hero · Inflows/Outflows widget · Verdict-of-the-moment CTA
+- **Tier 2 (first scroll):** Activity overview · Nutrition/Meals overview · My day/week/month view
+- **Tier 3 (progressive):** Progress overview · Daily Recap (after 8pm) · Coach nudge (event-driven)
+
+Habit Tracking is OFF the Dashboard in v2 — lives in Progress tab and Menu.
+
+**2. Health Score v1 formula — RESOLVED.**
+
+| Component | Weight |
+|---|---|
+| Nutrition adherence | 35% |
+| Training consistency | 25% |
+| Sleep | 20% |
+| Recovery (HRV / RHR) | 10% |
+| Body comp trend | 10% |
+
+- Range: 0–100. Rolling 7-day window per component (body comp uses goal-direction trend).
+- Missing component: **excluded**, remaining components re-weighted proportionally. No penalty zeros.
+- Day-1 fallback: "Building your baseline — 7 days of data unlocks your Health Score" + placeholder ring. No score number rendered.
+- Score is a diagnostic, not a competition. No leaderboards, no friend comparisons, ever.
+
+**3. Workout Detail active session — RESOLVED.** Specified as a three-state flow on the same screen (pre-workout · active · summary). Active session includes: current exercise card, per-set logger sheet, rest timer chip, next-exercise advance, pause, end-workout summary with RPE selector. Full spec lives in `FLOW-CHART.md` § 3.21.
+
+**4. Empty states — RESOLVED with table.** 26 empty-state copy lines documented in `APP-MAP.md` § 9, all in coach voice, covering every screen that can render data-empty. Priority four (Meal Log Day 1, Progress no-data, Coach Chat first open, Grocery List empty) are locked.
+
+**5. Daily Recap trigger — RESOLVED.** 8pm local device time. Quiet hours 10pm–7am still clear by 2 hours. Inherits future user-customized notification schedules. Travel: triggers at 8pm in the new local zone after the device switches; no retro-fire.
+
+### New Dashboard widget: Inflows/Outflows
+
+Creative energy-balance visualization, in two forms:
+- **Dashboard widget:** dual concentric ring. Outer = calories ingested by macro (P/C/F). Inner = calories expended by source (BMR / activity / workout). Center = net surplus/deficit. Day/Week/Month/Year toggle.
+- **Full-screen view:** Sankey-style flow diagram. Left lanes (food categories) flow into total intake; total intake flows across to total expenditure; right lanes split into BMR / activity / workout. Tap any lane → drill-down sheet.
+
+### 13 new/elevated top-level screens in v2
+
+10 require new mockups (catalog in `MOCKUP-PROMPTS-v2.md`): Dashboard v2 · Inflows/Outflows widget · Inflows/Outflows fullscreen · Activity overview widget · Meals & Nutrition hub · Exercise & Activity hub · Progress overview v2 · Menu sheet · Help screen · Tab bar component.
+
+3 are sub-pages under the new Exercise & Activity hub that get their own mockups in Round 2: Workout Log · Activity Tracker · Workout Plans (Exercise Library and Schedule deferred to v1.5 unless Pilot scope expands again).
+
+References: `docs/ios-guide/APP-MAP.md` v2, `docs/ios-guide/FLOW-CHART.md` v2, `docs/ios-guide/MOCKUP-PROMPTS-v2.md`.
