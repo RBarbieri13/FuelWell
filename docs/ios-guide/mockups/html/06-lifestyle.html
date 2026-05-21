@@ -194,6 +194,20 @@
     line-height: 1.4;
     letter-spacing: -0.002em;
   }
+  .opt-helper {
+    flex-basis: 100%;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid var(--bg-border-soft, #EEF0F3);
+    font-family: var(--font-body);
+    font-size: 13px; font-weight: 400;
+    color: var(--text-secondary);
+    line-height: 1.45;
+    letter-spacing: -0.002em;
+    display: none;
+  }
+  .opt-card.expanded { flex-wrap: wrap; align-items: flex-start; }
+  .opt-card.expanded .opt-helper { display: block; }
   .radio {
     width: 22px; height: 22px;
     border-radius: 50%;
@@ -401,24 +415,25 @@
   </svg>`;
 
   // Option rows
-  function row(kind, glyph, title, desc, selected) {
+  function row(kind, glyph, title, desc, selected, expanded, helper) {
     return `
-      <div class="opt-card${selected ? ' selected' : ''}">
+      <div class="opt-card${selected ? ' selected' : ''}${expanded ? ' expanded' : ''}">
         <div class="opt-icon ${kind}">${glyph}</div>
         <div class="opt-body">
           <div class="opt-title">${title}</div>
           <div class="opt-desc">${desc}</div>
         </div>
         <div class="radio${selected ? ' on' : ''}"></div>
+        ${expanded && helper ? `<div class="opt-helper">${helper}</div>` : ''}
       </div>`;
   }
 
   const variations = [
     {
       num: 'Variation 01 · State',
-      name: 'Default · empty',
-      cap: 'First render. No option chosen; Continue remains in the disabled-dark style until the user commits.',
-      sel: null, cta: 'disabled'
+      name: 'Default · "Cook at home" expanded',
+      cap: 'First render. No option chosen yet; user tapped "Cook at home mostly" to see what it means. Helper text expands inline.',
+      sel: null, expanded: 'home', cta: 'disabled'
     },
     {
       num: 'Variation 02 · State',
@@ -451,9 +466,9 @@
             <p class="title-sub">We'll tailor your suggestions.</p>
           </div>
           <div class="opt-stack">
-            ${row('home',    icHome, 'Cook at home mostly', 'Lean toward recipes when ranking meals.', v.sel === 'home')}
-            ${row('dineout', icFork, 'Eat out mostly',      'Lean toward restaurants when ranking meals.', v.sel === 'dineout')}
-            ${row('mix',     icGrid, 'Both equally',        'Balance recipes and restaurants evenly.', v.sel === 'mix')}
+            ${row('home',    icHome, 'Cook at home mostly', 'Lean toward recipes when ranking meals.', v.sel === 'home', v.expanded === 'home', "You cook most of your meals. We'll rank recipes ahead of restaurants and keep grocery lists tight to what's already in your kitchen.")}
+            ${row('dineout', icFork, 'Eat out mostly',      'Lean toward restaurants when ranking meals.', v.sel === 'dineout', v.expanded === 'dineout', "You eat out most days. We'll surface restaurant guidance first and rank menus by what fits your macros — no surprise calorie bombs.")}
+            ${row('mix',     icGrid, 'Both equally',        'Balance recipes and restaurants evenly.', v.sel === 'mix', v.expanded === 'mix', "Half cooked, half eaten out. We'll mix recipes and restaurant picks 50/50 and adjust as we learn your real-world rhythm.")}
           </div>
           <div class="helper">
             <span class="ico">${icInfo}</span>

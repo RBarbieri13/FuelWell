@@ -271,6 +271,20 @@
     line-height: 1.4;
     letter-spacing: -0.002em;
   }
+  .goal-helper {
+    flex-basis: 100%;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid var(--bg-border-soft);
+    font-family: var(--font-body);
+    font-size: 13px; font-weight: 400;
+    color: var(--text-secondary);
+    line-height: 1.45;
+    letter-spacing: -0.002em;
+    display: none;
+  }
+  .goal-card.expanded { flex-wrap: wrap; align-items: flex-start; }
+  .goal-card.expanded .goal-helper { display: block; }
 
   .radio {
     width: 22px; height: 22px;
@@ -453,7 +467,7 @@
           </div>
 
           <div class="goal-stack">
-            <div class="goal-card">
+            <div class="goal-card expanded">
               <div class="goal-icon lose">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
                   <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.7"/>
@@ -462,10 +476,11 @@
                 </svg>
               </div>
               <div class="goal-body">
-                <div class="goal-title">Lose weight</div>
+                <div class="goal-title">Lean cut (lose body fat)</div>
                 <div class="goal-desc">Calorie deficit with a high-protein floor.</div>
               </div>
               <div class="radio"></div>
+              <div class="goal-helper">Pull calories ~15% below maintenance while keeping protein high. You'll see body comp shift in 3–6 weeks.</div>
             </div>
 
             <div class="goal-card">
@@ -477,7 +492,7 @@
                 </svg>
               </div>
               <div class="goal-body">
-                <div class="goal-title">Maintain weight</div>
+                <div class="goal-title">Maintain (stabilize body comp)</div>
                 <div class="goal-desc">Hold your current weight, lock in habits.</div>
               </div>
               <div class="radio"></div>
@@ -492,7 +507,7 @@
                 </svg>
               </div>
               <div class="goal-body">
-                <div class="goal-title">Gain weight</div>
+                <div class="goal-title">Lean bulk (gain lean mass)</div>
                 <div class="goal-desc">Lean surplus with progressive intake.</div>
               </div>
               <div class="radio"></div>
@@ -504,7 +519,7 @@
               <rect x="1.5" y="6" width="9" height="7" rx="1.4" stroke="currentColor" stroke-width="1.4"/>
               <path d="M3.5 6V4a2.5 2.5 0 015 0v2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
             </svg>
-            Recomposition goals available in Premium.
+            Tap any option for details. Recomposition available in Premium.
           </div>
 
           <div class="cta-dock">
@@ -577,7 +592,7 @@
                 </svg>
               </div>
               <div class="goal-body">
-                <div class="goal-title">Lose weight</div>
+                <div class="goal-title">Lean cut (lose body fat)</div>
                 <div class="goal-desc">Calorie deficit with a high-protein floor.</div>
               </div>
               <div class="radio on"></div>
@@ -592,7 +607,7 @@
                 </svg>
               </div>
               <div class="goal-body">
-                <div class="goal-title">Maintain weight</div>
+                <div class="goal-title">Maintain (stabilize body comp)</div>
                 <div class="goal-desc">Hold your current weight, lock in habits.</div>
               </div>
               <div class="radio"></div>
@@ -607,7 +622,7 @@
                 </svg>
               </div>
               <div class="goal-body">
-                <div class="goal-title">Gain weight</div>
+                <div class="goal-title">Lean bulk (gain lean mass)</div>
                 <div class="goal-desc">Lean surplus with progressive intake.</div>
               </div>
               <div class="radio"></div>
@@ -692,7 +707,7 @@
                 </svg>
               </div>
               <div class="goal-body">
-                <div class="goal-title">Lose weight</div>
+                <div class="goal-title">Lean cut (lose body fat)</div>
                 <div class="goal-desc">Calorie deficit with a high-protein floor.</div>
               </div>
               <div class="radio"></div>
@@ -707,7 +722,7 @@
                 </svg>
               </div>
               <div class="goal-body">
-                <div class="goal-title">Maintain weight</div>
+                <div class="goal-title">Maintain (stabilize body comp)</div>
                 <div class="goal-desc">Hold your current weight, lock in habits.</div>
               </div>
               <div class="radio on"></div>
@@ -722,7 +737,7 @@
                 </svg>
               </div>
               <div class="goal-body">
-                <div class="goal-title">Gain weight</div>
+                <div class="goal-title">Lean bulk (gain lean mass)</div>
                 <div class="goal-desc">Lean surplus with progressive intake.</div>
               </div>
               <div class="radio"></div>

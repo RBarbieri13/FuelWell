@@ -1,9 +1,11 @@
-# FuelWell — App Map v2 (Phase 0.5 · Step 1)
+# FuelWell — App Map v2.1 (Phase 0.5 · Step 1)
 
-**Status:** ✅ APPROVED v2 — Robert reorganized the IA 2026-05-19 after the Round 1 mockup review. Max's Step 2 blockers resolved. All 27 Round 1 mockups stay; they're re-homed in the new tab/menu structure.
+**Version:** 2.1 (2026-05-21 — Phase 0.5.3 consolidation)
+
+**Status:** ✅ APPROVED v2 — Robert reorganized the IA 2026-05-19 after the Round 1 mockup review. Max's Step 2 blockers resolved. All 27 Round 1 mockups stay; they're re-homed in the new tab/menu structure. v2.1 layers in the D1–D19 consolidation pass from the Phase 0.5.3 final review (see `decisions.md`).
 
 **What changed from v1 → v2:**
-- Tab bar: `Home · Log · Coach · Learn · Progress` → **`Home · Meals/Nutrition · Coach · Exercise & Activity · Progress`**
+- Tab bar: `Home · Log · Coach · Learn · Progress` → **`Home · Meals · Coach · Exercise · Progress`** (single-word labels in the bar per D9; full names "Meals & Nutrition" and "Exercise & Activity" appear as screen titles on the hub landings)
 - Coach is the centerpiece tab — visually distinct (speech-bubble icon, inverted shading)
 - "Learn" tab dissolved into the new **Help** screen, accessed from the Dashboard top bar
 - New top-level navigation surface: a **hierarchical Menu** (Tools / Coach / Settings / Help / About)
@@ -41,13 +43,15 @@ FuelWell (splash)
 
 ## 2. Tab bar — five tabs, Coach centered
 
-| Order | Tab | Visual treatment | Tier |
-|---|---|---|---|
-| 1 (leftmost) | Home | Standard SF Symbol `house.fill` | Outer |
-| 2 | Meals & Nutrition | Standard SF Symbol `fork.knife` | Second |
-| 3 (center, prominent) | **Coach** | **Speech-bubble icon, inverted (`bg.elevated #0F1117`) container, slight elevation** | Centerpiece |
-| 4 | Exercise & Activity | Standard SF Symbol `figure.run` | Second |
-| 5 (rightmost) | Progress | Standard SF Symbol `chart.line.uptrend.xyaxis` | Outer |
+Tab-bar labels are single words per D9 (Home · Meals · Coach · Exercise · Progress). Full names ("Meals & Nutrition", "Exercise & Activity") only appear as the screen titles on the hub landings.
+
+| Order | Tab label (in bar) | Hub screen title | Visual treatment | Tier |
+|---|---|---|---|---|
+| 1 (leftmost) | Home | Dashboard | Standard SF Symbol `house.fill` | Outer |
+| 2 | Meals | Meals & Nutrition | Standard SF Symbol `fork.knife` | Second |
+| 3 (center, prominent) | **Coach** | Coach Chat | **Raised-circle FAB-style container (D6), inverted `bg.elevated #0F1117`, slight elevation** | Centerpiece |
+| 4 | Exercise | Exercise & Activity | Standard SF Symbol `figure.run` | Second |
+| 5 (rightmost) | Progress | Progress | Standard SF Symbol `chart.line.uptrend.xyaxis` | Outer |
 
 The Coach tab is always visually distinct, even when inactive. The rest follow iOS standard active/inactive coloring.
 
@@ -68,9 +72,9 @@ graph TD
 
   Dash --> TabBar((Tab bar · 5 tabs))
   TabBar --> THome[Home]
-  TabBar --> TMeals[Meals & Nutrition]
+  TabBar --> TMeals[Meals]
   TabBar --> TCoach[Coach]
-  TabBar --> TExer[Exercise & Activity]
+  TabBar --> TExer[Exercise]
   TabBar --> TProg[Progress]
 ```
 
@@ -102,11 +106,28 @@ The Home tab root. Top bar carries Menu (left) and Help (right). Max's hard ceil
 
 **Habit Tracking is NOT on the Dashboard** in v2. It lives in the Progress tab and in the Menu under Tools › Tracking.
 
+### § Day 1 Dashboard welcome mode (D7)
+
+The Dashboard has two co-existing states. The populated state described above is the canonical Dashboard. On the user's first session, before any meals or workouts have been logged, the Inflows/Outflows ring is replaced by a single large welcome card:
+
+- **Welcome card copy:** "Start here: log your first meal" (primary CTA).
+- **Trigger:** zero logged meals AND zero logged workouts for the current user.
+- **Collapse rule:** the welcome card auto-collapses after the first meal is logged; the canonical Inflows/Outflows ring takes its place on the next Dashboard render.
+- **Tier 1 contract honored:** the welcome card occupies the Tier 1 slot that the Inflows/Outflows ring normally holds; Health Score hero and Verdict CTA remain visible.
+- **Health Score during welcome mode:** still renders its day-1 fallback ("Building your baseline — 7 days of data unlocks your Health Score") with a placeholder ring.
+
+### § Health Score component notes (D11, D14)
+
+- **Recovery baseline (D11):** Recovery is computed off a 14-day rolling average of resting heart rate. Before 14 days of wearable data exist, Recovery is *excluded* from the Health Score and the remaining four components proportionally re-weight (same mechanism as the missing-component rule in § 8). The Health Score detail screen surfaces this explicitly with the copy: "Recovery unlocks with wearable data (Apple Watch or compatible device)" — not a silent reweight.
+- **Cause-first delta framing (D14):** the Dashboard hero and the Health Score detail screen render score deltas in cause-first form, not numeric-first. Example: "↓ sleep variance this week" rather than "↓ −2.3 vs last week". The numeric delta still exists internally for telemetry; it just isn't the lede in user-facing copy.
+
 ---
 
 ## 4. Menu — hierarchical navigation (new in v2)
 
 Opened from the hamburger icon top-left of Dashboard (and any screen via the universal Menu icon). Full-screen sheet with grouped sections.
+
+**D4 — hierarchical-collapsed by default.** Single-pane view. Categories visible by default (Snapshot · Tracking · Meals · Training · Coach · Settings · Help · About); each expands on tap. No two-tier tile redesign. Larger text and less whitespace than v1.
 
 ```
 USER HEADER (avatar · name · goal pill · today's Health Score)
@@ -129,7 +150,7 @@ TOOLS
 │   ├── Meal Plan Generator
 │   ├── Grocery List
 │   ├── Restaurant Guidance
-│   └── Macro history
+│   └── Macro history (D12 — deep-link to Progress › Macro adherence; no standalone screen)
 └── Training
     ├── Workout Log
     ├── Activity Tracker
@@ -188,7 +209,7 @@ Each non-Home tab opens a **hub landing page** that surfaces sub-pages, not a si
 |---|---|
 | Hero | Today's plate — compact Inflows/Outflows ring + remaining macros bar |
 | Today's meals | Logged meal rows + pending dinner slot |
-| Quick access | Meal Log · Restaurant Guidance · Recipe Browser · Meal Plan Generator · Grocery List · Macro History |
+| Quick access | Meal Log · Restaurant Guidance · Recipe Browser · Meal Plan Generator · Grocery List · Macro History (deep-link → Progress › Macro adherence per D12) |
 | Recent foods | Horizontal scroll of recent meal chips for one-tap re-log |
 
 ### 6.2 Exercise & Activity tab landing
@@ -220,7 +241,7 @@ Coach Chat. Inline Learn cards expand within the chat (the article surface remai
 
 ---
 
-## 7. Screen inventory v2 — 30 top-level screens (17 from v1 re-homed + 13 new/elevated)
+## 7. Screen inventory v2 — 29 top-level screens (17 from v1 re-homed + 12 new/elevated; Macro History removed per D12, Learn home retired per D10)
 
 **New in v2** marked with ⭐. **Re-homed from v1** marked with ↻.
 
@@ -252,7 +273,10 @@ Coach Chat. Inline Learn cards expand within the chat (the article surface remai
 | 17 | Recipe Detail ↻ | Add to Grocery / Log as meal |
 | 18 | Meal Plan Generator ↻ | Three options, single-line summaries |
 | 19 | Grocery List ↻ | Grouped by category |
-| 20 | Macro History ⭐ | Detail charts for macro adherence |
+
+> **Macro History (D12) — deep-link, not a screen.** The Meals & Nutrition hub's "Macro History" row deep-links to **Progress → Macro adherence** detail. There is no standalone Macro History screen at Pilot. The Meals & Nutrition hub still surfaces the row; the destination is Progress, not a new screen.
+
+> **Learn home (D10) — retired in Phase 0.5.3.** The v1 "Learn home" screen (Screen 31, slug `21-learn-home`) is not shipping at Pilot. All article content is reachable through the Help screen and inline Learn cards in Coach Chat.
 
 ### Coach tab
 
@@ -298,7 +322,9 @@ Coach Chat. Inline Learn cards expand within the chat (the article surface remai
 - **Range:** 0–100
 - **Missing components:** *excluded* — remaining components re-weighted proportionally. No penalty zeros.
 - **Day-1 fallback:** display "Building your baseline — 7 days of data unlocks your Health Score" with a placeholder ring. No score number rendered.
-- **Score is a diagnostic, not a competition.** No leaderboards, no "your friends scored X" comparisons, ever.
+- **Score is a diagnostic, not a competition.** No leaderboards, no "your friends scored X" comparisons, ever. (Internal terminology — user-facing copy avoids "diagnostic" per D1.)
+- **Recovery baseline (D11):** Recovery uses a 14-day rolling average of resting HR. Until 14 days exist, Recovery is excluded and the other four components re-weight proportionally. Detail screen renders: "Recovery unlocks with wearable data (Apple Watch or compatible device)" — explicit, not silent.
+- **Delta framing (D14):** cause-first on Dashboard hero and Health Score detail. "↓ sleep variance this week", not "↓ −2.3 vs last week".
 
 ---
 
@@ -334,6 +360,12 @@ A thoughtful empty state is a brand moment, not a placeholder. Every screen belo
 | Exercise Library | No favorites | "Tap an exercise for the form video and tip notes." |
 | Schedule | Empty week | "Plan a workout to start your week." |
 | Settings | n/a | n/a |
+
+### 9.1 Coach voice no-gos (D13)
+
+Apply in all coach-facing copy (Daily Recap, Coach Chat, nudges, empty states, push notifications):
+
+(1) never use "you missed", "you skipped", "you went over"; (2) never show adherence below 60% as an absolute % without trend comparison; (3) Daily Recap always leads with neutral or positive before any gap observation.
 
 ---
 

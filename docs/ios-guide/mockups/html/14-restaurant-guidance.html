@@ -536,6 +536,10 @@
   }
   .switch.on { background: var(--semantic-success); }
   .switch.on::after { left: 23px; }
+  /* Disabled (no location permission) — spec verify (D-locperm) */
+  .toggle-row.disabled .lbl { color: var(--text-disabled); }
+  .toggle-row.disabled .lbl .desc { color: var(--text-disabled); }
+  .toggle-row.disabled .switch { background: var(--bg-border); opacity: 0.6; }
 
   /* Cuisine chips */
   .chips-row {
@@ -577,10 +581,26 @@
     padding: 8px 6px 30px;
     z-index: 22;
   }
-  .tab { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: var(--text-muted); }
+  .tab { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: var(--text-muted); position: relative; }
   .tab.active { color: var(--text-primary); }
   .tab-glyph { width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; }
   .tab-label { font-family: var(--font-body); font-size: 10px; font-weight: 600; letter-spacing: 0.02em; }
+  /* V2 Raised-circle FAB Coach (D6) */
+  .tab.coach-fab { margin-top: -22px; }
+  .tab.coach-fab .tab-bubble {
+    position: relative;
+    width: 54px; height: 54px;
+    background: var(--gradient-brand);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+    box-shadow: 0 10px 24px rgba(0,210,120,.40), 0 2px 4px rgba(15,17,23,.16);
+  }
+  .tab.coach-fab .tab-bubble svg { color: #fff; }
+  .tab.coach-fab .tab-label { margin-top: 6px; color: var(--text-primary); font-weight: 700; }
+  .tab.coach-fab.active .tab-bubble {
+    box-shadow: 0 10px 24px rgba(0,210,120,.40), 0 2px 4px rgba(15,17,23,.16), 0 0 0 4px rgba(0,210,120,0.18);
+  }
 
   /* Bottom-pinned dashboard nudge (V1) */
   .bottom-nudge {
@@ -686,19 +706,19 @@
     arrowR: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
     chev: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
     tabHome: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11l8-7 8 7v8a1 1 0 01-1 1h-4v-6h-6v6H5a1 1 0 01-1-1v-8Z"/></svg>`,
-    tabLogA: `<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M9 8h6M9 12h6M9 16h3" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></svg>`,
-    tabLog: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M9 8h6M9 12h6M9 16h3" stroke-linecap="round"/></svg>`,
-    tabCoach: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11a8 8 0 1116 0v3a3 3 0 01-3 3h-1v-7h4M4 11v3a3 3 0 003 3h1v-7H4"/></svg>`,
-    tabLearn: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5.5C4 4.7 4.7 4 5.5 4H10a3 3 0 013 3v14a2 2 0 00-2-2H5.5A1.5 1.5 0 014 17.5v-12ZM20 5.5C20 4.7 19.3 4 18.5 4H14a3 3 0 00-3 3v14a2 2 0 012-2h5.5a1.5 1.5 0 001.5-1.5v-12Z"/></svg>`,
+    tabMealsA: `<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6 2v8a2 2 0 002 2v10h2V12a2 2 0 002-2V2h-1v8h-1V2h-1v8H8V2H6zm10 0c-1.5 0-2.5 2-2.5 5s1 5 2.5 5v10h2V2h-2z"/></svg>`,
+    tabMeals: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2v20M6 2v8a2 2 0 002 2h0a2 2 0 002-2V2M10 2v8M18 2v20M18 14c-1.5 0-2.5-2-2.5-5S16.5 2 18 2"/></svg>`,
+    tabCoach: `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a8 8 0 1116 0c0 4-3.6 7-8 7l-3 3v-3.2A8 8 0 014 11Z"/><path d="M9 10.5h6M9 13.5h4"/></svg>`,
+    tabExercise: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="14" cy="4.5" r="1.6"/><path d="M9 9l3-2 3 2 2 4M12 7l-1 5 3 3v5M11 12l-4 1-2 4"/></svg>`,
     tabProg: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg>`,
   };
 
   function tabbar(active) {
     return `<div class="tabbar">
       <div class="tab"><div class="tab-glyph">${ic.tabHome}</div><div class="tab-label">Home</div></div>
-      <div class="tab${active==='log'?' active':''}"><div class="tab-glyph">${active==='log'?ic.tabLogA:ic.tabLog}</div><div class="tab-label">Log</div></div>
-      <div class="tab"><div class="tab-glyph">${ic.tabCoach}</div><div class="tab-label">Coach</div></div>
-      <div class="tab"><div class="tab-glyph">${ic.tabLearn}</div><div class="tab-label">Learn</div></div>
+      <div class="tab${active==='log'?' active':''}"><div class="tab-glyph">${active==='log'?ic.tabMealsA:ic.tabMeals}</div><div class="tab-label">Meals</div></div>
+      <div class="tab coach-fab"><div class="tab-bubble">${ic.tabCoach}</div><div class="tab-label">Coach</div></div>
+      <div class="tab"><div class="tab-glyph">${ic.tabExercise}</div><div class="tab-label">Exercise</div></div>
       <div class="tab"><div class="tab-glyph">${ic.tabProg}</div><div class="tab-label">Progress</div></div>
     </div>`;
   }
@@ -817,8 +837,8 @@
           <span class="glyph">${ic.search}</span>
           Search restaurants
         </div>
-        <div class="toggle-row">
-          <div class="lbl">Show nearby<span class="desc">Uses location only while this tab is open</span></div>
+        <div class="toggle-row disabled">
+          <div class="lbl">Show nearby<span class="desc">Location permission off — tap to enable</span></div>
           <div class="switch"></div>
         </div>
         <div class="sec-h"><div class="l">Featured</div><div class="r">See all</div></div>

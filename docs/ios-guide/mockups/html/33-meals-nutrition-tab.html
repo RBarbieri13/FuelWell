@@ -108,7 +108,203 @@
   }
   .nav .iconbtn.primary { background: var(--gradient-brand); border-color: transparent; color: var(--text-primary); box-shadow: var(--elev-cta); }
 
-  /* Today's plate hero */
+  /* In-the-moment hero — "What should you eat next?" recommended meals */
+  .eat-next {
+    margin-top: 12px;
+    background: var(--bg-elevated);
+    color: var(--text-on-dark);
+    border-radius: var(--radius-lg);
+    padding: 16px 16px 14px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--elev-3);
+  }
+  .eat-next::before {
+    content: "";
+    position: absolute; top: 0; right: 0; bottom: 0; width: 60%;
+    background: radial-gradient(70% 60% at 80% 30%, rgba(0,210,120,0.28) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .eat-next-eyebrow {
+    font-family: var(--font-body);
+    font-size: 10.5px; font-weight: 700;
+    color: var(--text-on-dark-muted);
+    letter-spacing: 0.18em; text-transform: uppercase;
+    position: relative; z-index: 1;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .eat-next-eyebrow .meta {
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 10.5px; font-weight: 700;
+    color: var(--text-on-dark-muted);
+    letter-spacing: 0.04em;
+    text-transform: none;
+  }
+  .eat-next h2 {
+    margin: 6px 0 0;
+    font-family: var(--font-display);
+    font-size: 19px; font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.015em;
+    color: var(--text-on-dark);
+    position: relative; z-index: 1;
+  }
+  .eat-next .reco-list {
+    margin-top: 12px;
+    display: flex; flex-direction: column;
+    gap: 8px;
+    position: relative; z-index: 1;
+  }
+  .reco-row {
+    display: grid;
+    grid-template-columns: 40px 1fr auto;
+    column-gap: 11px;
+    align-items: center;
+    padding: 10px 10px 10px 10px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 12px;
+  }
+  .reco-row .thumb {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    background: rgba(255,255,255,0.08);
+  }
+  .reco-row .thumb.p { background: linear-gradient(135deg, rgba(0,210,120,0.32), rgba(0,180,216,0.18)); color: #fff; }
+  .reco-row .thumb.b { background: linear-gradient(135deg, rgba(245,158,11,0.34), rgba(0,210,120,0.18)); color: #fff; }
+  .reco-row .thumb.s { background: linear-gradient(135deg, rgba(0,180,216,0.30), rgba(168,85,247,0.20)); color: #fff; }
+  .reco-row .body { min-width: 0; }
+  .reco-row .nm {
+    font-family: var(--font-body);
+    font-size: 13.5px; font-weight: 600;
+    color: var(--text-on-dark);
+    letter-spacing: -0.003em;
+    line-height: 1.2;
+  }
+  .reco-row .pills {
+    margin-top: 4px;
+    display: flex; gap: 4px;
+    flex-wrap: wrap;
+  }
+  .reco-row .pill {
+    padding: 1.5px 6px;
+    border-radius: 999px;
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 9.5px; font-weight: 700;
+    letter-spacing: -0.003em;
+    border: 1px solid transparent;
+  }
+  .reco-row .pill.p { color: var(--macro-protein); background: rgba(0,210,120,0.14); border-color: rgba(0,210,120,0.32); }
+  .reco-row .pill.c { color: var(--macro-carbs); background: rgba(245,158,11,0.16); border-color: rgba(245,158,11,0.32); }
+  .reco-row .pill.f { color: var(--macro-fat); background: rgba(168,85,247,0.18); border-color: rgba(168,85,247,0.36); }
+  .reco-row .log-btn {
+    flex-shrink: 0;
+    height: 30px;
+    padding: 0 12px;
+    border-radius: 9px;
+    border: 0;
+    background: var(--gradient-brand);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 12px; font-weight: 700;
+    letter-spacing: -0.003em;
+    display: inline-flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 10px rgba(0,210,120,0.28);
+    cursor: pointer;
+  }
+  .eat-next .why {
+    margin-top: 10px;
+    font-family: var(--font-body);
+    font-size: 11px; font-weight: 500;
+    color: var(--text-on-dark-muted);
+    letter-spacing: -0.002em;
+    position: relative; z-index: 1;
+    line-height: 1.4;
+  }
+
+  /* Demoted compact remaining-macros card */
+  .remain-card {
+    margin-top: 10px;
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--elev-1);
+    padding: 11px 14px;
+  }
+  .remain-card .rc-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+  }
+  .remain-card .rc-head .lb {
+    font-family: var(--font-body);
+    font-size: 10px; font-weight: 700;
+    color: var(--text-secondary);
+    letter-spacing: 0.16em; text-transform: uppercase;
+  }
+  .remain-card .rc-head .kcal {
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 11px; font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.003em;
+  }
+  .remain-card .rc-head .kcal .of {
+    font-family: var(--font-body);
+    font-size: 10px; font-weight: 500;
+    color: var(--text-muted);
+    margin-left: 3px;
+  }
+  .remain-card .gauges {
+    margin-top: 8px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+  }
+  .remain-card .gauge .gl {
+    display: flex; align-items: center; gap: 5px;
+    font-family: var(--font-body);
+    font-size: 9.5px; font-weight: 700;
+    color: var(--text-secondary);
+    letter-spacing: 0.12em; text-transform: uppercase;
+  }
+  .remain-card .gauge .gl .dot { width: 7px; height: 7px; border-radius: 2px; display: inline-block; }
+  .remain-card .gauge .gl .dot.p { background: var(--macro-protein); }
+  .remain-card .gauge .gl .dot.c { background: var(--macro-carbs); }
+  .remain-card .gauge .gl .dot.f { background: var(--macro-fat); }
+  .remain-card .gauge .gv {
+    margin-top: 3px;
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 14px; font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.015em;
+    line-height: 1;
+  }
+  .remain-card .gauge .gv .u {
+    font-family: var(--font-body);
+    font-size: 9.5px; font-weight: 500;
+    color: var(--text-muted);
+    margin-left: 2px;
+  }
+  .remain-card .gauge .gt {
+    margin-top: 5px;
+    height: 3px;
+    background: var(--bg-border);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .remain-card .gauge .gt .gf {
+    height: 100%;
+    border-radius: 999px;
+  }
+  .remain-card .gauge .gt .gf.p { background: var(--macro-protein); }
+  .remain-card .gauge .gt .gf.c { background: var(--macro-carbs); }
+  .remain-card .gauge .gt .gf.f { background: var(--macro-fat); }
+
+  /* Today's plate hero (legacy — kept for empty state) */
   .plate {
     margin-top: 12px;
     background: var(--bg-surface);
@@ -423,15 +619,15 @@
     line-height: 1.45;
   }
 
-  /* Tab bar (Meals active) */
+  /* Tab bar (Meals active) — V2 raised-circle FAB-style Coach */
   .tabbar { position: absolute; left: 0; right: 0; bottom: 0; height: 88px; background: rgba(255,255,255,0.92); backdrop-filter: blur(18px); border-top: 1px solid var(--bg-border); display: grid; grid-template-columns: repeat(5, 1fr); padding: 8px 6px 30px; z-index: 22; }
   .tab { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: var(--text-muted); position: relative; }
   .tab.active { color: var(--text-primary); }
   .tab .tab-glyph { width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; }
   .tab .tab-label { font-family: var(--font-body); font-size: 10px; font-weight: 600; letter-spacing: 0.02em; }
-  .tab.coach { margin-top: -16px; }
-  .tab.coach .tab-bubble { position: relative; width: 52px; height: 52px; background: var(--bg-elevated); border-radius: 18px 18px 18px 6px; display: flex; align-items: center; justify-content: center; color: #fff; box-shadow: 0 8px 22px rgba(15,17,23,.34), 0 2px 4px rgba(15,17,23,.18); }
-  .tab.coach .tab-bubble::after { content: ""; position: absolute; left: 8px; bottom: -6px; width: 12px; height: 12px; background: var(--bg-elevated); border-radius: 2px; transform: rotate(45deg); }
+  .tab.coach { margin-top: -22px; }
+  .tab.coach .tab-bubble { position: relative; width: 52px; height: 52px; background: var(--gradient-brand); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; box-shadow: 0 6px 16px rgba(0,210,120,.30), 0 2px 4px rgba(15,17,23,.10); }
+  .tab.coach .tab-bubble svg { color: #fff; }
   .tab.coach .tab-label { margin-top: 4px; color: var(--text-primary); font-weight: 700; }
 
   .legend-doc { max-width: 1320px; margin: 56px auto 0; padding: 22px 26px; background: #FFFFFF; border: 1px solid var(--bg-border); border-radius: var(--radius-lg); display: grid; grid-template-columns: 220px 1fr; gap: 14px 28px; font-size: 12px; color: var(--text-secondary); line-height: 1.55; }
@@ -446,7 +642,7 @@
     <div>
       <p class="doc-eyebrow">FuelWell · Round 2 · Step 4 — Mockups</p>
       <h1 class="doc-title">M33 Meals &amp; Nutrition · tab landing</h1>
-      <p class="doc-sub">Hub screen reached from the Meals tab. Today's plate hero with a 124pt I/O ring + remaining macros, today's meals list, Quick access destinations, and a recent-foods scroller for one-tap re-log. Three variations explore ring vs. macros-only hero and list vs. grid Quick access.</p>
+      <p class="doc-sub">Hub screen reached from the Meals tab. Title at the top reads "Meals &amp; Nutrition" (full name) even though the tab BAR label is "Meals". <strong>Redesigned Tier 1 hero:</strong> the macro-balance readout is replaced with an in-the-moment "What should you eat next?" card surfacing the next 2–3 coach-recommended meals with macro-fit pills and one-tap Log buttons. A demoted compact remaining-macros card sits beneath. Macro History removed from quick access (deep-links from Progress per D12). Three variations explore today's-meals list density and list vs. grid Quick access.</p>
     </div>
     <div class="doc-meta">
       iPhone 15 Pro · 393 × 852 pt<br>
@@ -461,12 +657,14 @@
     <h3>Mockup notes · M33 Meals tab landing</h3>
     <dt>Header</dt>
     <dd>Display 700 26pt "Meals &amp; Nutrition" with a sub-line ("Fri · 3 of 4 meals logged"). Trailing + button uses <code>gradient.brand</code> — opens M12 Add Meal sheet.</dd>
-    <dt>Today's plate hero</dt>
-    <dd>Smaller version of the M29 dual ring (124pt) paired with three macro rows on the right. Ring shows cumulative kcal vs target, macros show remaining (target − consumed) so the user sees what's left rather than what's eaten — different lens from Dashboard. Tap → M30 Energy balance (same destination as Dashboard widget).</dd>
+    <dt>Tier-1 hero · Eat next</dt>
+    <dd><strong>Redesigned per Phase 0.5.3.</strong> Inverted <code>bg.elevated</code> "What should you eat next?" card surfacing 2–3 coach-recommended meals with thumbnail/glyph, macro-fit pills (+P / +C / +F vs the user's remaining target), and a one-tap gradient.brand <strong>Log</strong> button per row. Pick rationale ("Ranked by fit to your remaining macros") lives as a quiet footnote. Replaces the prior plate-ring readout, which is demoted to the secondary card below.</dd>
+    <dt>Remaining macros card (secondary)</dt>
+    <dd>Compact light-surface card directly beneath the eat-next hero. Shows kcal-left headline and three macro gauges (P / C / F left + tiny progress bar). Demoted from the old hero — same data, lower visual weight. Tap → M30 Energy balance for the full readout.</dd>
     <dt>Today's meals</dt>
     <dd>Same row pattern as M10/M28 — color-coded meal-type icon, name + meta line, trailing kcal. Pending slots render dashed with the coach's projected kcal. <strong>V1 &amp; V2</strong> use the vertical list. <strong>V3</strong> shows meals as a horizontal card row so the rest of the screen breathes.</dd>
     <dt>Quick access · destinations</dt>
-    <dd>Six per spec: <em>Meal Log</em>, <em>Restaurant Guidance</em>, <em>Recipe Browser</em>, <em>Meal Plan Generator</em>, <em>Grocery List</em>, <em>Macro History</em>. Color tokens follow each destination's role — green (food), warning-amber (restaurants), info-blue (recipes), premium-purple (plan), orange (grocery), info-blue (charts).</dd>
+    <dd>Five per spec (Macro History removed per D12 — it now deep-links from Progress): <em>Meal Log</em>, <em>Restaurant Guidance</em>, <em>Recipe Browser</em>, <em>Meal Plan Generator</em>, <em>Grocery List</em>. Color tokens follow each destination's role — green (food), warning-amber (restaurants), info-blue (recipes), premium-purple (plan), orange (grocery).</dd>
     <dt>Recent foods</dt>
     <dd>Horizontal scroll of 132pt cards: meal-type-tinted placeholder image, name, kcal+macro chip. Tap → re-logs the same meal at "now" (M13 portion editor open).</dd>
     <dt>Empty state</dt>
@@ -568,6 +766,65 @@
           <div class="v">1,546</div>
           <div class="of">/ 2,260 kcal</div>
           <div class="u">−714 LEFT</div>
+        </div>
+      </div>`;
+  }
+
+  /* ===== New in-the-moment hero: "What should you eat next?" ===== */
+  function eatNextHero() {
+    const recos = [
+      { cls: 'p', glyph: 'Y', nm: 'Greek yogurt + berries', pills: [['p','+28g P'],['c','+12g C'],['f','+4g F']] },
+      { cls: 'b', glyph: 'C', nm: 'Chicken bowl',           pills: [['p','+38g P'],['c','+35g C'],['f','+12g F']] },
+      { cls: 's', glyph: 'T', nm: 'Turkey sandwich',        pills: [['p','+24g P'],['c','+42g C'],['f','+10g F']] },
+    ];
+    return `
+      <div class="eat-next">
+        <div class="eat-next-eyebrow">
+          <span>EAT NEXT · COACH PICKS</span>
+          <span class="meta">714 kcal · 32P / 73C / 16F left</span>
+        </div>
+        <h2>What should you eat next?</h2>
+        <div class="reco-list">
+          ${recos.map(r => `
+            <div class="reco-row">
+              <div class="thumb ${r.cls}">${r.glyph}</div>
+              <div class="body">
+                <div class="nm">${r.nm}</div>
+                <div class="pills">
+                  ${r.pills.map(p => `<span class="pill ${p[0]}">${p[1]}</span>`).join('')}
+                </div>
+              </div>
+              <button class="log-btn">Log</button>
+            </div>`).join('')}
+        </div>
+        <div class="why">Ranked by fit to your remaining macros · tap any meal for swap options.</div>
+      </div>`;
+  }
+
+  /* ===== Demoted remaining-macros card (secondary) ===== */
+  function remainingMacrosCard() {
+    return `
+      <div class="remain-card">
+        <div class="rc-head">
+          <div class="lb">REMAINING TODAY</div>
+          <div class="kcal">714<span class="of">/ 2,260 kcal · 32% left</span></div>
+        </div>
+        <div class="gauges">
+          <div class="gauge">
+            <div class="gl"><span class="dot p"></span>PROTEIN</div>
+            <div class="gv">32<span class="u">g</span></div>
+            <div class="gt"><div class="gf p" style="width:80%"></div></div>
+          </div>
+          <div class="gauge">
+            <div class="gl"><span class="dot c"></span>CARBS</div>
+            <div class="gv">73<span class="u">g</span></div>
+            <div class="gt"><div class="gf c" style="width:70%"></div></div>
+          </div>
+          <div class="gauge">
+            <div class="gl"><span class="dot f"></span>FAT</div>
+            <div class="gv">16<span class="u">g</span></div>
+            <div class="gt"><div class="gf f" style="width:77%"></div></div>
+          </div>
         </div>
       </div>`;
   }
@@ -710,7 +967,6 @@
     { ico: ic.bookOpen, cls: 'info',     nm: 'Recipe Browser',     sub: 'Saved · Coach picks' },
     { ico: ic.cal,      cls: 'premium',  nm: 'Meal Plan Generator', sub: 'Week ahead, in 60 sec' },
     { ico: ic.cart,     cls: 'orange',   nm: 'Grocery List',       sub: '12 items · Wholefoods' },
-    { ico: ic.chart,    cls: 'info',     nm: 'Macro History',      sub: 'Charts · 30 days' },
   ];
   function qaList() {
     return `<div class="qa-list">
@@ -755,11 +1011,15 @@
   }
 
   /* ============= Variations ============= */
+  function heroBlock(state) {
+    if (state === 'empty') return plate('empty');
+    return `${eatNextHero()}${remainingMacrosCard()}`;
+  }
   function v1(state) {
     return `
       <div class="content">
         ${header(state === 'empty')}
-        ${plate(state)}
+        ${heroBlock(state)}
         <div class="section">
           <div class="section-head"><div class="t">Today's meals</div><div class="m">${state === 'empty' ? '0 logged' : '3 logged · 1,546 kcal'}</div></div>
           ${mealsList(state)}
@@ -778,7 +1038,7 @@
     return `
       <div class="content">
         ${header(state === 'empty')}
-        ${plate(state)}
+        ${heroBlock(state)}
         <div class="section">
           <div class="section-head"><div class="t">Today's meals</div><div class="m">${state === 'empty' ? '0 logged' : '3 logged'}</div></div>
           ${mealsList(state)}
@@ -797,7 +1057,7 @@
     return `
       <div class="content">
         ${header(state === 'empty')}
-        ${plateMacrosOnly(state)}
+        ${heroBlock(state)}
         <div class="section">
           <div class="section-head"><div class="t">Today's meals</div><div class="a">See all</div></div>
           ${mealsHorizontal(state)}
@@ -834,9 +1094,9 @@
   }
 
   const populated = [
-    { num: 'Variation 01', name: 'Ring plate · list QA', cap: 'Spec primary. 124pt ring with three macro rows beside, vertical meal list, list Quick access, horizontal recents.', render: v1('populated') },
-    { num: 'Variation 02', name: 'Ring plate · grid QA', cap: 'Same hero, but Quick access surfaces as a 2-column card grid — better for visual scanning of destinations.', render: v2('populated') },
-    { num: 'Variation 03', name: 'Numbers-first plate · horizontal meals', cap: 'No ring — single big number with macro mini-bars stacked beside. Meals scroll horizontally so the screen breathes; Quick access stays as a list.', render: v3('populated') },
+    { num: 'Variation 01', name: 'Eat-next hero · list QA', cap: 'Spec primary. Tier-1 "What should you eat next?" hero with three coach-recommended meals + one-tap Log; demoted remaining-macros card beneath; vertical meal list; list Quick access; horizontal recents.', render: v1('populated') },
+    { num: 'Variation 02', name: 'Eat-next hero · grid QA', cap: 'Same hero, but Quick access surfaces as a 2-column card grid — better for visual scanning of destinations.', render: v2('populated') },
+    { num: 'Variation 03', name: 'Eat-next hero · horizontal meals', cap: 'Same hero + remaining card; today\'s meals scroll horizontally so the screen breathes; Quick access stays as a list.', render: v3('populated') },
   ];
   const empties = [
     { num: 'Variation 01 · Empty', name: 'First-time · list', cap: 'Plate hero swaps to coach-voice prompt with [Photo log] [Coach suggest] CTAs. Today\'s meals collapse to three dashed slots. Recent foods still scrolls (last-week items).', render: v1('empty') },

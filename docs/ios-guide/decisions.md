@@ -130,3 +130,71 @@ Creative energy-balance visualization, in two forms:
 3 are sub-pages under the new Exercise & Activity hub that get their own mockups in Round 2: Workout Log · Activity Tracker · Workout Plans (Exercise Library and Schedule deferred to v1.5 unless Pilot scope expands again).
 
 References: `docs/ios-guide/APP-MAP.md` v2, `docs/ios-guide/FLOW-CHART.md` v2, `docs/ios-guide/MOCKUP-PROMPTS-v2.md`.
+
+## 2026-05-21 — Phase 0.5.3 — Final review consolidation
+
+Consolidates 58 reviewer change requests from Max's Phase 0.5 Final Review + Robby's mockup corrections + Robert's audit pass. Each decision below is non-negotiable downstream. Source citations: R-* prefixes = Robby; M-* = Max; A-* = audit.
+
+- **D1:** Health Score keeps its name. In user-facing copy, avoid the word "diagnostic" (regulatory-clinical). In internal docs, "diagnostic" is OK.
+- **D2:** Voice mode is OUT of Pilot. Remove Coach Chat voice mode (M30 V3 full-screen overlay). Mic-button-to-text remains; no streaming voice.
+- **D3:** Exercise & Activity is first-class at Pilot. All six sub-pages stay: Workout Log, Activity Tracker, Workout Plans, Exercise Library, Schedule, Trainer workouts.
+- **D4:** Menu is full hierarchical-collapsed. Single-pane view. Categories visible by default; tap to expand. No two-tier tile redesign. Larger text + less whitespace.
+- **D5:** Inflows/Outflows widget = V1 (Full dual ring). Both rings, composition labels, inflow/outflow icons. Drop V2 and V3.
+- **D6:** Tab bar = V2 (raised-circle FAB-style Coach). Drop V1 (speech-bubble).
+- **D7:** Day 1 Dashboard welcome-mode IN. First session before meals/workouts logged → ring replaced by single large welcome card ("Start here: log your first meal"). Populated state = canonical Dashboard. Both states co-exist; welcome card collapses after first meal logged.
+- **D8:** Favorites/must-have ingredients in Dietary onboarding DEFERRED.
+- **D9:** Tab labels = single words in the bar: Home · Meals · Coach · Exercise · Progress. Full names (Meals & Nutrition, Exercise & Activity) appear as screen titles on hub landings.
+- **D10:** Learn home (Screen 31, slug 21-learn-home) NOT shipping in Pilot. Remove from screen inventory. Help screen carries all article content.
+- **D11:** Recovery baseline = 14-day rolling average of resting HR. Before 14 days, Recovery excluded from Health Score and remaining components proportionally re-weight. Detail screen shows: "Recovery unlocks with wearable data (Apple Watch or compatible device)" — not silent reweight.
+- **D12:** Macro History is a deep-link, NOT a separate screen. Meals & Nutrition hub's "Macro History" row deep-links to Progress → Macro adherence. Remove standalone Macro History from inventory.
+- **D13:** Coach voice "no-gos" (apply in all coach-facing copy): (1) never use "you missed", "you skipped", "you went over"; (2) never show adherence below 60% as an absolute % without trend comparison; (3) Daily Recap always leads with neutral/positive before any gap observation.
+- **D14:** Health Score delta framing = cause-first. Instead of "↓ −2.3 vs last week", show "↓ sleep variance this week". Apply on Dashboard hero and Health Score detail screen.
+- **D15:** Offline write queue is IN at Pilot. Local SQLite write queue with reconnect-sync. Update all "offline = read-only" copy in flow chart and mockups.
+- **D16:** Daily Recap dynamic trigger. Fires 90 min before user's typical sleep wind-down (read from HealthKit sleep schedule). Replaces fixed 8 PM. Quiet hours 10pm–7am hard floor.
+- **D17:** Notification preview defaults to private (e.g. "Your coach has an update"). Detailed previews opt-in.
+- **D18:** Coach online indicator → typing indicator pattern. Remove persistent green "ONLINE" dot from Coach Chat; replace with subtle typing dots when coach is responding.
+- **D19:** Progressive onboarding reveal (Day 1→Day 7 tab unlock) DEFERRED to Phase 1.1.
+
+### Cross-references
+
+- `docs/ios-guide/APP-MAP.md` (v2.1) — IA reflects D2, D4, D7, D9, D10, D11, D12, D13, D14.
+- `docs/ios-guide/FLOW-CHART.md` (v2.1) — flows reflect D2, D9, D7, D15, D16, D17, D18, plus Macro History/Learn home removals (D10, D12).
+- `docs/ios-guide/mockups/` and the combined Phase 0.5 review PDF — visual deck reflects D5, D6, D7, D18 in Round 2 corrections.
+
+### Net-new patterns introduced in Phase 0.5.3
+
+These are platform-wide patterns that get referenced by individual screens, not standalone screens of their own.
+
+**C.1 Offline write queue (D15).** Local SQLite queue with reconnect-sync. While offline, any meal log / weight entry / mood / measurement / workout summary is appended to a local `pending_writes` table and the UI shows a small inline banner: "Offline — N logs will sync when you reconnect." A subtle dot appears on the Home tab icon when the queue is non-empty. Background sync fires on the next successful network call (or app foreground if already online). Conflict resolution: last-write-wins for own data (no merge UI needed — same user, single source). Server-side reconciliation logs duplicates but does not surface conflicts.
+
+**C.2 In-app bug reporting (A7).** New sub-screen "Send feedback" reachable from Menu › Help › Send feedback. The screen auto-captures: a screenshot of the current screen at the moment Help was opened, the app version, the current screen route, the timestamp. The user adds a free-text description and submits. Submission posts to a Supabase `feedback` table with the captured metadata plus the user_id. Confirmation: a snackbar "Thanks — we got it" with a "View status" link to a (read-only) feedback history view. **Not a separate top-level mockup** — render-time decision: it's reachable through Help and follows the standard sheet-modal pattern.
+
+**C.3 Undo affordance pattern (A10).** Global pattern. After any Save action (meal log, weight entry, mood entry, photo upload, measurement entry), a 5-second snackbar appears at the bottom (above the tab bar) with the form "Saved · Undo". Tapping Undo reverses the action. Snackbar auto-dismisses after 5s. Visual: `--bg-elevated` dark surface, `--text-on-dark` for the "Saved" label, `--action-green` for the tappable "Undo". Defined once here, referenced from every screen that has a Save action.
+
+**C.4 Data-freshness stamps (A9).** Copy pattern applied to surfaces whose accuracy depends on the latest sync from HealthKit / log. Stamp format:
+- Less than 12h old: "based on data as of HH:MM today"
+- 12–36h old: "based on data as of yesterday HH:MM"
+- More than 36h old: "data is stale — last sync DATE" plus an action chip to manually re-sync.
+
+Applied to: Dashboard Verdict CTA, Coach Chat responses, Health Score hero, Inflows/Outflows widget center. Style: `--text-muted`, font-size 9–10pt, weight 400. Italics optional.
+
+**C.5 Dynamic Daily Recap trigger (D16).** Replaces the prior fixed-8pm trigger. Computation:
+- Read the user's typical sleep onset time from HealthKit (7-day rolling median of sleep-stage data).
+- Trigger time = sleep onset − 90 min.
+- Hard floor: never before 19:00 local, never after 22:00 local. Clamp to that window.
+- If no sleep data exists yet (Day 1–7), default to 20:30 local.
+- Quiet hours 22:00–07:00 still take precedence — if the computed time would land inside quiet hours due to clamping issues, suppress the notification entirely that day.
+- Travel: triggers in the new local zone after the device switches; no retro-fire.
+
+**C.6 Reduce-manual-tracking audit.** Screens where manual input was previously the default and is now skippable or auto-detected at Pilot:
+
+| Screen | Old default | New default at Pilot |
+|---|---|---|
+| Mood entry | Required for Daily Recap completion | **Skippable** — Daily Recap fires without mood; coach can ask "How did today feel?" inline if context warrants |
+| Body photos | Weekly required tile | **Skippable** — surfaced as a gentle prompt, never blocking |
+| Body measurements | Weekly required entry | **Skippable** — auto-pulled from HealthKit where available |
+| Workout sets | Manual per-set logger | **HealthKit auto-capture preferred** — manual logger remains as override |
+| Macros / meal | Manual search-and-add | **Photo-log default primary path** — manual search is a secondary tab |
+| Weight | Manual entry | **HealthKit auto-pull** — manual entry is the fallback |
+
+Principle: manual logging is the exception, not the baseline. The Coach voice should reinforce this — e.g., "I'll pull your weight automatically from HealthKit. Tell me if you want to override it."

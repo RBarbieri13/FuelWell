@@ -23,6 +23,7 @@
     --elev-2:0 4px 14px rgba(15,17,23,.06),0 1px 2px rgba(15,17,23,.04);
     --elev-coach:0 8px 22px rgba(15,17,23,.34),0 2px 4px rgba(15,17,23,.18);
     --elev-coach-glow:0 10px 24px rgba(0,210,120,.40),0 2px 4px rgba(15,17,23,.16);
+    --elev-coach-rest:0 4px 12px rgba(0,210,120,.20),0 1px 2px rgba(15,17,23,.08);
     --font-display:'Outfit',system-ui,sans-serif;
     --font-body:'Inter',system-ui,sans-serif;
     --font-numeric:'DM Sans','Inter',sans-serif;
@@ -36,7 +37,7 @@
   .doc-sub{font-size:13px;color:var(--text-secondary);margin:8px 0 0;max-width:820px;line-height:1.55;}
   .doc-meta{font-family:var(--font-numeric);font-size:11px;color:var(--text-muted);text-align:right;letter-spacing:.04em;line-height:1.7;}
 
-  .frames-wrap{display:flex;gap:120px;justify-content:center;align-items:flex-start;}
+  .frames-wrap{display:flex;gap:120px;justify-content:center;align-items:flex-start;flex-wrap:wrap;}
   .variant-col{display:flex;flex-direction:column;align-items:center;width:480px;}
   .var-label{margin-bottom:24px;text-align:center;width:100%;}
   .var-num{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--text-muted);font-weight:600;}
@@ -133,15 +134,15 @@
     border-radius:50%;
     display:flex;align-items:center;justify-content:center;
     color:#fff;
-    box-shadow:var(--elev-coach-glow);
+    box-shadow:var(--elev-coach-rest);
   }
   .tab.coach-fab .tab-bubble svg path{stroke:#fff;}
   .tab.coach-fab .tab-bubble svg{color:#fff;}
   .tab.coach-fab .tab-label{margin-top:6px;color:var(--text-primary);font-weight:700;}
-  /* Inactive baseline: no gradient, dark-only */
+  /* Inactive baseline: no gradient, dark-only — A12 toned-down elevation */
   .tab.coach-fab.muted .tab-bubble{
     background:var(--bg-elevated);
-    box-shadow:0 8px 18px rgba(15,17,23,.30),0 2px 4px rgba(15,17,23,.16);
+    box-shadow:0 3px 8px rgba(15,17,23,.18),0 1px 2px rgba(15,17,23,.10);
   }
   /* Active: keep gradient + add subtle ring */
   .tab.coach-fab.active .tab-bubble{
@@ -189,7 +190,7 @@
     <div>
       <p class="doc-eyebrow">FuelWell · Round 2 · Step 4 — Mockups</p>
       <h1 class="doc-title">M37 Tab bar · isolation lock</h1>
-      <p class="doc-sub">Standalone treatment study of the v2 tab bar, rendered at iPhone width on a neutral light background. Five tabs left-to-right: <strong>Home · Meals &amp; Nutrition · Coach · Exercise &amp; Activity · Progress</strong>. Coach is the focal point — visually distinct even when not the active tab. Two variations × four states (Home active, Coach active, Exercise active, inactive baseline).</p>
+      <p class="doc-sub">Standalone treatment of the v2 tab bar, locked. Rendered at iPhone width on a neutral light background. Five tabs left-to-right with single-word labels: <strong>Home · Meals · Coach · Exercise · Progress</strong>. Coach is the focal point — raised-circle FAB-style centerpiece, visually distinct in every state. Four states stacked vertically: Home active · Coach active · Exercise active · Inactive baseline (A12 — toned-down inactive elevation).</p>
     </div>
     <div class="doc-meta">
       iPhone 15 Pro · 393pt wide<br>
@@ -204,10 +205,8 @@
     <h3>Mockup notes · M37 tab bar lock</h3>
     <dt>Geometry</dt>
     <dd>88pt tall standard iOS tab bar with a 30pt home-indicator safe-area inset at the bottom. Five equal columns. Coach column is the same width as the others — the visual prominence is achieved by lifting the icon, not by stretching the cell. Coach icon container is 54pt and rises 22pt above the row baseline so the bottom of the container still tucks behind the bar's blur surface.</dd>
-    <dt>Variation 1 · Speech bubble</dt>
-    <dd>The Round-2 canonical. 54pt rounded square with a 6pt bottom-left corner radius (the other three corners at 18pt) plus a 12pt rotated-square tail at the bottom-left, creating a chat-bubble silhouette. Inactive fill: <code>color.bg.elevated #0F1117</code>, white SF symbol glyph (<code>bubble.left.and.bubble.right.fill</code>). Active state swaps to <code>gradient.brand</code> fill with a green-glow shadow ramp — the chat bubble lights up.</dd>
-    <dt>Variation 2 · Raised circle (FAB-style)</dt>
-    <dd>54pt circle. Default fill is <code>gradient.brand</code> with a green-glow shadow — the FAB-style affordance reads as a primary action embedded in the bar, similar to Snapchat's old camera tab. Inactive baseline variant drops to dark <code>#0F1117</code> with a softer shadow (used during onboarding splashes / transitions). Active state keeps the gradient and adds a 4pt translucent green ring as the focus indicator.</dd>
+    <dt>V2 locked · Raised circle (FAB-style)</dt>
+    <dd>D6 resolution: V2 is canonical, V1 (speech-bubble) dropped. 54pt circle. Default fill is <code>gradient.brand</code> with a softened green halo (A12 — inactive elevation toned down vs. the Round-2 draft). Active state keeps the gradient and adds a 4pt translucent green ring as the focus indicator. Inactive baseline variant drops to dark <code>#0F1117</code> with a softer shadow (used during onboarding splashes / transitions).</dd>
     <dt>Outer tabs (Home · Progress)</dt>
     <dd>SF symbol line glyphs: <code>house</code> · <code>chart.line.uptrend.xyaxis</code>. Fill switches to <code>house.fill</code> / <code>chart.bar.fill</code> when active. Label color is <code>text.muted</code> when inactive, <code>text.primary</code> when active.</dd>
     <dt>Second-tier tabs (Meals · Exercise)</dt>
@@ -220,7 +219,7 @@
         <span>Bar height — <b>88pt</b> (incl. 30pt safe inset)</span>
         <span>Coach icon container — <b>54pt</b></span>
         <span>Coach lift above row — <b>22pt</b></span>
-        <span>Coach corner radius — <b>18 18 18 6 pt</b> (V1) · <b>50%</b> (V2)</span>
+        <span>Coach corner radius — <b>50%</b> (V2 locked)</span>
         <span>Standard tab glyph — <b>26pt</b> bounding box</span>
         <span>Label type — <b>Inter 600 · 10pt · +0.02em</b></span>
         <span>Active text — <b>color.text.primary</b></span>
@@ -297,10 +296,10 @@
   }
 
   const STATES = [
-    { id: 'home',     si: 'STATE 01', sn: 'Home tab active',     sc: 'Default app launch · Dashboard root' },
-    { id: 'coach',    si: 'STATE 02', sn: 'Coach tab active',    sc: 'Speech bubble lights up · gradient.brand fill (V1) / green-glow ring (V2)' },
-    { id: 'exercise', si: 'STATE 03', sn: 'Exercise tab active', sc: 'Second-tier · standard line→fill swap' },
-    { id: 'inactive', si: 'STATE 04', sn: 'Inactive baseline',   sc: 'Splash / transition · no tab marked active. Coach retains its distinct shading.' },
+    { id: 'home',     si: 'STATE 01', sn: 'State: Home active',     sc: 'Default app launch · Home label/icon highlighted, others muted.' },
+    { id: 'coach',    si: 'STATE 02', sn: 'State: Coach active',    sc: 'Centerpiece lights up · gradient.brand fill + green-glow ring focus indicator.' },
+    { id: 'exercise', si: 'STATE 03', sn: 'State: Exercise active', sc: 'Second-tier · standard line → fill glyph swap; label highlighted, others muted.' },
+    { id: 'inactive', si: 'STATE 04', sn: 'State: Inactive baseline', sc: 'No tab selected · splash / transition. Coach drops to dark with softened shadow (A12).' },
   ];
 
   function stateRow(state, variant) {
@@ -334,16 +333,10 @@
 
   const variants = [
     {
-      num: 'Variation 01',
-      name: 'Speech-bubble Coach',
-      variant: 'bubble',
-      cap: 'Round-2 canonical. 54pt rounded-square bubble with a tail at bottom-left, dark #0F1117 inactive fill, white SF symbol. Active state swaps to gradient.brand fill + green-glow shadow — the bubble visually lights up.',
-    },
-    {
-      num: 'Variation 02',
+      num: 'V2 · Locked',
       name: 'Raised circle · FAB-style Coach',
       variant: 'fab',
-      cap: '54pt circle treated like a primary FAB embedded in the bar. gradient.brand fill with a green-glow shadow at rest; active adds a 4pt translucent green ring; the splash/transition state falls back to dark #0F1117.',
+      cap: 'Locked V2 (D6). 54pt circle treated like a primary FAB embedded in the bar. gradient.brand fill with a softened green halo at rest (A12 — inactive elevation toned down); active state keeps the gradient and adds a 4pt translucent green ring as focus indicator; the splash / transition state falls back to dark #0F1117 with a softer shadow. Four states stacked vertically: Home active · Coach active · Exercise active · Inactive baseline.',
     },
   ];
 

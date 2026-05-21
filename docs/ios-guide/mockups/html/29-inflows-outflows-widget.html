@@ -190,6 +190,39 @@
   }
   .twindow button.on { background: var(--text-primary); color: var(--text-on-dark); }
 
+  /* Inflow / Outflow arrow labels overlaid on the ring */
+  .flow-arrow {
+    position: absolute;
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 4px 9px;
+    border-radius: 999px;
+    font-family: var(--font-body);
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    box-shadow: var(--elev-1);
+    z-index: 3;
+  }
+  .flow-arrow .fa-glyph {
+    font-family: var(--font-numeric);
+    font-size: 14px; font-weight: 800;
+    line-height: 1;
+    letter-spacing: 0;
+  }
+  .flow-arrow.outer {
+    top: 4px; right: 4px;
+    color: var(--macro-protein);
+    border-color: rgba(0,210,120,0.32);
+    background: rgba(0,210,120,0.10);
+  }
+  .flow-arrow.inner {
+    bottom: 4px; left: 4px;
+    color: var(--src-workout);
+    border-color: rgba(232,122,29,0.32);
+    background: rgba(232,122,29,0.10);
+  }
+
   /* Ring container */
   .ring-wrap {
     margin: 8px auto 4px;
@@ -288,23 +321,24 @@
   .legend-strip .lg {
     display: inline-flex; align-items: center; gap: 6px;
     font-family: var(--font-body);
-    font-size: 11px; font-weight: 600;
-    color: var(--text-body);
+    font-size: 11.5px; font-weight: 700;
+    color: var(--text-primary);
     letter-spacing: -0.003em;
   }
   .legend-strip .lg .sw {
-    width: 8px; height: 8px;
+    width: 10px; height: 10px;
     border-radius: 2px;
   }
   .legend-strip .lg .v {
     font-family: var(--font-numeric);
     font-feature-settings: "tnum" 1;
     color: var(--text-primary);
-    font-weight: 700;
+    font-weight: 800;
+    font-size: 12px;
   }
   .legend-strip .lg .nm {
-    color: var(--text-secondary);
-    font-weight: 500;
+    color: var(--text-body);
+    font-weight: 600;
   }
   .legend-strip.dual {
     display: grid;
@@ -461,8 +495,8 @@
   <header class="doc-header">
     <div>
       <p class="doc-eyebrow">FuelWell · Round 2 · Step 4 — Mockups</p>
-      <h1 class="doc-title">M29 Inflows / Outflows · Dashboard widget</h1>
-      <p class="doc-sub">Standalone study of the dual concentric ring widget at the size it appears on M28 Dashboard v2. Thin Tier 1 siblings (Health Score above, Verdict below) are dimmed so the widget reads as the focus of the frame. The widget itself is the tap target → opens M30 Energy balance full-screen.</p>
+      <h1 class="doc-title">M29 Inflows / Outflows · Dashboard widget — V1 (locked, D5)</h1>
+      <p class="doc-sub">Locked to V1 (Full dual ring) per D5. Outer ring shows macro intake (P / C / F) with gram counts; inner ring shows expenditure source (BMR / Activity / Workout) with kcal counts. Inflow ↘ and outflow ↗ icons sit alongside each ring. Thin Tier 1 siblings (Health Score above, Verdict below) are dimmed so the widget reads as the focus of the frame. The widget itself is the tap target → opens M30 Energy balance full-screen.</p>
     </div>
     <div class="doc-meta">
       iPhone 15 Pro · 393 × 852 pt<br>
@@ -587,6 +621,24 @@
     </svg>`;
   }
 
+  /* Inflow / Outflow arrow labels */
+  function flowArrows(opts) {
+    const { size } = opts;
+    const cx = size / 2;
+    const cy = size / 2;
+    // Outer arrow ↘ (inflows from food) — anchored top-right of outer ring
+    // Inner arrow ↗ (outflows: BMR + activity + workout) — anchored bottom-left of inner ring
+    return `
+      <div class="flow-arrow outer" title="Inflows from food">
+        <span class="fa-glyph">↘</span>
+        <span class="fa-label">IN</span>
+      </div>
+      <div class="flow-arrow inner" title="Outflows from BMR + activity + workout">
+        <span class="fa-glyph">↗</span>
+        <span class="fa-label">OUT</span>
+      </div>`;
+  }
+
   /* ===== Variations ===== */
 
   /* V1 — full dual ring */
@@ -624,6 +676,7 @@
         </div>
         <div class="ring-wrap">
           ${drawRing({ size: 246, outerR: 108, outerStroke: 16, innerR: 78, innerStroke: 10, intake, expend })}
+          ${flowArrows({ size: 246 })}
           <div class="ring-center">
             <div class="label">NET TODAY</div>
             <div class="net"><span class="arrow">${ic.arrowUR}</span>+128</div>
@@ -798,17 +851,13 @@
   }
 
   /* ===== Build ===== */
+  /* Locked to V1 (Full dual ring) per D5. */
   const variations = [
-    { num: 'Variation 01', name: 'Full dual ring', cap: 'As specified — outer macro intake + inner expenditure source rings. Full legend strip stacks IN / OUT rows beneath. 246pt overall.', render: v1Widget('default') },
-    { num: 'Variation 02', name: 'Compact · outer ring + mini-bar', cap: 'Outer macro ring alone (thickened 18pt for emphasis), with expenditure broken out as a 12pt segmented mini-bar card below — same color logic, lower pixel cost. 220pt ring.', render: v2Widget('default') },
-    { num: 'Variation 03', name: 'Dense · big number, inline legend', cap: 'Ring shrinks to 200pt to make room for a two-column legend pulled inline at the right. Center net number jumps to 54pt — most prominent number on the dashboard. Tightest vertical footprint.', render: v3Widget('default') },
+    { num: 'Variation 01 · Locked', name: 'Full dual ring (D5 canonical)', cap: 'Per D5 the only approved variation: outer macro intake ring + inner expenditure source ring, with inflow ↘ / outflow ↗ icons labeling each. Full legend strip stacks IN (grams) / OUT (kcal) rows beneath. 246pt overall.', render: v1Widget('default') },
   ];
 
-  // Add empty-state row underneath
   const emptyVars = [
-    { num: 'Variation 01 · Empty', name: 'Day 1 · zero logged', cap: 'Outer + inner ring collapse to a single dashed track. Center reads 0 kcal logged today, replaced by the primary + Log first meal button. Card tap still routes to M30 (empty there too).', render: v1Widget('empty') },
-    { num: 'Variation 02 · Empty', name: 'Compact · zero logged', cap: 'Mini-bar drops out, just the dashed ring and the empty CTA.', render: v2Widget('empty') },
-    { num: 'Variation 03 · Empty', name: 'Dense · zero logged', cap: 'Ring goes dashed; the inline column carries the CTA and a short coach-voice nudge.', render: v3Widget('empty') },
+    { num: 'Variation 01 · Locked · Empty', name: 'Day 1 · zero logged', cap: 'Outer + inner rings collapse to a single dashed track. Center reads 0 kcal logged today with a primary + Log first meal button.', render: v1Widget('empty') },
   ];
 
   function frame(v) {

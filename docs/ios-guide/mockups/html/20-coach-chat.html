@@ -83,13 +83,23 @@
     letter-spacing: -0.005em;
   }
   .top .st {
-    display: inline-flex; align-items: center; gap: 4px;
+    display: inline-flex; align-items: center; gap: 5px;
     font-family: var(--font-body);
     font-size: 10px; font-weight: 600;
     color: var(--text-muted);
-    letter-spacing: 0.1em; text-transform: uppercase;
+    letter-spacing: 0.08em;
   }
-  .top .st .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--semantic-success); box-shadow: 0 0 0 3px rgba(0,210,120,0.30); }
+  /* D18 — typing indicator replaces persistent ONLINE dot */
+  .top .st .typing-dots {
+    display: inline-flex; align-items: center; gap: 3px;
+    margin-right: 2px;
+  }
+  .top .st .typing-dots .d {
+    width: 4px; height: 4px; border-radius: 50%;
+    background: var(--text-muted);
+  }
+  .top .st .typing-dots .d:nth-child(2) { opacity: 0.75; }
+  .top .st .typing-dots .d:nth-child(3) { opacity: 0.5; }
   .top .icon-btn {
     width: 38px; height: 38px;
     border-radius: 50%;
@@ -315,10 +325,28 @@
 
   /* Tabbar */
   .tabbar { position: absolute; left: 0; right: 0; bottom: 0; height: 88px; background: rgba(255,255,255,0.92); backdrop-filter: blur(18px); border-top: 1px solid var(--bg-border); display: grid; grid-template-columns: repeat(5, 1fr); padding: 8px 6px 30px; z-index: 22; }
-  .tab { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: var(--text-muted); }
+  .tab { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: var(--text-muted); position: relative; }
   .tab.active { color: var(--text-primary); }
   .tab-glyph { width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; }
   .tab-label { font-family: var(--font-body); font-size: 10px; font-weight: 600; }
+  /* V2 Raised-circle FAB Coach (D6) */
+  .tab.coach-fab { margin-top: -22px; }
+  .tab.coach-fab .tab-bubble { position: relative; width: 54px; height: 54px; background: var(--gradient-brand); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; box-shadow: 0 10px 24px rgba(0,210,120,.40), 0 2px 4px rgba(15,17,23,.16); }
+  .tab.coach-fab .tab-bubble svg { color: #fff; }
+  .tab.coach-fab .tab-label { margin-top: 6px; color: var(--text-primary); font-weight: 700; }
+  .tab.coach-fab.active .tab-bubble { box-shadow: 0 10px 24px rgba(0,210,120,.40), 0 2px 4px rgba(15,17,23,.16), 0 0 0 4px rgba(0,210,120,0.18); }
+
+  /* Data-freshness stamp on coach reply (A9) */
+  .freshness {
+    margin-top: 6px;
+    margin-left: 34px;
+    align-self: flex-start;
+    font-family: var(--font-body);
+    font-size: 10.5px; font-weight: 400;
+    font-style: italic;
+    color: var(--text-muted);
+    letter-spacing: 0.01em;
+  }
 
   /* ===== V2 empty / first session ===== */
   .empty-stage {
@@ -429,125 +457,6 @@
   .examples .ex::before { content: '"'; color: var(--text-muted); margin-right: 2px; }
   .examples .ex::after { content: '"'; color: var(--text-muted); margin-left: 2px; }
 
-  /* ===== V3 voice mode ===== */
-  .voice-overlay {
-    position: absolute; inset: 0;
-    background: linear-gradient(180deg, #0F1117 0%, #1A1F2E 60%, #2A1845 100%);
-    color: var(--text-on-dark);
-    padding: 54px 0 0;
-    display: flex; flex-direction: column;
-    z-index: 5;
-    overflow: hidden;
-  }
-  .voice-top {
-    padding: 12px 18px;
-    display: grid; grid-template-columns: 56px 1fr 56px;
-    align-items: center;
-  }
-  .voice-top .close, .voice-top .menu {
-    width: 36px; height: 36px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.08);
-    color: #fff;
-    display: flex; align-items: center; justify-content: center;
-    margin: 0 auto;
-  }
-  .voice-top .ttl {
-    text-align: center;
-    font-family: var(--font-body);
-    font-size: 12px; font-weight: 700;
-    color: var(--text-on-dark-muted);
-    letter-spacing: 0.18em; text-transform: uppercase;
-  }
-  .voice-stage {
-    flex: 1;
-    display: flex; flex-direction: column; align-items: center;
-    padding: 30px 24px 20px;
-    text-align: center;
-  }
-  .voice-orb {
-    width: 200px; height: 200px;
-    border-radius: 50%;
-    background:
-      radial-gradient(70% 50% at 30% 30%, rgba(255,255,255,0.50) 0%, rgba(0,210,120,0.50) 30%, rgba(168,85,247,0.40) 60%, transparent 90%),
-      linear-gradient(135deg, #00D278 0%, #00B4D8 50%, #A855F7 100%);
-    box-shadow:
-      0 24px 60px rgba(168,85,247,0.36),
-      0 0 0 12px rgba(255,255,255,0.04),
-      0 0 0 24px rgba(255,255,255,0.02),
-      0 0 0 36px rgba(255,255,255,0.01);
-    position: relative;
-  }
-  .voice-orb::before, .voice-orb::after {
-    content: ""; position: absolute;
-    inset: -15%; border-radius: 50%;
-    border: 1px solid rgba(255,255,255,0.10);
-  }
-  .voice-orb::after { inset: -32%; }
-  .voice-label {
-    margin-top: 26px;
-    font-family: var(--font-body);
-    font-size: 11.5px; font-weight: 700;
-    color: var(--brand-green);
-    letter-spacing: 0.22em; text-transform: uppercase;
-    display: inline-flex; align-items: center; gap: 8px;
-  }
-  .voice-label .dot {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: var(--brand-green);
-    box-shadow: 0 0 0 4px rgba(71,231,176,0.32);
-  }
-  .voice-transcript {
-    margin-top: 16px;
-    font-family: var(--font-display);
-    font-size: 24px; font-weight: 700;
-    color: var(--text-on-dark);
-    line-height: 1.25;
-    letter-spacing: -0.018em;
-    max-width: 320px;
-  }
-  .voice-transcript .live { color: var(--brand-green); }
-  .voice-meta {
-    margin-top: 14px;
-    font-family: var(--font-body);
-    font-size: 13px;
-    color: var(--text-on-dark-muted);
-    line-height: 1.45;
-    max-width: 280px;
-  }
-  .voice-wave {
-    margin-top: 28px;
-    width: 220px;
-    height: 36px;
-    display: flex; align-items: center; justify-content: center; gap: 4px;
-  }
-  .voice-wave .b {
-    width: 3px;
-    border-radius: 999px;
-    background: var(--brand-green);
-    opacity: 0.92;
-  }
-  .voice-controls {
-    margin-top: auto;
-    padding-bottom: 22px;
-    display: flex; gap: 14px; align-items: center;
-  }
-  .vc-side {
-    width: 56px; height: 56px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.08);
-    color: #fff;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .vc-end {
-    width: 64px; height: 64px;
-    border-radius: 50%;
-    background: var(--semantic-error);
-    color: #fff;
-    display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 12px 28px rgba(239,68,68,0.32);
-  }
-
   /* Legend */
   .legend{max-width:1320px;margin:56px auto 0;padding:22px 26px;background:#FFFFFF;border:1px solid var(--bg-border);border-radius:var(--radius-lg);display:grid;grid-template-columns:220px 1fr;gap:14px 28px;font-size:12px;color:var(--text-secondary);line-height:1.55;}
   .legend h3{grid-column:1 / -1;margin:0 0 6px;font-family:var(--font-display);font-size:12px;font-weight:600;color:var(--text-muted);letter-spacing:.18em;text-transform:uppercase;}
@@ -562,12 +471,12 @@
     <div>
       <p class="doc-eyebrow">FuelWell · Phase 0.5 · Step 4 — Mockups</p>
       <h1 class="doc-title">M20 Coach Chat · Coach tab</h1>
-      <p class="doc-sub">Promoted from approved wireframe § 3.20 V1 (standard bubbles + inline learn cards). Three states: mid-conversation with the engine threading numeric context, an empty first-session screen with seed prompts, and the voice-mode immersive overlay.</p>
+      <p class="doc-sub">Promoted from approved wireframe § 3.20 V1 (standard bubbles + inline learn cards). Two states: mid-conversation with the engine threading numeric context, and an empty first-session screen with seed prompts. Voice mode is out (D2) — the mic in the composer remains for stop-and-fill text input only.</p>
     </div>
     <div class="doc-meta">
       iPhone 15 Pro · 393 × 852 pt<br>
       Tab · Coach<br>
-      Voice · long-press mic
+      Mic · stop-and-fill text
     </div>
   </header>
 
@@ -577,7 +486,7 @@
     <h3>Mockup notes · Step 4</h3>
 
     <dt>Top bar</dt>
-    <dd>30pt purple coach avatar with the brand-green online pulse beneath. "Coach" name in <strong>Inter 700</strong> 13pt. Trailing "New" link starts a fresh thread (info-blue, no border — feels iMessage-native).</dd>
+    <dd>30pt purple coach avatar above the name. "Coach" in <strong>Inter 700</strong> 13pt. Status row below name is empty when idle; during response generation it renders three muted typing dots + "Coach is typing…" (D18 — no persistent green ONLINE dot). Trailing "New" link starts a fresh thread (info-blue, no border — feels iMessage-native).</dd>
 
     <dt>Bubbles</dt>
     <dd>Coach left: white with 1pt hairline, 20pt rounding except a tightened bottom-left corner. User right: <code>bg.elevated</code> with white text, mirrored corner. Embedded cards live <em>inside</em> the coach bubble — the dark macro tile or the recipe-thumb chip.</dd>
@@ -586,13 +495,13 @@
     <dd>3-chip row hanging beneath the avatar column (offset 34pt). Primary chip uses <code>gradient.brand</code>; secondaries are white with hairline. Disappears once one is chosen.</dd>
 
     <dt>Composer</dt>
-    <dd>+ button (open camera / log a meal / pick from library), pill-shape field with mic glyph inside, gradient-brand send. Placeholder: <strong>"Ask me anything about today…"</strong> — the most important copy on the screen. Send disables to dim-dark until text is present.</dd>
+    <dd>+ button (open camera / log a meal / pick from library), pill-shape field with mic glyph inside (stop-and-fill text input only — no voice-mode overlay, per D2), gradient-brand send. Placeholder: <strong>"Ask me anything about today…"</strong> — the most important copy on the screen. Send disables to dim-dark until text is present.</dd>
 
     <dt>Empty / first-session · V2</dt>
     <dd>Personalized headline "Hi Jordan, <span style="background:linear-gradient(90deg,#A855F7,#00B4D8); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;">how can I help?</span>" with gradient-text accent. Context pill ("Friday · 3:42 PM · 714 kcal left"). 2×2 grid of seed-prompt cards (icon + one-line question, tinted-square icon), and a small "Try saying…" card with two example prompts in italic. No prior thread shown.</dd>
 
-    <dt>Voice mode · V3</dt>
-    <dd>Long-press mic → dark gradient overlay. 200pt orb pulses while listening, brand-green LISTENING label up top, live transcript in Outfit 700 24pt with the actively-streaming word highlighted brand-green. Audio waveform beneath. Bottom: keyboard switch, end-call (error-red), and speaker toggle.</dd>
+    <dt>Data-freshness stamp (A9)</dt>
+    <dd>Coach replies that reason over today's logged data carry a small italicized line beneath the bubble: "based on data as of 14:23 today." Renders only when the reply consumed log data; conversational replies (greetings, clarifying questions) omit it.</dd>
   </section>
 
 <script>
@@ -619,34 +528,33 @@
     swap:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 7h12l-3-3M20 17H8l3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
     fire:`<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c1 4 5 4 5 9a5 5 0 11-10 0c0-3 3-3 3-6 0-1 1-2 2-3Z"/></svg>`,
     tabHome:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11l8-7 8 7v8a1 1 0 01-1 1h-4v-6h-6v6H5a1 1 0 01-1-1v-8Z"/></svg>`,
-    tabLog:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M9 8h6M9 12h6M9 16h3" stroke-linecap="round"/></svg>`,
-    tabCoachA:`<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M4 11a8 8 0 1116 0v3a3 3 0 01-3 3h-1v-7h4M4 11v3a3 3 0 003 3h1v-7H4"/></svg>`,
-    tabLearn:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5.5C4 4.7 4.7 4 5.5 4H10a3 3 0 013 3v14a2 2 0 00-2-2H5.5A1.5 1.5 0 014 17.5v-12ZM20 5.5C20 4.7 19.3 4 18.5 4H14a3 3 0 00-3 3v14a2 2 0 012-2h5.5a1.5 1.5 0 001.5-1.5v-12Z"/></svg>`,
-    tabProg:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg>`,
-    keyboard:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="12" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M7 10h.01M11 10h.01M15 10h.01M7 14h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`,
-    speaker:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M11 5L6 9H3v6h3l5 4V5ZM16 8a5 5 0 010 8M19 5a8 8 0 010 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
-    phone:`<svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M21 7c-5 6-9 6-14 0l2-4 1 4-2 3c3 4 6 4 6 4l3-2 4 1-2 3a3 3 0 01-3 1c-5-1-9-4-11-9a3 3 0 011-3l4-2 1 4Z"/></svg>`,
-    x:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`,
-    more:`<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="6" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="18" cy="12" r="1.8"/></svg>`
+    tabMeals:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2v20M6 2v8a2 2 0 002 2h0a2 2 0 002-2V2M10 2v8M18 2v20M18 14c-1.5 0-2.5-2-2.5-5S16.5 2 18 2"/></svg>`,
+    tabCoach:`<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a8 8 0 1116 0c0 4-3.6 7-8 7l-3 3v-3.2A8 8 0 014 11Z"/><path d="M9 10.5h6M9 13.5h4"/></svg>`,
+    tabExercise:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="14" cy="4.5" r="1.6"/><path d="M9 9l3-2 3 2 2 4M12 7l-1 5 3 3v5M11 12l-4 1-2 4"/></svg>`,
+    tabProg:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg>`
   };
 
   function tabbar() {
     return `<div class="tabbar">
       <div class="tab"><div class="tab-glyph">${ic.tabHome}</div><div class="tab-label">Home</div></div>
-      <div class="tab"><div class="tab-glyph">${ic.tabLog}</div><div class="tab-label">Log</div></div>
-      <div class="tab active"><div class="tab-glyph">${ic.tabCoachA}</div><div class="tab-label">Coach</div></div>
-      <div class="tab"><div class="tab-glyph">${ic.tabLearn}</div><div class="tab-label">Learn</div></div>
+      <div class="tab"><div class="tab-glyph">${ic.tabMeals}</div><div class="tab-label">Meals</div></div>
+      <div class="tab coach-fab active"><div class="tab-bubble">${ic.tabCoach}</div><div class="tab-label">Coach</div></div>
+      <div class="tab"><div class="tab-glyph">${ic.tabExercise}</div><div class="tab-label">Exercise</div></div>
       <div class="tab"><div class="tab-glyph">${ic.tabProg}</div><div class="tab-label">Progress</div></div>
     </div>`;
   }
 
-  function topBar() {
+  // D18 — typing indicator only (no persistent ONLINE dot)
+  function topBar(typing) {
+    const status = typing
+      ? `<div class="st"><span class="typing-dots"><span class="d"></span><span class="d"></span><span class="d"></span></span>Coach is typing…</div>`
+      : `<div class="st">&nbsp;</div>`;
     return `<div class="top">
       <div class="icon-btn">${ic.info}</div>
       <div class="ttl-block">
         <div class="av">F</div>
         <div class="nm">Coach</div>
-        <div class="st"><span class="dot"></span>Online</div>
+        ${status}
       </div>
       <div class="new">New</div>
     </div>`;
@@ -663,13 +571,13 @@
   // ===== V1 mid-conversation =====
   function v1() {
     return `
-      ${topBar()}
+      ${topBar(true)}
       <div class="chat-scroll">
         <div class="day-div">Today · 3:42 PM</div>
         <div class="msg coach">
           <div class="av">F</div>
           <div class="bubble">
-            You're at <b>1,546 of 2,260</b> and you've got <b>32g of protein</b> still on the table. Here's what's left:
+            You're at <b>1,546 of 2,260</b> — there's room for a solid dinner with <b>32g of protein</b> left in the budget. Here's what's open:
             <div class="mac-tile">
               <div class="h">Remaining tonight</div>
               <div class="row">
@@ -680,13 +588,14 @@
             </div>
           </div>
         </div>
+        <div class="freshness">based on data as of 14:23 today</div>
         <div class="msg user">
           <div class="bubble">What should I eat for dinner?</div>
         </div>
         <div class="msg coach">
           <div class="av">F</div>
           <div class="bubble">
-            A grilled chicken bowl puts you right on plan — covers the protein gap and lands <b>32 kcal under</b> budget. From the recipes you've saved:
+            A grilled chicken bowl lands right on plan — covers the protein and comes in <b>32 kcal</b> inside budget. From the recipes you've saved:
             <div class="embed-card">
               <div class="thumb"></div>
               <div class="body">
@@ -705,7 +614,7 @@
         <div class="qr-row">
           <div class="qr primary">${ic.sparkle} Yes, slot it in</div>
           <div class="qr">Show alternatives</div>
-          <div class="qr">Skip dinner</div>
+          <div class="qr">Pick something else</div>
         </div>
       </div>
       ${composer(false)}
@@ -756,37 +665,11 @@
       ${tabbar()}`;
   }
 
-  // ===== V3 voice =====
-  function v3() {
-    // wave bars
-    const bars = [12,18,22,30,26,18,12,8,14,22,28,24,18,12,16,22,26,20,14,10,8,14,20,26,22,16,10,8,12,18,22,16,12,8,10,16,22,18,12,8,10,14,18,12,10].map(h => `<span class="b" style="height:${h}px;"></span>`).join('');
-    return `
-      <div class="voice-overlay">
-        <div class="voice-top">
-          <div class="close">${ic.x}</div>
-          <div class="ttl">Voice with Coach</div>
-          <div class="menu">${ic.more}</div>
-        </div>
-        <div class="voice-stage">
-          <div class="voice-orb"></div>
-          <div class="voice-label"><span class="dot"></span>Listening</div>
-          <div class="voice-transcript">What should I eat for dinner if I'm <span class="live">going to a steakhouse</span></div>
-          <div class="voice-meta">Tap and hold the mic to pause. Tap end-call when you're done.</div>
-          <div class="voice-wave">${bars}</div>
-        </div>
-        <div class="voice-controls">
-          <div class="vc-side">${ic.keyboard}</div>
-          <div class="vc-end">${ic.phone}</div>
-          <div class="vc-side">${ic.speaker}</div>
-        </div>
-        <div class="home-indicator on-dark"></div>
-      </div>`;
-  }
+  // V3 voice mode removed per D2 — mic in composer stays for stop-and-fill text input only.
 
   const variations = [
-    { num:'Variation 01 · State', name:'Mid-conversation', cap:'Coach opens with today\u2019s macro gap context (dark inline tile), user asks what to eat, coach picks a recipe and embeds the recipe card inside its bubble. Three quick-reply chips beneath.', body: v1(), onDark: false },
+    { num:'Variation 01 · State', name:'Mid-conversation', cap:'Coach opens with today\u2019s macro context (dark inline tile), user asks what to eat, coach picks a recipe and embeds the recipe card inside its bubble. Typing indicator under the avatar (D18); data-freshness stamp beneath the context bubble (A9).', body: v1(), onDark: false },
     { num:'Variation 02 · State', name:'First session · seeds', cap:'No prior thread. Personalized greeting with gradient-text accent, time-aware context pill, four seed-prompt cards in a 2\u00d72 grid, and two italic example prompts at the bottom.', body: v2(), onDark: false },
-    { num:'Variation 03 · State', name:'Voice mode · listening', cap:'Long-press mic launched the dark overlay. 200pt brand-gradient orb, live transcript with the streaming word in brand-green, audio waveform, end-call button bottom-center.', body: v3(), onDark: true }
   ];
 
   const root = document.getElementById('frames');

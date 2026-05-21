@@ -226,6 +226,18 @@
 
   /* ===== Section ===== */
   .section { margin-bottom: 22px; }
+  .section.macro-tint-protein {
+    padding-left: 12px;
+    border-left: 3px solid rgba(0, 210, 120, 0.10);
+  }
+  .section.macro-tint-carbs {
+    padding-left: 12px;
+    border-left: 3px solid rgba(245, 158, 11, 0.10);
+  }
+  .section.macro-tint-fat {
+    padding-left: 12px;
+    border-left: 3px solid rgba(168, 85, 247, 0.10);
+  }
   .section-label {
     font-family: var(--font-body);
     font-size: 12px; font-weight: 600;
@@ -662,7 +674,7 @@
                 <p class="title-sub">Five quick numbers — we'll set your starting calories and macros from these.</p>
               </div>
 
-              <div class="section">
+              <div class="section macro-tint-protein">
                 <div class="section-label">Height</div>
                 <div class="seg">
                   <div class="opt active">ft / in</div>
@@ -674,7 +686,7 @@
                 </div>
               </div>
 
-              <div class="section">
+              <div class="section macro-tint-carbs">
                 <div class="section-label">Weight</div>
                 <div class="seg">
                   <div class="opt active">lb</div>
@@ -685,7 +697,7 @@
                 </div>
               </div>
 
-              <div class="section">
+              <div class="section macro-tint-fat">
                 <div class="section-label">Age</div>
                 <div class="age-row">
                   <div class="age-field empty">
@@ -694,7 +706,7 @@
                 </div>
               </div>
 
-              <div class="section">
+              <div class="section macro-tint-protein">
                 <div class="section-label">Sex</div>
                 <div class="seg">
                   <div class="opt">Male</div>
@@ -703,7 +715,7 @@
                 </div>
               </div>
 
-              <div class="section">
+              <div class="section macro-tint-carbs">
                 <div class="section-label">Activity level</div>
                 <div class="activity-stack">
                   <div class="activity-card">
@@ -802,7 +814,7 @@
                 <p class="title-sub">Five quick numbers — we'll set your starting calories and macros from these.</p>
               </div>
 
-              <div class="section">
+              <div class="section macro-tint-protein">
                 <div class="section-label">Height</div>
                 <div class="seg">
                   <div class="opt active">ft / in</div>
@@ -818,7 +830,7 @@
                 </div>
               </div>
 
-              <div class="section">
+              <div class="section macro-tint-carbs">
                 <div class="section-label">Weight</div>
                 <div class="seg">
                   <div class="opt active">lb</div>
@@ -829,7 +841,7 @@
                 </div>
               </div>
 
-              <div class="section">
+              <div class="section macro-tint-fat">
                 <div class="section-label">Age</div>
                 <div class="age-row">
                   <div class="age-field empty">
@@ -931,7 +943,7 @@
 
               <!-- Scrolled state: title compressed, Age + Sex + Activity visible -->
 
-              <div class="section" style="margin-top: 16px;">
+              <div class="section macro-tint-carbs" style="margin-top: 16px;">
                 <div class="section-label">Weight</div>
                 <div class="seg">
                   <div class="opt active">lb</div>
@@ -939,12 +951,22 @@
                 </div>
                 <div class="value-row">
                   <div class="value-chip">
-                    <span class="num">158</span><span class="unit">lb</span>
+                    <span class="num">178</span><span class="unit">lb</span>
                   </div>
                 </div>
               </div>
 
-              <div class="section">
+              <div class="section macro-tint-fat">
+                <div class="section-label">Body fat %</div>
+                <div class="age-row">
+                  <div class="age-field">
+                    <span class="age-num">18</span>
+                    <span class="age-unit">%</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="section macro-tint-protein">
                 <div class="section-label">Age</div>
                 <div class="age-row">
                   <div class="age-field">
@@ -954,16 +976,16 @@
                 </div>
               </div>
 
-              <div class="section">
+              <div class="section macro-tint-carbs">
                 <div class="section-label">Sex</div>
                 <div class="seg">
-                  <div class="opt">Male</div>
-                  <div class="opt active">Female</div>
+                  <div class="opt active">Male</div>
+                  <div class="opt">Female</div>
                   <div class="opt">Prefer not</div>
                 </div>
               </div>
 
-              <div class="section">
+              <div class="section macro-tint-fat">
                 <div class="section-label">Activity level</div>
                 <div class="activity-stack">
                   <div class="activity-card">

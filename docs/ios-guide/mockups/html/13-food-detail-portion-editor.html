@@ -93,6 +93,34 @@
   .dynamic-island { position: absolute; top: 11px; left: 50%; transform: translateX(-50%); width: 124px; height: 36px; background: #0A0A0F; border-radius: 22px; z-index: 31; }
   .home-indicator { position: absolute; bottom: 9px; left: 50%; transform: translateX(-50%); width: 134px; height: 5px; background: var(--text-primary); border-radius: 3px; opacity: 0.85; z-index: 32; }
 
+  /* Undo snackbar (A10 — 5-second window after Save) */
+  .snackbar {
+    position: absolute;
+    left: 50%; transform: translateX(-50%);
+    bottom: 36px;
+    background: var(--bg-elevated);
+    color: var(--text-on-dark);
+    border-radius: var(--radius-pill);
+    padding: 12px 18px;
+    display: inline-flex; align-items: center; gap: 12px;
+    font-family: var(--font-body);
+    font-size: 13.5px; font-weight: 600;
+    box-shadow: 0 12px 32px rgba(15,17,23,.30), 0 4px 8px rgba(15,17,23,.18);
+    z-index: 28;
+    letter-spacing: -0.002em;
+  }
+  .snackbar .check {
+    display: inline-flex; align-items: center;
+    color: var(--action-green);
+  }
+  .snackbar .dot { color: var(--text-on-dark-muted); margin: 0 -2px; }
+  .snackbar .undo {
+    color: var(--action-green);
+    font-weight: 700;
+    text-transform: none;
+    cursor: pointer;
+  }
+
   /* Underlay */
   .underlay {
     position: absolute; inset: 0;
@@ -568,7 +596,8 @@
     clock: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`,
     chev: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
     trash: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 7h14M10 7V4h4v3M9 7l1 13a1 1 0 001 1h2a1 1 0 001-1l1-13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
-    warn: `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L1 21h22L12 2zm1 14h-2v2h2v-2zm0-7h-2v6h2V9z"/></svg>`
+    warn: `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L1 21h22L12 2zm1 14h-2v2h2v-2zm0-7h-2v6h2V9z"/></svg>`,
+    checkSm: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12.5l5 5L19.5 7.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`
   };
 
   function photo() {
@@ -727,6 +756,7 @@
           </div>
           <div class="body">${v.body}</div>
         </div>
+        ${v.num.includes('03') ? `<div class="snackbar"><span class="check">${ic.checkSm}</span>Saved<span class="dot">·</span><span class="undo">Undo</span></div>` : ''}
         <div class="home-indicator"></div>
       </div>
     </section>

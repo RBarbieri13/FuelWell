@@ -344,15 +344,17 @@
   }
   .sys-app-icon {
     margin: 2px auto 8px;
-    width: 56px; height: 56px;
-    border-radius: 14px;
-    background: var(--gradient-brand);
-    display: flex; align-items: center; justify-content: center;
-    color: var(--text-on-dark);
+    height: 28px;
+    display: inline-flex; align-items: center; justify-content: center;
     font-family: var(--font-display);
-    font-weight: 800; font-size: 24px;
-    letter-spacing: -0.04em;
-    box-shadow: 0 4px 12px rgba(0,210,120,.30);
+    font-weight: 700; font-size: 22px;
+    color: var(--text-primary);
+    letter-spacing: -0.025em;
+    line-height: 1;
+  }
+  .sys-app-icon .brand-letter {
+    color: var(--brand-green);
+    font-weight: 800;
   }
   .sys-h1 {
     font-family: var(--font-system);
@@ -715,7 +717,7 @@
             <div class="sys-sheet">
               <div class="sys-grabber"></div>
               <div class="sys-top">
-                <div class="sys-app-icon">F</div>
+                <div class="sys-app-icon"><span class="brand-letter">F</span>uel<span class="brand-letter">W</span>ell</div>
                 <h2 class="sys-h1">"FuelWell" Would Like<br/>To Access Your Health Data</h2>
                 <p class="sys-sub">FuelWell will read these categories to personalize your plan. You can change this any time in the Health app.</p>
               </div>

@@ -194,6 +194,21 @@
   }
   .item .source .dot { color: var(--text-disabled); margin: 0 4px; }
   .item.done .source { color: var(--text-disabled); }
+  /* Pantry-filter sub-source pill (A3) */
+  .item .pantry-pill {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 1px 6px;
+    border-radius: 999px;
+    font-family: var(--font-body);
+    font-size: 9.5px; font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--text-secondary);
+    background: var(--bg-base);
+    border: 1px solid var(--bg-border);
+    vertical-align: middle;
+  }
+  .item.done .pantry-pill { color: var(--text-disabled); }
   .item .qty {
     text-align: right;
     flex-shrink: 0;
@@ -519,7 +534,7 @@
           ${item('1','bunch','Kale, lacinato','Harvest bowl<span class="dot">·</span>+1', true)}
           ${item('3','','Avocado','Breakfast toast<span class="dot">·</span>x3', false)}
           ${item('1','pint','Cherry tomatoes','Mediterranean plate', false)}
-          ${item('1','head','Garlic','Used across 4 meals', false)}
+          ${item('1','head','Garlic','Used across 4 meals<span class="pantry-pill">from pantry filter</span>', false)}
           ${item('2','','Lemons','Salmon, dressings', false)}
         </div>
         ${catHead('Protein', 'var(--semantic-error)', 2, 5)}
@@ -527,7 +542,7 @@
           ${item('2','lb','Chicken thighs','Sheet-pan x2', true)}
           ${item('1','lb','Salmon fillets','Honey-mustard salmon', true)}
           ${item('1','lb','Ground turkey','Meatballs', false)}
-          ${item('1','dozen','Eggs','Breakfasts<span class="dot">·</span>5 ct used', false)}
+          ${item('1','dozen','Eggs','Breakfasts<span class="dot">·</span>5 ct used<span class="pantry-pill">from pantry filter</span>', false)}
           ${item('1','block','Extra-firm tofu','Pad see ew', false)}
         </div>
         ${catHead('Dairy', 'var(--semantic-info)', 1, 4)}
@@ -607,7 +622,7 @@
           ${item('1','bunch','Kale, lacinato','Harvest bowl', true)}
           ${item('3','','Avocado','Breakfast toast x3', true)}
           ${item('1','pint','Cherry tomatoes','Mediterranean plate', true)}
-          ${item('1','head','Garlic','Used across 4 meals', false)}
+          ${item('1','head','Garlic','Used across 4 meals<span class="pantry-pill">from pantry filter</span>', false)}
           ${item('2','','Lemons','Salmon, dressings', false)}
           ${item('1','bunch','Cilantro','Stir-fry, salsa', false)}
         </div>

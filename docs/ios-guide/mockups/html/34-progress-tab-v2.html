@@ -484,6 +484,42 @@
     letter-spacing: 0.1em; text-transform: uppercase;
   }
 
+  /* Quick-access deep-link list */
+  .qlist {
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--elev-1);
+    overflow: hidden;
+  }
+  .qlist .qrow {
+    display: grid; grid-template-columns: 32px 1fr auto;
+    gap: 10px; align-items: center;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--bg-border-soft);
+  }
+  .qlist .qrow:last-child { border-bottom: 0; }
+  .qlist .qrow .ic {
+    width: 30px; height: 30px;
+    border-radius: 9px;
+    background: var(--bg-base);
+    color: var(--text-body);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .qlist .qrow .nm {
+    font-family: var(--font-body);
+    font-size: 13.5px; font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.003em;
+  }
+  .qlist .qrow .sub {
+    margin-top: 1px;
+    font-family: var(--font-body);
+    font-size: 11.5px; font-weight: 600;
+    color: var(--text-body);
+  }
+  .qlist .qrow .chev { color: var(--text-muted); }
+
   /* Empty state */
   .empty {
     margin-top: 16px;
@@ -553,10 +589,11 @@
   .tab.active { color: var(--text-primary); }
   .tab .tab-glyph { width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; }
   .tab .tab-label { font-family: var(--font-body); font-size: 10px; font-weight: 600; letter-spacing: 0.02em; }
-  .tab.coach { margin-top: -16px; }
-  .tab.coach .tab-bubble { position: relative; width: 52px; height: 52px; background: var(--bg-elevated); border-radius: 18px 18px 18px 6px; display: flex; align-items: center; justify-content: center; color: #fff; box-shadow: 0 8px 22px rgba(15,17,23,.34), 0 2px 4px rgba(15,17,23,.18); }
-  .tab.coach .tab-bubble::after { content: ""; position: absolute; left: 8px; bottom: -6px; width: 12px; height: 12px; background: var(--bg-elevated); border-radius: 2px; transform: rotate(45deg); }
-  .tab.coach .tab-label { margin-top: 4px; color: var(--text-primary); font-weight: 700; }
+  /* V2 raised-circle Coach FAB */
+  .tab.coach { position: relative; }
+  .tab.coach .tab-bubble { position: absolute; top: -22px; left: 50%; transform: translateX(-50%); width: 52px; height: 52px; background: var(--gradient-brand); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; box-shadow: var(--elev-cta); border: 3px solid #FFFFFF; }
+  .tab.coach .tab-bubble svg { stroke: #FFFFFF; }
+  .tab.coach .tab-label { margin-top: 34px; color: var(--text-primary); font-weight: 700; }
 
   /* FOLD marker */
   .fold {
@@ -724,6 +761,43 @@
       </div>`;
   }
 
+  function quickAccess(state) {
+    if (state === 'empty') return '';
+    return `
+      <div class="qlist">
+        <div class="qrow">
+          <div class="ic" style="background: rgba(245,158,11,0.12); color: var(--macro-carbs);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="4" height="9" rx="0.6"/><rect x="10" y="6" width="4" height="14" rx="0.6"/><rect x="16" y="13" width="4" height="7" rx="0.6"/></svg>
+          </div>
+          <div>
+            <div class="nm">Macro adherence</div>
+            <div class="sub">Last 7 / 30 / 90 days</div>
+          </div>
+          <div class="chev">${ic.chev}</div>
+        </div>
+        <div class="qrow">
+          <div class="ic" style="background: rgba(0,180,216,0.10); color: var(--semantic-info);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round"/></svg>
+          </div>
+          <div>
+            <div class="nm">Health Score history</div>
+            <div class="sub">30-day trend · component breakdown</div>
+          </div>
+          <div class="chev">${ic.chev}</div>
+        </div>
+        <div class="qrow">
+          <div class="ic" style="background: rgba(168,85,247,0.10); color: var(--semantic-premium);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="6" cy="6" r="2"/><circle cx="12" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="6" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="18" cy="12" r="2" fill-opacity="0.3"/></svg>
+          </div>
+          <div>
+            <div class="nm">Habits</div>
+            <div class="sub">14-day grid · adherence per habit</div>
+          </div>
+          <div class="chev">${ic.chev}</div>
+        </div>
+      </div>`;
+  }
+
   function weightCard(state, variant) {
     if (state === 'empty') {
       return `
@@ -816,7 +890,7 @@
       <div class="card macro-card">
         <div class="card-head">
           <div class="eb">MACRO ADHERENCE · WEEK</div>
-          <div class="delta">5 of 7 days on pace</div>
+          <div class="delta">71% on pace · ${ic.arrowUp}+12 pts vs last week</div>
         </div>
         <div class="bars">
           ${adherence.map((d, i) => {
@@ -991,6 +1065,10 @@
           ${hsCard(state)}
         </div>
         <div class="section">
+          <div class="section-head"><div class="t">Quick access</div></div>
+          ${quickAccess(state)}
+        </div>
+        <div class="section">
           <div class="section-head"><div class="t">Weight</div></div>
           ${weightCard(state, 'v1')}
         </div>
@@ -1026,6 +1104,10 @@
           ${hsCard(state)}
         </div>
         <div class="section">
+          <div class="section-head"><div class="t">Quick access</div></div>
+          ${quickAccess(state)}
+        </div>
+        <div class="section">
           <div class="section-head"><div class="t">Weight</div></div>
           ${weightCard(state, 'v2')}
         </div>
@@ -1059,6 +1141,10 @@
         <div class="section">
           <div class="section-head"><div class="t">Health Score</div><div class="a">View detail</div></div>
           ${hsCard(state)}
+        </div>
+        <div class="section">
+          <div class="section-head"><div class="t">Quick access</div></div>
+          ${quickAccess(state)}
         </div>
         <div class="section">
           <div class="section-head"><div class="t">Habit Tracking</div><div class="a">View all habits</div></div>

@@ -439,15 +439,15 @@
     line-height: 1.45;
   }
 
-  /* Tab bar (Exercise active) */
+  /* Tab bar (Exercise active) — V2 raised-circle FAB-style Coach */
   .tabbar { position: absolute; left: 0; right: 0; bottom: 0; height: 88px; background: rgba(255,255,255,0.92); backdrop-filter: blur(18px); border-top: 1px solid var(--bg-border); display: grid; grid-template-columns: repeat(5, 1fr); padding: 8px 6px 30px; z-index: 22; }
   .tab { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: var(--text-muted); position: relative; }
   .tab.active { color: var(--text-primary); }
   .tab .tab-glyph { width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; }
   .tab .tab-label { font-family: var(--font-body); font-size: 10px; font-weight: 600; letter-spacing: 0.02em; }
-  .tab.coach { margin-top: -16px; }
-  .tab.coach .tab-bubble { position: relative; width: 52px; height: 52px; background: var(--bg-elevated); border-radius: 18px 18px 18px 6px; display: flex; align-items: center; justify-content: center; color: #fff; box-shadow: 0 8px 22px rgba(15,17,23,.34), 0 2px 4px rgba(15,17,23,.18); }
-  .tab.coach .tab-bubble::after { content: ""; position: absolute; left: 8px; bottom: -6px; width: 12px; height: 12px; background: var(--bg-elevated); border-radius: 2px; transform: rotate(45deg); }
+  .tab.coach { margin-top: -22px; }
+  .tab.coach .tab-bubble { position: relative; width: 52px; height: 52px; background: var(--gradient-brand); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; box-shadow: 0 6px 16px rgba(0,210,120,.30), 0 2px 4px rgba(15,17,23,.10); }
+  .tab.coach .tab-bubble svg { color: #fff; }
   .tab.coach .tab-label { margin-top: 4px; color: var(--text-primary); font-weight: 700; }
 
   /* Legend doc */
@@ -463,7 +463,7 @@
     <div>
       <p class="doc-eyebrow">FuelWell · Round 2 · Step 4 — Mockups</p>
       <h1 class="doc-title">M32 Exercise &amp; Activity · tab landing</h1>
-      <p class="doc-sub">Hub screen reached from the Exercise tab in the v2 bar. Today's workout (or rest-day card) hero, this-week strip, Quick access link list, and recent workouts. Three variations explore list vs. grid Quick-access density and a more visual recent-workouts treatment.</p>
+      <p class="doc-sub">Hub screen reached from the Exercise tab in the v2 bar. Hub title at the top of the screen reads "Exercise &amp; Activity" (full name), even though the tab BAR label is just "Exercise". Locked to V1 — list Quick-access pattern. Today's workout (or rest-day card) hero, this-week strip, Quick access list of all six destinations (Workout Log · Activity Tracker · Workout Plans · Exercise Library · Schedule · Trainer workouts), and recent workouts.</p>
     </div>
     <div class="doc-meta">
       iPhone 15 Pro · 393 × 852 pt<br>
@@ -774,14 +774,10 @@
   }
 
   const populated = [
-    { num: 'Variation 01', name: 'Spec primary · list Quick-access', cap: 'Strength · Push as today\'s workout hero, this-week strip below, grouped list of 6 destinations, three recent rows.', render: v1('populated') },
-    { num: 'Variation 02', name: '2-col Quick-access grid', cap: 'Same hero, but Quick access surfaces as a 2-column card grid — more visual, easier to scan icons quickly.', render: v2('populated') },
-    { num: 'Variation 03', name: 'Rest-day hero · horizontal recents', cap: 'Today is mobility/rest; hero flips to the light "Active Rest" treatment. Recent workouts become a horizontally-scrollable card row.', render: v3('populated') },
+    { num: 'Variation 01 · Locked', name: 'Spec primary · list Quick-access', cap: 'Strength · Push as today\'s workout hero, this-week strip below, grouped list of 6 destinations (Workout Log · Activity Tracker · Workout Plans · Exercise Library · Schedule · Trainer workouts), three recent rows.', render: v1('populated') },
   ];
   const empties = [
     { num: 'Variation 01 · Empty', name: 'First-time · list', cap: 'Hero swaps to the coach-voice prompt with [Coach suggest] [Browse plans]. Week strip reads all-rest. Recent rows collapse to a dashed coach-voice line.', render: v1('empty') },
-    { num: 'Variation 02 · Empty', name: 'First-time · grid', cap: 'Grid Quick-access still feels welcoming — empty days, empty recents, but the destinations are present and tappable.', render: v2('empty') },
-    { num: 'Variation 03 · Empty', name: 'First-time · horizontal', cap: 'V3\'s rest-day hero collapses to the same coach-voice prompt; the horizontal recents become an empty section.', render: v3('empty') },
   ];
 
   document.getElementById('frames').innerHTML = `

@@ -213,6 +213,35 @@
 
   /* Section */
   .section { margin-bottom: 22px; }
+  /* Macro-channel tinted dividers (parity with M04) — subtle ~10% alpha left borders */
+  .section.macro-tint-protein {
+    padding-left: 12px;
+    border-left: 3px solid rgba(0, 210, 120, 0.10);
+  }
+  .section.macro-tint-carbs {
+    padding-left: 12px;
+    border-left: 3px solid rgba(245, 158, 11, 0.10);
+  }
+  .section.macro-tint-fat {
+    padding-left: 12px;
+    border-left: 3px solid rgba(168, 85, 247, 0.10);
+  }
+  /* Same tint applied as a low-alpha chip-row background for variety */
+  .chip-wrap.macro-tint-protein {
+    background: rgba(0, 210, 120, 0.06);
+    border-radius: var(--radius-md);
+    padding: 8px;
+  }
+  .chip-wrap.macro-tint-carbs {
+    background: rgba(245, 158, 11, 0.06);
+    border-radius: var(--radius-md);
+    padding: 8px;
+  }
+  .chip-wrap.macro-tint-fat {
+    background: rgba(168, 85, 247, 0.06);
+    border-radius: var(--radius-md);
+    padding: 8px;
+  }
   .section-head {
     display: flex; align-items: baseline; justify-content: space-between;
     padding: 0 4px;

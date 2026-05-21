@@ -375,6 +375,25 @@
   .tab-glyph { width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; }
   .tab-label { font-family: var(--font-body); font-size: 10px; font-weight: 600; }
 
+  /* LEGACY banner (D10 — Learn home not shipping) */
+  .legacy-banner {
+    position: absolute;
+    top: 54px; left: 0; right: 0;
+    z-index: 40;
+    background: rgba(239, 68, 68, 0.92);
+    color: #FFFFFF;
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-align: center;
+    padding: 8px 12px;
+    text-transform: uppercase;
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(0,0,0,0.20);
+    box-shadow: 0 4px 14px rgba(239,68,68,0.30);
+  }
+
   /* Legend */
   .legend{max-width:1320px;margin:56px auto 0;padding:22px 26px;background:#FFFFFF;border:1px solid var(--bg-border);border-radius:var(--radius-lg);display:grid;grid-template-columns:220px 1fr;gap:14px 28px;font-size:12px;color:var(--text-secondary);line-height:1.55;}
   .legend h3{grid-column:1 / -1;margin:0 0 6px;font-family:var(--font-display);font-size:12px;font-weight:600;color:var(--text-muted);letter-spacing:.18em;text-transform:uppercase;}
@@ -383,7 +402,7 @@
   .legend code{background:#F4F5F7;border:1px solid var(--bg-border);padding:1px 6px;border-radius:4px;font-family:var(--font-numeric);font-size:11px;color:var(--text-primary);}
 </style>
 </head>
-<body>
+<body data-legacy="true">
 
   <header class="doc-header">
     <div>
@@ -615,6 +634,7 @@
       </div>
       <div class="device">
         ${statusBar}${island}
+        <div class="legacy-banner">LEGACY — content now lives in Help (D10)</div>
         <div class="screen">${v.body}</div>
         <div class="home-indicator"></div>
       </div>

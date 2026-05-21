@@ -53,18 +53,18 @@
   .nav-title{text-align:center;font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--text-primary);letter-spacing:-.012em;}
   .nav-title .sub{display:block;margin-top:1px;font-family:var(--font-body);font-size:11px;font-weight:500;color:var(--text-secondary);letter-spacing:.06em;text-transform:uppercase;}
 
-  .content{flex:1;padding:0 16px 28px;overflow:hidden;}
+  .content{flex:1;padding:0 16px 100px;overflow:hidden;}
 
   /* Profile card */
   .prof {
-    margin-top: 10px;
+    margin-top: 8px;
     background: var(--bg-surface);
     border: 1px solid var(--bg-border);
     border-radius: var(--radius-lg);
     box-shadow: var(--elev-1);
-    padding: 14px;
+    padding: 12px;
     display: grid; grid-template-columns: 56px 1fr auto;
-    gap: 12px; align-items: center;
+    gap: 10px; align-items: center;
   }
   .prof .av {
     width: 56px; height: 56px;
@@ -87,8 +87,8 @@
   .prof .email {
     margin-top: 2px;
     font-family: var(--font-body);
-    font-size: 12px; font-weight: 500;
-    color: var(--text-secondary);
+    font-size: 12px; font-weight: 600;
+    color: var(--text-body);
   }
   .prof .pills {
     margin-top: 6px;
@@ -100,7 +100,7 @@
     background: var(--bg-base);
     border: 1px solid var(--bg-border);
     font-family: var(--font-body);
-    font-size: 10.5px; font-weight: 600;
+    font-size: 10.5px; font-weight: 700;
     color: var(--text-body);
     letter-spacing: 0.04em;
   }
@@ -116,19 +116,19 @@
 
   /* Section head */
   .sec-h {
-    margin: 18px 4px 8px;
+    margin: 12px 4px 6px;
     display: flex; align-items: baseline; justify-content: space-between;
   }
   .sec-h .l {
     font-family: var(--font-body);
     font-size: 11px; font-weight: 700;
-    color: var(--text-muted);
+    color: var(--text-secondary);
     letter-spacing: 0.18em; text-transform: uppercase;
   }
   .sec-h .r {
     font-family: var(--font-body);
-    font-size: 11.5px; font-weight: 600;
-    color: var(--text-secondary);
+    font-size: 11.5px; font-weight: 700;
+    color: var(--text-body);
   }
 
   /* Targets card */
@@ -137,7 +137,7 @@
     border: 1px solid var(--bg-border);
     border-radius: var(--radius-lg);
     box-shadow: var(--elev-1);
-    padding: 14px;
+    padding: 12px;
   }
   .targets-grid {
     display: grid; grid-template-columns: 1fr 1fr;
@@ -184,8 +184,8 @@
   .tcell .edit-hint {
     margin-top: 8px;
     font-family: var(--font-body);
-    font-size: 10.5px; font-weight: 600;
-    color: var(--text-muted);
+    font-size: 10.5px; font-weight: 700;
+    color: var(--text-body);
     letter-spacing: 0.02em;
     display: inline-flex; align-items: center; gap: 4px;
   }
@@ -202,13 +202,13 @@
 
   /* Why-this-plan */
   .why-row {
-    margin-top: 12px;
-    padding: 10px 12px;
+    margin-top: 10px;
+    padding: 8px 10px;
     background: var(--bg-base);
     border: 1px solid var(--bg-border-soft);
     border-radius: var(--radius-md);
     font-family: var(--font-body);
-    font-size: 12px; font-weight: 500;
+    font-size: 12px; font-weight: 600;
     color: var(--text-body);
     line-height: 1.45;
     letter-spacing: -0.003em;
@@ -220,8 +220,8 @@
 
   /* Recalc CTA */
   .recalc {
-    margin-top: 14px;
-    width: 100%; height: 52px;
+    margin-top: 10px;
+    width: 100%; height: 48px;
     border-radius: var(--radius-md);
     background: var(--gradient-brand);
     color: var(--text-on-dark);
@@ -241,9 +241,9 @@
     overflow: hidden;
   }
   .s-row {
-    display: grid; grid-template-columns: 36px 1fr auto;
-    gap: 12px; align-items: center;
-    padding: 12px 14px;
+    display: grid; grid-template-columns: 32px 1fr auto;
+    gap: 10px; align-items: center;
+    padding: 10px 12px;
     border-bottom: 1px solid var(--bg-border-soft);
     cursor: pointer;
   }
@@ -270,8 +270,8 @@
   .s-row .sub {
     margin-top: 1px;
     font-family: var(--font-body);
-    font-size: 12px; font-weight: 500;
-    color: var(--text-secondary);
+    font-size: 12px; font-weight: 600;
+    color: var(--text-body);
     letter-spacing: -0.002em;
   }
   .s-row .sub .v {
@@ -416,6 +416,16 @@
     display: flex; align-items: center; justify-content: center;
   }
 
+  /* Tabbar V2 (raised-circle Coach FAB) */
+  .tabbar { position: absolute; left: 0; right: 0; bottom: 0; height: 88px; background: rgba(255,255,255,0.92); backdrop-filter: blur(18px); border-top: 1px solid var(--bg-border); display: grid; grid-template-columns: repeat(5, 1fr); padding: 8px 6px 30px; z-index: 22; }
+  .tab { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: var(--text-muted); position: relative; }
+  .tab.active { color: var(--text-primary); }
+  .tab-glyph { width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; }
+  .tab-label { font-family: var(--font-body); font-size: 10px; font-weight: 600; }
+  .tab-coach .tab-fab { position: absolute; top: -22px; left: 50%; transform: translateX(-50%); width: 52px; height: 52px; border-radius: 50%; background: var(--gradient-brand); display: flex; align-items: center; justify-content: center; color: #FFFFFF; box-shadow: var(--elev-cta); border: 3px solid #FFFFFF; }
+  .tab-coach .tab-fab svg { stroke: #FFFFFF; }
+  .tab-coach .tab-label { margin-top: 34px; }
+
   /* Legend */
   .legend{max-width:1320px;margin:56px auto 0;padding:22px 26px;background:#FFFFFF;border:1px solid var(--bg-border);border-radius:var(--radius-lg);display:grid;grid-template-columns:220px 1fr;gap:14px 28px;font-size:12px;color:var(--text-secondary);line-height:1.55;}
   .legend h3{grid-column:1 / -1;margin:0 0 6px;font-family:var(--font-display);font-size:12px;font-weight:600;color:var(--text-muted);letter-spacing:.18em;text-transform:uppercase;}
@@ -492,7 +502,22 @@
     sparkle:`<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2 6 6 2-6 2-2 6-2-6-6-2 6-2 2-6Z"/></svg>`,
     out:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M15 4h4a1 1 0 011 1v14a1 1 0 01-1 1h-4M3 12h12M11 8l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
     trash:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 7h14M10 7V4h4v3M9 7l1 13a1 1 0 001 1h2a1 1 0 001-1l1-13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    tabHome:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11l8-7 8 7v8a1 1 0 01-1 1h-4v-6h-6v6H5a1 1 0 01-1-1v-8Z"/></svg>`,
+    tabMeals:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M9 8h6M9 12h6M9 16h3" stroke-linecap="round"/></svg>`,
+    tabCoach:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a7 7 0 017 7v3l1.5 2.5a1 1 0 01-.9 1.5H4.4a1 1 0 01-.9-1.5L5 13v-3a7 7 0 017-7Z" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.5 18a2.5 2.5 0 005 0" stroke-linecap="round"/></svg>`,
+    tabExercise:`<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="10" width="2" height="4" rx="0.5"/><rect x="19" y="10" width="2" height="4" rx="0.5"/><rect x="6" y="8" width="3" height="8" rx="1"/><rect x="15" y="8" width="3" height="8" rx="1"/><rect x="9" y="11" width="6" height="2"/></svg>`,
+    tabProg:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="11" width="3" height="9" rx="1"/><rect x="10" y="5" width="3" height="15" rx="1"/><rect x="17" y="13" width="3" height="7" rx="1"/></svg>`,
   };
+
+  function tabbar() {
+    return `<div class="tabbar">
+      <div class="tab"><div class="tab-glyph">${ic.tabHome}</div><div class="tab-label">Home</div></div>
+      <div class="tab"><div class="tab-glyph">${ic.tabMeals}</div><div class="tab-label">Meals</div></div>
+      <div class="tab tab-coach"><div class="tab-fab">${ic.tabCoach}</div><div class="tab-label">Coach</div></div>
+      <div class="tab"><div class="tab-glyph">${ic.tabExercise}</div><div class="tab-label">Exercise</div></div>
+      <div class="tab"><div class="tab-glyph">${ic.tabProg}</div><div class="tab-label">Progress</div></div>
+    </div>`;
+  }
 
   function navBar(showGear) {
     return `<div class="nav">
@@ -724,6 +749,7 @@
       <div class="device">
         ${statusBar}${island}
         <div class="screen">${v.body}</div>
+        ${tabbar()}
         <div class="home-indicator"></div>
       </div>
     </section>

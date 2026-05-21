@@ -40,7 +40,7 @@
   .v-name{font-family:var(--font-display);font-size:16px;font-weight:600;color:var(--text-primary);margin-top:4px;}
   .v-cap{font-size:12px;color:var(--text-secondary);margin-top:4px;line-height:1.45;max-width:340px;}
 
-  .device{position:relative;width:393px;height:1240px;background:var(--bg-base);border-radius:56px;overflow:hidden;box-shadow:0 0 0 12px #0A0A0F,0 0 0 13px #2A2A30,0 30px 80px rgba(15,17,23,.28),0 12px 32px rgba(15,17,23,.16);}
+  .device{position:relative;width:393px;height:1720px;background:var(--bg-base);border-radius:56px;overflow:hidden;box-shadow:0 0 0 12px #0A0A0F,0 0 0 13px #2A2A30,0 30px 80px rgba(15,17,23,.28),0 12px 32px rgba(15,17,23,.16);}
   .status-bar{position:absolute;top:0;left:0;right:0;height:54px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 28px 9px;z-index:30;pointer-events:none;}
   .status-bar .time{font-family:var(--font-system);font-size:17px;font-weight:600;color:var(--text-primary);letter-spacing:-.01em;}
   .signal-bat{display:inline-block;width:26px;height:12px;border:1.2px solid var(--text-primary);border-radius:3px;position:relative;}
@@ -156,22 +156,23 @@
     padding:12px 12px;
   }
   .cat .ico{
-    width:30px;height:30px;border-radius:9px;
+    width:40px;height:40px;border-radius:11px;
     display:flex;align-items:center;justify-content:center;
   }
+  .cat .ico svg{width:20px;height:20px;}
   .cat .lb{margin-top:8px;font-family:var(--font-body);font-size:12px;font-weight:600;color:var(--text-primary);line-height:1.25;letter-spacing:-.003em;}
   .cat .ct{margin-top:1px;font-family:var(--font-numeric);font-size:10px;font-weight:600;color:var(--text-muted);}
 
-  /* Continue reading rows */
+  /* Continue reading rows (condensed) */
   .cr-row{
     background:var(--bg-surface);border:1px solid var(--bg-border);
     border-radius:var(--radius-md);box-shadow:var(--elev-1);
-    padding:10px 12px;
-    display:grid;grid-template-columns:42px 1fr 14px;column-gap:12px;align-items:center;
-    margin-bottom:6px;
+    padding:7px 12px;
+    display:grid;grid-template-columns:36px 1fr 14px;column-gap:10px;align-items:center;
+    margin-bottom:4px;
   }
   .cr-row .thumb{
-    width:42px;height:42px;border-radius:9px;
+    width:36px;height:36px;border-radius:8px;
     background:linear-gradient(135deg,#0F1117 0%,#2A1A3E 100%);
     position:relative;overflow:hidden;
   }
@@ -193,8 +194,8 @@
     border-radius:var(--radius-md);box-shadow:var(--elev-1);overflow:hidden;
   }
   .qs-row{
-    display:grid;grid-template-columns:30px 1fr 14px;column-gap:12px;align-items:center;
-    padding:11px 14px;border-bottom:1px solid var(--bg-border-soft);
+    display:grid;grid-template-columns:28px 1fr 14px;column-gap:10px;align-items:center;
+    padding:7px 14px;border-bottom:1px solid var(--bg-border-soft);
   }
   .qs-row:last-child{border-bottom:0;}
   .qs-row .ico{
@@ -206,21 +207,108 @@
   .qs-row .val{font-family:var(--font-numeric);font-size:11px;font-weight:600;color:var(--text-muted);text-align:right;margin-right:4px;letter-spacing:-.003em;}
   .qs-row .chev{color:var(--text-muted);}
 
-  /* Coach mini */
+  /* Coach prominent card — full-width dark surface with gradient CTA */
   .coach-mini{
     background:var(--bg-elevated);color:var(--text-on-dark);
-    border-radius:var(--radius-md);padding:14px 14px;
-    display:flex;align-items:center;gap:12px;box-shadow:var(--elev-3);
+    border-radius:var(--radius-lg);padding:18px 18px 16px;
+    display:flex;flex-direction:column;gap:12px;
+    box-shadow:var(--elev-3);
+    position:relative;overflow:hidden;
   }
+  .coach-mini::before{
+    content:"";position:absolute;top:0;right:0;bottom:0;width:60%;
+    background:radial-gradient(70% 60% at 80% 30%, rgba(168,85,247,0.30) 0%, transparent 60%);
+    pointer-events:none;
+  }
+  .coach-mini .top{display:flex;align-items:center;gap:12px;position:relative;z-index:1;}
   .coach-mini .av{
-    width:38px;height:38px;border-radius:50%;
+    width:44px;height:44px;border-radius:50%;
     background:linear-gradient(135deg,#A855F7,#6B21A8);color:#fff;
     display:flex;align-items:center;justify-content:center;
-    font-family:var(--font-display);font-size:15px;font-weight:700;
+    font-family:var(--font-display);font-size:17px;font-weight:700;
+    flex-shrink:0;
   }
-  .coach-mini .lb{flex:1;min-width:0;font-family:var(--font-body);font-size:13.5px;font-weight:600;color:var(--text-on-dark);letter-spacing:-.003em;}
-  .coach-mini .lb .sub{display:block;margin-top:2px;font-family:var(--font-body);font-size:11.5px;font-weight:500;color:var(--text-on-dark-muted);}
-  .coach-mini .chev{color:rgba(255,255,255,.4);}
+  .coach-mini .lb{flex:1;min-width:0;font-family:var(--font-display);font-size:15.5px;font-weight:700;color:var(--text-on-dark);letter-spacing:-.005em;line-height:1.25;}
+  .coach-mini .lb .sub{display:block;margin-top:3px;font-family:var(--font-body);font-size:11.5px;font-weight:500;color:var(--text-on-dark-muted);letter-spacing:-.003em;}
+  .coach-mini .cta{
+    position:relative;z-index:1;
+    height:44px;border-radius:12px;border:0;
+    background:var(--gradient-brand);color:var(--text-primary);
+    font-family:var(--font-body);font-size:14px;font-weight:700;
+    box-shadow:0 8px 18px rgba(0,210,120,.28);
+    display:flex;align-items:center;justify-content:center;gap:6px;
+    cursor:pointer;
+  }
+
+  /* Search results preview (sectioned) */
+  .search-preview{
+    margin-top:8px;
+    background:var(--bg-surface);
+    border:1px solid var(--bg-border);
+    border-radius:14px;
+    box-shadow:var(--elev-2);
+    overflow:hidden;
+  }
+  .sp-section{
+    border-top:1px solid var(--bg-border-soft);
+  }
+  .sp-section:first-child{border-top:0;}
+  .sp-head{
+    padding:8px 13px 4px;
+    font-family:var(--font-body);font-size:10px;font-weight:700;
+    color:var(--text-muted);letter-spacing:.16em;text-transform:uppercase;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .sp-head .ct{font-family:var(--font-numeric);font-feature-settings:"tnum" 1;letter-spacing:0;}
+  .sp-row{
+    padding:6px 13px 7px;
+    display:grid;grid-template-columns:18px 1fr 14px;column-gap:9px;align-items:center;
+    cursor:pointer;
+  }
+  .sp-row .lb{font-family:var(--font-body);font-size:12.5px;font-weight:500;color:var(--text-primary);letter-spacing:-.003em;}
+  .sp-row .lb b{font-weight:700;}
+  .sp-row .sp-ic{color:var(--text-muted);display:flex;}
+  .sp-row .sp-ic.coach{color:var(--semantic-premium);}
+  .sp-row .chev{color:var(--text-muted);display:flex;}
+  .sp-row.coach .lb{color:var(--semantic-premium);font-weight:600;}
+
+  /* Inline menu chips */
+  .inline-menu{
+    display:flex;gap:6px;overflow-x:auto;padding:2px 0 4px;
+  }
+  .inline-menu::-webkit-scrollbar{display:none;}
+  .inline-chip{
+    flex-shrink:0;
+    padding:6px 11px;
+    border-radius:999px;
+    background:var(--bg-surface);
+    border:1px solid var(--bg-border);
+    box-shadow:var(--elev-1);
+    font-family:var(--font-body);font-size:12px;font-weight:600;
+    color:var(--text-body);letter-spacing:-.003em;
+    cursor:pointer;
+  }
+  .inline-chip.active{background:var(--text-primary);color:var(--text-on-dark);border-color:var(--text-primary);}
+
+  /* FAQ external row */
+  .faq-row{
+    background:var(--bg-surface);
+    border:1px solid var(--bg-border);
+    border-radius:var(--radius-md);
+    box-shadow:var(--elev-1);
+    padding:11px 14px;
+    display:grid;grid-template-columns:32px 1fr 18px;column-gap:11px;align-items:center;
+    cursor:pointer;
+  }
+  .faq-row .ico{
+    width:28px;height:28px;border-radius:8px;
+    background:rgba(0,180,216,0.10);color:var(--semantic-info);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .faq-row .body{min-width:0;}
+  .faq-row .nm{font-family:var(--font-body);font-size:13.5px;font-weight:600;color:var(--text-primary);letter-spacing:-.003em;line-height:1.2;}
+  .faq-row .sub{margin-top:2px;font-family:var(--font-body);font-size:11px;font-weight:500;color:var(--text-secondary);letter-spacing:-.002em;}
+  .faq-row .ext{color:var(--text-muted);font-family:var(--font-numeric);font-size:14px;font-weight:700;}
 
   /* Footer link */
   .feedback-link{
@@ -241,7 +329,7 @@
     <div>
       <p class="doc-eyebrow">FuelWell · Round 2 · Step 4 — Mockups</p>
       <h1 class="doc-title">M36 Help</h1>
-      <p class="doc-sub">Reached from the Help icon on Dashboard (and the Help row in M35 Menu). Merges Learn-style articles with quick Settings access — search at top, one featured article, category tiles, in-progress reads, the most-used Settings rows, a coach hand-off card, and a feedback link.</p>
+      <p class="doc-sub">Reached from the Help icon on Dashboard (and the Help row in M35 Menu). Header now carries a dedicated Help-center icon (info-blue) on the right. Search field shows a sectioned-results preview (Articles · Settings · Ask Coach). Inline chip menu above the article grid (Onboarding · Macros 101 · Health Score · Coach Chat tips). Category tile icons enlarged ~30%. "Continue reading" and "Quick settings" rows condensed. New "FAQ &amp; Knowledge Base" external row → fuelwellhealth.com/help. "Talk to coach" promoted to a full-width prominent dark card with gradient-brand CTA.</p>
     </div>
     <div class="doc-meta">
       iPhone 15 Pro · 393 × 852 pt<br>
@@ -254,8 +342,12 @@
 
   <section class="legend-doc">
     <h3>Mockup notes · M36 Help</h3>
-    <dt>Search pinned at top</dt>
-    <dd>Single search field "Search articles, settings, or ask a question". Pinned (visually) so it stays in reach while the user scrolls. Right edge carries the cmd-K hint kbd ("/") for Tweaks-toggle users on iPad later.</dd>
+    <dt>Header · Help icon</dt>
+    <dd>Back chevron left, "Help" title centered, info-blue Help-center icon button on the right (clearer affordance than relying on the screen title alone). The right-side icon opens an in-context help tour from any sub-route.</dd>
+    <dt>Search · sectioned preview</dt>
+    <dd>Option A resolved. One search field "Search articles, settings, or ask a question" plus a preview dropdown directly beneath that sections matches into <strong>Articles</strong> (3), <strong>Settings</strong> (2), and a single <strong>Ask Coach</strong> row that converts the query into a coach chat. Lower visual noise than three parallel search surfaces; clearer intent split than a single undifferentiated result list.</dd>
+    <dt>Inline jump-to menu</dt>
+    <dd>Horizontal pill row above the article grid with high-value links: Onboarding, Macros 101, Health Score, Coach Chat tips. Active state inverts (dark surface, white text).</dd>
     <dt>Featured article</dt>
     <dd>One hero card. ChatGPT-Images-2.0-caption placeholder (cool gradient with the caption rule in the bottom-left). 3-min read pill, title, lead. <strong>"One thing to try today"</strong> takeaway lives in a slim base-tone block beneath the lead with a success-green accent bar — the article-end commitment surfaced up front.</dd>
     <dt>Categories scroll</dt>
@@ -264,8 +356,10 @@
     <dd>List of articles the user started but didn't finish. 42pt thumbnail + title + progress track (info-blue fill) + percent. Renders only when there is in-progress reading; collapses cleanly on a fresh install.</dd>
     <dt>Quick settings</dt>
     <dd>The three rows that drive ≥80% of settings traffic: Notifications, HealthKit, Account. Plus an "All settings →" link to the full Settings screen. Right-aligned value column shows current state (On · Connected · @jordan.c).</dd>
-    <dt>Talk to coach</dt>
-    <dd>Inverted mini-card with the coach avatar and the line "Have a question? Ask coach directly." Tap → Coach Chat (M20) pre-loaded with "Help: " prefix.</dd>
+    <dt>FAQ &amp; Knowledge Base</dt>
+    <dd>Single list row, info-blue brain icon. Title "FAQ &amp; Knowledge Base", sub-label "fuelwellhealth.com/help", trailing external-link mark "↗". Tap → external Safari to the public knowledge base.</dd>
+    <dt>Talk to coach (prominent)</dt>
+    <dd>Promoted to a full-width inverted dark card. Two stacked elements: a top row with the coach avatar + line "Have a question? Ask coach directly." / sub "Replies usually within seconds · 24/7", and beneath it a full-width <code>gradient.brand</code> CTA "Start a coach chat →". More visual weight than the prior text-style mini-card.</dd>
     <dt>Send feedback</dt>
     <dd>Text-link only, centered at the bottom — intentionally low-emphasis, signals it's the route of last resort.</dd>
     <dt>Variations</dt>
@@ -318,7 +412,9 @@
     return `<div class="nav">
       <div class="iconbtn">${ic.back}</div>
       <div class="title">Help</div>
-      <div style="width:34px;"></div>
+      <div class="iconbtn" style="background:rgba(0,180,216,0.10);border-color:rgba(0,180,216,0.30);color:var(--semantic-info);" title="Help center">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9.3 9.5a2.7 2.7 0 015.4.2c0 1.5-2 1.8-2.7 3.3M12 17v.01" stroke-linecap="round"/></svg>
+      </div>
     </div>`;
   }
   function search(){
@@ -385,9 +481,57 @@
   }
   function coachMini(){
     return `<div class="coach-mini">
-      <div class="av">F</div>
-      <div class="lb">Have a question? Ask coach directly.<span class="sub">Replies usually within seconds</span></div>
-      <div class="chev">${ic.chev}</div>
+      <div class="top">
+        <div class="av">F</div>
+        <div class="lb">Have a question? Ask coach directly.<span class="sub">Replies usually within seconds · 24/7</span></div>
+      </div>
+      <button class="cta">Start a coach chat ${ic.chev}</button>
+    </div>`;
+  }
+
+  /* Sectioned search preview (option A: single field, sectioned results dropdown) */
+  function searchPreview(){
+    return `<div class="search-preview">
+      <div class="sp-section">
+        <div class="sp-head"><span>Articles</span><span class="ct">3 results</span></div>
+        <div class="sp-row"><div class="sp-ic">${ic.clock}</div><div class="lb"><b>Protein</b> at breakfast: small habit, big payoff</div><div class="chev">${ic.chev}</div></div>
+        <div class="sp-row"><div class="sp-ic">${ic.clock}</div><div class="lb">Why <b>protein</b> timing matters less than you think</div><div class="chev">${ic.chev}</div></div>
+        <div class="sp-row"><div class="sp-ic">${ic.clock}</div><div class="lb">Hitting <b>protein</b> when eating out</div><div class="chev">${ic.chev}</div></div>
+      </div>
+      <div class="sp-section">
+        <div class="sp-head"><span>Settings</span><span class="ct">2 results</span></div>
+        <div class="sp-row"><div class="sp-ic">${ic.health}</div><div class="lb"><b>Protein</b> target — Account &amp; goals</div><div class="chev">${ic.chev}</div></div>
+        <div class="sp-row"><div class="sp-ic">${ic.bell}</div><div class="lb">Reminder · <b>protein</b> by 10 AM</div><div class="chev">${ic.chev}</div></div>
+      </div>
+      <div class="sp-section">
+        <div class="sp-head"><span>Ask coach</span><span class="ct">1 option</span></div>
+        <div class="sp-row coach"><div class="sp-ic coach">${ic.brain}</div><div class="lb">Ask Coach: "How much <b>protein</b> do I actually need?" →</div><div class="chev">${ic.chev}</div></div>
+      </div>
+    </div>`;
+  }
+
+  /* Inline high-value links above the article grid */
+  function inlineMenu(){
+    const items = [
+      { lb: 'Onboarding', active: false },
+      { lb: 'Macros 101', active: true },
+      { lb: 'Health Score', active: false },
+      { lb: 'Coach Chat tips', active: false },
+    ];
+    return `<div class="inline-menu">
+      ${items.map(i => `<span class="inline-chip ${i.active ? 'active' : ''}">${i.lb}</span>`).join('')}
+    </div>`;
+  }
+
+  /* FAQ & Knowledge Base external row */
+  function faqRow(){
+    return `<div class="faq-row">
+      <div class="ico">${ic.brain}</div>
+      <div class="body">
+        <div class="nm">FAQ &amp; Knowledge Base</div>
+        <div class="sub">fuelwellhealth.com/help</div>
+      </div>
+      <div class="ext">↗</div>
     </div>`;
   }
   function feedbackLink(){
@@ -399,6 +543,11 @@
       <div class="content">
         ${header()}
         ${search()}
+        ${searchPreview()}
+        <div class="section">
+          <div class="section-head"><div class="t">Jump to</div></div>
+          ${inlineMenu()}
+        </div>
         <div class="section">
           <div class="section-head"><div class="t">Featured today</div></div>
           ${featured(true)}
@@ -417,6 +566,10 @@
           ${quickSettings()}
         </div>
         <div class="section">
+          <div class="section-head"><div class="t">Knowledge base</div></div>
+          ${faqRow()}
+        </div>
+        <div class="section">
           <div class="section-head"><div class="t">Talk to coach</div></div>
           ${coachMini()}
         </div>
@@ -429,6 +582,11 @@
       <div class="content">
         ${header()}
         ${search()}
+        ${searchPreview()}
+        <div class="section">
+          <div class="section-head"><div class="t">Jump to</div></div>
+          ${inlineMenu()}
+        </div>
         <div class="section">
           <div class="section-head"><div class="t">Featured today</div></div>
           ${featured(false)}
@@ -463,6 +621,10 @@
           ${quickSettings()}
         </div>
         <div class="section">
+          <div class="section-head"><div class="t">Knowledge base</div></div>
+          ${faqRow()}
+        </div>
+        <div class="section">
           <div class="section-head"><div class="t">Talk to coach</div></div>
           ${coachMini()}
         </div>
@@ -475,6 +637,11 @@
       <div class="content">
         ${header()}
         ${search()}
+        ${searchPreview()}
+        <div class="section">
+          <div class="section-head"><div class="t">Jump to</div></div>
+          ${inlineMenu()}
+        </div>
         <div class="section">
           <div class="section-head"><div class="t">Browse by topic</div><div class="a">See all</div></div>
           ${cats()}
@@ -491,6 +658,10 @@
         <div class="section">
           <div class="section-head"><div class="t">Quick settings</div></div>
           ${quickSettings()}
+        </div>
+        <div class="section">
+          <div class="section-head"><div class="t">Knowledge base</div></div>
+          ${faqRow()}
         </div>
         <div class="section">
           <div class="section-head"><div class="t">Talk to coach</div></div>

@@ -1,6 +1,8 @@
-# FuelWell — Flow Chart v2 (Phase 0.5 · Step 2)
+# FuelWell — Flow Chart v2.1 (Phase 0.5 · Step 2)
 
-**Status:** ✅ UPDATED 2026-05-19 to App Map v2. Navigation arrows and per-button behavior across all 30 top-level screens (17 re-homed from v1 + 13 new/elevated).
+**Version:** 2.1 (2026-05-21 — Phase 0.5.3 consolidation)
+
+**Status:** ✅ UPDATED 2026-05-19 to App Map v2; layered 2026-05-21 to v2.1 for the D1–D19 consolidation pass (see `decisions.md`). Navigation arrows and per-button behavior across all 29 top-level screens (17 re-homed from v1 + 12 new/elevated; Macro History removed per D12, Learn home retired per D10).
 
 **Purpose:** answers *"what happens when I tap this?"* for every interactive element on every screen. Still no visual opinions — that's Step 4 (Mockups).
 
@@ -44,6 +46,10 @@ flowchart TD
   TabBar -- Exercise --> TExer[Exercise & Activity hub]
   TabBar -- Progress --> TProg[Progress overview v2]
 
+  %% Tab labels in the bar are single words per D9:
+  %% Home · Meals · Coach · Exercise · Progress.
+  %% Full names (Meals & Nutrition, Exercise & Activity) appear as hub screen titles only.
+
   %% Menu sheet outflows
   Menu -- Tools › any --> Tool[Tool screen]
   Menu -- Coach Chat --> Coach
@@ -57,7 +63,7 @@ flowchart TD
   TMeals --> Recipes[Recipe Browser]
   TMeals --> PlanGen[Meal Plan Generator]
   TMeals --> Grocery[Grocery List]
-  TMeals --> MacroHist[Macro History]
+  TMeals -- Macro History row deep-links --> Macro[Macro adherence]
   MealLog --> AddMeal
   AddMeal --> FoodDetail[Food Detail]
   FoodDetail -- Save --> MealLog
@@ -161,8 +167,17 @@ Nine steps. Each has Next and Back. HealthKit and Notification prompts are skipp
 | Element | Tap behavior |
 |---|---|
 | Progress overview summary | → Progress tab landing |
-| Daily Recap card (after 8pm only) | → Daily Recap screen |
+| Daily Recap card (after dynamic trigger — see § 3.6) | → Daily Recap screen |
 | Coach nudge card (event-driven) | → Coach Chat with prompt context preloaded |
+
+**Day 1 state (D7):** on the user's first session, before any meals or workouts have been logged, the Inflows/Outflows ring (Tier 1 slot) is replaced by a single large welcome card.
+
+| Element | Tap behavior |
+|---|---|
+| Welcome card — "Start here: log your first meal" | → Add Meal sheet (Photo default) |
+| Welcome card secondary link — "Take a tour" | → Help screen |
+
+The welcome card auto-collapses after the first meal is logged; the canonical Inflows/Outflows ring takes its place on the next Dashboard render. Health Score hero remains visible (day-1 fallback copy) and Verdict CTA remains visible. Tier 1 contract is preserved — the welcome card *replaces* the ring within that slot, not stacks on top.
 
 ### 3.2 Menu sheet (new)
 
@@ -182,6 +197,10 @@ Opened from the hamburger icon. Full-screen sheet. See APP-MAP § 4 for the full
 
 ### 3.3 Help screen (new — replaces Learn tab)
 
+The Help screen carries all article content. The v1 "Learn home" screen is retired in Phase 0.5.3 (D10) and not shipping at Pilot; Help + inline Learn cards in Coach Chat are the only article surfaces.
+
+**Notification preview privacy (D17):** the Notification preferences sub-screen (reachable from Quick settings row → "Notifications") defaults notification previews to *private*. Default lockscreen copy: "Your coach has an update." Detailed previews are opt-in via a "Show detailed notification previews" toggle.
+
 | Element | Tap behavior |
 |---|---|
 | Back chevron | Returns to caller (Dashboard or Menu) |
@@ -189,6 +208,7 @@ Opened from the hamburger icon. Full-screen sheet. See APP-MAP § 4 for the full
 | Featured article hero | → Article Detail |
 | Category tile | Filters Help to that category |
 | Continue-reading card | → Article Detail at saved scroll position |
+| Quick settings row → Notifications | → Notification preferences (D17 — preview defaults to private) |
 | Quick settings row | → that specific settings sub-screen |
 | "All settings →" link | → Settings (full) |
 | Talk to coach card | → Coach Chat |
@@ -207,15 +227,24 @@ Opened from the hamburger icon. Full-screen sheet. See APP-MAP § 4 for the full
 
 ### 3.5 Health Score detail (re-homed)
 
+**Delta framing (D14):** the hero delta is cause-first ("↓ sleep variance this week"), not numeric-first ("↓ −2.3 vs last week"). Apply on the Dashboard hero too.
+
+**Recovery baseline (D11):** Recovery is computed off a 14-day rolling average of resting HR. Before 14 days of wearable data exist, Recovery is excluded from the Health Score and remaining components proportionally re-weight. The Recovery component card renders: "Recovery unlocks with wearable data (Apple Watch or compatible device)" — explicit, not silent.
+
 | Element | Tap behavior |
 |---|---|
 | Back chevron | Returns to caller |
-| Hero (current score + 30-day delta + sparkline) | Decorative |
+| Hero (current score + cause-first delta + sparkline) | Decorative |
 | Component card (Nutrition / Training / Sleep / Recovery / Body comp) | → that Progress section |
+| Recovery component card (pre-14-day) | Renders the unlock copy above; → System permissions sheet (Apple Health) |
 | "Why this score" expander | Coach-voice explainer of weights and recent contributors |
 | Day-1 placeholder ("Building your baseline") | Decorative — no tap target |
 
 ### 3.6 Daily Recap (re-homed)
+
+**Trigger time (D16 — dynamic):** trigger time = (user's typical sleep onset from HealthKit, 7-day rolling median) − 90 min. Hard floor: never before 7 PM, never after 10 PM. Default to 8:30 PM if no HealthKit sleep data exists yet. Quiet hours 10pm–7am hard floor. Replaces the v2 fixed 8 PM trigger.
+
+**Voice (D13):** Daily Recap copy always leads with a neutral or positive observation before any gap observation. Never use "you missed", "you skipped", "you went over". Adherence below 60% never rendered as an absolute % without a trend comparison.
 
 | Element | Tap behavior |
 |---|---|
@@ -246,7 +275,7 @@ Opened from the hamburger icon. Full-screen sheet. See APP-MAP § 4 for the full
 | Quick access: Recipe Browser | → Recipe Browser |
 | Quick access: Meal Plan Generator | → Meal Plan Generator |
 | Quick access: Grocery List | → Grocery List |
-| Quick access: Macro History | → Macro History |
+| Quick access: Macro History | Deep-link → Progress › Macro adherence (D12 — no standalone screen) |
 | Recent food chip | One-tap re-log with last-used portion |
 
 ### 3.9 Meal Log day view (re-homed)
@@ -342,25 +371,28 @@ Grouped by category (Produce / Protein / Pantry / Dairy / Other).
 | Clear bought | Removes all checked items |
 | Share | iOS share sheet (text export) |
 
-### 3.18 Macro History (new)
+### 3.18 Macro History — deep link (D12)
 
-| Element | Tap behavior |
-|---|---|
-| Time range selector [Weekly/Monthly/90d/All] | Re-renders charts |
-| Macro card (P/C/F) | Tap → full-screen detail for that macro |
-| Day row in history list | → that day's Meal Log |
+Not a standalone screen at Pilot. The Meals & Nutrition hub's "Macro History" row deep-links to **Progress → Macro adherence** detail. See § 3.27 (Progress overview v2) for the Macro adherence card and its detail destination.
 
 ### 3.19 Coach Chat (re-homed)
 
 Input placeholder: *"Ask me anything about today…"*
+
+**Voice mode removed (D2):** the streaming full-screen voice-mode overlay (Mockup M30 V3) is OUT of Pilot. The mic button remains and dictates speech-to-text into the input field; there is no streaming voice conversation.
+
+**Presence indicator (D18):** no persistent green "ONLINE" dot. When the coach is responding, subtle three-dot typing indicator appears above the latest user message; it disappears when the response begins streaming in. No "last seen" timestamps.
+
+**Voice (D13):** Coach Chat copy follows the no-gos in `APP-MAP.md` § 9.1.
 
 | Element | Tap behavior |
 |---|---|
 | Message input + send | Standard chat send |
 | Inline Learn card | Expands inline; "Read full article" → Article Detail |
 | "Log this meal" suggestion chip | → Add Meal sheet preloaded |
-| Voice input mic | Speech-to-text fills the input |
+| Mic button (in input bar) | Speech-to-text dictates into the input field (D2 — no streaming voice mode) |
 | New conversation | Archives current thread |
+| Typing indicator (D18) | Decorative — appears while coach is composing; auto-dismisses on first token of response |
 
 ### 3.20 Exercise & Activity hub (new tab landing)
 
@@ -464,7 +496,7 @@ Default view: weekly.
 | Time range [Weekly/Monthly/90d/All] | Re-renders |
 | Health Score trend card | → Health Score detail |
 | Weight card | → Weight history |
-| Macro adherence card | → Macro History |
+| Macro adherence card | → Macro adherence detail (this is the destination of the Meals & Nutrition hub "Macro History" deep-link per D12) |
 | Body photos thumb | → Photo viewer (swipe history) |
 | Add Photo | → Photo Capture sheet |
 | Measurements row | → Measurements detail |
@@ -513,13 +545,16 @@ Default view: weekly.
 | **Back gesture** | Standard iOS swipe-from-left-edge available on every pushed screen |
 | **Tab tap while on tab root** | Scrolls to top |
 | **Tab tap on deep screen in same tab** | Pops to tab root |
-| **Coach tab** | Distinct visual treatment (speech-bubble icon, inverted shading) regardless of active state |
+| **Tab labels (D9)** | Single words in the tab bar: Home · Meals · Coach · Exercise · Progress. Full names ("Meals & Nutrition", "Exercise & Activity") appear only as hub screen titles. |
+| **Coach tab (D6)** | Distinct visual treatment — raised-circle FAB-style container, inverted shading — regardless of active state. Coach Chat presence uses a typing indicator (D18), no persistent ONLINE dot. |
 | **Pull to refresh** | Dashboard, Meal Log, Progress, Coach Chat |
-| **Offline mode** | Read-only banner; write actions disabled with explanatory toast |
+| **Offline write queue (D15)** | Pilot ships with a local SQLite write queue. Write actions stay enabled offline; queued writes show a small banner "Offline — N logs will sync when you reconnect" and a subtle dot on the Home tab when queued items exist. Background sync fires automatically on reconnect. Conflict resolution: last-write-wins for the user's own data. Replaces the v2 "offline = read-only" rule. |
 | **Coach proactive push tap** | Deep-links to the relevant screen |
+| **Notification preview privacy (D17)** | Lockscreen previews default to private ("Your coach has an update"). Detailed previews are opt-in via Settings › Notification preferences. |
+| **Coach voice no-gos (D13)** | Never use "you missed", "you skipped", "you went over"; never show adherence below 60% as an absolute % without trend comparison; Daily Recap leads with neutral or positive before any gap observation. |
 | **Onboarding skip** | Only on permission steps (HealthKit, Notifications). System resurfaces the prompt contextually later (e.g. first Progress open prompts HealthKit). |
 | **Sign-out cache wipe** | Local SQLite wiped before Welcome renders. Dev unit test required. |
-| **Daily Recap timezone** | Triggers at 8pm local device time. Inherits future custom notification schedules. |
+| **Daily Recap trigger (D16)** | Dynamic: `trigger = HealthKit 7-day median sleep onset − 90 min`. Hard floor never before 7 PM, never after 10 PM. Default 8:30 PM if no HealthKit sleep data yet. Quiet hours 10pm–7am hard floor. Inherits future custom notification schedules. |
 
 ---
 

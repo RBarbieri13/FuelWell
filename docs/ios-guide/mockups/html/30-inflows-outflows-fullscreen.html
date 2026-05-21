@@ -147,14 +147,14 @@
   }
   .sk-eyebrow {
     font-family: var(--font-body);
-    font-size: 10.5px; font-weight: 700;
-    color: var(--text-secondary);
+    font-size: 12px; font-weight: 800;
+    color: var(--text-primary);
     letter-spacing: 0.18em; text-transform: uppercase;
   }
   .sk-net {
     font-family: var(--font-numeric);
     font-feature-settings: "tnum" 1;
-    font-size: 14px; font-weight: 700;
+    font-size: 16px; font-weight: 800;
     color: var(--semantic-warning);
     letter-spacing: -0.01em;
   }
@@ -182,15 +182,15 @@
   }
   .stile .lbl {
     font-family: var(--font-body);
-    font-size: 9.5px; font-weight: 700;
-    color: var(--text-secondary);
-    letter-spacing: 0.14em; text-transform: uppercase;
+    font-size: 11.5px; font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: 0.16em; text-transform: uppercase;
   }
   .stile .num {
     margin-top: 4px;
     font-family: var(--font-numeric);
     font-feature-settings: "tnum" 1;
-    font-size: 22px; font-weight: 700;
+    font-size: 26px; font-weight: 800;
     color: var(--text-primary);
     letter-spacing: -0.02em;
     line-height: 1;
@@ -232,10 +232,11 @@
     background: var(--bg-surface);
     border: 1px solid var(--bg-border);
     border-radius: var(--radius-md);
-    padding: 10px 12px;
+    padding: 12px 12px;
     display: flex; align-items: center; gap: 10px;
     box-shadow: var(--elev-1);
     margin-bottom: 6px;
+    min-height: 56px; /* >= 28px tap target with comfortable buffer */
   }
   .lane-row .sw {
     width: 8px; height: 28px; border-radius: 3px;
@@ -244,7 +245,7 @@
   .lane-row .body { flex: 1; min-width: 0; }
   .lane-row .nm {
     font-family: var(--font-body);
-    font-size: 13px; font-weight: 600;
+    font-size: 14px; font-weight: 700;
     color: var(--text-primary);
     letter-spacing: -0.003em;
     line-height: 1.25;
@@ -271,7 +272,7 @@
   .lane-row .kcal {
     font-family: var(--font-numeric);
     font-feature-settings: "tnum" 1;
-    font-size: 13.5px; font-weight: 700;
+    font-size: 15px; font-weight: 800;
     color: var(--text-primary);
     letter-spacing: -0.005em;
     text-align: right;
@@ -290,6 +291,29 @@
     box-shadow: none;
   }
   .lane-row.pending .nm { color: var(--text-secondary); }
+
+  /* Sankey threshold footnote */
+  .sk-footnote {
+    margin-top: 8px;
+    font-family: var(--font-body);
+    font-size: 10.5px; font-weight: 500;
+    color: var(--text-secondary);
+    letter-spacing: -0.002em;
+    font-style: italic;
+  }
+
+  /* Orientation toggle (top-right of nav) */
+  .nav-actions { display: inline-flex; gap: 4px; align-items: center; }
+  .orient-toggle {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-primary);
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    box-shadow: var(--elev-1);
+    cursor: pointer;
+  }
 
   /* Empty state */
   .empty-state {
@@ -346,8 +370,8 @@
   <header class="doc-header">
     <div>
       <p class="doc-eyebrow">FuelWell · Round 2 · Step 4 — Mockups</p>
-      <h1 class="doc-title">M30 Energy balance · full-screen Sankey</h1>
-      <p class="doc-sub">Pushed from the M28/M29 widget. Sankey-style flow diagram: intake lanes (left) → total intake → total expenditure → expenditure lanes (right). Band thickness = calorie weight, color = dominant macro / source. Three layouts: horizontal flow (canonical), vertical flow (intake top → expenditure bottom), and a hybrid with stats sandwiching a smaller flow.</p>
+      <h1 class="doc-title">M30 Energy balance · full-screen Sankey — V3 Hybrid (locked)</h1>
+      <p class="doc-sub">Locked to V3 Hybrid layout per Max recommendation. Three summary stats above a Sankey-style flow diagram, with detail rows directly underneath. Bolder labels and bigger headers. Lanes representing &lt;7% of daily total collapse into a single "Other" band (footnote on the diagram). Each lane row is ≥ 28pt tall for a comfortable tap target. Top-right orientation toggle (portrait ↔ landscape) flips the Sankey direction.</p>
     </div>
     <div class="doc-meta">
       iPhone 15 Pro · 393 × 852 pt<br>
@@ -389,6 +413,7 @@
   const ic = {
     back: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>`,
     info: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v.01" stroke-linecap="round"/></svg>`,
+    rotate: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="14" height="10" rx="2"/><path d="M19 4v6M22 7l-3-3-3 3"/></svg>`,
     flow: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 6c4 0 4 12 8 12s4-12 8-12M3 18c4 0 4-12 8-12s4 12 8 12"/></svg>`,
     chev: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>`,
     tabHome: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11l8-7 8 7v8a1 1 0 01-1 1h-4v-6h-6v6H5a1 1 0 01-1-1v-8Z"/></svg>`,
@@ -421,26 +446,61 @@
   /* ============================================================
      DATA
      ============================================================ */
-  const INTAKE = [
+  const INTAKE_RAW = [
     { id: 'breakfast', name: 'Breakfast', kcal: 358, macro: 'c', detail: 'Oats, berries, peanut butter', p: 18, c: 52, f: 11 },
     { id: 'lunch',     name: 'Lunch',     kcal: 612, macro: 'p', detail: 'Chicken & rice bowl · Sweetgreen', p: 48, c: 64, f: 14 },
     { id: 'snacks',    name: 'Snacks',    kcal: 258, macro: 'p', detail: 'Greek yogurt + honey', p: 22, c: 30, f: 6 },
+    { id: 'coffee',    name: 'Coffee + cream', kcal: 95, macro: 'f', detail: 'Drip · oat milk', p: 1, c: 5, f: 9 },
+    { id: 'gum',       name: 'Gum', kcal: 12, macro: 'c', detail: '2 pieces', p: 0, c: 3, f: 0 },
     { id: 'dinner',    name: 'Dinner',    kcal: 612, macro: 'c', detail: 'Coach pick — chicken pasta', p: 38, c: 72, f: 18, projected: true },
   ];
-  const TOTAL_IN = INTAKE.reduce((a,b) => a + b.kcal, 0); // 1840
-  const EXPEND = [
+  const TOTAL_IN = INTAKE_RAW.reduce((a,b) => a + b.kcal, 0);
+
+  /* 7% threshold rule — lanes representing <7% of daily total collapse into a single "Other" band */
+  const INTAKE_THRESHOLD = TOTAL_IN * 0.07;
+  const INTAKE_MAIN = INTAKE_RAW.filter(i => i.kcal >= INTAKE_THRESHOLD);
+  const INTAKE_OTHER = INTAKE_RAW.filter(i => i.kcal < INTAKE_THRESHOLD);
+  const INTAKE = INTAKE_OTHER.length > 0
+    ? [...INTAKE_MAIN, {
+        id: 'other-in',
+        name: 'Other',
+        kcal: INTAKE_OTHER.reduce((a,b) => a + b.kcal, 0),
+        macro: 'c',
+        detail: `${INTAKE_OTHER.length} small items grouped (<7%)`,
+        p: INTAKE_OTHER.reduce((a,b) => a + b.p, 0),
+        c: INTAKE_OTHER.reduce((a,b) => a + b.c, 0),
+        f: INTAKE_OTHER.reduce((a,b) => a + b.f, 0),
+        isOther: true,
+      }]
+    : INTAKE_MAIN;
+
+  const EXPEND_RAW = [
     { id: 'bmr',      name: 'BMR',           kcal: 1142, src: 'bmr',      detail: 'Resting metabolic baseline · 24h' },
     { id: 'activity', name: 'Daily activity', kcal: 320, src: 'activity', detail: '8,432 steps · Apple Health' },
     { id: 'workout',  name: 'Workout',       kcal: 250,  src: 'workout',  detail: 'Strength · Push · 5pm' },
   ];
-  const TOTAL_OUT = EXPEND.reduce((a,b) => a + b.kcal, 0); // 1712
-  const NET = TOTAL_IN - TOTAL_OUT; // +128
+  const TOTAL_OUT = EXPEND_RAW.reduce((a,b) => a + b.kcal, 0);
+  const EXPEND_THRESHOLD = TOTAL_OUT * 0.07;
+  const EXPEND_MAIN = EXPEND_RAW.filter(i => i.kcal >= EXPEND_THRESHOLD);
+  const EXPEND_OTHER = EXPEND_RAW.filter(i => i.kcal < EXPEND_THRESHOLD);
+  const EXPEND = EXPEND_OTHER.length > 0
+    ? [...EXPEND_MAIN, {
+        id: 'other-out',
+        name: 'Other',
+        kcal: EXPEND_OTHER.reduce((a,b) => a + b.kcal, 0),
+        src: 'bmr',
+        detail: `${EXPEND_OTHER.length} small sources grouped (<7%)`,
+        isOther: true,
+      }]
+    : EXPEND_MAIN;
+
+  const NET = TOTAL_IN - TOTAL_OUT;
 
   const macroColor = (m, projected) => {
-    const base = m === 'p' ? '#00D278' : m === 'c' ? '#F59E0B' : '#A855F7';
+    const base = m === 'p' ? '#00D278' : m === 'c' ? '#F59E0B' : m === 'f' ? '#A855F7' : '#9CA3AF';
     return base;
   };
-  const srcColor = (s) => s === 'bmr' ? '#6B7280' : s === 'activity' ? '#00B4D8' : '#E87A1D';
+  const srcColor = (s) => s === 'bmr' ? '#6B7280' : s === 'activity' ? '#00B4D8' : s === 'workout' ? '#E87A1D' : '#9CA3AF';
 
   /* ============================================================
      SANKEY DRAWING
@@ -793,11 +853,11 @@
     let labels = '';
     leftBands.forEach(b => {
       const yMid = (b.srcY + b.srcYBot) / 2;
-      labels += `<text x="${leftEdge}" y="${yMid + 3}" font-family="Inter, sans-serif" font-size="9" font-weight="700" fill="#0A0A0F">${b.name}</text>`;
+      labels += `<text x="${leftEdge}" y="${yMid + 4}" font-family="Inter, sans-serif" font-size="11" font-weight="800" fill="#0A0A0F">${b.name}</text>`;
     });
     rightBands.forEach(b => {
       const yMid = (b.destY + b.destYBot) / 2;
-      labels += `<text x="${rightEdge}" y="${yMid + 3}" text-anchor="end" font-family="Inter, sans-serif" font-size="9" font-weight="700" fill="#0A0A0F">${b.name}</text>`;
+      labels += `<text x="${rightEdge}" y="${yMid + 4}" text-anchor="end" font-family="Inter, sans-serif" font-size="11" font-weight="800" fill="#0A0A0F">${b.name}</text>`;
     });
 
     const pillars = `
@@ -892,11 +952,11 @@
       summary = summaryTiles();
       detailRows = `
         <div class="detail-section">
-          <div class="section-h"><div class="t">INTAKE LANES · 4</div><div class="m">${TOTAL_IN.toLocaleString()} kcal</div></div>
+          <div class="section-h"><div class="t">INTAKE LANES · ${INTAKE.length}</div><div class="m">${TOTAL_IN.toLocaleString()} kcal</div></div>
           ${INTAKE.map(i => laneRow(i, 'intake')).join('')}
         </div>
         <div class="detail-section">
-          <div class="section-h"><div class="t">OUTPUT LANES · 3</div><div class="m">${TOTAL_OUT.toLocaleString()} kcal</div></div>
+          <div class="section-h"><div class="t">OUTPUT LANES · ${EXPEND.length}</div><div class="m">${TOTAL_OUT.toLocaleString()} kcal</div></div>
           ${EXPEND.map(i => laneRow(i, 'expend')).join('')}
         </div>`;
     }
@@ -910,9 +970,18 @@
       cardHead = `<div class="sk-head"><div class="sk-eyebrow">FLOW · TODAY</div><div class="sk-net">Net +${NET}</div></div>`;
     }
 
-    // V3 hybrid: summary BEFORE Sankey, detail rows AFTER
+    // V3 hybrid (locked): summary BEFORE Sankey, detail rows AFTER, with 7% footnote
     let body = '';
     if (kind === 'hybrid' && !empty) {
+      body = `
+        ${summary}
+        <div class="sankey-card" style="margin-top: 10px;">
+          ${cardHead}
+          ${sankey}
+          <div class="sk-footnote">Lanes &lt; 7% of daily total are grouped as Other.</div>
+        </div>
+        ${detailRows}`;
+    } else if (kind === 'hybrid' && empty) {
       body = `
         ${summary}
         <div class="sankey-card" style="margin-top: 10px;">
@@ -945,7 +1014,10 @@
               <div class="nav">
                 <div class="iconbtn">${ic.back}</div>
                 <div class="title">Energy balance</div>
-                <div class="iconbtn">${ic.info}</div>
+                <div class="nav-actions">
+                  <div class="orient-toggle" title="Toggle portrait / landscape">${ic.rotate}</div>
+                  <div class="iconbtn">${ic.info}</div>
+                </div>
               </div>
               <div class="seg">
                 <button class="on">Today</button>
@@ -962,15 +1034,12 @@
       </section>`;
   }
 
+  /* Locked to V3 Hybrid layout per Max recommendation. */
   const populated = [
-    { num: 'Variation 01 · Layout', kind: 'classic', empty: false, name: 'Classic L → R Sankey', cap: 'Canonical Sankey direction. Left lanes flow into the TOTAL INTAKE pillar, bridge across to TOTAL OUT, then split into BMR / activity / workout on the right.' },
-    { num: 'Variation 02 · Layout', kind: 'vertical', empty: false, name: 'Vertical T → B Sankey', cap: 'Intake "fills" the day from above, expenditure drains it below. Reads top-to-bottom — closer to a phone\'s natural scroll direction.' },
-    { num: 'Variation 03 · Layout', kind: 'hybrid', empty: false, name: 'Hybrid · stats wrap Sankey', cap: 'Three summary tiles pulled above a smaller Sankey, detail rows directly underneath. Most scannable single-glance read.' },
+    { num: 'Variation 01 · Locked', kind: 'hybrid', empty: false, name: 'V3 Hybrid · stats wrap Sankey (canonical)', cap: 'Locked layout: three summary tiles above a Sankey, detail rows directly underneath. Bolder headers and stat numbers. Lanes < 7% of daily total collapse into a single "Other" band; footnote sits beneath the diagram. Portrait/landscape toggle in the nav.' },
   ];
   const empties = [
-    { num: 'Variation 01 · Empty', kind: 'classic', empty: true, name: 'Day 1 · nothing to flow', cap: 'Classic layout, but Sankey collapses to two grey pillar stubs with a coach-voice message. Summary tiles render zeros; detail section is a single dashed empty-state panel.' },
-    { num: 'Variation 02 · Empty', kind: 'vertical', empty: true, name: 'Vertical · nothing to flow', cap: 'Vertical layout empty state — pillars sit horizontally with the same message.' },
-    { num: 'Variation 03 · Empty', kind: 'hybrid', empty: true, name: 'Hybrid · nothing to flow', cap: 'Hybrid empty — zero stats sit above a tiny pillar-only Sankey stub. The detail section reads as the empty hero.' },
+    { num: 'Variation 01 · Locked · Empty', kind: 'hybrid', empty: true, name: 'V3 Hybrid · nothing to flow', cap: 'Hybrid empty — zero stats sit above a tiny pillar-only Sankey stub. The detail section reads as the empty hero.' },
   ];
 
   document.getElementById('frames').innerHTML = `

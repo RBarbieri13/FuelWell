@@ -230,6 +230,55 @@
     line-height: 1.35;
   }
 
+  /* Privacy toggle row (D17 — show details on lock screen, defaults OFF) */
+  .privacy-row {
+    margin-top: 12px;
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--elev-1);
+    padding: 14px 16px;
+    display: flex; align-items: flex-start;
+    gap: 14px;
+  }
+  .privacy-text { flex: 1; min-width: 0; }
+  .privacy-title {
+    font-family: var(--font-body);
+    font-size: 15px; font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.005em;
+    line-height: 1.3;
+  }
+  .privacy-sub {
+    margin-top: 2px;
+    font-family: var(--font-body);
+    font-size: 12.5px; font-weight: 400;
+    color: var(--text-secondary);
+    letter-spacing: -0.002em;
+    line-height: 1.4;
+  }
+  .ios-switch {
+    flex-shrink: 0;
+    width: 44px; height: 26px;
+    border-radius: 999px;
+    background: #E5E7EB;
+    position: relative;
+    transition: background .15s ease;
+    margin-top: 2px;
+  }
+  .ios-switch::after {
+    content: "";
+    position: absolute;
+    top: 2px; left: 2px;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: #FFFFFF;
+    box-shadow: 0 2px 4px rgba(0,0,0,.18);
+    transition: left .15s ease;
+  }
+  .ios-switch.on { background: var(--action-green); }
+  .ios-switch.on::after { left: 20px; }
+
   /* CTA */
   .cta-dock {
     position: absolute;
@@ -489,7 +538,7 @@
     <dd>Centered below the subtitle, a single pill on white with a moon glyph and the time range "<span style="font-family:'DM Sans';font-weight:600;color:#0A0A0F;">10:00 PM – 7:00 AM</span>". Hard-coded at Pilot per the wireframe spec — surfaced as a promise, not a setting. Settings exposes it read-only.</dd>
 
     <dt>Trigger rows</dt>
-    <dd>Four-row card on white, <code>radius.lg</code>, with the same anatomy as M07's metric rows. Each row carries a tinted SF-Symbol icon, a trigger name in <strong>Inter 600</strong> 15pt, and a one-line consequence in <code>color.text.secondary</code>: meal skipped → warning; macros over → error; missed workout → info-blue; weight off plan → purple. Colors are tonal, not categorical — they hint at the kind of nudge without being a verdict.</dd>
+    <dd>Four-row card on white, <code>radius.lg</code>, with the same anatomy as M07's metric rows. Each row carries a tinted SF-Symbol icon, a trigger name in <strong>Inter 600</strong> 15pt, and a one-line consequence in <code>color.text.secondary</code>: meal gap → warning; macros over → error; workout idle → info-blue; weight off plan → purple. Colors are tonal, not categorical — they hint at the kind of nudge without being a verdict. (Trigger names follow D13 — no "skipped" / "missed" / "you went over" phrasing.)</dd>
 
     <dt>CTA — always enabled</dt>
     <dd>"Enable Notifications" with the bell glyph. Permission screens never disable the primary action; the iOS alert on tap is the one shot we get. Skip-for-now in <code>color.text.secondary</code> beneath — advances to 3.9 without firing the system prompt; user can recover later in Settings → Notifications (capped by the OS-level setting).</dd>
@@ -498,7 +547,7 @@
     <dd>Native iOS alert dialog — 270pt-wide rounded card with 92% white blur, "FuelWell" Would Like to Send You Notifications" in SF 17 semibold, subtitle "Notifications may include alerts, sounds, and icon badges. These can be configured in Settings." in SF 13. Two-column buttons — "Don't Allow" / "Allow" — bottom-right is the default per Apple HIG so we render it in 600.</dd>
 
     <dt>Lock-screen preview · V3</dt>
-    <dd>After tap-Allow, the device transitions to a dark gradient lock-screen mock with the iOS native clock (Sunday · 12:38) and two stacked notification banners — the first is the real "You skipped lunch" coach push, the second is a softened second-priority example. iOS-native rounded blur-bg, 0.5pt white border, the FuelWell gradient app glyph at 22pt. Bottom of frame fades to a "Notifications enabled — continue" label + dark Continue CTA so the flow keeps moving.</dd>
+    <dd>After tap-Allow, the device transitions to a dark gradient lock-screen mock with the iOS native clock (Sunday · 12:38) and two stacked notification banners — both render the D17 private default ("Your coach has an update" / "Open FuelWell to see the details."). iOS-native rounded blur-bg, 0.5pt white border, the FuelWell gradient app glyph at 22pt. Bottom of frame fades to a "Notifications enabled — continue" label + dark Continue CTA so the flow keeps moving.</dd>
 
     <dt>Verdict</dt>
     <dd>No verdict surface yet — engine still has no plan. Reveal is 3.9.</dd>
@@ -607,6 +656,13 @@
           ${triggerRow('workout', icWorkout, 'You miss a workout',  "Once, in the evening — not a streak shame.")}
           ${triggerRow('weight',  icWeight,  'Your weight drifts',  "Weekly, only when off your trend by 2 lb+.")}
         </div>
+        <div class="privacy-row">
+          <div class="privacy-text">
+            <div class="privacy-title">Show details on lock screen</div>
+            <div class="privacy-sub">You can change this anytime in Notification preferences.</div>
+          </div>
+          <div class="ios-switch" aria-label="Off"></div>
+        </div>
       </div>`;
   }
 
@@ -688,7 +744,7 @@
       <div class="v-label">
         <div class="v-num">Variation 03 · State</div>
         <div class="v-name">Allowed · lock-screen preview</div>
-        <div class="v-cap">User tapped Allow. The flow holds for one beat on a preview of what the user just signed up for — a real "You skipped lunch" coach push on the iOS lock screen. Continue moves to 3.9 Plan reveal.</div>
+        <div class="v-cap">User tapped Allow. The flow holds for one beat on a preview of what the user just signed up for — the D17 private-default coach push on the iOS lock screen. Continue moves to 3.9 Plan reveal.</div>
       </div>
       <div class="device lock-bg">
         ${statusBar(true)}
@@ -705,8 +761,8 @@
                 <div class="lock-notif-app-name">FuelWell</div>
                 <div class="lock-notif-time">now</div>
               </div>
-              <div class="lock-notif-title">You skipped lunch.</div>
-              <div class="lock-notif-body">You're 740 cal short with 6 hours left. A 35g-protein snack now keeps your plan on rails.</div>
+              <div class="lock-notif-title">Your coach has an update</div>
+              <div class="lock-notif-body">Open FuelWell to see the details.</div>
             </div>
             <div class="lock-notif">
               <div class="lock-notif-head">
@@ -714,8 +770,8 @@
                 <div class="lock-notif-app-name">FuelWell</div>
                 <div class="lock-notif-time">2h ago</div>
               </div>
-              <div class="lock-notif-title">Weight trend update.</div>
-              <div class="lock-notif-body">Down 0.4 lb on the week — right on your glide path. No changes needed.</div>
+              <div class="lock-notif-title">Your coach has an update</div>
+              <div class="lock-notif-body">Open FuelWell to see the details.</div>
             </div>
           </div>
           <div class="lock-overlay">
