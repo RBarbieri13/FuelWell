@@ -5,7 +5,7 @@
 **Branch:** feature/phase-1-foundations
 **Base commit:** c64a3e183136dfe31d5e14958ae9c2420d3ad5c8
 **Final HEAD:** see `git rev-parse HEAD` on `feature/phase-1-foundations`
-**PR:** pending push/create
+**PR:** https://github.com/RBarbieri13/FuelWell/pull/28
 
 ## DoD verification
 
@@ -17,7 +17,7 @@
 | 4 | Import direction OK | ✅ | `ios/scripts/check-feature-imports.sh` -> `Import direction check passed.` |
 | 5 | Theme drift clean | ✅ | `ios/scripts/check-theme-drift.sh` -> `Theme drift check passed.` |
 | 6 | SwiftLint clean | ✅ | `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer swiftlint --strict --config ios/.swiftlint.yml ios` -> 0 violations |
-| 7 | Commit + push + PR | 🟡 | W1-W6 commits present locally; push/PR are performed after this initial report commit so the PR URL can be recorded in a follow-up report update. |
+| 7 | Commit + push + PR | ✅ | W1-W6 commits pushed to `origin/feature/phase-1-foundations`; draft PR #28 opened against `main`. |
 | 8 | Handoff report present | ✅ | `ios/HANDOFF-REPORT.md` |
 
 ## Workstream summary
