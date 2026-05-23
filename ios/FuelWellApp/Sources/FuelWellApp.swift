@@ -4,6 +4,10 @@ import SwiftUI
 
 @main
 struct FuelWellApp: SwiftUI.App {
+    init() {
+        prepareFuelWellDependencies()
+    }
+
     var body: some Scene {
         WindowGroup {
             AppCoordinator(
