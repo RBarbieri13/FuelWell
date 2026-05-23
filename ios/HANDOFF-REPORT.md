@@ -4,7 +4,7 @@
 **Codex run id:** local-codex-2026-05-23-phase-1-foundations
 **Branch:** feature/phase-1-foundations
 **Base commit:** c64a3e183136dfe31d5e14958ae9c2420d3ad5c8
-**Final HEAD:** 51b685833a7649c9e2db97486055a7a52d03ca78
+**Final HEAD:** see `git rev-parse HEAD` on `feature/phase-1-foundations`
 **PR:** pending push/create
 
 ## DoD verification
@@ -27,7 +27,7 @@
 - W3 Theme generator - ✅ `2c7b9ea` - added DESIGN.md-driven Theme generation and drift checking.
 - W4 Lint + CI - ✅ `8d62212` - added SwiftLint strict config, import-direction checker, and iOS CI workflow.
 - W5 AppFeature + splash - ✅ `6237d5d` - added launch dependency prep hook for the TCA shell.
-- W6 Tests + handoff - ✅ `51b6858` - added AppFeature and DesignSystem Swift Testing coverage plus this report.
+- W6 Tests + handoff - ✅ `d3c87ce` - added AppFeature and DesignSystem Swift Testing coverage plus this report.
 
 ## Escalations / open questions
 
