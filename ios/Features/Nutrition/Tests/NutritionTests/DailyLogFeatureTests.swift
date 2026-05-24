@@ -45,3 +45,68 @@ func deleteSwipeRemovesOptimisticallyAndUpdatesMacros() async {
         $0.macroSnapshot = DailyLogFeature.State.snapshot(entries: $0.entries, target: $0.target)
     }
 }
+
+@MainActor
+@Test
+func addMealFlowDefaultsToPhotoAndSavesEntry() async throws {
+    let id = try #require(UUID(uuidString: "A0B2E9D8-DF82-4F62-9EB8-75B4F15F0A10"))
+    let date = Date(timeIntervalSince1970: 1_714_046_400)
+    let repository = InMemoryNutritionRepository()
+    let store = TestStore(initialState: DailyLogFeature.State(selectedDate: date)) {
+        DailyLogFeature()
+    } withDependencies: {
+        $0.nutritionRepository = repository
+        $0.uuid = .constant(id)
+        $0.date.now = date
+    }
+
+    await store.send(.addMealTapped) {
+        $0.isAddMealPresented = true
+        $0.addMealDraft = AddMealDraft()
+    }
+    await store.send(.addMealNameChanged("Salmon bowl")) {
+        $0.addMealDraft.name = "Salmon bowl"
+    }
+    await store.send(.addMealCaloriesChanged("610")) {
+        $0.addMealDraft.calories = "610"
+    }
+    await store.send(.addMealProteinChanged("44")) {
+        $0.addMealDraft.protein = "44"
+    }
+    await store.send(.addMealCarbsChanged("58")) {
+        $0.addMealDraft.carbs = "58"
+    }
+    await store.send(.addMealFatChanged("20")) {
+        $0.addMealDraft.fat = "20"
+    }
+
+    let entry = MealEntry(
+        id: id,
+        name: "Salmon bowl",
+        calories: 610,
+        protein: 44,
+        carbs: 58,
+        fat: 20,
+        loggedAt: date
+    )
+
+    await store.send(.saveAddMealTapped) {
+        $0.entries = IdentifiedArray(uniqueElements: [entry])
+        $0.macroSnapshot = DailyLogFeature.State.snapshot(entries: $0.entries, target: $0.target)
+        $0.isAddMealPresented = false
+        $0.addMealDraft = AddMealDraft()
+    }
+    await store.receive(.saveAddMealSucceeded(entry))
+}
+
+@MainActor
+@Test
+func addMealRequiresNameAndCalories() async {
+    let store = TestStore(initialState: DailyLogFeature.State()) {
+        DailyLogFeature()
+    }
+
+    await store.send(.saveAddMealTapped) {
+        $0.errorMessage = "Add a meal name and calories before saving."
+    }
+}
