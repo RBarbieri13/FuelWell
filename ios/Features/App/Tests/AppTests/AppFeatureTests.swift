@@ -33,3 +33,31 @@ func appFeatureLoadsThemeOnAppear() async {
         )
     }
 }
+
+@MainActor
+@Test
+func splashCompletesIntoMainTabs() async {
+    let store = TestStore(initialState: AppFeature.State()) {
+        AppFeature()
+    }
+
+    await store.send(.minimumSplashElapsed) {
+        $0.phase = .mainTabs
+    }
+}
+
+@MainActor
+@Test
+func tabSelectionUpdatesRootState() async {
+    let store = TestStore(initialState: AppFeature.State(phase: .mainTabs)) {
+        AppFeature()
+    }
+
+    await store.send(.tabSelected(.coach)) {
+        $0.selectedTab = .coach
+    }
+
+    await store.send(.tabSelected(.progress)) {
+        $0.selectedTab = .progress
+    }
+}

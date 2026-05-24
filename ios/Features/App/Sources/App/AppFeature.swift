@@ -23,15 +23,18 @@ public struct AppFeature: Sendable {
         public var phase: Phase
         public var theme: Theme
         public var architecture: ArchitectureState
+        public var selectedTab: AppTab
 
         public init(
             phase: Phase = .splash,
             theme: Theme = .app,
-            architecture: ArchitectureState = .init()
+            architecture: ArchitectureState = .init(),
+            selectedTab: AppTab = .home
         ) {
             self.phase = phase
             self.theme = theme
             self.architecture = architecture
+            self.selectedTab = selectedTab
         }
     }
 
@@ -56,7 +59,7 @@ public struct AppFeature: Sendable {
 
     public enum Phase: Equatable {
         case splash
-        case dashboardPlaceholder
+        case mainTabs
     }
 
     public enum Action: Equatable {
@@ -64,6 +67,7 @@ public struct AppFeature: Sendable {
         case architectureChecked(ArchitectureState)
         case themeLoaded(Theme)
         case minimumSplashElapsed
+        case tabSelected(AppTab)
     }
 
     public var body: some ReducerOf<Self> {
@@ -85,7 +89,11 @@ public struct AppFeature: Sendable {
                 return .none
 
             case .minimumSplashElapsed:
-                state.phase = .dashboardPlaceholder
+                state.phase = .mainTabs
+                return .none
+
+            case let .tabSelected(tab):
+                state.selectedTab = tab
                 return .none
             }
         }
