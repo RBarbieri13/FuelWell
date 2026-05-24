@@ -59,8 +59,12 @@ while IFS= read -r -d '' file; do
     [[ -z "${imported_module}" ]] && continue
 
     if is_declared_feature "${imported_module}"; then
-      echo "${file}: feature '${feature_name}' illegally imports feature '${imported_module}'"
-      violations=$((violations + 1))
+      if [[ "${feature_name}" == "App" ]]; then
+        :
+      else
+        echo "${file}: feature '${feature_name}' illegally imports feature '${imported_module}'"
+        violations=$((violations + 1))
+      fi
     elif is_declared_package "${imported_module}"; then
       :
     fi

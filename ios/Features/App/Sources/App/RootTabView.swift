@@ -1,5 +1,6 @@
 import ComposableArchitecture
 import DesignSystem
+import Nutrition
 import NutritionDomain
 import SwiftUI
 
@@ -19,7 +20,15 @@ public struct RootTabView: View {
             TabView(selection: self.$store.selectedTab.sending(\.tabSelected)) {
                 ForEach(AppTab.allCases) { tab in
                     NavigationStack {
-                        TabHubView(tab: tab)
+                        if tab == .meals {
+                            DailyLogView(
+                                store: Store(initialState: DailyLogFeature.State()) {
+                                    DailyLogFeature()
+                                }
+                            )
+                        } else {
+                            TabHubView(tab: tab)
+                        }
                     }
                     .tag(tab)
                     .tabItem {
