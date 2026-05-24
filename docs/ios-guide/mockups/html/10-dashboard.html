@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>FuelWell · M10 Dashboard · Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-base: #F4F5F7;
+    --bg-surface: #FFFFFF;
+    --bg-elevated: #0F1117;
+    --bg-elevated-2: #1A1F2E;
+    --bg-border: #E5E7EB;
+    --bg-border-soft: #EEF0F3;
+    --bg-border-dark: #2A2A3A;
+
+    --text-primary: #0A0A0F;
+    --text-body: #1F2937;
+    --text-secondary: #6B7280;
+    --text-muted: #9CA3AF;
+    --text-disabled: #C7CCD3;
+    --text-on-dark: #FFFFFF;
+    --text-on-dark-muted: #9AA0AC;
+
+    --brand-green: #47E7B0;
+    --action-green: #00D278;
+    --primary-orange: #E87A1D;
+
+    --semantic-success: #00D278;
+    --semantic-warning: #F59E0B;
+    --semantic-error: #EF4444;
+    --semantic-info: #00B4D8;
+    --semantic-premium: #A855F7;
+
+    --macro-protein: #00D278;
+    --macro-carbs: #F59E0B;
+    --macro-fat: #A855F7;
+    --macro-calories: #00D278;
+
+    --gradient-brand: linear-gradient(135deg, #00D278 0%, #47E7B0 100%);
+    --gradient-text: linear-gradient(90deg, #00D278, #00B4D8);
+
+    --radius-sm: 6px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+    --radius-xl: 28px;
+    --radius-pill: 999px;
+
+    --elev-1: 0 1px 2px rgba(15,17,23,.04), 0 1px 0 rgba(15,17,23,.02);
+    --elev-2: 0 4px 14px rgba(15,17,23,.06), 0 1px 2px rgba(15,17,23,.04);
+    --elev-3: 0 12px 32px rgba(15,17,23,.08);
+    --elev-cta: 0 8px 24px rgba(0,210,120,.22), 0 2px 4px rgba(15,17,23,.10);
+
+    --font-display: 'Outfit', system-ui, -apple-system, sans-serif;
+    --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-system: -apple-system, 'SF Pro Display', system-ui, sans-serif;
+    --font-numeric: 'DM Sans', 'Inter', sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: #ECEDF0;
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    padding: 56px 48px 96px;
+    min-width: 1380px;
+  }
+
+  /* Doc */
+  .doc-header {
+    max-width: 1320px; margin: 0 auto 48px;
+    display: flex; align-items: flex-end; justify-content: space-between;
+    gap: 32px; border-bottom: 1px solid #D6D8DD; padding-bottom: 24px;
+  }
+  .doc-eyebrow { font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-muted); margin: 0 0 8px; font-weight: 600; }
+  .doc-title { font-family: var(--font-display); font-size: 28px; font-weight: 700; margin: 0; color: var(--text-primary); letter-spacing: -0.018em; }
+  .doc-sub { font-size: 13px; color: var(--text-secondary); margin: 8px 0 0; max-width: 760px; line-height: 1.55; }
+  .doc-meta { font-family: var(--font-numeric); font-size: 11px; color: var(--text-muted); text-align: right; letter-spacing: 0.04em; line-height: 1.7; }
+
+  .frames-row { display: flex; gap: 64px; justify-content: center; align-items: flex-start; }
+  .variation { display: flex; flex-direction: column; align-items: center; width: 393px; }
+  .v-label { margin-bottom: 18px; text-align: center; width: 100%; }
+  .v-num { font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-muted); font-weight: 600; }
+  .v-name { font-family: var(--font-display); font-size: 16px; font-weight: 600; color: var(--text-primary); margin-top: 4px; letter-spacing: -0.005em; }
+  .v-cap { font-size: 12px; color: var(--text-secondary); margin-top: 4px; line-height: 1.45; max-width: 340px; }
+
+  /* Device */
+  .device {
+    position: relative; width: 393px; height: 852px;
+    background: var(--bg-base);
+    border-radius: 56px; overflow: hidden;
+    box-shadow: 0 0 0 12px #0A0A0F, 0 0 0 13px #2A2A30, 0 30px 80px rgba(15,17,23,.28), 0 12px 32px rgba(15,17,23,.16);
+  }
+  .status-bar { position: absolute; top: 0; left: 0; right: 0; height: 54px; display: flex; align-items: flex-end; justify-content: space-between; padding: 0 28px 9px; z-index: 30; pointer-events: none; }
+  .status-bar .time { font-family: var(--font-system); font-size: 17px; font-weight: 600; color: var(--text-primary); letter-spacing: -0.01em; }
+  .status-bar .signals { display: inline-flex; gap: 6px; align-items: center; }
+  .signal-bat { display: inline-block; width: 26px; height: 12px; border: 1.2px solid var(--text-primary); border-radius: 3px; position: relative; }
+  .signal-bat::after { content: ""; position: absolute; right: -3px; top: 3px; width: 2px; height: 5px; background: var(--text-primary); border-radius: 0 1.5px 1.5px 0; }
+  .signal-bat::before { content: ""; position: absolute; left: 1px; top: 1px; bottom: 1px; width: 78%; background: var(--text-primary); border-radius: 1.5px; }
+  .dynamic-island { position: absolute; top: 11px; left: 50%; transform: translateX(-50%); width: 124px; height: 36px; background: #0A0A0F; border-radius: 22px; z-index: 31; }
+  .home-indicator { position: absolute; bottom: 9px; left: 50%; transform: translateX(-50%); width: 134px; height: 5px; background: var(--text-primary); border-radius: 3px; opacity: 0.7; z-index: 32; }
+
+  /* Screen */
+  .screen {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    padding: 54px 0 0;
+    display: flex; flex-direction: column;
+  }
+  .content {
+    flex: 1;
+    padding: 0 16px 100px;
+    overflow: hidden;
+    position: relative;
+  }
+  .content::-webkit-scrollbar { display: none; }
+  .stack { display: flex; flex-direction: column; gap: 12px; padding-top: 12px; }
+
+  /* ===== Top header: greeting + meta ===== */
+  .top {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 6px 6px 4px;
+    gap: 8px;
+  }
+  .greet .h {
+    font-family: var(--font-display);
+    font-size: 24px; font-weight: 700;
+    color: var(--text-primary); letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .greet .h .name {
+    background: var(--gradient-text);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .greet .sub {
+    margin-top: 2px;
+    font-family: var(--font-body);
+    font-size: 12px; font-weight: 500;
+    color: var(--text-secondary);
+    letter-spacing: -0.003em;
+  }
+  .top-actions { display: flex; gap: 8px; align-items: center; }
+  .icon-btn {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-body);
+    position: relative;
+    box-shadow: var(--elev-1);
+    cursor: pointer;
+  }
+  .icon-btn .dot {
+    position: absolute; top: 8px; right: 9px;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--semantic-error);
+    border: 1.5px solid var(--bg-surface);
+  }
+  .avatar {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #00D278, #00B4D8);
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display);
+    font-size: 14px; font-weight: 700;
+    letter-spacing: -0.02em;
+    box-shadow: var(--elev-1);
+  }
+
+  /* ===== Verdict card ===== */
+  .verdict {
+    background: var(--bg-elevated);
+    color: var(--text-on-dark);
+    border-radius: var(--radius-lg);
+    padding: 13px 14px 14px;
+    box-shadow: var(--elev-3), inset 0 1px 0 rgba(255,255,255,0.04);
+    position: relative;
+    overflow: hidden;
+  }
+  .verdict::before {
+    content: "";
+    position: absolute;
+    top: 0; right: 0; bottom: 0; width: 70%;
+    background:
+      radial-gradient(80% 50% at 80% 50%, rgba(0,210,120,.20) 0%, transparent 60%),
+      radial-gradient(60% 40% at 60% 30%, rgba(0,180,216,.14) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .verdict.caution::before {
+    background:
+      radial-gradient(80% 50% at 80% 50%, rgba(245,158,11,.22) 0%, transparent 60%);
+  }
+  .verdict.welcome::before {
+    background:
+      radial-gradient(80% 50% at 80% 50%, rgba(71,231,176,.26) 0%, transparent 60%),
+      radial-gradient(60% 40% at 20% 100%, rgba(0,180,216,.16) 0%, transparent 60%);
+  }
+  .verdict-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--font-body);
+    font-size: 11px; font-weight: 600;
+    color: var(--text-on-dark-muted);
+    letter-spacing: 0.18em; text-transform: uppercase;
+    position: relative; z-index: 1;
+  }
+  .verdict-eyebrow .pulse {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--semantic-success);
+    box-shadow: 0 0 0 4px rgba(0,210,120,.22);
+  }
+  .verdict.caution .verdict-eyebrow .pulse {
+    background: var(--semantic-warning);
+    box-shadow: 0 0 0 4px rgba(245,158,11,.24);
+  }
+  .verdict-statement {
+    margin-top: 8px;
+    font-family: var(--font-display);
+    font-size: 20px; font-weight: 600;
+    color: var(--text-on-dark);
+    line-height: 1.22;
+    letter-spacing: -0.015em;
+    position: relative; z-index: 1;
+  }
+  .verdict-statement .accent {
+    background: var(--gradient-text);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .verdict.caution .verdict-statement .accent {
+    background: linear-gradient(90deg, #FBBF24 0%, #F59E0B 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .verdict-support {
+    margin-top: 6px;
+    font-family: var(--font-body);
+    font-size: 13px; font-weight: 400;
+    color: var(--text-on-dark-muted);
+    line-height: 1.45;
+    letter-spacing: -0.003em;
+    position: relative; z-index: 1;
+  }
+  .verdict-actions {
+    margin-top: 14px;
+    display: flex; align-items: center; gap: 10px;
+    position: relative; z-index: 1;
+  }
+  .v-cta {
+    flex: 1;
+    height: 40px;
+    border-radius: var(--radius-md);
+    border: 0;
+    background: var(--gradient-brand);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 14px; font-weight: 600;
+    letter-spacing: -0.003em;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    cursor: pointer;
+    box-shadow: var(--elev-cta);
+  }
+  .v-ghost {
+    height: 40px;
+    padding: 0 14px;
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(255,255,255,0.14);
+    background: rgba(255,255,255,0.06);
+    color: var(--text-on-dark);
+    font-family: var(--font-body);
+    font-size: 14px; font-weight: 500;
+    letter-spacing: -0.003em;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+  }
+
+  /* ===== Calories card ===== */
+  .card {
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--elev-1);
+    padding: 14px 16px 14px;
+  }
+  .eyebrow {
+    font-family: var(--font-body);
+    font-size: 10.5px; font-weight: 600;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+  .eyebrow .swatch {
+    display: inline-block; width: 8px; height: 8px; border-radius: 2px;
+    margin-right: 6px; transform: translateY(-1px);
+  }
+  .cal-row {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    margin-top: 6px;
+  }
+  .cal-num {
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 32px; font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.022em;
+    line-height: 1;
+  }
+  .cal-of {
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 14px; font-weight: 500;
+    color: var(--text-muted);
+    margin-left: 4px;
+    letter-spacing: -0.005em;
+  }
+  .cal-unit {
+    font-family: var(--font-body);
+    font-size: 10px; font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 0.14em; text-transform: uppercase;
+    margin-left: 6px;
+  }
+  .delta {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 12px; font-weight: 600;
+    color: var(--semantic-success);
+    background: rgba(0,210,120,0.10);
+    padding: 4px 9px;
+    border-radius: 999px;
+    letter-spacing: -0.003em;
+  }
+  .delta.warn { color: var(--semantic-warning); background: rgba(245,158,11,0.12); }
+  .delta.neutral { color: var(--text-secondary); background: var(--bg-base); border: 1px solid var(--bg-border); }
+  .histo {
+    margin-top: 12px;
+    display: flex; align-items: flex-end; gap: 2px;
+    height: 32px;
+  }
+  .histo span {
+    flex: 1;
+    background: var(--text-primary);
+    border-radius: 2px 2px 0 0;
+    min-height: 3px;
+    opacity: 0.92;
+  }
+  .histo span.dim { background: var(--bg-border); opacity: 1; }
+  .histo span.target {
+    background: linear-gradient(180deg, var(--semantic-success) 0%, #00b466 100%);
+  }
+  .histo-axis {
+    margin-top: 6px;
+    display: flex; justify-content: space-between;
+    font-family: var(--font-body);
+    font-size: 10px; color: var(--text-muted);
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+
+  /* ===== Macros band (dark inverted row) ===== */
+  .macros {
+    background: var(--bg-elevated);
+    border-radius: var(--radius-lg);
+    padding: 14px 16px 14px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    color: var(--text-on-dark);
+  }
+  .macros .m {
+    padding: 0 12px;
+    border-right: 1px solid var(--bg-border-dark);
+    position: relative;
+  }
+  .macros .m:first-child { padding-left: 4px; }
+  .macros .m:last-child { padding-right: 4px; border-right: 0; }
+  .macros .m-label {
+    display: flex; align-items: center; gap: 6px;
+    font-family: var(--font-body);
+    font-size: 10px; font-weight: 600;
+    color: var(--text-on-dark-muted);
+    letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .macros .m-label .sw {
+    width: 8px; height: 8px; border-radius: 2px;
+  }
+  .macros .m-num {
+    margin-top: 5px;
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 22px; font-weight: 600;
+    color: var(--text-on-dark);
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .macros .m-of {
+    margin-top: 3px;
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 11px; font-weight: 500;
+    color: var(--text-on-dark-muted);
+    letter-spacing: -0.005em;
+  }
+  .macros .m-bar {
+    margin-top: 9px;
+    height: 4px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .macros .m-bar .fill { height: 100%; border-radius: 999px; }
+  .macros .p .m-bar .fill { background: var(--macro-protein); }
+  .macros .c .m-bar .fill { background: var(--macro-carbs); }
+  .macros .f .m-bar .fill { background: var(--macro-fat); }
+  .macros .f .m-bar .fill.over { background: var(--semantic-error); }
+
+  /* ===== Week schedule ===== */
+  .week {
+    display: grid; grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+  }
+  .day {
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: 12px;
+    padding: 9px 6px 9px;
+    text-align: center;
+    box-shadow: var(--elev-1);
+    cursor: pointer;
+    position: relative;
+  }
+  .day.today {
+    background: var(--text-primary);
+    color: var(--text-on-dark);
+    border-color: var(--text-primary);
+  }
+  .day.future {
+    background: var(--bg-base);
+    box-shadow: none;
+  }
+  .day .dl {
+    font-family: var(--font-body);
+    font-size: 9.5px; font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .day.today .dl { color: var(--text-on-dark-muted); }
+  .day .dn {
+    margin-top: 3px;
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 16px; font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+  }
+  .day.today .dn { color: var(--text-on-dark); }
+  .day.future .dn { color: var(--text-disabled); }
+  .day .ind {
+    margin: 6px auto 0;
+    width: 4px; height: 4px; border-radius: 50%;
+    background: var(--semantic-success);
+  }
+  .day .ind.warn { background: var(--semantic-warning); }
+  .day .ind.miss { background: var(--bg-border); }
+  .day.today .ind { background: var(--brand-green); box-shadow: 0 0 0 2px rgba(71,231,176,0.32); }
+
+  /* ===== Two-column row ===== */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .pane {
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--elev-1);
+    padding: 14px 14px 14px;
+    display: flex; flex-direction: column;
+    min-height: 120px;
+  }
+  .pane-head {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .pane .title {
+    font-family: var(--font-body);
+    font-size: 13px; font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.003em;
+  }
+  .pane-glyph {
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .pane-glyph.workout { background: rgba(0,180,216,0.12); color: var(--semantic-info); }
+  .pane-glyph.habit { background: rgba(168,85,247,0.12); color: var(--semantic-premium); }
+  .workout-line {
+    font-family: var(--font-body);
+    font-size: 13px; font-weight: 500;
+    color: var(--text-body);
+    letter-spacing: -0.003em;
+    line-height: 1.3;
+  }
+  .workout-meta {
+    margin-top: 4px;
+    font-family: var(--font-body);
+    font-size: 11.5px;
+    color: var(--text-muted);
+    letter-spacing: -0.002em;
+  }
+  .workout-tags {
+    margin-top: 10px;
+    display: flex; gap: 6px; flex-wrap: wrap;
+  }
+  .tag {
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: var(--bg-base);
+    border: 1px solid var(--bg-border);
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 11px; font-weight: 600;
+    color: var(--text-body);
+    letter-spacing: -0.002em;
+  }
+  .tag.success { background: rgba(0,210,120,0.10); color: var(--semantic-success); border-color: rgba(0,210,120,0.32); }
+
+  /* Habit dots */
+  .habit-dots {
+    margin-top: 4px;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+  }
+  .habit-row {
+    display: flex; gap: 4px;
+    margin-bottom: 4px;
+  }
+  .habit-row .dot {
+    flex: 1;
+    height: 12px;
+    border-radius: 3px;
+    background: rgba(168,85,247,0.12);
+  }
+  .habit-row .dot.on { background: var(--semantic-premium); }
+  .habit-row .dot.miss { background: var(--bg-border); }
+  .habit-name {
+    font-family: var(--font-body);
+    font-size: 11px; font-weight: 500;
+    color: var(--text-secondary);
+    margin-top: 6px;
+    letter-spacing: -0.002em;
+  }
+  .habit-name .num {
+    color: var(--text-primary);
+    font-weight: 600;
+    font-family: var(--font-numeric);
+  }
+
+  /* ===== Coach nudge ===== */
+  .coach {
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-left: 3px solid var(--semantic-premium);
+    border-radius: var(--radius-md);
+    padding: 12px 14px;
+    display: flex; gap: 12px; align-items: flex-start;
+    box-shadow: var(--elev-1);
+  }
+  .coach .av {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #A855F7, #6B21A8);
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display);
+    font-size: 14px; font-weight: 700;
+    flex-shrink: 0;
+    letter-spacing: -0.02em;
+  }
+  .coach .body {
+    flex: 1; min-width: 0;
+  }
+  .coach .body .head {
+    display: flex; align-items: center; gap: 6px;
+    font-family: var(--font-body);
+    font-size: 11px; font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.06em; text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .coach .body .head .ts {
+    color: var(--text-disabled);
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  .coach .body p {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: 13.5px; font-weight: 400;
+    color: var(--text-body);
+    line-height: 1.45;
+    letter-spacing: -0.003em;
+  }
+  .coach .body p b { font-weight: 600; color: var(--text-primary); }
+  .coach .reply-row {
+    margin-top: 8px;
+    display: flex; gap: 6px; flex-wrap: wrap;
+  }
+  .reply {
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: var(--bg-base);
+    border: 1px solid var(--bg-border);
+    font-family: var(--font-body);
+    font-size: 12px; font-weight: 500;
+    color: var(--text-body);
+    letter-spacing: -0.003em;
+  }
+
+  /* ===== Meals list ===== */
+  .meals-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 4px;
+    margin-top: 4px;
+  }
+  .section-h {
+    font-family: var(--font-display);
+    font-size: 14px; font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.005em;
+  }
+  .section-meta {
+    font-family: var(--font-body);
+    font-size: 12px; font-weight: 500;
+    color: var(--text-secondary);
+    letter-spacing: -0.003em;
+  }
+
+  .meal-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-md);
+    padding: 12px 14px;
+    display: flex; align-items: center; gap: 12px;
+    box-shadow: var(--elev-1);
+    cursor: pointer;
+  }
+  .meal-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    background: var(--bg-base);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-body);
+    flex-shrink: 0;
+  }
+  .meal-icon.b { background: rgba(245,158,11,0.12); color: var(--macro-carbs); }
+  .meal-icon.l { background: rgba(0,210,120,0.12); color: var(--macro-protein); }
+  .meal-icon.s { background: rgba(0,180,216,0.10); color: var(--semantic-info); }
+  .meal-icon.d { background: var(--bg-border-soft); color: var(--text-secondary); border: 1px dashed var(--bg-border); }
+  .meal-text { flex: 1; min-width: 0; }
+  .meal-name {
+    font-family: var(--font-body);
+    font-size: 14px; font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.003em;
+    line-height: 1.25;
+  }
+  .meal-meta {
+    margin-top: 1px;
+    font-family: var(--font-body);
+    font-size: 12px; font-weight: 400;
+    color: var(--text-secondary);
+    letter-spacing: -0.002em;
+  }
+  .meal-meta .dot { color: var(--text-disabled); margin: 0 4px; }
+  .meal-kcal {
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 14px; font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.005em;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .meal-kcal .u {
+    display: block;
+    font-family: var(--font-body);
+    font-size: 9px; font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: 0.1em; text-transform: uppercase;
+    margin-top: 1px;
+  }
+  .meal-card.pending {
+    border-style: dashed;
+    background: transparent;
+    box-shadow: none;
+  }
+  .meal-card.pending .meal-name { color: var(--text-secondary); }
+  .meal-card.pending .meal-kcal { color: var(--text-muted); font-weight: 500; }
+
+  /* ===== FAB ===== */
+  .fab {
+    position: absolute;
+    bottom: 102px; right: 18px;
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: var(--gradient-brand);
+    color: var(--text-on-dark);
+    box-shadow: 0 12px 28px rgba(0,210,120,.36), 0 4px 8px rgba(15,17,23,.18);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 25;
+    cursor: pointer;
+  }
+
+  /* ===== Tab bar ===== */
+  .tabbar {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 88px;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(18px);
+    border-top: 1px solid var(--bg-border);
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    padding: 8px 6px 30px;
+    z-index: 22;
+  }
+  .tab {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 3px;
+    color: var(--text-muted);
+    cursor: pointer;
+  }
+  .tab.active { color: var(--text-primary); }
+  .tab-glyph {
+    width: 26px; height: 26px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .tab-label {
+    font-family: var(--font-body);
+    font-size: 10px; font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  /* ===== Empty state pieces (V3) ===== */
+  .empty-cta {
+    background: var(--bg-surface);
+    border: 1px dashed var(--bg-border);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    text-align: center;
+    box-shadow: none;
+    color: var(--text-secondary);
+  }
+
+  /* Reference badge — flags this as v1 reference, not canonical Dashboard */
+  .ref-badge {
+    display: inline-flex; align-items: center;
+    margin: 0 0 10px;
+    padding: 3px 9px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--bg-border);
+    background: var(--bg-surface);
+    color: var(--text-muted);
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 9.5px; font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    align-self: flex-start;
+  }
+
+  /* Legend */
+  .legend {
+    max-width: 1320px;
+    margin: 56px auto 0;
+    padding: 22px 26px;
+    background: #FFFFFF;
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-lg);
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 14px 28px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.55;
+  }
+  .legend h3 {
+    grid-column: 1 / -1; margin: 0 0 6px;
+    font-family: var(--font-display);
+    font-size: 12px; font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.18em; text-transform: uppercase;
+  }
+  .legend dt { grid-column: 1; font-size: 11px; font-weight: 600; color: var(--text-muted); letter-spacing: 0.04em; text-transform: uppercase; }
+  .legend dd { grid-column: 2; margin: 0; }
+  .legend code { background: #F4F5F7; border: 1px solid var(--bg-border); padding: 1px 6px; border-radius: 4px; font-family: var(--font-numeric); font-size: 11px; color: var(--text-primary); }
+</style>
+</head>
+<body>
+
+  <header class="doc-header">
+    <div>
+      <p class="doc-eyebrow">FuelWell · Phase 0.5 · Step 4 — Mockups</p>
+      <h1 class="doc-title">M10 Dashboard · Home tab root</h1>
+      <p class="doc-sub">Promoted from approved wireframe § 3.10 V1 (density-optimized vertical scroll). Verdict-first per DESIGN.md — the engine's answer leads, the data follows. Three states cover the lifecycle a user encounters: on-track mid-day, off-target caution, and the post-onboarding day-zero empty state.</p>
+    </div>
+    <div class="doc-meta">
+      iPhone 15 Pro · 393 × 852 pt<br>
+      Light · <code>color.bg.base #F4F5F7</code><br>
+      Tab · Home
+    </div>
+  </header>
+
+  <div class="frames-row" id="frames"></div>
+
+  <section class="legend">
+    <h3>Mockup notes · Step 4</h3>
+
+    <dt>Verdict card · top of content</dt>
+    <dd>The decision-engine surface, per DESIGN.md § Components → ScreenScaffold rule: <em>verdict is always above the data.</em> Uses the inverted <code>color.bg.elevated #0F1117</code> highlight row as the canonical workhorse for emphasis in a light theme. Title in Outfit 600 22pt with a gradient-text accent on the operative phrase; subtitle reads the supporting context in <code>color.text.onDarkMuted</code>. Primary CTA inside is <code>gradient.brand</code> with elevation.cta; secondary CTA is the ghost "Why?" link. Verdict pulse-dot color tracks the verdict tier — success-green on track, warning-amber on caution.</dd>
+
+    <dt>Calories card</dt>
+    <dd>White card, <code>radius.lg</code>, <code>elevation.1</code>. Hero number in <strong>DM Sans 600</strong> 32pt tabular followed by the target in muted color; a small chip on the right shows the running delta (+/− vs. plan) in <code>color.semantic.success</code> tint when in budget, warning tint when projected over. 32pt 7-bar histogram below shows the week's calorie trend — today is the success-green bar, past days are <code>color.text.primary</code>, future is the dim track.</dd>
+
+    <dt>Macros band</dt>
+    <dd>The dark inverted-row from DESIGN.md — <code>color.bg.elevated #0F1117</code>, <code>radius.lg</code>. Three columns separated by hairline dividers in <code>color.bg.border.dark</code>. Each column carries an 8pt macro-token swatch, label in <code>color.text.onDarkMuted</code>, value in <strong>DM Sans 600</strong> 22pt, "of N" beneath, and a 4pt fill bar in the macro color. In V2 the fat bar overflows to <code>color.semantic.error</code> red to telegraph the over-limit state — same shape, different color, no text change.</dd>
+
+    <dt>Week schedule</dt>
+    <dd>Seven-day strip, each tile <code>radius.md</code> with the weekday letter, date number in <strong>DM Sans 600</strong>, and a verdict-color dot beneath. Today is the inverted dark tile so the day reads as the focus point of every glance. Future days drop to <code>color.bg.base</code> with disabled text — the engine has nothing to say there yet.</dd>
+
+    <dt>Workout + Habit panes</dt>
+    <dd>Side-by-side cards in a 2-column row. Workout pane shows the next session ("Strength · Push, 5pm") with three numeric chips (45 min · 4 lifts · 90% comp). Habit pane shows a 7×N dot calendar in <code>color.semantic.premium</code> purple — purple is the habit tracking accent color from DESIGN.md (deliberately distinct from macro / verdict colors so the eye can route by hue alone).</dd>
+
+    <dt>Coach nudge</dt>
+    <dd>3pt premium-purple left accent (the FuelWell coach's signature stripe). Avatar uses the same gradient as the brand mark. Body is one or two sentences in coach voice referencing today's real data — never generic. Quick-reply chips beneath open the Coach tab pre-loaded with the response. Only renders when the engine has a trigger — never as a placeholder.</dd>
+
+    <dt>Meals list · Today</dt>
+    <dd>Compact rows: 36pt color-coded meal-type icon, name + meta line (time, calorie subtotal, source: <em>recipe</em> or <em>restaurant</em>), trailing kcal number. Pending slots ("Dinner") render with a dashed border and the coach's suggested kcal in muted text — a soft commitment the user can replace with a tap. Header carries a live total + the macro fingerprint of what's already eaten.</dd>
+
+    <dt>FAB</dt>
+    <dd>56pt circular Quick-Add fab, <code>gradient.brand</code> + a strong shadow. Floats 22pt above the tab bar at the right edge. Opens 3.12 Add Meal sheet. Same placement on every variation — anchor for muscle memory.</dd>
+
+    <dt>Tab bar</dt>
+    <dd>iOS-style five-tab bar with blur surface. Tabs: Home (active), Log, Coach, Learn, Progress. Active state is filled glyph + <code>color.text.primary</code>; inactive is line glyph at <code>color.text.muted</code>. 30pt bottom inset for the home-indicator gap.</dd>
+  </section>
+
+<script>
+  // ===== Shared chrome =====
+  const statusBar = `
+    <div class="status-bar">
+      <div class="time">9:41</div>
+      <div class="signals">
+        <svg width="17" height="11" viewBox="0 0 17 11" fill="none">
+          <rect x="0" y="7" width="3" height="4" rx="0.5" fill="#0A0A0F"/>
+          <rect x="4" y="5" width="3" height="6" rx="0.5" fill="#0A0A0F"/>
+          <rect x="8" y="3" width="3" height="8" rx="0.5" fill="#0A0A0F"/>
+          <rect x="12" y="0" width="3" height="11" rx="0.5" fill="#0A0A0F"/>
+        </svg>
+        <svg width="16" height="11" viewBox="0 0 16 11" fill="none">
+          <path d="M8 11l-2.5-2.5a3.5 3.5 0 014.9 0L8 11z" fill="#0A0A0F"/>
+          <path d="M2 5a8.5 8.5 0 0112 0l-1.5 1.5a6 6 0 00-9 0L2 5z" fill="#0A0A0F"/>
+          <path d="M5 8a4.5 4.5 0 016 0l-1.5 1.5a2.5 2.5 0 00-3 0L5 8z" fill="#0A0A0F"/>
+        </svg>
+        <span class="signal-bat"></span>
+      </div>
+    </div>`;
+  const islandHTML = `<div class="dynamic-island"></div>`;
+
+  // ===== Icons =====
+  const ic = {
+    bell: `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3a6 6 0 016 6v3.2c0 .6.2 1.1.5 1.5l1.6 1.9c.7.8.1 2-.9 2H4.8c-1 0-1.6-1.2-.9-2l1.6-1.9c.3-.4.5-.9.5-1.5V9a6 6 0 016-6Z"/><path d="M9.7 19c.4 1.2 1.3 2 2.3 2s1.9-.8 2.3-2H9.7Z"/></svg>`,
+    plus: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 4v16M4 12h16" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>`,
+    arrow: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    dumbbell: `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="9" width="3" height="6" rx="1"/><rect x="5" y="7" width="3" height="10" rx="1"/><rect x="8" y="11" width="8" height="2"/><rect x="16" y="7" width="3" height="10" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/></svg>`,
+    leaf: `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4c-9 0-15 5-15 12 0 2 .5 4 1.5 5l1.5-1.5C12 22 18 18 20 12V4Z"/></svg>`,
+    breakfast: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 8h12a4 4 0 010 8h-1v3H6V12a4 4 0 010-4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" fill="rgba(245,158,11,0.16)"/><path d="M9 5c0 1.5 1 1.5 1 3M13 4c0 1.5 1 1.5 1 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`,
+    lunch: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="7" stroke="currentColor" stroke-width="1.8" fill="rgba(0,210,120,0.14)"/><path d="M12 8v4l2.5 2.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`,
+    snack: `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="10" r="2"/><circle cx="15" cy="13" r="2"/><circle cx="11" cy="15" r="1.4"/><circle cx="7" cy="14" r="1.4"/><circle cx="13" cy="9" r="1.2"/><path d="M5 16a7 7 0 1014-3 3 3 0 01-3 0 3 3 0 01-4-2 3 3 0 01-3-2 7 7 0 00-4 7Z" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>`,
+    dinner: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M6 4v16M9 4v6a3 3 0 01-6 0V4M19 4c-2 0-3 2-3 5s1 5 3 5v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    tabHome: (a) => `<svg width="22" height="22" viewBox="0 0 24 24" fill="${a?'currentColor':'none'}" stroke="currentColor" stroke-width="${a?0:1.8}"><path d="M4 11l8-7 8 7v8a1 1 0 01-1 1h-4v-6h-6v6H5a1 1 0 01-1-1v-8Z"/></svg>`,
+    tabLog: (a) => `<svg width="22" height="22" viewBox="0 0 24 24" fill="${a?'currentColor':'none'}" stroke="currentColor" stroke-width="${a?0:1.8}"><rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M9 8h6M9 12h6M9 16h3" stroke="${a?'#fff':'currentColor'}" stroke-width="1.6" stroke-linecap="round"/></svg>`,
+    tabCoach: (a) => `<svg width="22" height="22" viewBox="0 0 24 24" fill="${a?'currentColor':'none'}" stroke="currentColor" stroke-width="${a?0:1.8}"><path d="M4 11a8 8 0 1116 0v3a3 3 0 01-3 3h-1v-7h4M4 11v3a3 3 0 003 3h1v-7H4"/></svg>`,
+    tabLearn: (a) => `<svg width="22" height="22" viewBox="0 0 24 24" fill="${a?'currentColor':'none'}" stroke="currentColor" stroke-width="${a?0:1.8}"><path d="M4 5.5C4 4.7 4.7 4 5.5 4H10a3 3 0 013 3v14a2 2 0 00-2-2H5.5A1.5 1.5 0 014 17.5v-12ZM20 5.5C20 4.7 19.3 4 18.5 4H14a3 3 0 00-3 3v14a2 2 0 012-2h5.5a1.5 1.5 0 001.5-1.5v-12Z"/></svg>`,
+    tabProgress: (a) => `<svg width="22" height="22" viewBox="0 0 24 24" fill="${a?'currentColor':'none'}" stroke="currentColor" stroke-width="${a?0:1.8}"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg>`,
+  };
+
+  function tabbar(active) {
+    const tabs = [
+      ['Home',     ic.tabHome,     'home'],
+      ['Log',      ic.tabLog,      'log'],
+      ['Coach',    ic.tabCoach,    'coach'],
+      ['Learn',    ic.tabLearn,    'learn'],
+      ['Progress', ic.tabProgress, 'progress'],
+    ];
+    return `<div class="tabbar">${tabs.map(([label, glyph, key]) => `
+      <div class="tab ${active===key?'active':''}">
+        <div class="tab-glyph">${glyph(active===key)}</div>
+        <div class="tab-label">${label}</div>
+      </div>`).join('')}</div>`;
+  }
+
+  function topBar(greetingHTML) {
+    return `
+      <div class="top">
+        <div class="greet">
+          ${greetingHTML}
+        </div>
+        <div class="top-actions">
+          <div class="icon-btn">${ic.bell}<span class="dot"></span></div>
+          <div class="avatar">JC</div>
+        </div>
+      </div>`;
+  }
+
+  // ===== Verdict block =====
+  function verdict(kind) {
+    if (kind === 'ontrack') {
+      return `
+        <div class="verdict">
+          <div class="verdict-eyebrow"><span class="pulse"></span>On track · 3:42 PM</div>
+          <div class="verdict-statement">A <span class="accent">grilled chicken bowl</span> at dinner puts you right on plan tonight.</div>
+          <div class="verdict-support">You're 714 kcal short, protein-light by 32g, and home in 90 min. Coach picked from your saved recipes.</div>
+          <div class="verdict-actions">
+            <button class="v-cta">View recipe ${ic.arrow}</button>
+            <button class="v-ghost">Why?</button>
+          </div>
+        </div>`;
+    }
+    if (kind === 'caution') {
+      return `
+        <div class="verdict caution">
+          <div class="verdict-eyebrow"><span class="pulse"></span>Caution · 8:14 PM</div>
+          <div class="verdict-statement">Skip the second slice — you're <span class="accent">28g over fat</span> for today.</div>
+          <div class="verdict-support">Lunch ran hotter than projected. A glass of water, then call it; tomorrow opens with the same target.</div>
+          <div class="verdict-actions">
+            <button class="v-cta">Adjust dinner ${ic.arrow}</button>
+            <button class="v-ghost">Log anyway</button>
+          </div>
+        </div>`;
+    }
+    // welcome
+    return `
+      <div class="verdict welcome">
+        <div class="verdict-eyebrow"><span class="pulse"></span>Day 1 · welcome</div>
+        <div class="verdict-statement">Your plan is <span class="accent">live</span>. Log your first meal whenever you're ready.</div>
+        <div class="verdict-support">Coach will start nudging once we see a meal or two of real data. No streaks, no shame — just the next-best decision.</div>
+        <div class="verdict-actions">
+          <button class="v-cta">Log first meal ${ic.arrow}</button>
+          <button class="v-ghost">Tour the app</button>
+        </div>
+      </div>`;
+  }
+
+  // ===== Calories card =====
+  function caloriesCard(state) {
+    if (state === 'ontrack') {
+      return `
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="eyebrow"><span class="swatch" style="background:var(--macro-calories)"></span>Calories · Today</div>
+            <div class="delta">−714 kcal left</div>
+          </div>
+          <div class="cal-row">
+            <div>
+              <span class="cal-num">1,546</span><span class="cal-of">/ 2,260</span><span class="cal-unit">kcal</span>
+            </div>
+          </div>
+          <div class="histo">
+            <span style="height: 78%"></span>
+            <span style="height: 92%"></span>
+            <span style="height: 65%"></span>
+            <span style="height: 88%"></span>
+            <span class="target" style="height: 68%"></span>
+            <span class="dim" style="height: 100%"></span>
+            <span class="dim" style="height: 100%"></span>
+          </div>
+          <div class="histo-axis">
+            <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
+          </div>
+        </div>`;
+    }
+    if (state === 'caution') {
+      return `
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="eyebrow"><span class="swatch" style="background:var(--macro-calories)"></span>Calories · Today</div>
+            <div class="delta warn">+186 over</div>
+          </div>
+          <div class="cal-row">
+            <div>
+              <span class="cal-num">2,446</span><span class="cal-of">/ 2,260</span><span class="cal-unit">kcal</span>
+            </div>
+          </div>
+          <div class="histo">
+            <span style="height: 78%"></span>
+            <span style="height: 92%"></span>
+            <span style="height: 65%"></span>
+            <span style="height: 88%"></span>
+            <span class="target" style="height: 108%; background: linear-gradient(180deg, #F59E0B 0%, #D97706 100%)"></span>
+            <span class="dim" style="height: 100%"></span>
+            <span class="dim" style="height: 100%"></span>
+          </div>
+          <div class="histo-axis">
+            <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
+          </div>
+        </div>`;
+    }
+    return `
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div class="eyebrow"><span class="swatch" style="background:var(--macro-calories)"></span>Calories · Today</div>
+          <div class="delta neutral">2,260 to spend</div>
+        </div>
+        <div class="cal-row">
+          <div>
+            <span class="cal-num" style="color: var(--text-muted)">0</span><span class="cal-of">/ 2,260</span><span class="cal-unit">kcal</span>
+          </div>
+        </div>
+        <div class="histo">
+          <span class="dim" style="height: 100%"></span>
+          <span class="dim" style="height: 100%"></span>
+          <span class="dim" style="height: 100%"></span>
+          <span class="dim" style="height: 100%"></span>
+          <span class="dim" style="height: 100%; outline: 1.5px solid var(--text-primary); outline-offset: -1px; border-radius: 2px;"></span>
+          <span class="dim" style="height: 100%"></span>
+          <span class="dim" style="height: 100%"></span>
+        </div>
+        <div class="histo-axis">
+          <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
+        </div>
+      </div>`;
+  }
+
+  // ===== Macros band =====
+  function macros(state) {
+    const sets = {
+      ontrack: {p: {n:128, t:160, pct: 80}, c: {n:172, t:245, pct: 70}, f: {n:54, t:70, pct: 77}},
+      caution: {p: {n:142, t:160, pct: 88}, c: {n:268, t:245, pct: 109, over: true}, f: {n:98, t:70, pct: 140, over: true}},
+      empty:   {p: {n:0, t:160, pct: 0}, c: {n:0, t:245, pct: 0}, f: {n:0, t:70, pct: 0}}
+    };
+    const s = sets[state];
+    function col(kind, label, swColor, data) {
+      const overClass = data.over ? ' over' : '';
+      return `
+        <div class="m ${kind}">
+          <div class="m-label"><span class="sw" style="background:${swColor}"></span>${label}</div>
+          <div class="m-num">${data.n}<span style="font-size:13px; font-weight:500; color: var(--text-on-dark-muted); margin-left:2px;">g</span></div>
+          <div class="m-of">of ${data.t}g · ${Math.min(data.pct,100)}%</div>
+          <div class="m-bar"><div class="fill${overClass}" style="width: ${Math.min(data.pct, 100)}%"></div></div>
+        </div>`;
+    }
+    return `
+      <div class="macros">
+        ${col('p', 'Protein', 'var(--macro-protein)', s.p)}
+        ${col('c', 'Carbs',   'var(--macro-carbs)',   s.c)}
+        ${col('f', 'Fat',     'var(--macro-fat)',     s.f)}
+      </div>`;
+  }
+
+  // ===== Week schedule =====
+  function week(state) {
+    const today = 4; // Fri
+    const labels = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+    const dates  = [12,13,14,15,16,17,18];
+    return `
+      <div class="week">
+        ${labels.map((dl, i) => {
+          const future = i > today;
+          const isToday = i === today;
+          let cls = 'day';
+          if (isToday) cls += ' today';
+          else if (future) cls += ' future';
+          let ind = '';
+          if (!future) {
+            if (state === 'caution' && i === today) ind = '<div class="ind warn"></div>';
+            else if (state === 'empty' && i === today) ind = '<div class="ind miss"></div>';
+            else ind = '<div class="ind"></div>';
+          } else {
+            ind = '<div class="ind miss"></div>';
+          }
+          return `<div class="${cls}"><div class="dl">${dl[0]}</div><div class="dn">${dates[i]}</div>${ind}</div>`;
+        }).join('')}
+      </div>`;
+  }
+
+  // ===== Workout + Habit panes =====
+  function twoCol(state) {
+    if (state === 'empty') {
+      return `
+        <div class="two-col">
+          <div class="pane">
+            <div class="pane-head"><div class="title">Today's workout</div><div class="pane-glyph workout">${ic.dumbbell}</div></div>
+            <div class="workout-line" style="color: var(--text-muted)">Add one when you're ready.</div>
+            <div class="workout-meta">We'll suggest from your plan.</div>
+          </div>
+          <div class="pane">
+            <div class="pane-head"><div class="title">Habits</div><div class="pane-glyph habit">${ic.leaf}</div></div>
+            <div class="workout-line" style="color: var(--text-muted)">No habits yet.</div>
+            <div class="workout-meta">Track up to 5 daily.</div>
+            <div style="margin-top: auto;"><div class="tag" style="background:var(--bg-base); color: var(--semantic-premium); border-color: rgba(168,85,247,0.32);">+ Add habit</div></div>
+          </div>
+        </div>`;
+    }
+    return `
+      <div class="two-col">
+        <div class="pane">
+          <div class="pane-head"><div class="title">Today's workout</div><div class="pane-glyph workout">${ic.dumbbell}</div></div>
+          <div class="workout-line">Strength · Push</div>
+          <div class="workout-meta">Scheduled · 5:00 PM</div>
+          <div class="workout-tags">
+            <span class="tag">45 min</span>
+            <span class="tag">4 lifts</span>
+            <span class="tag success">+220 kcal</span>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="pane-head"><div class="title">Habits · this wk</div><div class="pane-glyph habit">${ic.leaf}</div></div>
+          <div class="habit-row">
+            <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div>
+            <div class="dot ${state==='caution'?'miss':'on'}"></div>
+            <div class="dot on"></div><div class="dot"></div><div class="dot"></div>
+          </div>
+          <div class="habit-name">Water · <span class="num">${state==='caution'?'4':'5'} of 7</span></div>
+          <div class="habit-row" style="margin-top: 8px;">
+            <div class="dot on"></div><div class="dot on"></div><div class="dot miss"></div>
+            <div class="dot on"></div><div class="dot on"></div><div class="dot"></div><div class="dot"></div>
+          </div>
+          <div class="habit-name">Sleep · <span class="num">4 of 7</span></div>
+        </div>
+      </div>`;
+  }
+
+  // ===== Coach nudge =====
+  function coach(state) {
+    if (state === 'caution') {
+      return `
+        <div class="coach">
+          <div class="av">F</div>
+          <div class="body">
+            <div class="head">Coach <span class="ts">· now</span></div>
+            <p>You went hard on lunch — <b>112g of fat</b> already and dinner's still ahead. Want me to swap your usual chicken bowl for something lighter?</p>
+            <div class="reply-row">
+              <span class="reply">Yes, swap</span>
+              <span class="reply">No thanks</span>
+            </div>
+          </div>
+        </div>`;
+    }
+    if (state === 'empty') return ''; // no nudge yet
+    return `
+      <div class="coach">
+        <div class="av">F</div>
+        <div class="body">
+          <div class="head">Coach <span class="ts">· 12 min ago</span></div>
+          <p>Nice protein cadence — <b>128g by 3pm</b> means dinner can lean carb-forward. Pasta is on the table tonight if you want it.</p>
+          <div class="reply-row">
+            <span class="reply">Show me</span>
+            <span class="reply">Stick with chicken bowl</span>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  // ===== Meals list =====
+  function meals(state) {
+    if (state === 'empty') {
+      return `
+        <div class="meals-head">
+          <div class="section-h">Today's meals</div>
+          <div class="section-meta">0 logged</div>
+        </div>
+        <div class="meal-card pending">
+          <div class="meal-icon b">${ic.breakfast}</div>
+          <div class="meal-text">
+            <div class="meal-name">Log breakfast</div>
+            <div class="meal-meta">Tap to add · or let Coach suggest</div>
+          </div>
+          <div class="meal-kcal">~500<span class="u">kcal</span></div>
+        </div>
+        <div class="meal-card pending">
+          <div class="meal-icon l">${ic.lunch}</div>
+          <div class="meal-text">
+            <div class="meal-name">Log lunch</div>
+            <div class="meal-meta">Tap to add</div>
+          </div>
+          <div class="meal-kcal">~700<span class="u">kcal</span></div>
+        </div>`;
+    }
+    return `
+      <div class="meals-head">
+        <div class="section-h">Today's meals</div>
+        <div class="section-meta">${state==='caution' ? '4 logged · 2,446 kcal' : '3 logged · 1,546 kcal'}</div>
+      </div>
+      <div class="meal-card">
+        <div class="meal-icon b">${ic.breakfast}</div>
+        <div class="meal-text">
+          <div class="meal-name">Oats, berries, peanut butter</div>
+          <div class="meal-meta">8:14 AM<span class="dot">·</span>Recipe</div>
+        </div>
+        <div class="meal-kcal">438<span class="u">kcal</span></div>
+      </div>
+      <div class="meal-card">
+        <div class="meal-icon l">${ic.lunch}</div>
+        <div class="meal-text">
+          <div class="meal-name">${state==='caution' ? 'Carbonara, garlic bread' : 'Chicken & rice bowl'}</div>
+          <div class="meal-meta">${state==='caution' ? `12:50 PM<span class="dot">·</span>Maria&rsquo;s` : `12:34 PM<span class="dot">·</span>Sweetgreen`}</div>
+        </div>
+        <div class="meal-kcal">${state==='caution' ? '1,180' : '732'}<span class="u">kcal</span></div>
+      </div>
+      <div class="meal-card">
+        <div class="meal-icon s">${ic.snack}</div>
+        <div class="meal-text">
+          <div class="meal-name">Greek yogurt + honey</div>
+          <div class="meal-meta">3:08 PM<span class="dot">·</span>Pantry</div>
+        </div>
+        <div class="meal-kcal">${state==='caution' ? '358' : '376'}<span class="u">kcal</span></div>
+      </div>
+      ${state==='caution' ? `
+        <div class="meal-card">
+          <div class="meal-icon" style="background: rgba(239,68,68,0.10); color: var(--semantic-error);">${ic.dinner}</div>
+          <div class="meal-text">
+            <div class="meal-name">2 slices, pepperoni pizza</div>
+            <div class="meal-meta">7:48 PM<span class="dot">·</span>Frank's</div>
+          </div>
+          <div class="meal-kcal">730<span class="u">kcal</span></div>
+        </div>` : `
+        <div class="meal-card pending">
+          <div class="meal-icon d">${ic.dinner}</div>
+          <div class="meal-text">
+            <div class="meal-name">Dinner · slot pending</div>
+            <div class="meal-meta">Coach suggestion ready</div>
+          </div>
+          <div class="meal-kcal">~714<span class="u">kcal</span></div>
+        </div>`}`;
+  }
+
+  // ===== Variations =====
+  const variations = [
+    {
+      num: 'Variation 01 · State',
+      name: 'Mid-day · on track',
+      cap: 'Friday 3:42 PM. User has logged breakfast, lunch, an afternoon snack. Verdict promotes the engine\'s dinner pick. Macros tracking sub-target across all three channels.',
+      kind: 'ontrack'
+    },
+    {
+      num: 'Variation 02 · State',
+      name: 'Evening · caution',
+      cap: 'Friday 8:14 PM. Lunch ran hot and the pepperoni-pizza log just pushed fat over plan. Verdict flips to warning, macros band shows the fat fill spilling into error-red, coach reaches with a swap.',
+      kind: 'caution'
+    },
+    {
+      num: 'Variation 03 · State',
+      name: 'Day 1 · post-onboarding',
+      cap: 'First open after plan reveal. Nothing logged yet. Calories card shows 0 / 2,260 with a neutral chip, macros band is muted, schedule highlights today as the empty starting point. Welcome verdict invites the first log.',
+      kind: 'empty'
+    }
+  ];
+
+  function greeting(kind) {
+    if (kind === 'empty') return `<div class="h">Welcome, <span class="name">Jordan.</span></div><div class="sub">Sunday · May 18 · Day 1</div>`;
+    if (kind === 'caution') return `<div class="h">Hey, Jordan.</div><div class="sub">Friday · May 16 · 8:14 PM</div>`;
+    return `<div class="h">Hey, Jordan.</div><div class="sub">Friday · May 16 · 3:42 PM</div>`;
+  }
+
+  const root = document.getElementById('frames');
+  root.innerHTML = variations.map(v => `
+    <section class="variation">
+      <div class="v-label">
+        <div class="v-num">${v.num}</div>
+        <div class="v-name">${v.name}</div>
+        <div class="v-cap">${v.cap}</div>
+      </div>
+      <div class="device">
+        ${statusBar}
+        ${islandHTML}
+        <div class="screen">
+          <div class="content">
+            ${topBar(greeting(v.kind))}
+            <div class="stack">
+              <div class="ref-badge">[Reference · V1]</div>
+              ${verdict(v.kind)}
+              ${caloriesCard(v.kind)}
+              ${macros(v.kind)}
+              ${week(v.kind)}
+              ${twoCol(v.kind)}
+              ${coach(v.kind)}
+              ${meals(v.kind)}
+            </div>
+          </div>
+          <div class="fab">${ic.plus}</div>
+          ${tabbar('home')}
+        </div>
+        <div class="home-indicator"></div>
+      </div>
+    </section>
+  `).join('');
+</script>
+</body>
+</html>

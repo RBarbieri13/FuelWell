@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>FuelWell · M26 Health Score detail · Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-base:#F4F5F7; --bg-surface:#FFFFFF; --bg-elevated:#0F1117;
+    --bg-border:#E5E7EB; --bg-border-soft:#EEF0F3; --bg-border-dark:#2A2A3A;
+    --text-primary:#0A0A0F; --text-body:#1F2937; --text-secondary:#6B7280;
+    --text-muted:#9CA3AF; --text-disabled:#C7CCD3; --text-on-dark:#FFFFFF; --text-on-dark-muted:#9AA0AC;
+    --brand-green:#47E7B0; --semantic-success:#00D278; --semantic-warning:#F59E0B; --semantic-info:#00B4D8; --semantic-premium:#A855F7; --semantic-error:#EF4444;
+    --macro-protein:#00D278; --macro-carbs:#F59E0B; --macro-fat:#A855F7;
+    --gradient-brand: linear-gradient(135deg, #00D278 0%, #47E7B0 100%);
+    --radius-md:12px; --radius-lg:20px; --radius-pill:999px;
+    --elev-1: 0 1px 2px rgba(15,17,23,.04), 0 1px 0 rgba(15,17,23,.02);
+    --elev-2: 0 4px 14px rgba(15,17,23,.06), 0 1px 2px rgba(15,17,23,.04);
+    --elev-cta: 0 8px 24px rgba(0,210,120,.22);
+    --font-display:'Outfit', system-ui, sans-serif;
+    --font-body:'Inter', system-ui, sans-serif;
+    --font-system: -apple-system, 'SF Pro Display', system-ui, sans-serif;
+    --font-numeric:'DM Sans', 'Inter', sans-serif;
+  }
+  *{box-sizing:border-box;} html,body{margin:0;padding:0;}
+  body{background:#ECEDF0;color:var(--text-primary);font-family:var(--font-body);padding:56px 48px 96px;min-width:1380px;}
+  .doc-header{max-width:1320px;margin:0 auto 48px;display:flex;align-items:flex-end;justify-content:space-between;gap:32px;border-bottom:1px solid #D6D8DD;padding-bottom:24px;}
+  .doc-eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--text-muted);margin:0 0 8px;font-weight:600;}
+  .doc-title{font-family:var(--font-display);font-size:28px;font-weight:700;margin:0;letter-spacing:-.018em;}
+  .doc-sub{font-size:13px;color:var(--text-secondary);margin:8px 0 0;max-width:760px;line-height:1.55;}
+  .doc-meta{font-family:var(--font-numeric);font-size:11px;color:var(--text-muted);text-align:right;letter-spacing:.04em;line-height:1.7;}
+  .frames-row{display:flex;gap:64px;justify-content:center;align-items:flex-start;}
+  .variation{display:flex;flex-direction:column;align-items:center;width:393px;}
+  .v-label{margin-bottom:18px;text-align:center;width:100%;}
+  .v-num{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--text-muted);font-weight:600;}
+  .v-name{font-family:var(--font-display);font-size:16px;font-weight:600;color:var(--text-primary);margin-top:4px;}
+  .v-cap{font-size:12px;color:var(--text-secondary);margin-top:4px;line-height:1.45;max-width:340px;}
+  .device{position:relative;width:393px;height:852px;background:var(--bg-base);border-radius:56px;overflow:hidden;box-shadow:0 0 0 12px #0A0A0F,0 0 0 13px #2A2A30,0 30px 80px rgba(15,17,23,.28),0 12px 32px rgba(15,17,23,.16);}
+  .status-bar{position:absolute;top:0;left:0;right:0;height:54px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 28px 9px;z-index:30;}
+  .status-bar .time{font-family:var(--font-system);font-size:17px;font-weight:600;color:var(--text-primary);}
+  .status-bar .signals{display:inline-flex;gap:6px;align-items:center;}
+  .signal-bat{display:inline-block;width:26px;height:12px;border:1.2px solid var(--text-primary);border-radius:3px;position:relative;}
+  .signal-bat::after{content:"";position:absolute;right:-3px;top:3px;width:2px;height:5px;background:var(--text-primary);border-radius:0 1.5px 1.5px 0;}
+  .signal-bat::before{content:"";position:absolute;left:1px;top:1px;bottom:1px;width:78%;background:var(--text-primary);border-radius:1.5px;}
+  .dynamic-island{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:124px;height:36px;background:#0A0A0F;border-radius:22px;z-index:31;}
+  .home-indicator{position:absolute;bottom:9px;left:50%;transform:translateX(-50%);width:134px;height:5px;background:var(--text-primary);border-radius:3px;opacity:.7;z-index:32;}
+  .screen{position:absolute;top:0;left:0;right:0;bottom:88px;padding:54px 0 0;display:flex;flex-direction:column;overflow:hidden;}
+
+  .nav{height:44px;display:grid;grid-template-columns:56px 1fr 56px;align-items:center;padding:4px 12px 0;flex-shrink:0;}
+  .nav-btn{width:36px;height:36px;border-radius:50%;background:var(--bg-surface);border:1px solid var(--bg-border);display:flex;align-items:center;justify-content:center;color:var(--text-body);box-shadow:var(--elev-1);margin:0 auto;}
+  .nav-title{text-align:center;font-family:var(--font-display);font-size:17px;font-weight:700;color:var(--text-primary);letter-spacing:-.012em;}
+
+  .content{flex:1;padding:0 14px 14px;overflow:hidden;display:flex;flex-direction:column;gap:10px;}
+
+  /* (a) Hero */
+  .hero {
+    padding: 10px 4px 4px;
+  }
+  .hero .lbl {
+    font-family: var(--font-body);
+    font-size: 10px; font-weight: 700;
+    color: var(--text-secondary);
+    letter-spacing: 0.22em; text-transform: uppercase;
+  }
+  .hero .score-line {
+    margin-top: 4px;
+    display: flex; align-items: baseline; gap: 10px;
+  }
+  .hero .num {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 76px;
+    color: var(--text-primary);
+    letter-spacing: -0.04em;
+    line-height: 0.95;
+  }
+  .hero .of {
+    font-family: var(--font-body);
+    font-size: 13px; font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .hero .cause {
+    margin-top: 6px;
+    font-family: var(--font-body);
+    font-size: 13.5px; font-weight: 600;
+    color: var(--text-body);
+    letter-spacing: -0.003em;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .hero .arr-down { color: var(--semantic-error); font-weight: 800; }
+  .hero .arr-up   { color: var(--semantic-success); font-weight: 800; }
+
+  /* (b) Trend chart */
+  .trend-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--elev-1);
+    padding: 12px;
+  }
+  .trend-head {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 4px;
+  }
+  .trend-head .eb {
+    font-family: var(--font-body);
+    font-size: 10px; font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 0.16em; text-transform: uppercase;
+  }
+  .trend-head .pill {
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 10.5px; font-weight: 700;
+    color: var(--semantic-success);
+    background: rgba(0,210,120,0.10);
+    border: 1px solid rgba(0,210,120,0.32);
+    padding: 2px 8px;
+    border-radius: 999px;
+  }
+  .trend-chart {
+    height: 88px;
+    margin-top: 4px;
+  }
+  .trend-chart svg { width: 100%; height: 100%; display: block; }
+  .trend-axis {
+    margin-top: 4px;
+    display: flex; justify-content: space-between;
+    font-family: var(--font-body);
+    font-size: 9.5px; font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 0.10em; text-transform: uppercase;
+  }
+
+  /* (c) Radial spoke */
+  .radial-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--elev-1);
+    padding: 10px 10px 8px;
+  }
+  .radial-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 0 4px;
+    margin-bottom: 2px;
+  }
+  .radial-head .l {
+    font-family: var(--font-display);
+    font-size: 13px; font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.003em;
+  }
+  .radial-head .r {
+    font-family: var(--font-body);
+    font-size: 10.5px; font-weight: 600;
+    color: var(--text-secondary);
+  }
+  .radial-stage {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1.05 / 1;
+    max-width: 360px;
+    margin: 0 auto;
+  }
+  .radial-stage svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  .radial-center {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    pointer-events: none;
+  }
+  .radial-center .num {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 32px;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .radial-center .lbl {
+    margin-top: 2px;
+    font-family: var(--font-body);
+    font-size: 9px; font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 0.18em; text-transform: uppercase;
+  }
+  .recovery-callout {
+    margin-top: 6px;
+    padding: 8px 10px;
+    background: var(--bg-base);
+    border: 1px dashed var(--bg-border);
+    border-radius: var(--radius-md);
+    display: flex; align-items: center; gap: 8px;
+    font-family: var(--font-body);
+    font-size: 11.5px; font-weight: 600;
+    color: var(--text-body);
+    line-height: 1.35;
+    letter-spacing: -0.003em;
+  }
+  .recovery-callout .ic {
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    background: var(--bg-surface);
+    color: var(--text-muted);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid var(--bg-border);
+  }
+
+  /* (d) What affects your score — expandable rows */
+  .sec-h {
+    margin: 6px 4px 4px;
+    display: flex; align-items: baseline; justify-content: space-between;
+  }
+  .sec-h .l {
+    font-family: var(--font-display);
+    font-size: 14px; font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.005em;
+  }
+  .sec-h .r {
+    font-family: var(--font-body);
+    font-size: 11px; font-weight: 600;
+    color: var(--text-secondary);
+  }
+
+  .expand-list {
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--elev-1);
+    overflow: hidden;
+  }
+  .erow {
+    border-bottom: 1px solid var(--bg-border-soft);
+  }
+  .erow:last-child { border-bottom: 0; }
+  .erow .ehead {
+    display: grid; grid-template-columns: 28px 1fr auto auto;
+    gap: 10px; align-items: center;
+    padding: 9px 12px;
+    cursor: pointer;
+  }
+  .erow .ic {
+    width: 24px; height: 24px;
+    border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .erow .ic.nut { background: rgba(0,210,120,0.12); color: var(--semantic-success); }
+  .erow .ic.tra { background: rgba(0,180,216,0.12); color: var(--semantic-info); }
+  .erow .ic.sle { background: rgba(168,85,247,0.12); color: var(--semantic-premium); }
+  .erow .ic.rec { background: rgba(254,45,85,0.10); color: #FE2D55; }
+  .erow .ic.bod { background: rgba(245,158,11,0.12); color: var(--semantic-warning); }
+  .erow .nm {
+    font-family: var(--font-body);
+    font-size: 13px; font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.003em;
+  }
+  .erow .wt {
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 11px; font-weight: 700;
+    color: var(--text-secondary);
+    background: var(--bg-base);
+    border: 1px solid var(--bg-border-soft);
+    padding: 2px 7px;
+    border-radius: 999px;
+  }
+  .erow .chev { color: var(--text-muted); transition: transform 0.2s; }
+  .erow.open .chev { transform: rotate(90deg); }
+  .erow .ebody {
+    border-top: 1px solid var(--bg-border-soft);
+    padding: 8px 12px 10px 50px;
+    font-family: var(--font-body);
+    font-size: 11.5px; font-weight: 500;
+    color: var(--text-body);
+    line-height: 1.5;
+    letter-spacing: -0.002em;
+  }
+  .erow .ebody b { font-weight: 700; color: var(--text-primary); }
+  .erow .summary {
+    font-family: var(--font-body);
+    font-size: 11px; font-weight: 600;
+    color: var(--text-secondary);
+    margin-top: 1px;
+    letter-spacing: -0.002em;
+  }
+  .erow.locked .ic { background: var(--bg-base); color: var(--text-muted); }
+  .erow.locked .nm { color: var(--text-secondary); }
+  .erow .lock-pill {
+    font-family: var(--font-numeric);
+    font-size: 9.5px; font-weight: 700;
+    color: var(--text-muted);
+    border: 1px solid var(--bg-border);
+    padding: 2px 6px;
+    border-radius: 999px;
+    background: var(--bg-base);
+    letter-spacing: 0.04em;
+  }
+
+  /* (e) How to improve */
+  .improve-list {
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--elev-1);
+    overflow: hidden;
+  }
+  .irow {
+    display: grid; grid-template-columns: 28px 1fr;
+    gap: 10px; align-items: flex-start;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--bg-border-soft);
+  }
+  .irow:last-child { border-bottom: 0; }
+  .irow .ic {
+    width: 24px; height: 24px;
+    border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    margin-top: 1px;
+  }
+  .irow .ic.nut { background: rgba(0,210,120,0.12); color: var(--semantic-success); }
+  .irow .ic.tra { background: rgba(0,180,216,0.12); color: var(--semantic-info); }
+  .irow .ic.sle { background: rgba(168,85,247,0.12); color: var(--semantic-premium); }
+  .irow .ic.rec { background: var(--bg-base); color: var(--text-muted); border: 1px dashed var(--bg-border); }
+  .irow .ic.bod { background: rgba(245,158,11,0.12); color: var(--semantic-warning); }
+  .irow .nm {
+    font-family: var(--font-body);
+    font-size: 11.5px; font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.003em;
+  }
+  .irow .body {
+    margin-top: 1px;
+    font-family: var(--font-body);
+    font-size: 11.5px; font-weight: 500;
+    color: var(--text-body);
+    line-height: 1.4;
+    letter-spacing: -0.002em;
+  }
+  .irow.locked .nm { color: var(--text-secondary); }
+  .irow.locked .body { color: var(--text-secondary); }
+
+  /* Tabbar V2 (raised-circle Coach FAB) */
+  .tabbar { position: absolute; left: 0; right: 0; bottom: 0; height: 88px; background: rgba(255,255,255,0.92); backdrop-filter: blur(18px); border-top: 1px solid var(--bg-border); display: grid; grid-template-columns: repeat(5, 1fr); padding: 8px 6px 30px; z-index: 22; }
+  .tab { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: var(--text-muted); position: relative; }
+  .tab.active { color: var(--text-primary); }
+  .tab-glyph { width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; }
+  .tab-label { font-family: var(--font-body); font-size: 10px; font-weight: 600; }
+  .tab-coach .tab-fab { position: absolute; top: -22px; left: 50%; transform: translateX(-50%); width: 52px; height: 52px; border-radius: 50%; background: var(--gradient-brand); display: flex; align-items: center; justify-content: center; color: #FFFFFF; box-shadow: var(--elev-cta); border: 3px solid #FFFFFF; }
+  .tab-coach .tab-fab svg { stroke: #FFFFFF; }
+  .tab-coach .tab-label { margin-top: 34px; }
+
+  /* Legend */
+  .legend{max-width:1320px;margin:56px auto 0;padding:22px 26px;background:#FFFFFF;border:1px solid var(--bg-border);border-radius:var(--radius-lg);display:grid;grid-template-columns:220px 1fr;gap:14px 28px;font-size:12px;color:var(--text-secondary);line-height:1.55;}
+  .legend h3{grid-column:1 / -1;margin:0 0 6px;font-family:var(--font-display);font-size:12px;font-weight:600;color:var(--text-muted);letter-spacing:.18em;text-transform:uppercase;}
+  .legend dt{grid-column:1;font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:.04em;text-transform:uppercase;}
+  .legend dd{grid-column:2;margin:0;}
+  .legend code{background:#F4F5F7;border:1px solid var(--bg-border);padding:1px 6px;border-radius:4px;font-family:var(--font-numeric);font-size:11px;color:var(--text-primary);}
+</style>
+</head>
+<body>
+
+  <header class="doc-header">
+    <div>
+      <p class="doc-eyebrow">FuelWell · Phase 0.5.3 · Step 4 — Flagship redesign</p>
+      <h1 class="doc-title">M26 Health Score detail</h1>
+      <p class="doc-sub">Redesigned from V1 stacked-cards. Five sections top-to-bottom: cause-first hero, 30-day trend, five-arm radial spoke (Recovery shown locked per D11), per-component "what affects your score" expanders with two rows pre-expanded, per-component "how to improve" coach-voice actions. Tab bar V2 at the bottom.</p>
+    </div>
+    <div class="doc-meta">
+      iPhone 15 Pro · 393 × 852 pt<br>
+      Pushed · from Progress<br>
+      Health Score · 78
+    </div>
+  </header>
+
+  <div class="frames-row" id="frames"></div>
+
+  <section class="legend">
+    <h3>Mockup notes · Phase 0.5.3</h3>
+
+    <dt>Hero (a)</dt>
+    <dd>Cause-first delta per D14. Big Outfit-900 number, sub line reads <em>"↓ sleep variance this week"</em> not <em>"−2.3 vs last week"</em>. Arrow carries the semantic color; the cause phrase stays <code>text.body</code>. D1 word ban applies throughout — Health Score keeps its name; no clinical framing in user-facing copy.</dd>
+
+    <dt>Trend (b)</dt>
+    <dd>30-day SVG line chart with subtle horizontal gridlines, brand-green area gradient, today's value circled in <code>semantic.success</code>. Axis labels: "30 days ago" left, "Today" right.</dd>
+
+    <dt>Radial spoke (c)</dt>
+    <dd>Five arms — Nutrition 35% · Training 25% · Sleep 20% · Recovery 10% · Body comp 10%. Composite score (78) lives at the center. Each spoke is color-coded by its component (macro/semantic tokens). Recovery is rendered locked (low alpha + lock glyph), with the D11 callout: "Recovery unlocks with wearable data (Apple Watch or compatible device)." Remaining four components proportionally re-weight (Nutrition 39 / Training 28 / Sleep 22 / Body 11).</dd>
+
+    <dt>What affects (d)</dt>
+    <dd>5 rows, two pre-expanded (Nutrition and Sleep), each with ~3 lines of plain-English explanation. Component weight shown as a pill on the right of each row. Recovery row is locked.</dd>
+
+    <dt>How to improve (e)</dt>
+    <dd>5 coach-voice action rows, 1–2 lines each. No "you missed / skipped / went over" per D13. Recovery row is dimmed with the wearable callout repeated inline.</dd>
+
+    <dt>Tab bar</dt>
+    <dd>V2 (raised-circle Coach FAB) with single-word labels per D6 + D9: Home · Meals · Coach · Exercise · Progress. Progress active.</dd>
+  </section>
+
+<script>
+  const statusBar = `<div class="status-bar">
+    <div class="time">9:41</div>
+    <div class="signals">
+      <svg width="17" height="11" viewBox="0 0 17 11" fill="none"><rect x="0" y="7" width="3" height="4" rx="0.5" fill="#0A0A0F"/><rect x="4" y="5" width="3" height="6" rx="0.5" fill="#0A0A0F"/><rect x="8" y="3" width="3" height="8" rx="0.5" fill="#0A0A0F"/><rect x="12" y="0" width="3" height="11" rx="0.5" fill="#0A0A0F"/></svg>
+      <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><path d="M8 11l-2.5-2.5a3.5 3.5 0 014.9 0L8 11z" fill="#0A0A0F"/><path d="M2 5a8.5 8.5 0 0112 0l-1.5 1.5a6 6 0 00-9 0L2 5z" fill="#0A0A0F"/><path d="M5 8a4.5 4.5 0 016 0l-1.5 1.5a2.5 2.5 0 00-3 0L5 8z" fill="#0A0A0F"/></svg>
+      <span class="signal-bat"></span>
+    </div>
+  </div>`;
+  const island = `<div class="dynamic-island"></div>`;
+
+  const ic = {
+    back:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    share:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 4v12M8 8l4-4 4 4M5 14v4a2 2 0 002 2h10a2 2 0 002-2v-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    chev:`<svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    apple:`<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 5c-1-2-3-3-5-3 0 2 1 3 2 4-2 0-4 2-4 5 0 3 2 6 4 8 1 1 2 2 3 1 1-1 2-1 3 0s2 0 3-1c2-2 4-5 4-8s-2-5-4-5c-2 0-3 1-4-1Z"/></svg>`,
+    dumb:`<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="9" width="3" height="6" rx="1"/><rect x="5" y="7" width="3" height="10" rx="1"/><rect x="8" y="11" width="8" height="2"/><rect x="16" y="7" width="3" height="10" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/></svg>`,
+    moon:`<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20 14.5A8 8 0 119.5 4a6.5 6.5 0 0010.5 10.5Z"/></svg>`,
+    heart:`<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7-4.6-9-9.5C1.5 7 4.5 3.5 8 3.5c2 0 3.4 1 4 2 .6-1 2-2 4-2 3.5 0 6.5 3.5 5 8C19 16.4 12 21 12 21Z"/></svg>`,
+    scale:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="16" rx="3" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="11" r="3" stroke="currentColor" stroke-width="1.8"/></svg>`,
+    lock:`<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 018 0v3" stroke-linecap="round"/></svg>`,
+    tabHome:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11l8-7 8 7v8a1 1 0 01-1 1h-4v-6h-6v6H5a1 1 0 01-1-1v-8Z"/></svg>`,
+    tabMeals:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M9 8h6M9 12h6M9 16h3" stroke-linecap="round"/></svg>`,
+    tabCoach:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a7 7 0 017 7v3l1.5 2.5a1 1 0 01-.9 1.5H4.4a1 1 0 01-.9-1.5L5 13v-3a7 7 0 017-7Z" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.5 18a2.5 2.5 0 005 0" stroke-linecap="round"/></svg>`,
+    tabExercise:`<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="10" width="2" height="4" rx="0.5"/><rect x="19" y="10" width="2" height="4" rx="0.5"/><rect x="6" y="8" width="3" height="8" rx="1"/><rect x="15" y="8" width="3" height="8" rx="1"/><rect x="9" y="11" width="6" height="2"/></svg>`,
+    tabProg:`<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="11" width="3" height="9" rx="1"/><rect x="10" y="5" width="3" height="15" rx="1"/><rect x="17" y="13" width="3" height="7" rx="1"/></svg>`,
+  };
+
+  function navBar() {
+    return `<div class="nav">
+      <div class="nav-btn">${ic.back}</div>
+      <div class="nav-title">Health Score</div>
+      <div class="nav-btn">${ic.share}</div>
+    </div>`;
+  }
+
+  function tabbar() {
+    return `<div class="tabbar">
+      <div class="tab"><div class="tab-glyph">${ic.tabHome}</div><div class="tab-label">Home</div></div>
+      <div class="tab"><div class="tab-glyph">${ic.tabMeals}</div><div class="tab-label">Meals</div></div>
+      <div class="tab tab-coach"><div class="tab-fab">${ic.tabCoach}</div><div class="tab-label">Coach</div></div>
+      <div class="tab"><div class="tab-glyph">${ic.tabExercise}</div><div class="tab-label">Exercise</div></div>
+      <div class="tab active"><div class="tab-glyph">${ic.tabProg}</div><div class="tab-label">Progress</div></div>
+    </div>`;
+  }
+
+  /* (a) Hero — cause-first */
+  function hero() {
+    return `<div class="hero">
+      <div class="lbl">Health Score · today</div>
+      <div class="score-line">
+        <div class="num">78</div>
+        <div class="of">of 100</div>
+      </div>
+      <div class="cause">
+        <span class="arr-down">↓</span>
+        sleep variance this week
+      </div>
+    </div>`;
+  }
+
+  /* (b) Trend chart — last 30 days */
+  function trendChart() {
+    const values = [72, 73, 74, 73, 75, 76, 75, 77, 78, 79, 80, 79, 80, 81, 80, 79, 80, 81, 82, 81, 80, 81, 80, 79, 80, 81, 80, 79, 78, 78];
+    const w = 340, h = 88, padX = 6, padY = 8;
+    const min = Math.min(...values) - 2;
+    const max = Math.max(...values) + 2;
+    const X = i => padX + (i / (values.length - 1)) * (w - padX * 2);
+    const Y = v => padY + (1 - (v - min) / (max - min)) * (h - padY * 2);
+    const line = values.map((v, i) => `${i === 0 ? 'M' : 'L'} ${X(i).toFixed(1)} ${Y(v).toFixed(1)}`).join(' ');
+    const area = `${line} L ${X(values.length - 1).toFixed(1)} ${h} L ${X(0).toFixed(1)} ${h} Z`;
+    const last = [X(values.length - 1), Y(values[values.length - 1])];
+    return `<div class="trend-card">
+      <div class="trend-head">
+        <div class="eb">30-day trend</div>
+        <div class="pill">↑ +6 pts vs 30 days ago</div>
+      </div>
+      <div class="trend-chart">
+        <svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="trendArea26" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#00D278" stop-opacity="0.22"/>
+              <stop offset="100%" stop-color="#00D278" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <line x1="${padX}" x2="${w - padX}" y1="${padY + (h - padY*2) * 0.25}" y2="${padY + (h - padY*2) * 0.25}" stroke="#EEF0F3" stroke-width="1"/>
+          <line x1="${padX}" x2="${w - padX}" y1="${padY + (h - padY*2) * 0.50}" y2="${padY + (h - padY*2) * 0.50}" stroke="#EEF0F3" stroke-width="1"/>
+          <line x1="${padX}" x2="${w - padX}" y1="${padY + (h - padY*2) * 0.75}" y2="${padY + (h - padY*2) * 0.75}" stroke="#EEF0F3" stroke-width="1"/>
+          <path d="${area}" fill="url(#trendArea26)"/>
+          <path d="${line}" fill="none" stroke="#00D278" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="${last[0]}" cy="${last[1]}" r="7" fill="#00D278" fill-opacity="0.18"/>
+          <circle cx="${last[0]}" cy="${last[1]}" r="4" fill="#00D278" stroke="#FFFFFF" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div class="trend-axis"><span>30 days</span><span>today</span></div>
+    </div>`;
+  }
+
+  /* (c) Five-arm radial spoke — Recovery locked */
+  function radial() {
+    // 5 spokes — pentagon. Order (clockwise from top): Nutrition, Training, Recovery, Body, Sleep.
+    const w = 360, h = 340;
+    const cx = w / 2, cy = h / 2 + 6;
+    const Rmax = 124;
+    const components = [
+      { name:'Nutrition',  weight:'35%', score:88, color:'#00D278', locked:false, ic:'apple' },
+      { name:'Training',   weight:'25%', score:82, color:'#00B4D8', locked:false, ic:'dumb' },
+      { name:'Recovery',   weight:'10%', score:0,  color:'#FE2D55', locked:true,  ic:'heart' },
+      { name:'Body comp',  weight:'10%', score:74, color:'#F59E0B', locked:false, ic:'scale' },
+      { name:'Sleep',      weight:'20%', score:68, color:'#A855F7', locked:false, ic:'moon' },
+    ];
+    const n = components.length;
+    // angles starting at top (-90°), clockwise
+    const angles = Array.from({length: n}, (_, i) => -Math.PI / 2 + (i * 2 * Math.PI / n));
+
+    // Outer pentagon (100) and 50% guide ring
+    const outerPts = angles.map(a => [cx + Math.cos(a) * Rmax, cy + Math.sin(a) * Rmax]);
+    const innerPts = angles.map(a => [cx + Math.cos(a) * Rmax * 0.5, cy + Math.sin(a) * Rmax * 0.5]);
+    const outerPath = outerPts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ') + ' Z';
+    const innerPath = innerPts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ') + ' Z';
+
+    // Spokes — colored lines from center to component's (score/100) along spoke axis
+    const spokes = components.map((c, i) => {
+      const a = angles[i];
+      const r = c.locked ? Rmax * 0.18 : Rmax * (c.score / 100);
+      const tx = cx + Math.cos(a) * r;
+      const ty = cy + Math.sin(a) * r;
+      const stroke = c.locked ? 'rgba(254,45,85,0.18)' : c.color;
+      const sw = c.locked ? 4 : 6;
+      const dot = c.locked
+        ? `<circle cx="${tx.toFixed(1)}" cy="${ty.toFixed(1)}" r="6" fill="${c.color}" fill-opacity="0.16" stroke="${c.color}" stroke-width="1" stroke-opacity="0.36" stroke-dasharray="2 2"/>`
+        : `<circle cx="${tx.toFixed(1)}" cy="${ty.toFixed(1)}" r="6" fill="${c.color}" stroke="#FFFFFF" stroke-width="1.5"/>`;
+      return `
+        <line x1="${cx}" y1="${cy}" x2="${tx.toFixed(1)}" y2="${ty.toFixed(1)}" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" stroke-opacity="${c.locked ? 0.7 : 0.95}"/>
+        ${dot}`;
+    }).join('');
+
+    // Filled radar polygon connecting endpoints
+    const radarPts = components.map((c, i) => {
+      const a = angles[i];
+      const r = c.locked ? Rmax * 0.18 : Rmax * (c.score / 100);
+      return [cx + Math.cos(a) * r, cy + Math.sin(a) * r];
+    });
+    const radarPath = radarPts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ') + ' Z';
+
+    // Labels positioned outside each vertex
+    const labels = components.map((c, i) => {
+      const a = angles[i];
+      const lx = cx + Math.cos(a) * (Rmax + 28);
+      const ly = cy + Math.sin(a) * (Rmax + 22);
+      const align = Math.abs(Math.cos(a)) < 0.2 ? 'middle' : (Math.cos(a) > 0 ? 'start' : 'end');
+      const lockBadge = c.locked ? `<tspan dx="4" fill="#9CA3AF" font-size="9">${' '}LOCKED</tspan>` : '';
+      const valText = c.locked ? '—' : c.score;
+      const labelOpacity = c.locked ? 0.55 : 1;
+      // Tiny inline 7-day sparkline beneath label
+      const sparkX = lx - 18;
+      const sparkY = ly + 8;
+      const sparkPath = (() => {
+        const vals = [c.score - 4, c.score - 3, c.score - 5, c.score - 2, c.score - 3, c.score - 1, c.score];
+        if (c.locked) {
+          return `<path d="M 0 6 L 36 6" stroke="#C7CCD3" stroke-width="1.2" stroke-dasharray="3 3" transform="translate(${sparkX} ${sparkY})"/>`;
+        }
+        const mn = Math.min(...vals), mx = Math.max(...vals);
+        const span = (mx - mn) || 1;
+        const sw = 36, sh = 12;
+        const pts = vals.map((v, j) => [(j / (vals.length - 1)) * sw, sh - ((v - mn) / span) * sh]);
+        const path = pts.map((p, j) => `${j === 0 ? 'M' : 'L'} ${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ');
+        return `<g transform="translate(${sparkX} ${sparkY})"><path d="${path}" stroke="${c.color}" stroke-width="1.5" fill="none" stroke-linecap="round"/></g>`;
+      })();
+      return `
+        <text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="${align}"
+              font-family="Inter, system-ui, sans-serif" font-size="10.5" font-weight="700"
+              fill="#1F2937" opacity="${labelOpacity}">
+          ${c.name} <tspan fill="#9CA3AF" font-weight="600">${c.weight}</tspan>${lockBadge}
+        </text>
+        <text x="${lx.toFixed(1)}" y="${(ly + 22).toFixed(1)}" text-anchor="${align}"
+              font-family="DM Sans, Inter, sans-serif" font-size="13" font-weight="700"
+              fill="${c.color}" opacity="${labelOpacity}">${valText}</text>
+        ${sparkPath}`;
+    }).join('');
+
+    return `<div class="radial-card">
+      <div class="radial-head">
+        <div class="l">Five component levers</div>
+        <div class="r">Tap a spoke for detail</div>
+      </div>
+      <div class="radial-stage">
+        <svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid meet">
+          <path d="${outerPath}" fill="none" stroke="#EEF0F3" stroke-width="1"/>
+          <path d="${innerPath}" fill="none" stroke="#EEF0F3" stroke-width="1" stroke-dasharray="2 3"/>
+          <path d="${radarPath}" fill="rgba(0,210,120,0.06)" stroke="rgba(0,210,120,0.20)" stroke-width="1"/>
+          ${spokes}
+          ${labels}
+        </svg>
+        <div class="radial-center">
+          <div class="num">78</div>
+          <div class="lbl">Composite</div>
+        </div>
+      </div>
+      <div class="recovery-callout">
+        <span class="ic">${ic.lock}</span>
+        <span><b style="font-weight:700; color: var(--text-primary);">Recovery unlocks with wearable data</b> (Apple Watch or compatible device). Remaining four components proportionally re-weight (Nutrition 39 / Training 28 / Sleep 22 / Body 11).</span>
+      </div>
+    </div>`;
+  }
+
+  /* (d) What affects your score — expandable rows */
+  function whatAffects() {
+    const rows = [
+      { kind:'nut', glyph:ic.apple, name:'Nutrition', weight:'35%',
+        summary:'Protein consistency + calorie envelope', open:true,
+        body:`Counts <b>protein hit rate</b> (g vs target) and <b>calorie envelope</b> (% of days inside ±10% of plan). 7-day rolling.<br>Protein has been running 88% — that's the bigger lift on this score right now.<br>One over-budget weekend doesn't move it; a 4-day pattern does.` },
+      { kind:'tra', glyph:ic.dumb,  name:'Training', weight:'25%',
+        summary:'Sessions completed + volume vs plan', open:false },
+      { kind:'sle', glyph:ic.moon,  name:'Sleep', weight:'20%',
+        summary:'Duration + bedtime variance', open:true,
+        body:`Counts <b>average duration</b> (7-day) and <b>variance in bedtime</b> (lower variance = higher score).<br>Bedtime drifted 45 min later vs your 7-day median three nights this week — that's the cause behind today's dip.<br>Duration alone is fine; rhythm is the lever.` },
+      { kind:'rec', glyph:ic.heart, name:'Recovery', weight:'10%',
+        summary:'14-day resting HR baseline · locked', open:false, locked:true },
+      { kind:'bod', glyph:ic.scale, name:'Body comp', weight:'10%',
+        summary:'Weight trend vs goal band', open:false },
+    ];
+    return `<div class="expand-list">
+      ${rows.map(r => `
+        <div class="erow ${r.open ? 'open' : ''} ${r.locked ? 'locked' : ''}">
+          <div class="ehead">
+            <div class="ic ${r.kind}">${r.glyph}</div>
+            <div>
+              <div class="nm">${r.name}</div>
+              <div class="summary">${r.summary}</div>
+            </div>
+            ${r.locked ? `<div class="lock-pill">${ic.lock}<span style="margin-left:3px;">Wearable</span></div>` : `<div class="wt">${r.weight}</div>`}
+            <div class="chev">${ic.chev}</div>
+          </div>
+          ${r.open && r.body ? `<div class="ebody">${r.body}</div>` : ''}
+        </div>`).join('')}
+    </div>`;
+  }
+
+  /* (e) How to improve — coach voice */
+  function howToImprove() {
+    const rows = [
+      { kind:'nut', glyph:ic.apple, name:'Nutrition',
+        body:`Protein has been running ~20 g light midweek. Add a Greek yogurt or protein shake at 3 PM.` },
+      { kind:'tra', glyph:ic.dumb,  name:'Training',
+        body:`Pull day is the lightest slot this month. Lock Wednesday on the calendar to make it routine.` },
+      { kind:'sle', glyph:ic.moon,  name:'Sleep',
+        body:`Bedtime drifted 45 min later vs your 7-day median. Set a wind-down alert at 9:30 PM.` },
+      { kind:'rec', glyph:ic.lock,  name:'Recovery', locked:true,
+        body:`Recovery unlocks with wearable data (Apple Watch or compatible device).` },
+      { kind:'bod', glyph:ic.scale, name:'Body comp',
+        body:`Weigh-in cadence is twice this week. A daily fasted weigh-in gives the trend chart smoother data to work with.` },
+    ];
+    return `<div class="improve-list">
+      ${rows.map(r => `
+        <div class="irow ${r.locked ? 'locked' : ''}">
+          <div class="ic ${r.kind}">${r.glyph}</div>
+          <div>
+            <div class="nm">${r.name}</div>
+            <div class="body">${r.body}</div>
+          </div>
+        </div>`).join('')}
+    </div>`;
+  }
+
+  function v1() {
+    return `
+      ${navBar()}
+      <div class="content">
+        ${hero()}
+        ${trendChart()}
+        ${radial()}
+        <div class="sec-h"><div class="l">What affects your score</div><div class="r">Tap to expand</div></div>
+        ${whatAffects()}
+        <div class="sec-h"><div class="l">How to improve</div><div class="r">Coach</div></div>
+        ${howToImprove()}
+      </div>`;
+  }
+
+  const variations = [
+    { num:'Variation 01 · Redesign', name:'Health Score · flagship', cap:'Five-section redesign: cause-first hero, 30-day trend chart, five-arm radial spoke (Recovery locked), per-component "what affects" expanders (Nutrition + Sleep pre-expanded), per-component "how to improve" coach actions. Tab bar V2 at the bottom.', body: v1() }
+  ];
+
+  const root = document.getElementById('frames');
+  root.innerHTML = variations.map(v => `
+    <section class="variation">
+      <div class="v-label">
+        <div class="v-num">${v.num}</div>
+        <div class="v-name">${v.name}</div>
+        <div class="v-cap">${v.cap}</div>
+      </div>
+      <div class="device">
+        ${statusBar}${island}
+        <div class="screen">${v.body}</div>
+        ${tabbar()}
+        <div class="home-indicator"></div>
+      </div>
+    </section>
+  `).join('');
+</script>
+</body>
+</html>

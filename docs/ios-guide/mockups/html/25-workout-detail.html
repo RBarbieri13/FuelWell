@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>FuelWell · M25 Workout Detail · Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-base:#F4F5F7; --bg-surface:#FFFFFF; --bg-elevated:#0F1117;
+    --bg-border:#E5E7EB; --bg-border-soft:#EEF0F3;
+    --text-primary:#0A0A0F; --text-body:#1F2937; --text-secondary:#6B7280;
+    --text-muted:#9CA3AF; --text-disabled:#C7CCD3; --text-on-dark:#FFFFFF; --text-on-dark-muted:#9AA0AC;
+    --brand-green:#47E7B0; --semantic-success:#00D278; --semantic-warning:#F59E0B; --semantic-info:#00B4D8; --semantic-premium:#A855F7;
+    --gradient-brand: linear-gradient(135deg, #00D278 0%, #47E7B0 100%);
+    --radius-md:12px; --radius-lg:20px; --radius-pill:999px;
+    --elev-1: 0 1px 2px rgba(15,17,23,.04), 0 1px 0 rgba(15,17,23,.02);
+    --elev-2: 0 4px 14px rgba(15,17,23,.06), 0 1px 2px rgba(15,17,23,.04);
+    --elev-cta: 0 8px 24px rgba(0,210,120,.22);
+    --font-display:'Outfit', system-ui, sans-serif;
+    --font-body:'Inter', system-ui, sans-serif;
+    --font-system: -apple-system, 'SF Pro Display', system-ui, sans-serif;
+    --font-numeric:'DM Sans', 'Inter', sans-serif;
+  }
+  *{box-sizing:border-box;} html,body{margin:0;padding:0;}
+  body{background:#ECEDF0;color:var(--text-primary);font-family:var(--font-body);padding:56px 48px 96px;min-width:1380px;}
+  .doc-header{max-width:1320px;margin:0 auto 48px;display:flex;align-items:flex-end;justify-content:space-between;gap:32px;border-bottom:1px solid #D6D8DD;padding-bottom:24px;}
+  .doc-eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--text-muted);margin:0 0 8px;font-weight:600;}
+  .doc-title{font-family:var(--font-display);font-size:28px;font-weight:700;margin:0;letter-spacing:-.018em;}
+  .doc-sub{font-size:13px;color:var(--text-secondary);margin:8px 0 0;max-width:760px;line-height:1.55;}
+  .doc-meta{font-family:var(--font-numeric);font-size:11px;color:var(--text-muted);text-align:right;letter-spacing:.04em;line-height:1.7;}
+  .frames-row{display:flex;gap:64px;justify-content:center;align-items:flex-start;}
+  .variation{display:flex;flex-direction:column;align-items:center;width:393px;}
+  .v-label{margin-bottom:18px;text-align:center;width:100%;}
+  .v-num{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--text-muted);font-weight:600;}
+  .v-name{font-family:var(--font-display);font-size:16px;font-weight:600;color:var(--text-primary);margin-top:4px;}
+  .v-cap{font-size:12px;color:var(--text-secondary);margin-top:4px;line-height:1.45;max-width:340px;}
+  .device{position:relative;width:393px;height:852px;background:var(--bg-base);border-radius:56px;overflow:hidden;box-shadow:0 0 0 12px #0A0A0F,0 0 0 13px #2A2A30,0 30px 80px rgba(15,17,23,.28),0 12px 32px rgba(15,17,23,.16);}
+  .status-bar{position:absolute;top:0;left:0;right:0;height:54px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 28px 9px;z-index:30;}
+  .status-bar .time{font-family:var(--font-system);font-size:17px;font-weight:600;color:var(--text-primary);}
+  .status-bar.on-dark .time{color:var(--text-on-dark);}
+  .status-bar .signals{display:inline-flex;gap:6px;align-items:center;}
+  .status-bar.on-dark .signals svg rect, .status-bar.on-dark .signals svg path{fill:var(--text-on-dark)!important;}
+  .status-bar.on-dark .signal-bat{border-color:var(--text-on-dark);}
+  .status-bar.on-dark .signal-bat::before, .status-bar.on-dark .signal-bat::after{background:var(--text-on-dark);}
+  .signal-bat{display:inline-block;width:26px;height:12px;border:1.2px solid var(--text-primary);border-radius:3px;position:relative;}
+  .signal-bat::after{content:"";position:absolute;right:-3px;top:3px;width:2px;height:5px;background:var(--text-primary);border-radius:0 1.5px 1.5px 0;}
+  .signal-bat::before{content:"";position:absolute;left:1px;top:1px;bottom:1px;width:78%;background:var(--text-primary);border-radius:1.5px;}
+  .dynamic-island{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:124px;height:36px;background:#0A0A0F;border-radius:22px;z-index:31;}
+  .home-indicator{position:absolute;bottom:9px;left:50%;transform:translateX(-50%);width:134px;height:5px;background:var(--text-primary);border-radius:3px;opacity:.7;z-index:32;}
+  .home-indicator.on-dark{background:var(--text-on-dark);opacity:.85;}
+  .screen{position:absolute;top:0;left:0;right:0;bottom:0;padding:54px 0 0;display:flex;flex-direction:column;}
+
+  /* Hero */
+  .hero {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background:
+      radial-gradient(70% 50% at 30% 30%, rgba(255,255,255,0.12) 0%, transparent 50%),
+      linear-gradient(135deg, #1A1F2E 0%, #0F1117 60%, #1F2937 100%);
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .hero .dumbbell-l, .hero .dumbbell-r, .hero .bar {
+    position: absolute;
+  }
+  .hero .bar {
+    bottom: 32%; left: 18%; right: 18%; height: 6px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #71717A, #A1A1AA, #71717A);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.32);
+  }
+  .hero .plate {
+    position: absolute;
+    bottom: 26%;
+    width: 36px; height: 60px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #71717A, #404040);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.40);
+  }
+  .hero .plate.left { left: 14%; }
+  .hero .plate.right { right: 14%; }
+  .hero .plate2.left { left: 22%; height: 50px; width: 30px; bottom: 28%; opacity: 0.85; }
+  .hero .plate2.right { right: 22%; height: 50px; width: 30px; bottom: 28%; opacity: 0.85; }
+
+  .nav-float {
+    position: absolute; top: 54px; left: 0; right: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 6px 12px 0;
+    z-index: 6;
+  }
+  .nav-glass {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(8px);
+    color: var(--text-primary);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,.16);
+  }
+
+  /* Banner overlay */
+  .hero .overlay-meta {
+    position: absolute;
+    left: 16px; right: 16px; bottom: 14px;
+    color: var(--text-on-dark);
+    z-index: 3;
+  }
+  .hero .overlay-meta .eyebrow {
+    font-family: var(--font-body);
+    font-size: 10px; font-weight: 700;
+    color: var(--text-on-dark-muted);
+    letter-spacing: 0.22em; text-transform: uppercase;
+  }
+  .hero .overlay-meta .ttl {
+    margin-top: 4px;
+    font-family: var(--font-display);
+    font-size: 28px; font-weight: 700;
+    letter-spacing: -0.022em;
+    line-height: 1.1;
+  }
+
+  /* Sticky title nav */
+  .compact-nav {
+    height: 56px;
+    background: rgba(255,255,255,0.94);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--bg-border);
+    display: grid; grid-template-columns: 56px 1fr 56px;
+    align-items: center;
+    padding: 0 12px;
+    flex-shrink: 0;
+  }
+  .compact-nav .nm {
+    text-align: center;
+    font-family: var(--font-display);
+    font-size: 15px; font-weight: 700;
+    color: var(--text-primary);
+  }
+  .compact-nav .nb {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: var(--bg-base);
+    color: var(--text-body);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto;
+  }
+
+  .content { flex: 1; overflow: hidden; padding: 14px 16px 100px; display: flex; flex-direction: column; gap: 12px; }
+
+  /* Verdict / coach card */
+  .verdict {
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-left: 3px solid var(--semantic-success);
+    border-radius: var(--radius-md);
+    padding: 12px 14px;
+    box-shadow: var(--elev-1);
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .verdict .av {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #A855F7, #6B21A8);
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display);
+    font-weight: 700; font-size: 12px;
+    flex-shrink: 0;
+  }
+  .verdict .body { flex: 1; min-width: 0; }
+  .verdict .head {
+    font-family: var(--font-body);
+    font-size: 10.5px; font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 0.16em; text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+  .verdict .txt {
+    font-family: var(--font-body);
+    font-size: 13.5px; font-weight: 500;
+    color: var(--text-body);
+    line-height: 1.45;
+    letter-spacing: -0.003em;
+  }
+  .verdict .txt b { font-weight: 700; color: var(--text-primary); }
+
+  /* Stat tiles */
+  .stat-row {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .stat {
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--elev-1);
+    padding: 12px;
+  }
+  .stat .l {
+    font-family: var(--font-body);
+    font-size: 9.5px; font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .stat .v {
+    margin-top: 4px;
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 22px; font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.018em;
+    line-height: 1;
+  }
+  .stat .v .u {
+    font-family: var(--font-body);
+    font-size: 11px; font-weight: 600;
+    color: var(--text-muted);
+    margin-left: 2px;
+  }
+
+  /* Exercise list */
+  .ex-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--elev-1);
+    overflow: hidden;
+  }
+  .ex-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--bg-border-soft);
+  }
+  .ex-head .l {
+    font-family: var(--font-body);
+    font-size: 11px; font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 0.16em; text-transform: uppercase;
+  }
+  .ex-head .r {
+    font-family: var(--font-numeric);
+    font-size: 12px; font-weight: 700;
+    color: var(--text-secondary);
+  }
+  .ex {
+    display: grid; grid-template-columns: 36px 1fr auto;
+    gap: 12px; align-items: center;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--bg-border-soft);
+    cursor: pointer;
+    position: relative;
+  }
+  .ex:last-child { border-bottom: 0; }
+  .ex .n {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--bg-base);
+    color: var(--text-body);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display);
+    font-weight: 700; font-size: 13px;
+    flex-shrink: 0;
+  }
+  .ex.done .n {
+    background: var(--semantic-success); color: #fff;
+  }
+  .ex.active .n {
+    background: var(--bg-elevated); color: var(--text-on-dark);
+  }
+  .ex.active::before {
+    content: ""; position: absolute;
+    left: 0; top: 0; bottom: 0; width: 3px;
+    background: var(--semantic-success);
+  }
+  .ex .body { min-width: 0; }
+  .ex .nm {
+    font-family: var(--font-body);
+    font-size: 14px; font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.003em;
+    line-height: 1.25;
+  }
+  .ex.done .nm { color: var(--text-muted); text-decoration: line-through; }
+  .ex .meta {
+    margin-top: 2px;
+    display: flex; gap: 8px; flex-wrap: wrap;
+    font-family: var(--font-body);
+    font-size: 11.5px; font-weight: 500;
+    color: var(--text-secondary);
+  }
+  .ex .meta .v { font-family: var(--font-numeric); color: var(--text-body); font-weight: 700; }
+  .ex .meta .dot { color: var(--text-disabled); }
+  .ex .target {
+    text-align: right;
+    flex-shrink: 0;
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 12px; font-weight: 700;
+    color: var(--text-primary);
+  }
+  .ex .target .u {
+    font-family: var(--font-body);
+    font-size: 10px;
+    color: var(--text-muted);
+    display: block;
+    margin-top: 1px;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  /* Sticky start */
+  .sticky-start {
+    position: absolute;
+    left: 16px; right: 16px; bottom: 100px;
+    height: 56px;
+    border-radius: 18px;
+    background: var(--gradient-brand);
+    color: var(--text-on-dark);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    font-family: var(--font-body);
+    font-size: 16px; font-weight: 700;
+    box-shadow: 0 16px 36px rgba(0,210,120,0.32);
+    z-index: 22;
+    letter-spacing: -0.003em;
+  }
+
+  /* ===== V3 in-workout ===== */
+  .in-workout-screen {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, #0F1117 0%, #1A1F2E 100%);
+    color: var(--text-on-dark);
+    padding: 54px 0 0;
+    display: flex; flex-direction: column;
+    z-index: 4;
+    overflow: hidden;
+  }
+  .iw-top {
+    padding: 8px 16px;
+    display: grid; grid-template-columns: 40px 1fr 40px;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .iw-top .close, .iw-top .menu {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto;
+  }
+  .iw-top .ttl {
+    text-align: center;
+    font-family: var(--font-body);
+    font-size: 11px; font-weight: 700;
+    color: var(--text-on-dark-muted);
+    letter-spacing: 0.20em; text-transform: uppercase;
+  }
+  .iw-top .ttl .nm { color: var(--text-on-dark); font-size: 14px; font-family: var(--font-display); font-weight: 700; letter-spacing: -0.005em; margin-top: 1px; text-transform: none; }
+
+  .iw-progress {
+    margin: 4px 16px 0;
+    display: flex; gap: 4px;
+    flex-shrink: 0;
+  }
+  .iw-progress .b { flex: 1; height: 4px; border-radius: 999px; background: rgba(255,255,255,0.10); }
+  .iw-progress .b.done { background: var(--brand-green); }
+  .iw-progress .b.active { background: linear-gradient(90deg, var(--brand-green) 65%, rgba(255,255,255,0.10) 65%); }
+
+  .iw-body {
+    flex: 1;
+    padding: 20px 20px 16px;
+    overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+  .iw-eyebrow {
+    font-family: var(--font-body);
+    font-size: 11px; font-weight: 700;
+    color: var(--text-on-dark-muted);
+    letter-spacing: 0.20em; text-transform: uppercase;
+  }
+  .iw-eyebrow .of { color: var(--text-disabled); margin-left: 4px; }
+  .iw-h1 {
+    margin-top: 6px;
+    font-family: var(--font-display);
+    font-size: 30px; font-weight: 700;
+    color: var(--text-on-dark);
+    letter-spacing: -0.022em;
+    line-height: 1.15;
+  }
+  .iw-target {
+    margin-top: 8px;
+    display: flex; align-items: center; gap: 10px;
+    font-family: var(--font-body);
+    font-size: 13px; font-weight: 600;
+    color: var(--text-on-dark-muted);
+  }
+  .iw-target .pill {
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.08);
+    color: var(--text-on-dark);
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-weight: 700;
+    letter-spacing: -0.003em;
+  }
+  .iw-target .pill .u { font-family: var(--font-body); font-size: 11px; color: var(--text-on-dark-muted); margin-left: 2px; }
+
+  /* Sets table */
+  .sets-card {
+    margin-top: 18px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+  .sets-head {
+    display: grid;
+    grid-template-columns: 36px 1fr 1fr 1fr 36px;
+    gap: 8px;
+    padding: 8px 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    font-family: var(--font-body);
+    font-size: 9.5px; font-weight: 700;
+    color: var(--text-on-dark-muted);
+    letter-spacing: 0.18em; text-transform: uppercase;
+  }
+  .sets-head .right { text-align: right; }
+  .set-row {
+    display: grid;
+    grid-template-columns: 36px 1fr 1fr 1fr 36px;
+    gap: 8px; align-items: center;
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .set-row:last-child { border-bottom: 0; }
+  .set-row .n {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    color: var(--text-on-dark);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display);
+    font-weight: 700; font-size: 12px;
+  }
+  .set-row.done .n { background: var(--semantic-success); color: #fff; }
+  .set-row.active .n { background: var(--brand-green); color: var(--text-primary); }
+  .set-row .cell {
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 16px; font-weight: 700;
+    color: var(--text-on-dark);
+    letter-spacing: -0.005em;
+  }
+  .set-row.done .cell { color: var(--text-on-dark-muted); }
+  .set-row .cell.target {
+    color: var(--text-on-dark-muted);
+    font-weight: 500;
+    font-size: 14px;
+  }
+  .set-row .cell.input {
+    background: rgba(255,255,255,0.10);
+    border: 1px solid rgba(71,231,176,0.40);
+    border-radius: 8px;
+    padding: 4px 8px;
+    color: var(--brand-green);
+  }
+  .set-row .check {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    color: var(--text-on-dark-muted);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .set-row.done .check { background: var(--semantic-success); color: #fff; }
+  .set-row.active .check { background: var(--gradient-brand); color: var(--text-on-dark); }
+
+  .rest-strap {
+    margin-top: 12px;
+    padding: 12px 14px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: var(--radius-md);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .rest-strap .ring-mini {
+    width: 40px; height: 40px;
+    position: relative; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .rest-strap .ring-mini .digit {
+    position: absolute;
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 13px; font-weight: 700;
+    color: var(--brand-green);
+  }
+  .rest-strap .body { flex: 1; }
+  .rest-strap .lbl {
+    font-family: var(--font-body);
+    font-size: 10px; font-weight: 700;
+    color: var(--text-on-dark-muted);
+    letter-spacing: 0.18em; text-transform: uppercase;
+  }
+  .rest-strap .v {
+    margin-top: 2px;
+    font-family: var(--font-body);
+    font-size: 13px; font-weight: 600;
+    color: var(--text-on-dark);
+  }
+  .rest-strap .skip {
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.08);
+    color: var(--text-on-dark);
+    font-family: var(--font-body);
+    font-size: 12px; font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  /* iw bottom */
+  .iw-bottom {
+    margin-top: auto;
+    padding-top: 14px;
+    display: grid; grid-template-columns: 60px 1fr 60px;
+    gap: 8px;
+  }
+  .iw-bottom .side {
+    height: 56px;
+    border-radius: 18px;
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .iw-bottom .complete {
+    height: 56px;
+    border-radius: 18px;
+    background: var(--gradient-brand);
+    color: var(--text-on-dark);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    font-family: var(--font-body);
+    font-size: 15px; font-weight: 700;
+    letter-spacing: -0.003em;
+    box-shadow: 0 16px 36px rgba(0,210,120,0.32);
+  }
+
+  /* Tabbar V2 (raised-circle Coach FAB) */
+  .tabbar { position: absolute; left: 0; right: 0; bottom: 0; height: 88px; background: rgba(255,255,255,0.92); backdrop-filter: blur(18px); border-top: 1px solid var(--bg-border); display: grid; grid-template-columns: repeat(5, 1fr); padding: 8px 6px 30px; z-index: 20; }
+  .tab { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: var(--text-muted); position: relative; }
+  .tab.active { color: var(--text-primary); }
+  .tab-glyph { width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; }
+  .tab-label { font-family: var(--font-body); font-size: 10px; font-weight: 600; }
+  .tab-coach .tab-fab { position: absolute; top: -22px; left: 50%; transform: translateX(-50%); width: 52px; height: 52px; border-radius: 50%; background: var(--gradient-brand); display: flex; align-items: center; justify-content: center; color: #FFFFFF; box-shadow: var(--elev-cta); border: 3px solid #FFFFFF; }
+  .tab-coach .tab-fab svg { stroke: #FFFFFF; }
+  .tab-coach .tab-label { margin-top: 34px; }
+
+  /* Empty */
+  .empty-stage { flex: 1; padding: 14px 16px 100px; display: flex; flex-direction: column; gap: 14px; overflow: hidden; }
+  .empty-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--elev-1);
+    padding: 22px 18px;
+    text-align: center;
+  }
+  .empty-card .ic-ring {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: rgba(0,180,216,0.10);
+    color: var(--semantic-info);
+    margin: 0 auto 12px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .empty-card .h {
+    font-family: var(--font-display);
+    font-size: 19px; font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.012em;
+    line-height: 1.25;
+  }
+  .empty-card .s {
+    margin-top: 6px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+  .empty-card .actions {
+    margin-top: 14px;
+    display: flex; gap: 8px;
+  }
+  .empty-card .pri {
+    flex: 1; height: 46px;
+    border-radius: 14px;
+    background: var(--gradient-brand);
+    color: var(--text-on-dark);
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    font-family: var(--font-body);
+    font-size: 14px; font-weight: 700;
+    box-shadow: var(--elev-cta);
+  }
+  .empty-card .ghost {
+    flex: 1; height: 46px;
+    border-radius: 14px;
+    background: var(--bg-base);
+    border: 1px solid var(--bg-border);
+    color: var(--text-body);
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    font-family: var(--font-body);
+    font-size: 13.5px; font-weight: 600;
+  }
+
+  /* Week strip */
+  .week {
+    display: grid; grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+  }
+  .day {
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: 14px;
+    padding: 10px 4px;
+    text-align: center;
+    box-shadow: var(--elev-1);
+  }
+  .day.today { background: var(--bg-elevated); color: var(--text-on-dark); border-color: var(--bg-elevated); }
+  .day.rest { background: var(--bg-base); box-shadow: none; opacity: 0.7; }
+  .day .dl { font-family: var(--font-body); font-size: 9px; font-weight: 700; color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase; }
+  .day.today .dl { color: var(--text-on-dark-muted); }
+  .day .ws {
+    margin-top: 4px;
+    font-family: var(--font-body);
+    font-size: 10.5px; font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.005em;
+    display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .day.today .ws { color: var(--text-on-dark); }
+  .day.rest .ws { color: var(--text-muted); font-weight: 600; }
+
+  /* Legend */
+  .legend{max-width:1320px;margin:56px auto 0;padding:22px 26px;background:#FFFFFF;border:1px solid var(--bg-border);border-radius:var(--radius-lg);display:grid;grid-template-columns:220px 1fr;gap:14px 28px;font-size:12px;color:var(--text-secondary);line-height:1.55;}
+  .legend h3{grid-column:1 / -1;margin:0 0 6px;font-family:var(--font-display);font-size:12px;font-weight:600;color:var(--text-muted);letter-spacing:.18em;text-transform:uppercase;}
+  .legend dt{grid-column:1;font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:.04em;text-transform:uppercase;}
+  .legend dd{grid-column:2;margin:0;}
+  .legend code{background:#F4F5F7;border:1px solid var(--bg-border);padding:1px 6px;border-radius:4px;font-family:var(--font-numeric);font-size:11px;color:var(--text-primary);}
+</style>
+</head>
+<body>
+
+  <header class="doc-header">
+    <div>
+      <p class="doc-eyebrow">FuelWell · Phase 0.5 · Step 4 — Mockups</p>
+      <h1 class="doc-title">M25 Workout Detail · Push day</h1>
+      <p class="doc-sub">Promoted from approved wireframe § 3.25 V1 (hero dominant). Three states: pre-workout detail with the verdict + 3 stat tiles + exercise list, no-workout-planned empty state, and the dark in-workout view with the live rest timer.</p>
+    </div>
+    <div class="doc-meta">
+      iPhone 15 Pro · 393 × 852 pt<br>
+      Pilot · manual entry<br>
+      Template · Push day
+    </div>
+  </header>
+
+  <div class="frames-row" id="frames"></div>
+
+  <section class="legend">
+    <h3>Mockup notes · Step 4</h3>
+
+    <dt>Hero</dt>
+    <dd>16:9 dark gradient with a bar + plates illustration drawn in CSS. "PUSH DAY" eyebrow + Outfit 700 28pt name overlaid bottom-left; glassy back / share / save nav floats top.</dd>
+
+    <dt>Coach verdict</dt>
+    <dd>White card with a 3pt success-green left rail and the purple coach avatar. Two-line context referencing today's macros — "Last push session was <strong>3.2k volume</strong>; today you've got <strong>+220 kcal headroom</strong> after this." Replaces the engine "verdict" since Pilot is manual-entry only.</dd>
+
+    <dt>Stat tiles</dt>
+    <dd>Three cells: Volume (3.4k lb projected) · Sets (24) · Est. time (55 min). DM Sans tabular numbers. Same vocabulary as the Dashboard.</dd>
+
+    <dt>Exercise list</dt>
+    <dd>7-exercise card. First row is the active starting point with a 3pt success-green left rail + dark numbered tile. Each row: name, set/rep meta line ("4 sets · 8–12 reps · last 135 lb"), trailing weight target stack. Tap to drill into edits.</dd>
+
+    <dt>Sticky Start</dt>
+    <dd>56pt gradient-brand pill above the bottom edge with the green-halo shadow. Tap fires <code>haptic.commit</code> and transitions to the V3 in-workout view.</dd>
+
+    <dt>In-workout · V3</dt>
+    <dd>Dark immersive. Step progress bars up top, "Exercise 2 / 7" eyebrow + "Bench press" headline in Outfit 30pt, target chips (4 sets · 8–12 reps · 135 lb). Sets table: 5 columns (#, weight target, reps target, weight done, reps done) with done sets struck through, active set highlighted with the brand-green ring + green-tinted input fields. 40pt rest-timer strap shows 1:18 remaining with a brand-green ring + Skip pill. Bottom: prev / Complete set / next.</dd>
+
+    <dt>Empty · V2</dt>
+    <dd>No workout planned today. Info-blue ring icon + "No workout planned." copy + a two-button row (gradient-brand "Browse templates" + ghost "Add custom"). 7-day week strip beneath shows the rest of the week's scheduled workouts so the user can navigate to a future day.</dd>
+  </section>
+
+<script>
+  const statusBar = (onDark) => `<div class="status-bar ${onDark?'on-dark':''}">
+    <div class="time">9:41</div>
+    <div class="signals">
+      <svg width="17" height="11" viewBox="0 0 17 11" fill="none"><rect x="0" y="7" width="3" height="4" rx="0.5" fill="#0A0A0F"/><rect x="4" y="5" width="3" height="6" rx="0.5" fill="#0A0A0F"/><rect x="8" y="3" width="3" height="8" rx="0.5" fill="#0A0A0F"/><rect x="12" y="0" width="3" height="11" rx="0.5" fill="#0A0A0F"/></svg>
+      <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><path d="M8 11l-2.5-2.5a3.5 3.5 0 014.9 0L8 11z" fill="#0A0A0F"/><path d="M2 5a8.5 8.5 0 0112 0l-1.5 1.5a6 6 0 00-9 0L2 5z" fill="#0A0A0F"/><path d="M5 8a4.5 4.5 0 016 0l-1.5 1.5a2.5 2.5 0 00-3 0L5 8z" fill="#0A0A0F"/></svg>
+      <span class="signal-bat"></span>
+    </div>
+  </div>`;
+  const island = `<div class="dynamic-island"></div>`;
+
+  const ic = {
+    back:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    share:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 4v12M8 8l4-4 4 4M5 14v4a2 2 0 002 2h10a2 2 0 002-2v-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    bookmark:`<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4a2 2 0 012-2h8a2 2 0 012 2v18l-6-3.5L6 22V4Z"/></svg>`,
+    more:`<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="6" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="18" cy="12" r="1.8"/></svg>`,
+    play:`<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4l14 8-14 8V4Z"/></svg>`,
+    x:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`,
+    check:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12.5l5 5L19.5 7.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    arrL:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M19 12H5M11 6l-6 6 6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    arrR:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    plus:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>`,
+    library:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 5.5C4 4.7 4.7 4 5.5 4H10a3 3 0 013 3v14a2 2 0 00-2-2H5.5A1.5 1.5 0 014 17.5v-12ZM20 5.5C20 4.7 19.3 4 18.5 4H14a3 3 0 00-3 3v14a2 2 0 012-2h5.5a1.5 1.5 0 001.5-1.5v-12Z" stroke="currentColor" stroke-width="1.8"/></svg>`,
+    cal:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="16" rx="2.5" stroke="currentColor" stroke-width="1.8"/><path d="M3 9h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`,
+    tabHome:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11l8-7 8 7v8a1 1 0 01-1 1h-4v-6h-6v6H5a1 1 0 01-1-1v-8Z"/></svg>`,
+    tabMeals:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M9 8h6M9 12h6M9 16h3" stroke-linecap="round"/></svg>`,
+    tabCoach:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a7 7 0 017 7v3l1.5 2.5a1 1 0 01-.9 1.5H4.4a1 1 0 01-.9-1.5L5 13v-3a7 7 0 017-7Z" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.5 18a2.5 2.5 0 005 0" stroke-linecap="round"/></svg>`,
+    tabExercise:`<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="10" width="2" height="4" rx="0.5"/><rect x="19" y="10" width="2" height="4" rx="0.5"/><rect x="6" y="8" width="3" height="8" rx="1"/><rect x="15" y="8" width="3" height="8" rx="1"/><rect x="9" y="11" width="6" height="2"/></svg>`,
+    tabProg:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="11" width="3" height="9" rx="1"/><rect x="10" y="5" width="3" height="15" rx="1"/><rect x="17" y="13" width="3" height="7" rx="1"/></svg>`,
+  };
+
+  function tabbar(activeKey) {
+    const tabs = [
+      ['home','Home',ic.tabHome],
+      ['meals','Meals',ic.tabMeals],
+      ['coach','Coach',ic.tabCoach],
+      ['exercise','Exercise',ic.tabExercise],
+      ['progress','Progress',ic.tabProg],
+    ];
+    return `<div class="tabbar">${tabs.map(([k,l,glyph]) => {
+      if (k === 'coach') return `<div class="tab tab-coach ${activeKey===k?'active':''}"><div class="tab-fab">${glyph}</div><div class="tab-label">${l}</div></div>`;
+      return `<div class="tab ${activeKey===k?'active':''}"><div class="tab-glyph">${glyph}</div><div class="tab-label">${l}</div></div>`;
+    }).join('')}</div>`;
+  }
+
+  function hero() {
+    return `<div class="hero">
+      <span class="plate plate2 left"></span>
+      <span class="plate plate2 right"></span>
+      <span class="plate left"></span>
+      <span class="plate right"></span>
+      <span class="bar"></span>
+      <div class="overlay-meta">
+        <div class="eyebrow">Push day · Week 6</div>
+        <div class="ttl">Bench &amp; horizontal pressing</div>
+      </div>
+    </div>`;
+  }
+
+  function navFloat() {
+    return `<div class="nav-float">
+      <div class="nav-glass">${ic.back}</div>
+      <div style="display: flex; gap: 8px;">
+        <div class="nav-glass">${ic.share}</div>
+        <div class="nav-glass" style="color: var(--semantic-error, #EF4444);">${ic.bookmark}</div>
+      </div>
+    </div>`;
+  }
+
+  function exRow({n, nm, meta, target, done, active}) {
+    return `<div class="ex ${done?'done':''} ${active?'active':''}">
+      <div class="n">${done?ic.check:n}</div>
+      <div class="body">
+        <div class="nm">${nm}</div>
+        <div class="meta">${meta}</div>
+      </div>
+      <div class="target">${target.v}<span class="u">${target.u}</span></div>
+    </div>`;
+  }
+
+  // ===== V1 hero detail =====
+  function v1() {
+    return `
+      ${hero()}
+      ${navFloat()}
+      <div class="content">
+        <div class="verdict">
+          <div class="av">F</div>
+          <div class="body">
+            <div class="head">Coach · context</div>
+            <div class="txt">Last push session was <b>3.2k lb volume</b>. Today's plan keeps you in that range and lands you <b>+220 kcal headroom</b> after — dinner can stay carb-forward.</div>
+          </div>
+        </div>
+        <div class="stat-row">
+          <div class="stat"><div class="l">Volume</div><div class="v">3.4<span class="u">k lb</span></div></div>
+          <div class="stat"><div class="l">Sets</div><div class="v">24</div></div>
+          <div class="stat"><div class="l">Est. time</div><div class="v">55<span class="u">min</span></div></div>
+        </div>
+        <div class="ex-card">
+          <div class="ex-head">
+            <div class="l">Exercises</div>
+            <div class="r">1 / 7</div>
+          </div>
+          ${exRow({n:1, nm:'Bench press', meta:'<span class="v">4</span> × <span class="v">8–12</span><span class="dot">·</span>last 135 lb', target:{v:'135', u:'lb'}, active: true})}
+          ${exRow({n:2, nm:'Incline DB press', meta:'<span class="v">3</span> × <span class="v">10–12</span><span class="dot">·</span>last 50 lb', target:{v:'55', u:'lb'}})}
+          ${exRow({n:3, nm:'Cable fly', meta:'<span class="v">3</span> × <span class="v">12–15</span><span class="dot">·</span>last 30 lb', target:{v:'32.5', u:'lb'}})}
+          ${exRow({n:4, nm:'Overhead press', meta:'<span class="v">4</span> × <span class="v">6–10</span><span class="dot">·</span>last 85 lb', target:{v:'90', u:'lb'}})}
+          ${exRow({n:5, nm:'Lateral raise', meta:'<span class="v">3</span> × <span class="v">12–15</span><span class="dot">·</span>last 15 lb', target:{v:'15', u:'lb'}})}
+          ${exRow({n:6, nm:'Tricep pushdown', meta:'<span class="v">3</span> × <span class="v">10–12</span><span class="dot">·</span>last 60 lb', target:{v:'65', u:'lb'}})}
+          ${exRow({n:7, nm:'Skull crushers', meta:'<span class="v">3</span> × <span class="v">8–12</span><span class="dot">·</span>last 40 lb', target:{v:'45', u:'lb'}})}
+        </div>
+      </div>
+      <div class="sticky-start">${ic.play} Start workout</div>
+      ${tabbar('exercise')}`;
+  }
+
+  // ===== V2 empty =====
+  function v2() {
+    return `
+      <div class="compact-nav">
+        <div class="nb">${ic.back}</div>
+        <div class="nm">Workout</div>
+        <div class="nb">${ic.more}</div>
+      </div>
+      <div class="empty-stage">
+        <div class="empty-card">
+          <div class="ic-ring">${ic.cal}</div>
+          <div class="h">No workout planned today.</div>
+          <div class="s">Take it as a rest day, browse a template, or build your own — Coach won't nudge for missing a single rest.</div>
+          <div class="actions">
+            <div class="pri">${ic.library} Browse templates</div>
+            <div class="ghost">${ic.plus} Add custom</div>
+          </div>
+        </div>
+        <div style="margin-top: 4px;">
+          <div style="font-family: var(--font-body); font-size: 11px; font-weight: 700; color: var(--text-muted); letter-spacing: 0.16em; text-transform: uppercase; padding: 0 4px; margin-bottom: 8px;">This week</div>
+          <div class="week">
+            <div class="day"><div class="dl">M</div><div class="ws">Pull</div></div>
+            <div class="day rest"><div class="dl">T</div><div class="ws">Rest</div></div>
+            <div class="day"><div class="dl">W</div><div class="ws">Legs</div></div>
+            <div class="day"><div class="dl">T</div><div class="ws">Push</div></div>
+            <div class="day today"><div class="dl">F</div><div class="ws">Open</div></div>
+            <div class="day"><div class="dl">S</div><div class="ws">Pull</div></div>
+            <div class="day rest"><div class="dl">S</div><div class="ws">Rest</div></div>
+          </div>
+        </div>
+        <div style="margin-top: 14px;">
+          <div style="font-family: var(--font-body); font-size: 11px; font-weight: 700; color: var(--text-muted); letter-spacing: 0.16em; text-transform: uppercase; padding: 0 4px; margin-bottom: 8px;">Recent · re-run</div>
+          <div class="ex-card">
+            ${exRow({n:1, nm:'Push day', meta:'<span class="v">7</span> exercises<span class="dot">·</span>~55 min<span class="dot">·</span>last Thu', target:{v:'55', u:'min'}})}
+            ${exRow({n:2, nm:'Legs A', meta:'<span class="v">6</span> exercises<span class="dot">·</span>~50 min<span class="dot">·</span>last Wed', target:{v:'50', u:'min'}})}
+            ${exRow({n:3, nm:'Pull day', meta:'<span class="v">7</span> exercises<span class="dot">·</span>~55 min<span class="dot">·</span>last Mon', target:{v:'55', u:'min'}})}
+          </div>
+        </div>
+      </div>
+      ${tabbar('exercise')}`;
+  }
+
+  // ===== V3 in-workout =====
+  function v3() {
+    const r = 18, c = 2 * Math.PI * r, dash = 0.40 * c;
+    return `
+      <div class="in-workout-screen">
+        <div class="iw-top">
+          <div class="close">${ic.x}</div>
+          <div class="ttl">Push day<div class="nm">Set 3 of 4</div></div>
+          <div class="menu">${ic.more}</div>
+        </div>
+        <div class="iw-progress">
+          <div class="b done"></div>
+          <div class="b active"></div>
+          <div class="b"></div>
+          <div class="b"></div>
+          <div class="b"></div>
+          <div class="b"></div>
+          <div class="b"></div>
+        </div>
+        <div class="iw-body">
+          <div class="iw-eyebrow">Exercise 2<span class="of">/ 7</span></div>
+          <div class="iw-h1">Bench press.</div>
+          <div class="iw-target">
+            <span class="pill">4<span class="u"> sets</span></span>
+            <span class="pill">8–12<span class="u"> reps</span></span>
+            <span class="pill">135<span class="u"> lb</span></span>
+          </div>
+          <div class="sets-card">
+            <div class="sets-head">
+              <span>#</span>
+              <span>Weight</span>
+              <span>Reps</span>
+              <span>Done</span>
+              <span class="right"></span>
+            </div>
+            <div class="set-row done">
+              <div class="n">${ic.check}</div>
+              <div class="cell">135<span style="font-family:var(--font-body); font-size: 10px; color: var(--text-on-dark-muted); margin-left: 2px;">lb</span></div>
+              <div class="cell">10</div>
+              <div class="cell" style="color: var(--text-on-dark-muted); font-weight:500;">135 · 10</div>
+              <div class="check">${ic.check}</div>
+            </div>
+            <div class="set-row done">
+              <div class="n">${ic.check}</div>
+              <div class="cell">135<span style="font-family:var(--font-body); font-size: 10px; color: var(--text-on-dark-muted); margin-left: 2px;">lb</span></div>
+              <div class="cell">10</div>
+              <div class="cell" style="color: var(--text-on-dark-muted); font-weight:500;">135 · 9</div>
+              <div class="check">${ic.check}</div>
+            </div>
+            <div class="set-row active">
+              <div class="n">3</div>
+              <div class="cell input">135</div>
+              <div class="cell input">8</div>
+              <div class="cell" style="color: var(--text-on-dark-muted);">—</div>
+              <div class="check">${ic.check}</div>
+            </div>
+            <div class="set-row">
+              <div class="n">4</div>
+              <div class="cell target">135 lb</div>
+              <div class="cell target">8–12</div>
+              <div class="cell" style="color: var(--text-on-dark-muted);">—</div>
+              <div class="check"></div>
+            </div>
+          </div>
+          <div class="rest-strap">
+            <div class="ring-mini">
+              <svg width="40" height="40" viewBox="0 0 40 40" style="transform: rotate(-90deg);">
+                <circle cx="20" cy="20" r="${r}" stroke="rgba(255,255,255,0.10)" stroke-width="3" fill="none"/>
+                <circle cx="20" cy="20" r="${r}" stroke="var(--brand-green)" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="${dash} ${c}"/>
+              </svg>
+              <div class="digit">1:18</div>
+            </div>
+            <div class="body">
+              <div class="lbl">Rest · 90 sec</div>
+              <div class="v">Next set in 1:18 · breathe slow.</div>
+            </div>
+            <div class="skip">Skip</div>
+          </div>
+          <div class="iw-bottom">
+            <div class="side">${ic.arrL}</div>
+            <div class="complete">${ic.check} Log set</div>
+            <div class="side">${ic.arrR}</div>
+          </div>
+        </div>
+        <div class="home-indicator on-dark"></div>
+      </div>`;
+  }
+
+  const variations = [
+    { num:'Variation 01 · State', name:'Pre-workout · default', cap:'16:9 dark hero with the bar-and-plates illustration. Coach context card, 3 stat tiles, 7-exercise list with bench press marked active. Sticky gradient-brand Start workout at the bottom.', body: v1(), onDark: false },
+    { num:'Variation 02 · State', name:'No workout planned', cap:'Empty-state card with the info-blue icon ring and rest-day promise. Two CTAs (Browse templates / Add custom), 7-day week strip beneath, and a Recent re-run list.', body: v2(), onDark: false },
+    { num:'Variation 03 · State', name:'In-workout · set 3', cap:'Dark immersive view. Exercise 2 of 7, sets table with two done sets struck through, set 3 active with brand-green input chips. 40pt rest-timer ring showing 1:18 left. Log set primary at the bottom.', body: v3(), onDark: true }
+  ];
+
+  const root = document.getElementById('frames');
+  root.innerHTML = variations.map(v => `
+    <section class="variation">
+      <div class="v-label">
+        <div class="v-num">${v.num}</div>
+        <div class="v-name">${v.name}</div>
+        <div class="v-cap">${v.cap}</div>
+      </div>
+      <div class="device">
+        ${statusBar(v.onDark)}${island}
+        <div class="screen">${v.body}</div>
+        ${v.onDark?'':'<div class="home-indicator"></div>'}
+      </div>
+    </section>
+  `).join('');
+</script>
+</body>
+</html>

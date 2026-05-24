@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>FuelWell · M13 Food Detail · Portion editor · Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-base: #F4F5F7;
+    --bg-surface: #FFFFFF;
+    --bg-elevated: #0F1117;
+    --bg-border: #E5E7EB;
+    --bg-border-soft: #EEF0F3;
+
+    --text-primary: #0A0A0F;
+    --text-body: #1F2937;
+    --text-secondary: #6B7280;
+    --text-muted: #9CA3AF;
+    --text-disabled: #C7CCD3;
+    --text-on-dark: #FFFFFF;
+    --text-on-dark-muted: #9AA0AC;
+
+    --brand-green: #47E7B0;
+    --action-green: #00D278;
+    --semantic-success: #00D278;
+    --semantic-warning: #F59E0B;
+    --semantic-error: #EF4444;
+    --semantic-info: #00B4D8;
+
+    --macro-protein: #00D278;
+    --macro-carbs: #F59E0B;
+    --macro-fat: #A855F7;
+
+    --gradient-brand: linear-gradient(135deg, #00D278 0%, #47E7B0 100%);
+    --gradient-text: linear-gradient(90deg, #00D278, #00B4D8);
+
+    --radius-md: 12px;
+    --radius-lg: 20px;
+    --radius-xl: 28px;
+    --radius-pill: 999px;
+
+    --elev-1: 0 1px 2px rgba(15,17,23,.04), 0 1px 0 rgba(15,17,23,.02);
+    --elev-2: 0 4px 14px rgba(15,17,23,.06), 0 1px 2px rgba(15,17,23,.04);
+    --elev-cta: 0 8px 24px rgba(0,210,120,.22);
+
+    --font-display: 'Outfit', system-ui, -apple-system, sans-serif;
+    --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-system: -apple-system, 'SF Pro Display', system-ui, sans-serif;
+    --font-numeric: 'DM Sans', 'Inter', sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: #ECEDF0;
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    padding: 56px 48px 96px;
+    min-width: 1380px;
+  }
+
+  .doc-header {
+    max-width: 1320px; margin: 0 auto 48px;
+    display: flex; align-items: flex-end; justify-content: space-between;
+    gap: 32px; border-bottom: 1px solid #D6D8DD; padding-bottom: 24px;
+  }
+  .doc-eyebrow { font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-muted); margin: 0 0 8px; font-weight: 600; }
+  .doc-title { font-family: var(--font-display); font-size: 28px; font-weight: 700; margin: 0; letter-spacing: -0.018em; }
+  .doc-sub { font-size: 13px; color: var(--text-secondary); margin: 8px 0 0; max-width: 760px; line-height: 1.55; }
+  .doc-meta { font-family: var(--font-numeric); font-size: 11px; color: var(--text-muted); text-align: right; letter-spacing: 0.04em; line-height: 1.7; }
+
+  .frames-row { display: flex; gap: 64px; justify-content: center; align-items: flex-start; }
+  .variation { display: flex; flex-direction: column; align-items: center; width: 393px; }
+  .v-label { margin-bottom: 18px; text-align: center; width: 100%; }
+  .v-num { font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-muted); font-weight: 600; }
+  .v-name { font-family: var(--font-display); font-size: 16px; font-weight: 600; color: var(--text-primary); margin-top: 4px; letter-spacing: -0.005em; }
+  .v-cap { font-size: 12px; color: var(--text-secondary); margin-top: 4px; line-height: 1.45; max-width: 340px; }
+
+  .device {
+    position: relative; width: 393px; height: 852px;
+    background: var(--bg-base);
+    border-radius: 56px; overflow: hidden;
+    box-shadow: 0 0 0 12px #0A0A0F, 0 0 0 13px #2A2A30, 0 30px 80px rgba(15,17,23,.28), 0 12px 32px rgba(15,17,23,.16);
+  }
+  .status-bar { position: absolute; top: 0; left: 0; right: 0; height: 54px; display: flex; align-items: flex-end; justify-content: space-between; padding: 0 28px 9px; z-index: 30; pointer-events: none; }
+  .status-bar .time { font-family: var(--font-system); font-size: 17px; font-weight: 600; color: var(--text-primary); }
+  .status-bar .signals { display: inline-flex; gap: 6px; align-items: center; }
+  .signal-bat { display: inline-block; width: 26px; height: 12px; border: 1.2px solid var(--text-primary); border-radius: 3px; position: relative; }
+  .signal-bat::after { content: ""; position: absolute; right: -3px; top: 3px; width: 2px; height: 5px; background: var(--text-primary); border-radius: 0 1.5px 1.5px 0; }
+  .signal-bat::before { content: ""; position: absolute; left: 1px; top: 1px; bottom: 1px; width: 78%; background: var(--text-primary); border-radius: 1.5px; }
+  .dynamic-island { position: absolute; top: 11px; left: 50%; transform: translateX(-50%); width: 124px; height: 36px; background: #0A0A0F; border-radius: 22px; z-index: 31; }
+  .home-indicator { position: absolute; bottom: 9px; left: 50%; transform: translateX(-50%); width: 134px; height: 5px; background: var(--text-primary); border-radius: 3px; opacity: 0.85; z-index: 32; }
+
+  /* Undo snackbar (A10 — 5-second window after Save) */
+  .snackbar {
+    position: absolute;
+    left: 50%; transform: translateX(-50%);
+    bottom: 36px;
+    background: var(--bg-elevated);
+    color: var(--text-on-dark);
+    border-radius: var(--radius-pill);
+    padding: 12px 18px;
+    display: inline-flex; align-items: center; gap: 12px;
+    font-family: var(--font-body);
+    font-size: 13.5px; font-weight: 600;
+    box-shadow: 0 12px 32px rgba(15,17,23,.30), 0 4px 8px rgba(15,17,23,.18);
+    z-index: 28;
+    letter-spacing: -0.002em;
+  }
+  .snackbar .check {
+    display: inline-flex; align-items: center;
+    color: var(--action-green);
+  }
+  .snackbar .dot { color: var(--text-on-dark-muted); margin: 0 -2px; }
+  .snackbar .undo {
+    color: var(--action-green);
+    font-weight: 700;
+    text-transform: none;
+    cursor: pointer;
+  }
+
+  /* Underlay */
+  .underlay {
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.70) 100%),
+      var(--bg-base);
+    z-index: 5;
+  }
+
+  /* Sheet */
+  .sheet {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 78%;
+    background: var(--bg-base);
+    border-radius: 28px 28px 0 0;
+    z-index: 10;
+    box-shadow: 0 -20px 50px rgba(0,0,0,0.32);
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+  .grabber { width: 36px; height: 5px; background: var(--text-disabled); border-radius: 3px; margin: 8px auto 4px; flex-shrink: 0; }
+  .sheet-head {
+    display: grid; grid-template-columns: 72px 1fr 72px;
+    align-items: center;
+    padding: 4px 12px 12px;
+    flex-shrink: 0;
+  }
+  .sheet-head .cancel {
+    font-family: var(--font-body);
+    font-size: 14px; font-weight: 500;
+    color: var(--text-secondary);
+    padding: 8px 4px;
+  }
+  .sheet-head .ttl {
+    text-align: center;
+    font-family: var(--font-display);
+    font-size: 16px; font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.012em;
+  }
+  .sheet-head .save {
+    text-align: right;
+    font-family: var(--font-body);
+    font-size: 14px; font-weight: 700;
+    color: var(--semantic-success);
+    padding: 8px 4px;
+  }
+
+  .body {
+    flex: 1;
+    overflow: hidden;
+    padding: 4px 16px 24px;
+    position: relative;
+  }
+
+  /* ===== Top hero — image + macro tiles ===== */
+  .hero {
+    display: grid;
+    grid-template-columns: 116px 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .hero .photo {
+    width: 116px; height: 116px;
+    border-radius: 16px;
+    background:
+      radial-gradient(60% 50% at 30% 30%, rgba(255,255,255,0.4) 0%, transparent 60%),
+      linear-gradient(135deg, #34D399 0%, #00D278 60%, #047857 100%);
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--elev-2);
+    border: 1px solid rgba(15,17,23,0.06);
+  }
+  .hero .photo::before {
+    content: ""; position: absolute;
+    inset: 18px; border-radius: 50%;
+    background: rgba(255,255,255,0.10);
+  }
+  .hero .photo .blob { position: absolute; border-radius: 50%; }
+  .hero .photo .ba { top: 30%; left: 22%; width: 32px; height: 32px; background: linear-gradient(135deg, #FCD34D, #F59E0B); }
+  .hero .photo .bb { top: 22%; right: 18%; width: 28px; height: 28px; background: linear-gradient(135deg, #FECDD3, #FB7185); }
+  .hero .photo .bc { bottom: 22%; left: 50%; transform: translateX(-50%); width: 36px; height: 24px; border-radius: 14px; background: linear-gradient(135deg, #DDD6FE, #C4B5FD); }
+  .hero .head-text {
+    display: flex; flex-direction: column; justify-content: space-between;
+    min-width: 0;
+  }
+  .food-title {
+    font-family: var(--font-display);
+    font-size: 19px; font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.018em;
+    line-height: 1.18;
+  }
+  .food-brand {
+    margin-top: 2px;
+    display: flex; align-items: center; gap: 6px;
+    font-family: var(--font-body);
+    font-size: 12.5px; font-weight: 500;
+    color: var(--text-secondary);
+    letter-spacing: -0.003em;
+  }
+  .food-brand .src-pill {
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: rgba(0,180,216,0.10);
+    color: var(--semantic-info);
+    border: 1px solid rgba(0,180,216,0.30);
+    font-weight: 600;
+    font-size: 10.5px;
+    letter-spacing: 0.04em;
+  }
+  .hero .kcal-block {
+    margin-top: auto;
+    display: flex; align-items: baseline; gap: 8px;
+  }
+  .hero .k-num {
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 40px; font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.025em;
+    line-height: 1;
+  }
+  .hero .k-u {
+    font-family: var(--font-body);
+    font-size: 11px; font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .hero .delta-chip {
+    margin-top: 4px;
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: rgba(0,210,120,0.10);
+    color: var(--semantic-success);
+    border: 1px solid rgba(0,210,120,0.32);
+    font-family: var(--font-numeric);
+    font-size: 11px; font-weight: 600;
+  }
+
+  /* Macro tiles */
+  .macros-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .mt {
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--elev-1);
+    padding: 11px 12px 12px;
+    position: relative;
+    overflow: hidden;
+  }
+  .mt::before {
+    content: ""; position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+  }
+  .mt.p::before { background: var(--macro-protein); }
+  .mt.c::before { background: var(--macro-carbs); }
+  .mt.f::before { background: var(--macro-fat); }
+  .mt .lbl {
+    font-family: var(--font-body);
+    font-size: 10.5px; font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .mt .n {
+    margin-top: 4px;
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 22px; font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.018em;
+    line-height: 1;
+  }
+  .mt .n .u {
+    font-family: var(--font-body);
+    font-size: 11px; font-weight: 500;
+    color: var(--text-muted);
+    margin-left: 2px;
+  }
+  .mt .of {
+    margin-top: 4px;
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 11px; font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: -0.002em;
+  }
+
+  /* Section label */
+  .section-label {
+    margin-bottom: 8px;
+    display: flex; align-items: baseline; justify-content: space-between;
+    padding: 0 4px;
+  }
+  .section-label .l {
+    font-family: var(--font-body);
+    font-size: 11px; font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .section-label .r {
+    font-family: var(--font-body);
+    font-size: 12px; font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: -0.002em;
+  }
+  .section-label .r b { color: var(--text-primary); font-weight: 600; }
+
+  /* Portion stepper */
+  .stepper {
+    display: flex; align-items: stretch;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .step-btn {
+    width: 56px; height: 56px;
+    border-radius: 16px;
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    box-shadow: var(--elev-1);
+    color: var(--text-primary);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+  }
+  .step-val {
+    flex: 1;
+    height: 56px;
+    border-radius: 16px;
+    background: var(--bg-elevated);
+    color: var(--text-on-dark);
+    box-shadow: var(--elev-1);
+    display: flex; align-items: baseline; justify-content: center; gap: 6px;
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 28px; font-weight: 700;
+    letter-spacing: -0.022em;
+  }
+  .step-val .u {
+    font-family: var(--font-body);
+    font-size: 12px; font-weight: 500;
+    color: var(--text-on-dark-muted);
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+
+  /* Unit segmented */
+  .unit-seg {
+    display: flex;
+    background: var(--bg-border-soft);
+    border: 1px solid var(--bg-border);
+    border-radius: 12px;
+    padding: 3px;
+    height: 38px;
+    gap: 2px;
+    margin-bottom: 16px;
+  }
+  .unit-seg .opt {
+    flex: 1;
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-body);
+    font-size: 13px; font-weight: 500;
+    color: var(--text-body);
+    letter-spacing: -0.003em;
+  }
+  .unit-seg .opt.active {
+    background: var(--bg-surface);
+    color: var(--text-primary);
+    font-weight: 600;
+    box-shadow: var(--elev-1);
+  }
+
+  /* Meal slot + time selector */
+  .row-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .pick {
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--elev-1);
+    padding: 10px 14px;
+    display: flex; align-items: center; gap: 10px;
+    cursor: pointer;
+  }
+  .pick .ic {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    background: var(--bg-base);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-body);
+    flex-shrink: 0;
+  }
+  .pick .text { flex: 1; min-width: 0; }
+  .pick .lbl {
+    font-family: var(--font-body);
+    font-size: 10px; font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.12em; text-transform: uppercase;
+  }
+  .pick .v {
+    margin-top: 1px;
+    font-family: var(--font-body);
+    font-size: 13px; font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.003em;
+  }
+  .pick .chev { color: var(--text-muted); }
+
+  /* Notes field */
+  .notes {
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--elev-1);
+    padding: 12px 14px;
+    font-family: var(--font-body);
+    font-size: 13.5px; font-weight: 400;
+    color: var(--text-muted);
+    line-height: 1.45;
+    min-height: 60px;
+    margin-bottom: 14px;
+  }
+  .notes.filled { color: var(--text-body); }
+
+  /* Delete row (V3) */
+  .delete-row {
+    margin-top: 8px;
+    padding: 12px 14px;
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--elev-1);
+    display: flex; align-items: center; gap: 10px;
+    color: var(--semantic-error);
+    font-family: var(--font-body);
+    font-size: 14px; font-weight: 600;
+    cursor: pointer;
+  }
+  .delete-row .ic {
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    background: rgba(239,68,68,0.10);
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* Diff strap (V2) */
+  .diff-strap {
+    margin-bottom: 14px;
+    padding: 10px 12px;
+    background: rgba(245, 158, 11, 0.08);
+    border: 1px solid rgba(245, 158, 11, 0.32);
+    border-radius: var(--radius-md);
+    display: flex; align-items: center; gap: 10px;
+    color: var(--semantic-warning);
+    font-family: var(--font-body);
+    font-size: 12.5px; font-weight: 600;
+    letter-spacing: -0.003em;
+  }
+  .diff-strap b { color: var(--text-primary); font-weight: 700; }
+
+  /* Quick-pick portions row */
+  .quick-portions {
+    display: flex; gap: 6px;
+    margin-bottom: 18px;
+  }
+  .qp {
+    flex: 1;
+    padding: 8px 0;
+    border-radius: 999px;
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    text-align: center;
+    font-family: var(--font-body);
+    font-size: 12px; font-weight: 600;
+    color: var(--text-body);
+    box-shadow: var(--elev-1);
+    letter-spacing: -0.003em;
+  }
+  .qp.on {
+    background: var(--text-primary);
+    color: var(--text-on-dark);
+    border-color: var(--text-primary);
+  }
+
+  /* Legend */
+  .legend {
+    max-width: 1320px; margin: 56px auto 0;
+    padding: 22px 26px;
+    background: #FFFFFF;
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-lg);
+    display: grid; grid-template-columns: 220px 1fr;
+    gap: 14px 28px; font-size: 12px;
+    color: var(--text-secondary); line-height: 1.55;
+  }
+  .legend h3 { grid-column: 1 / -1; margin: 0 0 6px; font-family: var(--font-display); font-size: 12px; font-weight: 600; color: var(--text-muted); letter-spacing: 0.18em; text-transform: uppercase; }
+  .legend dt { grid-column: 1; font-size: 11px; font-weight: 600; color: var(--text-muted); letter-spacing: 0.04em; text-transform: uppercase; }
+  .legend dd { grid-column: 2; margin: 0; }
+  .legend code { background: #F4F5F7; border: 1px solid var(--bg-border); padding: 1px 6px; border-radius: 4px; font-family: var(--font-numeric); font-size: 11px; color: var(--text-primary); }
+</style>
+</head>
+<body>
+
+  <header class="doc-header">
+    <div>
+      <p class="doc-eyebrow">FuelWell · Phase 0.5 · Step 4 — Mockups</p>
+      <h1 class="doc-title">M13 Food Detail · Portion editor</h1>
+      <p class="doc-sub">Promoted from approved wireframe § 3.13 V1 (image + macros side-by-side). Three states cover the editor lifecycle: default 1-serving on entry, mid-edit with 1.5 servings + live recompute strap, and edit-existing-log mode with the Delete row exposed.</p>
+    </div>
+    <div class="doc-meta">
+      iPhone 15 Pro · 393 × 852 pt<br>
+      Modal · 78% sheet<br>
+      Food · Sweetgreen chicken bowl
+    </div>
+  </header>
+
+  <div class="frames-row" id="frames"></div>
+
+  <section class="legend">
+    <h3>Mockup notes · Step 4</h3>
+
+    <dt>Hero — image + headline</dt>
+    <dd>116pt square photo placeholder left (warm gradient with food blobs — ChatGPT Images 2.0 at finalization). Right column carries the food title in <strong>Outfit 700</strong> 19pt, a brand · source line with a tinted source pill ("Rest." / "Recipe" / "USDA"), and the live calorie hero in <strong>DM Sans 700</strong> 40pt with a small green delta-chip ("+220 vs. plan slot").</dd>
+
+    <dt>Macro tiles</dt>
+    <dd>3-cell grid below the hero. Each tile a 12pt-radius white card with a 3pt top accent stripe in the macro token color, label / value / "of plan" line. All three numbers and the calorie hero re-render live as the portion changes — the central proof point of the editor.</dd>
+
+    <dt>Portion stepper</dt>
+    <dd>56pt minus/plus pill-corners flanking a dark value capsule with the current value in <strong>DM Sans 700</strong> 28pt + lowercase unit. Long-press the value to type a custom number. Below sits the unit segmented control (g / oz / serving) — switching unit re-scales the displayed value to the canonical-equivalent and rounds to the appropriate decimal.</dd>
+
+    <dt>Quick portions</dt>
+    <dd>Five-chip row (½, ¾, 1, 1¼, 1½) at <code>radius.pill</code>. Active chip flips to <code>bg.elevated</code>. Quick-pick is the muscle-memory shortcut for users who don't want to tap the stepper four times.</dd>
+
+    <dt>Meal slot + time</dt>
+    <dd>Two-column row of pickers: meal slot (Breakfast / Lunch / Snacks / Dinner) and time. Slot defaults to whichever section is currently empty in the day — engine's best guess. Time defaults to "Now."</dd>
+
+    <dt>Notes</dt>
+    <dd>Single multiline field, white surface, placeholder "Anything to remember? (e.g. 'no dressing', 'shared half')." Free text is appended to the log entry and surfaced in 3.11 meta line.</dd>
+
+    <dt>Diff strap · V2</dt>
+    <dd>When the user moves the stepper away from the source's default (1 serving), an amber strap appears between hero and macros: "Logging <strong>1.5×</strong> the default — calories +366, protein +27g." Live-recomputes; tap to undo.</dd>
+
+    <dt>Delete row · V3</dt>
+    <dd>Renders only in edit-existing mode (entered by tapping a meal row in 3.11). Red label + trash glyph, bottom of the sheet. Tap → confirmation actionsheet.</dd>
+  </section>
+
+<script>
+  const statusBar = `
+    <div class="status-bar">
+      <div class="time">9:41</div>
+      <div class="signals">
+        <svg width="17" height="11" viewBox="0 0 17 11" fill="none"><rect x="0" y="7" width="3" height="4" rx="0.5" fill="#0A0A0F"/><rect x="4" y="5" width="3" height="6" rx="0.5" fill="#0A0A0F"/><rect x="8" y="3" width="3" height="8" rx="0.5" fill="#0A0A0F"/><rect x="12" y="0" width="3" height="11" rx="0.5" fill="#0A0A0F"/></svg>
+        <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><path d="M8 11l-2.5-2.5a3.5 3.5 0 014.9 0L8 11z" fill="#0A0A0F"/><path d="M2 5a8.5 8.5 0 0112 0l-1.5 1.5a6 6 0 00-9 0L2 5z" fill="#0A0A0F"/><path d="M5 8a4.5 4.5 0 016 0l-1.5 1.5a2.5 2.5 0 00-3 0L5 8z" fill="#0A0A0F"/></svg>
+        <span class="signal-bat"></span>
+      </div>
+    </div>`;
+  const island = `<div class="dynamic-island"></div>`;
+
+  const ic = {
+    minus: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>`,
+    plus: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>`,
+    fork: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 3v6a2 2 0 002 2v10a1 1 0 1 0 2 0V11a2 2 0 002-2V3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`,
+    clock: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`,
+    chev: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    trash: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 7h14M10 7V4h4v3M9 7l1 13a1 1 0 001 1h2a1 1 0 001-1l1-13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    warn: `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L1 21h22L12 2zm1 14h-2v2h2v-2zm0-7h-2v6h2V9z"/></svg>`,
+    checkSm: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12.5l5 5L19.5 7.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+  };
+
+  function photo() {
+    return `<div class="photo"><span class="blob ba"></span><span class="blob bb"></span><span class="blob bc"></span></div>`;
+  }
+
+  function hero({ kcal, deltaTxt, deltaColor }) {
+    return `
+      <div class="hero">
+        ${photo()}
+        <div class="head-text">
+          <div>
+            <div class="food-title">Chicken &amp; rice bowl</div>
+            <div class="food-brand">
+              <span class="src-pill">Rest.</span>
+              Sweetgreen · 14 oz
+            </div>
+          </div>
+          <div>
+            <div class="kcal-block">
+              <div class="k-num">${kcal}</div>
+              <div class="k-u">kcal</div>
+            </div>
+            <span class="delta-chip" style="color:${deltaColor.text}; background:${deltaColor.bg}; border-color:${deltaColor.border};">${deltaTxt}</span>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function macros({ p, c, f, base }) {
+    function tile(kind, label, val, ofVal) {
+      return `<div class="mt ${kind}"><div class="lbl">${label}</div><div class="n">${val}<span class="u">g</span></div><div class="of">${ofVal}</div></div>`;
+    }
+    return `
+      <div class="macros-grid">
+        ${tile('p','Protein', p, 'of 160 g · plan')}
+        ${tile('c','Carbs',   c, 'of 245 g · plan')}
+        ${tile('f','Fat',     f, 'of 70 g · plan')}
+      </div>`;
+  }
+
+  function stepper(val, unit) {
+    return `
+      <div class="stepper">
+        <div class="step-btn">${ic.minus}</div>
+        <div class="step-val">${val}<span class="u">${unit}</span></div>
+        <div class="step-btn">${ic.plus}</div>
+      </div>`;
+  }
+
+  function unitSeg(active) {
+    const opts = ['g','oz','serving'];
+    return `<div class="unit-seg">${opts.map(o => `<div class="opt ${active===o?'active':''}">${o}</div>`).join('')}</div>`;
+  }
+
+  function quickPortions(activeIdx) {
+    const opts = ['½','¾','1','1¼','1½'];
+    return `<div class="quick-portions">${opts.map((o,i) => `<div class="qp ${i===activeIdx?'on':''}">${o}</div>`).join('')}</div>`;
+  }
+
+  function pickers(slot, time) {
+    return `
+      <div class="row-grid">
+        <div class="pick">
+          <div class="ic">${ic.fork}</div>
+          <div class="text">
+            <div class="lbl">Meal</div>
+            <div class="v">${slot}</div>
+          </div>
+          <div class="chev">${ic.chev}</div>
+        </div>
+        <div class="pick">
+          <div class="ic">${ic.clock}</div>
+          <div class="text">
+            <div class="lbl">Time</div>
+            <div class="v">${time}</div>
+          </div>
+          <div class="chev">${ic.chev}</div>
+        </div>
+      </div>`;
+  }
+
+  // Variations
+  const variations = [
+    {
+      num:'Variation 01 · State', name:'Default · 1 serving',
+      cap:'User just picked this food from Search. 1 serving = base nutrition (732 kcal / 62 g P / 78 g C / 18 g F). Stepper at 1, "serving" unit active, slot defaulted to Lunch.',
+      body: `
+        ${hero({ kcal: '732', deltaTxt: '−18 kcal vs. plan slot', deltaColor: {text:'var(--semantic-success)', bg:'rgba(0,210,120,0.10)', border:'rgba(0,210,120,0.32)'} })}
+        ${macros({ p:62, c:78, f:18, base:true })}
+        <div class="section-label"><span class="l">Portion</span><span class="r"><b>1</b> serving · 14 oz</span></div>
+        ${stepper('1', 'serving')}
+        ${unitSeg('serving')}
+        ${quickPortions(2)}
+        <div class="section-label"><span class="l">Where + when</span><span class="r">Auto-filled</span></div>
+        ${pickers('Lunch', 'Now · 12:34 PM')}
+        <div class="section-label"><span class="l">Notes</span><span class="r">Optional</span></div>
+        <div class="notes">Anything to remember? (e.g. "no dressing", "shared half")</div>
+      `
+    },
+    {
+      num:'Variation 02 · State', name:'Edited · 1.5 servings',
+      cap:'User bumped the stepper to 1.5. Macros and calories re-render in place; a warning-amber diff strap appears above the macros explaining the delta vs. the default.',
+      body: `
+        ${hero({ kcal: '1,098', deltaTxt: '+338 kcal vs. plan slot', deltaColor: {text:'var(--semantic-warning)', bg:'rgba(245,158,11,0.12)', border:'rgba(245,158,11,0.36)'} })}
+        <div class="diff-strap">${ic.warn}<span>Logging <b>1.5×</b> the default — calories +366, protein +31 g</span></div>
+        ${macros({ p:93, c:117, f:27, base:false })}
+        <div class="section-label"><span class="l">Portion</span><span class="r"><b>1.5</b> servings · 21 oz</span></div>
+        ${stepper('1.5', 'servings')}
+        ${unitSeg('serving')}
+        ${quickPortions(4)}
+        <div class="section-label"><span class="l">Where + when</span><span class="r">Auto-filled</span></div>
+        ${pickers('Lunch', 'Now · 12:34 PM')}
+        <div class="section-label"><span class="l">Notes</span><span class="r">Optional</span></div>
+        <div class="notes filled">Got the big bowl — splitting with Sam, but ate most of it.</div>
+      `
+    },
+    {
+      num:'Variation 03 · State', name:'Editing existing log',
+      cap:'Entered by tapping the row in 3.11 Meal Log. Same hero + controls; bottom of sheet exposes the destructive Delete row in error-red.',
+      body: `
+        ${hero({ kcal: '732', deltaTxt: '+12 vs. plan slot', deltaColor: {text:'var(--semantic-success)', bg:'rgba(0,210,120,0.10)', border:'rgba(0,210,120,0.32)'} })}
+        ${macros({ p:62, c:78, f:18, base:true })}
+        <div class="section-label"><span class="l">Portion</span><span class="r"><b>1</b> serving · 14 oz</span></div>
+        ${stepper('1', 'serving')}
+        ${unitSeg('serving')}
+        <div class="section-label"><span class="l">Where + when</span><span class="r">Logged 12:34 PM</span></div>
+        ${pickers('Lunch', '12:34 PM · Fri')}
+        <div class="section-label"><span class="l">Notes</span><span class="r">Optional</span></div>
+        <div class="notes filled">Skipped the dressing today.</div>
+        <div class="delete-row">
+          <span class="ic">${ic.trash}</span>
+          Delete this meal
+        </div>
+      `
+    }
+  ];
+
+  const root = document.getElementById('frames');
+  root.innerHTML = variations.map(v => `
+    <section class="variation">
+      <div class="v-label">
+        <div class="v-num">${v.num}</div>
+        <div class="v-name">${v.name}</div>
+        <div class="v-cap">${v.cap}</div>
+      </div>
+      <div class="device">
+        ${statusBar}${island}
+        <div class="underlay"></div>
+        <div class="sheet">
+          <div class="grabber"></div>
+          <div class="sheet-head">
+            <div class="cancel">Cancel</div>
+            <div class="ttl">${v.num.includes('03') ? 'Edit log' : 'Add to log'}</div>
+            <div class="save">${v.num.includes('03') ? 'Save' : 'Add'}</div>
+          </div>
+          <div class="body">${v.body}</div>
+        </div>
+        ${v.num.includes('03') ? `<div class="snackbar"><span class="check">${ic.checkSm}</span>Saved<span class="dot">·</span><span class="undo">Undo</span></div>` : ''}
+        <div class="home-indicator"></div>
+      </div>
+    </section>
+  `).join('');
+</script>
+</body>
+</html>

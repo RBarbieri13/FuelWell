@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>FuelWell · M34 Progress v2 · Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-base: #F4F5F7;
+    --bg-surface: #FFFFFF;
+    --bg-elevated: #0F1117;
+    --bg-border: #E5E7EB;
+    --bg-border-soft: #EEF0F3;
+
+    --text-primary: #0A0A0F;
+    --text-body: #1F2937;
+    --text-secondary: #6B7280;
+    --text-muted: #9CA3AF;
+    --text-disabled: #C7CCD3;
+    --text-on-dark: #FFFFFF;
+    --text-on-dark-muted: #9AA0AC;
+
+    --primary-orange: #E87A1D;
+    --action-green: #00D278;
+    --brand-green: #47E7B0;
+
+    --semantic-success: #00D278;
+    --semantic-warning: #F59E0B;
+    --semantic-error: #EF4444;
+    --semantic-info: #00B4D8;
+    --semantic-premium: #A855F7;
+
+    --macro-protein: #00D278;
+    --macro-carbs: #F59E0B;
+    --macro-fat: #A855F7;
+
+    --gradient-brand: linear-gradient(135deg, #00D278 0%, #47E7B0 100%);
+
+    --radius-md: 12px;
+    --radius-lg: 20px;
+
+    --elev-1: 0 1px 2px rgba(15,17,23,.04), 0 1px 0 rgba(15,17,23,.02);
+    --elev-2: 0 4px 14px rgba(15,17,23,.06), 0 1px 2px rgba(15,17,23,.04);
+    --elev-3: 0 12px 32px rgba(15,17,23,.08);
+
+    --font-display: 'Outfit', system-ui, -apple-system, sans-serif;
+    --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-system: -apple-system, 'SF Pro Display', system-ui, sans-serif;
+    --font-numeric: 'DM Sans', 'Inter', sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { background: #ECEDF0; color: var(--text-primary); font-family: var(--font-body); padding: 56px 48px 96px; min-width: 1380px; }
+
+  .doc-header { max-width: 1320px; margin: 0 auto 48px; display: flex; align-items: flex-end; justify-content: space-between; gap: 32px; border-bottom: 1px solid #D6D8DD; padding-bottom: 24px; }
+  .doc-eyebrow { font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-muted); margin: 0 0 8px; font-weight: 600; }
+  .doc-title { font-family: var(--font-display); font-size: 28px; font-weight: 700; margin: 0; letter-spacing: -0.018em; }
+  .doc-sub { font-size: 13px; color: var(--text-secondary); margin: 8px 0 0; max-width: 820px; line-height: 1.55; }
+  .doc-meta { font-family: var(--font-numeric); font-size: 11px; color: var(--text-muted); text-align: right; letter-spacing: 0.04em; line-height: 1.7; }
+
+  .variation { display: flex; flex-direction: column; align-items: center; width: 393px; }
+  .v-label { margin-bottom: 18px; text-align: center; width: 100%; }
+  .v-num { font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-muted); font-weight: 600; }
+  .v-name { font-family: var(--font-display); font-size: 16px; font-weight: 600; color: var(--text-primary); margin-top: 4px; letter-spacing: -0.005em; }
+  .v-cap { font-size: 12px; color: var(--text-secondary); margin-top: 4px; line-height: 1.45; max-width: 340px; }
+
+  /* Device extended slightly so we can show more sections in one frame */
+  .device { position: relative; width: 393px; height: 1180px; background: var(--bg-base); border-radius: 56px; overflow: hidden; box-shadow: 0 0 0 12px #0A0A0F, 0 0 0 13px #2A2A30, 0 30px 80px rgba(15,17,23,.28), 0 12px 32px rgba(15,17,23,.16); }
+  .status-bar { position: absolute; top: 0; left: 0; right: 0; height: 54px; display: flex; align-items: flex-end; justify-content: space-between; padding: 0 28px 9px; z-index: 30; pointer-events: none; }
+  .status-bar .time { font-family: var(--font-system); font-size: 17px; font-weight: 600; color: var(--text-primary); letter-spacing: -0.01em; }
+  .signal-bat { display: inline-block; width: 26px; height: 12px; border: 1.2px solid var(--text-primary); border-radius: 3px; position: relative; }
+  .signal-bat::after { content: ""; position: absolute; right: -3px; top: 3px; width: 2px; height: 5px; background: var(--text-primary); border-radius: 0 1.5px 1.5px 0; }
+  .signal-bat::before { content: ""; position: absolute; left: 1px; top: 1px; bottom: 1px; width: 78%; background: var(--text-primary); border-radius: 1.5px; }
+  .dynamic-island { position: absolute; top: 11px; left: 50%; transform: translateX(-50%); width: 124px; height: 36px; background: #0A0A0F; border-radius: 22px; z-index: 31; }
+  .home-indicator-row { position: absolute; left: 0; right: 0; top: 837px; height: 5px; display: flex; justify-content: center; pointer-events: none; z-index: 32; }
+  .home-indicator-row > span { width: 134px; height: 5px; background: var(--text-primary); border-radius: 3px; opacity: 0.7; }
+
+  .screen { position: absolute; top: 0; left: 0; right: 0; bottom: 0; padding: 54px 0 0; }
+  .content { position: relative; padding: 0 16px 30px; }
+
+  /* Header */
+  .nav { display: flex; align-items: center; justify-content: space-between; padding: 6px 0 6px; }
+  .nav .title {
+    font-family: var(--font-display);
+    font-size: 26px; font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .nav .title .sub {
+    display: block; margin-top: 1px;
+    font-family: var(--font-body);
+    font-size: 11.5px; font-weight: 500;
+    color: var(--text-secondary);
+  }
+  .nav .iconbtn {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-primary);
+    box-shadow: var(--elev-1);
+  }
+
+  /* Range segmented */
+  .seg {
+    margin-top: 12px;
+    display: flex;
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: 999px;
+    padding: 3px;
+    box-shadow: var(--elev-1);
+  }
+  .seg button {
+    flex: 1;
+    border: 0;
+    background: transparent;
+    font-family: var(--font-body);
+    font-size: 12px; font-weight: 600;
+    color: var(--text-secondary);
+    padding: 6px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+  }
+  .seg button.on { background: var(--text-primary); color: var(--text-on-dark); }
+
+  /* Section card */
+  .section { margin-top: 14px; }
+  .section .section-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    padding: 0 2px;
+    margin-bottom: 8px;
+  }
+  .section .section-head .t {
+    font-family: var(--font-display);
+    font-size: 14px; font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.005em;
+  }
+  .section .section-head .a {
+    font-family: var(--font-body);
+    font-size: 12px; font-weight: 600;
+    color: var(--semantic-info);
+  }
+
+  .card {
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--elev-1);
+    padding: 14px 16px 14px;
+  }
+  .card-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+  }
+  .card-head .eb {
+    font-family: var(--font-body);
+    font-size: 10.5px; font-weight: 700;
+    color: var(--text-secondary);
+    letter-spacing: 0.18em; text-transform: uppercase;
+    display: inline-flex; align-items: center; gap: 7px;
+  }
+  .card-head .eb .glyph {
+    width: 20px; height: 20px;
+    border-radius: 6px;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: #fff;
+    font-size: 10px;
+  }
+  .card-head .more {
+    font-family: var(--font-body);
+    font-size: 11px; font-weight: 600;
+    color: var(--text-muted);
+  }
+  .card-head .delta {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 11.5px; font-weight: 700;
+    color: var(--semantic-success);
+    background: rgba(0,210,120,0.10);
+    padding: 3px 8px;
+    border-radius: 999px;
+    letter-spacing: -0.003em;
+  }
+  .card-head .delta.warn { color: var(--semantic-warning); background: rgba(245,158,11,0.12); }
+  .card-head .delta.error { color: var(--semantic-error); background: rgba(239,68,68,0.10); }
+
+  /* Health Score trend card */
+  .hs-card .hs-row {
+    margin-top: 8px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    align-items: center;
+  }
+  .hs-card .hs-num {
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-weight: 700;
+    font-size: 44px;
+    line-height: 1;
+    color: var(--text-primary);
+    letter-spacing: -0.035em;
+    display: inline-flex; align-items: baseline; gap: 0;
+  }
+  .hs-card .hs-num .pt {
+    font-size: 20px; font-weight: 600;
+    color: var(--text-muted);
+    margin-left: 2px;
+    letter-spacing: -0.02em;
+  }
+  .hs-card .hs-sub {
+    margin-top: 3px;
+    font-family: var(--font-body);
+    font-size: 11.5px; font-weight: 500;
+    color: var(--text-secondary);
+    line-height: 1.35;
+  }
+  .hs-card .spark {
+    width: 100%;
+    height: 56px;
+  }
+
+  /* Weight card */
+  .weight-row {
+    margin-top: 8px;
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 8px;
+  }
+  .weight-row .v {
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-weight: 700;
+    font-size: 32px;
+    color: var(--text-primary);
+    letter-spacing: -0.025em;
+    line-height: 1;
+  }
+  .weight-row .v .u {
+    font-size: 13px; font-weight: 500;
+    color: var(--text-muted);
+    margin-left: 3px;
+    letter-spacing: -0.005em;
+  }
+  .weight-row .cap {
+    font-family: var(--font-body);
+    font-size: 11.5px; font-weight: 500;
+    color: var(--text-secondary);
+    text-align: right;
+  }
+  .weight-chart {
+    margin-top: 12px;
+    width: 100%;
+    height: 92px;
+  }
+  .weight-card .actions {
+    margin-top: 10px;
+    display: flex; gap: 8px;
+  }
+  .weight-card .actions .btn {
+    flex: 1;
+    height: 34px;
+    border-radius: 10px;
+    border: 1px solid var(--bg-border);
+    background: var(--bg-base);
+    font-family: var(--font-body);
+    font-size: 12.5px; font-weight: 600;
+    color: var(--text-body);
+    letter-spacing: -0.003em;
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+  }
+  .weight-card .actions .btn.primary {
+    background: var(--gradient-brand);
+    color: var(--text-primary);
+    border-color: transparent;
+    box-shadow: 0 6px 18px rgba(0,210,120,.22);
+  }
+
+  /* Macro adherence card */
+  .macro-card .bars {
+    margin-top: 12px;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    height: 88px;
+    align-items: flex-end;
+  }
+  .macro-card .bar-col {
+    display: flex; flex-direction: column;
+    height: 100%; align-items: center;
+  }
+  .macro-card .bar-col .stack {
+    flex: 1;
+    width: 100%; max-width: 22px;
+    display: flex; flex-direction: column-reverse;
+  }
+  .macro-card .bar-col .stack .b { border-radius: 2px; margin-bottom: 1px; }
+  .macro-card .bar-col .stack .b.p { background: var(--macro-protein); }
+  .macro-card .bar-col .stack .b.c { background: var(--macro-carbs); }
+  .macro-card .bar-col .stack .b.f { background: var(--macro-fat); }
+  .macro-card .bar-col .d {
+    margin-top: 5px;
+    font-family: var(--font-body);
+    font-size: 9px; font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .macro-card .legend {
+    margin-top: 10px;
+    display: flex; gap: 12px;
+    font-family: var(--font-body);
+    font-size: 10.5px; color: var(--text-secondary);
+  }
+  .macro-card .legend .swatch { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 4px; transform: translateY(1px); }
+
+  /* Body photos */
+  .photos-scroll { display: flex; gap: 8px; overflow-x: auto; padding: 2px 0 4px; }
+  .photos-scroll::-webkit-scrollbar { display: none; }
+  .photo {
+    flex-shrink: 0;
+    width: 96px; height: 128px;
+    border-radius: 12px;
+    background: linear-gradient(180deg, #DCE0E8 0%, #B7BFCC 100%);
+    border: 1px solid var(--bg-border);
+    position: relative;
+    box-shadow: var(--elev-1);
+    overflow: hidden;
+  }
+  .photo .ph {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 11px; font-weight: 700;
+    color: rgba(15,17,23,0.45);
+    letter-spacing: 0.1em;
+  }
+  .photo .ds {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    padding: 6px 8px;
+    background: linear-gradient(180deg, transparent, rgba(15,17,23,0.6));
+    color: #fff;
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 10px; font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+  .photo.add {
+    background: var(--bg-surface);
+    border: 1px dashed var(--bg-border);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-secondary);
+  }
+  .photo.add .ph { color: var(--text-secondary); flex-direction: column; gap: 6px; font-size: 10px; }
+
+  /* Measurements list */
+  .meas-list { display: flex; flex-direction: column; gap: 0; }
+  .meas-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    column-gap: 10px;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--bg-border-soft);
+  }
+  .meas-row:last-child { border-bottom: 0; }
+  .meas-row .nm { font-family: var(--font-body); font-size: 13px; font-weight: 600; color: var(--text-primary); letter-spacing: -0.003em; }
+  .meas-row .vl { font-family: var(--font-numeric); font-feature-settings: "tnum" 1; font-size: 13px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.005em; }
+  .meas-row .vl .u { font-family: var(--font-body); font-size: 10px; font-weight: 500; color: var(--text-muted); margin-left: 2px; }
+  .meas-row .trend {
+    display: inline-flex; align-items: center; gap: 3px;
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 11px; font-weight: 700;
+    color: var(--semantic-success);
+    background: rgba(0,210,120,0.10);
+    padding: 2px 7px;
+    border-radius: 999px;
+    letter-spacing: -0.003em;
+  }
+  .meas-row .trend.warn { color: var(--semantic-warning); background: rgba(245,158,11,0.12); }
+  .meas-row .trend.flat { color: var(--text-secondary); background: var(--bg-base); border: 1px solid var(--bg-border); }
+
+  /* Mood card */
+  .mood-card .dots {
+    margin-top: 10px;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+  }
+  .mood-card .day {
+    text-align: center;
+  }
+  .mood-card .day .dl { font-family: var(--font-body); font-size: 9.5px; font-weight: 600; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; }
+  .mood-card .day .ring {
+    margin: 5px auto 0;
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    border: 2px solid var(--bg-border);
+    background: var(--bg-base);
+    color: var(--text-disabled);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+  .mood-card .day.good .ring { background: rgba(0,210,120,0.16); border-color: rgba(0,210,120,0.35); color: var(--semantic-success); }
+  .mood-card .day.ok .ring { background: rgba(0,180,216,0.14); border-color: rgba(0,180,216,0.35); color: var(--semantic-info); }
+  .mood-card .day.low .ring { background: rgba(245,158,11,0.12); border-color: rgba(245,158,11,0.32); color: var(--semantic-warning); }
+  .mood-card .day.today .ring { box-shadow: 0 0 0 3px rgba(0,210,120,0.18); }
+  .mood-card .heatmap {
+    margin-top: 12px;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 3px;
+  }
+  .mood-card .heatmap .cell {
+    aspect-ratio: 1;
+    border-radius: 3px;
+    background: var(--bg-base);
+  }
+  .mood-card .heatmap .cell.l1 { background: rgba(0,210,120,0.18); }
+  .mood-card .heatmap .cell.l2 { background: rgba(0,210,120,0.40); }
+  .mood-card .heatmap .cell.l3 { background: rgba(0,210,120,0.70); }
+  .mood-card .heatmap .cell.l4 { background: var(--semantic-success); }
+  .mood-card .heat-cap {
+    margin-top: 6px;
+    font-family: var(--font-body);
+    font-size: 10.5px; font-weight: 500;
+    color: var(--text-secondary);
+    letter-spacing: -0.003em;
+  }
+
+  /* Habit Tracking card */
+  .habit-card .habit-row {
+    display: grid;
+    grid-template-columns: 100px 1fr auto;
+    column-gap: 10px;
+    align-items: center;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--bg-border-soft);
+  }
+  .habit-card .habit-row:last-child { border-bottom: 0; }
+  .habit-card .habit-row .nm {
+    font-family: var(--font-body);
+    font-size: 12.5px; font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.003em;
+  }
+  .habit-card .habit-row .nm .sub {
+    display: block;
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 10px; font-weight: 600;
+    color: var(--text-muted);
+  }
+  .habit-card .dot-grid {
+    display: grid;
+    grid-template-columns: repeat(14, 1fr);
+    gap: 3px;
+  }
+  .habit-card .dot {
+    aspect-ratio: 1;
+    border-radius: 3px;
+    background: rgba(168,85,247,0.10);
+  }
+  .habit-card .dot.on { background: var(--semantic-premium); }
+  .habit-card .dot.miss { background: var(--bg-border); }
+  .habit-card .pct {
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 13px; font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.005em;
+  }
+  .habit-card .pct .lbl {
+    display: block;
+    font-family: var(--font-body);
+    font-size: 9px; font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+
+  /* Quick-access deep-link list */
+  .qlist {
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--elev-1);
+    overflow: hidden;
+  }
+  .qlist .qrow {
+    display: grid; grid-template-columns: 32px 1fr auto;
+    gap: 10px; align-items: center;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--bg-border-soft);
+  }
+  .qlist .qrow:last-child { border-bottom: 0; }
+  .qlist .qrow .ic {
+    width: 30px; height: 30px;
+    border-radius: 9px;
+    background: var(--bg-base);
+    color: var(--text-body);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .qlist .qrow .nm {
+    font-family: var(--font-body);
+    font-size: 13.5px; font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.003em;
+  }
+  .qlist .qrow .sub {
+    margin-top: 1px;
+    font-family: var(--font-body);
+    font-size: 11.5px; font-weight: 600;
+    color: var(--text-body);
+  }
+  .qlist .qrow .chev { color: var(--text-muted); }
+
+  /* Empty state */
+  .empty {
+    margin-top: 16px;
+    background: var(--bg-surface);
+    border: 1px dashed var(--bg-border);
+    border-radius: var(--radius-lg);
+    padding: 24px 20px;
+    text-align: center;
+  }
+  .empty .glyph {
+    width: 56px; height: 56px;
+    margin: 0 auto 12px;
+    background: var(--bg-base);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-muted);
+  }
+  .empty .ttl {
+    font-family: var(--font-display);
+    font-size: 16px; font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.005em;
+    line-height: 1.3;
+  }
+  .empty .sub {
+    margin-top: 6px;
+    font-family: var(--font-body);
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    line-height: 1.45;
+  }
+  .empty .ctas {
+    margin-top: 14px;
+    display: flex; gap: 8px; justify-content: center;
+  }
+  .empty .ctas .btn {
+    height: 34px;
+    padding: 0 14px;
+    border-radius: 10px;
+    border: 1px solid var(--bg-border);
+    background: var(--bg-surface);
+    font-family: var(--font-body);
+    font-size: 12.5px; font-weight: 600;
+    color: var(--text-primary);
+  }
+  .empty .ctas .btn.primary {
+    background: var(--gradient-brand);
+    color: var(--text-primary);
+    border-color: transparent;
+    box-shadow: 0 6px 18px rgba(0,210,120,.22);
+  }
+  .empty-sub {
+    padding: 14px 16px;
+    background: var(--bg-surface);
+    border: 1px dashed var(--bg-border);
+    border-radius: var(--radius-md);
+    text-align: center;
+    color: var(--text-secondary);
+    font-family: var(--font-body);
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  /* Tab bar (Progress active) */
+  .tabbar { position: absolute; left: 0; right: 0; top: 764px; height: 88px; background: rgba(255,255,255,0.92); backdrop-filter: blur(18px); border-top: 1px solid var(--bg-border); display: grid; grid-template-columns: repeat(5, 1fr); padding: 8px 6px 30px; z-index: 22; }
+  .tab { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: var(--text-muted); position: relative; }
+  .tab.active { color: var(--text-primary); }
+  .tab .tab-glyph { width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; }
+  .tab .tab-label { font-family: var(--font-body); font-size: 10px; font-weight: 600; letter-spacing: 0.02em; }
+  /* V2 raised-circle Coach FAB */
+  .tab.coach { position: relative; }
+  .tab.coach .tab-bubble { position: absolute; top: -22px; left: 50%; transform: translateX(-50%); width: 52px; height: 52px; background: var(--gradient-brand); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; box-shadow: var(--elev-cta); border: 3px solid #FFFFFF; }
+  .tab.coach .tab-bubble svg { stroke: #FFFFFF; }
+  .tab.coach .tab-label { margin-top: 34px; color: var(--text-primary); font-weight: 700; }
+
+  /* FOLD marker */
+  .fold {
+    position: relative;
+    margin: 6px -16px 6px;
+    border-top: 1px dashed #C7CCD3;
+    height: 1px;
+  }
+  .fold::after {
+    content: "FOLD · VIEWPORT EDGE · 852 PT";
+    position: absolute;
+    top: -7px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg-base);
+    padding: 0 10px;
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 9px; font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 0.22em;
+  }
+
+  .legend-doc { max-width: 1320px; margin: 56px auto 0; padding: 22px 26px; background: #FFFFFF; border: 1px solid var(--bg-border); border-radius: var(--radius-lg); display: grid; grid-template-columns: 220px 1fr; gap: 14px 28px; font-size: 12px; color: var(--text-secondary); line-height: 1.55; }
+  .legend-doc h3 { grid-column: 1 / -1; margin: 0 0 6px; font-family: var(--font-display); font-size: 12px; font-weight: 600; color: var(--text-muted); letter-spacing: 0.18em; text-transform: uppercase; }
+  .legend-doc dt { grid-column: 1; font-size: 11px; font-weight: 600; color: var(--text-muted); letter-spacing: 0.04em; text-transform: uppercase; }
+  .legend-doc dd { grid-column: 2; margin: 0; }
+  .legend-doc code { background: #F4F5F7; border: 1px solid var(--bg-border); padding: 1px 6px; border-radius: 4px; font-family: var(--font-numeric); font-size: 11px; color: var(--text-primary); }
+</style>
+</head>
+<body>
+  <header class="doc-header">
+    <div>
+      <p class="doc-eyebrow">FuelWell · Round 2 · Step 4 — Mockups</p>
+      <h1 class="doc-title">M34 Progress · v2 (Health Score + Habits)</h1>
+      <p class="doc-sub">Promoted from M23. Adds the Health Score trend card at the top (routes to M26 detail) and a new compact Habit Tracking card at the bottom — Habit Tracking lives here and in Menu, not on Dashboard. Section order: Health Score → Weight → Macro adherence → Body photos → Measurements → Mood &amp; energy → Habit Tracking. Frame extended so reviewers see the full stack without scrolling.</p>
+    </div>
+    <div class="doc-meta">
+      iPhone 15 Pro · 393 × 852 pt<br>
+      Frame extended for review · FOLD marked<br>
+      Tab · Progress
+    </div>
+  </header>
+
+  <div class="frames-row" id="frames"></div>
+
+  <section class="legend-doc">
+    <h3>Mockup notes · M34 Progress v2</h3>
+    <dt>Range selector</dt>
+    <dd>4-segment pill: <em>Weekly</em> (default) · Monthly · 90-day · All. All cards re-scale to the active window. Variation 2 changes the default to Monthly so reviewers see how the heavier charts behave.</dd>
+    <dt>Health Score trend (NEW)</dt>
+    <dd>First card. Top eyebrow <code>HEALTH SCORE</code>, big DM Sans 700 score (86.4), 30-day delta pill (<code>+4.2</code>), 56pt sparkline beside. Tap → M26 Health Score detail. The composite is the single number that integrates everything below it — putting it first lets the user see "am I trending in the right direction?" before diving into pillars.</dd>
+    <dt>Weight</dt>
+    <dd>Line chart of weekly averages (V1 single-line, V2 line + 7-day moving-average overlay, V3 line + dot-per-entry). Below the chart: a summary stat ("178.1 lb · −2.4 lb this month") and a primary "+ Add weight" button.</dd>
+    <dt>Macro adherence</dt>
+    <dd>Seven daily stacked P/C/F bars across the week. Adherence is shown as <em>percentage of target hit per day</em> — bars stack 0–100. Today highlighted (Variation 1 with a white dot on the topmost stack, Variation 2 with a colored ring); future days dim to <code>bg.border</code>. Summary stat: "Hit your macros 5 of 7 days" or "On pace · 71% of week".</dd>
+    <dt>Body photos</dt>
+    <dd>Horizontal scroll of 96×128 thumbs. Date overlay along the bottom edge. Trailing tile is a dashed add-photo card. Photos render as cool-tone gradient placeholders per the no-hand-drawn-imagery rule.</dd>
+    <dt>Measurements</dt>
+    <dd>Standard iOS-pattern list of waist / hips / chest / arms / etc., trailing trend pill colored green (down, in plan) / amber (up, watching) / neutral grey (flat). Tap row → full history sheet.</dd>
+    <dt>Mood &amp; energy</dt>
+    <dd><strong>V1</strong> Weekly dots — 7 circles with emoji-ish glyphs in tinted backgrounds. <strong>V2</strong> Weekly dots + a 5-row × 7-col heatmap of the last 5 weeks. <strong>V3</strong> Weekly dots only, more compact.</dd>
+    <dt>Habit Tracking (NEW)</dt>
+    <dd>Compact 14-day × 4-habit dot grid in <code>color.semantic.premium</code> purple. Each row shows the habit name + count, then a 14-day dot grid (on / miss / future), trailing % completion. "View all habits" link beneath routes to M27 Habit Tracking detail. Moved off Dashboard — accessed from here and from the Menu only.</dd>
+    <dt>Empty state</dt>
+    <dd>Cards collapse to an inline coach-voice line. Top card swaps to a "Building your baseline" panel matching the Dashboard's day-1 treatment. Coach copy: <em>Progress fills in as you log. Weight, photos, mood — one entry kicks it off.</em> Single primary CTA pinned at the top.</dd>
+  </section>
+
+<script>
+  const statusBar = `
+    <div class="status-bar">
+      <div class="time">9:41</div>
+      <div style="display:inline-flex; gap:6px; align-items:center;">
+        <svg width="17" height="11" viewBox="0 0 17 11" fill="none"><rect x="0" y="7" width="3" height="4" rx="0.5" fill="#0A0A0F"/><rect x="4" y="5" width="3" height="6" rx="0.5" fill="#0A0A0F"/><rect x="8" y="3" width="3" height="8" rx="0.5" fill="#0A0A0F"/><rect x="12" y="0" width="3" height="11" rx="0.5" fill="#0A0A0F"/></svg>
+        <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><path d="M8 11l-2.5-2.5a3.5 3.5 0 014.9 0L8 11z" fill="#0A0A0F"/><path d="M2 5a8.5 8.5 0 0112 0l-1.5 1.5a6 6 0 00-9 0L2 5z" fill="#0A0A0F"/><path d="M5 8a4.5 4.5 0 016 0l-1.5 1.5a2.5 2.5 0 00-3 0L5 8z" fill="#0A0A0F"/></svg>
+        <span class="signal-bat"></span>
+      </div>
+    </div>`;
+  const islandHTML = `<div class="dynamic-island"></div>`;
+
+  const ic = {
+    plus: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 4v16M4 12h16" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>`,
+    arrowUp: `<svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M6 11l6-6 6 6" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    arrowDown: `<svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M12 19V5M6 13l6 6 6-6" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    arrowFlat: `<svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M16 8l3 4-3 4" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    chev: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>`,
+    camera: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8a2 2 0 012-2h2l2-2h6l2 2h2a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/><circle cx="12" cy="13" r="3.5"/></svg>`,
+    scale: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 6h18l-2 14a2 2 0 01-2 2H7a2 2 0 01-2-2L3 6z"/><path d="M8 10h8"/></svg>`,
+    heart: `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7-4.5-7-10a4.5 4.5 0 018-3 4.5 4.5 0 018 3c0 5.5-7 10-7 10z"/></svg>`,
+    tabHome: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11l8-7 8 7v8a1 1 0 01-1 1h-4v-6h-6v6H5a1 1 0 01-1-1v-8Z"/></svg>`,
+    tabMeals: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4v16M9 4v6a3 3 0 01-6 0V4M19 4c-2 0-3 2-3 5s1 5 3 5v6"/></svg>`,
+    tabCoach: `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a8 8 0 1116 0c0 4-3.6 7-8 7l-3 3v-3.2A8 8 0 014 11Z"/><path d="M9 10.5h6M9 13.5h4"/></svg>`,
+    tabExercise: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M2 12h2M20 12h2M5 9v6M19 9v6M8 8v8M16 8v8M8 12h8"/></svg>`,
+    tabProgressFill: `<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="13" width="4" height="6" rx="1"/><rect x="9" y="5" width="4" height="14" rx="1"/><rect x="16" y="11" width="4" height="8" rx="1"/></svg>`,
+  };
+
+  function tabbar() {
+    return `<div class="tabbar">
+      <div class="tab"><div class="tab-glyph">${ic.tabHome}</div><div class="tab-label">Home</div></div>
+      <div class="tab"><div class="tab-glyph">${ic.tabMeals}</div><div class="tab-label">Meals</div></div>
+      <div class="tab coach"><div class="tab-bubble">${ic.tabCoach}</div><div class="tab-label">Coach</div></div>
+      <div class="tab"><div class="tab-glyph">${ic.tabExercise}</div><div class="tab-label">Exercise</div></div>
+      <div class="tab active"><div class="tab-glyph">${ic.tabProgressFill}</div><div class="tab-label">Progress</div></div>
+    </div>`;
+  }
+
+  /* ============= Cards ============= */
+  function header(state, range) {
+    return `
+      <div class="nav">
+        <div class="title">Progress<span class="sub">${state === 'empty' ? '7 days to your first scoreline' : 'May 16 · week of May 12'}</span></div>
+        <div class="iconbtn">${ic.plus}</div>
+      </div>
+      <div class="seg">
+        ${['Weekly','Monthly','90-day','All'].map(l => `<button class="${l === range ? 'on' : ''}">${l}</button>`).join('')}
+      </div>`;
+  }
+
+  function hsCard(state) {
+    if (state === 'empty') {
+      return `
+        <div class="card hs-card">
+          <div class="card-head">
+            <div class="eb"><span class="glyph" style="background:var(--text-disabled)">•</span>HEALTH SCORE</div>
+            <div class="more">DAY 1 / 7</div>
+          </div>
+          <div style="margin-top: 14px; display: flex; align-items: center; gap: 14px;">
+            <div style="width: 64px; height: 64px; border-radius: 50%; border: 4px dashed var(--bg-border); display: flex; align-items: center; justify-content: center; color: var(--text-disabled); font-family: var(--font-numeric); font-weight: 700; font-size: 22px;">—</div>
+            <div style="flex:1; min-width:0;">
+              <div style="font-family: var(--font-display); font-size: 15px; font-weight: 600; color: var(--text-primary); letter-spacing: -0.005em;">Building your baseline.</div>
+              <div style="margin-top: 3px; font-family: var(--font-body); font-size: 11.5px; color: var(--text-secondary); line-height: 1.4;">7 days of data unlock your Health Score. The line below starts plotting as you log.</div>
+            </div>
+          </div>
+        </div>`;
+    }
+    return `
+      <div class="card hs-card">
+        <div class="card-head">
+          <div class="eb"><span class="glyph" style="background:var(--gradient-brand)"></span>HEALTH SCORE · 30D</div>
+          <div class="more">View detail ${ic.chev}</div>
+        </div>
+        <div class="hs-row">
+          <div>
+            <div class="hs-num">86<span class="pt">.4</span></div>
+            <div class="hs-sub">
+              <span style="display:inline-flex; align-items:center; gap:4px; font-family:var(--font-numeric); font-feature-settings:'tnum' 1; font-size:12px; font-weight:700; color: var(--semantic-success); background: rgba(0,210,120,0.10); padding: 3px 8px; border-radius: 999px;">
+                ${ic.arrowUp}+4.2
+              </span>
+              <span style="margin-left: 6px;">last 30d · trending up</span>
+            </div>
+          </div>
+          <svg class="spark" viewBox="0 0 160 56" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="m34hs" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#00D278" stop-opacity="0.30"/>
+                <stop offset="100%" stop-color="#00D278" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <path d="M2 36 L18 38 L34 32 L50 28 L66 30 L82 22 L98 24 L114 18 L130 16 L146 12 L158 14 L158 56 L2 56 Z" fill="url(#m34hs)"/>
+            <path d="M2 36 L18 38 L34 32 L50 28 L66 30 L82 22 L98 24 L114 18 L130 16 L146 12 L158 14" stroke="#00D278" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="158" cy="14" r="3.5" fill="#00D278"/>
+            <circle cx="158" cy="14" r="7" fill="#00D278" fill-opacity="0.18"/>
+          </svg>
+        </div>
+      </div>`;
+  }
+
+  function quickAccess(state) {
+    if (state === 'empty') return '';
+    return `
+      <div class="qlist">
+        <div class="qrow">
+          <div class="ic" style="background: rgba(245,158,11,0.12); color: var(--macro-carbs);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="4" height="9" rx="0.6"/><rect x="10" y="6" width="4" height="14" rx="0.6"/><rect x="16" y="13" width="4" height="7" rx="0.6"/></svg>
+          </div>
+          <div>
+            <div class="nm">Macro adherence</div>
+            <div class="sub">Last 7 / 30 / 90 days</div>
+          </div>
+          <div class="chev">${ic.chev}</div>
+        </div>
+        <div class="qrow">
+          <div class="ic" style="background: rgba(0,180,216,0.10); color: var(--semantic-info);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round"/></svg>
+          </div>
+          <div>
+            <div class="nm">Health Score history</div>
+            <div class="sub">30-day trend · component breakdown</div>
+          </div>
+          <div class="chev">${ic.chev}</div>
+        </div>
+        <div class="qrow">
+          <div class="ic" style="background: rgba(168,85,247,0.10); color: var(--semantic-premium);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="6" cy="6" r="2"/><circle cx="12" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="6" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="18" cy="12" r="2" fill-opacity="0.3"/></svg>
+          </div>
+          <div>
+            <div class="nm">Habits</div>
+            <div class="sub">14-day grid · adherence per habit</div>
+          </div>
+          <div class="chev">${ic.chev}</div>
+        </div>
+      </div>`;
+  }
+
+  function weightCard(state, variant) {
+    if (state === 'empty') {
+      return `
+        <div class="card weight-card">
+          <div class="card-head">
+            <div class="eb">WEIGHT</div>
+          </div>
+          <div style="margin-top: 12px; padding: 16px 14px; background: var(--bg-base); border-radius: 12px; text-align: center;">
+            <div style="font-family: var(--font-numeric); font-size: 26px; font-weight: 700; color: var(--text-disabled); letter-spacing: -0.02em;">— lb</div>
+            <div style="margin-top: 4px; font-family: var(--font-body); font-size: 11.5px; color: var(--text-secondary);">Add your first weigh-in to start the line.</div>
+          </div>
+          <div class="actions">
+            <button class="btn primary">${ic.plus} Add weight</button>
+          </div>
+        </div>`;
+    }
+    // Mock data
+    const data = [180.6, 180.3, 179.9, 180.1, 179.4, 178.8, 179.0, 178.4, 178.0, 178.1];
+    const W = 320, H = 88, padX = 4, padY = 8;
+    const max = Math.max(...data) + 0.4;
+    const min = Math.min(...data) - 0.4;
+    const x = i => padX + (i / (data.length - 1)) * (W - padX*2);
+    const y = v => padY + (1 - (v - min) / (max - min)) * (H - padY*2);
+    const line = data.map((v, i) => `${i === 0 ? 'M' : 'L'} ${x(i)} ${y(v)}`).join(' ');
+    const area = `${line} L ${x(data.length-1)} ${H} L ${x(0)} ${H} Z`;
+
+    // V2 — also draw a moving-average overlay
+    let extraSeries = '';
+    if (variant === 'v2') {
+      const avg = data.map((_, i, arr) => {
+        const slice = arr.slice(Math.max(0, i-2), i+1);
+        return slice.reduce((a,b)=>a+b,0) / slice.length;
+      });
+      const aLine = avg.map((v,i) => `${i === 0 ? 'M' : 'L'} ${x(i)} ${y(v)}`).join(' ');
+      extraSeries = `<path d="${aLine}" stroke="#9CA3AF" stroke-width="1.6" stroke-dasharray="4 3" fill="none"/>`;
+    }
+    // V3 — dot per entry
+    let dots = '';
+    if (variant === 'v3') {
+      dots = data.map((v, i) => `<circle cx="${x(i)}" cy="${y(v)}" r="3" fill="#00D278" stroke="#fff" stroke-width="1.5"/>`).join('');
+    } else {
+      dots = `<circle cx="${x(data.length-1)}" cy="${y(data[data.length-1])}" r="4" fill="#00D278"/>
+              <circle cx="${x(data.length-1)}" cy="${y(data[data.length-1])}" r="8" fill="#00D278" fill-opacity="0.18"/>`;
+    }
+
+    return `
+      <div class="card weight-card">
+        <div class="card-head">
+          <div class="eb">WEIGHT · WEEKLY AVG</div>
+          <div class="delta">${ic.arrowDown}−2.4 lb / 30d</div>
+        </div>
+        <div class="weight-row">
+          <div class="v">178.1<span class="u">lb</span></div>
+          <div class="cap">Goal · 170 lb · 8 wks out at this pace</div>
+        </div>
+        <svg class="weight-chart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="m34wt" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#00D278" stop-opacity="0.20"/>
+              <stop offset="100%" stop-color="#00D278" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path d="${area}" fill="url(#m34wt)"/>
+          <path d="${line}" stroke="#00D278" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          ${extraSeries}
+          ${dots}
+        </svg>
+        <div class="actions">
+          <button class="btn primary">${ic.plus} Add weight</button>
+          <button class="btn">History</button>
+        </div>
+      </div>`;
+  }
+
+  function macroAdherenceCard(state) {
+    if (state === 'empty') {
+      return `<div class="empty-sub">Macro adherence chart unlocks after 3 days of meal logs.</div>`;
+    }
+    const days = ['M','T','W','T','F','S','S'];
+    const adherence = [
+      { p: 32, c: 30, f: 28, today: false },
+      { p: 30, c: 32, f: 26, today: false },
+      { p: 30, c: 28, f: 22, today: false },
+      { p: 32, c: 30, f: 28, today: false },
+      { p: 28, c: 26, f: 18, today: true },
+      { p: 0, c: 0, f: 0, future: true },
+      { p: 0, c: 0, f: 0, future: true },
+    ];
+    return `
+      <div class="card macro-card">
+        <div class="card-head">
+          <div class="eb">MACRO ADHERENCE · WEEK</div>
+          <div class="delta">71% on pace · ${ic.arrowUp}+12 pts vs last week</div>
+        </div>
+        <div class="bars">
+          ${adherence.map((d, i) => {
+            if (d.future) {
+              return `<div class="bar-col">
+                <div class="stack" style="opacity:0.3">
+                  <div class="b f" style="height:0"></div>
+                </div>
+                <div class="d">${days[i]}</div>
+              </div>`;
+            }
+            return `<div class="bar-col">
+              <div class="stack">
+                <div class="b p" style="height:${d.p}%"></div>
+                <div class="b c" style="height:${d.c}%"></div>
+                <div class="b f" style="height:${d.f}%"></div>
+              </div>
+              <div class="d" ${d.today ? 'style="color:var(--text-primary); font-weight:700;"' : ''}>${days[i]}</div>
+            </div>`;
+          }).join('')}
+        </div>
+        <div class="legend">
+          <span><span class="swatch" style="background:var(--macro-protein)"></span>Protein</span>
+          <span><span class="swatch" style="background:var(--macro-carbs)"></span>Carbs</span>
+          <span><span class="swatch" style="background:var(--macro-fat)"></span>Fat</span>
+        </div>
+      </div>`;
+  }
+
+  function photosSection(state) {
+    if (state === 'empty') {
+      return `<div class="empty-sub">Body photos appear here once you add the first one. Same pose, same time of day works best.</div>`;
+    }
+    return `<div class="photos-scroll">
+      ${['May 16','May 9','May 2','Apr 25','Apr 18'].map(d => `
+        <div class="photo">
+          <div class="ph">PHOTO</div>
+          <div class="ds">${d}</div>
+        </div>`).join('')}
+      <div class="photo add"><div class="ph">${ic.camera}<div>+ Add</div></div></div>
+    </div>`;
+  }
+
+  function measurementsCard(state) {
+    if (state === 'empty') {
+      return `<div class="empty-sub">Track waist, hips, chest, arms — coach uses these to refine your plan.</div>`;
+    }
+    const rows = [
+      { nm: 'Waist',  v: 33.5, u: 'in', dir: 'down', d: '−0.4 / 4w' },
+      { nm: 'Hips',   v: 39.2, u: 'in', dir: 'flat', d: '0 / 4w' },
+      { nm: 'Chest',  v: 42.8, u: 'in', dir: 'up',   d: '+0.3 / 4w' },
+      { nm: 'Arms',   v: 14.2, u: 'in', dir: 'up',   d: '+0.2 / 4w' },
+      { nm: 'Thighs', v: 23.6, u: 'in', dir: 'down', d: '−0.1 / 4w' },
+    ];
+    return `
+      <div class="card">
+        <div class="card-head">
+          <div class="eb">MEASUREMENTS · 4-WEEK</div>
+          <div class="more">${ic.chev}</div>
+        </div>
+        <div class="meas-list">
+          ${rows.map(r => {
+            const cls = r.dir === 'down' ? '' : (r.dir === 'up' ? 'warn' : 'flat');
+            const ic2 = r.dir === 'down' ? ic.arrowDown : (r.dir === 'up' ? ic.arrowUp : ic.arrowFlat);
+            return `<div class="meas-row">
+              <span class="nm">${r.nm}</span>
+              <span class="vl">${r.v}<span class="u">${r.u}</span></span>
+              <span class="trend ${cls}">${ic2}${r.d}</span>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>`;
+  }
+
+  function moodCard(state, variant) {
+    if (state === 'empty') {
+      return `<div class="empty-sub">Tap a mood circle in the morning recap to begin charting energy.</div>`;
+    }
+    const days = ['M','T','W','T','F','S','S'];
+    const moods = [
+      { cls: 'good', face: '🙂' },
+      { cls: 'good', face: '🙂' },
+      { cls: 'ok',   face: '😐' },
+      { cls: 'low',  face: '😕' },
+      { cls: 'good', face: '🙂', today: true },
+      { cls: '',     face: '·' },
+      { cls: '',     face: '·' },
+    ];
+    let heatmap = '';
+    if (variant === 'v2') {
+      // 5-week × 7-day grid (35 cells)
+      const cells = Array.from({length: 35}, (_, i) => {
+        const lvls = ['', 'l1', 'l2', 'l3', 'l4'];
+        // semi-random but deterministic
+        const v = (i * 7) % 11;
+        return lvls[v > 4 ? Math.floor(Math.random() * 5) : (v < 2 ? 0 : v > 7 ? 4 : v - 1)];
+      });
+      // make it deterministic
+      const fixedCells = ['l1','l2','l3','l2','l1','','l2',
+                          'l3','l4','l3','l2','l3','','l1',
+                          'l2','l3','l2','l4','l2','l1','',
+                          'l1','l2','l3','l2','l3','','l2',
+                          'l2','l3','l3','l4','l3','l1','l2'];
+      heatmap = `<div class="heatmap">${fixedCells.map(c => `<div class="cell ${c}"></div>`).join('')}</div>
+        <div class="heat-cap">Last 5 weeks · darker = higher energy</div>`;
+    }
+    return `
+      <div class="card mood-card">
+        <div class="card-head">
+          <div class="eb">MOOD &amp; ENERGY · WEEK</div>
+          <div class="more">${ic.chev}</div>
+        </div>
+        <div class="dots">
+          ${moods.map((m, i) => `
+            <div class="day ${m.cls} ${m.today ? 'today' : ''}">
+              <div class="dl">${days[i]}</div>
+              <div class="ring">${m.face}</div>
+            </div>`).join('')}
+        </div>
+        ${heatmap}
+      </div>`;
+  }
+
+  function habitCard(state) {
+    if (state === 'empty') {
+      return `
+        <div class="card habit-card">
+          <div class="card-head">
+            <div class="eb"><span class="glyph" style="background:var(--semantic-premium)">•</span>HABIT TRACKING</div>
+            <div class="more">Set up</div>
+          </div>
+          <div style="margin-top: 10px; padding: 14px; background: var(--bg-base); border-radius: 12px; text-align: center;">
+            <div style="font-family: var(--font-body); font-size: 13px; font-weight: 600; color: var(--text-primary);">Pick up to 5 daily habits.</div>
+            <div style="margin-top: 4px; font-family: var(--font-body); font-size: 11.5px; color: var(--text-secondary); line-height: 1.4;">Coach drafts a starter set from your goal — water, sleep, walks, and two of your choosing.</div>
+            <button style="margin-top: 12px; height: 34px; padding: 0 16px; border-radius: 10px; border: 0; background: var(--gradient-brand); color: var(--text-primary); font-family: var(--font-body); font-size: 12.5px; font-weight: 700; box-shadow: 0 6px 18px rgba(0,210,120,.22);">Add habits</button>
+          </div>
+        </div>`;
+    }
+    // 14-day dot grids per habit
+    const habits = [
+      { nm: 'Water · 8 cups',  count: '12 / 14', dots: 'wwwwwmwwwmwwww' }, // w=on, m=miss
+      { nm: 'Walk · 30 min',   count: '10 / 14', dots: 'wmwwwmwwwmwwwm' },
+      { nm: '7+ hr sleep',     count: '9 / 14',  dots: 'wmwmwwmwwmmwww' },
+      { nm: 'No screens · 9pm', count: '8 / 14',  dots: 'wmmwmwmwmwwwww' },
+    ];
+    return `
+      <div class="card habit-card">
+        <div class="card-head">
+          <div class="eb"><span class="glyph" style="background:var(--semantic-premium)">•</span>HABIT TRACKING · 14D</div>
+          <div class="more">View all ${ic.chev}</div>
+        </div>
+        <div style="margin-top: 6px;">
+          ${habits.map(h => `
+            <div class="habit-row">
+              <div class="nm">${h.nm}<span class="sub">${h.count}</span></div>
+              <div class="dot-grid">
+                ${h.dots.split('').map(c => `<div class="dot ${c === 'w' ? 'on' : 'miss'}"></div>`).join('')}
+              </div>
+              <div class="pct">${Math.round(parseInt(h.count) / 14 * 100)}%<span class="lbl">14d</span></div>
+            </div>`).join('')}
+        </div>
+      </div>`;
+  }
+
+  /* ============= Variations ============= */
+  function v1(state) {
+    return `
+      <div class="content">
+        ${header(state, 'Weekly')}
+        <div class="section">
+          <div class="section-head"><div class="t">Health Score</div><div class="a">View detail</div></div>
+          ${hsCard(state)}
+        </div>
+        <div class="section">
+          <div class="section-head"><div class="t">Quick access</div></div>
+          ${quickAccess(state)}
+        </div>
+        <div class="section">
+          <div class="section-head"><div class="t">Weight</div></div>
+          ${weightCard(state, 'v1')}
+        </div>
+        <div class="fold"></div>
+        <div class="section">
+          <div class="section-head"><div class="t">Macro adherence</div></div>
+          ${macroAdherenceCard(state)}
+        </div>
+        <div class="section">
+          <div class="section-head"><div class="t">Body photos</div><div class="a">See all</div></div>
+          ${photosSection(state)}
+        </div>
+        <div class="section">
+          <div class="section-head"><div class="t">Measurements</div></div>
+          ${measurementsCard(state)}
+        </div>
+        <div class="section">
+          <div class="section-head"><div class="t">Mood &amp; energy</div></div>
+          ${moodCard(state, 'v1')}
+        </div>
+        <div class="section">
+          <div class="section-head"><div class="t">Habit Tracking</div><div class="a">View all habits</div></div>
+          ${habitCard(state)}
+        </div>
+      </div>`;
+  }
+  function v2(state) {
+    return `
+      <div class="content">
+        ${header(state, 'Monthly')}
+        <div class="section">
+          <div class="section-head"><div class="t">Health Score</div><div class="a">View detail</div></div>
+          ${hsCard(state)}
+        </div>
+        <div class="section">
+          <div class="section-head"><div class="t">Quick access</div></div>
+          ${quickAccess(state)}
+        </div>
+        <div class="section">
+          <div class="section-head"><div class="t">Weight</div></div>
+          ${weightCard(state, 'v2')}
+        </div>
+        <div class="fold"></div>
+        <div class="section">
+          <div class="section-head"><div class="t">Macro adherence</div></div>
+          ${macroAdherenceCard(state)}
+        </div>
+        <div class="section">
+          <div class="section-head"><div class="t">Body photos</div><div class="a">See all</div></div>
+          ${photosSection(state)}
+        </div>
+        <div class="section">
+          <div class="section-head"><div class="t">Measurements</div></div>
+          ${measurementsCard(state)}
+        </div>
+        <div class="section">
+          <div class="section-head"><div class="t">Mood &amp; energy</div></div>
+          ${moodCard(state, 'v2')}
+        </div>
+        <div class="section">
+          <div class="section-head"><div class="t">Habit Tracking</div><div class="a">View all habits</div></div>
+          ${habitCard(state)}
+        </div>
+      </div>`;
+  }
+  function v3(state) {
+    return `
+      <div class="content">
+        ${header(state, 'Weekly')}
+        <div class="section">
+          <div class="section-head"><div class="t">Health Score</div><div class="a">View detail</div></div>
+          ${hsCard(state)}
+        </div>
+        <div class="section">
+          <div class="section-head"><div class="t">Quick access</div></div>
+          ${quickAccess(state)}
+        </div>
+        <div class="section">
+          <div class="section-head"><div class="t">Habit Tracking</div><div class="a">View all habits</div></div>
+          ${habitCard(state)}
+        </div>
+        <div class="section">
+          <div class="section-head"><div class="t">Weight</div></div>
+          ${weightCard(state, 'v3')}
+        </div>
+        <div class="fold"></div>
+        <div class="section">
+          <div class="section-head"><div class="t">Macro adherence</div></div>
+          ${macroAdherenceCard(state)}
+        </div>
+        <div class="section">
+          <div class="section-head"><div class="t">Body photos</div><div class="a">See all</div></div>
+          ${photosSection(state)}
+        </div>
+        <div class="section">
+          <div class="section-head"><div class="t">Mood &amp; energy</div></div>
+          ${moodCard(state, 'v3')}
+        </div>
+        <div class="section">
+          <div class="section-head"><div class="t">Measurements</div></div>
+          ${measurementsCard(state)}
+        </div>
+      </div>`;
+  }
+
+  function frame(spec) {
+    return `
+      <section class="variation">
+        <div class="v-label">
+          <div class="v-num">${spec.num}</div>
+          <div class="v-name">${spec.name}</div>
+          <div class="v-cap">${spec.cap}</div>
+        </div>
+        <div class="device">
+          ${statusBar}
+          ${islandHTML}
+          <div class="screen">
+            ${spec.render}
+            ${tabbar()}
+          </div>
+          <div class="home-indicator-row"><span></span></div>
+        </div>
+      </section>`;
+  }
+
+  const populated = [
+    { num: 'Variation 01', name: 'Spec primary · Weekly', cap: 'Section order per spec: HS · Weight · Macro adherence · Photos · Measurements · Mood · Habit Tracking. Frame extended; FOLD marked between Weight and Macro adherence.', render: v1('populated') },
+    { num: 'Variation 02', name: 'Monthly default · with mood heatmap', cap: 'Range pre-selected to Monthly. Weight chart adds the 3-week moving-average overlay. Mood card surfaces a 5-week × 7-day heatmap below the dots row.', render: v2('populated') },
+    { num: 'Variation 03', name: 'Habits-up · dot-per-weigh-in', cap: 'Habit Tracking pulled up to second position (treated as a Tier-1 surface on this tab). Weight chart switches to dot-per-entry. Measurements moves to last to keep recurring inputs (mood, photos) earlier.', render: v3('populated') },
+  ];
+  const empties = [
+    { num: 'Variation 01 · Empty', name: 'Day 1 · baseline building', cap: 'All cards collapse to coach-voice placeholders. HS card swaps to the dashed-ring "Building your baseline" panel; Weight card carries the single "+ Add weight" primary CTA. Habits card promotes "Add habits" gradient button.', render: v1('empty') },
+    { num: 'Variation 02 · Empty', name: 'Day 1 · monthly empty', cap: 'Same empty state, but the Monthly toggle is selected — the cards still flatten to the same coach-voice copy.', render: v2('empty') },
+    { num: 'Variation 03 · Empty', name: 'Day 1 · habits-up empty', cap: 'In V3\'s layout the Habit Tracking empty surfaces second — coach pushes the user toward picking habits before weigh-ins, since habits compound earliest.', render: v3('empty') },
+  ];
+
+  document.getElementById('frames').innerHTML = `
+    <div style="display:flex; flex-direction:column; gap: 64px;">
+      <div style="display:flex; gap: 72px; justify-content:center;">${populated.map(frame).join('')}</div>
+      <div style="display:flex; gap: 72px; justify-content:center;">${empties.map(frame).join('')}</div>
+    </div>`;
+</script>
+</body>
+</html>

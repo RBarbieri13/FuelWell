@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>FuelWell · M07 Onboarding — HealthKit permission · Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-base: #F4F5F7;
+    --bg-surface: #FFFFFF;
+    --bg-elevated: #0F1117;
+    --bg-border: #E5E7EB;
+    --bg-border-soft: #EEF0F3;
+
+    --text-primary: #0A0A0F;
+    --text-body: #1F2937;
+    --text-secondary: #6B7280;
+    --text-muted: #9CA3AF;
+    --text-disabled: #C7CCD3;
+    --text-on-dark: #FFFFFF;
+
+    --brand-green: #47E7B0;
+    --action-green: #00D278;
+
+    --semantic-success: #00D278;
+    --semantic-error: #EF4444;
+    --semantic-warning: #F59E0B;
+    --semantic-info: #00B4D8;
+
+    --apple-health-red: #FE2D55;
+
+    --gradient-brand: linear-gradient(135deg, #00D278 0%, #47E7B0 100%);
+
+    --radius-sm: 6px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+    --radius-xl: 28px;
+    --radius-pill: 999px;
+
+    --elev-1: 0 1px 2px rgba(15,17,23,.04), 0 1px 0 rgba(15,17,23,.02);
+    --elev-2: 0 4px 14px rgba(15,17,23,.06), 0 1px 2px rgba(15,17,23,.04);
+    --elev-3: 0 12px 32px rgba(15,17,23,.08);
+    --elev-cta: 0 10px 28px rgba(0,210,120,.28), 0 2px 6px rgba(0,210,120,.18);
+
+    --font-display: 'Outfit', system-ui, -apple-system, sans-serif;
+    --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-system: -apple-system, 'SF Pro Display', system-ui, sans-serif;
+    --font-numeric: 'DM Sans', 'Inter', sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: #ECEDF0;
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    padding: 56px 48px 96px;
+    min-width: 1380px;
+  }
+
+  .doc-header {
+    max-width: 1320px; margin: 0 auto 48px;
+    display: flex; align-items: flex-end; justify-content: space-between;
+    gap: 32px;
+    border-bottom: 1px solid #D6D8DD;
+    padding-bottom: 24px;
+  }
+  .doc-eyebrow { font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-muted); margin: 0 0 8px; font-weight: 600; }
+  .doc-title { font-family: var(--font-display); font-size: 28px; font-weight: 700; margin: 0; color: var(--text-primary); letter-spacing: -0.018em; }
+  .doc-sub { font-size: 13px; color: var(--text-secondary); margin: 8px 0 0; max-width: 760px; line-height: 1.55; }
+  .doc-meta { font-family: var(--font-numeric); font-size: 11px; color: var(--text-muted); text-align: right; letter-spacing: 0.04em; line-height: 1.7; }
+
+  .frames-row { display: flex; gap: 64px; justify-content: center; align-items: flex-start; }
+  .variation { display: flex; flex-direction: column; align-items: center; width: 393px; }
+  .v-label { margin-bottom: 18px; text-align: center; width: 100%; }
+  .v-num { font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-muted); font-weight: 600; }
+  .v-name { font-family: var(--font-display); font-size: 16px; font-weight: 600; color: var(--text-primary); margin-top: 4px; letter-spacing: -0.005em; }
+  .v-cap { font-size: 12px; color: var(--text-secondary); margin-top: 4px; line-height: 1.45; max-width: 340px; }
+
+  .device {
+    position: relative; width: 393px; height: 852px;
+    background: var(--bg-base);
+    border-radius: 56px;
+    overflow: hidden;
+    box-shadow: 0 0 0 12px #0A0A0F, 0 0 0 13px #2A2A30, 0 30px 80px rgba(15,17,23,.28), 0 12px 32px rgba(15,17,23,.16);
+  }
+  .status-bar { position: absolute; top: 0; left: 0; right: 0; height: 54px; display: flex; align-items: flex-end; justify-content: space-between; padding: 0 28px 9px; z-index: 30; pointer-events: none; }
+  .status-bar .time { font-family: var(--font-system); font-size: 17px; font-weight: 600; color: var(--text-primary); letter-spacing: -0.01em; }
+  .status-bar.on-dark .time { color: var(--text-on-dark); }
+  .status-bar .signals { display: inline-flex; gap: 6px; align-items: center; }
+  .signal-bat { display: inline-block; width: 26px; height: 12px; border: 1.2px solid var(--text-primary); border-radius: 3px; position: relative; }
+  .signal-bat::after { content: ""; position: absolute; right: -3px; top: 3px; width: 2px; height: 5px; background: var(--text-primary); border-radius: 0 1.5px 1.5px 0; }
+  .signal-bat::before { content: ""; position: absolute; left: 1px; top: 1px; bottom: 1px; width: 78%; background: var(--text-primary); border-radius: 1.5px; }
+  .dynamic-island { position: absolute; top: 11px; left: 50%; transform: translateX(-50%); width: 124px; height: 36px; background: #0A0A0F; border-radius: 22px; z-index: 31; }
+  .home-indicator { position: absolute; bottom: 9px; left: 50%; transform: translateX(-50%); width: 134px; height: 5px; background: var(--text-primary); border-radius: 3px; opacity: 0.7; z-index: 32; }
+
+  .screen { position: absolute; top: 0; left: 0; right: 0; bottom: 0; padding: 54px 0 0; display: flex; flex-direction: column; }
+  .nav { height: 44px; display: grid; grid-template-columns: 56px 1fr 56px; align-items: center; padding: 4px 8px 0; flex-shrink: 0; }
+  .nav-back { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; color: var(--text-primary); margin-left: 8px; cursor: pointer; }
+  .progress { display: flex; gap: 6px; justify-content: center; align-items: center; }
+  .progress .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text-disabled); }
+  .progress .dot.on { background: var(--text-primary); }
+
+  .body-stack { padding: 8px 24px 0; flex: 1; overflow: hidden; }
+
+  /* Hero icon */
+  .hero {
+    margin: 12px auto 18px;
+    width: 92px; height: 92px;
+    border-radius: 26px;
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    box-shadow: var(--elev-2);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .hero .heart {
+    width: 56px; height: 56px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--apple-health-red);
+  }
+  .hero .badge {
+    position: absolute;
+    right: -6px; bottom: -6px;
+    width: 32px; height: 32px;
+    background: var(--bg-surface);
+    border-radius: 50%;
+    border: 1px solid var(--bg-border);
+    box-shadow: var(--elev-1);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-primary);
+  }
+  .hero.success {
+    border-color: rgba(0,210,120,.20);
+    box-shadow: 0 8px 28px rgba(0,210,120,.22), 0 1px 2px rgba(0,210,120,.10);
+  }
+  .hero.success .heart { color: var(--apple-health-red); }
+  .hero.success .badge {
+    background: var(--gradient-brand);
+    color: var(--text-on-dark);
+    border-color: transparent;
+  }
+
+  .title-block { text-align: center; padding: 0 4px 6px; }
+  .title-h1 {
+    font-family: var(--font-display);
+    font-size: 26px; font-weight: 700;
+    line-height: 1.18;
+    letter-spacing: -0.022em;
+    color: var(--text-primary);
+    margin: 0;
+  }
+  .title-sub {
+    margin-top: 8px;
+    font-family: var(--font-body);
+    font-size: 15px; font-weight: 400;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    letter-spacing: -0.003em;
+  }
+  .title-sub b {
+    font-weight: 600;
+    color: var(--text-body);
+  }
+
+  .section-eyebrow {
+    margin-top: 22px;
+    padding: 0 4px;
+    font-family: var(--font-body);
+    font-size: 11px; font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.14em; text-transform: uppercase;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .section-eyebrow .dot {
+    width: 4px; height: 4px; border-radius: 50%;
+    background: var(--text-muted);
+  }
+
+  /* Metric rows */
+  .metric-stack {
+    margin-top: 10px;
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--elev-1);
+    overflow: hidden;
+  }
+  .metric-row {
+    display: flex; align-items: center;
+    gap: 14px;
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--bg-border-soft);
+  }
+  .metric-row:last-child { border-bottom: 0; }
+  .m-icon {
+    width: 34px; height: 34px;
+    border-radius: 9px;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .m-icon.weight   { background: rgba(0, 180, 216, 0.10); color: var(--semantic-info); }
+  .m-icon.steps    { background: rgba(0, 210, 120, 0.10); color: var(--semantic-success); }
+  .m-icon.workouts { background: rgba(254, 45, 85, 0.10); color: var(--apple-health-red); }
+  .m-icon.energy   { background: rgba(245, 158, 11, 0.10); color: var(--semantic-warning); }
+
+  .m-text { flex: 1; min-width: 0; }
+  .m-name {
+    font-family: var(--font-body);
+    font-size: 15px; font-weight: 600;
+    color: var(--text-primary); letter-spacing: -0.005em;
+    line-height: 1.25;
+  }
+  .m-why {
+    margin-top: 1px;
+    font-family: var(--font-body);
+    font-size: 12.5px; font-weight: 400;
+    color: var(--text-secondary);
+    letter-spacing: -0.002em;
+    line-height: 1.35;
+  }
+  .m-tag {
+    font-family: var(--font-body);
+    font-size: 10px; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--text-muted);
+    background: var(--bg-base);
+    border: 1px solid var(--bg-border);
+    padding: 4px 8px;
+    border-radius: 999px;
+  }
+  .m-tag.connected {
+    color: var(--semantic-success);
+    background: rgba(0,210,120,0.10);
+    border-color: rgba(0,210,120,0.32);
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .m-value {
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 15px; font-weight: 600;
+    color: var(--text-primary);
+    margin-left: 6px;
+    line-height: 1;
+    letter-spacing: -0.005em;
+  }
+  .m-unit {
+    font-family: var(--font-body);
+    font-size: 11px; font-weight: 500;
+    color: var(--text-secondary);
+    letter-spacing: 0.04em; text-transform: uppercase;
+    margin-left: 3px;
+  }
+
+  /* Trust strip */
+  .trust {
+    margin-top: 16px;
+    padding: 12px 14px;
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-md);
+    display: flex; align-items: flex-start; gap: 10px;
+    box-shadow: var(--elev-1);
+  }
+  .trust .lock {
+    flex-shrink: 0;
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    background: rgba(15,17,23,0.06);
+    color: var(--text-primary);
+    display: flex; align-items: center; justify-content: center;
+    margin-top: 1px;
+  }
+  .trust .copy {
+    font-family: var(--font-body);
+    font-size: 12.5px; font-weight: 400;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    letter-spacing: -0.003em;
+  }
+  .trust .copy b { font-weight: 600; color: var(--text-body); }
+
+  .cta-dock {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    padding: 14px 24px 26px;
+    background: linear-gradient(180deg, rgba(244,245,247,0) 0%, var(--bg-base) 26%);
+    z-index: 20;
+  }
+  .btn-primary {
+    width: 100%; height: 48px;
+    border-radius: var(--radius-md);
+    border: 0;
+    font-family: var(--font-body);
+    font-size: 17px; font-weight: 600;
+    letter-spacing: -0.005em;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    cursor: pointer;
+    background: var(--gradient-brand);
+    color: var(--text-on-dark);
+    box-shadow: var(--elev-cta);
+  }
+  .btn-primary.success { padding-left: 4px; padding-right: 4px; }
+  .skip-link {
+    margin: 12px 0 0;
+    height: 22px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-body);
+    font-size: 14px; font-weight: 500;
+    color: var(--text-secondary);
+    letter-spacing: -0.003em;
+    cursor: pointer;
+  }
+
+  /* ===== iOS HealthKit system sheet (V2) ===== */
+  .scrim {
+    position: absolute; inset: 0;
+    background: rgba(10,10,15,0.42);
+    z-index: 24;
+    backdrop-filter: blur(2px);
+  }
+  .sys-sheet {
+    position: absolute;
+    left: 6px; right: 6px; bottom: 6px;
+    background: #F2F2F7;
+    border-radius: 26px 26px 14px 14px;
+    z-index: 26;
+    box-shadow: 0 -16px 40px rgba(15,17,23,.32);
+    overflow: hidden;
+    max-height: 720px;
+  }
+  .sys-grabber {
+    width: 36px; height: 5px;
+    background: rgba(0,0,0,0.18);
+    border-radius: 3px;
+    margin: 8px auto 4px;
+  }
+  .sys-top {
+    text-align: center;
+    padding: 8px 24px 12px;
+    border-bottom: 0.5px solid rgba(60,60,67,0.18);
+  }
+  .sys-app-icon {
+    margin: 2px auto 8px;
+    height: 28px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: var(--font-display);
+    font-weight: 700; font-size: 22px;
+    color: var(--text-primary);
+    letter-spacing: -0.025em;
+    line-height: 1;
+  }
+  .sys-app-icon .brand-letter {
+    color: var(--brand-green);
+    font-weight: 800;
+  }
+  .sys-h1 {
+    font-family: var(--font-system);
+    font-size: 17px; font-weight: 700;
+    color: #000;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+    margin: 0;
+  }
+  .sys-sub {
+    font-family: var(--font-system);
+    font-size: 12.5px; color: #3C3C43;
+    margin-top: 6px; line-height: 1.4;
+    opacity: 0.78;
+  }
+  .sys-section {
+    font-family: var(--font-system);
+    font-size: 11px; font-weight: 400;
+    text-transform: uppercase;
+    color: rgba(60,60,67,.62);
+    letter-spacing: 0.04em;
+    padding: 14px 32px 6px;
+  }
+  .sys-action-bar {
+    display: flex; justify-content: space-between;
+    padding: 4px 16px 6px;
+    font-family: var(--font-system);
+    font-size: 15px;
+    color: #007AFF;
+  }
+  .sys-action-bar .a { font-weight: 400; }
+  .sys-card {
+    margin: 0 16px;
+    background: #FFF;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .sys-row {
+    display: flex; align-items: center;
+    padding: 11px 14px;
+    border-bottom: 0.5px solid rgba(60,60,67,0.18);
+    gap: 12px;
+  }
+  .sys-row:last-child { border-bottom: 0; }
+  .sys-icon {
+    width: 26px; height: 26px;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .sys-icon.weight   { background: rgba(0,180,216,0.14); color: var(--semantic-info); }
+  .sys-icon.steps    { background: rgba(0,210,120,0.14); color: var(--semantic-success); }
+  .sys-icon.workouts { background: rgba(254,45,85,0.14); color: var(--apple-health-red); }
+  .sys-icon.energy   { background: rgba(245,158,11,0.14); color: var(--semantic-warning); }
+  .sys-label {
+    flex: 1;
+    font-family: var(--font-system);
+    font-size: 15px; color: #000;
+    letter-spacing: -0.01em;
+  }
+  /* iOS green switch */
+  .sys-switch {
+    width: 51px; height: 31px;
+    background: #34C759;
+    border-radius: 999px;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .sys-switch::after {
+    content: "";
+    position: absolute; top: 2px; left: 22px;
+    width: 27px; height: 27px;
+    background: #FFF;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0,0,0,.15), 0 0 0 0.5px rgba(0,0,0,.04);
+  }
+
+  .sys-footer {
+    padding: 14px 16px 24px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .sys-btn {
+    height: 50px;
+    border-radius: 14px;
+    font-family: var(--font-system);
+    font-size: 17px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .sys-btn.primary { background: #000; color: #FFF; }
+  .sys-btn.secondary { background: #FFF; color: #007AFF; font-weight: 400; }
+
+  /* ===== Legend ===== */
+  .legend {
+    max-width: 1320px;
+    margin: 56px auto 0;
+    padding: 22px 26px;
+    background: #FFFFFF;
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-lg);
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 14px 28px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.55;
+  }
+  .legend h3 {
+    grid-column: 1 / -1;
+    margin: 0 0 6px;
+    font-family: var(--font-display);
+    font-size: 12px; font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.18em; text-transform: uppercase;
+  }
+  .legend dt {
+    grid-column: 1;
+    font-size: 11px; font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .legend dd { grid-column: 2; margin: 0; }
+  .legend code {
+    background: #F4F5F7;
+    border: 1px solid var(--bg-border);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: var(--font-numeric);
+    font-size: 11px;
+    color: var(--text-primary);
+  }
+</style>
+</head>
+<body>
+
+  <header class="doc-header">
+    <div>
+      <p class="doc-eyebrow">FuelWell · Phase 0.5 · Step 4 — Mockups</p>
+      <h1 class="doc-title">M07 Onboarding — HealthKit permission</h1>
+      <p class="doc-sub">Promoted from approved wireframe § 3.7 V1 (clinical bullet list — most informationally explicit). Three states cover the consent lifecycle: pre-permission explainer, the iOS HealthKit system sheet rising on Continue tap, and the post-grant success state with the first real values from Health filled into the row tags.</p>
+    </div>
+    <div class="doc-meta">
+      iPhone 15 Pro · 393 × 852 pt<br>
+      Light · <code>color.bg.base #F4F5F7</code><br>
+      Progress · 7 of 9
+    </div>
+  </header>
+
+  <div class="frames-row" id="frames"></div>
+
+  <section class="legend">
+    <h3>Mockup notes · Step 4</h3>
+
+    <dt>Progress dots</dt>
+    <dd>Seven of nine filled. Nav row matches M03–M06.</dd>
+
+    <dt>Hero</dt>
+    <dd>92pt rounded square (<code>radius.xl</code> 26pt) on white with a 1pt hairline and <code>elevation.2</code>. Holds Apple Health's red heart at full saturation — that color is fixed by convention even inside our light system (see <code>color.semantic.error</code> note in DESIGN.md). A 32pt badge in the corner carries the linking glyph (V1 / V2) or the brand-green check (V3) so the hero doubles as the success affordance.</dd>
+
+    <dt>Title block</dt>
+    <dd>"Connect Apple Health" in <strong>Outfit 700</strong> 26pt, centered. Subtitle: "We <b>read</b> four metrics to keep your plan accurate — never written back, never leaves your device." The "read" bold pulls the contractual word forward in the otherwise muted body color.</dd>
+
+    <dt>Metric rows</dt>
+    <dd>Single white card, <code>radius.lg</code>, with four rows separated by <code>color.bg.borderSoft</code> hairlines. Each row carries a 34pt tinted icon square, the metric name in <strong>Inter 600</strong> 15pt, a one-line <em>why</em> in <code>color.text.secondary</code> 12.5pt, and a "READ" pill on the right. The pill flips to a green "CONNECTED" affirmation + the last-synced value once HealthKit returns data (V3) — the row reads as both contract and live data source.</dd>
+
+    <dt>Trust strip</dt>
+    <dd>Below the metric card: a single-line claim with a lock glyph — "Read-only. <b>Stays on your device.</b> No third parties." The lock is rendered in <code>color.text.primary</code> on a 6% neutral wash so it doesn't compete with the hero color for attention.</dd>
+
+    <dt>Primary CTA · always enabled</dt>
+    <dd>Permission screens never disable Continue — the user must always be able to advance. V1 reads "Connect Apple Health" with the heart icon to telegraph the next sheet; V3 flips to "Continue" once permission has resolved. Skip-for-now sits beneath the CTA in <code>color.text.secondary</code> and advances to 3.8 with all metrics manual.</dd>
+
+    <dt>iOS HealthKit sheet · V2</dt>
+    <dd>Native-system mock: rounded-top tray on a scrim, FuelWell app glyph at the top, "FuelWell Would Like To Access Your Health Data" in SF Pro 17 bold, four data categories listed below an "Allow 'FuelWell' to read data" label, each with the iOS green switch in the on position. Bottom carries "Don't Allow" / "Allow" buttons — matches Apple HIG exactly. Status-bar time stays at <code>9:41</code> as our content underneath dims into the scrim.</dd>
+
+    <dt>Success · V3</dt>
+    <dd>Hero gains a green halo + a gradient.brand checkmark badge. Each metric row now shows its real value: <code>178.4 lb</code>, <code>8,432 steps</code>, <code>3 sessions</code>, <code>412 kcal</code> in <strong>DM Sans 600</strong> tabular — first real numbers the user sees in the app. CTA reads "Continue" — flow advances to 3.8 Notifications.</dd>
+  </section>
+
+<script>
+  // ===== Shared chrome =====
+  const islandHTML = `
+    <div class="dynamic-island"></div>`;
+  const statusBar = `
+    <div class="status-bar">
+      <div class="time">9:41</div>
+      <div class="signals">
+        <svg width="17" height="11" viewBox="0 0 17 11" fill="none">
+          <rect x="0" y="7" width="3" height="4" rx="0.5" fill="#0A0A0F"/>
+          <rect x="4" y="5" width="3" height="6" rx="0.5" fill="#0A0A0F"/>
+          <rect x="8" y="3" width="3" height="8" rx="0.5" fill="#0A0A0F"/>
+          <rect x="12" y="0" width="3" height="11" rx="0.5" fill="#0A0A0F"/>
+        </svg>
+        <svg width="16" height="11" viewBox="0 0 16 11" fill="none">
+          <path d="M8 11l-2.5-2.5a3.5 3.5 0 014.9 0L8 11z" fill="#0A0A0F"/>
+          <path d="M2 5a8.5 8.5 0 0112 0l-1.5 1.5a6 6 0 00-9 0L2 5z" fill="#0A0A0F"/>
+          <path d="M5 8a4.5 4.5 0 016 0l-1.5 1.5a2.5 2.5 0 00-3 0L5 8z" fill="#0A0A0F"/>
+        </svg>
+        <span class="signal-bat"></span>
+      </div>
+    </div>`;
+  const navBar = `
+    <div class="nav">
+      <div class="nav-back">
+        <svg width="11" height="20" viewBox="0 0 11 20" fill="none">
+          <path d="M9.5 1.5L2 10l7.5 8.5" stroke="#0A0A0F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="progress">
+        <span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span>
+        <span class="dot on"></span><span class="dot on"></span><span class="dot on"></span>
+        <span class="dot"></span><span class="dot"></span>
+      </div>
+      <div></div>
+    </div>`;
+
+  // ===== Icons =====
+  const heartHero = `<svg width="56" height="56" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 21s-7.5-4.6-9.3-9.8C1.4 7.3 4 3.5 7.8 3.5c2 0 3.4 1 4.2 2.4.8-1.4 2.2-2.4 4.2-2.4 3.8 0 6.4 3.8 5.1 7.7C19.5 16.4 12 21 12 21Z"/>
+  </svg>`;
+  const linkGlyph = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+    <path d="M9.5 14.5l5-5M9 6h3.5a4.5 4.5 0 010 9H10M14 18h-3.5a4.5 4.5 0 010-9H13"
+      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>`;
+  const checkGlyph = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+    <path d="M5 12.5l5 5L19.5 7.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>`;
+  const lockGlyph = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+    <rect x="5" y="11" width="14" height="10" rx="2" fill="currentColor"/>
+    <path d="M8 11V8a4 4 0 018 0v3" stroke="currentColor" stroke-width="1.8" fill="none"/>
+  </svg>`;
+  const icWeight = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+    <path d="M4 7h16l-1.5 12.4a2 2 0 01-2 1.6H7.5a2 2 0 01-2-1.6L4 7Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M9 11.5l2.4-2.4M9 11.5l1 1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    <circle cx="9" cy="11.5" r="0.5" fill="currentColor"/>
+  </svg>`;
+  const icSteps = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+    <ellipse cx="8.5" cy="9" rx="3" ry="4" transform="rotate(-18 8.5 9)"/>
+    <ellipse cx="6.5" cy="16" rx="2.2" ry="2.8"/>
+    <ellipse cx="15.5" cy="13" rx="3" ry="4" transform="rotate(18 15.5 13)"/>
+    <ellipse cx="17.5" cy="19.5" rx="2.2" ry="2.6"/>
+  </svg>`;
+  const icWorkouts = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+    <path d="M5 9v6M3 11v2M19 9v6M21 11v2M7 8h2v8H7zM15 8h2v8h-2zM9 11h6v2H9z"
+      stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="currentColor"/>
+  </svg>`;
+  const icEnergy = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"/>
+  </svg>`;
+
+  // ===== Metric rows =====
+  function metricRow(kind, glyph, name, why, state, value, unit) {
+    let tag = '';
+    if (state === 'read') {
+      tag = `<span class="m-tag">Read</span>`;
+    } else if (state === 'connected') {
+      tag = `<span class="m-tag connected">${checkGlyph} <span style="font-size:9px;">CONNECTED</span></span>
+             <span class="m-value">${value}</span><span class="m-unit">${unit}</span>`;
+    }
+    return `
+      <div class="metric-row">
+        <div class="m-icon ${kind}">${glyph}</div>
+        <div class="m-text">
+          <div class="m-name">${name}</div>
+          <div class="m-why">${why}</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:6px;">${tag}</div>
+      </div>`;
+  }
+
+  // ===== Variations =====
+  const variations = [
+    {
+      num: 'Variation 01 · State',
+      name: 'Pre-permission · explainer',
+      cap: 'Default first render. User hasn\'t tapped Continue yet. Each metric row shows its READ tag and the reason it matters; Skip-for-now sits beneath the gradient CTA.',
+      heroSuccess: false,
+      heroBadge: linkGlyph,
+      state: 'read',
+      ctaLabel: 'Connect Apple Health',
+      showSkip: true,
+      showSheet: false,
+      showHero: true
+    },
+    {
+      num: 'Variation 02 · State',
+      name: 'iOS HealthKit · system sheet',
+      cap: 'User tapped Continue. The native HealthKit sheet rises with the FuelWell app glyph and a green switch per category, defaulted on. Don\'t Allow / Allow at the bottom. Our explainer fades behind the scrim.',
+      heroSuccess: false,
+      heroBadge: linkGlyph,
+      state: 'read',
+      ctaLabel: 'Connect Apple Health',
+      showSkip: true,
+      showSheet: true,
+      showHero: true
+    },
+    {
+      num: 'Variation 03 · State',
+      name: 'Connected · first sync',
+      cap: 'User tapped Allow. Hero gains the brand-green check, each row swaps its READ tag for CONNECTED + a real value pulled from Health. CTA flips to "Continue" — flow advances to 3.8 Notifications.',
+      heroSuccess: true,
+      heroBadge: checkGlyph,
+      state: 'connected',
+      ctaLabel: 'Continue',
+      showSkip: false,
+      showSheet: false,
+      showHero: true
+    }
+  ];
+
+  const metrics = [
+    ['weight', icWeight, 'Weight', 'Recalibrate your daily target.', '178.4', 'lb'],
+    ['steps', icSteps, 'Steps', 'Adjust your active calorie budget.', '8,432', 'today'],
+    ['workouts', icWorkouts, 'Workouts', 'Refuel windows after training.', '3', 'this wk'],
+    ['energy', icEnergy, 'Active energy', 'Sharpen your daily expenditure.', '412', 'kcal']
+  ];
+
+  const root = document.getElementById('frames');
+  root.innerHTML = variations.map(v => `
+    <section class="variation">
+      <div class="v-label">
+        <div class="v-num">${v.num}</div>
+        <div class="v-name">${v.name}</div>
+        <div class="v-cap">${v.cap}</div>
+      </div>
+      <div class="device">
+        ${statusBar}
+        ${islandHTML}
+        <div class="screen">
+          ${navBar}
+          <div class="body-stack">
+            <div class="hero ${v.heroSuccess ? 'success' : ''}">
+              <div class="heart">${heartHero}</div>
+              <div class="badge" ${v.heroSuccess ? 'style="color:#fff;"' : ''}>${v.heroBadge}</div>
+            </div>
+            <div class="title-block">
+              <h1 class="title-h1">${v.heroSuccess ? 'You\'re connected.' : 'Connect Apple Health'}</h1>
+              <p class="title-sub">${v.heroSuccess
+                ? 'We\'ll keep your plan in sync with Health as you go. Change access any time in Settings.'
+                : 'We <b>read</b> four metrics to keep your plan accurate — never written back, never leaves your device.'}</p>
+            </div>
+            <div class="section-eyebrow"><span class="dot"></span>${v.heroSuccess ? 'Syncing now' : 'We read'}</div>
+            <div class="metric-stack">
+              ${metrics.map(m => metricRow(m[0], {weight:icWeight,steps:icSteps,workouts:icWorkouts,energy:icEnergy}[m[0]], m[2], m[3], v.state, m[4], m[5])).join('')}
+            </div>
+            ${v.heroSuccess ? '' : `
+              <div class="trust">
+                <div class="lock">${lockGlyph}</div>
+                <div class="copy">Read-only. <b>Stays on your device.</b> No third parties — not even FuelWell servers.</div>
+              </div>
+            `}
+          </div>
+          <div class="cta-dock">
+            <button class="btn-primary ${v.heroSuccess ? 'success' : ''}">
+              ${v.heroSuccess ? '' : `<span style="display:inline-flex; color:#fff;">${heartHero.replace('width="56"','width="18"').replace('height="56"','height="18"')}</span>`}
+              ${v.ctaLabel}
+            </button>
+            ${v.showSkip ? `<div class="skip-link">Skip for now</div>` : ''}
+          </div>
+          ${v.showSheet ? `
+            <div class="scrim"></div>
+            <div class="sys-sheet">
+              <div class="sys-grabber"></div>
+              <div class="sys-top">
+                <div class="sys-app-icon"><span class="brand-letter">F</span>uel<span class="brand-letter">W</span>ell</div>
+                <h2 class="sys-h1">"FuelWell" Would Like<br/>To Access Your Health Data</h2>
+                <p class="sys-sub">FuelWell will read these categories to personalize your plan. You can change this any time in the Health app.</p>
+              </div>
+              <div class="sys-action-bar">
+                <span class="a">Turn All Categories Off</span>
+                <span class="a">Turn All On</span>
+              </div>
+              <div class="sys-section">Allow "FuelWell" to read data</div>
+              <div class="sys-card">
+                <div class="sys-row"><div class="sys-icon weight">${icWeight}</div><div class="sys-label">Weight</div><div class="sys-switch"></div></div>
+                <div class="sys-row"><div class="sys-icon steps">${icSteps}</div><div class="sys-label">Steps</div><div class="sys-switch"></div></div>
+                <div class="sys-row"><div class="sys-icon workouts">${icWorkouts}</div><div class="sys-label">Workouts</div><div class="sys-switch"></div></div>
+                <div class="sys-row"><div class="sys-icon energy">${icEnergy}</div><div class="sys-label">Active Energy</div><div class="sys-switch"></div></div>
+              </div>
+              <div class="sys-footer">
+                <div class="sys-btn primary">Allow</div>
+                <div class="sys-btn secondary">Don't Allow</div>
+              </div>
+            </div>
+          ` : ''}
+        </div>
+        <div class="home-indicator"></div>
+      </div>
+    </section>
+  `).join('');
+</script>
+</body>
+</html>

@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>FuelWell · M21 Learn Home · Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-base:#F4F5F7; --bg-surface:#FFFFFF; --bg-elevated:#0F1117;
+    --bg-border:#E5E7EB; --bg-border-soft:#EEF0F3;
+    --text-primary:#0A0A0F; --text-body:#1F2937; --text-secondary:#6B7280;
+    --text-muted:#9CA3AF; --text-disabled:#C7CCD3; --text-on-dark:#FFFFFF; --text-on-dark-muted:#9AA0AC;
+    --brand-green:#47E7B0; --semantic-success:#00D278; --semantic-warning:#F59E0B; --semantic-info:#00B4D8; --semantic-premium:#A855F7;
+    --macro-protein:#00D278; --macro-carbs:#F59E0B; --macro-fat:#A855F7;
+    --gradient-brand: linear-gradient(135deg, #00D278 0%, #47E7B0 100%);
+    --radius-md:12px; --radius-lg:20px; --radius-pill:999px;
+    --elev-1: 0 1px 2px rgba(15,17,23,.04), 0 1px 0 rgba(15,17,23,.02);
+    --elev-2: 0 4px 14px rgba(15,17,23,.06), 0 1px 2px rgba(15,17,23,.04);
+    --font-display:'Outfit', system-ui, sans-serif;
+    --font-body:'Inter', system-ui, sans-serif;
+    --font-system: -apple-system, 'SF Pro Display', system-ui, sans-serif;
+    --font-numeric:'DM Sans', 'Inter', sans-serif;
+  }
+  *{box-sizing:border-box;} html,body{margin:0;padding:0;}
+  body{background:#ECEDF0;color:var(--text-primary);font-family:var(--font-body);padding:56px 48px 96px;min-width:1380px;}
+  .doc-header{max-width:1320px;margin:0 auto 48px;display:flex;align-items:flex-end;justify-content:space-between;gap:32px;border-bottom:1px solid #D6D8DD;padding-bottom:24px;}
+  .doc-eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--text-muted);margin:0 0 8px;font-weight:600;}
+  .doc-title{font-family:var(--font-display);font-size:28px;font-weight:700;margin:0;letter-spacing:-.018em;}
+  .doc-sub{font-size:13px;color:var(--text-secondary);margin:8px 0 0;max-width:760px;line-height:1.55;}
+  .doc-meta{font-family:var(--font-numeric);font-size:11px;color:var(--text-muted);text-align:right;letter-spacing:.04em;line-height:1.7;}
+  .frames-row{display:flex;gap:64px;justify-content:center;align-items:flex-start;}
+  .variation{display:flex;flex-direction:column;align-items:center;width:393px;}
+  .v-label{margin-bottom:18px;text-align:center;width:100%;}
+  .v-num{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--text-muted);font-weight:600;}
+  .v-name{font-family:var(--font-display);font-size:16px;font-weight:600;color:var(--text-primary);margin-top:4px;}
+  .v-cap{font-size:12px;color:var(--text-secondary);margin-top:4px;line-height:1.45;max-width:340px;}
+  .device{position:relative;width:393px;height:852px;background:var(--bg-base);border-radius:56px;overflow:hidden;box-shadow:0 0 0 12px #0A0A0F,0 0 0 13px #2A2A30,0 30px 80px rgba(15,17,23,.28),0 12px 32px rgba(15,17,23,.16);}
+  .status-bar{position:absolute;top:0;left:0;right:0;height:54px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 28px 9px;z-index:30;}
+  .status-bar .time{font-family:var(--font-system);font-size:17px;font-weight:600;color:var(--text-primary);}
+  .status-bar .signals{display:inline-flex;gap:6px;align-items:center;}
+  .signal-bat{display:inline-block;width:26px;height:12px;border:1.2px solid var(--text-primary);border-radius:3px;position:relative;}
+  .signal-bat::after{content:"";position:absolute;right:-3px;top:3px;width:2px;height:5px;background:var(--text-primary);border-radius:0 1.5px 1.5px 0;}
+  .signal-bat::before{content:"";position:absolute;left:1px;top:1px;bottom:1px;width:78%;background:var(--text-primary);border-radius:1.5px;}
+  .dynamic-island{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:124px;height:36px;background:#0A0A0F;border-radius:22px;z-index:31;}
+  .home-indicator{position:absolute;bottom:9px;left:50%;transform:translateX(-50%);width:134px;height:5px;background:var(--text-primary);border-radius:3px;opacity:.7;z-index:32;}
+  .screen{position:absolute;top:0;left:0;right:0;bottom:0;padding:54px 0 0;display:flex;flex-direction:column;}
+
+  .nav{height:48px;display:grid;grid-template-columns:56px 1fr 56px;align-items:center;padding:4px 12px 0;flex-shrink:0;}
+  .nav-btn{width:38px;height:38px;border-radius:50%;background:var(--bg-surface);border:1px solid var(--bg-border);display:flex;align-items:center;justify-content:center;color:var(--text-body);box-shadow:var(--elev-1);margin:0 auto;}
+  .nav-title{text-align:center;font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--text-primary);letter-spacing:-.018em;}
+
+  .content{flex:1;padding:0 16px 100px;overflow:hidden;}
+
+  /* Search field */
+  .search-field {
+    margin-top: 10px;
+    height: 44px;
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: 14px;
+    box-shadow: var(--elev-1);
+    padding: 0 12px 0 40px;
+    display: flex; align-items: center;
+    position: relative;
+    font-family: var(--font-body);
+    font-size: 14.5px; font-weight: 500;
+    color: var(--text-muted);
+  }
+  .search-field.tall { height: 56px; font-size: 15px; }
+  .search-field.focused { border-color: var(--text-primary); box-shadow: 0 0 0 3px rgba(15,17,23,0.06), var(--elev-1); color: var(--text-primary); }
+  .search-field .glyph { position: absolute; left: 14px; color: var(--text-muted); }
+  .search-field.focused .glyph { color: var(--text-primary); }
+  .search-field .caret { display: inline-block; width: 2px; height: 18px; background: var(--text-primary); margin-left: 1px; transform: translateY(1px); }
+  .search-field .cancel { position: absolute; right: 14px; font-family: var(--font-body); font-size: 14px; font-weight: 500; color: var(--semantic-info); }
+
+  /* Section head */
+  .sec-h { display: flex; align-items: baseline; justify-content: space-between; margin: 22px 4px 10px; }
+  .sec-h .l { font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.012em; }
+  .sec-h .l .sub { display: block; margin-top: 1px; font-family: var(--font-body); font-size: 11px; font-weight: 500; color: var(--text-secondary); letter-spacing: -0.002em; }
+  .sec-h .r { font-family: var(--font-body); font-size: 12.5px; font-weight: 600; color: var(--semantic-info); }
+
+  /* Category carousel */
+  .cat-row {
+    margin: 0 -16px 0;
+    padding: 0 16px 4px;
+    display: flex; gap: 10px;
+    overflow: hidden;
+  }
+  .cat {
+    flex-shrink: 0;
+    width: 132px;
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-lg);
+    padding: 14px;
+    box-shadow: var(--elev-1);
+    position: relative;
+    overflow: hidden;
+  }
+  .cat::before {
+    content: ""; position: absolute;
+    inset: 0;
+    background: radial-gradient(60% 50% at 100% 0%, var(--tint, rgba(0,210,120,0.18)) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .cat .ic {
+    width: 36px; height: 36px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--bg-base);
+    position: relative; z-index: 1;
+  }
+  .cat .nm {
+    margin-top: 12px;
+    font-family: var(--font-body);
+    font-size: 13.5px; font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.004em;
+    line-height: 1.25;
+    position: relative; z-index: 1;
+  }
+  .cat .ct {
+    margin-top: 4px;
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 11px; font-weight: 600;
+    color: var(--text-muted);
+    position: relative; z-index: 1;
+  }
+  .cat .ct .v { color: var(--text-body); font-weight: 700; }
+
+  /* Continue reading */
+  .continue {
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-lg);
+    padding: 14px;
+    display: grid; grid-template-columns: 56px 1fr;
+    gap: 12px;
+    box-shadow: var(--elev-1);
+    align-items: center;
+  }
+  .continue .thumb {
+    width: 56px; height: 56px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #BBF7D0, #22C55E);
+    position: relative;
+    overflow: hidden;
+  }
+  .continue .thumb::before { content: ""; position: absolute; inset: 0; background: radial-gradient(60% 50% at 30% 30%, rgba(255,255,255,0.25) 0%, transparent 60%); }
+  .continue .body { min-width: 0; }
+  .continue .lbl {
+    font-family: var(--font-body);
+    font-size: 10px; font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 0.16em; text-transform: uppercase;
+  }
+  .continue .nm {
+    margin-top: 2px;
+    font-family: var(--font-body);
+    font-size: 13.5px; font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.003em;
+    line-height: 1.3;
+  }
+  .continue .prog-row {
+    margin-top: 6px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .continue .bar {
+    flex: 1; height: 4px;
+    background: var(--bg-base);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .continue .bar .fill {
+    height: 100%;
+    background: var(--gradient-brand);
+    border-radius: 999px;
+  }
+  .continue .pct {
+    font-family: var(--font-numeric);
+    font-size: 11px; font-weight: 700;
+    color: var(--text-secondary);
+  }
+
+  /* Article row */
+  .art-list { display: flex; flex-direction: column; gap: 10px; }
+  .art {
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-lg);
+    padding: 12px;
+    display: grid; grid-template-columns: 72px 1fr;
+    gap: 12px;
+    box-shadow: var(--elev-1);
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+  }
+  .art .thumb {
+    width: 72px; height: 72px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--c1, #FCD34D), var(--c2, #F59E0B));
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .art .thumb::before { content: ""; position: absolute; inset: 0; background: radial-gradient(60% 50% at 30% 30%, rgba(255,255,255,0.28) 0%, transparent 60%); }
+  .art .cat-tag {
+    position: absolute; top: 8px; left: 8px;
+    padding: 3px 7px;
+    border-radius: 999px;
+    background: rgba(15,17,23,0.80);
+    color: var(--text-on-dark);
+    font-family: var(--font-body);
+    font-size: 9.5px; font-weight: 700;
+    letter-spacing: 0.10em;
+  }
+  .art .body { min-width: 0; }
+  .art .ttl {
+    font-family: var(--font-body);
+    font-size: 14px; font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.005em;
+    line-height: 1.3;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .art .ttl b { font-weight: 800; background: rgba(255,222,0,0.34); padding: 0 2px; border-radius: 2px; }
+  .art .sum {
+    margin-top: 3px;
+    font-family: var(--font-body);
+    font-size: 11.5px; font-weight: 400;
+    color: var(--text-secondary);
+    line-height: 1.4;
+    letter-spacing: -0.002em;
+    display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .art .met {
+    margin-top: 5px;
+    display: flex; align-items: center; gap: 4px;
+    font-family: var(--font-body);
+    font-size: 10.5px; font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+  }
+  .art .met .dot { color: var(--text-disabled); }
+  .art .met .cat {
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 9.5px;
+    letter-spacing: 0.10em;
+    background: var(--bg-base);
+    border: 1px solid var(--bg-border);
+    color: var(--text-body);
+  }
+  .art .met .fit {
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 9.5px;
+    letter-spacing: 0.10em;
+    background: rgba(0,210,120,0.10);
+    border: 1px solid rgba(0,210,120,0.32);
+    color: var(--semantic-success);
+    font-weight: 700;
+  }
+
+  /* For-you hero card */
+  .for-hero {
+    margin-top: 4px;
+    background: var(--bg-elevated);
+    color: var(--text-on-dark);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .for-hero::before {
+    content: ""; position: absolute;
+    top: 0; right: 0; width: 60%; height: 100%;
+    background: radial-gradient(60% 60% at 80% 40%, rgba(0,210,120,0.30) 0%, transparent 60%);
+  }
+  .for-hero .lbl {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--font-body);
+    font-size: 10px; font-weight: 700;
+    color: var(--text-on-dark-muted);
+    letter-spacing: 0.18em; text-transform: uppercase;
+    position: relative; z-index: 1;
+  }
+  .for-hero .lbl .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--brand-green); box-shadow: 0 0 0 3px rgba(71,231,176,0.32); }
+  .for-hero .ttl {
+    margin-top: 8px;
+    font-family: var(--font-display);
+    font-size: 19px; font-weight: 700;
+    line-height: 1.25;
+    color: var(--text-on-dark);
+    letter-spacing: -0.014em;
+    position: relative; z-index: 1;
+  }
+  .for-hero .sub {
+    margin-top: 6px;
+    font-family: var(--font-body);
+    font-size: 12.5px;
+    color: var(--text-on-dark-muted);
+    line-height: 1.4;
+    letter-spacing: -0.003em;
+    position: relative; z-index: 1;
+  }
+  .for-hero .why {
+    margin-top: 10px;
+    padding: 8px 10px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 10px;
+    font-family: var(--font-body);
+    font-size: 11px; font-weight: 500;
+    color: var(--text-on-dark);
+    letter-spacing: -0.003em;
+    display: flex; align-items: center; gap: 6px;
+    position: relative; z-index: 1;
+  }
+  .for-hero .why b { font-weight: 700; }
+  .for-hero .row {
+    margin-top: 14px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: relative; z-index: 1;
+  }
+  .for-hero .met {
+    display: flex; align-items: center; gap: 6px;
+    font-family: var(--font-body);
+    font-size: 11px; font-weight: 600;
+    color: var(--text-on-dark-muted);
+  }
+  .for-hero .read {
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: var(--gradient-brand);
+    color: var(--text-on-dark);
+    font-family: var(--font-body);
+    font-size: 12.5px; font-weight: 700;
+    display: inline-flex; align-items: center; gap: 6px;
+    box-shadow: 0 6px 16px rgba(0,210,120,0.32);
+    letter-spacing: -0.003em;
+  }
+
+  /* Chip row (V3) */
+  .chip-row {
+    margin: 12px -16px 0;
+    padding: 0 16px;
+    display: flex; gap: 6px;
+    overflow: hidden;
+  }
+  .chip {
+    flex-shrink: 0; height: 32px; padding: 0 12px;
+    border-radius: 999px;
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    box-shadow: var(--elev-1);
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--font-body);
+    font-size: 12.5px; font-weight: 500;
+    color: var(--text-body);
+  }
+  .chip.on { background: var(--bg-elevated); color: var(--text-on-dark); border-color: var(--bg-elevated); font-weight: 600; }
+  .chip .c { font-family: var(--font-numeric); color: var(--text-muted); font-weight: 600; }
+  .chip.on .c { color: var(--text-on-dark-muted); }
+
+  /* Tabbar */
+  .tabbar { position: absolute; left: 0; right: 0; bottom: 0; height: 88px; background: rgba(255,255,255,0.92); backdrop-filter: blur(18px); border-top: 1px solid var(--bg-border); display: grid; grid-template-columns: repeat(5, 1fr); padding: 8px 6px 30px; z-index: 22; }
+  .tab { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: var(--text-muted); }
+  .tab.active { color: var(--text-primary); }
+  .tab-glyph { width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; }
+  .tab-label { font-family: var(--font-body); font-size: 10px; font-weight: 600; }
+
+  /* LEGACY banner (D10 — Learn home not shipping) */
+  .legacy-banner {
+    position: absolute;
+    top: 54px; left: 0; right: 0;
+    z-index: 40;
+    background: rgba(239, 68, 68, 0.92);
+    color: #FFFFFF;
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-align: center;
+    padding: 8px 12px;
+    text-transform: uppercase;
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(0,0,0,0.20);
+    box-shadow: 0 4px 14px rgba(239,68,68,0.30);
+  }
+
+  /* Legend */
+  .legend{max-width:1320px;margin:56px auto 0;padding:22px 26px;background:#FFFFFF;border:1px solid var(--bg-border);border-radius:var(--radius-lg);display:grid;grid-template-columns:220px 1fr;gap:14px 28px;font-size:12px;color:var(--text-secondary);line-height:1.55;}
+  .legend h3{grid-column:1 / -1;margin:0 0 6px;font-family:var(--font-display);font-size:12px;font-weight:600;color:var(--text-muted);letter-spacing:.18em;text-transform:uppercase;}
+  .legend dt{grid-column:1;font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:.04em;text-transform:uppercase;}
+  .legend dd{grid-column:2;margin:0;}
+  .legend code{background:#F4F5F7;border:1px solid var(--bg-border);padding:1px 6px;border-radius:4px;font-family:var(--font-numeric);font-size:11px;color:var(--text-primary);}
+</style>
+</head>
+<body data-legacy="true">
+
+  <header class="doc-header">
+    <div>
+      <p class="doc-eyebrow">FuelWell · Phase 0.5 · Step 4 — Mockups</p>
+      <h1 class="doc-title">M21 Learn Home · Learn tab</h1>
+      <p class="doc-sub">Promoted from approved wireframe § 3.21 V1 (categories carousel + featured list). Three states: default with continue-reading, the engine "For you today" ranking (Learn-tab differentiator), and search-active with substring matches.</p>
+    </div>
+    <div class="doc-meta">
+      iPhone 15 Pro · 393 × 852 pt<br>
+      Tab · Learn<br>
+      Articles · 3-min read max
+    </div>
+  </header>
+
+  <div class="frames-row" id="frames"></div>
+
+  <section class="legend">
+    <h3>Mockup notes · Step 4</h3>
+
+    <dt>Categories carousel</dt>
+    <dd>132pt cards in a horizontal scroll. Each card carries a category-tinted 36pt icon, name in <strong>Inter 700</strong> 13.5pt, and a count "12 articles." A subtle radial-gradient tint in the top-right corner of each card uses the category color at low alpha — nutrition green, macros green, eating-out warm-amber, recovery purple.</dd>
+
+    <dt>Continue reading</dt>
+    <dd>Single white row with a 56pt thumbnail, eyebrow "CONTINUE READING," title, then a gradient-brand progress bar with the percent. Renders only if the user has an article in progress.</dd>
+
+    <dt>For-you hero · V2</dt>
+    <dd>Replaces the carousel as the first surface when the engine has a strong recommendation. Dark elevated card with the brand-green pulse + "FOR YOU TODAY" eyebrow, the article title in <strong>Outfit 700</strong> 19pt, and a "Why" strap explaining the engine's reasoning. Trailing gradient-brand "Read · 3 min" pill.</dd>
+
+    <dt>Featured list</dt>
+    <dd>72pt thumbnail with a corner category pill on a saturated brand-tinted gradient, then title (2-line clamp), one-line summary, meta row (X min · category · optional engine-fit chip). Each thumb uses its category color for instant scanning.</dd>
+
+    <dt>Search active · V3</dt>
+    <dd>Tall focused search field with caret. Below: category chips for narrowing the scope, then matched articles with substring highlighted yellow. "Suggested by Coach" tail surfaces an article that didn't match the query but the engine thinks is more useful for today's macros.</dd>
+  </section>
+
+<script>
+  const statusBar = `<div class="status-bar">
+    <div class="time">9:41</div>
+    <div class="signals">
+      <svg width="17" height="11" viewBox="0 0 17 11" fill="none"><rect x="0" y="7" width="3" height="4" rx="0.5" fill="#0A0A0F"/><rect x="4" y="5" width="3" height="6" rx="0.5" fill="#0A0A0F"/><rect x="8" y="3" width="3" height="8" rx="0.5" fill="#0A0A0F"/><rect x="12" y="0" width="3" height="11" rx="0.5" fill="#0A0A0F"/></svg>
+      <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><path d="M8 11l-2.5-2.5a3.5 3.5 0 014.9 0L8 11z" fill="#0A0A0F"/><path d="M2 5a8.5 8.5 0 0112 0l-1.5 1.5a6 6 0 00-9 0L2 5z" fill="#0A0A0F"/><path d="M5 8a4.5 4.5 0 016 0l-1.5 1.5a2.5 2.5 0 00-3 0L5 8z" fill="#0A0A0F"/></svg>
+      <span class="signal-bat"></span>
+    </div>
+  </div>`;
+  const island = `<div class="dynamic-island"></div>`;
+
+  const ic = {
+    search:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M16 16l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`,
+    profile:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.8"/><path d="M4 21a8 8 0 0116 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`,
+    apple:`<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 5c-1-2-3-3-5-3 0 2 1 3 2 4-2 0-4 2-4 5 0 3 2 6 4 8 1 1 2 2 3 1 1-1 2-1 3 0s2 0 3-1c2-2 4-5 4-8s-2-5-4-5c-2 0-3 1-4-1Z"/></svg>`,
+    macros:`<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="8" cy="8" r="3"/><circle cx="16" cy="9" r="2.5"/><circle cx="12" cy="16" r="3.5"/></svg>`,
+    out:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M6 4v16M9 4v6a3 3 0 01-6 0V4M19 4c-2 0-3 2-3 5s1 5 3 5v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`,
+    sleep:`<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20 14.5A8 8 0 119.5 4a6.5 6.5 0 0010.5 10.5Z"/></svg>`,
+    fire:`<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c1 4 5 4 5 9a5 5 0 11-10 0c0-3 3-3 3-6 0-1 1-2 2-3Z"/></svg>`,
+    sparkle:`<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2 6 6 2-6 2-2 6-2-6-6-2 6-2 2-6Z"/></svg>`,
+    clock:`<svg width="11" height="11" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`,
+    arrR:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    tabHome:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11l8-7 8 7v8a1 1 0 01-1 1h-4v-6h-6v6H5a1 1 0 01-1-1v-8Z"/></svg>`,
+    tabLog:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M9 8h6M9 12h6M9 16h3" stroke-linecap="round"/></svg>`,
+    tabCoach:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11a8 8 0 1116 0v3a3 3 0 01-3 3h-1v-7h4M4 11v3a3 3 0 003 3h1v-7H4"/></svg>`,
+    tabLearnA:`<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M4 5.5C4 4.7 4.7 4 5.5 4H10a3 3 0 013 3v14a2 2 0 00-2-2H5.5A1.5 1.5 0 014 17.5v-12ZM20 5.5C20 4.7 19.3 4 18.5 4H14a3 3 0 00-3 3v14a2 2 0 012-2h5.5a1.5 1.5 0 001.5-1.5v-12Z"/></svg>`,
+    tabProg:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg>`,
+  };
+
+  function tabbar() {
+    return `<div class="tabbar">
+      <div class="tab"><div class="tab-glyph">${ic.tabHome}</div><div class="tab-label">Home</div></div>
+      <div class="tab"><div class="tab-glyph">${ic.tabLog}</div><div class="tab-label">Log</div></div>
+      <div class="tab"><div class="tab-glyph">${ic.tabCoach}</div><div class="tab-label">Coach</div></div>
+      <div class="tab active"><div class="tab-glyph">${ic.tabLearnA}</div><div class="tab-label">Learn</div></div>
+      <div class="tab"><div class="tab-glyph">${ic.tabProg}</div><div class="tab-label">Progress</div></div>
+    </div>`;
+  }
+
+  function navBar() {
+    return `<div class="nav">
+      <div></div>
+      <div class="nav-title">Learn</div>
+      <div class="nav-btn">${ic.profile}</div>
+    </div>`;
+  }
+
+  function catCard(name, count, glyph, tint, iconColor, iconBg) {
+    return `<div class="cat" style="--tint: ${tint}">
+      <div class="ic" style="background:${iconBg}; color:${iconColor}">${glyph}</div>
+      <div class="nm">${name}</div>
+      <div class="ct"><span class="v">${count}</span> articles</div>
+    </div>`;
+  }
+
+  function art({ title, sum, cat, mins, c1, c2, fit, highlight }) {
+    const fitTag = fit ? `<span class="dot">·</span><span class="fit">${fit}% fit today</span>` : '';
+    const t = highlight ? title.replace(highlight, `<b>${highlight}</b>`) : title;
+    return `<div class="art">
+      <div class="thumb" style="--c1:${c1}; --c2:${c2}"><span class="cat-tag">${cat}</span></div>
+      <div class="body">
+        <div class="ttl">${t}</div>
+        <div class="sum">${sum}</div>
+        <div class="met">${ic.clock}<span style="margin-left:1px;">${mins} min</span><span class="dot">·</span><span class="cat">${cat}</span>${fitTag}</div>
+      </div>
+    </div>`;
+  }
+
+  // ===== V1 default =====
+  function v1() {
+    return `
+      ${navBar()}
+      <div class="content">
+        <div class="search-field"><span class="glyph">${ic.search}</span>Search articles</div>
+        <div class="sec-h">
+          <div class="l">Categories<span class="sub">Browse by topic</span></div>
+          <div class="r">See all</div>
+        </div>
+        <div class="cat-row">
+          ${catCard('Nutrition basics', 12, ic.apple, 'rgba(0,210,120,0.20)', '#16A34A', 'rgba(0,210,120,0.10)')}
+          ${catCard('Macros explained', 8, ic.macros, 'rgba(245,158,11,0.20)', '#D97706', 'rgba(245,158,11,0.12)')}
+          ${catCard('Eating out', 5, ic.out, 'rgba(0,180,216,0.18)', '#0284C7', 'rgba(0,180,216,0.10)')}
+          ${catCard('Recovery', 7, ic.sleep, 'rgba(168,85,247,0.20)', '#7C3AED', 'rgba(168,85,247,0.10)')}
+        </div>
+        <div class="sec-h" style="margin-top: 18px;">
+          <div class="l">Continue reading</div>
+        </div>
+        <div class="continue">
+          <div class="thumb"></div>
+          <div class="body">
+            <div class="lbl">Macros</div>
+            <div class="nm">Why protein timing matters less than total intake</div>
+            <div class="prog-row">
+              <div class="bar"><div class="fill" style="width: 62%"></div></div>
+              <div class="pct">62%</div>
+            </div>
+          </div>
+        </div>
+        <div class="sec-h">
+          <div class="l">Featured</div>
+          <div class="r">See all</div>
+        </div>
+        <div class="art-list">
+          ${art({ title: 'The 1g-per-pound protein rule: where it came from and when to break it', sum: 'A short history and what to actually do with the number.', cat: 'Macros', mins: 3, c1: '#FCD34D', c2: '#F59E0B', fit: 94 })}
+          ${art({ title: 'Eating out without blowing your plan: a tactical guide', sum: 'Five moves that work across cuisines.', cat: 'Eating out', mins: 4, c1: '#FECDD3', c2: '#FB7185' })}
+          ${art({ title: 'Sleep deprivation hurts your macros more than dessert ever will', sum: 'Why 6 hours is the floor — and what to fix first.', cat: 'Recovery', mins: 3, c1: '#DDD6FE', c2: '#A78BFA' })}
+        </div>
+      </div>
+      ${tabbar()}`;
+  }
+
+  // ===== V2 for you today =====
+  function v2() {
+    return `
+      ${navBar()}
+      <div class="content">
+        <div class="search-field"><span class="glyph">${ic.search}</span>Search articles</div>
+        <div class="sec-h">
+          <div class="l">For you today<span class="sub">Ranked vs. what you logged</span></div>
+        </div>
+        <div class="for-hero">
+          <div class="lbl"><span class="dot"></span>Pick of the day · 94% fit</div>
+          <div class="ttl">The 1g-per-pound protein rule: where it came from and when to break it.</div>
+          <div class="sub">3-min read · Macros · by Coach</div>
+          <div class="why">${ic.sparkle}<span><b>Why now:</b> you're 32g of protein short and this article suggests an evening fix.</span></div>
+          <div class="row">
+            <div class="met">${ic.clock} 3 min · 1,240 words</div>
+            <div class="read">Read ${ic.arrR}</div>
+          </div>
+        </div>
+        <div class="sec-h">
+          <div class="l">More that fit</div>
+          <div class="r">10 more</div>
+        </div>
+        <div class="art-list">
+          ${art({ title: 'Why a 30g protein lunch beats a 60g protein dinner', sum: 'Distribution matters more than people give it credit for.', cat: 'Macros', mins: 2, c1: '#FCD34D', c2: '#F59E0B', fit: 88 })}
+          ${art({ title: 'Restaurant macros: the trick is the side, not the entree', sum: 'Where the calories actually hide.', cat: 'Eating out', mins: 3, c1: '#FECDD3', c2: '#FB7185', fit: 82 })}
+          ${art({ title: 'Greek yogurt is overrated. Here\'s what to eat instead.', sum: 'Three swaps with double the protein density.', cat: 'Macros', mins: 2, c1: '#BBF7D0', c2: '#22C55E', fit: 78 })}
+        </div>
+      </div>
+      ${tabbar()}`;
+  }
+
+  // ===== V3 search active =====
+  function v3() {
+    return `
+      ${navBar()}
+      <div class="content">
+        <div class="search-field tall focused">
+          <span class="glyph">${ic.search}</span>
+          protein<span class="caret"></span>
+          <span class="cancel">Cancel</span>
+        </div>
+        <div class="chip-row">
+          <div class="chip on">All <span class="c">8</span></div>
+          <div class="chip">Macros <span class="c">5</span></div>
+          <div class="chip">Recovery <span class="c">2</span></div>
+          <div class="chip">Eating out <span class="c">1</span></div>
+        </div>
+        <div class="sec-h">
+          <div class="l">8 matches</div>
+          <div class="r">Sort: relevance</div>
+        </div>
+        <div class="art-list">
+          ${art({ title: 'The 1g-per-pound protein rule', sum: 'Where it came from and when to break it.', cat: 'Macros', mins: 3, c1: '#FCD34D', c2: '#F59E0B', highlight: 'protein' })}
+          ${art({ title: 'Why protein timing matters less than total', sum: 'Distribution >>> circadian timing.', cat: 'Macros', mins: 4, c1: '#BBF7D0', c2: '#22C55E', highlight: 'protein' })}
+          ${art({ title: 'Plant-based protein: the absorption gap', sum: 'Why 30g whey ≠ 30g pea.', cat: 'Macros', mins: 3, c1: '#FED7AA', c2: '#FB923C', highlight: 'protein' })}
+          ${art({ title: 'A protein-forward breakfast that takes 4 minutes', sum: 'Yogurt, oats, almonds. That\'s it.', cat: 'Macros', mins: 2, c1: '#FECDD3', c2: '#FB7185', highlight: 'protein' })}
+          ${art({ title: 'Recovery is protein\'s second job', sum: 'After the muscle, before the sleep.', cat: 'Recovery', mins: 3, c1: '#DDD6FE', c2: '#A78BFA', highlight: 'protein' })}
+        </div>
+        <div class="sec-h">
+          <div class="l">Suggested by Coach<span class="sub">Not in search, but fits today</span></div>
+        </div>
+        <div class="art-list">
+          ${art({ title: 'Why your evening macros usually wreck the plan', sum: 'Three small moves that fix it.', cat: 'Macros', mins: 3, c1: '#BAE6FD', c2: '#0284C7', fit: 94 })}
+        </div>
+      </div>
+      ${tabbar()}`;
+  }
+
+  const variations = [
+    { num:'Variation 01 · State', name:'Default · browse', cap:'Categories carousel up top, continue-reading row with progress, three featured articles. Engine quietly flags the top featured with a green fit chip.', body: v1() },
+    { num:'Variation 02 · State', name:'For-you · ranked', cap:'Engine has a strong pick. Dark for-you hero card with the "Why now" rationale + gradient-brand Read button. Three more fit-ranked articles below with green fit-pct chips.', body: v2() },
+    { num:'Variation 03 · State', name:'Search · "protein"', cap:'Focused search with caret, category chips for scope, 8 substring-highlighted matches. Coach-suggested article tail surfaces an in-budget article that didn\u2019t match.', body: v3() }
+  ];
+
+  const root = document.getElementById('frames');
+  root.innerHTML = variations.map(v => `
+    <section class="variation">
+      <div class="v-label">
+        <div class="v-num">${v.num}</div>
+        <div class="v-name">${v.name}</div>
+        <div class="v-cap">${v.cap}</div>
+      </div>
+      <div class="device">
+        ${statusBar}${island}
+        <div class="legacy-banner">LEGACY — content now lives in Help (D10)</div>
+        <div class="screen">${v.body}</div>
+        <div class="home-indicator"></div>
+      </div>
+    </section>
+  `).join('');
+</script>
+</body>
+</html>

@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>FuelWell · M02 Onboarding — Sign in · Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ===== Tokens (per DESIGN.md) ===== */
+  :root {
+    --bg-base: #F4F5F7;
+    --bg-surface: #FFFFFF;
+    --bg-elevated: #0F1117;
+    --bg-border: #E5E7EB;
+
+    --text-primary: #0A0A0F;
+    --text-secondary: #4B5563;
+    --text-muted: #6B7280;
+    --text-on-dark: #FFFFFF;
+    --text-on-dark-muted: #9CA3AF;
+
+    --brand-green: #47E7B0;
+    --action-green: #00D278;
+    --semantic-error: #EF4444;
+
+    --gradient-brand: linear-gradient(135deg, #00D278 0%, #47E7B0 100%);
+
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-pill: 999px;
+
+    --elev-1: 0 1px 2px rgba(15,17,23,.04), 0 1px 0 rgba(15,17,23,.02);
+    --elev-2: 0 4px 12px rgba(15,17,23,.06), 0 1px 0 rgba(15,17,23,.03);
+    --elev-3: 0 12px 32px rgba(15,17,23,.12);
+    --elev-cta: 0 10px 28px rgba(0,210,120,.28), 0 2px 6px rgba(0,210,120,.18);
+
+    --font-display: 'Outfit', system-ui, -apple-system, sans-serif;
+    --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-system: -apple-system, 'SF Pro Display', system-ui, sans-serif;
+    --font-numeric: 'DM Sans', 'Inter', sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: #ECEDF0;
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    padding: 56px 48px 96px;
+    min-width: 1380px;
+  }
+
+  /* ===== Doc header ===== */
+  .doc-header {
+    max-width: 1320px; margin: 0 auto 48px;
+    display: flex; align-items: flex-end; justify-content: space-between;
+    gap: 32px;
+    border-bottom: 1px solid #D6D8DD;
+    padding-bottom: 24px;
+  }
+  .doc-eyebrow {
+    font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--text-muted); margin: 0 0 8px; font-weight: 600;
+  }
+  .doc-title {
+    font-family: var(--font-display);
+    font-size: 28px; font-weight: 700;
+    margin: 0; color: var(--text-primary);
+    letter-spacing: -0.018em;
+  }
+  .doc-sub {
+    font-size: 13px; color: var(--text-secondary);
+    margin: 8px 0 0; max-width: 720px; line-height: 1.55;
+  }
+  .doc-meta {
+    font-family: var(--font-numeric);
+    font-size: 11px; color: var(--text-muted);
+    text-align: right; letter-spacing: 0.04em; line-height: 1.7;
+  }
+
+  /* ===== Frames ===== */
+  .frames-row {
+    display: flex; gap: 64px;
+    justify-content: center; align-items: flex-start;
+  }
+  .variation {
+    display: flex; flex-direction: column; align-items: center;
+    width: 393px;
+  }
+  .v-label { margin-bottom: 18px; text-align: center; width: 100%; }
+  .v-num {
+    font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--text-muted); font-weight: 600;
+  }
+  .v-name {
+    font-family: var(--font-display);
+    font-size: 16px; font-weight: 600;
+    color: var(--text-primary); margin-top: 4px;
+    letter-spacing: -0.005em;
+  }
+  .v-cap {
+    font-size: 12px; color: var(--text-secondary);
+    margin-top: 4px; line-height: 1.45; max-width: 340px;
+  }
+
+  /* ===== Device ===== */
+  .device {
+    position: relative;
+    width: 393px; height: 852px;
+    background: var(--bg-base);
+    border-radius: 56px;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 12px #0A0A0F, 0 0 0 13px #2A2A30,
+      0 30px 80px rgba(15,17,23,.28), 0 12px 32px rgba(15,17,23,.16);
+  }
+
+  /* iOS chrome */
+  .status-bar {
+    position: absolute; top: 0; left: 0; right: 0; height: 54px;
+    display: flex; align-items: flex-end; justify-content: space-between;
+    padding: 0 28px 9px; z-index: 10; pointer-events: none;
+  }
+  .status-bar .time {
+    font-family: var(--font-system);
+    font-size: 17px; font-weight: 600;
+    color: var(--text-primary); letter-spacing: -0.01em;
+  }
+  .status-bar .signals { display: inline-flex; gap: 6px; align-items: center; }
+  .signal-bat {
+    display: inline-block; width: 26px; height: 12px;
+    border: 1.2px solid var(--text-primary); border-radius: 3px;
+    position: relative;
+  }
+  .signal-bat::after {
+    content: ""; position: absolute; right: -3px; top: 3px;
+    width: 2px; height: 5px; background: var(--text-primary);
+    border-radius: 0 1.5px 1.5px 0;
+  }
+  .signal-bat::before {
+    content: ""; position: absolute; left: 1px; top: 1px; bottom: 1px;
+    width: 78%; background: var(--text-primary); border-radius: 1.5px;
+  }
+  .dynamic-island {
+    position: absolute; top: 11px; left: 50%; transform: translateX(-50%);
+    width: 124px; height: 36px;
+    background: #0A0A0F; border-radius: 22px;
+  }
+  .home-indicator {
+    position: absolute; bottom: 9px; left: 50%; transform: translateX(-50%);
+    width: 134px; height: 5px;
+    background: var(--text-primary); border-radius: 3px;
+    opacity: 0.7; z-index: 10;
+  }
+
+  /* ===== Screen ===== */
+  .screen {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    padding: 54px 24px 32px;
+    display: flex; flex-direction: column;
+  }
+
+  /* Nav */
+  .nav {
+    height: 44px;
+    display: flex; align-items: center;
+    padding-top: 4px;
+  }
+  .nav-back {
+    width: 28px; height: 28px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-primary); cursor: pointer;
+  }
+
+  /* Title block */
+  .title-block {
+    margin-top: 16px;
+    padding-bottom: 32px;
+  }
+  .title-h1 {
+    font-family: var(--font-display);
+    font-size: 28px; font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.022em;
+    color: var(--text-primary);
+    margin: 0;
+  }
+  .title-sub {
+    margin-top: 8px;
+    font-family: var(--font-body);
+    font-size: 15px; font-weight: 400;
+    color: var(--text-secondary);
+    line-height: 1.45;
+    letter-spacing: -0.005em;
+  }
+
+  /* Apple button */
+  .btn-apple {
+    width: 100%;
+    height: 48px;
+    background: #000000;
+    border: 0;
+    border-radius: var(--radius-md);
+    display: flex; align-items: center; justify-content: center;
+    gap: 8px;
+    color: #FFFFFF;
+    font-family: var(--font-system);
+    font-size: 17px; font-weight: 600;
+    letter-spacing: -0.005em;
+    cursor: pointer;
+  }
+  .apple-logo {
+    width: 16px; height: 18px;
+    fill: #FFFFFF;
+  }
+
+  /* Google button (secondary OAuth option) */
+  .btn-google {
+    width: 100%;
+    height: 48px;
+    margin-top: 10px;
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-md);
+    display: flex; align-items: center; justify-content: center;
+    gap: 10px;
+    color: var(--text-primary);
+    font-family: var(--font-system);
+    font-size: 17px; font-weight: 600;
+    letter-spacing: -0.005em;
+    cursor: pointer;
+  }
+  .google-logo {
+    width: 18px; height: 18px;
+  }
+
+  /* Divider */
+  .divider {
+    display: flex; align-items: center; gap: 14px;
+    margin: 20px 0;
+  }
+  .divider-line {
+    flex: 1; height: 1px;
+    background: var(--bg-border);
+  }
+  .divider-label {
+    font-family: var(--font-body);
+    font-size: 12px; font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* Field */
+  .field {
+    width: 100%; height: 52px;
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-md);
+    padding: 0 16px;
+    display: flex; align-items: center;
+    font-family: var(--font-body);
+    font-size: 16px; font-weight: 500;
+    color: var(--text-primary);
+    letter-spacing: -0.005em;
+  }
+  .field + .field { margin-top: 12px; }
+  .field.empty { color: var(--text-muted); font-weight: 400; }
+  .field.focused {
+    border-color: #00B4D8;
+    box-shadow: 0 0 0 3px rgba(0,180,216,0.16);
+  }
+  .field.error {
+    border-color: var(--semantic-error);
+    box-shadow: 0 0 0 3px rgba(239,68,68,0.14);
+  }
+  .field .value { color: var(--text-primary); flex: 1; }
+  .field .dots {
+    flex: 1;
+    font-family: var(--font-system);
+    letter-spacing: 0.18em;
+    color: var(--text-primary);
+  }
+  .field .visibility {
+    width: 22px; height: 22px;
+    color: var(--text-muted);
+    cursor: pointer;
+  }
+  .field-error-msg {
+    margin-top: 6px;
+    padding-left: 4px;
+    font-family: var(--font-body);
+    font-size: 12px; font-weight: 500;
+    color: var(--semantic-error);
+    letter-spacing: -0.002em;
+  }
+
+  /* CTA group */
+  .cta-group {
+    margin-top: 24px;
+  }
+  .btn-primary {
+    width: 100%; height: 48px;
+    border-radius: var(--radius-md);
+    border: 0;
+    font-family: var(--font-body);
+    font-size: 17px; font-weight: 600;
+    letter-spacing: -0.005em;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+  }
+  .btn-primary.disabled {
+    /* Secondary dark per DESIGN.md Buttons § — used while form invalid */
+    background: var(--text-primary);
+    color: var(--text-on-dark);
+    opacity: 0.45;
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+  .btn-primary.enabled {
+    background: var(--gradient-brand);
+    color: var(--text-on-dark);
+    box-shadow: var(--elev-cta);
+  }
+
+  .forgot-link {
+    margin-top: 16px;
+    text-align: center;
+    font-family: var(--font-body);
+    font-size: 14px; font-weight: 500;
+    color: var(--text-secondary);
+    letter-spacing: -0.002em;
+    cursor: pointer;
+  }
+  .forgot-link .underline {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1.2px;
+    color: var(--text-primary);
+  }
+
+  /* Cursor in focused field */
+  .caret {
+    display: inline-block;
+    width: 2px; height: 22px;
+    background: #00B4D8;
+    margin-left: 1px;
+    vertical-align: middle;
+    animation: blink 1s infinite;
+  }
+  @keyframes blink {
+    0%, 49% { opacity: 1; }
+    50%, 100% { opacity: 0; }
+  }
+
+  /* iOS keyboard (V2) */
+  .keyboard {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    background: #D1D5DB;
+    padding: 8px 4px 8px;
+    z-index: 5;
+    border-top: 0.5px solid rgba(0,0,0,0.15);
+  }
+  .kb-row {
+    display: flex; gap: 6px;
+    padding: 0 4px 8px;
+    justify-content: center;
+  }
+  .kb-row.r2 { padding-left: 22px; padding-right: 22px; }
+  .kb-key {
+    flex: 1;
+    height: 42px;
+    background: #FFFFFF;
+    border-radius: 5px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-system);
+    font-size: 22px; font-weight: 400;
+    color: var(--text-primary);
+    box-shadow: 0 1px 0 rgba(0,0,0,0.35);
+  }
+  .kb-key.action {
+    flex: 0 0 38px;
+    background: #ADB3BC;
+    font-size: 13px;
+  }
+  .kb-key.space {
+    flex: 4;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+  .kb-key.return {
+    flex: 0 0 78px;
+    background: #ADB3BC;
+    color: #FFFFFF;
+    font-size: 13px; font-weight: 500;
+  }
+  .kb-bottom {
+    display: flex; gap: 6px;
+    padding: 0 4px;
+    justify-content: center;
+  }
+  .kb-mode {
+    flex: 0 0 56px;
+    height: 36px;
+    background: #ADB3BC;
+    border-radius: 5px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-system);
+    font-size: 13px; color: var(--text-primary);
+  }
+  .kb-emoji {
+    flex: 0 0 36px;
+    height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-muted);
+  }
+  .kb-indicator {
+    width: 134px; height: 5px;
+    background: var(--text-primary);
+    border-radius: 3px;
+    opacity: 0.7;
+    margin: 6px auto 4px;
+  }
+
+  /* ===== Legend ===== */
+  .legend {
+    max-width: 1320px;
+    margin: 56px auto 0;
+    padding: 22px 26px;
+    background: #FFFFFF;
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-lg);
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 14px 28px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.55;
+  }
+  .legend h3 {
+    grid-column: 1 / -1;
+    margin: 0 0 6px;
+    font-family: var(--font-display);
+    font-size: 12px; font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.18em; text-transform: uppercase;
+  }
+  .legend dt {
+    grid-column: 1;
+    font-size: 11px; font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .legend dd { grid-column: 2; margin: 0; }
+  .legend code {
+    background: #F4F5F7;
+    border: 1px solid var(--bg-border);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: var(--font-numeric);
+    font-size: 11px;
+    color: var(--text-primary);
+  }
+</style>
+</head>
+<body>
+
+  <header class="doc-header">
+    <div>
+      <p class="doc-eyebrow">FuelWell · Phase 0.5 · Step 4 — Mockups</p>
+      <h1 class="doc-title">M02 Onboarding — Sign in / Create account</h1>
+      <p class="doc-sub">Promoted from approved wireframe § 3.2 V1 (Apple-led stack). Three state variations: empty, mid-entry with keyboard, and an authentication error. Continue button switches from disabled-dark to gradient.brand only when the form is valid.</p>
+    </div>
+    <div class="doc-meta">
+      iPhone 15 Pro · 393 × 852 pt<br>
+      Light · <code>color.bg.base #F4F5F7</code><br>
+      Apple Sign-In above the "or" divider
+    </div>
+  </header>
+
+  <div class="frames-row">
+
+    <!-- ============================================================ -->
+    <!-- V1 — Default empty state                                      -->
+    <!-- ============================================================ -->
+    <section class="variation">
+      <div class="v-label">
+        <div class="v-num">Variation 01 · State</div>
+        <div class="v-name">Default · empty</div>
+        <div class="v-cap">First load. Both fields empty, Continue stays in disabled-dark secondary style until the form validates.</div>
+      </div>
+
+      <div class="device">
+        <div class="status-bar">
+          <div class="time">9:41</div>
+          <div class="dynamic-island"></div>
+          <div class="signals">
+            <svg width="17" height="11" viewBox="0 0 17 11" fill="none">
+              <rect x="0" y="7" width="3" height="4" rx="0.5" fill="#0A0A0F"/>
+              <rect x="4" y="5" width="3" height="6" rx="0.5" fill="#0A0A0F"/>
+              <rect x="8" y="3" width="3" height="8" rx="0.5" fill="#0A0A0F"/>
+              <rect x="12" y="0" width="3" height="11" rx="0.5" fill="#0A0A0F"/>
+            </svg>
+            <svg width="16" height="11" viewBox="0 0 16 11" fill="none">
+              <path d="M8 11l-2.5-2.5a3.5 3.5 0 014.9 0L8 11z" fill="#0A0A0F"/>
+              <path d="M2 5a8.5 8.5 0 0112 0l-1.5 1.5a6 6 0 00-9 0L2 5z" fill="#0A0A0F"/>
+              <path d="M5 8a4.5 4.5 0 016 0l-1.5 1.5a2.5 2.5 0 00-3 0L5 8z" fill="#0A0A0F"/>
+            </svg>
+            <span class="signal-bat"></span>
+          </div>
+        </div>
+
+        <div class="screen">
+          <div class="nav">
+            <div class="nav-back">
+              <svg width="13" height="22" viewBox="0 0 13 22" fill="none">
+                <path d="M11 1L2 11l9 10" stroke="#0A0A0F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="title-block">
+            <h1 class="title-h1">Welcome back.</h1>
+            <p class="title-sub">Sign in to pick up where your last log left off — or create a new account if you're fresh.</p>
+          </div>
+
+          <button class="btn-apple">
+            <svg class="apple-logo" viewBox="0 0 384 512">
+              <path fill="#FFFFFF" d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/>
+            </svg>
+            Continue with Apple
+          </button>
+
+          <button class="btn-google">
+            <svg class="google-logo" viewBox="0 0 18 18" aria-hidden="true">
+              <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.71v2.26h2.92c1.7-1.57 2.68-3.88 2.68-6.61z"/>
+              <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.19l-2.92-2.26c-.81.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.03-3.7H.96v2.32A9 9 0 0 0 9 18z"/>
+              <path fill="#FBBC05" d="M3.97 10.71A5.41 5.41 0 0 1 3.68 9c0-.59.1-1.17.29-1.71V4.97H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.03l3.01-2.32z"/>
+              <path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58A9 9 0 0 0 9 0 9 9 0 0 0 .96 4.97l3.01 2.32C4.68 5.16 6.66 3.58 9 3.58z"/>
+            </svg>
+            Continue with Google
+          </button>
+
+          <div class="divider">
+            <div class="divider-line"></div>
+            <span class="divider-label">or</span>
+            <div class="divider-line"></div>
+          </div>
+
+          <div>
+            <div class="field empty">Email address</div>
+            <div class="field empty">Password</div>
+          </div>
+
+          <div class="cta-group">
+            <button class="btn-primary disabled">Continue</button>
+            <div class="forgot-link">
+              <span class="underline">Forgot password?</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="home-indicator"></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- V2 — Mid-entry with keyboard                                  -->
+    <!-- ============================================================ -->
+    <section class="variation">
+      <div class="v-label">
+        <div class="v-num">Variation 02 · State</div>
+        <div class="v-name">Mid-entry · keyboard up</div>
+        <div class="v-cap">Email entered, password focused. Field shows the info-blue focus ring; iOS keyboard occupies the bottom half.</div>
+      </div>
+
+      <div class="device">
+        <div class="status-bar">
+          <div class="time">9:41</div>
+          <div class="dynamic-island"></div>
+          <div class="signals">
+            <svg width="17" height="11" viewBox="0 0 17 11" fill="none">
+              <rect x="0" y="7" width="3" height="4" rx="0.5" fill="#0A0A0F"/>
+              <rect x="4" y="5" width="3" height="6" rx="0.5" fill="#0A0A0F"/>
+              <rect x="8" y="3" width="3" height="8" rx="0.5" fill="#0A0A0F"/>
+              <rect x="12" y="0" width="3" height="11" rx="0.5" fill="#0A0A0F"/>
+            </svg>
+            <svg width="16" height="11" viewBox="0 0 16 11" fill="none">
+              <path d="M8 11l-2.5-2.5a3.5 3.5 0 014.9 0L8 11z" fill="#0A0A0F"/>
+              <path d="M2 5a8.5 8.5 0 0112 0l-1.5 1.5a6 6 0 00-9 0L2 5z" fill="#0A0A0F"/>
+              <path d="M5 8a4.5 4.5 0 016 0l-1.5 1.5a2.5 2.5 0 00-3 0L5 8z" fill="#0A0A0F"/>
+            </svg>
+            <span class="signal-bat"></span>
+          </div>
+        </div>
+
+        <div class="screen">
+          <div class="nav">
+            <div class="nav-back">
+              <svg width="13" height="22" viewBox="0 0 13 22" fill="none">
+                <path d="M11 1L2 11l9 10" stroke="#0A0A0F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="title-block">
+            <h1 class="title-h1">Welcome back.</h1>
+          </div>
+
+          <button class="btn-apple">
+            <svg class="apple-logo" viewBox="0 0 384 512">
+              <path fill="#FFFFFF" d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/>
+            </svg>
+            Continue with Apple
+          </button>
+
+          <button class="btn-google">
+            <svg class="google-logo" viewBox="0 0 18 18" aria-hidden="true">
+              <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.71v2.26h2.92c1.7-1.57 2.68-3.88 2.68-6.61z"/>
+              <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.19l-2.92-2.26c-.81.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.03-3.7H.96v2.32A9 9 0 0 0 9 18z"/>
+              <path fill="#FBBC05" d="M3.97 10.71A5.41 5.41 0 0 1 3.68 9c0-.59.1-1.17.29-1.71V4.97H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.03l3.01-2.32z"/>
+              <path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58A9 9 0 0 0 9 0 9 9 0 0 0 .96 4.97l3.01 2.32C4.68 5.16 6.66 3.58 9 3.58z"/>
+            </svg>
+            Continue with Google
+          </button>
+
+          <div class="divider">
+            <div class="divider-line"></div>
+            <span class="divider-label">or</span>
+            <div class="divider-line"></div>
+          </div>
+
+          <div>
+            <div class="field">
+              <span class="value">robert@walker.co</span>
+            </div>
+            <div class="field focused">
+              <span class="dots">••••••••</span><span class="caret"></span>
+              <svg class="visibility" viewBox="0 0 24 24" fill="none">
+                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- iOS keyboard -->
+        <div class="keyboard">
+          <div class="kb-row">
+            <div class="kb-key">q</div><div class="kb-key">w</div><div class="kb-key">e</div>
+            <div class="kb-key">r</div><div class="kb-key">t</div><div class="kb-key">y</div>
+            <div class="kb-key">u</div><div class="kb-key">i</div><div class="kb-key">o</div>
+            <div class="kb-key">p</div>
+          </div>
+          <div class="kb-row r2">
+            <div class="kb-key">a</div><div class="kb-key">s</div><div class="kb-key">d</div>
+            <div class="kb-key">f</div><div class="kb-key">g</div><div class="kb-key">h</div>
+            <div class="kb-key">j</div><div class="kb-key">k</div><div class="kb-key">l</div>
+          </div>
+          <div class="kb-row">
+            <div class="kb-key action">⇧</div>
+            <div class="kb-key">z</div><div class="kb-key">x</div><div class="kb-key">c</div>
+            <div class="kb-key">v</div><div class="kb-key">b</div><div class="kb-key">n</div>
+            <div class="kb-key">m</div>
+            <div class="kb-key action">⌫</div>
+          </div>
+          <div class="kb-bottom">
+            <div class="kb-mode">123</div>
+            <div class="kb-emoji">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="9.5" stroke="currentColor" stroke-width="1.5"/>
+                <circle cx="9" cy="10" r="1" fill="currentColor"/>
+                <circle cx="15" cy="10" r="1" fill="currentColor"/>
+                <path d="M8 14.5a5 5 0 008 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="kb-key space">space</div>
+            <div class="kb-key return">go</div>
+          </div>
+          <div class="kb-indicator"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- V3 — Valid + filled, ready to submit                          -->
+    <!-- ============================================================ -->
+    <section class="variation">
+      <div class="v-label">
+        <div class="v-num">Variation 03 · State</div>
+        <div class="v-name">Valid · ready</div>
+        <div class="v-cap">Both fields valid. Continue button switches to gradient.brand with the elevation.cta halo. Returning-user flow.</div>
+      </div>
+
+      <div class="device">
+        <div class="status-bar">
+          <div class="time">9:41</div>
+          <div class="dynamic-island"></div>
+          <div class="signals">
+            <svg width="17" height="11" viewBox="0 0 17 11" fill="none">
+              <rect x="0" y="7" width="3" height="4" rx="0.5" fill="#0A0A0F"/>
+              <rect x="4" y="5" width="3" height="6" rx="0.5" fill="#0A0A0F"/>
+              <rect x="8" y="3" width="3" height="8" rx="0.5" fill="#0A0A0F"/>
+              <rect x="12" y="0" width="3" height="11" rx="0.5" fill="#0A0A0F"/>
+            </svg>
+            <svg width="16" height="11" viewBox="0 0 16 11" fill="none">
+              <path d="M8 11l-2.5-2.5a3.5 3.5 0 014.9 0L8 11z" fill="#0A0A0F"/>
+              <path d="M2 5a8.5 8.5 0 0112 0l-1.5 1.5a6 6 0 00-9 0L2 5z" fill="#0A0A0F"/>
+              <path d="M5 8a4.5 4.5 0 016 0l-1.5 1.5a2.5 2.5 0 00-3 0L5 8z" fill="#0A0A0F"/>
+            </svg>
+            <span class="signal-bat"></span>
+          </div>
+        </div>
+
+        <div class="screen">
+          <div class="nav">
+            <div class="nav-back">
+              <svg width="13" height="22" viewBox="0 0 13 22" fill="none">
+                <path d="M11 1L2 11l9 10" stroke="#0A0A0F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="title-block">
+            <h1 class="title-h1">Welcome back.</h1>
+            <p class="title-sub">Sign in to pick up where your last log left off — or create a new account if you're fresh.</p>
+          </div>
+
+          <button class="btn-apple">
+            <svg class="apple-logo" viewBox="0 0 384 512">
+              <path fill="#FFFFFF" d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/>
+            </svg>
+            Continue with Apple
+          </button>
+
+          <button class="btn-google">
+            <svg class="google-logo" viewBox="0 0 18 18" aria-hidden="true">
+              <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.71v2.26h2.92c1.7-1.57 2.68-3.88 2.68-6.61z"/>
+              <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.19l-2.92-2.26c-.81.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.03-3.7H.96v2.32A9 9 0 0 0 9 18z"/>
+              <path fill="#FBBC05" d="M3.97 10.71A5.41 5.41 0 0 1 3.68 9c0-.59.1-1.17.29-1.71V4.97H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.03l3.01-2.32z"/>
+              <path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58A9 9 0 0 0 9 0 9 9 0 0 0 .96 4.97l3.01 2.32C4.68 5.16 6.66 3.58 9 3.58z"/>
+            </svg>
+            Continue with Google
+          </button>
+
+          <div class="divider">
+            <div class="divider-line"></div>
+            <span class="divider-label">or</span>
+            <div class="divider-line"></div>
+          </div>
+
+          <div>
+            <div class="field">
+              <span class="value">robert@walker.co</span>
+            </div>
+            <div class="field">
+              <span class="dots">••••••••••••</span>
+              <svg class="visibility" viewBox="0 0 24 24" fill="none">
+                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="cta-group">
+            <button class="btn-primary enabled">Continue</button>
+            <div class="forgot-link">
+              <span class="underline">Forgot password?</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="home-indicator"></div>
+      </div>
+    </section>
+
+  </div>
+
+  <section class="legend">
+    <h3>Mockup notes · Step 4</h3>
+
+    <dt>Apple Sign-In</dt>
+    <dd>Solid black <code>#000</code>, 48pt tall, <code>radius.md</code> 12px. White SF logo + "Continue with Apple" in San Francisco 600 17pt per Apple HIG. Sits above the "or" divider on every state — primacy locked from wireframe.</dd>
+
+    <dt>Continue button states</dt>
+    <dd><strong>V1 disabled:</strong> dark secondary fill (<code>color.text.primary</code> background at 0.45 opacity) — communicates that the affordance exists but isn't active. <strong>V3 enabled:</strong> switches to <code>gradient.brand</code> with the <code>elevation.cta</code> green halo. Same 48pt height, same position — only the fill changes.</dd>
+
+    <dt>Field states</dt>
+    <dd><strong>Default:</strong> 52pt tall, white surface, 1pt <code>color.bg.border</code>, <code>radius.md</code>, Inter 500 16pt. <strong>Focused (V2 password):</strong> border switches to <code>color.semantic.info</code> #00B4D8 with a 3pt 14%-alpha ring. <strong>Error (component spec):</strong> red border + red ring + 12pt error message below.</dd>
+
+    <dt>iOS keyboard</dt>
+    <dd>V2 shows the password field focused with the system QWERTY keyboard up. Status bar stays black-on-light per iOS. Title block compresses (subtitle drops) and the form sits above the keyboard — no overlap.</dd>
+
+    <dt>Voice</dt>
+    <dd>H1: "Welcome back to your numbers." — direct, specific, claims the brand frame. Subtitle: "Sign in to pick up where your last log left off — or create a new account if you're fresh." No banned vocabulary.</dd>
+
+    <dt>Type stack</dt>
+    <dd>H1 in <strong>Outfit 700</strong> 28pt -0.022em. Subtitle in <strong>Inter 400</strong> 15pt. Field input in <strong>Inter 500</strong> 16pt. Continue + Forgot in <strong>Inter</strong> 17/14pt. Apple button stays on the system font per Apple HIG.</dd>
+
+    <dt>Forgot password</dt>
+    <dd>Inter 500 14pt, <code>color.text.secondary</code>. The underline lives on the action word "Forgot password?" only, not the whole row. Sits 16pt below Continue on every state.</dd>
+  </section>
+
+</body>
+</html>

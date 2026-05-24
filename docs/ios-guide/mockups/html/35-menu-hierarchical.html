@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>FuelWell · M35 Menu sheet · Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-base: #F4F5F7;
+    --bg-surface: #FFFFFF;
+    --bg-elevated: #0F1117;
+    --bg-border: #E5E7EB;
+    --bg-border-soft: #EEF0F3;
+
+    --text-primary: #0A0A0F;
+    --text-body: #1F2937;
+    --text-secondary: #6B7280;
+    --text-muted: #9CA3AF;
+    --text-disabled: #C7CCD3;
+    --text-on-dark: #FFFFFF;
+    --text-on-dark-muted: #9AA0AC;
+
+    --primary-orange: #E87A1D;
+    --action-green: #00D278;
+    --brand-green: #47E7B0;
+
+    --semantic-success: #00D278;
+    --semantic-warning: #F59E0B;
+    --semantic-error: #EF4444;
+    --semantic-info: #00B4D8;
+    --semantic-premium: #A855F7;
+
+    --gradient-brand: linear-gradient(135deg, #00D278 0%, #47E7B0 100%);
+    --gradient-bw: linear-gradient(135deg, #0A0A0F 0%, #1A1F2E 100%);
+
+    --radius-md: 12px;
+    --radius-lg: 20px;
+
+    --elev-1: 0 1px 2px rgba(15,17,23,.04), 0 1px 0 rgba(15,17,23,.02);
+    --elev-2: 0 4px 14px rgba(15,17,23,.06), 0 1px 2px rgba(15,17,23,.04);
+    --elev-3: 0 12px 32px rgba(15,17,23,.08);
+
+    --font-display: 'Outfit', system-ui, -apple-system, sans-serif;
+    --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-system: -apple-system, 'SF Pro Display', system-ui, sans-serif;
+    --font-numeric: 'DM Sans', 'Inter', sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { background: #ECEDF0; color: var(--text-primary); font-family: var(--font-body); padding: 56px 48px 96px; min-width: 1380px; }
+
+  .doc-header { max-width: 1320px; margin: 0 auto 48px; display: flex; align-items: flex-end; justify-content: space-between; gap: 32px; border-bottom: 1px solid #D6D8DD; padding-bottom: 24px; }
+  .doc-eyebrow { font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-muted); margin: 0 0 8px; font-weight: 600; }
+  .doc-title { font-family: var(--font-display); font-size: 28px; font-weight: 700; margin: 0; letter-spacing: -0.018em; }
+  .doc-sub { font-size: 13px; color: var(--text-secondary); margin: 8px 0 0; max-width: 820px; line-height: 1.55; }
+  .doc-meta { font-family: var(--font-numeric); font-size: 11px; color: var(--text-muted); text-align: right; letter-spacing: 0.04em; line-height: 1.7; }
+
+  .variation { display: flex; flex-direction: column; align-items: center; width: 393px; }
+  .v-label { margin-bottom: 18px; text-align: center; width: 100%; }
+  .v-num { font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-muted); font-weight: 600; }
+  .v-name { font-family: var(--font-display); font-size: 16px; font-weight: 600; color: var(--text-primary); margin-top: 4px; letter-spacing: -0.005em; }
+  .v-cap { font-size: 12px; color: var(--text-secondary); margin-top: 4px; line-height: 1.45; max-width: 340px; }
+
+  /* Device — D4 hierarchical-collapsed fits above the 852pt fold; extended slightly for the one expanded demo category */
+  .device { position: relative; width: 393px; height: 1100px; background: var(--bg-base); border-radius: 56px; overflow: hidden; box-shadow: 0 0 0 12px #0A0A0F, 0 0 0 13px #2A2A30, 0 30px 80px rgba(15,17,23,.28), 0 12px 32px rgba(15,17,23,.16); }
+  .status-bar { position: absolute; top: 0; left: 0; right: 0; height: 54px; display: flex; align-items: flex-end; justify-content: space-between; padding: 0 28px 9px; z-index: 30; pointer-events: none; }
+  .status-bar .time { font-family: var(--font-system); font-size: 17px; font-weight: 600; color: var(--text-primary); letter-spacing: -0.01em; }
+  .signal-bat { display: inline-block; width: 26px; height: 12px; border: 1.2px solid var(--text-primary); border-radius: 3px; position: relative; }
+  .signal-bat::after { content: ""; position: absolute; right: -3px; top: 3px; width: 2px; height: 5px; background: var(--text-primary); border-radius: 0 1.5px 1.5px 0; }
+  .signal-bat::before { content: ""; position: absolute; left: 1px; top: 1px; bottom: 1px; width: 78%; background: var(--text-primary); border-radius: 1.5px; }
+  .dynamic-island { position: absolute; top: 11px; left: 50%; transform: translateX(-50%); width: 124px; height: 36px; background: #0A0A0F; border-radius: 22px; z-index: 31; }
+  .home-indicator-row { position: absolute; left: 0; right: 0; top: 837px; height: 5px; display: flex; justify-content: center; pointer-events: none; z-index: 32; }
+  .home-indicator-row > span { width: 134px; height: 5px; background: var(--text-primary); border-radius: 3px; opacity: 0.7; }
+
+  /* FOLD marker */
+  .fold {
+    position: relative;
+    margin: 6px 0 6px;
+    border-top: 1px dashed #C7CCD3;
+    height: 1px;
+  }
+  .fold::after {
+    content: "FOLD · VIEWPORT EDGE · 852 PT";
+    position: absolute;
+    top: -7px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg-base);
+    padding: 0 10px;
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 9px; font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 0.22em;
+  }
+
+  .screen { position: absolute; top: 0; left: 0; right: 0; bottom: 0; padding: 54px 0 0; }
+  .content { position: relative; padding: 0 16px 30px; }
+
+  /* Header */
+  .menu-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 6px 4px 8px;
+  }
+  .menu-head .title {
+    font-family: var(--font-display);
+    font-size: 22px; font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+  }
+  .closebtn {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    box-shadow: var(--elev-1);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-primary);
+  }
+
+  /* Profile block */
+  .profile {
+    margin-top: 8px;
+    background: var(--bg-elevated);
+    color: var(--text-on-dark);
+    border-radius: var(--radius-lg);
+    padding: 16px 16px 16px;
+    display: flex; align-items: center; gap: 14px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--elev-3);
+  }
+  .profile::before {
+    content: "";
+    position: absolute; right: -20px; top: -20px;
+    width: 180px; height: 180px;
+    background: radial-gradient(closest-side, rgba(0,210,120,0.22), transparent);
+    pointer-events: none;
+  }
+  .avatar {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: var(--gradient-brand);
+    color: var(--text-primary);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display);
+    font-size: 19px; font-weight: 700;
+    letter-spacing: -0.02em;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.04);
+  }
+  .profile .who {
+    flex: 1; min-width: 0;
+    position: relative; z-index: 1;
+  }
+  .profile .nm {
+    font-family: var(--font-display);
+    font-size: 17px; font-weight: 700;
+    color: var(--text-on-dark);
+    letter-spacing: -0.01em;
+  }
+  .profile .meta {
+    margin-top: 2px;
+    display: flex; align-items: center; gap: 6px;
+    flex-wrap: wrap;
+  }
+  .profile .meta .pill {
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.14);
+    font-family: var(--font-body);
+    font-size: 10.5px; font-weight: 600;
+    color: var(--text-on-dark);
+    letter-spacing: -0.003em;
+  }
+  .profile .meta .em {
+    font-family: var(--font-body);
+    font-size: 11.5px; font-weight: 500;
+    color: var(--text-on-dark-muted);
+  }
+  .profile .hs {
+    position: relative; z-index: 1;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .profile .hs .l {
+    font-family: var(--font-body);
+    font-size: 9px; font-weight: 700;
+    color: var(--text-on-dark-muted);
+    letter-spacing: 0.18em; text-transform: uppercase;
+  }
+  .profile .hs .v {
+    margin-top: 1px;
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 26px; font-weight: 700;
+    color: var(--text-on-dark);
+    letter-spacing: -0.025em;
+    line-height: 1;
+    display: inline-flex; align-items: baseline; gap: 4px;
+  }
+  .profile .hs .v .arrow {
+    font-family: var(--font-numeric);
+    font-size: 12px; font-weight: 700;
+    color: var(--brand-green);
+  }
+
+  /* Section eyebrow */
+  .sec-eyebrow {
+    margin: 18px 6px 6px;
+    font-family: var(--font-body);
+    font-size: 11px; font-weight: 700;
+    color: var(--text-secondary);
+    letter-spacing: 0.16em; text-transform: uppercase;
+    display: flex; align-items: baseline; justify-content: space-between;
+  }
+  .sec-eyebrow .hint {
+    font-family: var(--font-body);
+    font-size: 10.5px; font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  .sub-eyebrow {
+    margin: 14px 14px 5px;
+    font-family: var(--font-body);
+    font-size: 10px; font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 0.14em; text-transform: uppercase;
+  }
+
+  /* Hierarchical collapsed categories (D4 — single-pane) */
+  .cat-list {
+    margin-top: 12px;
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--elev-1);
+    overflow: hidden;
+  }
+  .cat-row {
+    display: grid;
+    grid-template-columns: 30px 1fr 18px;
+    column-gap: 12px;
+    align-items: center;
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--bg-border-soft);
+    cursor: pointer;
+    background: var(--bg-surface);
+  }
+  .cat-row:last-child { border-bottom: 0; }
+  .cat-row .ico {
+    width: 26px; height: 26px;
+    border-radius: 7px;
+    background: var(--bg-base);
+    color: var(--text-body);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .cat-row .ico.success { background: rgba(0,210,120,0.10); color: var(--semantic-success); }
+  .cat-row .ico.info { background: rgba(0,180,216,0.10); color: var(--semantic-info); }
+  .cat-row .ico.warning { background: rgba(245,158,11,0.12); color: var(--semantic-warning); }
+  .cat-row .ico.orange { background: rgba(232,122,29,0.10); color: var(--primary-orange); }
+  .cat-row .ico.premium { background: rgba(168,85,247,0.12); color: var(--semantic-premium); }
+  .cat-row .cat-lb {
+    font-family: var(--font-body);
+    font-size: 16px; font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.005em;
+    line-height: 1.2;
+  }
+  .cat-row .cat-chev {
+    color: var(--text-muted);
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 150ms ease-out;
+  }
+  .cat-row.expanded .cat-chev { transform: rotate(90deg); color: var(--text-primary); }
+  .cat-row.expanded { background: var(--bg-base); }
+
+  /* Expanded children container — sits directly under its category row */
+  .cat-children {
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--bg-border-soft);
+    padding: 4px 0 8px;
+  }
+  .cat-children .child-row {
+    display: grid;
+    grid-template-columns: 30px 1fr 14px;
+    column-gap: 12px;
+    align-items: center;
+    padding: 8px 14px 8px 30px;
+    cursor: pointer;
+  }
+  .cat-children .child-row .ico {
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    background: var(--bg-base);
+    color: var(--text-body);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .cat-children .child-row .ico.success { background: rgba(0,210,120,0.10); color: var(--semantic-success); }
+  .cat-children .child-row .ico.info { background: rgba(0,180,216,0.10); color: var(--semantic-info); }
+  .cat-children .child-row .ico.warning { background: rgba(245,158,11,0.12); color: var(--semantic-warning); }
+  .cat-children .child-row .ico.orange { background: rgba(232,122,29,0.10); color: var(--primary-orange); }
+  .cat-children .child-row .ico.premium { background: rgba(168,85,247,0.12); color: var(--semantic-premium); }
+  .cat-children .child-row .ico.error { background: rgba(239,68,68,0.10); color: var(--semantic-error); }
+  .cat-children .child-row .child-lb {
+    font-family: var(--font-body);
+    font-size: 14px; font-weight: 500;
+    color: var(--text-primary);
+    letter-spacing: -0.003em;
+  }
+  .cat-children .child-row .badge {
+    margin-right: 4px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: var(--bg-base);
+    border: 1px solid var(--bg-border);
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 10.5px; font-weight: 700;
+    color: var(--text-body);
+  }
+  .cat-children .child-row .chev { color: var(--text-muted); display: flex; align-items: center; justify-content: center; }
+  .cat-children .child-row.destructive .child-lb { color: var(--semantic-error); font-weight: 600; }
+
+  /* Help icon row at top, under user header */
+  .help-top {
+    margin-top: 10px;
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--elev-1);
+    display: grid;
+    grid-template-columns: 32px 1fr 14px;
+    column-gap: 12px;
+    align-items: center;
+    padding: 10px 14px;
+    cursor: pointer;
+  }
+  .help-top .ico {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    background: rgba(0,180,216,0.10);
+    color: var(--semantic-info);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .help-top .lb {
+    font-family: var(--font-body);
+    font-size: 14.5px; font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.003em;
+  }
+  .help-top .lb .sub {
+    display: block;
+    margin-top: 1px;
+    font-family: var(--font-body);
+    font-size: 11.5px; font-weight: 500;
+    color: var(--text-secondary);
+  }
+  .help-top .chev { color: var(--text-muted); display: flex; align-items: center; justify-content: center; }
+
+  /* iOS grouped list (kept for legacy / static rows) */
+  .group {
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--elev-1);
+    overflow: hidden;
+  }
+  .row {
+    display: grid;
+    grid-template-columns: 30px 1fr 14px;
+    column-gap: 12px;
+    align-items: center;
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--bg-border-soft);
+    cursor: pointer;
+    background: var(--bg-surface);
+  }
+  .row:last-child { border-bottom: 0; }
+  .row .ico {
+    width: 26px; height: 26px;
+    border-radius: 7px;
+    background: var(--bg-base);
+    color: var(--text-body);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .row .ico.success { background: rgba(0,210,120,0.10); color: var(--semantic-success); }
+  .row .ico.info { background: rgba(0,180,216,0.10); color: var(--semantic-info); }
+  .row .ico.warning { background: rgba(245,158,11,0.12); color: var(--semantic-warning); }
+  .row .ico.orange { background: rgba(232,122,29,0.10); color: var(--primary-orange); }
+  .row .ico.premium { background: rgba(168,85,247,0.12); color: var(--semantic-premium); }
+  .row .ico.error { background: rgba(239,68,68,0.10); color: var(--semantic-error); }
+  .row .lb { font-family: var(--font-body); font-size: 14px; font-weight: 500; color: var(--text-primary); letter-spacing: -0.003em; }
+  .row .chev { color: var(--text-muted); display: flex; align-items: center; justify-content: center; }
+  .row .badge {
+    margin-right: 4px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: var(--bg-base);
+    border: 1px solid var(--bg-border);
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 10.5px; font-weight: 700;
+    color: var(--text-body);
+  }
+  .row.destructive .lb { color: var(--semantic-error); font-weight: 600; }
+  .row.destructive .chev { color: rgba(239,68,68,0.4); }
+
+  /* V2 — card-based sections */
+  .card-sect {
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--elev-1);
+    padding: 8px 0 0;
+    margin-top: 10px;
+    overflow: hidden;
+  }
+  .card-sect .card-head {
+    padding: 6px 16px 6px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .card-sect .card-head .ttl {
+    font-family: var(--font-body);
+    font-size: 11px; font-weight: 700;
+    color: var(--text-secondary);
+    letter-spacing: 0.16em; text-transform: uppercase;
+  }
+
+  /* V3 — Tools as icon grid */
+  .grid-tools {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-top: 6px;
+  }
+  .grid-tile {
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: 14px;
+    box-shadow: var(--elev-1);
+    padding: 10px 6px 9px;
+    text-align: center;
+    cursor: pointer;
+  }
+  .grid-tile .ico {
+    width: 30px; height: 30px;
+    margin: 0 auto;
+    border-radius: 9px;
+    background: var(--bg-base);
+    color: var(--text-body);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .grid-tile .lb {
+    margin-top: 6px;
+    font-family: var(--font-body);
+    font-size: 11px; font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.2;
+    letter-spacing: -0.003em;
+  }
+  .grid-tile .ico.success { background: rgba(0,210,120,0.10); color: var(--semantic-success); }
+  .grid-tile .ico.info { background: rgba(0,180,216,0.10); color: var(--semantic-info); }
+  .grid-tile .ico.warning { background: rgba(245,158,11,0.12); color: var(--semantic-warning); }
+  .grid-tile .ico.orange { background: rgba(232,122,29,0.10); color: var(--primary-orange); }
+  .grid-tile .ico.premium { background: rgba(168,85,247,0.12); color: var(--semantic-premium); }
+
+  .grid-sub-head {
+    margin: 16px 6px 6px;
+    font-family: var(--font-body);
+    font-size: 10px; font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 0.14em; text-transform: uppercase;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .grid-sub-head::after {
+    content: "";
+    flex: 1; height: 1px;
+    background: var(--bg-border);
+  }
+
+  /* Coach mini card */
+  .coach-card {
+    margin-top: 10px;
+    background: var(--bg-elevated);
+    color: var(--text-on-dark);
+    border-radius: var(--radius-md);
+    padding: 14px 14px;
+    display: flex; align-items: center; gap: 12px;
+    box-shadow: var(--elev-2);
+  }
+  .coach-card .av {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #A855F7, #6B21A8);
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display);
+    font-size: 14px; font-weight: 700;
+  }
+  .coach-card .lb {
+    flex: 1; min-width: 0;
+    font-family: var(--font-body);
+    font-size: 13.5px; font-weight: 600;
+    color: var(--text-on-dark);
+    letter-spacing: -0.003em;
+  }
+  .coach-card .lb .sub {
+    display: block;
+    margin-top: 2px;
+    font-family: var(--font-body);
+    font-size: 11.5px; font-weight: 500;
+    color: var(--text-on-dark-muted);
+  }
+  .coach-card .chev { color: rgba(255,255,255,0.4); }
+
+  .legend-doc { max-width: 1320px; margin: 56px auto 0; padding: 22px 26px; background: #FFFFFF; border: 1px solid var(--bg-border); border-radius: var(--radius-lg); display: grid; grid-template-columns: 220px 1fr; gap: 14px 28px; font-size: 12px; color: var(--text-secondary); line-height: 1.55; }
+  .legend-doc h3 { grid-column: 1 / -1; margin: 0 0 6px; font-family: var(--font-display); font-size: 12px; font-weight: 600; color: var(--text-muted); letter-spacing: 0.18em; text-transform: uppercase; }
+  .legend-doc dt { grid-column: 1; font-size: 11px; font-weight: 600; color: var(--text-muted); letter-spacing: 0.04em; text-transform: uppercase; }
+  .legend-doc dd { grid-column: 2; margin: 0; }
+  .legend-doc code { background: #F4F5F7; border: 1px solid var(--bg-border); padding: 1px 6px; border-radius: 4px; font-family: var(--font-numeric); font-size: 11px; color: var(--text-primary); }
+</style>
+</head>
+<body>
+  <header class="doc-header">
+    <div>
+      <p class="doc-eyebrow">FuelWell · Round 2 · Step 4 — Mockups</p>
+      <h1 class="doc-title">M35 Menu sheet</h1>
+      <p class="doc-sub">Full-screen sheet from the hamburger icon on any screen. <strong>D4 lock — hierarchical-collapsed, single-pane.</strong> Eight categories visible by default as 16pt 700 rows with chevron affordances: <strong>Snapshot · Tracking · Meals · Training · Coach · Settings · Help · About.</strong> Each row expands on tap to reveal its children (Tracking is rendered expanded here to demonstrate the pattern). Tighter row padding (~9px vs the prior 16–20px) so all eight categories sit above the fold without scrolling. A dedicated Help row sits directly under the user header for one-tap entry.</p>
+    </div>
+    <div class="doc-meta">
+      iPhone 15 Pro · 393 × 852 pt<br>
+      Sheet · presented over the underlying screen<br>
+      Frame extended for review · FOLD marked
+    </div>
+  </header>
+
+  <div class="frames-row" id="frames"></div>
+
+  <section class="legend-doc">
+    <h3>Mockup notes · M35 Menu</h3>
+    <dt>Header &amp; profile</dt>
+    <dd>Title "Menu" in display 700 22pt, close-X in the top-right (icon-button, light surface). Below it a 52pt avatar card on inverted <code>bg.elevated</code> — name, goal pill, and today's Health Score with a small delta arrow. Avatar is itself tappable → routes to Your Plan / Profile (M24).</dd>
+    <dt>Hierarchical categories</dt>
+    <dd>Locked to single-pane hierarchical-collapsed per D4. Eight categories — Snapshot, Tracking, Meals, Training, Coach, Settings, Help, About — render as a single grouped list of 16pt 700 category rows with a chevron. Tap any row to expand its children in-place (chevron rotates 90°, row background shifts to <code>bg.base</code>); tap again to collapse. No two-tier tile redesign. Tracking is shown expanded in this mockup to demonstrate the pattern. Row vertical padding tightened from 11px to 9px so all eight categories fit above the fold without scroll.</dd>
+    <dt>Icon palette</dt>
+    <dd>Token-bound: Health Score / Daily Recap on <code>success</code> green; I/O · My day on <code>info</code> blue; Habits / Mood / Photos on <code>premium</code> purple; Meals destinations split across <code>success</code>, <code>warning</code>, <code>info</code>, <code>premium</code>, <code>orange</code>; Training on <code>orange</code> and <code>info</code>; Settings / Help / About on neutral. The Sign-out row is the only destructive row — label in <code>color.semantic.error</code>.</dd>
+    <dt>Help row (top)</dt>
+    <dd>A dedicated Help row sits directly under the user profile header — info-blue circular icon, title "Help" + sub-line "FAQs, articles, ask coach", chevron. Tap → opens M36 Help directly. Mirrors the Help category lower in the list (intentional duplicate for one-tap access from any session).</dd>
+    <dt>Coach · Settings · Help · About</dt>
+    <dd>Same category-row treatment as Tools sub-categories. Coach expands to one child (Coach Chat); Settings expands to Account, Permissions, Notifications, Data export, Sign out (destructive); Help expands to Learn articles, Contact support, Send feedback; About expands to About FuelWell, Privacy, Terms, Share, Version.</dd>
+    <dt>Sticky behavior</dt>
+    <dd>The Profile block is sticky to the top of the sheet when the user scrolls. The close-X stays in the safe-area top. Tab bar does <strong>not</strong> render here — the Menu is modal.</dd>
+  </section>
+
+<script>
+  const statusBar = `
+    <div class="status-bar">
+      <div class="time">9:41</div>
+      <div style="display:inline-flex; gap:6px; align-items:center;">
+        <svg width="17" height="11" viewBox="0 0 17 11" fill="none"><rect x="0" y="7" width="3" height="4" rx="0.5" fill="#0A0A0F"/><rect x="4" y="5" width="3" height="6" rx="0.5" fill="#0A0A0F"/><rect x="8" y="3" width="3" height="8" rx="0.5" fill="#0A0A0F"/><rect x="12" y="0" width="3" height="11" rx="0.5" fill="#0A0A0F"/></svg>
+        <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><path d="M8 11l-2.5-2.5a3.5 3.5 0 014.9 0L8 11z" fill="#0A0A0F"/><path d="M2 5a8.5 8.5 0 0112 0l-1.5 1.5a6 6 0 00-9 0L2 5z" fill="#0A0A0F"/><path d="M5 8a4.5 4.5 0 016 0l-1.5 1.5a2.5 2.5 0 00-3 0L5 8z" fill="#0A0A0F"/></svg>
+        <span class="signal-bat"></span>
+      </div>
+    </div>`;
+  const islandHTML = `<div class="dynamic-island"></div>`;
+
+  const ic = {
+    close: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>`,
+    chev: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>`,
+    arrowUp: `<svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M6 11l6-6 6 6" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    // Snapshot
+    heart: `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7-4.5-7-10a4.5 4.5 0 018-3 4.5 4.5 0 018 3c0 5.5-7 10-7 10z"/></svg>`,
+    moon: `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20 14.5a8 8 0 11-10.5-11A6.5 6.5 0 0020 14.5z"/></svg>`,
+    flow: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6c4 0 4 12 8 12s4-12 8-12M3 18c4 0 4-12 8-12s4 12 8 12"/></svg>`,
+    cal: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4" stroke-linecap="round"/></svg>`,
+    // Tracking
+    leaf: `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4c-9 0-15 5-15 12 0 2 .5 4 1.5 5l1.5-1.5C12 22 18 18 20 12V4Z"/></svg>`,
+    scale: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 6h18l-2 14a2 2 0 01-2 2H7a2 2 0 01-2-2L3 6z"/><path d="M8 10h8"/></svg>`,
+    camera: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 8a2 2 0 012-2h2l2-2h6l2 2h2a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/><circle cx="12" cy="13" r="3.5"/></svg>`,
+    ruler: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 16l13-13 5 5L8 21z"/><path d="M9 9l2 2M12 6l2 2M6 12l2 2"/></svg>`,
+    smile: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M9 14s1 2 3 2 3-2 3-2M9 10v.01M15 10v.01" stroke-linecap="round"/></svg>`,
+    // Meals
+    log: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M9 8h6M9 12h6M9 16h3" stroke-linecap="round"/></svg>`,
+    book: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5.5C4 4.7 4.7 4 5.5 4H10a3 3 0 013 3v14a2 2 0 00-2-2H5.5A1.5 1.5 0 014 17.5v-12ZM20 5.5C20 4.7 19.3 4 18.5 4H14a3 3 0 00-3 3v14a2 2 0 012-2h5.5a1.5 1.5 0 001.5-1.5v-12Z"/></svg>`,
+    cart: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2l2 12h12l2-8H7"/><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/></svg>`,
+    fork: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4v16M9 4v6a3 3 0 01-6 0V4M19 4c-2 0-3 2-3 5s1 5 3 5v6"/></svg>`,
+    chart: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg>`,
+    // Training
+    dumb: `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="9" width="3" height="6" rx="1"/><rect x="5" y="7" width="3" height="10" rx="1"/><rect x="8" y="11" width="8" height="2"/><rect x="16" y="7" width="3" height="10" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/></svg>`,
+    figure: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="14" cy="4" r="1.5"/><path d="M14 7l-2 4 3 2v6M12 13l-3 1M14 7l3 3"/></svg>`,
+    list: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg>`,
+    // Coach / Settings
+    coach: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a8 8 0 1116 0c0 4-3.6 7-8 7l-3 3v-3.2A8 8 0 014 11Z"/></svg>`,
+    user: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.5 3.5-8 8-8s8 3.5 8 8" stroke-linecap="round"/></svg>`,
+    lock: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>`,
+    bell: `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3a6 6 0 016 6v3.2c0 .6.2 1.1.5 1.5l1.6 1.9c.7.8.1 2-.9 2H4.8c-1 0-1.6-1.2-.9-2l1.6-1.9c.3-.4.5-.9.5-1.5V9a6 6 0 016-6Z"/></svg>`,
+    download: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v14M6 11l6 6 6-6M4 21h16"/></svg>`,
+    out: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 4h4a1 1 0 011 1v14a1 1 0 01-1 1h-4M9 16l-4-4 4-4M5 12h11"/></svg>`,
+    help: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M9.3 9.5a2.7 2.7 0 015.4.2c0 1.5-2 1.8-2.7 3.3M12 17v.01" stroke-linecap="round"/></svg>`,
+    bookOpen: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5.5C4 4.7 4.7 4 5.5 4H10a3 3 0 013 3v14a2 2 0 00-2-2H5.5A1.5 1.5 0 014 17.5v-12Z"/><path d="M20 5.5C20 4.7 19.3 4 18.5 4H14a3 3 0 00-3 3v14a2 2 0 012-2h5.5a1.5 1.5 0 001.5-1.5v-12Z"/></svg>`,
+    chat: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 11-3-6L21 4l-1.5 3.5A7.95 7.95 0 0121 12z"/></svg>`,
+    send: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>`,
+    info: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v.01" stroke-linecap="round"/></svg>`,
+    file: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9z"/><path d="M14 3v6h6"/></svg>`,
+    share: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="12" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="18" cy="18" r="2"/><path d="M8 11l8-4M8 13l8 4"/></svg>`,
+  };
+
+  /* ============= CATEGORY ICONS ============= */
+  const catIco = {
+    snapshot: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7-4.5-7-10a4.5 4.5 0 018-3 4.5 4.5 0 018 3c0 5.5-7 10-7 10z"/></svg>`,
+    tracking: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg>`,
+    meals: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4v16M9 4v6a3 3 0 01-6 0V4M19 4c-2 0-3 2-3 5s1 5 3 5v6"/></svg>`,
+    training: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="9" width="3" height="6" rx="1"/><rect x="5" y="7" width="3" height="10" rx="1"/><rect x="8" y="11" width="8" height="2"/><rect x="16" y="7" width="3" height="10" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/></svg>`,
+    coach: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a8 8 0 1116 0c0 4-3.6 7-8 7l-3 3v-3.2A8 8 0 014 11Z"/></svg>`,
+    settings: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3h.1A1.7 1.7 0 0010 3.1V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8v.1a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg>`,
+    help: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M9.3 9.5a2.7 2.7 0 015.4.2c0 1.5-2 1.8-2.7 3.3M12 17v.01" stroke-linecap="round"/></svg>`,
+    about: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v.01" stroke-linecap="round"/></svg>`,
+    helpTop: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9.3 9.5a2.7 2.7 0 015.4.2c0 1.5-2 1.8-2.7 3.3M12 17v.01" stroke-linecap="round"/></svg>`,
+  };
+
+  /* ============= DATA ============= */
+  const SNAPSHOT = [
+    { ico: ic.heart,  cls: 'success', lb: 'Health Score' },
+    { ico: ic.moon,   cls: 'premium', lb: 'Daily Recap' },
+    { ico: ic.flow,   cls: 'info',    lb: 'Inflows / Outflows' },
+    { ico: ic.cal,    cls: 'info',    lb: 'My day / week / month' },
+  ];
+  const TRACKING = [
+    { ico: ic.leaf,    cls: 'premium', lb: 'Habits',          badge: '4' },
+    { ico: ic.scale,   cls: '',        lb: 'Weight history' },
+    { ico: ic.camera,  cls: 'info',    lb: 'Body photos' },
+    { ico: ic.ruler,   cls: '',        lb: 'Measurements' },
+    { ico: ic.smile,   cls: 'premium', lb: 'Mood & energy' },
+  ];
+  const MEALS = [
+    { ico: ic.log,      cls: 'success', lb: 'Meal Log' },
+    { ico: ic.book,     cls: 'info',    lb: 'Recipe Browser' },
+    { ico: ic.cal,      cls: 'premium', lb: 'Meal Plan Generator' },
+    { ico: ic.cart,     cls: 'orange',  lb: 'Grocery List',     badge: '12' },
+    { ico: ic.fork,     cls: 'warning', lb: 'Restaurant Guidance' },
+    { ico: ic.chart,    cls: 'info',    lb: 'Macro history' },
+  ];
+  const TRAINING = [
+    { ico: ic.log,      cls: 'orange',  lb: 'Workout Log' },
+    { ico: ic.figure,   cls: 'info',    lb: 'Activity Tracker' },
+    { ico: ic.list,     cls: 'premium', lb: 'Workout Plans' },
+    { ico: ic.book,     cls: 'premium', lb: 'Exercise Library' },
+    { ico: ic.cal,      cls: 'success', lb: 'Schedule' },
+  ];
+  const SETTINGS = [
+    { ico: ic.user, cls: '', lb: 'Account' },
+    { ico: ic.lock, cls: '', lb: 'Permissions' },
+    { ico: ic.bell, cls: '', lb: 'Notification preferences' },
+    { ico: ic.download, cls: '', lb: 'Data export' },
+    { ico: ic.out, cls: 'error', lb: 'Sign out', destructive: true },
+  ];
+  const HELP = [
+    { ico: ic.bookOpen, cls: 'info', lb: 'Learn articles' },
+    { ico: ic.chat, cls: '', lb: 'Contact support' },
+    { ico: ic.send, cls: '', lb: 'Send feedback' },
+  ];
+  const ABOUT = [
+    { ico: ic.info, cls: '', lb: 'About FuelWell' },
+    { ico: ic.lock, cls: '', lb: 'Privacy' },
+    { ico: ic.file, cls: '', lb: 'Terms' },
+    { ico: ic.share, cls: 'success', lb: 'Share FuelWell' },
+    { ico: ic.info, cls: '', lb: 'Version 1.0.2 (build 124)', static: true },
+  ];
+
+  function row(item) {
+    return `<div class="row ${item.destructive ? 'destructive' : ''}">
+      <div class="ico ${item.cls || ''}">${item.ico}</div>
+      <div class="lb">${item.lb}</div>
+      ${item.badge ? `<div class="badge">${item.badge}</div>` : ''}
+      <div class="chev">${item.static ? '' : ic.chev}</div>
+    </div>`;
+  }
+  function group(items) {
+    return `<div class="group">${items.map(row).join('')}</div>`;
+  }
+  function gridTile(item) {
+    return `<div class="grid-tile">
+      <div class="ico ${item.cls || ''}">${item.ico}</div>
+      <div class="lb">${item.lb}</div>
+    </div>`;
+  }
+
+  function profileBlock() {
+    return `
+      <div class="profile">
+        <div class="avatar">JC</div>
+        <div class="who">
+          <div class="nm">Jordan Chen</div>
+          <div class="meta">
+            <span class="pill">Lose fat · −0.8 lb/wk</span>
+            <span class="em">Week 3 of 12</span>
+          </div>
+        </div>
+        <div class="hs">
+          <div class="l">SCORE</div>
+          <div class="v">86<span style="font-size:14px; font-weight:600; color: var(--text-on-dark-muted);">.4</span></div>
+          <div style="margin-top:3px; font-family: var(--font-numeric); font-size: 10px; font-weight: 700; color: var(--brand-green); display:inline-flex; align-items:center; gap:2px;">${ic.arrowUp}+4.2 30d</div>
+        </div>
+      </div>`;
+  }
+
+  function header() {
+    return `<div class="menu-head">
+      <div class="title">Menu</div>
+      <div class="closebtn">${ic.close}</div>
+    </div>`;
+  }
+
+  /* ============= V1 (LOCKED) — Hierarchical collapsed, single-pane (D4) ============= */
+  function helpTopRow() {
+    return `<div class="help-top">
+      <div class="ico">${catIco.helpTop}</div>
+      <div class="lb">Help<span class="sub">FAQs, articles, ask coach</span></div>
+      <div class="chev">${ic.chev}</div>
+    </div>`;
+  }
+
+  function childRow(item) {
+    return `<div class="child-row ${item.destructive ? 'destructive' : ''}">
+      <div class="ico ${item.cls || ''}">${item.ico}</div>
+      <div class="child-lb">${item.lb}</div>
+      ${item.badge ? `<div class="badge">${item.badge}</div>` : ''}
+      <div class="chev">${item.static ? '' : ic.chev}</div>
+    </div>`;
+  }
+
+  function catRow({ key, label, iconCls, expanded, children }) {
+    const rowsHTML = expanded
+      ? `<div class="cat-children">${children.map(childRow).join('')}</div>`
+      : '';
+    return `
+      <div class="cat-row ${expanded ? 'expanded' : ''}">
+        <div class="ico ${iconCls}">${catIco[key]}</div>
+        <div class="cat-lb">${label}</div>
+        <div class="cat-chev">${ic.chev}</div>
+      </div>
+      ${rowsHTML}`;
+  }
+
+  function v1() {
+    const COACH_CHILD = [{ ico: ic.coach, cls: 'premium', lb: 'Coach Chat' }];
+    const HELP_CHILD = HELP;
+    // Categories collapsed by default. One ("Tracking") shown expanded to demo the pattern.
+    const CATEGORIES = [
+      { key: 'snapshot', label: 'Snapshot', iconCls: 'success',  expanded: false, children: SNAPSHOT },
+      { key: 'tracking', label: 'Tracking', iconCls: 'info',     expanded: true,  children: TRACKING },
+      { key: 'meals',    label: 'Meals',    iconCls: 'warning',  expanded: false, children: MEALS },
+      { key: 'training', label: 'Training', iconCls: 'orange',   expanded: false, children: TRAINING },
+      { key: 'coach',    label: 'Coach',    iconCls: 'premium',  expanded: false, children: COACH_CHILD },
+      { key: 'settings', label: 'Settings', iconCls: '',         expanded: false, children: SETTINGS },
+      { key: 'help',     label: 'Help',     iconCls: 'info',     expanded: false, children: HELP_CHILD },
+      { key: 'about',    label: 'About',    iconCls: '',         expanded: false, children: ABOUT },
+    ];
+
+    return `
+      <div class="content">
+        ${header()}
+        ${profileBlock()}
+        ${helpTopRow()}
+
+        <div class="cat-list">
+          ${CATEGORIES.map(catRow).join('')}
+        </div>
+      </div>`;
+  }
+
+  /* ============= V2 — each top-level section in own card ============= */
+  function v2() {
+    return `
+      <div class="content">
+        ${header()}
+        ${profileBlock()}
+
+        <div class="card-sect">
+          <div class="card-head"><span class="ttl">Tools · Snapshot</span></div>
+          ${group(SNAPSHOT)}
+        </div>
+        <div class="card-sect">
+          <div class="card-head"><span class="ttl">Tools · Tracking</span></div>
+          ${group(TRACKING)}
+        </div>
+        <div class="fold"></div>
+        <div class="card-sect">
+          <div class="card-head"><span class="ttl">Tools · Meals</span></div>
+          ${group(MEALS)}
+        </div>
+        <div class="card-sect">
+          <div class="card-head"><span class="ttl">Tools · Training</span></div>
+          ${group(TRAINING)}
+        </div>
+        <div class="card-sect">
+          <div class="card-head"><span class="ttl">Coach</span></div>
+          ${group([{ico: ic.coach, cls: 'premium', lb: 'Coach Chat'}])}
+        </div>
+        <div class="card-sect">
+          <div class="card-head"><span class="ttl">Settings</span></div>
+          ${group(SETTINGS)}
+        </div>
+        <div class="card-sect">
+          <div class="card-head"><span class="ttl">Help</span></div>
+          ${group(HELP)}
+        </div>
+        <div class="card-sect">
+          <div class="card-head"><span class="ttl">About</span></div>
+          ${group(ABOUT)}
+        </div>
+      </div>`;
+  }
+
+  /* ============= V3 — icon grid for Tools, list for the rest ============= */
+  function v3() {
+    return `
+      <div class="content">
+        ${header()}
+        ${profileBlock()}
+
+        <div class="sec-eyebrow">Tools</div>
+
+        <div class="grid-sub-head">Snapshot</div>
+        <div class="grid-tools">
+          ${SNAPSHOT.map(gridTile).join('')}
+        </div>
+        <div class="grid-sub-head">Tracking</div>
+        <div class="grid-tools">
+          ${TRACKING.map(gridTile).join('')}
+        </div>
+        <div class="fold"></div>
+        <div class="grid-sub-head">Meals</div>
+        <div class="grid-tools">
+          ${MEALS.map(gridTile).join('')}
+        </div>
+        <div class="grid-sub-head">Training</div>
+        <div class="grid-tools">
+          ${TRAINING.map(gridTile).join('')}
+        </div>
+
+        <div class="sec-eyebrow">Coach</div>
+        <div class="coach-card">
+          <div class="av">F</div>
+          <div class="lb">Coach Chat<span class="sub">Ask anything · 24/7</span></div>
+          <div class="chev">${ic.chev}</div>
+        </div>
+
+        <div class="sec-eyebrow">Settings</div>
+        ${group(SETTINGS)}
+
+        <div class="sec-eyebrow">Help</div>
+        ${group(HELP)}
+
+        <div class="sec-eyebrow">About</div>
+        ${group(ABOUT)}
+      </div>`;
+  }
+
+  function frame(spec) {
+    return `
+      <section class="variation">
+        <div class="v-label">
+          <div class="v-num">${spec.num}</div>
+          <div class="v-name">${spec.name}</div>
+          <div class="v-cap">${spec.cap}</div>
+        </div>
+        <div class="device">
+          ${statusBar}
+          ${islandHTML}
+          <div class="screen">
+            ${spec.render}
+          </div>
+          <div class="home-indicator-row"><span></span></div>
+        </div>
+      </section>`;
+  }
+
+  const variants = [
+    { num: 'V1 · Locked (D4)', name: 'Hierarchical collapsed · single-pane', cap: 'D4 resolution. All eight categories visible by default as single rows with a chevron; each expands on tap (Tracking shown expanded here to demonstrate the pattern). Larger row text (16pt / 700), tighter 9px vertical row padding. A dedicated Help row sits directly under the user header for one-tap access.', render: v1() },
+  ];
+
+  document.getElementById('frames').innerHTML = `
+    <div style="display:flex; gap: 72px; justify-content:center;">${variants.map(frame).join('')}</div>`;
+</script>
+</body>
+</html>

@@ -1,8 +1,47 @@
 # FuelWell — Master Plan
 
 **Date drafted:** 2026-05-03
-**Status:** Living document. Updated as Gap Analysis decisions are made and chapters are referenced in implementation.
+**Last status review:** 2026-05-04 — currently mid–Phase 0
+**Status:** Living document. Updated as decisions land.
 **Owners:** Robert (build) + Max (product/business)
+
+## Where we are right now
+
+**Phase 0 — Pre-build alignment** is ✅ complete (2026-05-13, both Robert and Max signed off). Phase 0.5 (Visual Design) is now in progress. Phase 0.5 and 0.6 (Interactive Prototype) bracket Phase 0 and Phase 1 so every screen is mapped, drawn, mocked up, and clickable *before* any iOS code is written.
+
+**Phase 0 deliverables:**
+- ✅ iOS Production Guide ingested (`docs/ios-guide/`)
+- ✅ Gap Analysis worksheet filled out and resolved (`docs/FuelWell-Gap-Analysis.md`) — all 12 items + 10 engineering defaults locked; Max countersigned with comments
+- ✅ Q&A log preserved (`docs/FuelWell-Gap-Analysis-Log.md`) — verbatim Robert + Max
+- ✅ `PRINCIPLES.md` written (`docs/ios-guide/PRINCIPLES.md`) — 13 binding rules + Daily Loop from Vision + Inspiration + Blueprint
+- ✅ Product context aggregated (`docs/ios-guide/PRODUCT-CONTEXT.md`) — single in-repo reference for the Drive sources
+- ✅ Canonical `DESIGN.md` promoted from draft (2026-05-14) — light-mode native, Robert generated in Claude Design (project `019ddbc6-73f6-7d05-b865-d559378d48fa`). Old draft is now marked SUPERSEDED.
+- ✅ `src/lib/design-tokens.ts` updated to retire `#3D9B2F` and adopt the canonical `#47E7B0` brand green (2026-05-14).
+- ⏳ iOS guide chapters 1–3 detailed read — Robert, deferred to Phase 1 prep
+- ✅ Account confirmations: Apple Developer Individual, Anthropic API key, Supabase project (ID + secret in hand). Sentry + PostHog deferred to later phases.
+- ✅ Editor decision: **Xcode** (with Claude Code as the AI coding agent alongside)
+- ✅ Open scope deltas resolved — see table below
+
+## Scope deltas — resolved
+
+These surfaced from the Execution Blueprint and the Inspiration Deep Dive. Resolutions captured here.
+
+| # | Delta | Resolution |
+|---|---|---|
+| S1 | Workouts at Pilot (Screens 22–23) | **Superseded 2026-05-14:** workouts are a first-class Pilot feature with in-session logging (Workout Detail screen with per-day exercise list, Start-workout CTA, set-by-set logger). Trainer plans still log as manual entry; the in-app workout flow is for FuelWell-prescribed or user-built workouts. |
+| S2 | Water tracking (Screen 27) | **IN** — surfaces as a passive HealthKit-style tile on Dashboard. Low friction, high engagement. |
+| S3 | Meal Plan Generator (Screen 25) | **IN at Pilot.** Three plan options per generation, each with a single-line summary. Auto-populates Grocery List on Accept. |
+| S4 | Streaks / consistency score | **IN** — gentle vocabulary only (e.g. "X-day logging streak"). No public leaderboards. Per Max's "no guilt" principle. |
+| S5 | Photo / camera-first meal logging | **IN.** Photo is the default tab on Add Meal. Also includes barcode scan and search. Voice deferred. |
+| S6 | Restaurant nutrition database | **Curated chain database** for Pilot (resolved via Gap #2). Top 3 picks show macros immediately. Surfaceable from Dashboard via "I'm eating out right now" CTA. |
+| S7 | Education system delivery | **Dual-surface** (resolved via Gap #1): full Learn tab with search + categories, plus inline contextual cards inside Coach Chat. One content store. |
+| S8 | Personal recipe bank + "repeat last meal" shortcut | **IN.** Recipe Browser leads with "based on your remaining macros today." Recent meals appear as one-tap chips in Add Meal. |
+
+Master Plan §"Phase 3 — Craft" is updated to reflect the real Pilot scope: **17 top-level screens** (added Daily Recap per Max in v1, then Health Score detail / Workout Plan / Habit Tracking detail in v2 per Robert), 9 onboarding sub-screens (added Lifestyle per Max), plus the Dashboard "I'm eating out right now" quick action and empty-state coaching across every screen.
+
+## Workout Detail scope — resolved 2026-05-14
+
+Robert chose option (a): workouts are a first-class Pilot feature with in-session logging. See `docs/ios-guide/decisions.md`.
 
 This is the binding plan for building the FuelWell iOS app to Pilot, Founding 100, and Public launch. It supersedes `docs/FuelWell-Phase-Plan.md` (which remains as the simpler partner-facing summary).
 
@@ -12,11 +51,11 @@ This is the binding plan for building the FuelWell iOS app to Pilot, Founding 10
 
 These are non-negotiable. They come from three sources we've already aligned on.
 
-### 1. Product framing — from the Inspiration Guide (CTO Version)
+### 1. Product framing — from the Inspiration Guide (CTO Version) and PRINCIPLES.md
 
 > FuelWell is **not** a tracking app, **not** a workout app, **not** a nutrition planner. FuelWell is a **real-time decision system** that removes the need for users to constantly figure out what to do.
 
-Every screen, every reducer, every API response answers **"what should I do right now?"** before it answers "here is some data." If a screen only shows numbers, it is wrong. This becomes `ios/PRINCIPLES.md` and is the first thing referenced in code review.
+Every screen, every reducer, every API response answers **"what should I do right now?"** before it answers "here is some data." If a screen only shows numbers, it is wrong. The 13 binding rules and the Daily Loop (Dashboard → Log → Adjust → Continue → Repeat) live in `docs/ios-guide/PRINCIPLES.md`.
 
 ### 2. Stack — from the iOS Production Guide
 
@@ -51,6 +90,8 @@ The seven:
 6. **Grocery lists** — generated from selected recipes + staples
 7. **Progress tracking** — trend + projection + next action
 
+Phase 0 leaves room to add scope deltas (water tracking, education layer, etc.) before Phase 0.5 visual design begins.
+
 ---
 
 ## Repo layout
@@ -67,6 +108,9 @@ FuelWell/
 │   ├── FuelWell-Phase-Plan.{md,pdf}    # partner-facing summary
 │   └── ios-guide/                      # the iOS production guide (read by Claude Code)
 │       ├── CLAUDE.md
+│       ├── PRINCIPLES.md
+│       ├── PRODUCT-CONTEXT.md
+│       ├── DESIGN.md                   # promoted from draft in Phase 0
 │       ├── consensus-stack.md
 │       ├── reconciliation-matrix.md
 │       ├── contested-choices.md
@@ -83,144 +127,243 @@ FuelWell/
     └── fastlane/
 ```
 
-When Claude Code runs from `/ios`, it reads `ios/docs/CLAUDE.md` first. That instruction set already prescribes the architecture, conventions, and forbidden patterns.
-
 ---
 
-## Phase plan
-
-The guide is organized in five parts (Foundations → Architecture → Craft → Quality → Ship). The phase plan mirrors that, with two additional phases bracketing the build (pre-build alignment, post-launch hardening).
+## The complete phase plan
 
 Phases are sequential. **No phase begins until the previous phase's gates are green.**
 
-### Phase 0 — Pre-build alignment
+---
 
-**Goal:** every binding decision made before a line of Swift is written.
+### Phase 0 — Pre-build Alignment
 
-- [ ] Resolve all 12 gap-analysis items with Max (`docs/FuelWell-Gap-Analysis.md`)
-- [ ] Write `ios/PRINCIPLES.md` extracting the decision-engine framing from the Inspiration Guide
-- [ ] Read iOS guide chapters 1–3 (landscape, Swift essentials, toolchain setup)
-- [ ] Lock the 7-feature MVP scope; freeze additions until Pilot ships
-- [ ] Confirm Apple Developer Program enrollment, App Store Connect access
-- [ ] Confirm Anthropic API key, Supabase project, Sentry project, PostHog project
-- [ ] Decide: Cursor or Xcode as the editor (Claude Code is constant either way)
+**Goal:** every binding decision made before anything visual or technical starts.
 
-**Gate:** Gap analysis fully filled in and signed by Robert + Max.
+- ✅ Ingest the iOS Production Guide (CLAUDE.md, Consensus Stack, Reconciliation Matrix, 20 chapters)
+- ✅ Write PRINCIPLES.md (13 binding product rules + the Daily Loop)
+- ✅ Write PRODUCT-CONTEXT.md (aggregates Vision, Master_v2, Execution Blueprint)
+- ✅ Lock the 7-feature MVP scope at the top level
+- ✅ Read iOS Guide chapters 1–3 to extract Phase 1 requirements
+- ✅ Roll back premature DESIGN.md to a draft
+- ⏳ Answer the 12 Gap Analysis questions with Max (or by Robert + Claude proposal)
+- ⏳ Answer the 8 scope deltas with Max (workouts? water tracking? streaks? meal plan generator? etc.)
+- ⏳ Promote DESIGN.md from draft to canonical (YAML+Markdown format, FuelWell brand tokens)
+- ⏳ Confirm Apple Developer Program enrollment ($99/year — Individual vs Organization decision)
+- ⏳ Confirm Node.js installed on MacBook
+- ⏳ Confirm: Anthropic API key set up (deferred to Phase 3 acceptable)
+- ⏳ Confirm: Supabase project created (deferred to Phase 2 acceptable)
+- ✅ Editor choice: Xcode (already on MacBook, version 26.3 confirmed)
 
-### Phase 1 — Foundations *(Chapters 1–3, 5)*
+**Gate to leave Phase 0:** all Gap Analysis + scope delta answers locked, DESIGN.md promoted, Apple Developer enrollment started.
 
-**Goal:** project skeleton compiles, tooling wired, design contract written, AI loop functional.
+---
 
-- [ ] `ios/` Xcode project created, Swift 6 with `enableUpcomingFeature("StrictConcurrency")` and `swiftLanguageMode(.v6)` package-wide
-- [ ] SPM topology: `ios/Features/` and `ios/Packages/` directories with the import-direction script (`scripts/check-feature-imports.sh`)
-- [ ] `docs/ios-guide/` symlinked or copied to `ios/docs/`
-- [ ] `ios/docs/DESIGN.md` written from the Chapter 3 template (tokens, components, brand) — ported from `src/lib/design-tokens.ts` so the iOS app and marketing site share a brand contract
-- [ ] First-pass `Packages/DesignSystem/Theme.swift` generated from DESIGN.md; CI drift check in place
-- [ ] Claude Design connected (reads codebase + DESIGN.md)
-- [ ] ChatGPT Images 2.0 access confirmed for non-UI assets
-- [ ] SwiftLint `--strict` config committed
-- [ ] Repo runs `swift build` clean from a fresh checkout
+### Phase 0.5 — Visual Design
 
-**Gate:** Empty TCA `AppFeature` reducer compiles with strict concurrency, app launches in simulator showing a themed splash that pulls from `Theme`.
+**Goal:** by the end, you and Max know exactly what every screen looks like and what every button does. No code written yet.
 
-### Phase 2 — Architecture *(Chapters 4, 6, 8, 13)*
+Four sequential sub-steps, each building on the last:
 
-**Goal:** every infrastructure package exists with a `liveValue`, `testValue`, and `previewValue`. Navigation skeleton runs.
+#### Step 1 — App Map / Sitemap
+- Take the 13 screens from Max's Execution Blueprint and draw them as a tree
+- Show parent/child relationships (Dashboard is root, everything else hangs off it)
+- Add onboarding flow as the entry sequence before the tree
+- **Output:** a single one-page diagram you and Max look at together
 
-- [ ] `AppFeature` reducer + `AppCoordinator` (TCACoordinators) with stack-based navigation
-- [ ] `Packages/DesignSystem/` — Theme, Component Gallery scaffold
-- [ ] `Packages/Persistence/` — SQLiteData wrapper, migration runner, CloudKit container config
-- [ ] `Packages/Networking/` — `LiveAPIClient` actor + `RetryingAPIClient` decorator
-- [ ] `Packages/AnthropicClient/` — chat completion + streaming, gated behind kill-switch
-- [ ] `Packages/SupabaseClient/` — auth, edge function invoker, `feature_flags` reader (30s cache)
-- [ ] `Packages/HealthKitClient/` — read-scope client behind protocol (write scope deferred until Gap #9 resolved)
-- [ ] `Packages/Analytics/` — PostHog adapter with strict event taxonomy
-- [ ] `Packages/CrashReporting/` — Sentry adapter
-- [ ] All `liveValue`s default to `unimplemented(...)` until registered at app launch via `prepareDependencies`
+#### Step 2 — Flow Chart
+- Same screens, now with arrows showing navigation
+- Document what each major button does on every screen
+- "Tap 'Log Meal' on Dashboard → goes to Meal Log screen → has three tabs: Search, Photo, Scan"
+- Black-and-white, no design opinions yet — just structure
+- **Output:** a flow diagram, printable and markup-friendly
 
-**Gate:** Every package has a unit test that hits `testValue` and a preview that hits `previewValue`. Component Gallery view runs and shows every Theme component.
+#### Step 3 — Wireframes
+- Every screen drawn as a rough grayscale layout
+- Where the title sits, where buttons go, where cards appear, what's above the fold
+- No final colors, no real photos — just shapes and labels
+- This is where you and Max argue about "should the verdict be above the macros or below"
+- **Output:** ~15 wireframe images (one per screen), reviewed and approved
 
-### Phase 3 — Craft *(Chapters 7, 9–12, the 7 features)*
+#### Step 4 — Mockups
+- Every screen drawn in full color with real FuelWell brand (palette, fonts, dark theme)
+- Real photos for food, real numbers in the macro displays
+- "What the app actually looks like" — investor-ready
+- **Output:** ~15 mockup images, locked as the spec for iOS code
 
-**Goal:** the seven MVP features end-to-end, behaving as decision-makers, not displays.
+**Tooling:** Claude Design (included in your Max subscription). Robert writes prompts, Claude Design returns three variations per screen, Robert + Max pick. Decisions logged.
 
-- [ ] **Auth + Onboarding** — `SignUpFeature`, `SignInFeature`, `OnboardingFeature` (goal, baseline macros, dietary constraints), Pilot plan flag (no tier gating)
-- [ ] **MacroTrackingFeature** — log meal, instant verdict, dynamic recalc per Gap #3 resolution
-- [ ] **AICoachingFeature** — chat with day-context memory; kill-switch enforced server-side
-- [ ] **ProactiveCoachingFeature** — APNs registration, state-triggered notifications, quiet-hours per Gap #6
-- [ ] **RestaurantGuidanceFeature** — input mode per Gap #2 (DB / photo-only / curated chains)
-- [ ] **RecipeSuggestionsFeature** — pulls from inventory + dietary constraints
-- [ ] **GroceryListFeature** — generated per Gap #7 (recipes / manual / both)
-- [ ] **ProgressTrackingFeature** — trend + projection + next action per Gap #8
-- [ ] **Settings** — account, data export, sign out
-- [ ] **Empty states + error states + offline states** across every screen
-- [ ] Supabase schema: `users`, `profiles`, `meals`, `foods`, `recipes`, `grocery_items`, `progress_entries`, `coach_messages`, `restaurants`
-- [ ] RLS policies per table
-- [ ] Offline behavior per Gap #11
+**Gate to leave Phase 0.5:** Max signs off on all mockups. They become the locked spec for everything that follows.
 
-**Gate:** End-to-end critical path runs on a real device — sign up → onboard → log meal → see verdict → ask coach → get proactive nudge → check progress.
+---
 
-### Phase 4 — Quality *(Chapters 14–16, 19)*
+### Phase 0.6 — Interactive Prototype
+
+**Goal:** click through the entire FuelWell app on laptop or iPad as if it were real. Find UX problems while fixes are still cheap.
+
+- Wire the approved mockups together into a clickable flow in Claude Design
+- Every button in the prototype links to where it should go
+- Generate a shareable URL
+- Robert and Max click through every screen, every flow, every button
+- Share with 2–5 trusted people (pilot candidates, Max's network) for outside feedback
+- Collect notes, fix issues, iterate
+- Final lock — no more visual changes after this without a written decision in `decisions.md`
+
+**Gate to leave Phase 0.6:** the prototype works end-to-end and Max + Robert + 2–5 outside testers have given thumbs up.
+
+---
+
+### Phase 1 — Foundations *(iOS Guide Chapters 1–3, 5)*
+
+**Goal:** Xcode project running on Robert's Mac with all tooling wired up. No features yet, just plumbing.
+
+- Create the `ios/` folder in the repo
+- New Xcode project, Swift 6, iOS 17 deployment target, iOS 18 SDK
+- Turn on Strict Concurrency (Complete) and ExistentialAny
+- Move `CLAUDE.md` to `docs/CLAUDE.md` (where Claude Code actually looks)
+- Install Claude Code on the MacBook via Node.js
+- Verify Claude Code reads the project ("ask: what's the deployment target?")
+- Install Sentry MCP server with placeholder token
+- Build the four foundational SPM packages: Core, DesignSystem, Networking, Persistence
+- Generate `Theme.swift` from the locked DESIGN.md (CI check for drift)
+- Configure SwiftLint in strict mode
+- Run an empty test suite to verify the pipeline works
+
+**Gate:** `xcodebuild test` returns green. Empty TCA app launches in the simulator showing a themed splash screen.
+
+---
+
+### Phase 2 — Architecture *(iOS Guide Chapters 4, 6, 8, 13)*
+
+**Goal:** every infrastructure piece exists in its own package with a real implementation, a test stub, and a preview stub. The app shell exists but is empty.
+
+- Build the rest of the infrastructure packages: AnthropicClient (with kill-switch), SupabaseClient, HealthKitClient (read-only first), Analytics (PostHog), CrashReporting (Sentry)
+- Build the `AppFeature` root reducer (TCA)
+- Build the `AppCoordinator` for stack-based navigation (TCACoordinators)
+- Configure Supabase database schema: users, profiles, meals, foods, recipes, grocery_items, progress_entries, coach_messages, restaurants
+- Set up row-level security (RLS) so users can only see their own data
+- Wire SQLiteData with CloudKit sync
+- Set up HealthKit read scope per Gap #9
+- Set up the kill-switch infrastructure (Supabase `feature_flags` table + 30-second client cache)
+- Every package has a `liveValue`, `testValue`, and `previewValue`
+- All packages have at least one passing test
+
+**Gate:** every infrastructure piece is independently testable. The app can read/write to the database, talk to Anthropic, and authenticate users — all through clean interfaces.
+
+---
+
+### Phase 3 — Craft *(iOS Guide Chapters 7, 9–12)*
+
+**Goal:** implement every feature in the locked MVP scope against the approved Phase 0.5/0.6 mockups.
+
+For each MVP feature:
+
+- **Macro Tracking** (Screens 15, 16, 17) — Dashboard + Meal Log + Food Search
+- **AI Coaching Chat** (Screen 18) — context memory, quick-reply chips
+- **Proactive Coaching** (Screen 24) — push notifications triggered by user state
+- **Restaurant Guidance** — per Gap Analysis resolution
+- **Recipe Suggestions** (Screen 19) — "use remaining macros" filter
+- **Grocery Lists** (Screen 26) — generated from recipes
+- **Progress Tracking** (Screen 20) — interpretation, not raw charts
+
+Plus connective tissue:
+- Onboarding flow (per intake form Max designed)
+- Profile / "Your Plan" screen (Screen 21) with "why this plan" explanations
+- Authentication (sign up, sign in, session management)
+- Empty states, error states, offline states across every screen
+- Pilot plan flag (no tier gating — everyone sees everything)
+
+Every feature ships only when:
+- It answers "what should I do next?" before showing data
+- It has reducer tests proving the state transitions are correct
+- It has at least one snapshot test
+- It implements the approved mockup faithfully
+
+**Gate:** end-to-end critical path runs on a real iPhone — sign up → onboard → log meal → see verdict → ask coach → get proactive nudge → check progress.
+
+---
+
+### Phase 4 — Quality *(iOS Guide Chapters 14–16, 19)*
 
 **Goal:** the app meets the production bar before submission.
 
-- [ ] Reducer tests (`TestStore`) for all 7 features
-- [ ] Snapshot tests for the Component Gallery and key screens
-- [ ] Critical-path XCUITest: onboarding → log meal → see progress
-- [ ] Accessibility pass — VoiceOver, Dynamic Type, contrast — DESIGN.md WCAG linter green
-- [ ] Performance budgets — cold launch < 400ms, 60fps scrolling — verified via OSSignposter
-- [ ] AI cost monitoring dashboard with per-user cap per Gap #12
-- [ ] `PrivacyInfo.xcprivacy` declares all collected data types
-- [ ] All `NS*UsageDescription` strings name the data, the use, and the protections
-- [ ] Kill-switch drill: disable AI feature from Supabase SQL console, verify app respects it within 30 seconds
+- Reducer tests for every feature
+- Snapshot tests for every screen in the Component Gallery
+- Critical-path XCUITests (full user flows)
+- Accessibility pass — VoiceOver, Dynamic Type, contrast (WCAG AA)
+- Performance budgets verified — cold launch under 400ms, scrolling stays at 60fps
+- AI cost monitoring dashboard with per-user spending cap
+- `PrivacyInfo.xcprivacy` declares every data type collected
+- All `NS*UsageDescription` strings name the data, the use, and the protections
+- Kill-switch drill: disable an AI feature from a SQL console, verify the app respects it within 30 seconds
 
-**Gate:** Five-check lint contract green, all tests pass, performance budgets met, kill-switch verified.
+**Gate:** all tests green, performance budgets met, kill-switch verified.
 
-### Phase 5 — Ship *(Chapters 17–19)*
+---
+
+### Phase 5 — Ship *(iOS Guide Chapters 17–19)*
 
 **Goal:** TestFlight build in pilot users' hands.
 
-- [ ] GitHub Actions workflow on macos-15 with Fastlane lanes (`test`, `beta`, `release`)
-- [ ] Fastlane `match` for code signing, App Store Connect API key auth
-- [ ] CI gates: `scripts/check-feature-imports.sh`, DESIGN.md ↔ Theme drift, SwiftLint `--strict`, all tests, snapshot tests
-- [ ] Sentry release tagging in `release` lane
-- [ ] PostHog event taxonomy committed and enforced in code (Chapter 18)
-- [ ] App Store Connect record created with privacy answers, NS strings, and screenshots (Chapter 19)
-- [ ] First TestFlight build uploaded
-- [ ] 30 pilot users invited (list pulled from Founders 100 signups via Supabase)
-- [ ] Internal feedback channel (Linear or email)
-- [ ] Phased rollout enabled
+- GitHub Actions CI/CD pipeline on macos-15 runners
+- Fastlane lanes (`test`, `beta`, `release`)
+- Fastlane `match` for code signing certificates
+- CI gates: import boundaries, DESIGN.md ↔ Theme drift, SwiftLint, tests, snapshots
+- Sentry release tagging in the `release` lane
+- PostHog event taxonomy enforced in code
+- App Store Connect record created
+- App Store screenshots generated via ChatGPT Images 2.0 (English first; multilingual if applicable)
+- Privacy answers completed
+- First TestFlight build uploaded
+- 30 pilot users invited from the Founders 100 signup list
+- In-app feedback channel
+- Phased rollout enabled
 
-**Gate:** Pilot users can install, sign in, and use all 7 features without crashes.
+**Gate:** pilot users can install, sign in, and use all features without crashes.
 
-### Phase 6 — Operate *(Chapter 20)*
+---
 
-**Goal:** the team can respond to incidents, ship updates, and learn from real usage.
+### Phase 6 — Operate *(iOS Guide Chapter 20)*
 
-- [ ] Sentry alert routing + response runbook populated
-- [ ] Kill-switch drill scheduled monthly
-- [ ] Crash-free session rate target ≥ 99.5%, alerted if it drops
-- [ ] PostHog dashboards for the seven features' decision-engine engagement (did the user act on the recommendation?)
-- [ ] Weekly pilot triage cadence
-- [ ] App Review rejection response runbook
-- [ ] Production database access procedure documented
+**Goal:** Robert and Max can respond to incidents, ship updates, and learn from real usage.
 
-**Gate:** First pilot week completes without an incident the runbook can't handle.
+- Sentry alert routing and incident response runbook
+- Monthly kill-switch drill scheduled and documented
+- Crash-free session rate target ≥ 99.5% with alerting
+- PostHog dashboards tracking "decision-engine engagement" — did users follow the coach's recommendation?
+- Weekly pilot feedback triage cadence
+- App Review rejection response runbook
+- Production database access procedure documented
 
-### Phase 7 — Founding 100 hardening
+**Gate:** the first pilot week completes without an incident the runbook can't handle.
 
-**Goal:** the app is ready for paying customers and the App Store public listing.
+---
 
-- [ ] Triage pilot feedback, fix top issues
-- [ ] Tier gating introduced (Pro vs Premium) per `FuelWell_Master_v2`
-- [ ] Stripe or RevenueCat for subscriptions, server-side validation
-- [ ] Founders 100 lifetime pricing wired in (hard cap of 100)
-- [ ] Web ↔ app account linkage — signups from `src/app/signup` and `src/app/founders-100` land in the same Supabase user table the app reads
-- [ ] App Store screenshots generated via ChatGPT Images 2.0 (multilingual where relevant)
-- [ ] Figma for Agents MCP installed if screenshot work demands it (per Reconciliation Matrix row 16)
-- [ ] App Store submission, phased rollout configured
+### Phase 7 — Founding 100 Hardening
+
+**Goal:** the app is ready for paying customers and public App Store launch.
+
+- Triage pilot feedback, fix top issues
+- Introduce tier gating: Pro vs Premium per Master_v2's feature matrix
+- Stripe or RevenueCat integration for subscriptions
+- Server-side subscription validation
+- Founders 100 lifetime pricing wired in with the hard cap of 100
+- Web ↔ app account linkage — signups from the marketing site land in the same Supabase user table the app reads
+- Multilingual App Store screenshots if launching outside English markets
+- Figma for Agents MCP installed if the screenshot work demands it
+- App Store submission for public launch, phased rollout configured
 
 **Gate:** Founding 100 cohort can sign up, pay, and use the app without contacting support.
+
+---
+
+## What's deliberately out of scope for v1
+
+- Multi-language support (English only at Pilot; multilingual screenshots only for App Store submission per Phase 7)
+- Workout module (deferred until tier gating in Phase 7; per Master_v2 it's a Premium feature) — *subject to scope-delta S1 resolution*
+- Trainer compatibility (per Gap Analysis resolution)
+- Apple Watch app
+- Android
+- Web app version of the product
 
 ---
 
@@ -229,46 +372,21 @@ Phases are sequential. **No phase begins until the previous phase's gates are gr
 These apply across every phase.
 
 ### Branch and PR workflow
-Per `AGENTS.md`: never commit to `main`, every change is a PR, post-commit hook auto-pushes feature branches. Pre-commit hook enforces locally; branch protection enforces remotely.
+Per `AGENTS.md`: never commit to `main`, every change is a PR, post-commit hook auto-pushes feature branches.
 
 ### Multi-device development
 Robert may pick up work from MacBook (Xcode required for iOS builds) or iPad (Claude Code on the web at claude.ai/code, or `@claude` mentions in GitHub PRs). Always pull `main` before resuming on a different device.
 
 ### Decision discipline
-Every deviation from the Consensus Stack or Reconciliation Matrix gets an entry in `docs/ios-guide/decisions.md` with a date and reason. Temporary deviations include a sunset date. Permanent deviations also update the matrix row.
-
-### AI design loop
-1. Open DESIGN.md.
-2. Generate the screen with Claude Design (three variations).
-3. Pick a variation; if it needs non-UI assets (illustrations, hero graphics), generate them with ChatGPT Images 2.0.
-4. Hand off to Claude Code with the chapter reference: *"Implement `AddMealFeature` reducer following Chapter 9 patterns, view following Chapter 7."*
-5. Claude Code reads `ios/docs/CLAUDE.md` first and produces code that respects the conventions.
+Every deviation from the Consensus Stack or Reconciliation Matrix gets an entry in `docs/ios-guide/decisions.md` with a date and reason. Temporary deviations include a sunset date.
 
 ### Kill-switch first
-Any AI-touching feature ships with its kill-switch wired *before* the feature is enabled in TestFlight. The order is: kill-switch → feature → rollout. Never the other way.
+Any AI-touching feature ships with its kill-switch wired *before* the feature is enabled in TestFlight.
 
 ---
 
-## What's deliberately out of scope for v1
+## Open questions tracked
 
-- Multi-language support (English only at Pilot; multilingual screenshots only for App Store submission per Phase 7)
-- Workout module (deferred until tier gating in Phase 7; per Master_v2 it's a Premium feature)
-- Trainer compatibility (per Gap #4 resolution)
-- Recomposition timeline as a full feature (per Gap #5 resolution)
-- Apple Watch app
-- Android
-- Web app version of the product (the marketing site stays as marketing only)
-
----
-
-## What we still don't know
-
-The plan is intentionally honest about its blind spots. These are the questions that haven't been answered yet, in order of how much they could move the plan:
-
-1. **Inspiration Guide details.** I have a one-paragraph summary of the decision-engine framing. The full guide (just added) will be re-read at Phase 0 and may add or replace principles in `ios/PRINCIPLES.md`.
-2. **Gap Analysis answers.** All 12 rows are open. Each answer locks a feature shape in Phase 3.
-3. **Anthropic vs OpenAI for the coaching model.** Consensus Stack says Anthropic. Gap #12 lets Robert + Max confirm.
-4. **HealthKit write-back vs read-only.** Gap #9.
-5. **Apple Sign-In requirement.** Apple may require it for an app that has another social/email auth; Gap #10.
-
-Update this section as questions get answered or new ones surface.
+- 12 Gap Analysis rows in `docs/FuelWell-Gap-Analysis.md` — partially resolved by Master_v2; remaining items pending Max review
+- 8 scope deltas (S1–S8) added during context digestion — pending Max review
+- DESIGN.md content — Robert generated via Claude Design; pending location confirmation so it can be promoted to canonical

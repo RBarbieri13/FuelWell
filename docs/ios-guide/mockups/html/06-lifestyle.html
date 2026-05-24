@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>FuelWell · M06 Onboarding — Lifestyle · Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-base: #F4F5F7;
+    --bg-surface: #FFFFFF;
+    --bg-elevated: #0F1117;
+    --bg-border: #E5E7EB;
+    --bg-border-soft: #EEF0F3;
+
+    --text-primary: #0A0A0F;
+    --text-body: #1F2937;
+    --text-secondary: #6B7280;
+    --text-muted: #9CA3AF;
+    --text-disabled: #C7CCD3;
+    --text-on-dark: #FFFFFF;
+
+    --brand-green: #47E7B0;
+    --action-green: #00D278;
+    --primary-orange: #E87A1D;
+
+    --semantic-success: #00D278;
+    --semantic-info: #00B4D8;
+
+    --gradient-brand: linear-gradient(135deg, #00D278 0%, #47E7B0 100%);
+
+    --radius-sm: 6px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+    --radius-pill: 999px;
+
+    --elev-1: 0 1px 2px rgba(15,17,23,.04), 0 1px 0 rgba(15,17,23,.02);
+    --elev-2: 0 4px 14px rgba(15,17,23,.06), 0 1px 2px rgba(15,17,23,.04);
+    --elev-cta: 0 10px 28px rgba(0,210,120,.28), 0 2px 6px rgba(0,210,120,.18);
+
+    --font-display: 'Outfit', system-ui, -apple-system, sans-serif;
+    --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-system: -apple-system, 'SF Pro Display', system-ui, sans-serif;
+    --font-numeric: 'DM Sans', 'Inter', sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: #ECEDF0;
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    padding: 56px 48px 96px;
+    min-width: 1380px;
+  }
+
+  .doc-header {
+    max-width: 1320px; margin: 0 auto 48px;
+    display: flex; align-items: flex-end; justify-content: space-between;
+    gap: 32px;
+    border-bottom: 1px solid #D6D8DD;
+    padding-bottom: 24px;
+  }
+  .doc-eyebrow {
+    font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--text-muted); margin: 0 0 8px; font-weight: 600;
+  }
+  .doc-title {
+    font-family: var(--font-display);
+    font-size: 28px; font-weight: 700;
+    margin: 0; color: var(--text-primary); letter-spacing: -0.018em;
+  }
+  .doc-sub {
+    font-size: 13px; color: var(--text-secondary);
+    margin: 8px 0 0; max-width: 760px; line-height: 1.55;
+  }
+  .doc-meta {
+    font-family: var(--font-numeric);
+    font-size: 11px; color: var(--text-muted);
+    text-align: right; letter-spacing: 0.04em; line-height: 1.7;
+  }
+
+  .frames-row { display: flex; gap: 64px; justify-content: center; align-items: flex-start; }
+  .variation { display: flex; flex-direction: column; align-items: center; width: 393px; }
+  .v-label { margin-bottom: 18px; text-align: center; width: 100%; }
+  .v-num { font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-muted); font-weight: 600; }
+  .v-name { font-family: var(--font-display); font-size: 16px; font-weight: 600; color: var(--text-primary); margin-top: 4px; letter-spacing: -0.005em; }
+  .v-cap { font-size: 12px; color: var(--text-secondary); margin-top: 4px; line-height: 1.45; max-width: 340px; }
+
+  .device {
+    position: relative;
+    width: 393px; height: 852px;
+    background: var(--bg-base);
+    border-radius: 56px;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 12px #0A0A0F, 0 0 0 13px #2A2A30,
+      0 30px 80px rgba(15,17,23,.28), 0 12px 32px rgba(15,17,23,.16);
+  }
+  .status-bar {
+    position: absolute; top: 0; left: 0; right: 0; height: 54px;
+    display: flex; align-items: flex-end; justify-content: space-between;
+    padding: 0 28px 9px; z-index: 10; pointer-events: none;
+  }
+  .status-bar .time { font-family: var(--font-system); font-size: 17px; font-weight: 600; color: var(--text-primary); letter-spacing: -0.01em; }
+  .status-bar .signals { display: inline-flex; gap: 6px; align-items: center; }
+  .signal-bat { display: inline-block; width: 26px; height: 12px; border: 1.2px solid var(--text-primary); border-radius: 3px; position: relative; }
+  .signal-bat::after { content: ""; position: absolute; right: -3px; top: 3px; width: 2px; height: 5px; background: var(--text-primary); border-radius: 0 1.5px 1.5px 0; }
+  .signal-bat::before { content: ""; position: absolute; left: 1px; top: 1px; bottom: 1px; width: 78%; background: var(--text-primary); border-radius: 1.5px; }
+  .dynamic-island { position: absolute; top: 11px; left: 50%; transform: translateX(-50%); width: 124px; height: 36px; background: #0A0A0F; border-radius: 22px; }
+  .home-indicator { position: absolute; bottom: 9px; left: 50%; transform: translateX(-50%); width: 134px; height: 5px; background: var(--text-primary); border-radius: 3px; opacity: 0.7; z-index: 10; }
+
+  .screen {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    padding: 54px 0 0;
+    display: flex; flex-direction: column;
+  }
+  .nav {
+    height: 44px;
+    display: grid;
+    grid-template-columns: 56px 1fr 56px;
+    align-items: center;
+    padding: 4px 8px 0;
+  }
+  .nav-back { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; color: var(--text-primary); margin-left: 8px; cursor: pointer; }
+  .progress { display: flex; gap: 6px; justify-content: center; align-items: center; }
+  .progress .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text-disabled); }
+  .progress .dot.on { background: var(--text-primary); }
+
+  .title-block { padding: 24px 24px 28px; }
+  .title-h1 {
+    font-family: var(--font-display);
+    font-size: 28px; font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.022em;
+    color: var(--text-primary);
+    margin: 0;
+  }
+  .title-sub {
+    margin-top: 8px;
+    font-family: var(--font-body);
+    font-size: 16px; font-weight: 400;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    letter-spacing: -0.003em;
+  }
+
+  /* Lifestyle cards — chrome matches Goal selection */
+  .opt-stack {
+    padding: 0 16px;
+    display: flex; flex-direction: column;
+    gap: 12px;
+  }
+  .opt-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--elev-1);
+    padding: 16px;
+    display: flex; align-items: center; gap: 14px;
+    cursor: pointer;
+    position: relative;
+  }
+  .opt-card.selected {
+    border: 1.5px solid var(--semantic-success);
+    background: rgba(0,210,120,0.05);
+    box-shadow: 0 1px 2px rgba(0,210,120,.10), 0 1px 0 rgba(15,17,23,.02);
+    padding: 15.5px;
+  }
+  .opt-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .opt-icon.home    { background: rgba(0, 210, 120, 0.10); color: var(--semantic-success); }
+  .opt-icon.dineout { background: rgba(232, 122, 29, 0.10); color: var(--primary-orange); }
+  .opt-icon.mix     { background: rgba(0, 180, 216, 0.10); color: var(--semantic-info); }
+
+  .opt-body { flex: 1; min-width: 0; }
+  .opt-title {
+    font-family: var(--font-body);
+    font-size: 18px; font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+  }
+  .opt-desc {
+    margin-top: 2px;
+    font-family: var(--font-body);
+    font-size: 14px; font-weight: 400;
+    color: var(--text-secondary);
+    line-height: 1.4;
+    letter-spacing: -0.002em;
+  }
+  .opt-helper {
+    flex-basis: 100%;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid var(--bg-border-soft, #EEF0F3);
+    font-family: var(--font-body);
+    font-size: 13px; font-weight: 400;
+    color: var(--text-secondary);
+    line-height: 1.45;
+    letter-spacing: -0.002em;
+    display: none;
+  }
+  .opt-card.expanded { flex-wrap: wrap; align-items: flex-start; }
+  .opt-card.expanded .opt-helper { display: block; }
+  .radio {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: 1.5px solid #D1D5DB;
+    background: var(--bg-surface);
+    flex-shrink: 0;
+    position: relative;
+  }
+  .radio.on { border: 1.5px solid var(--semantic-success); }
+  .radio.on::after {
+    content: ""; position: absolute; inset: 3px;
+    border-radius: 50%; background: var(--semantic-success);
+  }
+
+  .helper {
+    padding: 22px 24px 0;
+    font-family: var(--font-body);
+    font-size: 12px; font-weight: 400;
+    line-height: 1.5;
+    color: var(--text-muted);
+    display: flex; align-items: flex-start; gap: 8px;
+  }
+  .helper .ico {
+    flex-shrink: 0;
+    margin-top: 1px;
+    color: var(--semantic-info);
+  }
+  .helper .ico.success { color: var(--semantic-success); }
+  .helper .ico.orange { color: var(--primary-orange); }
+
+  .cta-dock {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    padding: 16px 24px 34px;
+    background: linear-gradient(180deg, rgba(244,245,247,0) 0%, var(--bg-base) 24%);
+  }
+  .btn-primary {
+    width: 100%; height: 48px;
+    border-radius: var(--radius-md);
+    border: 0;
+    font-family: var(--font-body);
+    font-size: 17px; font-weight: 600;
+    letter-spacing: -0.005em;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+  }
+  .btn-primary.disabled {
+    background: var(--text-primary);
+    color: var(--text-on-dark);
+    opacity: 0.42;
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+  .btn-primary.enabled {
+    background: var(--gradient-brand);
+    color: var(--text-on-dark);
+    box-shadow: var(--elev-cta);
+  }
+
+  .legend {
+    max-width: 1320px;
+    margin: 56px auto 0;
+    padding: 22px 26px;
+    background: #FFFFFF;
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-lg);
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 14px 28px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.55;
+  }
+  .legend h3 {
+    grid-column: 1 / -1;
+    margin: 0 0 6px;
+    font-family: var(--font-display);
+    font-size: 12px; font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.18em; text-transform: uppercase;
+  }
+  .legend dt {
+    grid-column: 1;
+    font-size: 11px; font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .legend dd { grid-column: 2; margin: 0; }
+  .legend code {
+    background: #F4F5F7;
+    border: 1px solid var(--bg-border);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: var(--font-numeric);
+    font-size: 11px;
+    color: var(--text-primary);
+  }
+</style>
+</head>
+<body>
+
+  <header class="doc-header">
+    <div>
+      <p class="doc-eyebrow">FuelWell · Phase 0.5 · Step 4 — Mockups</p>
+      <h1 class="doc-title">M06 Onboarding — Lifestyle</h1>
+      <p class="doc-sub">Promoted from approved wireframe § 3.6 V1 (stacked cards, icon left). Same card chrome as Goal selection — radius.lg, 1pt hairline, elevation.1; selected state picks up the semantic-success border and a 5% on-track tint. Three state variations: empty default, "Cook at home mostly" selected, "Both equally" selected.</p>
+    </div>
+    <div class="doc-meta">
+      iPhone 15 Pro · 393 × 852 pt<br>
+      Light · <code>color.bg.base #F4F5F7</code><br>
+      Progress · 6 of 9
+    </div>
+  </header>
+
+  <div class="frames-row" id="frames"></div>
+
+  <section class="legend">
+    <h3>Mockup notes · Step 4</h3>
+
+    <dt>Progress dots</dt>
+    <dd>Six of nine filled — <code>color.text.primary</code> for filled, <code>color.text.disabled</code> for empty. Centered in the 44pt nav row.</dd>
+
+    <dt>Title block</dt>
+    <dd>"How do you usually eat?" in <strong>Outfit 700</strong> 28pt, -0.022em. Subtitle: "We'll tailor your suggestions." — single sentence, plain promise, no hedging.</dd>
+
+    <dt>Cards · default</dt>
+    <dd>White <code>color.bg.surface</code>, 1pt <code>color.bg.border</code> hairline, <code>radius.lg</code> 20pt, <code>elevation.1</code>. Padding 16pt. Title <strong>Inter 600</strong> 18pt, description <strong>Inter 400</strong> 14pt at <code>color.text.secondary</code>. 22pt empty radio on the right.</dd>
+
+    <dt>Cards · selected</dt>
+    <dd>1.5pt <code>color.semantic.success</code> border + 5% tinted background <code>rgba(0,210,120,.05)</code>. Radio fills with the success green. Same chrome as M03 — selection is unambiguous and reads as a positive commit.</dd>
+
+    <dt>Icon squares</dt>
+    <dd>40pt rounded squares (<code>radius.md</code> minus 2pt) holding the SF Symbol at full saturation. Background is the same hue at 10% alpha to keep the row weight balanced against the text column:
+      <br>· <code>house.fill</code> on <code>color.semantic.success</code> green — "Cook at home mostly"
+      <br>· <code>fork.knife</code> on <code>color.primary.orange</code> — "Eat out mostly"
+      <br>· <code>circle.grid.2x2.fill</code> on <code>color.semantic.info</code> blue — "Both equally"
+    </dd>
+
+    <dt>Descriptions</dt>
+    <dd>Each card carries one specific sentence about the engine bias — "Lean toward recipes when ranking meals.", "Lean toward restaurants when ranking meals.", "Balance recipes and restaurants evenly." Real copy, no banned vocabulary, ties the lifestyle choice to a concrete downstream effect.</dd>
+
+    <dt>Helper line</dt>
+    <dd>Below the stack: "You can change this any time in Settings." 12pt <code>color.text.muted</code> with a small SF <code>info.circle</code> leading glyph. Sets reversibility expectation without weakening the commit.</dd>
+
+    <dt>Continue · two states</dt>
+    <dd><strong>Disabled (V1):</strong> <code>color.text.primary</code> @ 0.42 opacity — affordance present, low gravity. <strong>Enabled (V2 / V3):</strong> <code>gradient.brand</code> with <code>elevation.cta</code> green halo. Same 48pt height, <code>radius.md</code> — only fill + shadow change.</dd>
+  </section>
+
+<script>
+  // Shared chrome
+  const island = `
+    <div class="status-bar">
+      <div class="time">9:41</div>
+      <div class="dynamic-island"></div>
+      <div class="signals">
+        <svg width="17" height="11" viewBox="0 0 17 11" fill="none">
+          <rect x="0" y="7" width="3" height="4" rx="0.5" fill="#0A0A0F"/>
+          <rect x="4" y="5" width="3" height="6" rx="0.5" fill="#0A0A0F"/>
+          <rect x="8" y="3" width="3" height="8" rx="0.5" fill="#0A0A0F"/>
+          <rect x="12" y="0" width="3" height="11" rx="0.5" fill="#0A0A0F"/>
+        </svg>
+        <svg width="16" height="11" viewBox="0 0 16 11" fill="none">
+          <path d="M8 11l-2.5-2.5a3.5 3.5 0 014.9 0L8 11z" fill="#0A0A0F"/>
+          <path d="M2 5a8.5 8.5 0 0112 0l-1.5 1.5a6 6 0 00-9 0L2 5z" fill="#0A0A0F"/>
+          <path d="M5 8a4.5 4.5 0 016 0l-1.5 1.5a2.5 2.5 0 00-3 0L5 8z" fill="#0A0A0F"/>
+        </svg>
+        <span class="signal-bat"></span>
+      </div>
+    </div>`;
+  const navBar = `
+    <div class="nav">
+      <div class="nav-back">
+        <svg width="11" height="20" viewBox="0 0 11 20" fill="none">
+          <path d="M9.5 1.5L2 10l7.5 8.5" stroke="#0A0A0F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="progress">
+        <span class="dot on"></span><span class="dot on"></span><span class="dot on"></span>
+        <span class="dot on"></span><span class="dot on"></span><span class="dot on"></span>
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+      </div>
+      <div></div>
+    </div>`;
+
+  // SF-Symbol-style glyphs (drawn close to SF rounded weight)
+  const icHome = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+    <path d="M3.5 11.2L12 4l8.5 7.2v8.3a1.5 1.5 0 0 1-1.5 1.5h-3.5v-6.2h-7V21H5a1.5 1.5 0 0 1-1.5-1.5v-8.3Z"
+      fill="currentColor"/>
+  </svg>`;
+  const icFork = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+    <path d="M7 3v6a2 2 0 0 0 2 2v10a1 1 0 1 0 2 0V11a2 2 0 0 0 2-2V3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M9 3v5M11 3v5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M18 3c-1.6 0-3 1.4-3 3.2v4.3c0 .6.4 1 1 1h1.5V21a1 1 0 1 0 2 0V3.2c0-.1-.6-.2-1.5-.2Z" fill="currentColor"/>
+  </svg>`;
+  const icGrid = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+    <rect x="3.5" y="3.5" width="7" height="7" rx="1.8" fill="currentColor"/>
+    <rect x="13.5" y="3.5" width="7" height="7" rx="1.8" fill="currentColor"/>
+    <rect x="3.5" y="13.5" width="7" height="7" rx="1.8" fill="currentColor"/>
+    <rect x="13.5" y="13.5" width="7" height="7" rx="1.8" fill="currentColor"/>
+  </svg>`;
+  const icInfo = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/>
+    <path d="M12 11v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="12" cy="7.5" r="1.25" fill="currentColor"/>
+  </svg>`;
+
+  // Option rows
+  function row(kind, glyph, title, desc, selected, expanded, helper) {
+    return `
+      <div class="opt-card${selected ? ' selected' : ''}${expanded ? ' expanded' : ''}">
+        <div class="opt-icon ${kind}">${glyph}</div>
+        <div class="opt-body">
+          <div class="opt-title">${title}</div>
+          <div class="opt-desc">${desc}</div>
+        </div>
+        <div class="radio${selected ? ' on' : ''}"></div>
+        ${expanded && helper ? `<div class="opt-helper">${helper}</div>` : ''}
+      </div>`;
+  }
+
+  const variations = [
+    {
+      num: 'Variation 01 · State',
+      name: 'Default · "Cook at home" expanded',
+      cap: 'First render. No option chosen yet; user tapped "Cook at home mostly" to see what it means. Helper text expands inline.',
+      sel: null, expanded: 'home', cta: 'disabled'
+    },
+    {
+      num: 'Variation 02 · State',
+      name: '"Cook at home mostly" selected',
+      cap: 'Recipe-biased lifestyle. Coach will lean toward home-cookable suggestions when the engine ranks meals.',
+      sel: 'home', cta: 'enabled'
+    },
+    {
+      num: 'Variation 03 · State',
+      name: '"Both equally" selected',
+      cap: 'Balanced ranking. Engine weights restaurants and recipes 50/50. Same chrome — only the success-border and radio fill move.',
+      sel: 'mix', cta: 'enabled'
+    }
+  ];
+
+  const root = document.getElementById('frames');
+  root.innerHTML = variations.map(v => `
+    <section class="variation">
+      <div class="v-label">
+        <div class="v-num">${v.num}</div>
+        <div class="v-name">${v.name}</div>
+        <div class="v-cap">${v.cap}</div>
+      </div>
+      <div class="device">
+        ${island}
+        <div class="screen">
+          ${navBar}
+          <div class="title-block">
+            <h1 class="title-h1">How do you usually eat?</h1>
+            <p class="title-sub">We'll tailor your suggestions.</p>
+          </div>
+          <div class="opt-stack">
+            ${row('home',    icHome, 'Cook at home mostly', 'Lean toward recipes when ranking meals.', v.sel === 'home', v.expanded === 'home', "You cook most of your meals. We'll rank recipes ahead of restaurants and keep grocery lists tight to what's already in your kitchen.")}
+            ${row('dineout', icFork, 'Eat out mostly',      'Lean toward restaurants when ranking meals.', v.sel === 'dineout', v.expanded === 'dineout', "You eat out most days. We'll surface restaurant guidance first and rank menus by what fits your macros — no surprise calorie bombs.")}
+            ${row('mix',     icGrid, 'Both equally',        'Balance recipes and restaurants evenly.', v.sel === 'mix', v.expanded === 'mix', "Half cooked, half eaten out. We'll mix recipes and restaurant picks 50/50 and adjust as we learn your real-world rhythm.")}
+          </div>
+          <div class="helper">
+            <span class="ico">${icInfo}</span>
+            <span>You can change this any time in Settings.</span>
+          </div>
+          <div class="cta-dock">
+            <button class="btn-primary ${v.cta}">Continue</button>
+          </div>
+        </div>
+        <div class="home-indicator"></div>
+      </div>
+    </section>
+  `).join('');
+</script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+name: iOS CI
+
+on:
+  pull_request:
+    paths:
+      - "ios/**"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: ios
+
+jobs:
+  test:
+    name: Build and Test
+    runs-on: macos-15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode 26
+        run: |
+          if [ -d /Applications/Xcode_26.app ]; then
+            sudo xcode-select -s /Applications/Xcode_26.app
+          else
+            sudo xcode-select -s /Applications/Xcode.app
+          fi
+          xcodebuild -version
+
+      - name: Run unit tests
+        run: |
+          xcodebuild test \
+            -scheme FuelWellApp \
+            -destination 'platform=iOS Simulator,name=iPhone 15'
+
+  lint:
+    name: Lint and Architecture
+    runs-on: macos-15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode 26
+        run: |
+          if [ -d /Applications/Xcode_26.app ]; then
+            sudo xcode-select -s /Applications/Xcode_26.app
+          else
+            sudo xcode-select -s /Applications/Xcode.app
+          fi
+          xcodebuild -version
+
+      - name: Install SwiftLint
+        run: brew install swiftlint
+
+      - name: SwiftLint strict
+        run: swiftlint --strict --config .swiftlint.yml
+
+      - name: Check feature import direction
+        run: scripts/check-feature-imports.sh
+
+      - name: Check theme drift
+        run: scripts/check-theme-drift.sh
+
+  snapshots:
+    name: Snapshot Tests
+    runs-on: macos-15
+    env:
+      SNAPSHOT_RECORD: "false"
+      RECORD_SNAPSHOTS: "false"
+      POINTFREE_SNAPSHOT_RECORD: "false"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode 26
+        run: |
+          if [ -d /Applications/Xcode_26.app ]; then
+            sudo xcode-select -s /Applications/Xcode_26.app
+          else
+            sudo xcode-select -s /Applications/Xcode.app
+          fi
+          xcodebuild -version
+
+      - name: Run snapshot tests with recording off
+        run: |
+          xcodebuild test \
+            -scheme FuelWellApp \
+            -destination 'platform=iOS Simulator,name=iPhone 15' \
+            -only-testing:DesignSystemTests

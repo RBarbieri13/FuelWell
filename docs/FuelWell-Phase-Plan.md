@@ -6,11 +6,27 @@ Sequential reference checklist. No fixed dates. Everyone on a single pilot plan;
 
 From the Inspiration Guide (CTO version): every screen answers **"what should I do right now?"** before it shows data. FuelWell is a real-time decision system, not a tracker. If a screen only shows numbers, it is wrong.
 
-## Phase 0 — Pre-build alignment
-- [ ] Resolve all 12 gap-analysis items with Max
-- [ ] Re-read Inspiration Guide (CTO version); extract decision-engine principles into `ios/PRINCIPLES.md`
-- [ ] Lock the 7-feature MVP scope in writing; freeze additions until pilot ships
-- [ ] Decide repo layout (`/` Next.js stays, `/ios` for Xcode project)
+## Phase 0 — Pre-build alignment ✅ Complete (2026-05-13)
+- [x] Resolve all 12 gap-analysis items with Max → see `FuelWell-Gap-Analysis.md`
+- [x] Re-read Inspiration Guide (CTO version); extract decision-engine principles into `ios/PRINCIPLES.md`
+- [x] Lock Pilot scope in writing; freeze additions until pilot ships (note: scope grew beyond original 7 features — see gap analysis)
+- [x] Decide repo layout (`/` Next.js stays, `/ios` for Xcode project)
+
+## Phase 0.5 — Visual Design 🟡 In progress
+- [x] Step 1: App Map (17 top-level screens, 9 onboarding) — Max approved 2026-05-13, expanded 2026-05-14
+- [x] Step 2: Flow Chart — incorporates Max's review + scope expansion
+- [x] Step 3a: Wireframe prompts ready (`WIREFRAME-PROMPTS.md`, 28 prompts)
+- [ ] Step 3b: Generate the 28 wireframes in Claude Design — 0/28 done
+- [ ] Step 3c: Max signs off on each variation; saved to `docs/ios-guide/wireframes/`
+- [x] Canonical DESIGN.md promoted (2026-05-14)
+- [x] Dashboard mockup reference v3 built in canonical light theme
+- [ ] Step 4: Generate the remaining 16 high-fidelity mockups in Claude Design
+- [ ] Max sign-off on all mockups → locked spec for Phase 1
+
+## Phase 0.6 — Interactive Prototype ⏸ Not started
+- [ ] Wire approved mockups into a clickable flow in Claude Design
+- [ ] Share URL with Robert + Max + 2–5 outside testers
+- [ ] Iterate based on feedback; final lock
 
 ## Phase 1 — Foundations
 - [ ] Xcode project, Swift 6, SPM module structure

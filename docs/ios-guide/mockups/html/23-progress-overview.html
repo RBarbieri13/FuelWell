@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>FuelWell · M23 Progress overview · Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-base:#F4F5F7; --bg-surface:#FFFFFF; --bg-elevated:#0F1117;
+    --bg-border:#E5E7EB; --bg-border-soft:#EEF0F3; --bg-border-dark:#2A2A3A;
+    --text-primary:#0A0A0F; --text-body:#1F2937; --text-secondary:#6B7280;
+    --text-muted:#9CA3AF; --text-disabled:#C7CCD3; --text-on-dark:#FFFFFF; --text-on-dark-muted:#9AA0AC;
+    --brand-green:#47E7B0; --semantic-success:#00D278; --semantic-warning:#F59E0B; --semantic-info:#00B4D8; --semantic-premium:#A855F7; --semantic-error:#EF4444;
+    --macro-protein:#00D278; --macro-carbs:#F59E0B; --macro-fat:#A855F7;
+    --gradient-brand: linear-gradient(135deg, #00D278 0%, #47E7B0 100%);
+    --radius-md:12px; --radius-lg:20px; --radius-pill:999px;
+    --elev-1: 0 1px 2px rgba(15,17,23,.04), 0 1px 0 rgba(15,17,23,.02);
+    --elev-2: 0 4px 14px rgba(15,17,23,.06), 0 1px 2px rgba(15,17,23,.04);
+    --elev-cta: 0 8px 24px rgba(0,210,120,.22);
+    --font-display:'Outfit', system-ui, sans-serif;
+    --font-body:'Inter', system-ui, sans-serif;
+    --font-system: -apple-system, 'SF Pro Display', system-ui, sans-serif;
+    --font-numeric:'DM Sans', 'Inter', sans-serif;
+  }
+  *{box-sizing:border-box;} html,body{margin:0;padding:0;}
+  body{background:#ECEDF0;color:var(--text-primary);font-family:var(--font-body);padding:56px 48px 96px;min-width:1380px;}
+  .doc-header{max-width:1320px;margin:0 auto 48px;display:flex;align-items:flex-end;justify-content:space-between;gap:32px;border-bottom:1px solid #D6D8DD;padding-bottom:24px;}
+  .doc-eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--text-muted);margin:0 0 8px;font-weight:600;}
+  .doc-title{font-family:var(--font-display);font-size:28px;font-weight:700;margin:0;letter-spacing:-.018em;}
+  .doc-sub{font-size:13px;color:var(--text-secondary);margin:8px 0 0;max-width:760px;line-height:1.55;}
+  .doc-meta{font-family:var(--font-numeric);font-size:11px;color:var(--text-muted);text-align:right;letter-spacing:.04em;line-height:1.7;}
+  .frames-row{display:flex;gap:64px;justify-content:center;align-items:flex-start;}
+  .variation{display:flex;flex-direction:column;align-items:center;width:393px;}
+  .v-label{margin-bottom:18px;text-align:center;width:100%;}
+  .v-num{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--text-muted);font-weight:600;}
+  .v-name{font-family:var(--font-display);font-size:16px;font-weight:600;color:var(--text-primary);margin-top:4px;}
+  .v-cap{font-size:12px;color:var(--text-secondary);margin-top:4px;line-height:1.45;max-width:340px;}
+  .device{position:relative;width:393px;height:852px;background:var(--bg-base);border-radius:56px;overflow:hidden;box-shadow:0 0 0 12px #0A0A0F,0 0 0 13px #2A2A30,0 30px 80px rgba(15,17,23,.28),0 12px 32px rgba(15,17,23,.16);}
+  .status-bar{position:absolute;top:0;left:0;right:0;height:54px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 28px 9px;z-index:30;}
+  .status-bar .time{font-family:var(--font-system);font-size:17px;font-weight:600;color:var(--text-primary);}
+  .status-bar .signals{display:inline-flex;gap:6px;align-items:center;}
+  .signal-bat{display:inline-block;width:26px;height:12px;border:1.2px solid var(--text-primary);border-radius:3px;position:relative;}
+  .signal-bat::after{content:"";position:absolute;right:-3px;top:3px;width:2px;height:5px;background:var(--text-primary);border-radius:0 1.5px 1.5px 0;}
+  .signal-bat::before{content:"";position:absolute;left:1px;top:1px;bottom:1px;width:78%;background:var(--text-primary);border-radius:1.5px;}
+  .dynamic-island{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:124px;height:36px;background:#0A0A0F;border-radius:22px;z-index:31;}
+  .home-indicator{position:absolute;bottom:9px;left:50%;transform:translateX(-50%);width:134px;height:5px;background:var(--text-primary);border-radius:3px;opacity:.7;z-index:32;}
+  .screen{position:absolute;top:0;left:0;right:0;bottom:0;padding:54px 0 0;display:flex;flex-direction:column;}
+
+  .top {
+    height: 56px;
+    display: grid; grid-template-columns: 56px 1fr 56px;
+    align-items: center;
+    padding: 4px 12px 0;
+    flex-shrink: 0;
+  }
+  .top .ttl {
+    text-align: center;
+    font-family: var(--font-display);
+    font-size: 20px; font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.018em;
+  }
+  .icon-btn{width:38px;height:38px;border-radius:50%;background:var(--bg-surface);border:1px solid var(--bg-border);display:flex;align-items:center;justify-content:center;color:var(--text-body);box-shadow:var(--elev-1);margin:0 auto;}
+
+  /* Range selector */
+  .range-row {
+    margin: 6px 16px 0;
+    display: flex;
+    background: var(--bg-border-soft);
+    border: 1px solid var(--bg-border);
+    border-radius: 12px;
+    padding: 3px;
+    height: 36px;
+    gap: 2px;
+    flex-shrink: 0;
+  }
+  .range-row .opt {
+    flex: 1;
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-body);
+    font-size: 12.5px; font-weight: 500;
+    color: var(--text-body);
+    letter-spacing: -0.003em;
+  }
+  .range-row .opt.active {
+    background: var(--bg-elevated);
+    color: var(--text-on-dark);
+    font-weight: 700;
+    box-shadow: 0 1px 2px rgba(15,17,23,.20);
+  }
+
+  .content { flex: 1; overflow: hidden; padding: 14px 16px 100px; display: flex; flex-direction: column; gap: 14px; }
+
+  /* Card */
+  .card {
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--elev-1);
+    padding: 14px 16px;
+  }
+  .card-head {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 8px;
+  }
+  .eyebrow {
+    font-family: var(--font-body);
+    font-size: 10.5px; font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 0.16em; text-transform: uppercase;
+  }
+  .add-mini {
+    height: 28px; padding: 0 10px;
+    border-radius: 999px;
+    background: var(--bg-base);
+    border: 1px solid var(--bg-border);
+    display: inline-flex; align-items: center; gap: 4px;
+    font-family: var(--font-body);
+    font-size: 11.5px; font-weight: 600;
+    color: var(--text-body);
+    letter-spacing: -0.003em;
+  }
+  .add-mini.pri { background: var(--gradient-brand); color: var(--text-on-dark); border-color: transparent; box-shadow: var(--elev-cta); }
+
+  /* Stat line */
+  .stat-row {
+    display: flex; align-items: baseline; gap: 8px;
+    margin-bottom: 10px;
+  }
+  .stat-num {
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 32px; font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.022em;
+    line-height: 1;
+  }
+  .stat-num .u {
+    font-family: var(--font-body);
+    font-size: 13px; font-weight: 600;
+    color: var(--text-secondary);
+    margin-left: 4px;
+    letter-spacing: 0.04em;
+  }
+  .delta-chip {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 12px; font-weight: 700;
+    letter-spacing: -0.003em;
+    background: rgba(0,210,120,0.10);
+    color: var(--semantic-success);
+    border: 1px solid rgba(0,210,120,0.32);
+  }
+  .delta-chip.warn { background: rgba(245,158,11,0.10); color: var(--semantic-warning); border-color: rgba(245,158,11,0.36); }
+  .delta-chip.neutral { background: var(--bg-base); color: var(--text-secondary); border-color: var(--bg-border); }
+
+  /* Line chart */
+  .chart {
+    height: 96px;
+    position: relative;
+    margin-top: 4px;
+  }
+  .chart svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  .chart .x-axis {
+    margin-top: 6px;
+    display: flex; justify-content: space-between;
+    font-family: var(--font-body);
+    font-size: 10px; color: var(--text-muted);
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+
+  /* Macro adherence card */
+  .adher-row {
+    display: grid; grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    margin-top: 6px;
+  }
+  .adher-col {
+    text-align: center;
+  }
+  .adher-col .dl { font-family: var(--font-body); font-size: 9px; font-weight: 700; color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; }
+  .adher-stack {
+    display: flex; flex-direction: column-reverse; gap: 2px;
+    height: 60px;
+    background: var(--bg-base);
+    border-radius: 8px;
+    overflow: hidden;
+    padding: 3px;
+  }
+  .adher-stack .seg { border-radius: 3px; }
+  .adher-stack .p { background: var(--macro-protein); }
+  .adher-stack .c { background: var(--macro-carbs); }
+  .adher-stack .f { background: var(--macro-fat); }
+  .adher-stack .miss { background: rgba(15,17,23,0.06); }
+  .adher-col .pct {
+    margin-top: 4px;
+    font-family: var(--font-numeric);
+    font-feature-settings: "tnum" 1;
+    font-size: 10.5px; font-weight: 700;
+    color: var(--text-primary);
+  }
+  .adher-col .pct.warn { color: var(--semantic-warning); }
+  .adher-col .pct.miss { color: var(--text-disabled); }
+
+  .leg-row {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--bg-border-soft);
+    display: flex; gap: 14px;
+    font-family: var(--font-body);
+    font-size: 11px; font-weight: 600;
+    color: var(--text-secondary);
+  }
+  .leg-row .l { display: flex; align-items: center; gap: 5px; }
+  .leg-row .l .sw { width: 8px; height: 8px; border-radius: 2px; }
+  .leg-row .l .v { font-family: var(--font-numeric); color: var(--text-primary); }
+
+  /* Photo strip */
+  .photo-strip {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 6px;
+  }
+  .photo-strip .tile {
+    aspect-ratio: 3 / 4;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--c1, #FCD34D), var(--c2, #F59E0B));
+    position: relative;
+    overflow: hidden;
+  }
+  .photo-strip .tile::before { content: ""; position: absolute; inset: 0; background: radial-gradient(40% 40% at 50% 50%, rgba(255,255,255,0.18) 0%, transparent 60%); }
+  .photo-strip .tile .lbl {
+    position: absolute; bottom: 6px; left: 6px;
+    padding: 2px 6px;
+    border-radius: 999px;
+    background: rgba(15,17,23,0.72);
+    color: var(--text-on-dark);
+    font-family: var(--font-numeric);
+    font-size: 9.5px; font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .photo-strip .tile.add {
+    background: transparent;
+    border: 1.5px dashed var(--bg-border);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-muted);
+  }
+  .photo-strip .tile.add::before { display: none; }
+  .photo-strip.long { grid-template-columns: repeat(4, 1fr); }
+
+  /* Measurements list */
+  .meas-list {
+    display: flex; flex-direction: column;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .meas {
+    display: grid; grid-template-columns: 1fr auto auto;
+    gap: 12px; align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--bg-border-soft);
+  }
+  .meas:last-child { border-bottom: 0; }
+  .meas .nm { font-family: var(--font-body); font-size: 13.5px; font-weight: 600; color: var(--text-primary); }
+  .meas .v { font-family: var(--font-numeric); font-feature-settings: "tnum" 1; font-size: 14px; font-weight: 700; color: var(--text-primary); }
+  .meas .v .u { font-family: var(--font-body); font-size: 11px; font-weight: 500; color: var(--text-muted); margin-left: 2px; }
+  .meas .arr {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-system);
+    font-size: 11px;
+  }
+  .meas .arr.down { background: rgba(0,210,120,0.12); color: var(--semantic-success); }
+  .meas .arr.up { background: rgba(245,158,11,0.14); color: var(--semantic-warning); }
+  .meas .arr.flat { background: var(--bg-base); color: var(--text-muted); }
+
+  /* Empty stage */
+  .empty-stage {
+    flex: 1;
+    overflow: hidden;
+    padding: 14px 16px 100px;
+    display: flex; flex-direction: column;
+    gap: 14px;
+  }
+  .promise-card {
+    background: var(--bg-elevated);
+    color: var(--text-on-dark);
+    border-radius: var(--radius-lg);
+    padding: 18px;
+    position: relative;
+    overflow: hidden;
+  }
+  .promise-card::before {
+    content: ""; position: absolute;
+    top: 0; right: 0; width: 60%; height: 100%;
+    background: radial-gradient(60% 60% at 80% 50%, rgba(71,231,176,0.24) 0%, transparent 60%);
+  }
+  .promise-card .lbl {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--font-body);
+    font-size: 10px; font-weight: 700;
+    color: var(--text-on-dark-muted);
+    letter-spacing: 0.20em; text-transform: uppercase;
+    position: relative; z-index: 1;
+  }
+  .promise-card .lbl .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--brand-green); box-shadow: 0 0 0 3px rgba(71,231,176,0.32); }
+  .promise-card .h {
+    margin-top: 10px;
+    font-family: var(--font-display);
+    font-size: 22px; font-weight: 700;
+    color: var(--text-on-dark);
+    line-height: 1.2;
+    letter-spacing: -0.018em;
+    position: relative; z-index: 1;
+  }
+  .promise-card .h .accent {
+    background: linear-gradient(90deg, #47E7B0, #00B4D8);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .promise-card .s {
+    margin-top: 6px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--text-on-dark-muted);
+    line-height: 1.5;
+    position: relative; z-index: 1;
+  }
+  .promise-card .actions {
+    margin-top: 14px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    position: relative; z-index: 1;
+  }
+  .promise-card .actions .a {
+    height: 40px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.10);
+    color: var(--text-on-dark);
+    border: 1px solid rgba(255,255,255,0.16);
+    display: flex; align-items: center; justify-content: center; gap: 4px;
+    font-family: var(--font-body);
+    font-size: 12px; font-weight: 700;
+  }
+  .promise-card .actions .a.primary { background: var(--gradient-brand); color: var(--text-on-dark); border-color: transparent; box-shadow: var(--elev-cta); }
+
+  .skel-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--elev-1);
+    padding: 14px 16px;
+    opacity: 0.6;
+  }
+
+  /* Tabbar */
+  .tabbar { position: absolute; left: 0; right: 0; bottom: 0; height: 88px; background: rgba(255,255,255,0.92); backdrop-filter: blur(18px); border-top: 1px solid var(--bg-border); display: grid; grid-template-columns: repeat(5, 1fr); padding: 8px 6px 30px; z-index: 22; }
+  .tab { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: var(--text-muted); position: relative; }
+  .tab.active { color: var(--text-primary); }
+  .tab-glyph { width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; }
+  .tab-label { font-family: var(--font-body); font-size: 10px; font-weight: 600; }
+  /* V2 raised-circle Coach FAB */
+  .tab-coach { position: relative; }
+  .tab-coach .tab-fab { position: absolute; top: -22px; left: 50%; transform: translateX(-50%); width: 52px; height: 52px; border-radius: 50%; background: var(--gradient-brand); display: flex; align-items: center; justify-content: center; color: var(--text-on-dark); box-shadow: var(--elev-cta); border: 3px solid #FFFFFF; }
+  .tab-coach .tab-fab svg { stroke: #FFFFFF; }
+  .tab-coach .tab-label { margin-top: 34px; }
+
+  /* Reference badge */
+  .ref-badge { position: absolute; top: 60px; left: 50%; transform: translateX(-50%); z-index: 25; font-family: var(--font-numeric); font-size: 9.5px; font-weight: 700; color: var(--text-muted); border: 1px solid var(--bg-border); background: var(--bg-surface); padding: 3px 8px; border-radius: 999px; letter-spacing: 0.10em; }
+
+  /* Legend */
+  .legend{max-width:1320px;margin:56px auto 0;padding:22px 26px;background:#FFFFFF;border:1px solid var(--bg-border);border-radius:var(--radius-lg);display:grid;grid-template-columns:220px 1fr;gap:14px 28px;font-size:12px;color:var(--text-secondary);line-height:1.55;}
+  .legend h3{grid-column:1 / -1;margin:0 0 6px;font-family:var(--font-display);font-size:12px;font-weight:600;color:var(--text-muted);letter-spacing:.18em;text-transform:uppercase;}
+  .legend dt{grid-column:1;font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:.04em;text-transform:uppercase;}
+  .legend dd{grid-column:2;margin:0;}
+  .legend code{background:#F4F5F7;border:1px solid var(--bg-border);padding:1px 6px;border-radius:4px;font-family:var(--font-numeric);font-size:11px;color:var(--text-primary);}
+</style>
+</head>
+<body>
+
+  <header class="doc-header">
+    <div>
+      <p class="doc-eyebrow">FuelWell · Phase 0.5 · Step 4 — Mockups</p>
+      <h1 class="doc-title">M23 Progress overview · Progress tab</h1>
+      <p class="doc-sub">Promoted from approved wireframe § 3.23 V1 (weekly card-stack). Three states: weekly default with the verdict-first stat lines, 90-day view with full trend and photo grid, and the empty post-onboarding promise card.</p>
+    </div>
+    <div class="doc-meta">
+      iPhone 15 Pro · 393 × 852 pt<br>
+      Tab · Progress<br>
+      Default · Weekly
+    </div>
+  </header>
+
+  <div class="frames-row" id="frames"></div>
+
+  <section class="legend">
+    <h3>Mockup notes · Step 4</h3>
+
+    <dt>Range selector</dt>
+    <dd>Segmented Weekly / Monthly / 90-day / All. Defaults to <strong>Weekly</strong> per Max — daily noise discourages, weekly is where signal lives. Inactive options on the <code>bg.borderSoft</code> track; active flips to <code>bg.elevated</code> + 700.</dd>
+
+    <dt>Weight card · verdict-first</dt>
+    <dd>Eyebrow + "+ Add weight" pill on the right (gradient-brand when missing today's entry). Stat line first — <strong>DM Sans 700</strong> 32pt current value + a green/amber delta chip (−1.2 lb · WoW). Chart underneath as supporting data. 7-day SVG line chart with the current point dotted in success-green; today's data point gets a 3pt halo.</dd>
+
+    <dt>Macro adherence card</dt>
+    <dd>7-column stacked-bar chart by day. Each column shows the % adherence per macro stacked (protein-green / carbs-amber / fat-purple) with a top-of-bar miss segment in neutral. Percent number underneath each day in DM Sans tabular. Legend strip at the bottom carries weekly averages.</dd>
+
+    <dt>90-day view · V2</dt>
+    <dd>Range flipped to 90-day. Weight card chart becomes a denser line with a brand-green target zone shaded behind the actual trend. Stat shows total ("-3.8 lb · 90 days") + weekly average. Photo grid expands from a 3-tile this-week strip into a 4-column timeline of 8 progress photos with date labels. Measurements list appears beneath (waist / hips / chest with trend arrows).</dd>
+
+    <dt>Empty / V3</dt>
+    <dd>Range dimmed. Dark "WHY WEEKLY" promise card with the brand-green pulse, copy explaining the weekly-trend rule, and three entry actions (gradient-brand "Add weight" + ghost "Add photo" / "Log mood"). Below it: dimmed skeleton versions of the weight and adherence cards as placeholder shape — never reads broken, always reads "data coming."</dd>
+  </section>
+
+<script>
+  const statusBar = `<div class="status-bar">
+    <div class="time">9:41</div>
+    <div class="signals">
+      <svg width="17" height="11" viewBox="0 0 17 11" fill="none"><rect x="0" y="7" width="3" height="4" rx="0.5" fill="#0A0A0F"/><rect x="4" y="5" width="3" height="6" rx="0.5" fill="#0A0A0F"/><rect x="8" y="3" width="3" height="8" rx="0.5" fill="#0A0A0F"/><rect x="12" y="0" width="3" height="11" rx="0.5" fill="#0A0A0F"/></svg>
+      <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><path d="M8 11l-2.5-2.5a3.5 3.5 0 014.9 0L8 11z" fill="#0A0A0F"/><path d="M2 5a8.5 8.5 0 0112 0l-1.5 1.5a6 6 0 00-9 0L2 5z" fill="#0A0A0F"/><path d="M5 8a4.5 4.5 0 016 0l-1.5 1.5a2.5 2.5 0 00-3 0L5 8z" fill="#0A0A0F"/></svg>
+      <span class="signal-bat"></span>
+    </div>
+  </div>`;
+  const island = `<div class="dynamic-island"></div>`;
+
+  const ic = {
+    filter:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M7 12h10M10 18h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`,
+    plus:`<svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>`,
+    camera:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="14" rx="2.5" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="13" r="3.5" stroke="currentColor" stroke-width="1.8"/></svg>`,
+    mood:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M9 14c1 1.5 5 1.5 6 0M9 10h.01M15 10h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`,
+    scale:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="16" rx="3" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="11" r="3" stroke="currentColor" stroke-width="1.8"/><path d="M12 13v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`,
+    tabHome:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11l8-7 8 7v8a1 1 0 01-1 1h-4v-6h-6v6H5a1 1 0 01-1-1v-8Z"/></svg>`,
+    tabLog:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M9 8h6M9 12h6M9 16h3" stroke-linecap="round"/></svg>`,
+    tabCoach:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11a8 8 0 1116 0v3a3 3 0 01-3 3h-1v-7h4M4 11v3a3 3 0 003 3h1v-7H4"/></svg>`,
+    tabLearn:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5.5C4 4.7 4.7 4 5.5 4H10a3 3 0 013 3v14a2 2 0 00-2-2H5.5A1.5 1.5 0 014 17.5v-12ZM20 5.5C20 4.7 19.3 4 18.5 4H14a3 3 0 00-3 3v14a2 2 0 012-2h5.5a1.5 1.5 0 001.5-1.5v-12Z"/></svg>`,
+    tabProgA:`<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="11" width="3" height="9" rx="1"/><rect x="10" y="5" width="3" height="15" rx="1"/><rect x="17" y="13" width="3" height="7" rx="1"/></svg>`,
+  };
+
+  function tabbar() {
+    return `<div class="tabbar v2">
+      <div class="tab"><div class="tab-glyph">${ic.tabHome}</div><div class="tab-label">Home</div></div>
+      <div class="tab"><div class="tab-glyph">${ic.tabLog}</div><div class="tab-label">Meals</div></div>
+      <div class="tab tab-coach"><div class="tab-fab">${ic.tabCoach}</div><div class="tab-label">Coach</div></div>
+      <div class="tab"><div class="tab-glyph">${ic.tabLearn}</div><div class="tab-label">Exercise</div></div>
+      <div class="tab active"><div class="tab-glyph">${ic.tabProgA}</div><div class="tab-label">Progress</div></div>
+    </div>`;
+  }
+
+  function topBar() {
+    return `<div class="top">
+      <div></div>
+      <div class="ttl">Progress</div>
+      <div class="icon-btn">${ic.filter}</div>
+    </div>`;
+  }
+
+  function rangeSel(active, dimmed) {
+    const opts = [['week','Week'], ['month','Month'], ['q','90 days'], ['all','All']];
+    return `<div class="range-row" ${dimmed?'style="opacity:0.55;"':''}>${opts.map(([k,l])=>`<div class="opt ${active===k?'active':''}">${l}</div>`).join('')}</div>`;
+  }
+
+  // Line chart helper
+  function linePoints(values, width, height, padding=8) {
+    const n = values.length;
+    const min = Math.min(...values), max = Math.max(...values);
+    const span = (max - min) || 1;
+    return values.map((v, i) => {
+      const x = padding + (i / (n - 1)) * (width - padding * 2);
+      const y = (height - padding) - ((v - min) / span) * (height - padding * 2);
+      return [x, y];
+    });
+  }
+
+  function lineChart(values, opts = {}) {
+    const w = 350, h = 90;
+    const pts = linePoints(values, w, h);
+    const path = 'M ' + pts.map(p => `${p[0]} ${p[1]}`).join(' L ');
+    const last = pts[pts.length - 1];
+    const areaPath = path + ` L ${w-8} ${h-8} L 8 ${h-8} Z`;
+    const targetBand = opts.target ? `<rect x="8" y="${h * 0.35}" width="${w - 16}" height="${h * 0.30}" fill="rgba(71,231,176,0.10)" rx="4"/>` : '';
+    const gridLines = [0.25, 0.5, 0.75].map(p => `<line x1="8" x2="${w-8}" y1="${h*p}" y2="${h*p}" stroke="#EEF0F3" stroke-width="1"/>`).join('');
+    return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+      ${gridLines}
+      ${targetBand}
+      <path d="${areaPath}" fill="url(#grad1)" opacity="0.18"/>
+      <path d="${path}" fill="none" stroke="#0F1117" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="${last[0]}" cy="${last[1]}" r="7" fill="rgba(71,231,176,0.32)"/>
+      <circle cx="${last[0]}" cy="${last[1]}" r="4" fill="#00D278" stroke="#fff" stroke-width="1.5"/>
+      <defs>
+        <linearGradient id="grad1" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stop-color="#0F1117" stop-opacity="0.6"/>
+          <stop offset="100%" stop-color="#0F1117" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+    </svg>`;
+  }
+
+  // Adherence column
+  function adherCol(dl, p, c, f, miss, pct, klass) {
+    return `<div class="adher-col">
+      <div class="dl">${dl}</div>
+      <div class="adher-stack">
+        ${miss ? `<div class="seg miss" style="height: ${miss}%"></div>` : ''}
+        <div class="seg f" style="height: ${f}%"></div>
+        <div class="seg c" style="height: ${c}%"></div>
+        <div class="seg p" style="height: ${p}%"></div>
+      </div>
+      <div class="pct ${klass||''}">${pct}%</div>
+    </div>`;
+  }
+
+  // ===== V1 weekly =====
+  function v1() {
+    return `
+      ${topBar()}
+      ${rangeSel('week')}
+      <div class="content">
+        <div class="card">
+          <div class="card-head">
+            <div class="eyebrow">Weight · this week</div>
+            <div class="add-mini">${ic.plus} Add weight</div>
+          </div>
+          <div class="stat-row">
+            <div class="stat-num">178.4<span class="u">lb</span></div>
+            <div class="delta-chip">▼ 1.2 · WoW</div>
+          </div>
+          <div class="chart">${lineChart([180.2, 179.8, 179.6, 179.1, 178.8, 178.6, 178.4])}</div>
+          <div class="x-axis"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+        </div>
+        <div class="card">
+          <div class="card-head">
+            <div class="eyebrow">Macro adherence</div>
+            <div class="eyebrow" style="text-transform:none; letter-spacing:0; font-weight:700; color: var(--text-primary); font-family: var(--font-numeric); font-size: 12px;">85% on plan</div>
+          </div>
+          <div class="adher-row">
+            ${adherCol('M', 32, 28, 24, 16, 84)}
+            ${adherCol('T', 34, 30, 22, 14, 86)}
+            ${adherCol('W', 30, 24, 22, 24, 76, 'warn')}
+            ${adherCol('T', 36, 30, 22, 12, 88)}
+            ${adherCol('F', 34, 28, 24, 14, 86)}
+            ${adherCol('S', 26, 22, 18, 34, 66, 'warn')}
+            ${adherCol('S', 18, 14, 12, 56, 44, 'miss')}
+          </div>
+          <div class="leg-row">
+            <div class="l"><span class="sw" style="background:var(--macro-protein)"></span><span class="v">88%</span> protein</div>
+            <div class="l"><span class="sw" style="background:var(--macro-carbs)"></span><span class="v">82%</span> carbs</div>
+            <div class="l"><span class="sw" style="background:var(--macro-fat)"></span><span class="v">79%</span> fat</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head">
+            <div class="eyebrow">Photos · this week</div>
+            <div class="add-mini">${ic.camera}</div>
+          </div>
+          <div class="photo-strip">
+            <div class="tile" style="--c1:#FCD34D; --c2:#F59E0B"><span class="lbl">May 11</span></div>
+            <div class="tile" style="--c1:#FECDD3; --c2:#FB7185"><span class="lbl">May 14</span></div>
+            <div class="tile add">+ Add</div>
+          </div>
+        </div>
+      </div>
+      ${tabbar()}`;
+  }
+
+  // ===== V2 90-day =====
+  function v2() {
+    // 12 week trend
+    const values = [183.4, 182.8, 182.3, 181.8, 181.2, 180.6, 180.1, 179.8, 179.5, 179.0, 178.7, 178.4];
+    return `
+      ${topBar()}
+      ${rangeSel('q')}
+      <div class="content">
+        <div class="card">
+          <div class="card-head">
+            <div class="eyebrow">Weight · 90 days</div>
+            <div class="add-mini">${ic.plus} Add</div>
+          </div>
+          <div class="stat-row">
+            <div class="stat-num">178.4<span class="u">lb</span></div>
+            <div class="delta-chip">▼ 5.0 lb · 90d</div>
+          </div>
+          <div style="font-family:var(--font-body); font-size: 11.5px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px; letter-spacing: -0.003em;">
+            Avg <span style="font-family:var(--font-numeric); color: var(--text-primary); font-weight:700;">−0.42 lb/wk</span> · trending into target band
+          </div>
+          <div class="chart" style="height: 110px;">${lineChart(values, {target: true})}</div>
+          <div class="x-axis"><span>Feb 17</span><span>Mar 17</span><span>Apr 17</span><span>May 18</span></div>
+        </div>
+        <div class="card">
+          <div class="card-head">
+            <div class="eyebrow">Photos · 12 weeks</div>
+            <div class="add-mini">${ic.camera}</div>
+          </div>
+          <div class="photo-strip long">
+            <div class="tile" style="--c1:#FECACA; --c2:#EF4444"><span class="lbl">Feb 17</span></div>
+            <div class="tile" style="--c1:#FED7AA; --c2:#FB923C"><span class="lbl">Mar 03</span></div>
+            <div class="tile" style="--c1:#FCD34D; --c2:#F59E0B"><span class="lbl">Mar 17</span></div>
+            <div class="tile" style="--c1:#FDE68A; --c2:#EAB308"><span class="lbl">Mar 31</span></div>
+            <div class="tile" style="--c1:#BBF7D0; --c2:#22C55E"><span class="lbl">Apr 14</span></div>
+            <div class="tile" style="--c1:#A7F3D0; --c2:#10B981"><span class="lbl">Apr 28</span></div>
+            <div class="tile" style="--c1:#BAE6FD; --c2:#0284C7"><span class="lbl">May 12</span></div>
+            <div class="tile add">+ Add</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head">
+            <div class="eyebrow">Measurements · 90d</div>
+          </div>
+          <div class="meas-list">
+            <div class="meas">
+              <div class="nm">Waist</div>
+              <div class="v">34.2<span class="u">in</span></div>
+              <div class="arr down">▼</div>
+            </div>
+            <div class="meas">
+              <div class="nm">Hips</div>
+              <div class="v">39.0<span class="u">in</span></div>
+              <div class="arr flat">·</div>
+            </div>
+            <div class="meas">
+              <div class="nm">Chest</div>
+              <div class="v">42.1<span class="u">in</span></div>
+              <div class="arr up">▲</div>
+            </div>
+            <div class="meas">
+              <div class="nm">Right arm</div>
+              <div class="v">14.6<span class="u">in</span></div>
+              <div class="arr up">▲</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      ${tabbar()}`;
+  }
+
+  // ===== V3 empty =====
+  function v3() {
+    return `
+      ${topBar()}
+      ${rangeSel('week', true)}
+      <div class="empty-stage">
+        <div class="promise-card">
+          <div class="lbl"><span class="dot"></span>Why weekly</div>
+          <div class="h">The signal shows up after <span class="accent">7 days.</span></div>
+          <div class="s">Daily numbers swing 2–4 lb on water alone. We default to weekly trends because that's where progress actually lives. Drop one data point now and check back Sunday.</div>
+          <div class="actions">
+            <div class="a primary">${ic.scale} Add weight</div>
+            <div class="a">${ic.camera} Add photo</div>
+            <div class="a">${ic.mood} Log mood</div>
+          </div>
+        </div>
+        <div class="skel-card">
+          <div class="card-head">
+            <div class="eyebrow">Weight · this week</div>
+            <div class="add-mini">${ic.plus} Add</div>
+          </div>
+          <div class="stat-row">
+            <div class="stat-num" style="color: var(--text-disabled);">—</div>
+            <div class="delta-chip neutral">No data yet</div>
+          </div>
+          <div class="chart" style="background: var(--bg-base); border-radius: 12px;">
+            <svg viewBox="0 0 350 90" preserveAspectRatio="none">
+              <line x1="8" x2="342" y1="22" y2="22" stroke="#EEF0F3" stroke-width="1"/>
+              <line x1="8" x2="342" y1="45" y2="45" stroke="#EEF0F3" stroke-width="1"/>
+              <line x1="8" x2="342" y1="68" y2="68" stroke="#EEF0F3" stroke-width="1"/>
+              <path d="M 8 45 L 342 45" stroke="#D6D8DD" stroke-width="2" stroke-dasharray="6 6"/>
+            </svg>
+          </div>
+          <div class="x-axis"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+        </div>
+        <div class="skel-card">
+          <div class="card-head">
+            <div class="eyebrow">Macro adherence</div>
+            <div class="eyebrow" style="color: var(--text-disabled);">— %</div>
+          </div>
+          <div class="adher-row">
+            ${[...'MTWTFSS'].map(d => `<div class="adher-col"><div class="dl">${d}</div><div class="adher-stack"><div class="seg miss" style="height:100%"></div></div><div class="pct miss">·</div></div>`).join('')}
+          </div>
+        </div>
+      </div>
+      ${tabbar()}`;
+  }
+
+  const variations = [
+    { num:'Variation 01 · State', name:'Weekly · default', cap:'Verdict-first weight card (178.4 lb / ▼ 1.2 WoW), 7-day line chart with today\u2019s point haloed. Adherence card shows 85% with the daily macro stacks and weekend dip in amber/dim.', body: v1() },
+    { num:'Variation 02 · State', name:'90-day · trend + photos', cap:'Range flipped to 90 days. Weight chart over 12 weeks with the brand-green target band shaded. 4-column photo timeline, measurements list with direction arrows.', body: v2() },
+    { num:'Variation 03 · State', name:'Empty · first time', cap:'No data yet. Dark "Why weekly" promise card with the brand-green accent + three entry CTAs. Dimmed skeleton cards beneath hint at the layout once data lands.', body: v3() }
+  ];
+
+  const root = document.getElementById('frames');
+  root.innerHTML = variations.map(v => `
+    <section class="variation">
+      <div class="v-label">
+        <div class="v-num">${v.num}</div>
+        <div class="v-name">${v.name}</div>
+        <div class="v-cap">${v.cap}</div>
+      </div>
+      <div class="device">
+        ${statusBar}${island}
+        <div class="ref-badge">[REFERENCE · V1]</div>
+        <div class="screen">${v.body}</div>
+        <div class="home-indicator"></div>
+      </div>
+    </section>
+  `).join('');
+</script>
+</body>
+</html>
