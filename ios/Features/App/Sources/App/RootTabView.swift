@@ -1,5 +1,6 @@
 import ComposableArchitecture
 import DesignSystem
+import Nutrition
 import SwiftUI
 
 public struct RootTabView: View {
@@ -35,6 +36,7 @@ private struct TabHubView: View {
     let tab: AppTab
 
     @Environment(\.theme) private var theme
+    private let macroSnapshot = MacroDaySnapshot.preview
 
     var body: some View {
         ScrollView {
@@ -72,12 +74,15 @@ private struct TabHubView: View {
             [
                 .init(title: "Health Score", detail: "Building your baseline"),
                 .init(title: "Start here: log your first meal", detail: "Unlock today's first verdict"),
-                .init(title: "Verdict", detail: "Eat a real lunch")
+                .init(title: "Verdict", detail: self.macroSnapshot.verdict.headline)
             ]
         case .meals:
             [
-                .init(title: "Today's plate", detail: "Macros and energy balance"),
-                .init(title: "Meal Log", detail: "Add breakfast, lunch, dinner, or snack"),
+                .init(
+                    title: "Today's plate",
+                    detail: "\(self.macroSnapshot.remaining.displayClamped.macros.protein)g protein left"
+                ),
+                .init(title: "Meal Log", detail: self.macroSnapshot.recommendations[0].detail),
                 .init(title: "Restaurant Guidance", detail: "Choose what to order here")
             ]
         case .coach:

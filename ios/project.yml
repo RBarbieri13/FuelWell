@@ -25,6 +25,8 @@ packages:
     path: Packages/Analytics
   CrashReporting:
     path: Packages/CrashReporting
+  Nutrition:
+    path: Packages/Nutrition
   Networking:
     path: Packages/Networking
   Persistence:
@@ -51,6 +53,8 @@ targets:
         product: CrashReporting
       - package: HealthKitClient
         product: HealthKitClient
+      - package: Nutrition
+        product: Nutrition
       - package: SupabaseClient
         product: SupabaseClient
     settings:
@@ -80,6 +84,8 @@ targets:
         product: CrashReporting
       - package: HealthKitClient
         product: HealthKitClient
+      - package: Nutrition
+        product: Nutrition
       - package: SupabaseClient
         product: SupabaseClient
     settings:
@@ -157,6 +163,18 @@ targets:
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES
+  NutritionTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: Packages/Nutrition/Tests/NutritionTests
+    dependencies:
+      - package: Nutrition
+        product: Nutrition
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
 schemes:
   FuelWellApp:
     build:
@@ -175,3 +193,4 @@ schemes:
         - HealthKitClientTests
         - AnalyticsTests
         - CrashReportingTests
+        - NutritionTests
