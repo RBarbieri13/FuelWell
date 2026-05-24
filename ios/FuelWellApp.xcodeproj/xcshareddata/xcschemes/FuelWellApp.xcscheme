@@ -117,6 +117,17 @@
                ReferencedContainer = "container:FuelWellApp.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "73CD336C5A0B4EF47E927665"
+               BuildableName = "NutritionTests.xctest"
+               BlueprintName = "NutritionTests"
+               ReferencedContainer = "container:FuelWellApp.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <CommandLineArguments>
       </CommandLineArguments>
