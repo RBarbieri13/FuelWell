@@ -20,3 +20,12 @@ This repo is edited from multiple devices (MacBook CLI, iPhone/iPad via claude.a
 6. **If you find yourself on `main` with uncommitted changes**, move them onto a feature branch immediately: `git checkout -b feature/<name>` (no commit needed — working-tree changes carry over).
 7. **Do not edit files on a feature branch that another in-flight branch also touches.** If unsure, merge or rebase the open PR first.
 
+# Moonchild design workflow
+
+For Moonchild, design-system, PRD-to-UI, design-to-code, design MCP, or UI consistency work, use the `moonchild-design-implementation` skill first.
+
+- Repo setup lives in `docs/moonchild/README.md`.
+- Canonical FuelWell design contract is `docs/ios-guide/DESIGN.md`.
+- iOS generated tokens live in `ios/Packages/DesignSystem/Sources/DesignSystem/Theme.swift`.
+- Moonchild MCP requires Robert to install/authenticate it from Moonchild account settings. If it is not connected, ask for the Moonchild MCP install command or a Moonchild structured export before claiming design fidelity.
+- After any design-token or UI implementation work, run build/tests plus `ios/scripts/check-theme-drift.sh`, `ios/scripts/check-feature-imports.sh`, and SwiftLint.
