@@ -3,24 +3,24 @@
 import PackageDescription
 
 let package = Package(
-    name: "Nutrition",
+    name: "NutritionDomain",
     platforms: [
         .iOS(.v17)
     ],
     products: [
-        .library(name: "Nutrition", type: .static, targets: ["Nutrition"])
+        .library(name: "NutritionDomain", type: .static, targets: ["NutritionDomain"])
     ],
     targets: [
         .target(
-            name: "Nutrition",
+            name: "NutritionDomain",
             swiftSettings: [
                 .enableExperimentalFeature("StrictConcurrency"),
                 .enableUpcomingFeature("ExistentialAny")
             ]
         ),
         .testTarget(
-            name: "NutritionTests",
-            dependencies: ["Nutrition"],
+            name: "NutritionDomainTests",
+            dependencies: ["NutritionDomain"],
             swiftSettings: [
                 .enableExperimentalFeature("StrictConcurrency"),
                 .enableUpcomingFeature("ExistentialAny")

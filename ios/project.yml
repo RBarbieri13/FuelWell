@@ -25,8 +25,10 @@ packages:
     path: Packages/Analytics
   CrashReporting:
     path: Packages/CrashReporting
-  Nutrition:
-    path: Packages/Nutrition
+  NutritionDomain:
+    path: Packages/NutritionDomain
+  NutritionFeature:
+    path: Features/Nutrition
   Networking:
     path: Packages/Networking
   Persistence:
@@ -53,8 +55,8 @@ targets:
         product: CrashReporting
       - package: HealthKitClient
         product: HealthKitClient
-      - package: Nutrition
-        product: Nutrition
+      - package: NutritionDomain
+        product: NutritionDomain
       - package: SupabaseClient
         product: SupabaseClient
     settings:
@@ -84,8 +86,8 @@ targets:
         product: CrashReporting
       - package: HealthKitClient
         product: HealthKitClient
-      - package: Nutrition
-        product: Nutrition
+      - package: NutritionDomain
+        product: NutritionDomain
       - package: SupabaseClient
         product: SupabaseClient
     settings:
@@ -163,15 +165,29 @@ targets:
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES
-  NutritionTests:
+  NutritionDomainTests:
     type: bundle.unit-test
     platform: iOS
     deploymentTarget: "17.0"
     sources:
-      - path: Packages/Nutrition/Tests/NutritionTests
+      - path: Packages/NutritionDomain/Tests/NutritionDomainTests
     dependencies:
-      - package: Nutrition
+      - package: NutritionDomain
+        product: NutritionDomain
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+  NutritionFeatureTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: Features/Nutrition/Tests/NutritionTests
+    dependencies:
+      - package: NutritionFeature
         product: Nutrition
+      - package: Core
+        product: Core
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES
@@ -193,4 +209,5 @@ schemes:
         - HealthKitClientTests
         - AnalyticsTests
         - CrashReportingTests
-        - NutritionTests
+        - NutritionDomainTests
+        - NutritionFeatureTests

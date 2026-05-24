@@ -1,6 +1,6 @@
 import ComposableArchitecture
 import DesignSystem
-import Nutrition
+import NutritionDomain
 import SwiftUI
 
 public struct RootTabView: View {
@@ -124,7 +124,8 @@ private struct TabHeroView: View {
                 .foregroundStyle(self.titleColor)
 
             Text(self.subtitle)
-                .font(.custom(self.theme.font.body, size: self.theme.text.body.size))
+                .font(.custom(self.theme.font.body, size: self.theme.text.bodyLG.size))
+                .fontWeight(.medium)
                 .foregroundStyle(self.bodyColor)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -161,7 +162,7 @@ private struct TabHeroView: View {
     }
 
     private var bodyColor: Color {
-        self.tab == .coach ? self.theme.color.text.onDarkMuted.color : self.theme.color.text.secondary.color
+        self.tab == .coach ? self.theme.color.text.onDark.color : self.theme.color.text.body.color
     }
 }
 
@@ -174,13 +175,14 @@ private struct TabActionRow: View {
         HStack(spacing: self.theme.spacing.md) {
             VStack(alignment: .leading, spacing: self.theme.spacing.xs) {
                 Text(self.item.title)
-                    .font(.custom(self.theme.font.body, size: self.theme.text.body.size))
+                    .font(.custom(self.theme.font.body, size: self.theme.text.bodyLG.size))
                     .fontWeight(.semibold)
                     .foregroundStyle(self.theme.color.text.primary.color)
 
                 Text(self.item.detail)
-                    .font(.custom(self.theme.font.body, size: self.theme.text.bodySM.size))
-                    .foregroundStyle(self.theme.color.text.secondary.color)
+                    .font(.custom(self.theme.font.body, size: self.theme.text.body.size))
+                    .fontWeight(.medium)
+                    .foregroundStyle(self.theme.color.text.body.color)
             }
 
             Spacer()
