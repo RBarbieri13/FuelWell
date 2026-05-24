@@ -15,6 +15,16 @@ packages:
     path: Packages/Core
   DesignSystem:
     path: Packages/DesignSystem
+  AnthropicClient:
+    path: Packages/AnthropicClient
+  SupabaseClient:
+    path: Packages/SupabaseClient
+  HealthKitClient:
+    path: Packages/HealthKitClient
+  Analytics:
+    path: Packages/Analytics
+  CrashReporting:
+    path: Packages/CrashReporting
   Networking:
     path: Packages/Networking
   Persistence:
@@ -33,10 +43,22 @@ targets:
         product: App
       - package: DesignSystem
         product: DesignSystem
+      - package: Analytics
+        product: Analytics
+      - package: AnthropicClient
+        product: AnthropicClient
+      - package: CrashReporting
+        product: CrashReporting
+      - package: HealthKitClient
+        product: HealthKitClient
+      - package: SupabaseClient
+        product: SupabaseClient
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.fuelwell.app
         GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_NSHealthShareUsageDescription: FuelWell reads workouts, sleep, steps, energy, and body measurements to personalize coaching.
+        INFOPLIST_KEY_NSHealthUpdateUsageDescription: FuelWell does not write Health data in this phase.
         INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
         INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents: YES
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
@@ -50,6 +72,16 @@ targets:
     dependencies:
       - package: App
         product: App
+      - package: Analytics
+        product: Analytics
+      - package: AnthropicClient
+        product: AnthropicClient
+      - package: CrashReporting
+        product: CrashReporting
+      - package: HealthKitClient
+        product: HealthKitClient
+      - package: SupabaseClient
+        product: SupabaseClient
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES
@@ -62,6 +94,66 @@ targets:
     dependencies:
       - package: DesignSystem
         product: DesignSystem
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+  AnthropicClientTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: Packages/AnthropicClient/Tests/AnthropicClientTests
+    dependencies:
+      - package: AnthropicClient
+        product: AnthropicClient
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+  SupabaseClientTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: Packages/SupabaseClient/Tests/SupabaseClientTests
+    dependencies:
+      - package: SupabaseClient
+        product: SupabaseClient
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+  HealthKitClientTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: Packages/HealthKitClient/Tests/HealthKitClientTests
+    dependencies:
+      - package: HealthKitClient
+        product: HealthKitClient
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+  AnalyticsTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: Packages/Analytics/Tests/AnalyticsTests
+    dependencies:
+      - package: Analytics
+        product: Analytics
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+  CrashReportingTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: Packages/CrashReporting/Tests/CrashReportingTests
+    dependencies:
+      - package: CrashReporting
+        product: CrashReporting
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES
@@ -78,3 +170,8 @@ schemes:
       targets:
         - AppTests
         - DesignSystemTests
+        - AnthropicClientTests
+        - SupabaseClientTests
+        - HealthKitClientTests
+        - AnalyticsTests
+        - CrashReportingTests
