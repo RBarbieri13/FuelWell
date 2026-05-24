@@ -1,0 +1,13 @@
+{
+  "sourceType": "github",
+  "source": "github",
+  "url": "https://github.com/anthropics/skills",
+  "repo": "anthropics/skills",
+  "ref": null,
+  "subpath": "skills/mcp-builder",
+  "installSource": "anthropics/skills/skills/mcp-builder",
+  "skillName": "mcp-builder",
+  "scope": "project",
+  "installedAt": "2026-05-24T18:26:48.064Z",
+  "updatedAt": "2026-05-24T18:26:48.064Z"
+}

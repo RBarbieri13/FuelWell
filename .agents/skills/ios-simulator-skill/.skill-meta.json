@@ -1,0 +1,13 @@
+{
+  "sourceType": "github",
+  "source": "github",
+  "url": "https://github.com/conorluddy/ios-simulator-skill",
+  "repo": "conorluddy/ios-simulator-skill",
+  "ref": null,
+  "subpath": "ios-simulator-skill/skills/ios-simulator-skill",
+  "installSource": "conorluddy/ios-simulator-skill/ios-simulator-skill/skills/ios-simulator-skill",
+  "skillName": "ios-simulator-skill",
+  "scope": "project",
+  "installedAt": "2026-05-24T18:26:45.539Z",
+  "updatedAt": "2026-05-24T18:26:45.539Z"
+}
