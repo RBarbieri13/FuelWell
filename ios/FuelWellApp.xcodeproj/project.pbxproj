@@ -26,6 +26,7 @@
 		7B86D3915E80AACDF6C86388 /* CrashReportingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50C5BFF2EAEB63759B854E69 /* CrashReportingTests.swift */; };
 		828AA6FB777F1CDC03805A2C /* App in Frameworks */ = {isa = PBXBuildFile; productRef = 159612099978ADB2428B15D4 /* App */; };
 		8B214741ADCEF773C22621B8 /* SupabaseClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E87BC127E4591BBD7B5FB190 /* SupabaseClientTests.swift */; };
+		8F6B160359BB70A1C50CC771 /* SupabaseClient in Frameworks */ = {isa = PBXBuildFile; productRef = 35F9875A95C99DBD77AE5434 /* SupabaseClient */; };
 		96922C84363B7364690F169F /* NutritionDomain in Frameworks */ = {isa = PBXBuildFile; productRef = DF3D5011F498564731103745 /* NutritionDomain */; };
 		9EBB2892A49EEFAA57D0998E /* App in Frameworks */ = {isa = PBXBuildFile; productRef = C9717509AAA91CD741114D46 /* App */; };
 		B3B14A3449901DA7B27138BA /* AnthropicClient in Frameworks */ = {isa = PBXBuildFile; productRef = 02A468A0B528BC794A35A371 /* AnthropicClient */; };
@@ -37,7 +38,7 @@
 		CDBA6B5EA4250DF41490DAA2 /* HealthKitClient in Frameworks */ = {isa = PBXBuildFile; productRef = 2EF8408FBB5A9D5CE9404D7B /* HealthKitClient */; };
 		CEA676DAAFF8793964D8A9A7 /* ThemeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B121203B5A518889F220416 /* ThemeTests.swift */; };
 		D221C2E98E005F83CC4A66D1 /* CrashReporting in Frameworks */ = {isa = PBXBuildFile; productRef = ACE1B26EE237383A20C8998A /* CrashReporting */; };
-		E0EEC1FDF701A7D84C6E8CE6 /* SupabaseClient in Frameworks */ = {isa = PBXBuildFile; productRef = 35F9875A95C99DBD77AE5434 /* SupabaseClient */; };
+		E0EEC1FDF701A7D84C6E8CE6 /* Nutrition in Frameworks */ = {isa = PBXBuildFile; productRef = E0BB0FF27D90D4F853C2E30A /* Nutrition */; };
 		E452520C8E3688317A97CD65 /* AnthropicClient in Frameworks */ = {isa = PBXBuildFile; productRef = FF0357DB14B82BEF78F23A72 /* AnthropicClient */; };
 		F86E044D2CD7EC516B7BC3C5 /* CrashReporting in Frameworks */ = {isa = PBXBuildFile; productRef = 67FC99E3A4D52CF6EF835CAD /* CrashReporting */; };
 		FCBD0876C8D0895EFAD842C7 /* MacroDecisionEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06F6BEFBE2E4B674A50B733F /* MacroDecisionEngineTests.swift */; };
@@ -98,7 +99,8 @@
 				D221C2E98E005F83CC4A66D1 /* CrashReporting in Frameworks */,
 				B6BADB1365A5713F1B809D2A /* HealthKitClient in Frameworks */,
 				96922C84363B7364690F169F /* NutritionDomain in Frameworks */,
-				E0EEC1FDF701A7D84C6E8CE6 /* SupabaseClient in Frameworks */,
+				E0EEC1FDF701A7D84C6E8CE6 /* Nutrition in Frameworks */,
+				8F6B160359BB70A1C50CC771 /* SupabaseClient in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -483,6 +485,7 @@
 				ACE1B26EE237383A20C8998A /* CrashReporting */,
 				EBFC0B46EB6060D743FD35F0 /* HealthKitClient */,
 				DF3D5011F498564731103745 /* NutritionDomain */,
+				E0BB0FF27D90D4F853C2E30A /* Nutrition */,
 				35F9875A95C99DBD77AE5434 /* SupabaseClient */,
 			);
 			productName = FuelWellApp;
@@ -1382,6 +1385,10 @@
 		DF3D5011F498564731103745 /* NutritionDomain */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = NutritionDomain;
+		};
+		E0BB0FF27D90D4F853C2E30A /* Nutrition */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Nutrition;
 		};
 		EBFC0B46EB6060D743FD35F0 /* HealthKitClient */ = {
 			isa = XCSwiftPackageProductDependency;

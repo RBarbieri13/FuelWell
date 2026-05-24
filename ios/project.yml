@@ -57,6 +57,8 @@ targets:
         product: HealthKitClient
       - package: NutritionDomain
         product: NutritionDomain
+      - package: NutritionFeature
+        product: Nutrition
       - package: SupabaseClient
         product: SupabaseClient
     settings:

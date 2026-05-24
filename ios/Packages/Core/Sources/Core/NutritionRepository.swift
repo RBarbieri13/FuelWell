@@ -43,7 +43,7 @@ extension DependencyValues {
 
 private enum NutritionRepositoryKey: DependencyKey {
     static var liveValue: any NutritionRepository {
-        InMemoryNutritionRepository()
+        InMemoryNutritionRepository(seed: MealEntry.previewEntries)
     }
 
     static var testValue: any NutritionRepository {
@@ -51,9 +51,13 @@ private enum NutritionRepositoryKey: DependencyKey {
     }
 
     static var previewValue: any NutritionRepository {
-        InMemoryNutritionRepository(seed: [
-            MealEntry(name: "Oatmeal", calories: 310, protein: 10, carbs: 55, fat: 6),
-            MealEntry(name: "Chicken bowl", calories: 520, protein: 42, carbs: 48, fat: 18)
-        ])
+        InMemoryNutritionRepository(seed: MealEntry.previewEntries)
     }
+}
+
+extension MealEntry {
+    public static let previewEntries: [MealEntry] = [
+        MealEntry(name: "Oatmeal", calories: 310, protein: 10, carbs: 55, fat: 6),
+        MealEntry(name: "Chicken bowl", calories: 520, protein: 42, carbs: 48, fat: 18)
+    ]
 }
