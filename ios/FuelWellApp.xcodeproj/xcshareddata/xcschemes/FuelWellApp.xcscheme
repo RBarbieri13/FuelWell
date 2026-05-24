@@ -62,6 +62,61 @@
                ReferencedContainer = "container:FuelWellApp.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "010A4979F16A9FCCE2BE98C1"
+               BuildableName = "AnthropicClientTests.xctest"
+               BlueprintName = "AnthropicClientTests"
+               ReferencedContainer = "container:FuelWellApp.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "6298DBD7BE936F87C399D12B"
+               BuildableName = "SupabaseClientTests.xctest"
+               BlueprintName = "SupabaseClientTests"
+               ReferencedContainer = "container:FuelWellApp.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "EBDA7026A910722A15EF9240"
+               BuildableName = "HealthKitClientTests.xctest"
+               BlueprintName = "HealthKitClientTests"
+               ReferencedContainer = "container:FuelWellApp.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "0A13693D0B4512F560C4657A"
+               BuildableName = "AnalyticsTests.xctest"
+               BlueprintName = "AnalyticsTests"
+               ReferencedContainer = "container:FuelWellApp.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B3DF299CD302435A019CDA3D"
+               BuildableName = "CrashReportingTests.xctest"
+               BlueprintName = "CrashReportingTests"
+               ReferencedContainer = "container:FuelWellApp.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <CommandLineArguments>
       </CommandLineArguments>

@@ -7,26 +7,61 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		00138100E585E22822BB0F1C /* CrashReporting in Frameworks */ = {isa = PBXBuildFile; productRef = 8F5A6C3564FBD439EF0FBC20 /* CrashReporting */; };
+		16C4AA88D105F551DC23BFE6 /* Analytics in Frameworks */ = {isa = PBXBuildFile; productRef = 6C80E5D8F27C5735F8B5C3E1 /* Analytics */; };
+		23275F307DF68E53AF774B23 /* HealthKitClient in Frameworks */ = {isa = PBXBuildFile; productRef = 5275277C2654D6AE1D8F8C09 /* HealthKitClient */; };
 		24FE11C46090BD2F0F3DE4E8 /* FuelWellApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CA9C6656CAB7C1C83089C72 /* FuelWellApp.swift */; };
+		2FA15D44276AA995E9F03582 /* SupabaseClient in Frameworks */ = {isa = PBXBuildFile; productRef = 43851B7DC17A7E4975E5DF8B /* SupabaseClient */; };
+		308EA91C167DD40A31E8016E /* AnthropicClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C74CC19984E3437AF5CCE0C /* AnthropicClientTests.swift */; };
 		46DCE2683117D957327FC93F /* AppFeatureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47ED229A15FF76E83E8AE703 /* AppFeatureTests.swift */; };
 		5932B1786E235844770D782E /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 370FE810A7736B66746FACA9 /* DesignSystem */; };
 		5F5DB4958C9C634B24FB37B3 /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 4D23E8317116A890B8DAA8FE /* DesignSystem */; };
+		6B3E637187BD30858178A50B /* SupabaseClient in Frameworks */ = {isa = PBXBuildFile; productRef = C8C0CC9A8E4CE014A35C4BD5 /* SupabaseClient */; };
+		6D2691325A97B2F4CE504116 /* AnalyticsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C0F7AAB7BBED97139CEEE47 /* AnalyticsTests.swift */; };
+		72AA7B4A1E4116C85E4DD0D7 /* Analytics in Frameworks */ = {isa = PBXBuildFile; productRef = 67D490D2785A18B1328EA388 /* Analytics */; };
+		7B86D3915E80AACDF6C86388 /* CrashReportingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50C5BFF2EAEB63759B854E69 /* CrashReportingTests.swift */; };
 		828AA6FB777F1CDC03805A2C /* App in Frameworks */ = {isa = PBXBuildFile; productRef = 159612099978ADB2428B15D4 /* App */; };
+		8B214741ADCEF773C22621B8 /* SupabaseClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E87BC127E4591BBD7B5FB190 /* SupabaseClientTests.swift */; };
+		96922C84363B7364690F169F /* SupabaseClient in Frameworks */ = {isa = PBXBuildFile; productRef = 35F9875A95C99DBD77AE5434 /* SupabaseClient */; };
 		9EBB2892A49EEFAA57D0998E /* App in Frameworks */ = {isa = PBXBuildFile; productRef = C9717509AAA91CD741114D46 /* App */; };
+		B3B14A3449901DA7B27138BA /* AnthropicClient in Frameworks */ = {isa = PBXBuildFile; productRef = 02A468A0B528BC794A35A371 /* AnthropicClient */; };
+		B6BADB1365A5713F1B809D2A /* HealthKitClient in Frameworks */ = {isa = PBXBuildFile; productRef = EBFC0B46EB6060D743FD35F0 /* HealthKitClient */; };
+		BB17FA9B2F23A69E89AEA220 /* Analytics in Frameworks */ = {isa = PBXBuildFile; productRef = 9A7A416ADA5337C051A9CA92 /* Analytics */; };
+		C2D1F6674CF2F408203B5825 /* AnthropicClient in Frameworks */ = {isa = PBXBuildFile; productRef = D7977175BB469F04F6B14D50 /* AnthropicClient */; };
+		CABFC8C5FBF761742B3D36EF /* HealthKitClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF042C3459C06538638038CC /* HealthKitClientTests.swift */; };
+		CDBA6B5EA4250DF41490DAA2 /* HealthKitClient in Frameworks */ = {isa = PBXBuildFile; productRef = 2EF8408FBB5A9D5CE9404D7B /* HealthKitClient */; };
 		CEA676DAAFF8793964D8A9A7 /* ThemeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B121203B5A518889F220416 /* ThemeTests.swift */; };
+		D221C2E98E005F83CC4A66D1 /* CrashReporting in Frameworks */ = {isa = PBXBuildFile; productRef = ACE1B26EE237383A20C8998A /* CrashReporting */; };
+		E452520C8E3688317A97CD65 /* AnthropicClient in Frameworks */ = {isa = PBXBuildFile; productRef = FF0357DB14B82BEF78F23A72 /* AnthropicClient */; };
+		F86E044D2CD7EC516B7BC3C5 /* CrashReporting in Frameworks */ = {isa = PBXBuildFile; productRef = 67FC99E3A4D52CF6EF835CAD /* CrashReporting */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2BFE4A0D114885235E740870 /* AnthropicClientTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = AnthropicClientTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		2EAECD2204EB655CAAAFD5E5 /* Analytics */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Analytics; path = Packages/Analytics; sourceTree = SOURCE_ROOT; };
+		3CAF1EF868C725498221E215 /* HealthKitClientTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = HealthKitClientTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		409A9C45B5DE74A41495935C /* SupabaseClient */ = {isa = PBXFileReference; lastKnownFileType = folder; name = SupabaseClient; path = Packages/SupabaseClient; sourceTree = SOURCE_ROOT; };
 		47ED229A15FF76E83E8AE703 /* AppFeatureTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppFeatureTests.swift; sourceTree = "<group>"; };
 		4B121203B5A518889F220416 /* ThemeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeTests.swift; sourceTree = "<group>"; };
 		4B2F705E019039E659FDB75D /* AppTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = AppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D71BBF4FC1AD348C933CFC2 /* DesignSystemTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = DesignSystemTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		4E2420AF60255FE400D1AF04 /* SupabaseClientTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = SupabaseClientTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		50C5BFF2EAEB63759B854E69 /* CrashReportingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrashReportingTests.swift; sourceTree = "<group>"; };
+		611D7A6B199A70FB3BB2A6E7 /* CrashReportingTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = CrashReportingTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6CA9C6656CAB7C1C83089C72 /* FuelWellApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FuelWellApp.swift; sourceTree = "<group>"; };
+		6DAFEB83DF99C301C3634D9A /* AnthropicClient */ = {isa = PBXFileReference; lastKnownFileType = folder; name = AnthropicClient; path = Packages/AnthropicClient; sourceTree = SOURCE_ROOT; };
 		861900CE59C0B45EB267EE5E /* App */ = {isa = PBXFileReference; lastKnownFileType = folder; name = App; path = Features/App; sourceTree = SOURCE_ROOT; };
+		8C0F7AAB7BBED97139CEEE47 /* AnalyticsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsTests.swift; sourceTree = "<group>"; };
+		8D184EE2B81C96B09945B6A7 /* HealthKitClient */ = {isa = PBXFileReference; lastKnownFileType = folder; name = HealthKitClient; path = Packages/HealthKitClient; sourceTree = SOURCE_ROOT; };
+		9B253880B90B3461ED1C8DFA /* AnalyticsTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = AnalyticsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9C74CC19984E3437AF5CCE0C /* AnthropicClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnthropicClientTests.swift; sourceTree = "<group>"; };
 		B9CEB224194E971DDEBD9AA0 /* Persistence */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Persistence; path = Packages/Persistence; sourceTree = SOURCE_ROOT; };
+		BE9240DF4329198C935AEECE /* CrashReporting */ = {isa = PBXFileReference; lastKnownFileType = folder; name = CrashReporting; path = Packages/CrashReporting; sourceTree = SOURCE_ROOT; };
 		C80BB3055E9CA31719A9FE33 /* FuelWellApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = FuelWellApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D7621B9AA750FF5C21B4E26A /* Networking */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Networking; path = Packages/Networking; sourceTree = SOURCE_ROOT; };
 		DE805F56F775B95F520692DA /* DesignSystem */ = {isa = PBXFileReference; lastKnownFileType = folder; name = DesignSystem; path = Packages/DesignSystem; sourceTree = SOURCE_ROOT; };
+		DF042C3459C06538638038CC /* HealthKitClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitClientTests.swift; sourceTree = "<group>"; };
+		E87BC127E4591BBD7B5FB190 /* SupabaseClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseClientTests.swift; sourceTree = "<group>"; };
 		FA93EEDE5E862918DEBEE5AF /* Core */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Core; path = Packages/Core; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -45,6 +80,51 @@
 			files = (
 				828AA6FB777F1CDC03805A2C /* App in Frameworks */,
 				5932B1786E235844770D782E /* DesignSystem in Frameworks */,
+				16C4AA88D105F551DC23BFE6 /* Analytics in Frameworks */,
+				B3B14A3449901DA7B27138BA /* AnthropicClient in Frameworks */,
+				D221C2E98E005F83CC4A66D1 /* CrashReporting in Frameworks */,
+				B6BADB1365A5713F1B809D2A /* HealthKitClient in Frameworks */,
+				96922C84363B7364690F169F /* SupabaseClient in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1FF1C1EDBFFBB7B720DE5410 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F86E044D2CD7EC516B7BC3C5 /* CrashReporting in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		26E1D643AF61DF9C392C1074 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E452520C8E3688317A97CD65 /* AnthropicClient in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		608FD3C5C93D237EE33407A2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				72AA7B4A1E4116C85E4DD0D7 /* Analytics in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A7AEF510BD7C97C6808C96E3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				23275F307DF68E53AF774B23 /* HealthKitClient in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B007CAC56C723BE23E62530E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2FA15D44276AA995E9F03582 /* SupabaseClient in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -53,6 +133,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				9EBB2892A49EEFAA57D0998E /* App in Frameworks */,
+				BB17FA9B2F23A69E89AEA220 /* Analytics in Frameworks */,
+				C2D1F6674CF2F408203B5825 /* AnthropicClient in Frameworks */,
+				00138100E585E22822BB0F1C /* CrashReporting in Frameworks */,
+				CDBA6B5EA4250DF41490DAA2 /* HealthKitClient in Frameworks */,
+				6B3E637187BD30858178A50B /* SupabaseClient in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -68,6 +153,24 @@
 			path = Packages/DesignSystem/Tests/DesignSystemTests;
 			sourceTree = "<group>";
 		};
+		31E349595067FB66F9D060DC /* CrashReportingTests */ = {
+			isa = PBXGroup;
+			children = (
+				50C5BFF2EAEB63759B854E69 /* CrashReportingTests.swift */,
+			);
+			name = CrashReportingTests;
+			path = Packages/CrashReporting/Tests/CrashReportingTests;
+			sourceTree = "<group>";
+		};
+		3659771EF331DBD8E03ED9A1 /* AnalyticsTests */ = {
+			isa = PBXGroup;
+			children = (
+				8C0F7AAB7BBED97139CEEE47 /* AnalyticsTests.swift */,
+			);
+			name = AnalyticsTests;
+			path = Packages/Analytics/Tests/AnalyticsTests;
+			sourceTree = "<group>";
+		};
 		4969F225C8640DB5294F6ED5 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
@@ -75,6 +178,24 @@
 			);
 			name = Sources;
 			path = FuelWellApp/Sources;
+			sourceTree = "<group>";
+		};
+		504A9252CA659A2E601EC50D /* HealthKitClientTests */ = {
+			isa = PBXGroup;
+			children = (
+				DF042C3459C06538638038CC /* HealthKitClientTests.swift */,
+			);
+			name = HealthKitClientTests;
+			path = Packages/HealthKitClient/Tests/HealthKitClientTests;
+			sourceTree = "<group>";
+		};
+		5328C9CAE97238A27F1C0826 /* AnthropicClientTests */ = {
+			isa = PBXGroup;
+			children = (
+				9C74CC19984E3437AF5CCE0C /* AnthropicClientTests.swift */,
+			);
+			name = AnthropicClientTests;
+			path = Packages/AnthropicClient/Tests/AnthropicClientTests;
 			sourceTree = "<group>";
 		};
 		79BFA6DD02BD86816C7E076B /* AppTests */ = {
@@ -89,9 +210,14 @@
 		7D7F7C0172E0B3D15E76EEC0 /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				9B253880B90B3461ED1C8DFA /* AnalyticsTests.xctest */,
+				2BFE4A0D114885235E740870 /* AnthropicClientTests.xctest */,
 				4B2F705E019039E659FDB75D /* AppTests.xctest */,
+				611D7A6B199A70FB3BB2A6E7 /* CrashReportingTests.xctest */,
 				4D71BBF4FC1AD348C933CFC2 /* DesignSystemTests.xctest */,
 				C80BB3055E9CA31719A9FE33 /* FuelWellApp.app */,
+				3CAF1EF868C725498221E215 /* HealthKitClientTests.xctest */,
+				4E2420AF60255FE400D1AF04 /* SupabaseClientTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -99,22 +225,41 @@
 		AF02B3B8DDEAEA8573D781F9 = {
 			isa = PBXGroup;
 			children = (
+				3659771EF331DBD8E03ED9A1 /* AnalyticsTests */,
+				5328C9CAE97238A27F1C0826 /* AnthropicClientTests */,
 				79BFA6DD02BD86816C7E076B /* AppTests */,
+				31E349595067FB66F9D060DC /* CrashReportingTests */,
 				0E2E5E54DD7DFEC1C466512A /* DesignSystemTests */,
+				504A9252CA659A2E601EC50D /* HealthKitClientTests */,
 				F0AE411B2E556D7B6A0B4499 /* Packages */,
 				4969F225C8640DB5294F6ED5 /* Sources */,
+				E0D9F9B1D588D054F375588E /* SupabaseClientTests */,
 				7D7F7C0172E0B3D15E76EEC0 /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		E0D9F9B1D588D054F375588E /* SupabaseClientTests */ = {
+			isa = PBXGroup;
+			children = (
+				E87BC127E4591BBD7B5FB190 /* SupabaseClientTests.swift */,
+			);
+			name = SupabaseClientTests;
+			path = Packages/SupabaseClient/Tests/SupabaseClientTests;
 			sourceTree = "<group>";
 		};
 		F0AE411B2E556D7B6A0B4499 /* Packages */ = {
 			isa = PBXGroup;
 			children = (
+				2EAECD2204EB655CAAAFD5E5 /* Analytics */,
+				6DAFEB83DF99C301C3634D9A /* AnthropicClient */,
 				861900CE59C0B45EB267EE5E /* App */,
 				FA93EEDE5E862918DEBEE5AF /* Core */,
+				BE9240DF4329198C935AEECE /* CrashReporting */,
 				DE805F56F775B95F520692DA /* DesignSystem */,
+				8D184EE2B81C96B09945B6A7 /* HealthKitClient */,
 				D7621B9AA750FF5C21B4E26A /* Networking */,
 				B9CEB224194E971DDEBD9AA0 /* Persistence */,
+				409A9C45B5DE74A41495935C /* SupabaseClient */,
 			);
 			path = Packages;
 			sourceTree = "<group>";
@@ -122,6 +267,44 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		010A4979F16A9FCCE2BE98C1 /* AnthropicClientTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 50A0AEAD8B99E26B2934D4F8 /* Build configuration list for PBXNativeTarget "AnthropicClientTests" */;
+			buildPhases = (
+				08221640B580B5C5E648E048 /* Sources */,
+				26E1D643AF61DF9C392C1074 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AnthropicClientTests;
+			packageProductDependencies = (
+				FF0357DB14B82BEF78F23A72 /* AnthropicClient */,
+			);
+			productName = AnthropicClientTests;
+			productReference = 2BFE4A0D114885235E740870 /* AnthropicClientTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		0A13693D0B4512F560C4657A /* AnalyticsTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3283B1FC04AE8A13D52792BE /* Build configuration list for PBXNativeTarget "AnalyticsTests" */;
+			buildPhases = (
+				D4217AEFEF1932F6BD56EFFD /* Sources */,
+				608FD3C5C93D237EE33407A2 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AnalyticsTests;
+			packageProductDependencies = (
+				67D490D2785A18B1328EA388 /* Analytics */,
+			);
+			productName = AnalyticsTests;
+			productReference = 9B253880B90B3461ED1C8DFA /* AnalyticsTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		5D8FBFD9FDC520E7735CF092 /* DesignSystemTests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 87DCD4D82E4255757563D201 /* Build configuration list for PBXNativeTarget "DesignSystemTests" */;
@@ -141,6 +324,25 @@
 			productReference = 4D71BBF4FC1AD348C933CFC2 /* DesignSystemTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		6298DBD7BE936F87C399D12B /* SupabaseClientTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0066C506612C18BE6DE6E1E6 /* Build configuration list for PBXNativeTarget "SupabaseClientTests" */;
+			buildPhases = (
+				D6753BCD727205A2BE71ACA5 /* Sources */,
+				B007CAC56C723BE23E62530E /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SupabaseClientTests;
+			packageProductDependencies = (
+				43851B7DC17A7E4975E5DF8B /* SupabaseClient */,
+			);
+			productName = SupabaseClientTests;
+			productReference = 4E2420AF60255FE400D1AF04 /* SupabaseClientTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		6F9A91BB3BA886B9C74CD8C2 /* AppTests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = F2FD6A5373636A01752F4A02 /* Build configuration list for PBXNativeTarget "AppTests" */;
@@ -155,9 +357,33 @@
 			name = AppTests;
 			packageProductDependencies = (
 				C9717509AAA91CD741114D46 /* App */,
+				9A7A416ADA5337C051A9CA92 /* Analytics */,
+				D7977175BB469F04F6B14D50 /* AnthropicClient */,
+				8F5A6C3564FBD439EF0FBC20 /* CrashReporting */,
+				2EF8408FBB5A9D5CE9404D7B /* HealthKitClient */,
+				C8C0CC9A8E4CE014A35C4BD5 /* SupabaseClient */,
 			);
 			productName = AppTests;
 			productReference = 4B2F705E019039E659FDB75D /* AppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		B3DF299CD302435A019CDA3D /* CrashReportingTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F14D109BD16C4356B335E1A0 /* Build configuration list for PBXNativeTarget "CrashReportingTests" */;
+			buildPhases = (
+				A6E453FFB540D92BB7B12A91 /* Sources */,
+				1FF1C1EDBFFBB7B720DE5410 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = CrashReportingTests;
+			packageProductDependencies = (
+				67FC99E3A4D52CF6EF835CAD /* CrashReporting */,
+			);
+			productName = CrashReportingTests;
+			productReference = 611D7A6B199A70FB3BB2A6E7 /* CrashReportingTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		C2CA1E955E162F8261AF65EE /* FuelWellApp */ = {
@@ -175,10 +401,34 @@
 			packageProductDependencies = (
 				159612099978ADB2428B15D4 /* App */,
 				370FE810A7736B66746FACA9 /* DesignSystem */,
+				6C80E5D8F27C5735F8B5C3E1 /* Analytics */,
+				02A468A0B528BC794A35A371 /* AnthropicClient */,
+				ACE1B26EE237383A20C8998A /* CrashReporting */,
+				EBFC0B46EB6060D743FD35F0 /* HealthKitClient */,
+				35F9875A95C99DBD77AE5434 /* SupabaseClient */,
 			);
 			productName = FuelWellApp;
 			productReference = C80BB3055E9CA31719A9FE33 /* FuelWellApp.app */;
 			productType = "com.apple.product-type.application";
+		};
+		EBDA7026A910722A15EF9240 /* HealthKitClientTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3682DB32E1E5BEC40DE42B85 /* Build configuration list for PBXNativeTarget "HealthKitClientTests" */;
+			buildPhases = (
+				355891F76FD271A44BD8A253 /* Sources */,
+				A7AEF510BD7C97C6808C96E3 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = HealthKitClientTests;
+			packageProductDependencies = (
+				5275277C2654D6AE1D8F8C09 /* HealthKitClient */,
+			);
+			productName = HealthKitClientTests;
+			productReference = 3CAF1EF868C725498221E215 /* HealthKitClientTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -201,25 +451,43 @@
 			mainGroup = AF02B3B8DDEAEA8573D781F9;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				069122B95B2B2D4D9841AD7A /* XCLocalSwiftPackageReference "Packages/Analytics" */,
+				D3B088CF713C2D038C96E5C6 /* XCLocalSwiftPackageReference "Packages/AnthropicClient" */,
 				B3F0EFDB5AF59C69402F2259 /* XCLocalSwiftPackageReference "Features/App" */,
 				F476E6E8BBB4B9B4C316D18D /* XCLocalSwiftPackageReference "Packages/Core" */,
+				006588EB2BA1F07104BFA099 /* XCLocalSwiftPackageReference "Packages/CrashReporting" */,
 				6B9AA57CE984994EDE606450 /* XCLocalSwiftPackageReference "Packages/DesignSystem" */,
+				E70C7A614417DFF1AC4D2866 /* XCLocalSwiftPackageReference "Packages/HealthKitClient" */,
 				6C4CDCEB2517CF9553863029 /* XCLocalSwiftPackageReference "Packages/Networking" */,
 				262A3E2C14A35915F962359B /* XCLocalSwiftPackageReference "Packages/Persistence" */,
+				ACE30396F7A5608CAD17BF1C /* XCLocalSwiftPackageReference "Packages/SupabaseClient" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 7D7F7C0172E0B3D15E76EEC0 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
+				0A13693D0B4512F560C4657A /* AnalyticsTests */,
+				010A4979F16A9FCCE2BE98C1 /* AnthropicClientTests */,
 				6F9A91BB3BA886B9C74CD8C2 /* AppTests */,
+				B3DF299CD302435A019CDA3D /* CrashReportingTests */,
 				5D8FBFD9FDC520E7735CF092 /* DesignSystemTests */,
 				C2CA1E955E162F8261AF65EE /* FuelWellApp */,
+				EBDA7026A910722A15EF9240 /* HealthKitClientTests */,
+				6298DBD7BE936F87C399D12B /* SupabaseClientTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
+		08221640B580B5C5E648E048 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				308EA91C167DD40A31E8016E /* AnthropicClientTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		17D43A46582678CB0D45CDE8 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -233,6 +501,38 @@
 			buildActionMask = 2147483647;
 			files = (
 				46DCE2683117D957327FC93F /* AppFeatureTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		355891F76FD271A44BD8A253 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CABFC8C5FBF761742B3D36EF /* HealthKitClientTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A6E453FFB540D92BB7B12A91 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7B86D3915E80AACDF6C86388 /* CrashReportingTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D4217AEFEF1932F6BD56EFFD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6D2691325A97B2F4CE504116 /* AnalyticsTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D6753BCD727205A2BE71ACA5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8B214741ADCEF773C22621B8 /* SupabaseClientTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -253,6 +553,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "FuelWell reads workouts, sleep, steps, energy, and body measurements to personalize coaching.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "FuelWell does not write Health data in this phase.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -266,6 +568,40 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
+		};
+		1DE75C6B60032AF54E02A4C6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.fuelwell.SupabaseClientTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		27DF74FC17085E8D2EB13138 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.fuelwell.CrashReportingTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
 		};
 		2CDB91D75142F89C5777F8EA /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -326,6 +662,23 @@
 			};
 			name = Release;
 		};
+		43A1739B8FC7A19FC6DAEDB3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.fuelwell.CrashReportingTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		43FBEB91744C27102B235029 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -338,6 +691,40 @@
 					"@loader_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.fuelwell.AppTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4A521436B36A275CE04BA07D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.fuelwell.HealthKitClientTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		4EA18F1D283022388D9FB243 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.fuelwell.HealthKitClientTests;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -372,6 +759,57 @@
 					"@loader_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.fuelwell.DesignSystemTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		6400311ACF5B781B619E42AF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.fuelwell.AnalyticsTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		6BEA88AFC3E8E24266F2692C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.fuelwell.SupabaseClientTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		74A3477EC7A3B36ECEE7D3CA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.fuelwell.AnthropicClientTests;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -466,6 +904,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "FuelWell reads workouts, sleep, steps, energy, and body measurements to personalize coaching.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "FuelWell does not write Health data in this phase.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -480,9 +920,79 @@
 			};
 			name = Debug;
 		};
+		BBF40A51D319CD9F7AA7C2AF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.fuelwell.AnalyticsTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		BE1688538E79C90C065ED035 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.fuelwell.AnthropicClientTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		0066C506612C18BE6DE6E1E6 /* Build configuration list for PBXNativeTarget "SupabaseClientTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DE75C6B60032AF54E02A4C6 /* Debug */,
+				6BEA88AFC3E8E24266F2692C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		3283B1FC04AE8A13D52792BE /* Build configuration list for PBXNativeTarget "AnalyticsTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6400311ACF5B781B619E42AF /* Debug */,
+				BBF40A51D319CD9F7AA7C2AF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		3682DB32E1E5BEC40DE42B85 /* Build configuration list for PBXNativeTarget "HealthKitClientTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4EA18F1D283022388D9FB243 /* Debug */,
+				4A521436B36A275CE04BA07D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		50A0AEAD8B99E26B2934D4F8 /* Build configuration list for PBXNativeTarget "AnthropicClientTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				74A3477EC7A3B36ECEE7D3CA /* Debug */,
+				BE1688538E79C90C065ED035 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 		87DCD4D82E4255757563D201 /* Build configuration list for PBXNativeTarget "DesignSystemTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -510,6 +1020,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
+		F14D109BD16C4356B335E1A0 /* Build configuration list for PBXNativeTarget "CrashReportingTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				27DF74FC17085E8D2EB13138 /* Debug */,
+				43A1739B8FC7A19FC6DAEDB3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 		F2FD6A5373636A01752F4A02 /* Build configuration list for PBXNativeTarget "AppTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -522,6 +1041,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
+		006588EB2BA1F07104BFA099 /* XCLocalSwiftPackageReference "Packages/CrashReporting" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/CrashReporting;
+		};
+		069122B95B2B2D4D9841AD7A /* XCLocalSwiftPackageReference "Packages/Analytics" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/Analytics;
+		};
 		262A3E2C14A35915F962359B /* XCLocalSwiftPackageReference "Packages/Persistence" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/Persistence;
@@ -534,9 +1061,21 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/Networking;
 		};
+		ACE30396F7A5608CAD17BF1C /* XCLocalSwiftPackageReference "Packages/SupabaseClient" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/SupabaseClient;
+		};
 		B3F0EFDB5AF59C69402F2259 /* XCLocalSwiftPackageReference "Features/App" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Features/App;
+		};
+		D3B088CF713C2D038C96E5C6 /* XCLocalSwiftPackageReference "Packages/AnthropicClient" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/AnthropicClient;
+		};
+		E70C7A614417DFF1AC4D2866 /* XCLocalSwiftPackageReference "Packages/HealthKitClient" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/HealthKitClient;
 		};
 		F476E6E8BBB4B9B4C316D18D /* XCLocalSwiftPackageReference "Packages/Core" */ = {
 			isa = XCLocalSwiftPackageReference;
@@ -545,21 +1084,81 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		02A468A0B528BC794A35A371 /* AnthropicClient */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AnthropicClient;
+		};
 		159612099978ADB2428B15D4 /* App */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = App;
+		};
+		2EF8408FBB5A9D5CE9404D7B /* HealthKitClient */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = HealthKitClient;
+		};
+		35F9875A95C99DBD77AE5434 /* SupabaseClient */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SupabaseClient;
 		};
 		370FE810A7736B66746FACA9 /* DesignSystem */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = DesignSystem;
 		};
+		43851B7DC17A7E4975E5DF8B /* SupabaseClient */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SupabaseClient;
+		};
 		4D23E8317116A890B8DAA8FE /* DesignSystem */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = DesignSystem;
 		};
+		5275277C2654D6AE1D8F8C09 /* HealthKitClient */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = HealthKitClient;
+		};
+		67D490D2785A18B1328EA388 /* Analytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Analytics;
+		};
+		67FC99E3A4D52CF6EF835CAD /* CrashReporting */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CrashReporting;
+		};
+		6C80E5D8F27C5735F8B5C3E1 /* Analytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Analytics;
+		};
+		8F5A6C3564FBD439EF0FBC20 /* CrashReporting */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CrashReporting;
+		};
+		9A7A416ADA5337C051A9CA92 /* Analytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Analytics;
+		};
+		ACE1B26EE237383A20C8998A /* CrashReporting */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CrashReporting;
+		};
+		C8C0CC9A8E4CE014A35C4BD5 /* SupabaseClient */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SupabaseClient;
+		};
 		C9717509AAA91CD741114D46 /* App */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = App;
+		};
+		D7977175BB469F04F6B14D50 /* AnthropicClient */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AnthropicClient;
+		};
+		EBFC0B46EB6060D743FD35F0 /* HealthKitClient */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = HealthKitClient;
+		};
+		FF0357DB14B82BEF78F23A72 /* AnthropicClient */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AnthropicClient;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
