@@ -1,0 +1,13 @@
+{
+  "sourceType": "github",
+  "source": "github",
+  "url": "https://github.com/twostraws/Swift-Testing-Agent-Skill",
+  "repo": "twostraws/Swift-Testing-Agent-Skill",
+  "ref": null,
+  "subpath": "swift-testing-pro",
+  "installSource": "twostraws/Swift-Testing-Agent-Skill/swift-testing-pro",
+  "skillName": "swift-testing-pro",
+  "scope": "project",
+  "installedAt": "2026-05-24T18:26:44.562Z",
+  "updatedAt": "2026-05-24T18:26:44.562Z"
+}
