@@ -10,9 +10,15 @@ let package = Package(
     products: [
         .library(name: "Core", type: .static, targets: ["Core"])
     ],
+    dependencies: [
+        .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.9.0")
+    ],
     targets: [
         .target(
             name: "Core",
+            dependencies: [
+                .product(name: "Dependencies", package: "swift-dependencies")
+            ],
             swiftSettings: [
                 .enableExperimentalFeature("StrictConcurrency"),
                 .enableUpcomingFeature("ExistentialAny")
@@ -20,7 +26,11 @@ let package = Package(
         ),
         .testTarget(
             name: "CoreTests",
-            dependencies: ["Core"]
+            dependencies: ["Core"],
+            swiftSettings: [
+                .enableExperimentalFeature("StrictConcurrency"),
+                .enableUpcomingFeature("ExistentialAny")
+            ]
         )
     ],
     swiftLanguageModes: [.v6]

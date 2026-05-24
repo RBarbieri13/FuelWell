@@ -9,11 +9,11 @@ This slice adds the first durable nutrition domain layer behind the Meals and Pr
 
 ## Added
 
-- `Nutrition` Swift package with macro target, intake, remaining, verdict, recommendation, meal-slot, and day-snapshot models.
+- `NutritionDomain` Swift package with macro target, intake, remaining, verdict, recommendation, meal-slot, and day-snapshot models.
 - `MacroDecisionEngine.evaluate(target:intake:nextMeal:)` for verdict-first macro guidance.
 - Swift Testing coverage for remaining-macro math, protein-behind-calories guidance, on-track guidance, coach-language no-gos, and the three-recommendation cap.
 - App shell wiring so Home and Meals tab placeholder copy reads from `MacroDaySnapshot.preview` instead of independent hardcoded nutrition copy.
-- XcodeGen registration for the `Nutrition` package and `NutritionTests` target.
+- XcodeGen registration for the `NutritionDomain` package and `NutritionDomainTests` target.
 
 ## Product Rules Preserved
 

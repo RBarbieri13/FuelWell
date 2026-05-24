@@ -3,37 +3,26 @@
 import PackageDescription
 
 let package = Package(
-    name: "App",
+    name: "Nutrition",
     platforms: [
         .iOS(.v17)
     ],
     products: [
-        .library(name: "App", type: .static, targets: ["App"])
+        .library(name: "Nutrition", type: .static, targets: ["Nutrition"])
     ],
     dependencies: [
         .package(path: "../../Packages/Core"),
         .package(path: "../../Packages/DesignSystem"),
-        .package(path: "../../Packages/AnthropicClient"),
-        .package(path: "../../Packages/SupabaseClient"),
-        .package(path: "../../Packages/HealthKitClient"),
-        .package(path: "../../Packages/Analytics"),
-        .package(path: "../../Packages/CrashReporting"),
         .package(path: "../../Packages/NutritionDomain"),
-        .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.17.0"),
-        .package(url: "https://github.com/johnpatrickmorgan/TCACoordinators", from: "0.9.0")
+        .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.17.0")
     ],
     targets: [
         .target(
-            name: "App",
+            name: "Nutrition",
             dependencies: [
-                "Analytics",
-                "AnthropicClient",
                 "Core",
-                "CrashReporting",
                 "DesignSystem",
-                "HealthKitClient",
                 "NutritionDomain",
-                "SupabaseClient",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
             ],
             swiftSettings: [
@@ -42,16 +31,17 @@ let package = Package(
             ]
         ),
         .testTarget(
-            name: "AppTests",
+            name: "NutritionTests",
             dependencies: [
-                "App",
-                "Analytics",
-                "AnthropicClient",
-                "HealthKitClient",
-                "SupabaseClient",
+                "Nutrition",
+                "Core",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
             ],
-            path: "Tests/AppTests"
+            path: "Tests/NutritionTests",
+            swiftSettings: [
+                .enableExperimentalFeature("StrictConcurrency"),
+                .enableUpcomingFeature("ExistentialAny")
+            ]
         )
     ],
     swiftLanguageModes: [.v6]

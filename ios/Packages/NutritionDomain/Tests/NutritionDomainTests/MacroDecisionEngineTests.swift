@@ -1,4 +1,4 @@
-import Nutrition
+import NutritionDomain
 import Testing
 
 @Test
