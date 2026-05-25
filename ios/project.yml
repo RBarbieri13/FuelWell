@@ -220,6 +220,18 @@ targets:
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES
+  FuelWellUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: FuelWellUITests
+    dependencies:
+      - target: FuelWellApp
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_TARGET_NAME: FuelWellApp
 schemes:
   FuelWellApp:
     build:
@@ -242,3 +254,4 @@ schemes:
         - CrashReportingTests
         - NutritionDomainTests
         - NutritionFeatureTests
+        - FuelWellUITests

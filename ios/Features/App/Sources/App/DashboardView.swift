@@ -94,6 +94,9 @@ private struct HealthScoreHero: View {
             }
         }
         .phaseCard()
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Health Score")
+        .accessibilityValue("78. Protein is behind today. Recovery unlocks with wearable data.")
         .qualityID(QualityIdentifier.dashboardHealthScore)
     }
 }
@@ -133,6 +136,9 @@ private struct InflowsOutflowsCard: View {
             }
         }
         .phaseCard()
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Inflows and Outflows")
+        .accessibilityValue("\(self.snapshot.intake.calories) calories in. 1,210 calories out. 230 net calories.")
         .qualityID(QualityIdentifier.dashboardInflowsOutflows)
     }
 }
@@ -160,6 +166,8 @@ private struct VerdictCard: View {
                 .fontWeight(.bold)
         }
         .phaseCard()
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("Next action")
         .qualityID(QualityIdentifier.dashboardVerdict)
     }
 }
