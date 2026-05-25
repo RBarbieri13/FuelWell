@@ -17,6 +17,7 @@ public struct DailyLogFeature {
         public var addMealDraft: AddMealDraft
         public var recentEntries: [MealEntry]
         public var selectedDestination: NutritionDestination?
+        public var foodSearchSuggestions: [FoodSearchSuggestion]
 
         public init(
             entries: IdentifiedArrayOf<MealEntry> = [],
@@ -27,6 +28,7 @@ public struct DailyLogFeature {
             addMealDraft: AddMealDraft = AddMealDraft(),
             recentEntries: [MealEntry] = [],
             selectedDestination: NutritionDestination? = nil,
+            foodSearchSuggestions: [FoodSearchSuggestion] = FoodSearchSuggestion.defaultSuggestions,
             target: MacroTarget = MacroTarget(
                 calories: 2_100,
                 macros: MacroGrams(protein: 150, carbs: 220, fat: 70)
@@ -41,6 +43,7 @@ public struct DailyLogFeature {
             self.addMealDraft = addMealDraft
             self.recentEntries = recentEntries
             self.selectedDestination = selectedDestination
+            self.foodSearchSuggestions = foodSearchSuggestions
             self.macroSnapshot = Self.snapshot(entries: entries, target: target)
         }
 
@@ -77,6 +80,7 @@ public struct DailyLogFeature {
         case mealHistoryRepeatTapped(MealEntry)
         case recipeBrowserRecipeTapped(RecipeSuggestion)
         case addMealModeSelected(AddMealMode)
+        case foodSearchSuggestionTapped(FoodSearchSuggestion)
         case recentMealTapped(MealEntry)
         case addMealNameChanged(String)
         case addMealCaloriesChanged(String)
@@ -174,6 +178,10 @@ public struct DailyLogFeature {
 
             case let .addMealModeSelected(mode):
                 state.addMealDraft.mode = mode
+                return .none
+
+            case let .foodSearchSuggestionTapped(food):
+                state.addMealDraft = AddMealDraft.foodSearch(food)
                 return .none
 
             case let .recentMealTapped(entry):
