@@ -18,15 +18,18 @@ Scope: Dashboard, Meals & Nutrition, Coach, Exercise, Progress, Menu, Help
 - Main tab roots are covered by the critical-path UI test.
 - Add Meal has stable identifiers for open and save actions.
 - The UI test covers the full fast path: launch -> Meals -> Add Meal -> save -> see logged meal.
+- The Component Gallery now renders core design-system components at standard, compact, and accessibility5 Dynamic Type sizes.
 
 ## Still Open
 
 - Add explicit VoiceOver labels and values for macro progress tiles.
-- Add Dynamic Type screenshot/snapshot coverage once the Component Gallery exists.
+- Add pixel-baseline snapshot coverage with `swift-snapshot-testing` once the rendered gallery states are approved.
 - Add contrast automation if the DESIGN.md WCAG linter becomes available in the toolchain.
 - Add delete/edit meal UI tests once edit is implemented as a user-facing flow.
+- Bundle or replace the named brand fonts so render logs stop falling back through UIKit font descriptors.
 
 ## Evidence
 
 - `FuelWellCriticalPathUITests` covers cold launch, Menu, Help, Add Meal, and primary tab reachability.
+- `ComponentGalleryRenderTests` renders the design-system gallery in normal, compact-width, and accessibility5 states.
 - Existing SwiftUI code continues to use the generated `Theme` tokens rather than raw colors.

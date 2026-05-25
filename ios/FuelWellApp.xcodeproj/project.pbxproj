@@ -18,6 +18,7 @@
 		308EA91C167DD40A31E8016E /* AnthropicClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C74CC19984E3437AF5CCE0C /* AnthropicClientTests.swift */; };
 		32FC6A022D1A5E690887AF10 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = B5B5543DED540909B09D1EDC /* Core */; };
 		46DCE2683117D957327FC93F /* AppFeatureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47ED229A15FF76E83E8AE703 /* AppFeatureTests.swift */; };
+		4A0CAB4DC482140B2AC9D636 /* ComponentGalleryRenderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE88D7C304B0C1BA0647DE4D /* ComponentGalleryRenderTests.swift */; };
 		5932B1786E235844770D782E /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 370FE810A7736B66746FACA9 /* DesignSystem */; };
 		5F5DB4958C9C634B24FB37B3 /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 4D23E8317116A890B8DAA8FE /* DesignSystem */; };
 		6B3E637187BD30858178A50B /* NutritionDomain in Frameworks */ = {isa = PBXBuildFile; productRef = 84199B457E3A5BCD30A3807A /* NutritionDomain */; };
@@ -90,6 +91,7 @@
 		9B253880B90B3461ED1C8DFA /* AnalyticsTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = AnalyticsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9C74CC19984E3437AF5CCE0C /* AnthropicClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnthropicClientTests.swift; sourceTree = "<group>"; };
 		AD17B4ABA97C270B763FF1CD /* NutritionDomainTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = NutritionDomainTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		AE88D7C304B0C1BA0647DE4D /* ComponentGalleryRenderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComponentGalleryRenderTests.swift; sourceTree = "<group>"; };
 		B1EAC66EFCFC2CB8A89481FA /* FuelWellUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = FuelWellUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B9CEB224194E971DDEBD9AA0 /* Persistence */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Persistence; path = Packages/Persistence; sourceTree = SOURCE_ROOT; };
 		BE9240DF4329198C935AEECE /* CrashReporting */ = {isa = PBXFileReference; lastKnownFileType = folder; name = CrashReporting; path = Packages/CrashReporting; sourceTree = SOURCE_ROOT; };
@@ -220,6 +222,7 @@
 		0E2E5E54DD7DFEC1C466512A /* DesignSystemTests */ = {
 			isa = PBXGroup;
 			children = (
+				AE88D7C304B0C1BA0647DE4D /* ComponentGalleryRenderTests.swift */,
 				4B121203B5A518889F220416 /* ThemeTests.swift */,
 			);
 			name = DesignSystemTests;
@@ -751,6 +754,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4A0CAB4DC482140B2AC9D636 /* ComponentGalleryRenderTests.swift in Sources */,
 				CEA676DAAFF8793964D8A9A7 /* ThemeTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
