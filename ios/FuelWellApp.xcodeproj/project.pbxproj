@@ -31,6 +31,7 @@
 		8F6B160359BB70A1C50CC771 /* SupabaseClient in Frameworks */ = {isa = PBXBuildFile; productRef = 35F9875A95C99DBD77AE5434 /* SupabaseClient */; };
 		92F494003A3D9A020E442A07 /* PersistenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61512A7A4DAA2D43BD804368 /* PersistenceTests.swift */; };
 		96922C84363B7364690F169F /* NutritionDomain in Frameworks */ = {isa = PBXBuildFile; productRef = DF3D5011F498564731103745 /* NutritionDomain */; };
+		9BD4AB79B855F1F5D294BB66 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 165F0021ABA3E00997286AAC /* PrivacyInfo.xcprivacy */; };
 		9EBB2892A49EEFAA57D0998E /* App in Frameworks */ = {isa = PBXBuildFile; productRef = C9717509AAA91CD741114D46 /* App */; };
 		A2645D1B22477907E6C56D91 /* Persistence in Frameworks */ = {isa = PBXBuildFile; productRef = 0AE45C2A0E182ACE99B2A8CB /* Persistence */; };
 		B3B14A3449901DA7B27138BA /* AnthropicClient in Frameworks */ = {isa = PBXBuildFile; productRef = 02A468A0B528BC794A35A371 /* AnthropicClient */; };
@@ -52,6 +53,7 @@
 		06F6BEFBE2E4B674A50B733F /* MacroDecisionEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacroDecisionEngineTests.swift; sourceTree = "<group>"; };
 		0A277A0A924638199BF69B4E /* Nutrition */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Nutrition; path = Features/Nutrition; sourceTree = SOURCE_ROOT; };
 		0F1922BF3BEBD3C27002F2D7 /* CoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreTests.swift; sourceTree = "<group>"; };
+		165F0021ABA3E00997286AAC /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		231F591E67A99C4846848A4B /* NutritionFeatureTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = NutritionFeatureTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2BFE4A0D114885235E740870 /* AnthropicClientTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = AnthropicClientTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2EAECD2204EB655CAAAFD5E5 /* Analytics */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Analytics; path = Packages/Analytics; sourceTree = SOURCE_ROOT; };
@@ -302,6 +304,15 @@
 			path = Features/Nutrition/Tests/NutritionTests;
 			sourceTree = "<group>";
 		};
+		9E6F1252CC99F34C624C985F /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				165F0021ABA3E00997286AAC /* PrivacyInfo.xcprivacy */,
+			);
+			name = Resources;
+			path = FuelWellApp/Resources;
+			sourceTree = "<group>";
+		};
 		AF02B3B8DDEAEA8573D781F9 = {
 			isa = PBXGroup;
 			children = (
@@ -316,6 +327,7 @@
 				83F7244B990EF089B98A0B6E /* NutritionTests */,
 				F0AE411B2E556D7B6A0B4499 /* Packages */,
 				C105F591167C2EF5A7D65CE1 /* PersistenceTests */,
+				9E6F1252CC99F34C624C985F /* Resources */,
 				4969F225C8640DB5294F6ED5 /* Sources */,
 				E0D9F9B1D588D054F375588E /* SupabaseClientTests */,
 				7D7F7C0172E0B3D15E76EEC0 /* Products */,
@@ -535,6 +547,7 @@
 			buildConfigurationList = 8E81FCF2A71CD70F8698D1DC /* Build configuration list for PBXNativeTarget "FuelWellApp" */;
 			buildPhases = (
 				F28E320FBFF85119E8B0BEBB /* Sources */,
+				F736D546F85186001CD1B5FA /* Resources */,
 				0799C73DC60026696F9431AA /* Frameworks */,
 			);
 			buildRules = (
@@ -668,6 +681,17 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F736D546F85186001CD1B5FA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9BD4AB79B855F1F5D294BB66 /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		08221640B580B5C5E648E048 /* Sources */ = {

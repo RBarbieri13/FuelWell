@@ -40,6 +40,7 @@ struct DashboardView: View {
                 }
                 .labelStyle(.iconOnly)
                 .tint(self.theme.color.text.body.color)
+                .qualityID(QualityIdentifier.menuButton)
             }
 
             ToolbarItem(placement: .topBarTrailing) {
@@ -48,6 +49,7 @@ struct DashboardView: View {
                 }
                 .labelStyle(.iconOnly)
                 .tint(self.theme.color.text.body.color)
+                .qualityID(QualityIdentifier.helpButton)
             }
         }
         .sheet(isPresented: self.$isMenuPresented) {
@@ -92,6 +94,7 @@ private struct HealthScoreHero: View {
             }
         }
         .phaseCard()
+        .qualityID(QualityIdentifier.dashboardHealthScore)
     }
 }
 
@@ -130,6 +133,7 @@ private struct InflowsOutflowsCard: View {
             }
         }
         .phaseCard()
+        .qualityID(QualityIdentifier.dashboardInflowsOutflows)
     }
 }
 
@@ -156,6 +160,7 @@ private struct VerdictCard: View {
                 .fontWeight(.bold)
         }
         .phaseCard()
+        .qualityID(QualityIdentifier.dashboardVerdict)
     }
 }
 

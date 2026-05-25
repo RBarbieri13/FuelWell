@@ -63,6 +63,7 @@ public struct DailyLogView: View {
                 .labelStyle(.iconOnly)
                 .fontWeight(.semibold)
                 .tint(self.theme.color.primary.accent.color)
+                .accessibilityIdentifier("nutrition.add-meal")
             }
         }
         .sheet(
