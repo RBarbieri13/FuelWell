@@ -25,53 +25,7 @@ public struct DailyLogView: View {
                     self.store.send(.destinationTapped(destination))
                 }
 
-                if let destination = self.store.selectedDestination {
-                    if destination == .restaurantGuidance {
-                        RestaurantGuidanceView(
-                            plan: self.store.restaurantGuidance,
-                            onLogMeal: {
-                                self.store.send(.restaurantGuidanceLogMealTapped)
-                            },
-                            onDismiss: {
-                                self.store.send(.destinationDismissed)
-                            }
-                        )
-                    } else if destination == .mealHistory {
-                        MealHistoryView(
-                            entries: self.store.recentEntries,
-                            onRepeat: { entry in
-                                self.store.send(.mealHistoryRepeatTapped(entry))
-                            },
-                            onDismiss: {
-                                self.store.send(.destinationDismissed)
-                            }
-                        )
-                    } else if destination == .recipeBrowser {
-                        RecipeBrowserView(
-                            plan: self.store.recipeBrowserPlan,
-                            onChoose: { recipe in
-                                self.store.send(.recipeBrowserRecipeTapped(recipe))
-                            },
-                            onDismiss: {
-                                self.store.send(.destinationDismissed)
-                            }
-                        )
-                    } else if destination == .groceryList {
-                        GroceryListView(
-                            plan: self.store.groceryListPlan,
-                            onLogMeal: {
-                                self.store.send(.groceryListLogMealTapped)
-                            },
-                            onDismiss: {
-                                self.store.send(.destinationDismissed)
-                            }
-                        )
-                    } else {
-                        DestinationShellCard(destination: destination) {
-                            self.store.send(.destinationDismissed)
-                        }
-                    }
-                }
+                NutritionDestinationPanel(store: self.store)
 
                 if self.store.isLoading {
                     ProgressView()

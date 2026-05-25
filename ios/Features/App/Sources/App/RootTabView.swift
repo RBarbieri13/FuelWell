@@ -26,6 +26,14 @@ public struct RootTabView: View {
                                     DailyLogFeature()
                                 }
                             )
+                        } else if tab == .home {
+                            DashboardView()
+                        } else if tab == .coach {
+                            CoachChatView()
+                        } else if tab == .exercise {
+                            ExerciseActivityView()
+                        } else if tab == .progress {
+                            ProgressOverviewView()
                         } else {
                             TabHubView(tab: tab)
                         }

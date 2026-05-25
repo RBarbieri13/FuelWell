@@ -172,6 +172,26 @@ func tappingRecentMealPrefillsDraftMacros() async {
 
 @MainActor
 @Test
+func foodSearchSuggestionPrefillsDraftMacros() async {
+    let suggestion = FoodSearchSuggestion(
+        name: "Greek yogurt",
+        serving: "1 cup plain",
+        calories: 140,
+        protein: 24,
+        carbs: 8,
+        fat: 0
+    )
+    let store = TestStore(initialState: DailyLogFeature.State()) {
+        DailyLogFeature()
+    }
+
+    await store.send(.foodSearchSuggestionTapped(suggestion)) {
+        $0.addMealDraft = AddMealDraft.foodSearch(suggestion)
+    }
+}
+
+@MainActor
+@Test
 func destinationTappedStoresHubShell() async {
     let store = TestStore(initialState: DailyLogFeature.State()) {
         DailyLogFeature()
@@ -332,6 +352,17 @@ func groceryListLogMealOpensPhotoFirstDraft() async {
         $0.isAddMealPresented = true
         $0.addMealDraft = AddMealDraft(mode: .photo)
     }
+}
+
+@MainActor
+@Test
+func mealPlanGeneratorUsesRecipePlanSlots() {
+    let recipePlan = DailyLogFeature.State.recipeBrowserPlan(snapshot: .preview)
+    let plan = DailyLogFeature.State.mealPlanGeneratorPlan(recipePlan: recipePlan)
+
+    #expect(plan.slots.count == 3)
+    #expect(plan.slots.first?.title == "Next meal")
+    #expect(plan.slots.first?.meal == recipePlan.suggestions.first)
 }
 
 @MainActor

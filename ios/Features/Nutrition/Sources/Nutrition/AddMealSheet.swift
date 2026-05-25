@@ -24,7 +24,11 @@ struct AddMealSheet: View {
                             selectedPhotoItem: self.$selectedPhotoItem
                         )
                     } else {
-                        ModeCard(mode: self.store.addMealDraft.mode)
+                        BackupLoggingCard(
+                            mode: self.store.addMealDraft.mode,
+                            suggestions: self.store.foodSearchSuggestions,
+                            onChoose: { self.store.send(.foodSearchSuggestionTapped($0)) }
+                        )
                     }
                     MacroEntryFields(store: self.store)
                     self.saveButton
@@ -390,69 +394,6 @@ private struct CameraCaptureView: UIViewControllerRepresentable {
             }
 
             self.onCapture(data)
-        }
-    }
-}
-
-private struct ModeCard: View {
-    let mode: AddMealMode
-    @Environment(\.theme) private var theme
-
-    var body: some View {
-        HStack(alignment: .top, spacing: self.theme.spacing.md) {
-            Image(systemName: self.iconName)
-                .font(.title2.weight(.semibold))
-                .foregroundStyle(self.theme.color.primary.accent.color)
-                .frame(width: 32)
-
-            VStack(alignment: .leading, spacing: self.theme.spacing.xs) {
-                Text(self.title)
-                    .font(.custom(self.theme.font.body, size: self.theme.text.bodyLG.size))
-                    .fontWeight(.bold)
-                    .foregroundStyle(self.theme.color.text.primary.color)
-
-                Text(self.detail)
-                    .font(.custom(self.theme.font.body, size: self.theme.text.body.size))
-                    .fontWeight(.medium)
-                    .foregroundStyle(self.theme.color.text.body.color)
-            }
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(self.theme.spacing.md)
-        .background(self.theme.color.bg.surface.color)
-        .clipShape(RoundedRectangle(cornerRadius: self.theme.radius.md))
-    }
-
-    private var iconName: String {
-        switch self.mode {
-        case .photo:
-            "camera.fill"
-        case .search:
-            "magnifyingglass"
-        case .scan:
-            "barcode.viewfinder"
-        }
-    }
-
-    private var title: String {
-        switch self.mode {
-        case .photo:
-            "Photo-first logging"
-        case .search:
-            "Search backup"
-        case .scan:
-            "Barcode backup"
-        }
-    }
-
-    private var detail: String {
-        switch self.mode {
-        case .photo:
-            "Snap the meal first. For now, enter the quick macro estimate below."
-        case .search:
-            "Search will connect to foods and recent meals. Quick entry keeps the flow usable today."
-        case .scan:
-            "Barcode scanning is staged here, with manual macros as the reliable fallback."
         }
     }
 }
