@@ -73,6 +73,7 @@ public struct DailyLogFeature {
         case destinationTapped(NutritionDestination)
         case destinationDismissed
         case restaurantGuidanceLogMealTapped
+        case groceryListLogMealTapped
         case mealHistoryRepeatTapped(MealEntry)
         case recipeBrowserRecipeTapped(RecipeSuggestion)
         case addMealModeSelected(AddMealMode)
@@ -148,6 +149,12 @@ public struct DailyLogFeature {
                 return .none
 
             case .restaurantGuidanceLogMealTapped:
+                state.selectedDestination = nil
+                state.isAddMealPresented = true
+                state.addMealDraft = AddMealDraft(mode: .photo)
+                return .none
+
+            case .groceryListLogMealTapped:
                 state.selectedDestination = nil
                 state.isAddMealPresented = true
                 state.addMealDraft = AddMealDraft(mode: .photo)
