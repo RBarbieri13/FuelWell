@@ -16,6 +16,7 @@ public struct DailyLogFeature {
         public var isAddMealPresented: Bool
         public var addMealDraft: AddMealDraft
         public var recentEntries: [MealEntry]
+        public var selectedDestination: NutritionDestination?
 
         public init(
             entries: IdentifiedArrayOf<MealEntry> = [],
@@ -25,6 +26,7 @@ public struct DailyLogFeature {
             isAddMealPresented: Bool = false,
             addMealDraft: AddMealDraft = AddMealDraft(),
             recentEntries: [MealEntry] = [],
+            selectedDestination: NutritionDestination? = nil,
             target: MacroTarget = MacroTarget(
                 calories: 2_100,
                 macros: MacroGrams(protein: 150, carbs: 220, fat: 70)
@@ -38,6 +40,7 @@ public struct DailyLogFeature {
             self.isAddMealPresented = isAddMealPresented
             self.addMealDraft = addMealDraft
             self.recentEntries = recentEntries
+            self.selectedDestination = selectedDestination
             self.macroSnapshot = Self.snapshot(entries: entries, target: target)
         }
 
@@ -67,6 +70,8 @@ public struct DailyLogFeature {
         case loadFailed(String)
         case addMealTapped
         case addMealDismissed
+        case destinationTapped(NutritionDestination)
+        case destinationDismissed
         case addMealModeSelected(AddMealMode)
         case recentMealTapped(MealEntry)
         case addMealNameChanged(String)
@@ -129,6 +134,14 @@ public struct DailyLogFeature {
             case .addMealDismissed:
                 state.isAddMealPresented = false
                 state.addMealDraft = AddMealDraft()
+                return .none
+
+            case let .destinationTapped(destination):
+                state.selectedDestination = destination
+                return .none
+
+            case .destinationDismissed:
+                state.selectedDestination = nil
                 return .none
 
             case let .addMealModeSelected(mode):
@@ -260,6 +273,61 @@ public enum AddMealMode: String, CaseIterable, Equatable, Identifiable {
     case scan = "Scan"
 
     public var id: String { self.rawValue }
+}
+
+public enum NutritionDestination: String, CaseIterable, Equatable, Identifiable, Sendable {
+    case restaurantGuidance
+    case recipeBrowser
+    case mealPlanGenerator
+    case groceryList
+    case mealHistory
+
+    public var id: String { self.rawValue }
+
+    public var title: String {
+        switch self {
+        case .restaurantGuidance:
+            "Restaurant Guidance"
+        case .recipeBrowser:
+            "Recipe Browser"
+        case .mealPlanGenerator:
+            "Meal Plan Generator"
+        case .groceryList:
+            "Grocery List"
+        case .mealHistory:
+            "Meal History"
+        }
+    }
+
+    public var detail: String {
+        switch self {
+        case .restaurantGuidance:
+            "Order choices that keep today on track."
+        case .recipeBrowser:
+            "Find meals that fit the remaining macros."
+        case .mealPlanGenerator:
+            "Plan the next few eating windows."
+        case .groceryList:
+            "Turn a plan into a practical shopping list."
+        case .mealHistory:
+            "Review recent meals and repeat what works."
+        }
+    }
+
+    public var systemImage: String {
+        switch self {
+        case .restaurantGuidance:
+            "fork.knife"
+        case .recipeBrowser:
+            "book.pages"
+        case .mealPlanGenerator:
+            "calendar.badge.clock"
+        case .groceryList:
+            "cart"
+        case .mealHistory:
+            "clock.arrow.circlepath"
+        }
+    }
 }
 
 public struct AddMealDraft: Equatable {
