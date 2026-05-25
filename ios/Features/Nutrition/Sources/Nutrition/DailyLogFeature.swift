@@ -62,7 +62,6 @@ public struct DailyLogFeature {
 
             return MacroDecisionEngine.evaluate(target: target, intake: intake, nextMeal: nextMeal)
         }
-
     }
 
     public enum Action: Equatable {
@@ -74,6 +73,7 @@ public struct DailyLogFeature {
         case destinationTapped(NutritionDestination)
         case destinationDismissed
         case restaurantGuidanceLogMealTapped
+        case mealHistoryRepeatTapped(MealEntry)
         case addMealModeSelected(AddMealMode)
         case recentMealTapped(MealEntry)
         case addMealNameChanged(String)
@@ -108,7 +108,7 @@ public struct DailyLogFeature {
                 return .run { [date = state.selectedDate, repository = self.repository] send in
                     do {
                         let entries = try await repository.entries(for: date)
-                        let recentEntries = try await repository.recentEntries(limit: 8)
+                        let recentEntries = try await repository.recentEntries(limit: 30)
                         await send(.entriesLoaded(entries: entries, recentEntries: recentEntries))
                     } catch {
                         await send(.loadFailed(error.localizedDescription))
@@ -150,6 +150,12 @@ public struct DailyLogFeature {
                 state.selectedDestination = nil
                 state.isAddMealPresented = true
                 state.addMealDraft = AddMealDraft(mode: .photo)
+                return .none
+
+            case let .mealHistoryRepeatTapped(entry):
+                state.selectedDestination = nil
+                state.isAddMealPresented = true
+                state.addMealDraft = AddMealDraft.repeating(entry)
                 return .none
 
             case let .addMealModeSelected(mode):
@@ -370,6 +376,17 @@ public struct AddMealDraft: Equatable {
 
     public var canSave: Bool {
         !self.trimmedName.isEmpty && self.caloriesValue != nil
+    }
+
+    public static func repeating(_ entry: MealEntry) -> AddMealDraft {
+        AddMealDraft(
+            mode: .photo,
+            name: entry.name,
+            calories: "\(entry.calories)",
+            protein: "\(entry.protein)",
+            carbs: "\(entry.carbs)",
+            fat: "\(entry.fat)"
+        )
     }
 
     public func entry(id: UUID, loggedAt: Date) -> MealEntry? {
