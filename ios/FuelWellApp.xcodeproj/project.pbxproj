@@ -673,6 +673,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "FuelWell uses the camera to log meal photos for nutrition tracking.";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "FuelWell reads workouts, sleep, steps, energy, and body measurements to personalize coaching.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "FuelWell does not write Health data in this phase.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -1058,6 +1059,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "FuelWell uses the camera to log meal photos for nutrition tracking.";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "FuelWell reads workouts, sleep, steps, energy, and body measurements to personalize coaching.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "FuelWell does not write Health data in this phase.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
