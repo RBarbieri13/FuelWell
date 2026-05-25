@@ -36,6 +36,16 @@ public struct DailyLogView: View {
                                 self.store.send(.destinationDismissed)
                             }
                         )
+                    } else if destination == .mealHistory {
+                        MealHistoryView(
+                            entries: self.store.recentEntries,
+                            onRepeat: { entry in
+                                self.store.send(.mealHistoryRepeatTapped(entry))
+                            },
+                            onDismiss: {
+                                self.store.send(.destinationDismissed)
+                            }
+                        )
                     } else {
                         DestinationShellCard(destination: destination) {
                             self.store.send(.destinationDismissed)

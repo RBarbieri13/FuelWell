@@ -228,6 +228,43 @@ func restaurantGuidanceLogMealOpensPhotoFirstDraft() async {
 
 @MainActor
 @Test
+func mealHistoryRepeatPrefillsAndOpensPhotoFirstDraft() async {
+    let entry = MealEntry(name: "Steak bowl", calories: 640, protein: 52, carbs: 54, fat: 24)
+    let store = TestStore(
+        initialState: DailyLogFeature.State(selectedDestination: .mealHistory)
+    ) {
+        DailyLogFeature()
+    }
+
+    await store.send(.mealHistoryRepeatTapped(entry)) {
+        $0.selectedDestination = nil
+        $0.isAddMealPresented = true
+        $0.addMealDraft = AddMealDraft.repeating(entry)
+    }
+}
+
+@MainActor
+@Test
+func mealHistorySectionsGroupRecentEntriesByDay() {
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.timeZone = TimeZone(secondsFromGMT: 0) ?? .current
+    let today = Date(timeIntervalSince1970: 1_714_046_400)
+    let yesterday = today.addingTimeInterval(-86_400)
+    let entries = [
+        MealEntry(name: "Dinner", calories: 700, protein: 45, carbs: 60, fat: 24, loggedAt: today),
+        MealEntry(name: "Breakfast", calories: 400, protein: 30, carbs: 40, fat: 12, loggedAt: today),
+        MealEntry(name: "Lunch", calories: 520, protein: 42, carbs: 48, fat: 18, loggedAt: yesterday)
+    ]
+
+    let sections = MealHistorySection.group(entries: entries, calendar: calendar)
+
+    #expect(sections.count == 2)
+    #expect(sections.first?.entries.map(\.name) == ["Dinner", "Breakfast"])
+    #expect(sections.last?.entries.map(\.name) == ["Lunch"])
+}
+
+@MainActor
+@Test
 func photoCaptureActionsAttachAndClearDraftPhoto() async {
     let photoData = Data([0x01, 0x02, 0x03])
     let importedPhotoData = Data([0x04, 0x05, 0x06])
