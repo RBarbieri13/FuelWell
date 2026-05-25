@@ -303,6 +303,39 @@ func recipeBrowserRecipePrefillsAndOpensPhotoFirstDraft() async {
 
 @MainActor
 @Test
+func groceryListPlanUsesRecipeFocus() {
+    let entries = IdentifiedArray(uniqueElements: [
+        MealEntry(name: "Toast", calories: 420, protein: 8, carbs: 70, fat: 10)
+    ])
+    let target = MacroTarget(calories: 2_100, macros: MacroGrams(protein: 150, carbs: 220, fat: 70))
+    let snapshot = DailyLogFeature.State.snapshot(entries: entries, target: target)
+    let recipePlan = DailyLogFeature.State.recipeBrowserPlan(snapshot: snapshot)
+    let groceryPlan = DailyLogFeature.State.groceryListPlan(recipePlan: recipePlan)
+
+    #expect(groceryPlan.headline == "Shop protein first")
+    #expect(groceryPlan.groups.first?.title == "Protein anchors")
+    #expect(groceryPlan.groups.first?.items.first?.name == "Chicken breast")
+    #expect(groceryPlan.groups.first?.items.first?.isPriority == true)
+}
+
+@MainActor
+@Test
+func groceryListLogMealOpensPhotoFirstDraft() async {
+    let store = TestStore(
+        initialState: DailyLogFeature.State(selectedDestination: .groceryList)
+    ) {
+        DailyLogFeature()
+    }
+
+    await store.send(.groceryListLogMealTapped) {
+        $0.selectedDestination = nil
+        $0.isAddMealPresented = true
+        $0.addMealDraft = AddMealDraft(mode: .photo)
+    }
+}
+
+@MainActor
+@Test
 func photoCaptureActionsAttachAndClearDraftPhoto() async {
     let photoData = Data([0x01, 0x02, 0x03])
     let importedPhotoData = Data([0x04, 0x05, 0x06])

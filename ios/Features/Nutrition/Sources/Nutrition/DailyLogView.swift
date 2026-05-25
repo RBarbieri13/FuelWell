@@ -56,6 +56,16 @@ public struct DailyLogView: View {
                                 self.store.send(.destinationDismissed)
                             }
                         )
+                    } else if destination == .groceryList {
+                        GroceryListView(
+                            plan: self.store.groceryListPlan,
+                            onLogMeal: {
+                                self.store.send(.groceryListLogMealTapped)
+                            },
+                            onDismiss: {
+                                self.store.send(.destinationDismissed)
+                            }
+                        )
                     } else {
                         DestinationShellCard(destination: destination) {
                             self.store.send(.destinationDismissed)
