@@ -42,6 +42,8 @@ targets:
     deploymentTarget: "17.0"
     sources:
       - path: FuelWellApp/Sources
+      - path: FuelWellApp/Resources
+        buildPhase: resources
     dependencies:
       - package: App
         product: App

@@ -42,9 +42,27 @@ public struct RootTabView: View {
                     .tabItem {
                         Label(tab.title, systemImage: tab.systemImage)
                     }
+                    .qualityID(tab.qualityIdentifier)
                 }
             }
             .tint(self.theme.color.primary.green.color)
+        }
+    }
+}
+
+extension AppTab {
+    var qualityIdentifier: String {
+        switch self {
+        case .home:
+            "tab.home"
+        case .meals:
+            QualityIdentifier.tabMeals
+        case .coach:
+            QualityIdentifier.tabCoach
+        case .exercise:
+            QualityIdentifier.tabExercise
+        case .progress:
+            QualityIdentifier.tabProgress
         }
     }
 }

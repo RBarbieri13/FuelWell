@@ -119,6 +119,7 @@ struct AddMealSheet: View {
         .buttonStyle(.borderedProminent)
         .tint(self.theme.color.primary.accent.color)
         .disabled(!self.store.addMealDraft.canSave)
+        .accessibilityIdentifier("nutrition.add-meal.save")
     }
 }
 
