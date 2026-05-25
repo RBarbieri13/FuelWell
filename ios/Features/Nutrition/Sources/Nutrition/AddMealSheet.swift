@@ -120,6 +120,7 @@ struct AddMealSheet: View {
         .tint(self.theme.color.primary.accent.color)
         .disabled(!self.store.addMealDraft.canSave)
         .accessibilityIdentifier("nutrition.add-meal.save")
+        .accessibilityLabel("Save meal")
     }
 }
 

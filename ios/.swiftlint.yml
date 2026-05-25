@@ -4,6 +4,7 @@ included:
   - FuelWellApp
   - Features
   - Packages
+  - FuelWellUITests
 
 excluded:
   - .build

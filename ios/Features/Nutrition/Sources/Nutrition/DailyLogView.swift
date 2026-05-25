@@ -64,6 +64,7 @@ public struct DailyLogView: View {
                 .fontWeight(.semibold)
                 .tint(self.theme.color.primary.accent.color)
                 .accessibilityIdentifier("nutrition.add-meal")
+                .accessibilityLabel("Add meal")
             }
         }
         .sheet(
