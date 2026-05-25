@@ -70,6 +70,11 @@ public struct DailyLogFeature {
         case addMealProteinChanged(String)
         case addMealCarbsChanged(String)
         case addMealFatChanged(String)
+        case addMealPhotoButtonTapped
+        case addMealPhotoLibraryLoaded(Data?)
+        case addMealCameraDismissed
+        case addMealCameraCaptured(Data)
+        case addMealPhotoCleared
         case saveAddMealTapped
         case saveAddMealSucceeded(MealEntry)
         case saveAddMealFailed(String)
@@ -144,6 +149,31 @@ public struct DailyLogFeature {
                 state.addMealDraft.fat = fat
                 return .none
 
+            case .addMealPhotoButtonTapped:
+                state.addMealDraft.mode = .photo
+                state.addMealDraft.isCameraPresented = true
+                return .none
+
+            case let .addMealPhotoLibraryLoaded(data):
+                guard let data else { return .none }
+                state.addMealDraft.mode = .photo
+                state.addMealDraft.photoData = data
+                return .none
+
+            case .addMealCameraDismissed:
+                state.addMealDraft.isCameraPresented = false
+                return .none
+
+            case let .addMealCameraCaptured(data):
+                state.addMealDraft.mode = .photo
+                state.addMealDraft.photoData = data
+                state.addMealDraft.isCameraPresented = false
+                return .none
+
+            case .addMealPhotoCleared:
+                state.addMealDraft.photoData = nil
+                return .none
+
             case .saveAddMealTapped:
                 guard state.addMealDraft.canSave else {
                     state.errorMessage = "Add a meal name and calories before saving."
@@ -213,6 +243,8 @@ public struct AddMealDraft: Equatable {
     public var protein: String
     public var carbs: String
     public var fat: String
+    public var photoData: Data?
+    public var isCameraPresented: Bool
 
     public init(
         mode: AddMealMode = .photo,
@@ -220,7 +252,9 @@ public struct AddMealDraft: Equatable {
         calories: String = "",
         protein: String = "",
         carbs: String = "",
-        fat: String = ""
+        fat: String = "",
+        photoData: Data? = nil,
+        isCameraPresented: Bool = false
     ) {
         self.mode = mode
         self.name = name
@@ -228,6 +262,8 @@ public struct AddMealDraft: Equatable {
         self.protein = protein
         self.carbs = carbs
         self.fat = fat
+        self.photoData = photoData
+        self.isCameraPresented = isCameraPresented
     }
 
     public var canSave: Bool {

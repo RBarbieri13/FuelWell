@@ -101,6 +101,33 @@ func addMealFlowDefaultsToPhotoAndSavesEntry() async throws {
 
 @MainActor
 @Test
+func photoCaptureActionsAttachAndClearDraftPhoto() async {
+    let photoData = Data([0x01, 0x02, 0x03])
+    let importedPhotoData = Data([0x04, 0x05, 0x06])
+    let store = TestStore(initialState: DailyLogFeature.State()) {
+        DailyLogFeature()
+    }
+
+    await store.send(.addMealPhotoButtonTapped) {
+        $0.addMealDraft.mode = .photo
+        $0.addMealDraft.isCameraPresented = true
+    }
+    await store.send(.addMealCameraCaptured(photoData)) {
+        $0.addMealDraft.mode = .photo
+        $0.addMealDraft.photoData = photoData
+        $0.addMealDraft.isCameraPresented = false
+    }
+    await store.send(.addMealPhotoCleared) {
+        $0.addMealDraft.photoData = nil
+    }
+    await store.send(.addMealPhotoLibraryLoaded(importedPhotoData)) {
+        $0.addMealDraft.mode = .photo
+        $0.addMealDraft.photoData = importedPhotoData
+    }
+}
+
+@MainActor
+@Test
 func addMealRequiresNameAndCalories() async {
     let store = TestStore(initialState: DailyLogFeature.State()) {
         DailyLogFeature()
