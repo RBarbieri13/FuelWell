@@ -171,6 +171,32 @@ func tappingRecentMealPrefillsDraftMacros() async {
 
 @MainActor
 @Test
+func destinationTappedStoresHubShell() async {
+    let store = TestStore(initialState: DailyLogFeature.State()) {
+        DailyLogFeature()
+    }
+
+    await store.send(.destinationTapped(.restaurantGuidance)) {
+        $0.selectedDestination = .restaurantGuidance
+    }
+}
+
+@MainActor
+@Test
+func destinationDismissedClearsHubShell() async {
+    let store = TestStore(
+        initialState: DailyLogFeature.State(selectedDestination: .mealPlanGenerator)
+    ) {
+        DailyLogFeature()
+    }
+
+    await store.send(.destinationDismissed) {
+        $0.selectedDestination = nil
+    }
+}
+
+@MainActor
+@Test
 func photoCaptureActionsAttachAndClearDraftPhoto() async {
     let photoData = Data([0x01, 0x02, 0x03])
     let importedPhotoData = Data([0x04, 0x05, 0x06])
