@@ -2,6 +2,7 @@ import ComposableArchitecture
 import Core
 import Foundation
 import Nutrition
+import NutritionDomain
 import Testing
 
 @MainActor
@@ -192,6 +193,36 @@ func destinationDismissedClearsHubShell() async {
 
     await store.send(.destinationDismissed) {
         $0.selectedDestination = nil
+    }
+}
+
+@MainActor
+@Test
+func restaurantGuidanceUsesRebalancePlanWhenCaloriesAreOverTarget() {
+    let entries = IdentifiedArray(uniqueElements: [
+        MealEntry(name: "Big dinner", calories: 2_300, protein: 80, carbs: 260, fat: 95)
+    ])
+    let target = MacroTarget(calories: 2_100, macros: MacroGrams(protein: 150, carbs: 220, fat: 70))
+    let snapshot = DailyLogFeature.State.snapshot(entries: entries, target: target)
+    let plan = DailyLogFeature.State.restaurantGuidance(snapshot: snapshot)
+
+    #expect(plan.headline == "Go lean and protein-forward")
+    #expect(plan.priorities.map(\.title).contains("Sauce on the side"))
+}
+
+@MainActor
+@Test
+func restaurantGuidanceLogMealOpensPhotoFirstDraft() async {
+    let store = TestStore(
+        initialState: DailyLogFeature.State(selectedDestination: .restaurantGuidance)
+    ) {
+        DailyLogFeature()
+    }
+
+    await store.send(.restaurantGuidanceLogMealTapped) {
+        $0.selectedDestination = nil
+        $0.isAddMealPresented = true
+        $0.addMealDraft = AddMealDraft(mode: .photo)
     }
 }
 

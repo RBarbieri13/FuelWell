@@ -62,6 +62,7 @@ public struct DailyLogFeature {
 
             return MacroDecisionEngine.evaluate(target: target, intake: intake, nextMeal: nextMeal)
         }
+
     }
 
     public enum Action: Equatable {
@@ -72,6 +73,7 @@ public struct DailyLogFeature {
         case addMealDismissed
         case destinationTapped(NutritionDestination)
         case destinationDismissed
+        case restaurantGuidanceLogMealTapped
         case addMealModeSelected(AddMealMode)
         case recentMealTapped(MealEntry)
         case addMealNameChanged(String)
@@ -142,6 +144,12 @@ public struct DailyLogFeature {
 
             case .destinationDismissed:
                 state.selectedDestination = nil
+                return .none
+
+            case .restaurantGuidanceLogMealTapped:
+                state.selectedDestination = nil
+                state.isAddMealPresented = true
+                state.addMealDraft = AddMealDraft(mode: .photo)
                 return .none
 
             case let .addMealModeSelected(mode):

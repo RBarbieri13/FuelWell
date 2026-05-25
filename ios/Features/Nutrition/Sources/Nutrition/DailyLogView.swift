@@ -26,8 +26,20 @@ public struct DailyLogView: View {
                 }
 
                 if let destination = self.store.selectedDestination {
-                    DestinationShellCard(destination: destination) {
-                        self.store.send(.destinationDismissed)
+                    if destination == .restaurantGuidance {
+                        RestaurantGuidanceView(
+                            plan: self.store.restaurantGuidance,
+                            onLogMeal: {
+                                self.store.send(.restaurantGuidanceLogMealTapped)
+                            },
+                            onDismiss: {
+                                self.store.send(.destinationDismissed)
+                            }
+                        )
+                    } else {
+                        DestinationShellCard(destination: destination) {
+                            self.store.send(.destinationDismissed)
+                        }
                     }
                 }
 
