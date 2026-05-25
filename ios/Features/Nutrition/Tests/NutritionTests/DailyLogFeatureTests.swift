@@ -265,6 +265,44 @@ func mealHistorySectionsGroupRecentEntriesByDay() {
 
 @MainActor
 @Test
+func recipeBrowserPrioritizesProteinWhenProteinRemainingIsHigh() {
+    let entries = IdentifiedArray(uniqueElements: [
+        MealEntry(name: "Toast", calories: 420, protein: 8, carbs: 70, fat: 10)
+    ])
+    let target = MacroTarget(calories: 2_100, macros: MacroGrams(protein: 150, carbs: 220, fat: 70))
+    let snapshot = DailyLogFeature.State.snapshot(entries: entries, target: target)
+    let plan = DailyLogFeature.State.recipeBrowserPlan(snapshot: snapshot)
+
+    #expect(plan.headline == "Find a protein anchor")
+    #expect(plan.suggestions.first?.title == "Chicken rice bowl")
+}
+
+@MainActor
+@Test
+func recipeBrowserRecipePrefillsAndOpensPhotoFirstDraft() async {
+    let recipe = RecipeSuggestion(
+        title: "Shrimp taco plate",
+        detail: "Shrimp, corn tortillas, slaw, avocado, salsa.",
+        calories: 560,
+        protein: 40,
+        carbs: 58,
+        fat: 18
+    )
+    let store = TestStore(
+        initialState: DailyLogFeature.State(selectedDestination: .recipeBrowser)
+    ) {
+        DailyLogFeature()
+    }
+
+    await store.send(.recipeBrowserRecipeTapped(recipe)) {
+        $0.selectedDestination = nil
+        $0.isAddMealPresented = true
+        $0.addMealDraft = AddMealDraft.recipe(recipe)
+    }
+}
+
+@MainActor
+@Test
 func photoCaptureActionsAttachAndClearDraftPhoto() async {
     let photoData = Data([0x01, 0x02, 0x03])
     let importedPhotoData = Data([0x04, 0x05, 0x06])
