@@ -8,6 +8,7 @@ public struct MealEntry: Codable, Equatable, Identifiable, Sendable {
     public var carbs: Int
     public var fat: Int
     public var loggedAt: Date
+    public var photoAttachmentID: UUID?
 
     public init(
         id: UUID = UUID(),
@@ -16,7 +17,8 @@ public struct MealEntry: Codable, Equatable, Identifiable, Sendable {
         protein: Int,
         carbs: Int,
         fat: Int,
-        loggedAt: Date = .now
+        loggedAt: Date = .now,
+        photoAttachmentID: UUID? = nil
     ) {
         self.id = id
         self.name = name
@@ -25,5 +27,6 @@ public struct MealEntry: Codable, Equatable, Identifiable, Sendable {
         self.carbs = carbs
         self.fat = fat
         self.loggedAt = loggedAt
+        self.photoAttachmentID = photoAttachmentID
     }
 }

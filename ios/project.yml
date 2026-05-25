@@ -108,6 +108,30 @@ targets:
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES
+  CoreTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: Packages/Core/Tests/CoreTests
+    dependencies:
+      - package: Core
+        product: Core
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+  PersistenceTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: Packages/Persistence/Tests/PersistenceTests
+    dependencies:
+      - package: Persistence
+        product: Persistence
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
   AnthropicClientTests:
     type: bundle.unit-test
     platform: iOS
@@ -207,6 +231,8 @@ schemes:
       targets:
         - AppTests
         - DesignSystemTests
+        - CoreTests
+        - PersistenceTests
         - AnthropicClientTests
         - SupabaseClientTests
         - HealthKitClientTests
