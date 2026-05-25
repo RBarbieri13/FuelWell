@@ -74,6 +74,7 @@ public struct DailyLogFeature {
         case destinationDismissed
         case restaurantGuidanceLogMealTapped
         case mealHistoryRepeatTapped(MealEntry)
+        case recipeBrowserRecipeTapped(RecipeSuggestion)
         case addMealModeSelected(AddMealMode)
         case recentMealTapped(MealEntry)
         case addMealNameChanged(String)
@@ -156,6 +157,12 @@ public struct DailyLogFeature {
                 state.selectedDestination = nil
                 state.isAddMealPresented = true
                 state.addMealDraft = AddMealDraft.repeating(entry)
+                return .none
+
+            case let .recipeBrowserRecipeTapped(recipe):
+                state.selectedDestination = nil
+                state.isAddMealPresented = true
+                state.addMealDraft = AddMealDraft.recipe(recipe)
                 return .none
 
             case let .addMealModeSelected(mode):
@@ -386,6 +393,17 @@ public struct AddMealDraft: Equatable {
             protein: "\(entry.protein)",
             carbs: "\(entry.carbs)",
             fat: "\(entry.fat)"
+        )
+    }
+
+    public static func recipe(_ recipe: RecipeSuggestion) -> AddMealDraft {
+        AddMealDraft(
+            mode: .photo,
+            name: recipe.title,
+            calories: "\(recipe.calories)",
+            protein: "\(recipe.protein)",
+            carbs: "\(recipe.carbs)",
+            fat: "\(recipe.fat)"
         )
     }
 

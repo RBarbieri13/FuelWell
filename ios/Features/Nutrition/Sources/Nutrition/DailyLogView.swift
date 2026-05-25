@@ -46,6 +46,16 @@ public struct DailyLogView: View {
                                 self.store.send(.destinationDismissed)
                             }
                         )
+                    } else if destination == .recipeBrowser {
+                        RecipeBrowserView(
+                            plan: self.store.recipeBrowserPlan,
+                            onChoose: { recipe in
+                                self.store.send(.recipeBrowserRecipeTapped(recipe))
+                            },
+                            onDismiss: {
+                                self.store.send(.destinationDismissed)
+                            }
+                        )
                     } else {
                         DestinationShellCard(destination: destination) {
                             self.store.send(.destinationDismissed)
