@@ -15,7 +15,7 @@ struct AddMealSheet: View {
                 VStack(alignment: .leading, spacing: self.theme.spacing.lg) {
                     self.header
                     self.modePicker
-
+                    RecentMealsStrip(store: self.store)
                     if self.store.addMealDraft.mode == .photo {
                         PhotoLoggingCard(
                             photoData: self.store.addMealDraft.photoData,
@@ -26,7 +26,6 @@ struct AddMealSheet: View {
                     } else {
                         ModeCard(mode: self.store.addMealDraft.mode)
                     }
-
                     MacroEntryFields(store: self.store)
                     self.saveButton
                 }
@@ -81,10 +80,7 @@ struct AddMealSheet: View {
                 .fontWeight(.bold)
                 .foregroundStyle(self.theme.color.text.primary.color)
 
-            Text(
-                "Photo is the default. Quick macro entry keeps today moving " +
-                    "while camera recognition comes online."
-            )
+            Text("Photo is the default. Quick macro entry keeps today moving while camera recognition comes online.")
                 .font(.custom(self.theme.font.body, size: self.theme.text.body.size))
                 .fontWeight(.medium)
                 .foregroundStyle(self.theme.color.text.body.color)
@@ -119,6 +115,49 @@ struct AddMealSheet: View {
         .buttonStyle(.borderedProminent)
         .tint(self.theme.color.primary.accent.color)
         .disabled(!self.store.addMealDraft.canSave)
+    }
+}
+
+private struct RecentMealsStrip: View {
+    @Bindable var store: StoreOf<DailyLogFeature>
+    @Environment(\.theme) private var theme
+
+    var body: some View {
+        if !self.store.recentEntries.isEmpty {
+            VStack(alignment: .leading, spacing: self.theme.spacing.sm) {
+                Text("Recent meals")
+                    .font(.custom(self.theme.font.body, size: self.theme.text.bodySM.size))
+                    .fontWeight(.bold)
+                    .foregroundStyle(self.theme.color.text.secondary.color)
+
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: self.theme.spacing.sm) {
+                        ForEach(self.store.recentEntries) { entry in
+                            Button {
+                                self.store.send(.recentMealTapped(entry))
+                            } label: {
+                                VStack(alignment: .leading, spacing: self.theme.spacing.xs) {
+                                    Text(entry.name)
+                                        .font(.custom(self.theme.font.body, size: self.theme.text.bodySM.size))
+                                        .fontWeight(.bold)
+                                        .foregroundStyle(self.theme.color.text.primary.color)
+                                        .lineLimit(1)
+
+                                    Text("\(entry.calories) cal · \(entry.protein)g protein")
+                                        .font(.custom(self.theme.font.body, size: self.theme.text.caption.size))
+                                        .fontWeight(.medium)
+                                        .foregroundStyle(self.theme.color.text.secondary.color)
+                                }
+                                .frame(width: 148, alignment: .leading)
+                                .padding(self.theme.spacing.sm)
+                                .background(self.theme.color.bg.surface.color)
+                                .clipShape(RoundedRectangle(cornerRadius: self.theme.radius.sm))
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 

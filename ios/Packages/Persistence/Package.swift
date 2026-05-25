@@ -10,13 +10,11 @@ let package = Package(
     products: [
         .library(name: "Persistence", type: .static, targets: ["Persistence"])
     ],
-    dependencies: [
-        .package(path: "../Core")
-    ],
+    dependencies: [],
     targets: [
         .target(
             name: "Persistence",
-            dependencies: ["Core"],
+            dependencies: [],
             swiftSettings: [
                 .enableExperimentalFeature("StrictConcurrency"),
                 .enableUpcomingFeature("ExistentialAny")

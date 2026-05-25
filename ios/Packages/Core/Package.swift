@@ -11,12 +11,14 @@ let package = Package(
         .library(name: "Core", type: .static, targets: ["Core"])
     ],
     dependencies: [
+        .package(path: "../Persistence"),
         .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.9.0")
     ],
     targets: [
         .target(
             name: "Core",
             dependencies: [
+                "Persistence",
                 .product(name: "Dependencies", package: "swift-dependencies")
             ],
             swiftSettings: [

@@ -23,6 +23,11 @@ public struct DailyLogView: View {
                 } else if self.store.entries.isEmpty {
                     EmptyMealLogView()
                 } else {
+                    Text("Today")
+                        .font(.custom(self.theme.font.display, size: self.theme.text.title.size))
+                        .fontWeight(.bold)
+                        .foregroundStyle(self.theme.color.text.primary.color)
+
                     ForEach(self.store.entries) { entry in
                         MealEntryRow(entry: entry) {
                             self.store.send(.deleteSwiped(id: entry.id))
@@ -117,6 +122,15 @@ private struct MealEntryRow: View {
 
     var body: some View {
         HStack {
+            if self.entry.photoAttachmentID != nil {
+                Image(systemName: "camera.fill")
+                    .font(.body.weight(.semibold))
+                    .foregroundStyle(self.theme.color.primary.accent.color)
+                    .frame(width: 36, height: 36)
+                    .background(self.theme.color.primary.accent.color.opacity(0.12))
+                    .clipShape(RoundedRectangle(cornerRadius: self.theme.radius.sm))
+            }
+
             VStack(alignment: .leading, spacing: self.theme.spacing.xs) {
                 Text(self.entry.name)
                     .font(.custom(self.theme.font.body, size: self.theme.text.bodyLG.size))

@@ -20,9 +20,10 @@ func onAppearLoadsEntriesAndRefreshesMacroSnapshot() async {
     await store.send(.onAppear) {
         $0.isLoading = true
     }
-    await store.receive(\.entriesLoaded) {
+    await store.receive(.entriesLoaded(entries: entries, recentEntries: entries)) {
         $0.isLoading = false
         $0.entries = IdentifiedArray(uniqueElements: entries)
+        $0.recentEntries = entries
         $0.macroSnapshot = DailyLogFeature.State.snapshot(entries: $0.entries, target: $0.target)
     }
 }
@@ -42,6 +43,7 @@ func deleteSwipeRemovesOptimisticallyAndUpdatesMacros() async {
 
     await store.send(.deleteSwiped(id: entry.id)) {
         $0.entries = []
+        $0.recentEntries = []
         $0.macroSnapshot = DailyLogFeature.State.snapshot(entries: $0.entries, target: $0.target)
     }
 }
@@ -92,11 +94,79 @@ func addMealFlowDefaultsToPhotoAndSavesEntry() async throws {
 
     await store.send(.saveAddMealTapped) {
         $0.entries = IdentifiedArray(uniqueElements: [entry])
+        $0.recentEntries = [entry]
         $0.macroSnapshot = DailyLogFeature.State.snapshot(entries: $0.entries, target: $0.target)
         $0.isAddMealPresented = false
         $0.addMealDraft = AddMealDraft()
     }
     await store.receive(.saveAddMealSucceeded(entry))
+}
+
+@MainActor
+@Test
+func addMealWithPhotoKeepsAttachmentReferenceForPersistence() async throws {
+    let id = try #require(UUID(uuidString: "9ED1D74C-763E-4452-845B-22C03F566541"))
+    let date = Date(timeIntervalSince1970: 1_714_046_400)
+    let photoData = Data([0x01, 0x02, 0x03])
+    let repository = InMemoryNutritionRepository()
+    let store = TestStore(initialState: DailyLogFeature.State(selectedDate: date)) {
+        DailyLogFeature()
+    } withDependencies: {
+        $0.nutritionRepository = repository
+        $0.uuid = .constant(id)
+        $0.date.now = date
+    }
+
+    await store.send(.addMealNameChanged("Turkey sandwich")) {
+        $0.addMealDraft.name = "Turkey sandwich"
+    }
+    await store.send(.addMealCaloriesChanged("520")) {
+        $0.addMealDraft.calories = "520"
+    }
+    await store.send(.addMealCameraCaptured(photoData)) {
+        $0.addMealDraft.mode = .photo
+        $0.addMealDraft.photoData = photoData
+        $0.addMealDraft.isCameraPresented = false
+    }
+
+    let entry = MealEntry(
+        id: id,
+        name: "Turkey sandwich",
+        calories: 520,
+        protein: 0,
+        carbs: 0,
+        fat: 0,
+        loggedAt: date,
+        photoAttachmentID: id
+    )
+
+    await store.send(.saveAddMealTapped) {
+        $0.entries = IdentifiedArray(uniqueElements: [entry])
+        $0.recentEntries = [entry]
+        $0.macroSnapshot = DailyLogFeature.State.snapshot(entries: $0.entries, target: $0.target)
+        $0.addMealDraft = AddMealDraft()
+    }
+    await store.receive(.saveAddMealSucceeded(entry))
+
+    let savedData = try await repository.photoData(for: entry)
+    #expect(savedData == photoData)
+}
+
+@MainActor
+@Test
+func tappingRecentMealPrefillsDraftMacros() async {
+    let recent = MealEntry(name: "Chicken bowl", calories: 520, protein: 42, carbs: 48, fat: 18)
+    let store = TestStore(initialState: DailyLogFeature.State(recentEntries: [recent])) {
+        DailyLogFeature()
+    }
+
+    await store.send(.recentMealTapped(recent)) {
+        $0.addMealDraft.name = "Chicken bowl"
+        $0.addMealDraft.calories = "520"
+        $0.addMealDraft.protein = "42"
+        $0.addMealDraft.carbs = "48"
+        $0.addMealDraft.fat = "18"
+    }
 }
 
 @MainActor

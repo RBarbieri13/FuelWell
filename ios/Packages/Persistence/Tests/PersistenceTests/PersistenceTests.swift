@@ -9,3 +9,37 @@ func migrationRunnerAcceptsStore() async throws {
 
     try await runner.migrate(store: store)
 }
+
+@Test
+func jsonFileStoreRoundTripsCodableModels() throws {
+    let fileURL = FileManager.default.temporaryDirectory
+        .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        .appendingPathComponent("payload.json")
+    let store = JSONFileStore<Payload>(fileURL: fileURL)
+    let payload = Payload(name: "Meal", count: 2)
+
+    try store.save(payload)
+
+    #expect(try store.load(default: Payload(name: "Default", count: 0)) == payload)
+}
+
+@Test
+func fileAttachmentStoreRoundTripsAndDeletesData() throws {
+    let directoryURL = FileManager.default.temporaryDirectory
+        .appendingPathComponent(UUID().uuidString, isDirectory: true)
+    let store = FileAttachmentStore(directoryURL: directoryURL)
+    let data = Data([0x01, 0x02, 0x03])
+
+    _ = try store.save(data, named: "photo.jpg")
+
+    #expect(try store.load(named: "photo.jpg") == data)
+
+    try store.delete(named: "photo.jpg")
+
+    #expect(try store.load(named: "photo.jpg") == nil)
+}
+
+private struct Payload: Codable, Equatable, Sendable {
+    let name: String
+    let count: Int
+}

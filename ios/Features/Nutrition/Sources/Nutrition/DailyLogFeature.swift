@@ -15,6 +15,7 @@ public struct DailyLogFeature {
         public var macroSnapshot: MacroDaySnapshot
         public var isAddMealPresented: Bool
         public var addMealDraft: AddMealDraft
+        public var recentEntries: [MealEntry]
 
         public init(
             entries: IdentifiedArrayOf<MealEntry> = [],
@@ -23,6 +24,7 @@ public struct DailyLogFeature {
             errorMessage: String? = nil,
             isAddMealPresented: Bool = false,
             addMealDraft: AddMealDraft = AddMealDraft(),
+            recentEntries: [MealEntry] = [],
             target: MacroTarget = MacroTarget(
                 calories: 2_100,
                 macros: MacroGrams(protein: 150, carbs: 220, fat: 70)
@@ -35,6 +37,7 @@ public struct DailyLogFeature {
             self.target = target
             self.isAddMealPresented = isAddMealPresented
             self.addMealDraft = addMealDraft
+            self.recentEntries = recentEntries
             self.macroSnapshot = Self.snapshot(entries: entries, target: target)
         }
 
@@ -60,11 +63,12 @@ public struct DailyLogFeature {
 
     public enum Action: Equatable {
         case onAppear
-        case entriesLoaded([MealEntry])
+        case entriesLoaded(entries: [MealEntry], recentEntries: [MealEntry])
         case loadFailed(String)
         case addMealTapped
         case addMealDismissed
         case addMealModeSelected(AddMealMode)
+        case recentMealTapped(MealEntry)
         case addMealNameChanged(String)
         case addMealCaloriesChanged(String)
         case addMealProteinChanged(String)
@@ -97,16 +101,18 @@ public struct DailyLogFeature {
                 return .run { [date = state.selectedDate, repository = self.repository] send in
                     do {
                         let entries = try await repository.entries(for: date)
-                        await send(.entriesLoaded(entries))
+                        let recentEntries = try await repository.recentEntries(limit: 8)
+                        await send(.entriesLoaded(entries: entries, recentEntries: recentEntries))
                     } catch {
                         await send(.loadFailed(error.localizedDescription))
                     }
                 }
                 .cancellable(id: CancelID.load, cancelInFlight: true)
 
-            case let .entriesLoaded(entries):
+            case let .entriesLoaded(entries, recentEntries):
                 state.isLoading = false
                 state.entries = IdentifiedArray(uniqueElements: entries)
+                state.recentEntries = recentEntries
                 state.macroSnapshot = State.snapshot(entries: state.entries, target: state.target)
                 return .none
 
@@ -127,6 +133,14 @@ public struct DailyLogFeature {
 
             case let .addMealModeSelected(mode):
                 state.addMealDraft.mode = mode
+                return .none
+
+            case let .recentMealTapped(entry):
+                state.addMealDraft.name = entry.name
+                state.addMealDraft.calories = "\(entry.calories)"
+                state.addMealDraft.protein = "\(entry.protein)"
+                state.addMealDraft.carbs = "\(entry.carbs)"
+                state.addMealDraft.fat = "\(entry.fat)"
                 return .none
 
             case let .addMealNameChanged(name):
@@ -182,14 +196,16 @@ public struct DailyLogFeature {
                 guard let entry = state.addMealDraft.entry(id: self.uuid(), loggedAt: self.now) else {
                     return .none
                 }
+                let photoData = state.addMealDraft.photoData
                 state.errorMessage = nil
                 state.entries.append(entry)
+                state.recentEntries = Self.recentEntries(afterSaving: entry, current: state.recentEntries)
                 state.macroSnapshot = State.snapshot(entries: state.entries, target: state.target)
                 state.isAddMealPresented = false
                 state.addMealDraft = AddMealDraft()
-                return .run { [repository = self.repository] send in
+                return .run { [entry, photoData, repository = self.repository] send in
                     do {
-                        try await repository.save(entry)
+                        try await repository.save(entry, photoData: photoData)
                         await send(.saveAddMealSucceeded(entry))
                     } catch {
                         await send(.saveAddMealFailed(error.localizedDescription))
@@ -206,6 +222,7 @@ public struct DailyLogFeature {
             case let .deleteSwiped(id):
                 guard let original = state.entries[id: id] else { return .none }
                 state.entries.remove(id: id)
+                state.recentEntries.removeAll { $0.id == id }
                 state.macroSnapshot = State.snapshot(entries: state.entries, target: state.target)
                 return .run { [repository = self.repository] send in
                     do {
@@ -217,10 +234,19 @@ public struct DailyLogFeature {
 
             case let .deleteFailed(original):
                 state.entries.append(original)
+                state.recentEntries = Self.recentEntries(afterSaving: original, current: state.recentEntries)
                 state.macroSnapshot = State.snapshot(entries: state.entries, target: state.target)
                 return .none
             }
         }
+    }
+
+    private static func recentEntries(afterSaving entry: MealEntry, current: [MealEntry]) -> [MealEntry] {
+        Array(
+            ([entry] + current.filter { $0.id != entry.id })
+                .sorted { $0.loggedAt > $1.loggedAt }
+                .prefix(8)
+        )
     }
 
     private enum CancelID: Hashable {
@@ -274,6 +300,7 @@ public struct AddMealDraft: Equatable {
         guard let calories = self.caloriesValue else { return nil }
         let name = self.trimmedName
         guard !name.isEmpty else { return nil }
+        let photoAttachmentID = self.photoData == nil ? nil : id
 
         return MealEntry(
             id: id,
@@ -282,7 +309,8 @@ public struct AddMealDraft: Equatable {
             protein: Int(self.protein) ?? 0,
             carbs: Int(self.carbs) ?? 0,
             fat: Int(self.fat) ?? 0,
-            loggedAt: loggedAt
+            loggedAt: loggedAt,
+            photoAttachmentID: photoAttachmentID
         )
     }
 
