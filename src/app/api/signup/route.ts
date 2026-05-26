@@ -1,16 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
 import { sendFoundersWelcomeEmail } from "@/lib/email";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 
-function getSupabaseServer() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+type SignupSource = "signup" | "founders-100";
 
-  if (!url || !key) {
-    throw new Error("Supabase environment variables are not configured");
-  }
+function normalizeEmail(email: string): string {
+  return email.trim().toLowerCase();
+}
 
-  return createClient(url, key);
+function normalizeSource(source: string | undefined | null): SignupSource {
+  return source === "founders-100" ? "founders-100" : "signup";
 }
 
 export async function POST(request: NextRequest) {
@@ -21,41 +20,76 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { name, email, source } = body as Record<
+  const { name, firstName, lastName, email, source } = body as Record<
     string,
     string | undefined | null
   >;
 
-  const trimmedEmail = email?.trim();
+  const trimmedEmail = email ? normalizeEmail(email) : "";
   if (!trimmedEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
     return NextResponse.json({ error: "Valid email is required." }, { status: 400 });
   }
 
-  const trimmedName = name?.trim() || null;
-  const supabase = getSupabaseServer();
+  const trimmedFirstName = firstName?.trim() || null;
+  const trimmedLastName = lastName?.trim() || null;
+  const trimmedName =
+    name?.trim() ||
+    [trimmedFirstName, trimmedLastName].filter(Boolean).join(" ") ||
+    null;
+  const normalizedSource = normalizeSource(source);
+  const supabase = getSupabaseAdmin();
 
-  const { error } = await supabase.from("founders_100").insert({
-    email: trimmedEmail,
-    name: trimmedName,
-    tier: "pro",
-    billing_period: "monthly",
-  });
+  const { error: signupError } = await supabase
+    .from("marketing_signups")
+    .upsert(
+      {
+        email: trimmedEmail,
+        name: trimmedName,
+        first_name: trimmedFirstName,
+        last_name: trimmedLastName,
+        source: normalizedSource,
+        desired_tier: "pro",
+        billing_period: "monthly",
+        founding100_interest: normalizedSource === "founders-100",
+        metadata: {
+          route: normalizedSource === "founders-100" ? "/founders-100" : "/signup",
+        },
+      },
+      { onConflict: "normalized_email" },
+    );
 
-  if (error) {
-    if (error.code === "23505") {
-      return NextResponse.json(
-        { error: "This email is already on the Founders 100 list!" },
-        { status: 409 },
-      );
-    }
-    console.error("Supabase insert error:", error);
+  if (signupError) {
+    console.error("Supabase marketing_signups upsert error:", signupError);
     return NextResponse.json(
       { error: "Something went wrong. Please try again." },
       { status: 500 },
     );
   }
 
-  if (source === "founders-100") {
+  if (normalizedSource === "founders-100") {
+    const { error: foundersError } = await supabase
+      .from("founders_100")
+      .upsert(
+        {
+          email: trimmedEmail,
+          name: trimmedName,
+          first_name: trimmedFirstName,
+          last_name: trimmedLastName,
+          source: normalizedSource,
+          tier: "pro",
+          billing_period: "monthly",
+        },
+        { onConflict: "normalized_email" },
+      );
+
+    if (foundersError) {
+      console.error("Supabase founders_100 upsert error:", foundersError);
+      return NextResponse.json(
+        { error: "Something went wrong. Please try again." },
+        { status: 500 },
+      );
+    }
+
     try {
       await sendFoundersWelcomeEmail({ email: trimmedEmail });
     } catch (emailError) {

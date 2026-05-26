@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { createClient } from "@supabase/supabase-js";
 import { Founders100Content } from "./founders-100-content";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 
 export const metadata: Metadata = {
   title: "Founders 100",
@@ -11,15 +11,14 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 async function getSpotsClaimed(): Promise<number> {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  if (!url || !key) {
-    console.warn("Supabase env vars missing — falling back to 0 spots claimed.");
+  let supabase: ReturnType<typeof getSupabaseAdmin>;
+  try {
+    supabase = getSupabaseAdmin();
+  } catch {
+    console.warn("Supabase admin env vars missing — falling back to 0 spots claimed.");
     return 0;
   }
 
-  const supabase = createClient(url, key);
   const { count, error } = await supabase
     .from("founders_100")
     .select("*", { count: "exact", head: true });

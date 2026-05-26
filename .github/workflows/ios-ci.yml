@@ -73,6 +73,7 @@ jobs:
           bash -n tools/release/check-phase4-readiness.sh
           bash -n tools/supabase/kill-switch-drill.sh
           bash -n tools/release/check-phase7-founding100.sh
+          bash -n tools/release/check-phase7-commerce-linkage.sh
           bash -n tools/operate/check-operate-readiness.sh
           node --check tools/operate/triage-feedback.js
           node -e "JSON.parse(require('fs').readFileSync('docs/ios-guide/operate/posthog-decision-engine-dashboard.json', 'utf8'))"
