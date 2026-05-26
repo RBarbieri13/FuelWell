@@ -27,9 +27,11 @@ Scope: Dashboard, Meals & Nutrition, Coach, Exercise, Progress, Menu, Help
 - Add contrast automation if the DESIGN.md WCAG linter becomes available in the toolchain.
 - Add delete/edit meal UI tests once edit is implemented as a user-facing flow.
 - Bundle or replace the named brand fonts so render logs stop falling back through UIKit font descriptors.
+- Keep snapshot baselines pinned to the checked-in iPhone 15 simulator reference before enabling them in CI.
 
 ## Evidence
 
 - `FuelWellCriticalPathUITests` covers cold launch, Menu, Help, Add Meal, and primary tab reachability.
 - `ComponentGalleryRenderTests` renders the design-system gallery in normal, compact-width, and accessibility5 states.
+- `ComponentGallerySnapshotTests` compares the gallery against standard, compact-width, and accessibility5 PNG baselines.
 - Existing SwiftUI code continues to use the generated `Theme` tokens rather than raw colors.
