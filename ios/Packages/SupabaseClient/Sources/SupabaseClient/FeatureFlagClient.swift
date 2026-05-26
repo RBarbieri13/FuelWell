@@ -55,7 +55,11 @@ extension FeatureFlagClient: DependencyKey {
         )
     }
 
-    public static func live(configuration: SupabaseConfiguration? = .environment) -> FeatureFlagClient {
+    public static func live(
+        configuration: SupabaseConfiguration? = .environment,
+        ttl: TimeInterval = 30,
+        session: URLSession = .shared
+    ) -> FeatureFlagClient {
         guard let configuration else {
             return FeatureFlagClient(
                 isEnabled: { _ in throw SupabaseClientError.missingConfiguration },
@@ -63,7 +67,7 @@ extension FeatureFlagClient: DependencyKey {
             )
         }
 
-        let store = CachedFeatureFlagStore(configuration: configuration, ttl: 30)
+        let store = CachedFeatureFlagStore(configuration: configuration, ttl: ttl, session: session)
         return FeatureFlagClient(
             isEnabled: { try await store.isEnabled($0) },
             refresh: { try await store.refresh() }
