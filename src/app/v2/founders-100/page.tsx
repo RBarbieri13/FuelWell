@@ -89,12 +89,23 @@ const trustBadges = [
 
 /* ───── Progress Ring ───── */
 
-function SpotsRing() {
-  const total = 100;
-  const filled = 7;
+const founders100TotalSpots = 100;
+
+// The v2 route is a static design preview, so keep the count explicit here.
+const v2PreviewSpotsClaimed = 7;
+const v2PreviewSpotsRemaining =
+  founders100TotalSpots - v2PreviewSpotsClaimed;
+
+function SpotsRing({
+  spotsClaimed,
+  totalSpots,
+}: {
+  spotsClaimed: number;
+  totalSpots: number;
+}) {
   const radius = 52;
   const circumference = 2 * Math.PI * radius;
-  const progress = filled / total;
+  const progress = spotsClaimed / totalSpots;
   const offset = circumference * (1 - progress);
 
   return (
@@ -139,10 +150,10 @@ function SpotsRing() {
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <span className="text-3xl font-bold text-[#191c1d] tabular-nums">
-          <CountUp end={7} duration={1200} />
+          <CountUp end={spotsClaimed} duration={1200} />
         </span>
         <span className="text-[10px] text-[#6c7a71] font-medium">
-          of 100
+          of {totalSpots}
         </span>
       </div>
     </div>
@@ -175,13 +186,18 @@ export default function V2Founders100Page() {
 
             {/* Counter + Ring */}
             <div className="mt-10 inline-flex items-center gap-6 rounded-2xl border border-[#e7e8e8] bg-white shadow-[0_20px_40px_rgba(0,105,68,0.06)] px-8 py-6">
-              <SpotsRing />
+              <SpotsRing
+                spotsClaimed={v2PreviewSpotsClaimed}
+                totalSpots={founders100TotalSpots}
+              />
               <div className="text-left">
                 <p className="text-sm text-[#6c7a71] font-medium">
                   spots claimed
                 </p>
                 <div className="h-px bg-[#e7e8e8] my-2" />
-                <p className="text-2xl font-bold text-[#006c49]">93</p>
+                <p className="text-2xl font-bold text-[#006c49]">
+                  {v2PreviewSpotsRemaining}
+                </p>
                 <p className="text-xs text-[#6c7a71]">remaining</p>
               </div>
             </div>
@@ -401,14 +417,14 @@ export default function V2Founders100Page() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-white" />
               </span>
-              Limited availability — 93 spots remaining
+              Limited availability — {v2PreviewSpotsRemaining} spots remaining
             </div>
             <h2 className="text-3xl md:text-4xl font-bold text-white">
               Secure Your Spot
             </h2>
             <p className="text-white/80 leading-relaxed">
               Secure your lifetime rate and help shape the future of AI-powered
-              wellness coaching. Only 100 founding spots will be available.
+              wellness coaching. Only {founders100TotalSpots} founding spots will be available.
             </p>
             <Link
               href="/signup?from=founders-100"
