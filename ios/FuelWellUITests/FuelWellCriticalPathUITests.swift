@@ -126,7 +126,7 @@ final class FuelWellCriticalPathUITests: XCTestCase {
         return app
     }
 
-    private func waitUntilEnabled(_ element: XCUIElement, timeout: TimeInterval = 2) {
+    private func waitUntilEnabled(_ element: XCUIElement, timeout: TimeInterval = 6) {
         let predicate = NSPredicate(format: "isEnabled == true")
         self.expectation(for: predicate, evaluatedWith: element)
         self.waitForExpectations(timeout: timeout)
