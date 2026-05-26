@@ -349,7 +349,7 @@ private actor InMemorySubscriptionStore {
 
     func link(request: AccountLinkRequest) throws -> MarketingAccountLink {
         let email = request.email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-        guard email.contains("@") else {
+        guard self.isValidEmail(email) else {
             throw SubscriptionClientError.invalidEmail
         }
 
@@ -390,7 +390,7 @@ private actor InMemorySubscriptionStore {
 
     func reserve(userID: UUID, email: String) throws -> Founding100Reservation {
         let normalizedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-        guard normalizedEmail.contains("@") else {
+        guard self.isValidEmail(normalizedEmail) else {
             throw SubscriptionClientError.invalidEmail
         }
 
@@ -416,5 +416,12 @@ private actor InMemorySubscriptionStore {
             productID: ProductIdentifiers.defaults.founding100Lifetime
         )
         return reservation
+    }
+
+    private func isValidEmail(_ email: String) -> Bool {
+        email.range(
+            of: #"^[^\s@]+@[^\s@]+\.[^\s@]+$"#,
+            options: .regularExpression
+        ) != nil
     }
 }
