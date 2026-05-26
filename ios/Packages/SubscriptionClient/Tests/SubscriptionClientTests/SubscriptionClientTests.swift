@@ -24,10 +24,15 @@ func founding100ReservationGrantsLifetimePremiumAccess() async throws {
     let client = SubscriptionClient.inMemory(statuses: [:], reservations: [])
 
     let reservation = try await client.reserveFounding100(userID, "founder@fuelwell.app")
+    let link = try await client.linkMarketingSignup(
+        AccountLinkRequest(userID: userID, email: "Founder@FuelWell.app", source: "founders-100")
+    )
     let status = try await client.status(userID)
 
     #expect(reservation.position == 1)
     #expect(reservation.isWithinHardCap)
+    #expect(link.email == "founder@fuelwell.app")
+    #expect(link.founding100Position == 1)
     #expect(status.tier == .founding100Lifetime)
     #expect(status.canAccess(.workoutPlans))
 }
@@ -46,6 +51,15 @@ func founding100ReservationIsIdempotentPerUser() async throws {
 }
 
 @Test
+func founding100ReservationRejectsInvalidEmail() async throws {
+    let client = SubscriptionClient.inMemory(statuses: [:], reservations: [])
+
+    await #expect(throws: SubscriptionClientError.invalidEmail) {
+        _ = try await client.reserveFounding100(UUID(), "not-an-email")
+    }
+}
+
+@Test
 func proAndPremiumGateFeaturesDifferently() {
     let userID = UUID()
     let pro = SubscriptionStatus(userID: userID, tier: .pro, isActive: true)
@@ -56,6 +70,28 @@ func proAndPremiumGateFeaturesDifferently() {
     #expect(!pro.canAccess(.workoutPlans))
     #expect(premium.canAccess(.workoutPlans))
     #expect(!inactive.canAccess(.coachChat))
+}
+
+@Test
+func providerReceiptValidationRecordsAuditEvent() async throws {
+    let userID = UUID()
+    let client = SubscriptionClient.inMemory(statuses: [:], reservations: [])
+
+    let status = try await client.validateProviderReceipt(
+        userID,
+        ProviderReceipt(
+            provider: .revenueCat,
+            environment: .sandbox,
+            receiptToken: "revenue-cat-token",
+            productID: ProductIdentifiers.defaults.premiumMonthly
+        )
+    )
+    let events = try await client.validationEvents(userID)
+
+    #expect(status.tier == .premium)
+    #expect(events.count == 1)
+    #expect(events.first?.provider == .revenueCat)
+    #expect(events.first?.productID == ProductIdentifiers.defaults.premiumMonthly)
 }
 
 @Test

@@ -15,9 +15,9 @@ const founders100Pricing = [
     name: "FuelWell Pro",
     description: "AI-powered nutrition coaching",
     plans: [
-      { period: "Monthly", founders: "$6.49/mo", regular: "$12.99/mo" },
-      { period: "6-Month", founders: "$34.50", regular: "$69" },
-      { period: "Annual", founders: "$59.50", regular: "$119" },
+      { period: "Monthly", founders: "$10.99/mo", regular: "$12.99/mo" },
+      { period: "6-Month", founders: "$59", regular: "$69" },
+      { period: "Annual", founders: "$99", regular: "$119" },
     ],
   },
   {
@@ -25,9 +25,9 @@ const founders100Pricing = [
     name: "FuelWell Premium",
     description: "Full AI coaching experience",
     plans: [
-      { period: "Monthly", founders: "$9.49/mo", regular: "$18.99/mo" },
-      { period: "6-Month", founders: "$49.50", regular: "$99" },
-      { period: "Annual", founders: "$89.50", regular: "$179" },
+      { period: "Monthly", founders: "$16.99/mo", regular: "$18.99/mo" },
+      { period: "6-Month", founders: "$89", regular: "$99" },
+      { period: "Annual", founders: "$159", regular: "$179" },
     ],
   },
 ];

@@ -15,7 +15,6 @@ import {
   Zap,
   Heart,
   Star,
-  Check,
   Crown,
 } from "lucide-react";
 
@@ -274,14 +273,14 @@ export default function V2Founders100Page() {
                 <div className="mb-6 p-4 rounded-2xl bg-[#006c49]/5 border border-[#006c49]/15">
                   <div className="flex items-baseline gap-1">
                     <span className="text-4xl font-bold text-[#191c1d]">
-                      $9.99
+                      $10.99
                     </span>
                     <span className="text-[#6c7a71]">/month for life</span>
                   </div>
                   <p className="text-sm text-[#6c7a71] mt-1">
                     or{" "}
                     <span className="text-[#191c1d] font-semibold">
-                      $89/year
+                      $99/year
                     </span>{" "}
                     for life —{" "}
                     <span className="text-[#006c49] font-semibold">
@@ -303,7 +302,7 @@ export default function V2Founders100Page() {
                 </ul>
 
                 <Link
-                  href="/signup"
+                  href="/signup?from=founders-100"
                   className="v2-btn-primary flex items-center justify-center gap-2 h-12 text-base w-full"
                 >
                   Join as Pro
@@ -343,7 +342,7 @@ export default function V2Founders100Page() {
                   <p className="text-sm text-[#6c7a71] mt-1">
                     or{" "}
                     <span className="text-[#191c1d] font-semibold">
-                      $149.99/year
+                      $159/year
                     </span>{" "}
                     for life —{" "}
                     <span className="text-[#006c49] font-semibold">
@@ -371,7 +370,7 @@ export default function V2Founders100Page() {
                 </ul>
 
                 <Link
-                  href="/signup"
+                  href="/signup?from=founders-100"
                   className="v2-btn-primary flex items-center justify-center gap-2 h-12 text-base w-full"
                 >
                   Join as Premium
@@ -412,7 +411,7 @@ export default function V2Founders100Page() {
               wellness coaching. Only 100 founding spots will be available.
             </p>
             <Link
-              href="/signup"
+              href="/signup?from=founders-100"
               className="inline-flex items-center gap-2 h-12 px-8 text-base font-semibold text-[#006c49] bg-white rounded-full hover:scale-[1.03] hover:shadow-lg transition-all duration-200"
             >
               Claim Your Spot

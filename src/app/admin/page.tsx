@@ -1,4 +1,4 @@
-import { getSupabase } from "@/lib/supabase";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { SignupsTable, type SignupRow } from "./signups-table";
 
 export const dynamic = "force-dynamic";
@@ -14,55 +14,78 @@ type Founders100Row = {
   created_at: string;
   email: string;
   name: string | null;
+  source: string | null;
   tier: string;
   billing_period: string;
 };
 
-async function queryFounders(
-  client: ReturnType<typeof getSupabase>,
-): Promise<Founders100Row[]> {
+type MarketingSignupRow = {
+  id: string;
+  created_at: string;
+  email: string;
+  name: string | null;
+  source: string;
+};
+
+async function queryFounders(): Promise<Founders100Row[]> {
+  const client = getSupabaseAdmin();
   const { data, error } = await client
     .from("founders_100")
-    .select("id, created_at, email, name, tier, billing_period")
+    .select("id, created_at, email, name, source, tier, billing_period")
     .order("created_at", { ascending: false });
 
   if (error) throw error;
   return data as Founders100Row[];
 }
 
+async function queryLeads(): Promise<MarketingSignupRow[]> {
+  const client = getSupabaseAdmin();
+  const { data, error } = await client
+    .from("marketing_signups")
+    .select("id, created_at, email, name, source")
+    .order("created_at", { ascending: false });
+
+  if (error) throw error;
+  return data as MarketingSignupRow[];
+}
+
 async function loadData(): Promise<{
   founders: SignupRow[];
+  leads: SignupRow[];
   error: string | null;
 }> {
   try {
-    let rows: Founders100Row[];
+    const [founderRows, leadRows] = await Promise.all([
+      queryFounders(),
+      queryLeads(),
+    ]);
 
-    // Try service role key first, fall back to anon key
-    try {
-      const { getSupabaseAdmin } = await import("@/lib/supabase-admin");
-      rows = await queryFounders(getSupabaseAdmin());
-    } catch {
-      rows = await queryFounders(getSupabase());
-    }
-
-    const founders: SignupRow[] = rows.map((r) => ({
+    const founders: SignupRow[] = founderRows.map((r) => ({
       id: r.id,
       created_at: r.created_at,
       email: r.email,
       name: r.name,
-      source: "founders-100",
+      source: r.source ?? "founders-100",
     }));
 
-    return { founders, error: null };
+    const leads: SignupRow[] = leadRows.map((r) => ({
+      id: r.id,
+      created_at: r.created_at,
+      email: r.email,
+      name: r.name,
+      source: r.source,
+    }));
+
+    return { founders, leads, error: null };
   } catch (err) {
     const message =
       err instanceof Error ? err.message : "Unknown error loading data";
-    return { founders: [], error: message };
+    return { founders: [], leads: [], error: message };
   }
 }
 
 export default async function AdminDashboardPage() {
-  const { founders, error } = await loadData();
+  const { founders, leads, error } = await loadData();
 
   return (
     <main className="min-h-screen bg-white px-6 py-12 md:px-12">
@@ -86,8 +109,15 @@ export default async function AdminDashboardPage() {
 
         <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <StatCard label="Founders 100" value={founders.length} accent="violet" />
-          <StatCard label="Total Leads" value={founders.length} accent="orange" />
+          <StatCard label="Total Leads" value={leads.length} accent="orange" />
         </section>
+
+        <SignupsTable
+          title="All Leads"
+          description="Every website signup captured for later account linkage."
+          rows={leads}
+          filename="fuelwell-leads.csv"
+        />
 
         <SignupsTable
           title="Founders 100"
