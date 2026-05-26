@@ -22,12 +22,14 @@
 		32FC6A022D1A5E690887AF10 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = B5B5543DED540909B09D1EDC /* Core */; };
 		46DCE2683117D957327FC93F /* AppFeatureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47ED229A15FF76E83E8AE703 /* AppFeatureTests.swift */; };
 		4A0CAB4DC482140B2AC9D636 /* ComponentGalleryRenderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE88D7C304B0C1BA0647DE4D /* ComponentGalleryRenderTests.swift */; };
+		50A890D6205BB70A187E71B5 /* Outfit-Variable.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AA8195CED831D47B85B2D1A0 /* Outfit-Variable.ttf */; };
 		5932B1786E235844770D782E /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 370FE810A7736B66746FACA9 /* DesignSystem */; };
 		5F5DB4958C9C634B24FB37B3 /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 4D23E8317116A890B8DAA8FE /* DesignSystem */; };
 		6B3E637187BD30858178A50B /* NutritionDomain in Frameworks */ = {isa = PBXBuildFile; productRef = 84199B457E3A5BCD30A3807A /* NutritionDomain */; };
 		6B8D3ADD845D8AC83D20554E /* Nutrition in Frameworks */ = {isa = PBXBuildFile; productRef = 7FCB14C374EBEB5269EE3526 /* Nutrition */; };
 		6D2691325A97B2F4CE504116 /* AnalyticsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C0F7AAB7BBED97139CEEE47 /* AnalyticsTests.swift */; };
 		72AA7B4A1E4116C85E4DD0D7 /* Analytics in Frameworks */ = {isa = PBXBuildFile; productRef = 67D490D2785A18B1328EA388 /* Analytics */; };
+		755DFAFADA641F8D3367431F /* Inter-Variable.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C35877AF42BEB66CACA82281 /* Inter-Variable.ttf */; };
 		7B2833CC9BA78EA366A04FDD /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 58C84448500BAD0F7B2D201B /* Core */; };
 		7B86D3915E80AACDF6C86388 /* CrashReportingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50C5BFF2EAEB63759B854E69 /* CrashReportingTests.swift */; };
 		828AA6FB777F1CDC03805A2C /* App in Frameworks */ = {isa = PBXBuildFile; productRef = 159612099978ADB2428B15D4 /* App */; };
@@ -45,11 +47,13 @@
 		B6BADB1365A5713F1B809D2A /* HealthKitClient in Frameworks */ = {isa = PBXBuildFile; productRef = EBFC0B46EB6060D743FD35F0 /* HealthKitClient */; };
 		BB17FA9B2F23A69E89AEA220 /* Analytics in Frameworks */ = {isa = PBXBuildFile; productRef = 9A7A416ADA5337C051A9CA92 /* Analytics */; };
 		C2D1F6674CF2F408203B5825 /* AnthropicClient in Frameworks */ = {isa = PBXBuildFile; productRef = D7977175BB469F04F6B14D50 /* AnthropicClient */; };
+		C5595E55CDF1FE9BBA5220FF /* DMSans-Variable.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FFB767E37D1AE0BB1D37EB2C /* DMSans-Variable.ttf */; };
 		CABFC8C5FBF761742B3D36EF /* HealthKitClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF042C3459C06538638038CC /* HealthKitClientTests.swift */; };
 		CC47A7F9A56D63067082A79A /* NutritionDomain in Frameworks */ = {isa = PBXBuildFile; productRef = A4A62AF2AE14D6A785815F5F /* NutritionDomain */; };
 		CDBA6B5EA4250DF41490DAA2 /* HealthKitClient in Frameworks */ = {isa = PBXBuildFile; productRef = 2EF8408FBB5A9D5CE9404D7B /* HealthKitClient */; };
 		CEA676DAAFF8793964D8A9A7 /* ThemeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B121203B5A518889F220416 /* ThemeTests.swift */; };
 		D221C2E98E005F83CC4A66D1 /* CrashReporting in Frameworks */ = {isa = PBXBuildFile; productRef = ACE1B26EE237383A20C8998A /* CrashReporting */; };
+		E03AB3DAD079A556D956AFA2 /* BrandFontTestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA880CBB610408730DED8C0 /* BrandFontTestSupport.swift */; };
 		E0EEC1FDF701A7D84C6E8CE6 /* Nutrition in Frameworks */ = {isa = PBXBuildFile; productRef = E0BB0FF27D90D4F853C2E30A /* Nutrition */; };
 		E430105DEB14FA1DF5361AC3 /* testComponentGalleryCompactSnapshot.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 92F937B0FC7D1B03570C7AA7 /* testComponentGalleryCompactSnapshot.1.png */; };
 		E452520C8E3688317A97CD65 /* AnthropicClient in Frameworks */ = {isa = PBXBuildFile; productRef = FF0357DB14B82BEF78F23A72 /* AnthropicClient */; };
@@ -94,16 +98,19 @@
 		861900CE59C0B45EB267EE5E /* App */ = {isa = PBXFileReference; lastKnownFileType = folder; name = App; path = Features/App; sourceTree = SOURCE_ROOT; };
 		8C0F7AAB7BBED97139CEEE47 /* AnalyticsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsTests.swift; sourceTree = "<group>"; };
 		8D184EE2B81C96B09945B6A7 /* HealthKitClient */ = {isa = PBXFileReference; lastKnownFileType = folder; name = HealthKitClient; path = Packages/HealthKitClient; sourceTree = SOURCE_ROOT; };
+		8FA880CBB610408730DED8C0 /* BrandFontTestSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrandFontTestSupport.swift; sourceTree = "<group>"; };
 		92F937B0FC7D1B03570C7AA7 /* testComponentGalleryCompactSnapshot.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = testComponentGalleryCompactSnapshot.1.png; sourceTree = "<group>"; };
 		9B253880B90B3461ED1C8DFA /* AnalyticsTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = AnalyticsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9C74CC19984E3437AF5CCE0C /* AnthropicClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnthropicClientTests.swift; sourceTree = "<group>"; };
 		A6B65369A6BA9DE8A2C3B364 /* testComponentGalleryAccessibilitySnapshot.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = testComponentGalleryAccessibilitySnapshot.1.png; sourceTree = "<group>"; };
+		AA8195CED831D47B85B2D1A0 /* Outfit-Variable.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Outfit-Variable.ttf"; sourceTree = "<group>"; };
 		AD17B4ABA97C270B763FF1CD /* NutritionDomainTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = NutritionDomainTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AE88D7C304B0C1BA0647DE4D /* ComponentGalleryRenderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComponentGalleryRenderTests.swift; sourceTree = "<group>"; };
 		B1EAC66EFCFC2CB8A89481FA /* FuelWellUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = FuelWellUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B1FFE6812124FEDF63F66AFF /* ComponentGallerySnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComponentGallerySnapshotTests.swift; sourceTree = "<group>"; };
 		B9CEB224194E971DDEBD9AA0 /* Persistence */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Persistence; path = Packages/Persistence; sourceTree = SOURCE_ROOT; };
 		BE9240DF4329198C935AEECE /* CrashReporting */ = {isa = PBXFileReference; lastKnownFileType = folder; name = CrashReporting; path = Packages/CrashReporting; sourceTree = SOURCE_ROOT; };
+		C35877AF42BEB66CACA82281 /* Inter-Variable.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inter-Variable.ttf"; sourceTree = "<group>"; };
 		C80BB3055E9CA31719A9FE33 /* FuelWellApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = FuelWellApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD2C076E08E25E6CFE03D62A /* DailyLogFailureStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyLogFailureStateTests.swift; sourceTree = "<group>"; };
 		D59EA91E45C2851A49603D09 /* NutritionDomain */ = {isa = PBXFileReference; lastKnownFileType = folder; name = NutritionDomain; path = Packages/NutritionDomain; sourceTree = SOURCE_ROOT; };
@@ -113,6 +120,7 @@
 		E87BC127E4591BBD7B5FB190 /* SupabaseClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseClientTests.swift; sourceTree = "<group>"; };
 		FA3BC9E50227626EF370A623 /* testComponentGalleryStandardSnapshot.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = testComponentGalleryStandardSnapshot.1.png; sourceTree = "<group>"; };
 		FA93EEDE5E862918DEBEE5AF /* Core */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Core; path = Packages/Core; sourceTree = SOURCE_ROOT; };
+		FFB767E37D1AE0BB1D37EB2C /* DMSans-Variable.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "DMSans-Variable.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -244,6 +252,7 @@
 		0E2E5E54DD7DFEC1C466512A /* DesignSystemTests */ = {
 			isa = PBXGroup;
 			children = (
+				8FA880CBB610408730DED8C0 /* BrandFontTestSupport.swift */,
 				AE88D7C304B0C1BA0647DE4D /* ComponentGalleryRenderTests.swift */,
 				B1FFE6812124FEDF63F66AFF /* ComponentGallerySnapshotTests.swift */,
 				4B121203B5A518889F220416 /* ThemeTests.swift */,
@@ -362,10 +371,21 @@
 			path = Features/Nutrition/Tests/NutritionTests;
 			sourceTree = "<group>";
 		};
+		8C40DF50F6D8387735D9AF24 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				FFB767E37D1AE0BB1D37EB2C /* DMSans-Variable.ttf */,
+				C35877AF42BEB66CACA82281 /* Inter-Variable.ttf */,
+				AA8195CED831D47B85B2D1A0 /* Outfit-Variable.ttf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
 		9E6F1252CC99F34C624C985F /* Resources */ = {
 			isa = PBXGroup;
 			children = (
 				165F0021ABA3E00997286AAC /* PrivacyInfo.xcprivacy */,
+				8C40DF50F6D8387735D9AF24 /* Fonts */,
 			);
 			name = Resources;
 			path = FuelWellApp/Resources;
@@ -781,6 +801,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C5595E55CDF1FE9BBA5220FF /* DMSans-Variable.ttf in Resources */,
+				755DFAFADA641F8D3367431F /* Inter-Variable.ttf in Resources */,
+				50A890D6205BB70A187E71B5 /* Outfit-Variable.ttf in Resources */,
 				9BD4AB79B855F1F5D294BB66 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -800,6 +823,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E03AB3DAD079A556D956AFA2 /* BrandFontTestSupport.swift in Sources */,
 				4A0CAB4DC482140B2AC9D636 /* ComponentGalleryRenderTests.swift in Sources */,
 				1BCB1DD82D1DF0599E229130 /* ComponentGallerySnapshotTests.swift in Sources */,
 				CEA676DAAFF8793964D8A9A7 /* ThemeTests.swift in Sources */,

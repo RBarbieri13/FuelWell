@@ -14,4 +14,16 @@ import Testing
     #expect(Theme.app.text.display.size == 32)
     #expect(Theme.app.font.numeric == "DM Sans")
 }
+
+@Test func brandFontRegistryMatchesThemeFamilies() {
+    #expect(Theme.app.font.display == "Outfit")
+    #expect(Theme.app.font.body == "Inter")
+    #expect(Theme.app.font.numeric == "DM Sans")
+
+    #expect(FuelWellFontRegistry.bundledFontFiles == [
+        "Outfit-Variable.ttf",
+        "Inter-Variable.ttf",
+        "DMSans-Variable.ttf"
+    ])
+}
 #endif

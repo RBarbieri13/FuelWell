@@ -7,6 +7,8 @@ import XCTest
 @MainActor
 final class ComponentGallerySnapshotTests: XCTestCase {
     func testComponentGalleryStandardSnapshot() {
+        registerFuelWellFontsForTests()
+
         assertSnapshot(
             of: ComponentGallery(),
             as: .image(layout: .fixed(width: 390, height: 1_600))
@@ -14,6 +16,8 @@ final class ComponentGallerySnapshotTests: XCTestCase {
     }
 
     func testComponentGalleryCompactSnapshot() {
+        registerFuelWellFontsForTests()
+
         assertSnapshot(
             of: ComponentGallery(),
             as: .image(layout: .fixed(width: 320, height: 1_800))
@@ -21,6 +25,8 @@ final class ComponentGallerySnapshotTests: XCTestCase {
     }
 
     func testComponentGalleryAccessibilitySnapshot() {
+        registerFuelWellFontsForTests()
+
         assertSnapshot(
             of: ComponentGallery()
                 .environment(\.dynamicTypeSize, .accessibility5),

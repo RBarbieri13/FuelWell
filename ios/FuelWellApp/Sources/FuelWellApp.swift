@@ -1,10 +1,12 @@
 import App
 import ComposableArchitecture
+import DesignSystem
 import SwiftUI
 
 @main
 struct FuelWellApp: SwiftUI.App {
     init() {
+        FuelWellFontRegistry.registerBundledFonts()
         prepareFuelWellDependencies()
     }
 
