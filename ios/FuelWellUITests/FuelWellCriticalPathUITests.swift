@@ -2,6 +2,37 @@ import XCTest
 
 @MainActor
 final class FuelWellCriticalPathUITests: XCTestCase {
+    func testLaunchPerformanceBudget() {
+        self.continueAfterFailure = false
+
+        measure(metrics: [XCTApplicationLaunchMetric(waitUntilResponsive: true)]) {
+            let app = XCUIApplication()
+            app.launchArguments = ["--ui-testing"]
+            app.launch()
+            XCTAssertTrue(app.navigationBars["Dashboard"].waitForExistence(timeout: 5))
+            app.terminate()
+        }
+    }
+
+    func testPrimaryTabNavigationPerformanceBudget() {
+        let app = self.launchApp()
+        defer { app.terminate() }
+
+        measure(metrics: [XCTClockMetric()]) {
+            app.tabBars.buttons["Meals"].tap()
+            XCTAssertTrue(app.navigationBars["Meals & Nutrition"].waitForExistence(timeout: 2))
+
+            app.tabBars.buttons["Coach"].tap()
+            XCTAssertTrue(app.navigationBars["Coach Chat"].waitForExistence(timeout: 2))
+
+            app.tabBars.buttons["Exercise"].tap()
+            XCTAssertTrue(app.navigationBars["Exercise & Activity"].waitForExistence(timeout: 2))
+
+            app.tabBars.buttons["Progress"].tap()
+            XCTAssertTrue(app.navigationBars["Progress"].waitForExistence(timeout: 2))
+        }
+    }
+
     func testColdLaunchShowsDashboardQualitySurfaces() {
         let app = self.launchApp()
         defer { app.terminate() }
@@ -42,7 +73,10 @@ final class FuelWellCriticalPathUITests: XCTestCase {
         app.textFields["Protein"].tap()
         app.textFields["Protein"].typeText("40")
 
-        app.buttons["nutrition.add-meal.save"].tap()
+        let saveButton = app.buttons["nutrition.add-meal.save"]
+        XCTAssertTrue(saveButton.waitForExistence(timeout: 2))
+        self.waitUntilEnabled(saveButton)
+        saveButton.tap()
 
         XCTAssertTrue(app.staticTexts["Quality test bowl"].waitForExistence(timeout: 2))
         XCTAssertTrue(app.staticTexts["40g protein - 500 calories"].exists)
@@ -70,5 +104,11 @@ final class FuelWellCriticalPathUITests: XCTestCase {
         app.launch()
         XCTAssertTrue(app.navigationBars["Dashboard"].waitForExistence(timeout: 5))
         return app
+    }
+
+    private func waitUntilEnabled(_ element: XCUIElement, timeout: TimeInterval = 2) {
+        let predicate = NSPredicate(format: "isEnabled == true")
+        self.expectation(for: predicate, evaluatedWith: element)
+        self.waitForExpectations(timeout: timeout)
     }
 }
