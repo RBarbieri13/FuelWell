@@ -19,10 +19,15 @@ public struct AnalyticsEvent: Equatable, Sendable {
 
     public static let approvedEventNames: Set<String> = [
         "app_launched",
+        "coach_recommendation_dismissed",
+        "coach_recommendation_followed",
+        "coach_recommendation_presented",
         "feedback_failed",
         "feedback_started",
         "feedback_submitted",
         "healthkit_synced",
+        "nudge_delivered",
+        "nudge_opened",
         "tab_selected"
     ]
 
@@ -54,8 +59,78 @@ public struct AnalyticsEvent: Equatable, Sendable {
         )
     }
 
+    public static func coachRecommendationPresented(
+        surface: String,
+        recommendationID: String,
+        category: String
+    ) -> AnalyticsEvent {
+        AnalyticsEvent(
+            name: "coach_recommendation_presented",
+            properties: [
+                "surface": .string(surface),
+                "recommendation_id": .string(recommendationID),
+                "category": .string(category)
+            ]
+        )
+    }
+
+    public static func coachRecommendationFollowed(
+        surface: String,
+        recommendationID: String,
+        elapsedSeconds: Int
+    ) -> AnalyticsEvent {
+        AnalyticsEvent(
+            name: "coach_recommendation_followed",
+            properties: [
+                "surface": .string(surface),
+                "recommendation_id": .string(recommendationID),
+                "elapsed_seconds": .int(elapsedSeconds)
+            ]
+        )
+    }
+
+    public static func coachRecommendationDismissed(
+        surface: String,
+        recommendationID: String,
+        reason: String
+    ) -> AnalyticsEvent {
+        AnalyticsEvent(
+            name: "coach_recommendation_dismissed",
+            properties: [
+                "surface": .string(surface),
+                "recommendation_id": .string(recommendationID),
+                "reason": .string(reason)
+            ]
+        )
+    }
+
     public static func healthKitSynced(daysBack: Int) -> AnalyticsEvent {
         AnalyticsEvent(name: "healthkit_synced", properties: ["days_back": .int(daysBack)])
+    }
+
+    public static func nudgeDelivered(
+        nudgeID: String,
+        category: String,
+        trigger: String
+    ) -> AnalyticsEvent {
+        AnalyticsEvent(
+            name: "nudge_delivered",
+            properties: [
+                "nudge_id": .string(nudgeID),
+                "category": .string(category),
+                "trigger": .string(trigger)
+            ]
+        )
+    }
+
+    public static func nudgeOpened(nudgeID: String, category: String) -> AnalyticsEvent {
+        AnalyticsEvent(
+            name: "nudge_opened",
+            properties: [
+                "nudge_id": .string(nudgeID),
+                "category": .string(category)
+            ]
+        )
     }
 
     public static func tabSelected(_ tab: String) -> AnalyticsEvent {

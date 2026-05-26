@@ -7,6 +7,8 @@ on:
       - ".github/workflows/ios-ci.yml"
       - "tools/release/**"
       - "tools/supabase/**"
+      - "tools/operate/**"
+      - "docs/ios-guide/operate/**"
   push:
     branches:
       - main
@@ -15,6 +17,8 @@ on:
       - ".github/workflows/ios-ci.yml"
       - "tools/release/**"
       - "tools/supabase/**"
+      - "tools/operate/**"
+      - "docs/ios-guide/operate/**"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -66,6 +70,9 @@ jobs:
         run: |
           bash -n tools/release/check-phase4-readiness.sh
           bash -n tools/supabase/kill-switch-drill.sh
+          bash -n tools/operate/check-operate-readiness.sh
+          node --check tools/operate/triage-feedback.js
+          node -e "JSON.parse(require('fs').readFileSync('docs/ios-guide/operate/posthog-decision-engine-dashboard.json', 'utf8'))"
 
   test:
     name: Build and Test
