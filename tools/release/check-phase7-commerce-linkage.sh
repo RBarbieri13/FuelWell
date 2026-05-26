@@ -14,6 +14,19 @@ require_file() {
   fi
 }
 
+require_match() {
+  local pattern="$1"
+  local path="$2"
+  local message="$3"
+
+  if rg -Fq "$pattern" "$ROOT_DIR/$path"; then
+    echo "ok: $message"
+  else
+    echo "missing: $message"
+    status=1
+  fi
+}
+
 echo "FuelWell Phase 7 commerce and account-linkage readiness"
 echo
 
@@ -25,24 +38,24 @@ require_file "docs/ios-guide/phase7/commerce-account-linkage.md"
 
 echo
 echo "Contract checks"
-rg -Fq "marketing_signups" "$ROOT_DIR/ios/supabase/migrations/202605260002_phase7_account_linkage.sql"
-echo "ok: marketing signup table is versioned"
-rg -Fq "link_marketing_signup_to_user" "$ROOT_DIR/ios/supabase/migrations/202605260002_phase7_account_linkage.sql"
-echo "ok: authenticated account-link RPC is versioned"
-rg -Fq "record_subscription_validation_event" "$ROOT_DIR/ios/supabase/migrations/202605260002_phase7_account_linkage.sql"
-echo "ok: server-side validation ledger RPC is versioned"
-rg -Fq "service_role" "$ROOT_DIR/ios/supabase/migrations/202605260002_phase7_account_linkage.sql"
-echo "ok: paid validation write path is server-only"
-rg -Fq "getSupabaseAdmin" "$ROOT_DIR/src/app/api/signup/route.ts"
-echo "ok: website signup uses server-side Supabase client"
-rg -Fq "normalizeEmail" "$ROOT_DIR/src/app/api/signup/route.ts"
-echo "ok: website signup normalizes email before storage"
-rg -Fq 'onConflict: "normalized_email"' "$ROOT_DIR/src/app/api/signup/route.ts"
-echo "ok: website signup upserts by normalized email"
-rg -Fq "linkMarketingSignup" "$ROOT_DIR/ios/Packages/SubscriptionClient/Sources/SubscriptionClient/SubscriptionClient.swift"
-echo "ok: iOS subscription client exposes account linkage"
-rg -Fq "validateProviderReceipt" "$ROOT_DIR/ios/Packages/SubscriptionClient/Sources/SubscriptionClient/SubscriptionClient.swift"
-echo "ok: iOS subscription client exposes provider receipt validation seam"
+require_match "marketing_signups" "ios/supabase/migrations/202605260002_phase7_account_linkage.sql" \
+  "marketing signup table is versioned"
+require_match "link_marketing_signup_to_user" "ios/supabase/migrations/202605260002_phase7_account_linkage.sql" \
+  "authenticated account-link RPC is versioned"
+require_match "record_subscription_validation_event" "ios/supabase/migrations/202605260002_phase7_account_linkage.sql" \
+  "server-side validation ledger RPC is versioned"
+require_match "service_role" "ios/supabase/migrations/202605260002_phase7_account_linkage.sql" \
+  "paid validation write path is server-only"
+require_match "getSupabaseAdmin" "src/app/api/signup/route.ts" \
+  "website signup uses server-side Supabase client"
+require_match "normalizeEmail" "src/app/api/signup/route.ts" \
+  "website signup normalizes email before storage"
+require_match 'onConflict: "normalized_email"' "src/app/api/signup/route.ts" \
+  "website signup upserts by normalized email"
+require_match "linkMarketingSignup" "ios/Packages/SubscriptionClient/Sources/SubscriptionClient/SubscriptionClient.swift" \
+  "iOS subscription client exposes account linkage"
+require_match "validateProviderReceipt" "ios/Packages/SubscriptionClient/Sources/SubscriptionClient/SubscriptionClient.swift" \
+  "iOS subscription client exposes provider receipt validation seam"
 
 echo
 if [[ "$status" -eq 0 ]]; then

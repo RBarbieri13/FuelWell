@@ -13,9 +13,9 @@ This PR advances Phase 7 by connecting the website signup surface, Founders 100 
 - Moved website signup storage to the server-side Supabase admin client and normalized email conflict handling.
 - Expanded the admin dashboard so it shows all marketing leads plus Founders 100 seats.
 - Aligned Founders 100 pricing across the current signup form and v2 Founders page with `PRODUCT-CONTEXT.md`.
-- Added iOS subscription-account models for provider receipts, account-link requests, marketing-account links, and validation events.
+- Introduced iOS subscription-account models for provider receipts, account-link requests, marketing-account links, and validation events.
 - Added an Account and access settings screen that surfaces Supabase identity, subscription status, and Founders 100 linkage.
-- Added local Phase 7 commerce-linkage release checks and wired their syntax check into CI.
+- Wired local Phase 7 commerce-linkage release checks into CI with syntax validation.
 
 ## Guardrails
 
