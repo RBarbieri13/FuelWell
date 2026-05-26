@@ -27,6 +27,18 @@ type MarketingSignupRow = {
   source: string;
 };
 
+type SubscriptionValidationRow = {
+  id: string;
+  validated_at: string;
+  user_id: string;
+  provider: string;
+  product_id: string;
+  environment: string;
+  entitlement_tier: string;
+  provider_customer_id: string | null;
+  provider_event_id: string | null;
+};
+
 async function queryFounders(): Promise<Founders100Row[]> {
   const client = getSupabaseAdmin();
   const { data, error } = await client
@@ -49,15 +61,41 @@ async function queryLeads(): Promise<MarketingSignupRow[]> {
   return data as MarketingSignupRow[];
 }
 
+async function queryValidationEvents(): Promise<SubscriptionValidationRow[]> {
+  const client = getSupabaseAdmin();
+  const { data, error } = await client
+    .from("subscription_validation_events")
+    .select(
+      [
+        "id",
+        "validated_at",
+        "user_id",
+        "provider",
+        "product_id",
+        "environment",
+        "entitlement_tier",
+        "provider_customer_id",
+        "provider_event_id",
+      ].join(", "),
+    )
+    .order("validated_at", { ascending: false })
+    .limit(25);
+
+  if (error) throw error;
+  return (data ?? []) as unknown as SubscriptionValidationRow[];
+}
+
 async function loadData(): Promise<{
   founders: SignupRow[];
   leads: SignupRow[];
+  validationEvents: SubscriptionValidationRow[];
   error: string | null;
 }> {
   try {
-    const [founderRows, leadRows] = await Promise.all([
+    const [founderRows, leadRows, validationEvents] = await Promise.all([
       queryFounders(),
       queryLeads(),
+      queryValidationEvents(),
     ]);
 
     const founders: SignupRow[] = founderRows.map((r) => ({
@@ -76,16 +114,16 @@ async function loadData(): Promise<{
       source: r.source,
     }));
 
-    return { founders, leads, error: null };
+    return { founders, leads, validationEvents, error: null };
   } catch (err) {
     const message =
       err instanceof Error ? err.message : "Unknown error loading data";
-    return { founders: [], leads: [], error: message };
+    return { founders: [], leads: [], validationEvents: [], error: message };
   }
 }
 
 export default async function AdminDashboardPage() {
-  const { founders, leads, error } = await loadData();
+  const { founders, leads, validationEvents, error } = await loadData();
 
   return (
     <main className="min-h-screen bg-white px-6 py-12 md:px-12">
@@ -110,7 +148,14 @@ export default async function AdminDashboardPage() {
         <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <StatCard label="Founders 100" value={founders.length} accent="violet" />
           <StatCard label="Total Leads" value={leads.length} accent="orange" />
+          <StatCard
+            label="Validation Events"
+            value={validationEvents.length}
+            accent="emerald"
+          />
         </section>
+
+        <SubscriptionValidationTable rows={validationEvents} />
 
         <SignupsTable
           title="All Leads"
@@ -127,6 +172,75 @@ export default async function AdminDashboardPage() {
         />
       </div>
     </main>
+  );
+}
+
+function SubscriptionValidationTable({
+  rows,
+}: {
+  rows: SubscriptionValidationRow[];
+}) {
+  return (
+    <section className="space-y-3">
+      <div>
+        <h2 className="text-xl font-semibold">
+          Subscription Validation{" "}
+          <span className="ml-2 text-sm font-normal text-muted-foreground">
+            ({rows.length})
+          </span>
+        </h2>
+        <p className="text-sm text-muted-foreground">
+          Latest server-recorded RevenueCat, Stripe, or manual entitlement events.
+        </p>
+      </div>
+
+      <div className="overflow-x-auto rounded-xl border border-neutral-200">
+        <table className="w-full text-sm">
+          <thead className="bg-neutral-50 text-left text-xs uppercase tracking-wide text-neutral-600">
+            <tr>
+              <th className="px-4 py-3 font-medium">Validated</th>
+              <th className="px-4 py-3 font-medium">Provider</th>
+              <th className="px-4 py-3 font-medium">Tier</th>
+              <th className="px-4 py-3 font-medium">Product</th>
+              <th className="px-4 py-3 font-medium">User</th>
+              <th className="px-4 py-3 font-medium">Provider Event</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={6}
+                  className="px-4 py-8 text-center text-neutral-500"
+                >
+                  No subscription validation events yet.
+                </td>
+              </tr>
+            ) : (
+              rows.map((row) => (
+                <tr key={row.id} className="border-t border-neutral-100">
+                  <td className="px-4 py-3 whitespace-nowrap text-neutral-600">
+                    {new Date(row.validated_at).toLocaleString()}
+                  </td>
+                  <td className="px-4 py-3 capitalize">
+                    {row.provider.replace("_", " ")}
+                    <span className="ml-2 rounded-full bg-neutral-100 px-2 py-0.5 text-xs text-neutral-600">
+                      {row.environment}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 font-medium">{row.entitlement_tier}</td>
+                  <td className="px-4 py-3 font-mono text-xs">{row.product_id}</td>
+                  <td className="px-4 py-3 font-mono text-xs">{row.user_id}</td>
+                  <td className="px-4 py-3 font-mono text-xs">
+                    {row.provider_event_id ?? row.provider_customer_id ?? "-"}
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+    </section>
   );
 }
 
