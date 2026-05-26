@@ -12,6 +12,8 @@ Operational reference for incidents, releases, and routine maintenance. This is 
 - App Review rejection response
 - Operating cadence
 
+Phase 6 detailed operating files live in `docs/ios-guide/operate/`.
+
 See Chapter 20 (`docs/ios-guide/chapters/chapter-20-post-launch-operations.md`) for the full operations playbook.
 
 ## Release Procedure
@@ -129,15 +131,23 @@ Daily during TestFlight:
 - Check Sentry critical and important issues.
 - Check app feedback and support inbox.
 - Confirm the latest TestFlight build still launches and reaches Dashboard.
+- Run or review the pilot feedback triage summary when new reports arrive.
 
 Weekly:
 
 - Review top crashes, slow paths, and support themes.
 - Review analytics funnels once PostHog events are live.
 - Update release notes and known issues.
+- Pick the top three feedback themes for the next large release-train PR.
 
 Quarterly:
 
 - Run the kill-switch drill.
 - Review dependencies against the consensus stack.
 - Refresh App Store screenshots if the UI changed materially.
+
+Monthly:
+
+- Run the staging kill-switch drill and update the drill log.
+- Confirm Sentry alert routing still reaches Robert and Max.
+- Confirm the PostHog decision-engine dashboard still matches the current analytics taxonomy.

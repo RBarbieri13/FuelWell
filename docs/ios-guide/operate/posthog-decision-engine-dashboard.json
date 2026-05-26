@@ -1,0 +1,84 @@
+{
+  "name": "FuelWell Pilot Decision Engine",
+  "description": "Tracks whether pilots see, trust, follow, and return from FuelWell recommendations.",
+  "refresh": "daily during TestFlight, weekly after pilot week one",
+  "events": [
+    "app_launched",
+    "tab_selected",
+    "coach_recommendation_presented",
+    "coach_recommendation_followed",
+    "coach_recommendation_dismissed",
+    "nudge_delivered",
+    "nudge_opened",
+    "feedback_started",
+    "feedback_submitted",
+    "feedback_failed",
+    "healthkit_synced"
+  ],
+  "insights": [
+    {
+      "title": "Recommendation Follow-Through Rate",
+      "type": "funnel",
+      "steps": [
+        "coach_recommendation_presented",
+        "coach_recommendation_followed"
+      ],
+      "breakdowns": [
+        "surface",
+        "category"
+      ],
+      "target": ">= 35% during pilot week one"
+    },
+    {
+      "title": "Recommendation Dismissal Reasons",
+      "type": "trend",
+      "event": "coach_recommendation_dismissed",
+      "breakdowns": [
+        "reason",
+        "category"
+      ],
+      "target": "No single reason exceeds 40% of dismissals for a week"
+    },
+    {
+      "title": "Nudge Open Rate",
+      "type": "funnel",
+      "steps": [
+        "nudge_delivered",
+        "nudge_opened"
+      ],
+      "breakdowns": [
+        "category",
+        "trigger"
+      ],
+      "target": ">= 20% pilot open rate"
+    },
+    {
+      "title": "Feedback Completion",
+      "type": "funnel",
+      "steps": [
+        "feedback_started",
+        "feedback_submitted"
+      ],
+      "breakdowns": [
+        "route"
+      ],
+      "target": ">= 80% of started feedback is submitted"
+    },
+    {
+      "title": "Primary Tab Interest",
+      "type": "trend",
+      "event": "tab_selected",
+      "breakdowns": [
+        "tab"
+      ],
+      "target": "Coach and Meals tabs both receive repeat visits"
+    }
+  ],
+  "pilot_review_questions": [
+    "Are pilots following recommendations or only reading them?",
+    "Which recommendation category creates the most dismissals?",
+    "Do proactive nudges bring pilots back into the app?",
+    "Does feedback completion break on any route?",
+    "Are pilots using Coach after logging meals?"
+  ]
+}
