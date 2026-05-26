@@ -81,9 +81,9 @@ WHERE name = 'ai_meal_plan';
 
 | Date | Environment | T=0 to kill | Kill to disabled | Disabled to restored | Result | Notes |
 | --- | --- | --- | --- | --- | --- | --- |
-| Pending | Staging | Pending | Pending | Pending | Pending | Run once staging Supabase credentials are attached to the release candidate. |
+| 2026-05-26 | Staging | Blocked | Blocked | Blocked | Blocked | Staging endpoint reachable via `~/.fuelwell/supabase-staging.env`, but REST returned `PGRST205` because `public.feature_flags` is not present in the schema cache. Apply `ios/supabase/migrations/202605240001_phase2_architecture.sql`, add a local service-role key, then rerun `tools/supabase/kill-switch-drill.sh drill`. |
 
-Current readiness note: package and app-unit coverage verify the local kill-switch contract: `ai_meal_plan` reads from Supabase REST with the expected auth headers, client-side caching honors the configured TTL, disabled AI features stop before calling the proxy, and launch readiness treats disabled AI as an intentional safe-off state. A live staging drill is still required before TestFlight.
+Current readiness note: package and app-unit coverage verify the local kill-switch contract: `ai_meal_plan` reads from Supabase REST with the expected auth headers, client-side caching honors the configured TTL, disabled AI features stop before calling the proxy, and launch readiness treats disabled AI as an intentional safe-off state. The staging read path was attempted on 2026-05-26 and is blocked until the existing Phase 2 schema migration is applied to staging.
 
 ## Production Database Access
 

@@ -27,7 +27,7 @@ The live staging drill still requires real Supabase credentials. This document r
 
 `AppFeatureTests.disabledAnthropicFeatureStillCountsAsReady` verifies that a disabled AI feature is considered a safe-off state during launch readiness, not an app outage.
 
-## Remaining Live Drill
+## Staging Drill Status
 
 Before TestFlight, run the runbook drill against staging:
 
@@ -37,4 +37,4 @@ Before TestFlight, run the runbook drill against staging:
 4. Restore the flag.
 5. Record timings in `docs/ios-guide/runbook.md`.
 
-This PR does not claim that live staging has been exercised.
+The first live read attempt ran on 2026-05-26 with `~/.fuelwell/supabase-staging.env`. The Supabase endpoint was reachable, but REST returned `PGRST205` because `public.feature_flags` was not present in the staging schema cache. Apply `ios/supabase/migrations/202605240001_phase2_architecture.sql`, then rerun `tools/supabase/kill-switch-drill.sh read` and `tools/supabase/kill-switch-drill.sh drill`.
