@@ -111,6 +111,17 @@
             parallelizable = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "E7DE82731F459B08567A3E72"
+               BuildableName = "SubscriptionClientTests.xctest"
+               BlueprintName = "SubscriptionClientTests"
+               ReferencedContainer = "container:FuelWellApp.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "EBDA7026A910722A15EF9240"
                BuildableName = "HealthKitClientTests.xctest"
                BlueprintName = "HealthKitClientTests"
