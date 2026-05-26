@@ -33,6 +33,8 @@ packages:
     path: Packages/Networking
   Persistence:
     path: Packages/Persistence
+  SubscriptionClient:
+    path: Packages/SubscriptionClient
   App:
     path: Features/App
   SnapshotTesting:
@@ -66,6 +68,8 @@ targets:
         product: Nutrition
       - package: SupabaseClient
         product: SupabaseClient
+      - package: SubscriptionClient
+        product: SubscriptionClient
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.fuelwell.app
@@ -98,6 +102,8 @@ targets:
         product: NutritionDomain
       - package: SupabaseClient
         product: SupabaseClient
+      - package: SubscriptionClient
+        product: SubscriptionClient
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES
@@ -160,6 +166,18 @@ targets:
     dependencies:
       - package: SupabaseClient
         product: SupabaseClient
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+  SubscriptionClientTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: Packages/SubscriptionClient/Tests/SubscriptionClientTests
+    dependencies:
+      - package: SubscriptionClient
+        product: SubscriptionClient
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES
@@ -254,6 +272,7 @@ schemes:
         - PersistenceTests
         - AnthropicClientTests
         - SupabaseClientTests
+        - SubscriptionClientTests
         - HealthKitClientTests
         - AnalyticsTests
         - CrashReportingTests

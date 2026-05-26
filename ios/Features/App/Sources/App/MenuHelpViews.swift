@@ -1,6 +1,7 @@
 import Analytics
 import Dependencies
 import DesignSystem
+import SubscriptionClient
 import SupabaseClient
 import SwiftUI
 
@@ -32,6 +33,7 @@ struct MenuSheetView: View {
                         .init(title: "Help", detail: "Articles, support, feedback", icon: "questionmark.circle")
                     ]
                 )
+                Founding100StatusCard()
             }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -43,6 +45,37 @@ struct MenuSheetView: View {
                 }
             }
         }
+    }
+}
+
+private struct Founding100StatusCard: View {
+    @Environment(\.theme) private var theme
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: self.theme.spacing.sm) {
+            HStack(alignment: .top, spacing: self.theme.spacing.md) {
+                Image(systemName: "sparkles")
+                    .font(.title2.weight(.semibold))
+                    .foregroundStyle(self.theme.color.primary.accent.color)
+                    .frame(width: 32)
+
+                VStack(alignment: .leading, spacing: self.theme.spacing.xs) {
+                    Text(EntitlementTier.founding100Lifetime.displayName)
+                        .font(.custom(self.theme.font.display, size: self.theme.text.title.size))
+                        .fontWeight(.bold)
+                        .foregroundStyle(self.theme.color.text.primary.color)
+
+                    Text(
+                        "Founders 100 is capped at \(Founding100Reservation.hardCap) lifetime seats. " +
+                            "Everyone keeps Pilot access until paid tiers are turned on."
+                    )
+                        .font(.custom(self.theme.font.body, size: self.theme.text.body.size))
+                        .fontWeight(.medium)
+                        .foregroundStyle(self.theme.color.text.body.color)
+                }
+            }
+        }
+        .phaseCard()
     }
 }
 
