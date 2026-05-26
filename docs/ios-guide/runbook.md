@@ -26,6 +26,14 @@ Use this checklist for every TestFlight or App Store candidate:
 6. Confirm privacy strings, App Store metadata, screenshots, and support links still match the current app surface.
 7. Tag the release only after the build, runbook notes, and release notes agree.
 
+One-command gate:
+
+```bash
+tools/release/check-phase4-readiness.sh --full
+```
+
+The gate exits `3` when the local code path is healthy but external release evidence is still blocked, such as missing staging kill-switch access or no physical iPhone for Instruments.
+
 ## Performance Evidence
 
 Automated Phase 4 checks:
