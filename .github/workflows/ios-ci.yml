@@ -93,7 +93,9 @@ jobs:
         run: |
           xcodebuild test \
             -scheme FuelWellApp \
-            -destination "${IOS_CI_DESTINATION}"
+            -destination "${IOS_CI_DESTINATION}" \
+            -skipMacroValidation \
+            -skipPackagePluginValidation
 
   snapshots:
     name: Snapshot Tests
@@ -126,6 +128,8 @@ jobs:
           xcodebuild test \
             -scheme FuelWellApp \
             -destination "${IOS_CI_DESTINATION}" \
+            -skipMacroValidation \
+            -skipPackagePluginValidation \
             -only-testing:DesignSystemTests
 
   fastlane:
