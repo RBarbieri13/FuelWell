@@ -6,6 +6,8 @@ import UIKit
 
 @MainActor
 @Test func componentGalleryRendersStandardVisualContract() throws {
+    registerFuelWellFontsForTests()
+
     let image = try render(
         ComponentGallery()
             .frame(width: 390, height: 1_600)
@@ -17,6 +19,8 @@ import UIKit
 
 @MainActor
 @Test func componentGalleryRendersAccessibilityWorstCase() throws {
+    registerFuelWellFontsForTests()
+
     let image = try render(
         ComponentGallery()
             .environment(\.dynamicTypeSize, .accessibility5)
@@ -29,6 +33,8 @@ import UIKit
 
 @MainActor
 @Test func componentGalleryRendersCompactWidth() throws {
+    registerFuelWellFontsForTests()
+
     let image = try render(
         ComponentGallery()
             .frame(width: 320, height: 1_800)
