@@ -25,7 +25,7 @@ This slice expands Phase 4 beyond visual quality by locking down feature reducer
 ## Verification
 
 - `xcodegen generate --spec project.yml`
-- `swiftlint --strict --config ios/.swiftlint.yml ios/Features/App ios/Features/Nutrition`
+- `swiftlint --strict --config ios/.swiftlint.yml ios`
 - `xcodebuild -scheme FuelWellApp -destination 'platform=iOS Simulator,name=iPhone 15' -only-testing:AppTests -only-testing:NutritionFeatureTests test`
 
 ## Notes
