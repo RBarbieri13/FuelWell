@@ -110,6 +110,44 @@ public struct MarketingAccountLink: Codable, Equatable, Sendable {
         self.linkedAt = linkedAt
         self.founding100Position = founding100Position
     }
+
+    enum CodingKeys: String, CodingKey {
+        case userID = "user_id"
+        case email
+        case source
+        case linkedAt = "linked_at"
+        case founding100Position = "founding100_position"
+    }
+}
+
+public struct SubscriptionConfiguration: Equatable, Sendable {
+    public var projectURL: URL
+    public var anonKey: String
+    public var accessToken: String?
+
+    public init(projectURL: URL, anonKey: String, accessToken: String? = nil) {
+        self.projectURL = projectURL
+        self.anonKey = anonKey
+        self.accessToken = accessToken
+    }
+
+    public static var environment: SubscriptionConfiguration? {
+        guard
+            let rawURL = ProcessInfo.processInfo.environment["FUELWELL_SUPABASE_URL"],
+            let url = URL(string: rawURL),
+            let anonKey = ProcessInfo.processInfo.environment["FUELWELL_SUPABASE_ANON_KEY"],
+            !anonKey.isEmpty
+        else {
+            return nil
+        }
+
+        let accessToken = ProcessInfo.processInfo.environment["FUELWELL_SUPABASE_ACCESS_TOKEN"]
+        return SubscriptionConfiguration(
+            projectURL: url,
+            anonKey: anonKey,
+            accessToken: accessToken?.isEmpty == false ? accessToken : nil
+        )
+    }
 }
 
 public struct ProductIdentifiers: Codable, Equatable, Sendable {
@@ -166,6 +204,15 @@ public struct SubscriptionStatus: Codable, Equatable, Sendable {
             self.tier.unlocksPremiumFeatures
         }
     }
+
+    enum CodingKeys: String, CodingKey {
+        case userID = "user_id"
+        case tier
+        case isActive = "is_active"
+        case productID = "product_id"
+        case expiresAt = "expires_at"
+        case validatedAt = "validated_at"
+    }
 }
 
 public struct SubscriptionValidationEvent: Codable, Equatable, Identifiable, Sendable {
@@ -193,6 +240,16 @@ public struct SubscriptionValidationEvent: Codable, Equatable, Identifiable, Sen
         self.environment = environment
         self.status = status
         self.validatedAt = validatedAt
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case userID = "user_id"
+        case provider
+        case productID = "product_id"
+        case environment
+        case status = "entitlement_tier"
+        case validatedAt = "validated_at"
     }
 }
 
@@ -222,13 +279,23 @@ public struct Founding100Reservation: Codable, Equatable, Identifiable, Sendable
     public var isWithinHardCap: Bool {
         (1...Self.hardCap).contains(self.position)
     }
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case userID = "user_id"
+        case email
+        case position
+        case reservedAt = "reserved_at"
+    }
 }
 
 public enum SubscriptionClientError: Error, Equatable, Sendable {
     case founding100SoldOut
     case invalidReceipt
     case invalidEmail
+    case invalidResponse
     case missingConfiguration
+    case transport(String)
     case unimplemented
 }
 
@@ -258,7 +325,7 @@ public struct SubscriptionClient: Sendable {
 }
 
 extension SubscriptionClient: DependencyKey {
-    public static let liveValue = SubscriptionClient.unconfigured
+    public static let liveValue = SubscriptionClient.live()
 
     public static let testValue = SubscriptionClient(
         status: { _ in throw SubscriptionClientError.unimplemented },
@@ -299,129 +366,30 @@ extension SubscriptionClient: DependencyKey {
             validationEvents: { await store.validationEvents(userID: $0) }
         )
     }
+
+    public static func live(
+        configuration: SubscriptionConfiguration? = .environment,
+        session: URLSession = .shared
+    ) -> SubscriptionClient {
+        guard let configuration else {
+            return SubscriptionClient.unconfigured
+        }
+
+        let transport = SupabaseSubscriptionTransport(configuration: configuration, session: session)
+        return SubscriptionClient(
+            status: { try await transport.status(userID: $0) },
+            validateReceipt: { _, _ in throw SubscriptionClientError.missingConfiguration },
+            validateProviderReceipt: { _, _ in throw SubscriptionClientError.missingConfiguration },
+            reserveFounding100: { try await transport.reserveFounding100(userID: $0, email: $1) },
+            linkMarketingSignup: { try await transport.linkMarketingSignup($0) },
+            validationEvents: { try await transport.validationEvents(userID: $0) }
+        )
+    }
 }
 
 extension DependencyValues {
     public var subscriptionClient: SubscriptionClient {
         get { self[SubscriptionClient.self] }
         set { self[SubscriptionClient.self] = newValue }
-    }
-}
-
-private actor InMemorySubscriptionStore {
-    private var statuses: [UUID: SubscriptionStatus]
-    private var reservations: [Founding100Reservation]
-    private var links: [UUID: MarketingAccountLink] = [:]
-    private var events: [SubscriptionValidationEvent] = []
-
-    init(statuses: [UUID: SubscriptionStatus], reservations: [Founding100Reservation]) {
-        self.statuses = statuses
-        self.reservations = reservations
-    }
-
-    func status(userID: UUID) -> SubscriptionStatus {
-        self.statuses[userID] ?? SubscriptionStatus(userID: userID, tier: .pilot, isActive: true)
-    }
-
-    func validateReceipt(userID: UUID, receipt: String) throws -> SubscriptionStatus {
-        guard !receipt.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-            throw SubscriptionClientError.invalidReceipt
-        }
-
-        return self.recordValidation(
-            userID: userID,
-            receipt: ProviderReceipt(
-                provider: .manual,
-                environment: .sandbox,
-                receiptToken: receipt,
-                productID: ProductIdentifiers.defaults.premiumMonthly
-            )
-        )
-    }
-
-    func validateProviderReceipt(userID: UUID, receipt: ProviderReceipt) throws -> SubscriptionStatus {
-        guard !receipt.receiptToken.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-            throw SubscriptionClientError.invalidReceipt
-        }
-
-        return self.recordValidation(userID: userID, receipt: receipt)
-    }
-
-    func link(request: AccountLinkRequest) throws -> MarketingAccountLink {
-        let email = request.email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-        guard self.isValidEmail(email) else {
-            throw SubscriptionClientError.invalidEmail
-        }
-
-        let existingReservation = self.reservations.first(where: { $0.userID == request.userID })
-        let link = MarketingAccountLink(
-            userID: request.userID,
-            email: email,
-            source: request.source,
-            founding100Position: existingReservation?.position
-        )
-        self.links[request.userID] = link
-        return link
-    }
-
-    func validationEvents(userID: UUID) -> [SubscriptionValidationEvent] {
-        self.events.filter { $0.userID == userID }
-    }
-
-    private func recordValidation(userID: UUID, receipt: ProviderReceipt) -> SubscriptionStatus {
-        let status = SubscriptionStatus(
-            userID: userID,
-            tier: .premium,
-            isActive: true,
-            productID: receipt.productID
-        )
-        self.statuses[userID] = status
-        self.events.append(
-            SubscriptionValidationEvent(
-                userID: userID,
-                provider: receipt.provider,
-                productID: receipt.productID,
-                environment: receipt.environment,
-                status: status.tier
-            )
-        )
-        return status
-    }
-
-    func reserve(userID: UUID, email: String) throws -> Founding100Reservation {
-        let normalizedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-        guard self.isValidEmail(normalizedEmail) else {
-            throw SubscriptionClientError.invalidEmail
-        }
-
-        if let existingIndex = self.reservations.firstIndex(where: { $0.userID == userID }) {
-            self.reservations[existingIndex].email = normalizedEmail
-            return self.reservations[existingIndex]
-        }
-
-        guard self.reservations.count < Founding100Reservation.hardCap else {
-            throw SubscriptionClientError.founding100SoldOut
-        }
-
-        let reservation = Founding100Reservation(
-            userID: userID,
-            email: normalizedEmail,
-            position: self.reservations.count + 1
-        )
-        self.reservations.append(reservation)
-        self.statuses[userID] = SubscriptionStatus(
-            userID: userID,
-            tier: .founding100Lifetime,
-            isActive: true,
-            productID: ProductIdentifiers.defaults.founding100Lifetime
-        )
-        return reservation
-    }
-
-    private func isValidEmail(_ email: String) -> Bool {
-        email.range(
-            of: #"^[^\s@]+@[^\s@]+\.[^\s@]+$"#,
-            options: .regularExpression
-        ) != nil
     }
 }
