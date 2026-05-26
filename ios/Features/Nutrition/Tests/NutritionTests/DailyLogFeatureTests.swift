@@ -403,3 +403,27 @@ func addMealRequiresNameAndCalories() async {
         $0.errorMessage = "Add a meal name and calories before saving."
     }
 }
+
+@MainActor
+@Test
+func addMealDismissalClearsCameraAndPhotoDraftState() async {
+    let store = TestStore(
+        initialState: DailyLogFeature.State(
+            isAddMealPresented: true,
+            addMealDraft: AddMealDraft(
+                mode: .photo,
+                name: "Photo meal",
+                calories: "500",
+                photoData: Data([0x01]),
+                isCameraPresented: true
+            )
+        )
+    ) {
+        DailyLogFeature()
+    }
+
+    await store.send(.addMealDismissed) {
+        $0.isAddMealPresented = false
+        $0.addMealDraft = AddMealDraft()
+    }
+}
