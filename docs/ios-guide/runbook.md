@@ -83,7 +83,7 @@ WHERE name = 'ai_meal_plan';
 | --- | --- | --- | --- | --- | --- | --- |
 | Pending | Staging | Pending | Pending | Pending | Pending | Run once staging Supabase credentials are attached to the release candidate. |
 
-Current readiness note: unit coverage verifies that a disabled Anthropic feature is treated as an intentional safe off state. A live staging drill is still required before TestFlight.
+Current readiness note: package and app-unit coverage verify the local kill-switch contract: `ai_meal_plan` reads from Supabase REST with the expected auth headers, client-side caching honors the configured TTL, disabled AI features stop before calling the proxy, and launch readiness treats disabled AI as an intentional safe-off state. A live staging drill is still required before TestFlight.
 
 ## Production Database Access
 

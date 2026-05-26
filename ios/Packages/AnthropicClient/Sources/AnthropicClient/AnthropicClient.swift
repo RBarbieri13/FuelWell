@@ -50,21 +50,7 @@ public struct AnthropicClient: Sendable {
 }
 
 extension AnthropicClient: DependencyKey {
-    public static let liveValue = AnthropicClient { request in
-        guard
-            let url = URL(string: ProcessInfo.processInfo.environment["FUELWELL_ANTHROPIC_PROXY_URL"] ?? ""),
-            !url.absoluteString.isEmpty
-        else {
-            throw AnthropicClientError.missingConfiguration
-        }
-
-        let flags = FeatureFlagClient.liveValue
-        guard try await flags.isEnabled(request.featureFlag) else {
-            throw AnthropicClientError.featureDisabled(request.featureFlag)
-        }
-
-        return try await LiveAnthropicClient(endpoint: url).complete(request)
-    }
+    public static let liveValue = AnthropicClient.live()
 
     public static let testValue = AnthropicClient { _ in
         throw AnthropicClientError.unimplemented
@@ -72,6 +58,24 @@ extension AnthropicClient: DependencyKey {
 
     public static let previewValue = AnthropicClient { request in
         AnthropicResponse(text: "Preview response for: \(request.prompt)")
+    }
+
+    public static func live(
+        endpoint: URL? = URL(string: ProcessInfo.processInfo.environment["FUELWELL_ANTHROPIC_PROXY_URL"] ?? ""),
+        featureFlags: FeatureFlagClient = .liveValue,
+        session: URLSession = .shared
+    ) -> AnthropicClient {
+        AnthropicClient { request in
+            guard let endpoint, !endpoint.absoluteString.isEmpty else {
+                throw AnthropicClientError.missingConfiguration
+            }
+
+            guard try await featureFlags.isEnabled(request.featureFlag) else {
+                throw AnthropicClientError.featureDisabled(request.featureFlag)
+            }
+
+            return try await LiveAnthropicClient(endpoint: endpoint, session: session).complete(request)
+        }
     }
 }
 
@@ -117,11 +121,20 @@ private struct AnthropicProxyBody: Encodable {
     var prompt: String
     var model: String
     var maxTokens: Int
+    var featureFlag: String
 
     init(request: AnthropicRequest) {
         self.prompt = request.prompt
         self.model = request.model
         self.maxTokens = request.maxTokens
+        self.featureFlag = request.featureFlag
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case prompt
+        case model
+        case maxTokens
+        case featureFlag = "feature_flag"
     }
 }
 
