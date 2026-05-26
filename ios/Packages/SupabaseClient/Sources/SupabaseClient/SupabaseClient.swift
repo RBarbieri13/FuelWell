@@ -67,6 +67,44 @@ public struct MealRecord: Codable, Equatable, Identifiable, Sendable {
     }
 }
 
+public struct FeedbackReport: Codable, Equatable, Identifiable, Sendable {
+    public var id: UUID
+    public var userID: UUID?
+    public var route: String
+    public var message: String
+    public var appVersion: String
+    public var metadata: [String: String]
+    public var createdAt: Date
+
+    public init(
+        id: UUID = UUID(),
+        userID: UUID? = nil,
+        route: String,
+        message: String,
+        appVersion: String,
+        metadata: [String: String] = [:],
+        createdAt: Date = Date()
+    ) {
+        self.id = id
+        self.userID = userID
+        self.route = route
+        self.message = message
+        self.appVersion = appVersion
+        self.metadata = metadata
+        self.createdAt = createdAt
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case userID = "user_id"
+        case route
+        case message
+        case appVersion = "app_version"
+        case metadata
+        case createdAt = "created_at"
+    }
+}
+
 public enum SupabaseClientError: Error, Equatable, Sendable {
     case disabled
     case invalidResponse
@@ -80,17 +118,20 @@ public struct SupabaseDatabaseClient: Sendable {
     public var fetchProfile: @Sendable (UUID) async throws -> Profile?
     public var upsertProfile: @Sendable (Profile) async throws -> Profile
     public var insertMeal: @Sendable (MealRecord) async throws -> MealRecord
+    public var submitFeedback: @Sendable (FeedbackReport) async throws -> FeedbackReport
 
     public init(
         currentUser: @escaping @Sendable () async throws -> SupabaseUser?,
         fetchProfile: @escaping @Sendable (UUID) async throws -> Profile?,
         upsertProfile: @escaping @Sendable (Profile) async throws -> Profile,
-        insertMeal: @escaping @Sendable (MealRecord) async throws -> MealRecord
+        insertMeal: @escaping @Sendable (MealRecord) async throws -> MealRecord,
+        submitFeedback: @escaping @Sendable (FeedbackReport) async throws -> FeedbackReport
     ) {
         self.currentUser = currentUser
         self.fetchProfile = fetchProfile
         self.upsertProfile = upsertProfile
         self.insertMeal = insertMeal
+        self.submitFeedback = submitFeedback
     }
 }
 
@@ -101,7 +142,8 @@ extension SupabaseDatabaseClient: DependencyKey {
         currentUser: { throw SupabaseClientError.unimplemented },
         fetchProfile: { _ in throw SupabaseClientError.unimplemented },
         upsertProfile: { _ in throw SupabaseClientError.unimplemented },
-        insertMeal: { _ in throw SupabaseClientError.unimplemented }
+        insertMeal: { _ in throw SupabaseClientError.unimplemented },
+        submitFeedback: { _ in throw SupabaseClientError.unimplemented }
     )
 
     public static let previewValue = SupabaseDatabaseClient.inMemory(
@@ -117,7 +159,8 @@ extension SupabaseDatabaseClient: DependencyKey {
                 currentUser: { throw SupabaseClientError.missingConfiguration },
                 fetchProfile: { _ in throw SupabaseClientError.missingConfiguration },
                 upsertProfile: { _ in throw SupabaseClientError.missingConfiguration },
-                insertMeal: { _ in throw SupabaseClientError.missingConfiguration }
+                insertMeal: { _ in throw SupabaseClientError.missingConfiguration },
+                submitFeedback: { _ in throw SupabaseClientError.missingConfiguration }
             )
         }
 
@@ -126,7 +169,8 @@ extension SupabaseDatabaseClient: DependencyKey {
             currentUser: { try await transport.currentUser() },
             fetchProfile: { try await transport.fetchProfile(userID: $0) },
             upsertProfile: { try await transport.upsertProfile($0) },
-            insertMeal: { try await transport.insertMeal($0) }
+            insertMeal: { try await transport.insertMeal($0) },
+            submitFeedback: { try await transport.submitFeedback($0) }
         )
     }
 
@@ -136,7 +180,8 @@ extension SupabaseDatabaseClient: DependencyKey {
             currentUser: { await store.user },
             fetchProfile: { await store.profile(id: $0) },
             upsertProfile: { try await store.upsert(profile: $0) },
-            insertMeal: { try await store.insert(meal: $0) }
+            insertMeal: { try await store.insert(meal: $0) },
+            submitFeedback: { try await store.submit(feedback: $0) }
         )
     }
 }
@@ -152,6 +197,7 @@ private actor InMemorySupabaseStore {
     let user: SupabaseUser?
     private var profiles: [UUID: Profile] = [:]
     private var meals: [UUID: MealRecord] = [:]
+    private var feedback: [UUID: FeedbackReport] = [:]
 
     init(user: SupabaseUser?) {
         self.user = user
@@ -169,6 +215,11 @@ private actor InMemorySupabaseStore {
     func insert(meal: MealRecord) -> MealRecord {
         self.meals[meal.id] = meal
         return meal
+    }
+
+    func submit(feedback: FeedbackReport) -> FeedbackReport {
+        self.feedback[feedback.id] = feedback
+        return feedback
     }
 }
 
@@ -227,6 +278,22 @@ private actor SupabaseRESTTransport {
             queryItems: [URLQueryItem(name: "select", value: "*")],
             method: "POST",
             body: self.encoder.encode(meal),
+            prefer: "return=representation"
+        )
+
+        guard let row = rows.first else {
+            throw SupabaseClientError.invalidResponse
+        }
+
+        return row
+    }
+
+    func submitFeedback(_ feedback: FeedbackReport) async throws -> FeedbackReport {
+        let rows: [FeedbackReport] = try await self.request(
+            path: "rest/v1/feedback",
+            queryItems: [URLQueryItem(name: "select", value: "*")],
+            method: "POST",
+            body: self.encoder.encode(feedback),
             prefer: "return=representation"
         )
 

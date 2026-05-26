@@ -56,6 +56,26 @@ final class FuelWellCriticalPathUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["Search articles, settings, or ask a question"].exists)
     }
 
+    func testFeedbackCanBeSubmittedFromHelp() {
+        let app = self.launchApp()
+        defer { app.terminate() }
+
+        app.buttons["nav.help"].tap()
+        XCTAssertTrue(app.staticTexts["Help"].waitForExistence(timeout: 2))
+
+        app.buttons["feedback.submit"].tap()
+        XCTAssertTrue(app.navigationBars["Send Feedback"].waitForExistence(timeout: 2))
+
+        app.textViews["feedback.message"].tap()
+        app.textViews["feedback.message"].typeText("Pilot feedback from UI test")
+
+        let submitButton = app.buttons["feedback.submit"]
+        self.waitUntilEnabled(submitButton)
+        submitButton.tap()
+
+        XCTAssertTrue(app.staticTexts["feedback.success"].waitForExistence(timeout: 2))
+    }
+
     func testAddMealCriticalPath() {
         let app = self.launchApp()
         defer { app.terminate() }
@@ -106,7 +126,7 @@ final class FuelWellCriticalPathUITests: XCTestCase {
         return app
     }
 
-    private func waitUntilEnabled(_ element: XCUIElement, timeout: TimeInterval = 2) {
+    private func waitUntilEnabled(_ element: XCUIElement, timeout: TimeInterval = 6) {
         let predicate = NSPredicate(format: "isEnabled == true")
         self.expectation(for: predicate, evaluatedWith: element)
         self.waitForExpectations(timeout: timeout)

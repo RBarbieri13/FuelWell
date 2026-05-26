@@ -1,0 +1,15 @@
+FuelWell helps you decide what to do next with food, activity, and recovery.
+
+Log meals quickly, review your macro direction, and use coach-style guidance to keep the day realistic. The app is built for people who want practical nutrition decisions without turning every meal into spreadsheet work.
+
+FuelWell can help you:
+
+- Understand whether today is on track
+- Log meals and photos
+- Review macro adherence
+- Plan groceries and recipes
+- Get restaurant guidance
+- Connect activity and recovery context
+- Send feedback during the pilot
+
+The pilot version is focused on clarity, habit-building, and fast feedback.

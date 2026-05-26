@@ -21,6 +21,27 @@ func inMemoryClientRoundTripsProfileAndMeal() async throws {
 }
 
 @Test
+func inMemoryClientAcceptsFeedbackReports() async throws {
+    let userID = UUID()
+    let client = SupabaseDatabaseClient.inMemory(user: SupabaseUser(id: userID, email: "test@fuelwell.app"))
+
+    let report = FeedbackReport(
+        userID: userID,
+        route: "help",
+        message: "The meal logger needs clearer copy.",
+        appVersion: "1.0.0",
+        metadata: ["surface": "help"]
+    )
+
+    let submitted = try await client.submitFeedback(report)
+
+    #expect(submitted.userID == userID)
+    #expect(submitted.route == "help")
+    #expect(submitted.message == "The meal logger needs clearer copy.")
+    #expect(submitted.metadata["surface"] == "help")
+}
+
+@Test
 func featureFlagConstantReadsKnownFlags() async throws {
     let flags = FeatureFlagClient.constant([
         FeatureFlag(name: "ai_meal_plan", enabled: false)

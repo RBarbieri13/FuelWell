@@ -17,12 +17,49 @@ public struct AnalyticsEvent: Equatable, Sendable {
         self.properties = properties
     }
 
+    public static let approvedEventNames: Set<String> = [
+        "app_launched",
+        "feedback_failed",
+        "feedback_started",
+        "feedback_submitted",
+        "healthkit_synced",
+        "tab_selected"
+    ]
+
     public static func appLaunched(source: String) -> AnalyticsEvent {
         AnalyticsEvent(name: "app_launched", properties: ["source": .string(source)])
     }
 
+    public static func feedbackStarted(route: String) -> AnalyticsEvent {
+        AnalyticsEvent(name: "feedback_started", properties: ["route": .string(route)])
+    }
+
+    public static func feedbackSubmitted(route: String, messageLength: Int) -> AnalyticsEvent {
+        AnalyticsEvent(
+            name: "feedback_submitted",
+            properties: [
+                "route": .string(route),
+                "message_length": .int(messageLength)
+            ]
+        )
+    }
+
+    public static func feedbackFailed(route: String, reason: String) -> AnalyticsEvent {
+        AnalyticsEvent(
+            name: "feedback_failed",
+            properties: [
+                "route": .string(route),
+                "reason": .string(reason)
+            ]
+        )
+    }
+
     public static func healthKitSynced(daysBack: Int) -> AnalyticsEvent {
         AnalyticsEvent(name: "healthkit_synced", properties: ["days_back": .int(daysBack)])
+    }
+
+    public static func tabSelected(_ tab: String) -> AnalyticsEvent {
+        AnalyticsEvent(name: "tab_selected", properties: ["tab": .string(tab)])
     }
 }
 

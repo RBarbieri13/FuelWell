@@ -78,6 +78,16 @@ create table if not exists restaurants (
     created_at timestamptz not null default now()
 );
 
+create table if not exists feedback (
+    id uuid primary key default gen_random_uuid(),
+    user_id uuid references auth.users(id) on delete set null,
+    route text not null,
+    message text not null,
+    app_version text not null,
+    metadata jsonb not null default '{}'::jsonb,
+    created_at timestamptz not null default now()
+);
+
 create table if not exists feature_flags (
     name text primary key,
     enabled boolean not null default true,
@@ -100,6 +110,7 @@ alter table grocery_items enable row level security;
 alter table progress_entries enable row level security;
 alter table coach_messages enable row level security;
 alter table restaurants enable row level security;
+alter table feedback enable row level security;
 alter table feature_flags enable row level security;
 
 create policy "profiles are owner-readable" on profiles
@@ -156,9 +167,15 @@ create policy "restaurants owner-writable" on restaurants
 create policy "restaurants owner-updatable" on restaurants
     for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
+create policy "feedback owner-readable" on feedback
+    for select using (auth.uid() = user_id);
+create policy "feedback anonymous or owner-writable" on feedback
+    for insert with check (user_id is null or auth.uid() = user_id);
+
 create policy "anyone can read feature flags" on feature_flags
     for select using (true);
 
 create index if not exists meals_user_logged_at_idx on meals (user_id, logged_at desc);
 create index if not exists progress_entries_user_measured_at_idx on progress_entries (user_id, measured_at desc);
 create index if not exists coach_messages_user_created_at_idx on coach_messages (user_id, created_at desc);
+create index if not exists feedback_created_at_idx on feedback (created_at desc);

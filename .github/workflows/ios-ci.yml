@@ -1,0 +1,150 @@
+name: iOS CI
+
+on:
+  pull_request:
+    paths:
+      - "ios/**"
+      - ".github/workflows/ios-ci.yml"
+      - "tools/release/**"
+      - "tools/supabase/**"
+  push:
+    branches:
+      - main
+    paths:
+      - "ios/**"
+      - ".github/workflows/ios-ci.yml"
+      - "tools/release/**"
+      - "tools/supabase/**"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: ios
+
+env:
+  IOS_CI_DESTINATION: "platform=iOS Simulator,name=iPhone 17"
+
+jobs:
+  quality:
+    name: Quality Gates
+    runs-on: macos-15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          if [ -d /Applications/Xcode_26.app ]; then
+            sudo xcode-select -s /Applications/Xcode_26.app
+          else
+            sudo xcode-select -s /Applications/Xcode.app
+          fi
+          xcodebuild -version
+
+      - name: Install tools
+        run: |
+          brew list swiftlint >/dev/null 2>&1 || brew install swiftlint
+          brew list xcodegen >/dev/null 2>&1 || brew install xcodegen
+
+      - name: Regenerate project
+        run: xcodegen generate --spec project.yml
+
+      - name: SwiftLint strict
+        run: swiftlint --strict --config .swiftlint.yml
+
+      - name: Check feature import direction
+        run: scripts/check-feature-imports.sh
+
+      - name: Check theme drift
+        run: scripts/check-theme-drift.sh
+
+      - name: Check release gate syntax
+        working-directory: .
+        run: |
+          bash -n tools/release/check-phase4-readiness.sh
+          bash -n tools/supabase/kill-switch-drill.sh
+
+  test:
+    name: Build and Test
+    runs-on: macos-15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          if [ -d /Applications/Xcode_26.app ]; then
+            sudo xcode-select -s /Applications/Xcode_26.app
+          else
+            sudo xcode-select -s /Applications/Xcode.app
+          fi
+          xcodebuild -version
+
+      - name: Install XcodeGen
+        run: brew list xcodegen >/dev/null 2>&1 || brew install xcodegen
+
+      - name: Regenerate project
+        run: xcodegen generate --spec project.yml
+
+      - name: Run full test suite
+        run: |
+          xcodebuild test \
+            -scheme FuelWellApp \
+            -destination "${IOS_CI_DESTINATION}" \
+            -skipMacroValidation \
+            -skipPackagePluginValidation
+
+  snapshots:
+    name: Snapshot Tests
+    runs-on: macos-15
+    env:
+      SNAPSHOT_RECORD: "false"
+      RECORD_SNAPSHOTS: "false"
+      POINTFREE_SNAPSHOT_RECORD: "false"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          if [ -d /Applications/Xcode_26.app ]; then
+            sudo xcode-select -s /Applications/Xcode_26.app
+          else
+            sudo xcode-select -s /Applications/Xcode.app
+          fi
+          xcodebuild -version
+
+      - name: Install XcodeGen
+        run: brew list xcodegen >/dev/null 2>&1 || brew install xcodegen
+
+      - name: Regenerate project
+        run: xcodegen generate --spec project.yml
+
+      - name: Run snapshot tests with recording off
+        run: |
+          xcodebuild test \
+            -scheme FuelWellApp \
+            -destination "${IOS_CI_DESTINATION}" \
+            -skipMacroValidation \
+            -skipPackagePluginValidation \
+            -only-testing:DesignSystemTests
+
+  fastlane:
+    name: Fastlane Config
+    runs-on: macos-15
+    env:
+      FASTLANE_SKIP_UPDATE_CHECK: "1"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Ruby dependencies
+        run: |
+          bundle config set path vendor/bundle
+          bundle install
+
+      - name: List lanes
+        run: bundle exec fastlane lanes

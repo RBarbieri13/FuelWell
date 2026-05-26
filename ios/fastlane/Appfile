@@ -1,0 +1,4 @@
+app_identifier(ENV.fetch("FUELWELL_APP_IDENTIFIER", "com.fuelwell.app"))
+apple_id(ENV["FUELWELL_APPLE_ID"])
+team_id(ENV["FUELWELL_APPLE_TEAM_ID"])
+itc_team_id(ENV["FUELWELL_APP_STORE_CONNECT_TEAM_ID"])

@@ -94,7 +94,9 @@ public struct AppFeature: Sendable {
 
             case let .tabSelected(tab):
                 state.selectedTab = tab
-                return .none
+                return .run { _ in
+                    try? await self.analytics.track(.tabSelected(tab.rawValue))
+                }
             }
         }
     }

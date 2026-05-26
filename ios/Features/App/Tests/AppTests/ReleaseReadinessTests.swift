@@ -69,6 +69,43 @@ func generatedInfoPlistUsageStringsStayAppReviewReady() throws {
     #expect(!project.contains("INFOPLIST_KEY_NSPhotoLibraryUsageDescription"))
 }
 
+@Test
+func phase5ShipFoundationsStayWired() throws {
+    let root = repoRoot()
+    let workflow = try String(
+        contentsOf: root.appendingPathComponent(".github/workflows/ios-ci.yml"),
+        encoding: .utf8
+    )
+    let fastfile = try String(
+        contentsOf: iosRoot().appendingPathComponent("fastlane/Fastfile"),
+        encoding: .utf8
+    )
+    let metadataDescription = try String(
+        contentsOf: iosRoot().appendingPathComponent("fastlane/metadata/en-US/description.txt"),
+        encoding: .utf8
+    )
+
+    #expect(workflow.contains("SwiftLint strict"))
+    #expect(workflow.contains("Run full test suite"))
+    #expect(workflow.contains("Fastlane Config"))
+    #expect(fastfile.contains("lane :test"))
+    #expect(fastfile.contains("lane :beta"))
+    #expect(fastfile.contains("lane :release"))
+    #expect(metadataDescription.contains("FuelWell helps you decide what to do next"))
+}
+
+@Test
+func feedbackSchemaAndAnalyticsStayReleaseReady() throws {
+    let migration = try String(
+        contentsOf: iosRoot().appendingPathComponent("supabase/migrations/202605240001_phase2_architecture.sql"),
+        encoding: .utf8
+    )
+
+    #expect(migration.contains("create table if not exists feedback"))
+    #expect(migration.contains("feedback anonymous or owner-writable"))
+    #expect(migration.contains("feedback_created_at_idx"))
+}
+
 private func privacyManifest() throws -> [String: Any] {
     let data = try Data(
         contentsOf: iosRoot()
@@ -126,4 +163,8 @@ private func iosRoot(filePath: String = #filePath) -> URL {
         .deletingLastPathComponent()
         .deletingLastPathComponent()
         .deletingLastPathComponent()
+}
+
+private func repoRoot(filePath: String = #filePath) -> URL {
+    iosRoot(filePath: filePath).deletingLastPathComponent()
 }
