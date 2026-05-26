@@ -1,0 +1,69 @@
+opt_out_usage
+
+default_platform(:ios)
+
+platform :ios do
+  desc "Run local quality and test gates"
+  lane :test do
+    sh("xcodegen generate --spec project.yml")
+    sh("swiftlint --strict --config .swiftlint.yml")
+    sh("scripts/check-feature-imports.sh")
+    sh("scripts/check-theme-drift.sh")
+    scan(
+      scheme: "FuelWellApp",
+      device: "iPhone 15",
+      clean: true,
+      output_directory: "fastlane/test_output"
+    )
+  end
+
+  desc "Build and upload a TestFlight candidate"
+  lane :beta do
+    ensure_ci_ready!
+    match(type: "appstore", readonly: true)
+    increment_build_number(
+      build_number: ENV.fetch("FUELWELL_BUILD_NUMBER", Time.now.utc.strftime("%Y%m%d%H%M"))
+    )
+    build_app(
+      scheme: "FuelWellApp",
+      export_method: "app-store",
+      output_directory: "fastlane/build"
+    )
+    upload_to_testflight(
+      skip_waiting_for_build_processing: false,
+      distribute_external: false,
+      changelog: ENV.fetch("FUELWELL_TESTFLIGHT_CHANGELOG", "FuelWell pilot build.")
+    )
+  end
+
+  desc "Prepare App Store submission metadata and upload the reviewed build"
+  lane :release do
+    beta
+    upload_to_app_store(
+      submit_for_review: false,
+      automatic_release: false,
+      phased_release: true,
+      force: true,
+      metadata_path: "fastlane/metadata",
+      screenshots_path: "fastlane/screenshots"
+    )
+    sentry_release_tag
+  end
+
+  private_lane :ensure_ci_ready! do
+    sh("../tools/release/check-phase4-readiness.sh --full")
+  end
+
+  private_lane :sentry_release_tag do
+    if ENV["SENTRY_AUTH_TOKEN"].to_s.empty?
+      UI.important("Skipping Sentry release tagging because SENTRY_AUTH_TOKEN is not set.")
+      next
+    end
+
+    sh("which sentry-cli")
+    sh(
+      "sentry-cli releases new #{lane_context[SharedValues::BUILD_NUMBER]} " \
+      "--org #{ENV.fetch('SENTRY_ORG')} --project #{ENV.fetch('SENTRY_PROJECT')}"
+    )
+  end
+end

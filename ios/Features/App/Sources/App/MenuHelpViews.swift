@@ -1,4 +1,7 @@
+import Analytics
+import Dependencies
 import DesignSystem
+import SupabaseClient
 import SwiftUI
 
 struct MenuSheetView: View {
@@ -67,6 +70,19 @@ struct HelpView: View {
                         .init(title: "Contact support", detail: "Send feedback or report a problem", icon: "envelope")
                     ]
                 )
+                NavigationLink {
+                    FeedbackView(route: "help")
+                } label: {
+                    Label("Send feedback", systemImage: "paperplane.fill")
+                        .font(.custom(self.theme.font.body, size: self.theme.text.bodyLG.size))
+                        .fontWeight(.bold)
+                        .foregroundStyle(self.theme.color.text.onDark.color)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(self.theme.spacing.md)
+                        .background(self.theme.color.bg.elevated.color)
+                        .clipShape(RoundedRectangle(cornerRadius: self.theme.radius.md))
+                }
+                .qualityID(QualityIdentifier.feedbackSubmit)
                 DashboardSection(
                     title: "Quick settings",
                     items: [
@@ -85,6 +101,136 @@ struct HelpView: View {
                     .tint(self.theme.color.text.body.color)
                 }
             }
+        }
+    }
+}
+
+struct FeedbackView: View {
+    let route: String
+
+    @Dependency(\.analytics) private var analytics
+    @Dependency(\.supabaseDatabase) private var supabaseDatabase
+    @Environment(\.theme) private var theme
+    @State private var message = ""
+    @State private var status: FeedbackStatus = .idle
+
+    private var isSubmitDisabled: Bool {
+        self.message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || self.status == .submitting
+    }
+
+    var body: some View {
+        PhaseScroll(title: "Send Feedback") {
+            PhaseHero(
+                icon: "paperplane.fill",
+                title: "Tell us what happened",
+                detail: "Robert and Max can triage bugs, confusing copy, or launch blockers from here."
+            )
+
+            VStack(alignment: .leading, spacing: self.theme.spacing.md) {
+                Text("Feedback")
+                    .font(.custom(self.theme.font.display, size: self.theme.text.title.size))
+                    .fontWeight(.bold)
+
+                TextEditor(text: self.$message)
+                    .font(.custom(self.theme.font.body, size: self.theme.text.bodyLG.size))
+                    .fontWeight(.medium)
+                    .frame(minHeight: 180)
+                    .padding(self.theme.spacing.sm)
+                    .background(self.theme.color.bg.base.color)
+                    .clipShape(RoundedRectangle(cornerRadius: self.theme.radius.sm))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: self.theme.radius.sm)
+                            .stroke(self.theme.color.bg.borderSoft.color, lineWidth: 1)
+                    )
+                    .qualityID(QualityIdentifier.feedbackMessage)
+
+                Button(self.status.buttonTitle, systemImage: "paperplane.fill") {
+                    Task {
+                        await self.submit()
+                    }
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(self.theme.color.primary.accent.color)
+                .fontWeight(.bold)
+                .disabled(self.isSubmitDisabled)
+                .qualityID(QualityIdentifier.feedbackSubmit)
+
+                if let statusCopy = self.status.copy {
+                    Text(statusCopy)
+                        .font(.custom(self.theme.font.body, size: self.theme.text.body.size))
+                        .fontWeight(.semibold)
+                        .foregroundStyle(self.statusColor)
+                        .qualityID(QualityIdentifier.feedbackSuccess)
+                }
+            }
+            .phaseCard()
+        }
+        .task {
+            try? await self.analytics.track(.feedbackStarted(route: self.route))
+        }
+    }
+
+    private func submit() async {
+        let trimmed = self.message.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+
+        self.status = .submitting
+        do {
+            let report = FeedbackReport(
+                route: self.route,
+                message: trimmed,
+                appVersion: Self.appVersion,
+                metadata: [
+                    "surface": self.route,
+                    "source": "ios_help"
+                ]
+            )
+            _ = try await self.supabaseDatabase.submitFeedback(report)
+            try? await self.analytics.track(.feedbackSubmitted(route: self.route, messageLength: trimmed.count))
+            self.status = .submitted
+            self.message = ""
+        } catch {
+            try? await self.analytics.track(.feedbackFailed(route: self.route, reason: String(describing: error)))
+            self.status = .failed
+        }
+    }
+
+    private static var appVersion: String {
+        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
+        let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String
+        return [version, build].compactMap { $0 }.joined(separator: " ")
+    }
+
+    private var statusColor: Color {
+        self.status == .submitted ? self.theme.color.primary.green.color : self.theme.color.text.body.color
+    }
+}
+
+private enum FeedbackStatus: Equatable {
+    case idle
+    case submitting
+    case submitted
+    case failed
+
+    var buttonTitle: String {
+        switch self {
+        case .idle, .failed:
+            "Send Feedback"
+        case .submitting:
+            "Sending"
+        case .submitted:
+            "Sent"
+        }
+    }
+
+    var copy: String? {
+        switch self {
+        case .idle, .submitting:
+            nil
+        case .submitted:
+            "Thanks - we got it."
+        case .failed:
+            "Feedback could not be sent. Try again when you are back online."
         }
     }
 }

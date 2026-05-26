@@ -64,7 +64,8 @@ func appFeatureReportsUnavailableArchitectureClients() async {
             currentUser: { throw SupabaseClientError.missingConfiguration },
             fetchProfile: { _ in throw SupabaseClientError.missingConfiguration },
             upsertProfile: { _ in throw SupabaseClientError.missingConfiguration },
-            insertMeal: { _ in throw SupabaseClientError.missingConfiguration }
+            insertMeal: { _ in throw SupabaseClientError.missingConfiguration },
+            submitFeedback: { _ in throw SupabaseClientError.missingConfiguration }
         )
     }
 
@@ -164,8 +165,14 @@ func splashCompletesIntoMainTabs() async {
 @MainActor
 @Test
 func tabSelectionUpdatesRootState() async {
+    let recorder = AnalyticsRecorder()
     let store = TestStore(initialState: AppFeature.State(phase: .mainTabs)) {
         AppFeature()
+    } withDependencies: {
+        $0.analytics = AnalyticsClient(
+            identify: { _, _ in },
+            track: { event in await recorder.record(event) }
+        )
     }
 
     await store.send(.tabSelected(.coach)) {
@@ -175,6 +182,12 @@ func tabSelectionUpdatesRootState() async {
     await store.send(.tabSelected(.progress)) {
         $0.selectedTab = .progress
     }
+
+    let events = await recorder.events
+    #expect(events == [
+        .tabSelected("coach"),
+        .tabSelected("progress")
+    ])
 }
 
 private struct AppFeatureTestError: Error, CustomStringConvertible, Sendable {
@@ -190,5 +203,13 @@ private actor CrashCaptureRecorder {
 
     func record(message: String, context: CrashContext) {
         self.captures.append((message, context))
+    }
+}
+
+private actor AnalyticsRecorder {
+    private(set) var events: [AnalyticsEvent] = []
+
+    func record(_ event: AnalyticsEvent) {
+        self.events.append(event)
     }
 }
