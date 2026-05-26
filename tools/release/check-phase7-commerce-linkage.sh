@@ -32,6 +32,7 @@ echo
 
 require_file "ios/supabase/migrations/202605260002_phase7_account_linkage.sql"
 require_file "ios/Packages/SubscriptionClient/Sources/SubscriptionClient/SubscriptionClient.swift"
+require_file "ios/Packages/SubscriptionClient/Sources/SubscriptionClient/SupabaseSubscriptionTransport.swift"
 require_file "src/app/api/signup/route.ts"
 require_file "src/components/signup-form.tsx"
 require_file "docs/ios-guide/phase7/commerce-account-linkage.md"
@@ -56,6 +57,14 @@ require_match "linkMarketingSignup" "ios/Packages/SubscriptionClient/Sources/Sub
   "iOS subscription client exposes account linkage"
 require_match "validateProviderReceipt" "ios/Packages/SubscriptionClient/Sources/SubscriptionClient/SubscriptionClient.swift" \
   "iOS subscription client exposes provider receipt validation seam"
+require_match "SupabaseSubscriptionTransport" "ios/Packages/SubscriptionClient/Sources/SubscriptionClient/SupabaseSubscriptionTransport.swift" \
+  "iOS subscription client has live Supabase transport"
+require_match "rest/v1/rpc/reserve_founding100" "ios/Packages/SubscriptionClient/Sources/SubscriptionClient/SupabaseSubscriptionTransport.swift" \
+  "iOS client calls Founding 100 reservation RPC"
+require_match "rest/v1/rpc/link_marketing_signup_to_user" "ios/Packages/SubscriptionClient/Sources/SubscriptionClient/SupabaseSubscriptionTransport.swift" \
+  "iOS client calls marketing account-link RPC"
+require_match "subscription_validation_events" "ios/Packages/SubscriptionClient/Sources/SubscriptionClient/SupabaseSubscriptionTransport.swift" \
+  "iOS client reads validation audit events"
 
 echo
 if [[ "$status" -eq 0 ]]; then

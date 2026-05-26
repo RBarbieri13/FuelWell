@@ -31,11 +31,19 @@ The iOS `SubscriptionClient` exposes three separate jobs:
 - `linkMarketingSignup(request)`: link a website signup to the signed-in app user.
 - `validateProviderReceipt(userID, receipt)`: cache/display server-validated access and preserve a validation event.
 
+The live client now reads Supabase configuration from:
+
+- `FUELWELL_SUPABASE_URL`
+- `FUELWELL_SUPABASE_ANON_KEY`
+- `FUELWELL_SUPABASE_ACCESS_TOKEN` for signed-in user RPC calls
+
+When configured, it reads `subscription_entitlements`, calls `reserve_founding100(...)`, calls `link_marketing_signup_to_user(...)`, and reads `subscription_validation_events`. If configuration is missing, dependency injection falls back to the unconfigured client so previews and early local runs do not accidentally hit production.
+
 Pilot remains open. The app can show account and Founders 100 status now, but public tier gating should wait until provider validation is live.
 
 ## Payment Authority
 
-RevenueCat or Stripe validation must happen server-side. The app may submit provider receipt tokens, but only a server-side validation path can write active `subscription_entitlements`.
+RevenueCat or Stripe validation must happen server-side. The app may submit provider receipt tokens later, but the live client intentionally leaves provider receipt validation unconfigured until a server-owned validation endpoint exists. Only a server-side validation path can write active `subscription_entitlements`.
 
 ## Pricing Source
 
