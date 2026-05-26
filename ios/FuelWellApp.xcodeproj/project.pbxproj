@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		00138100E585E22822BB0F1C /* CrashReporting in Frameworks */ = {isa = PBXBuildFile; productRef = 8F5A6C3564FBD439EF0FBC20 /* CrashReporting */; };
+		0251BA598276B026C0C4CAD3 /* DailyLogFailureStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2C076E08E25E6CFE03D62A /* DailyLogFailureStateTests.swift */; };
 		04D3E783BAD0DC1079367732 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = DAEC0CC3DEAD8E3FBAEAFE29 /* SnapshotTesting */; };
 		09C30113393314C20D401969 /* CoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F1922BF3BEBD3C27002F2D7 /* CoreTests.swift */; };
 		0B3148D289DC979131D813F5 /* DailyLogFeatureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5984918B00B939F5310CB4F7 /* DailyLogFeatureTests.swift */; };
@@ -104,6 +105,7 @@
 		B9CEB224194E971DDEBD9AA0 /* Persistence */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Persistence; path = Packages/Persistence; sourceTree = SOURCE_ROOT; };
 		BE9240DF4329198C935AEECE /* CrashReporting */ = {isa = PBXFileReference; lastKnownFileType = folder; name = CrashReporting; path = Packages/CrashReporting; sourceTree = SOURCE_ROOT; };
 		C80BB3055E9CA31719A9FE33 /* FuelWellApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = FuelWellApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CD2C076E08E25E6CFE03D62A /* DailyLogFailureStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyLogFailureStateTests.swift; sourceTree = "<group>"; };
 		D59EA91E45C2851A49603D09 /* NutritionDomain */ = {isa = PBXFileReference; lastKnownFileType = folder; name = NutritionDomain; path = Packages/NutritionDomain; sourceTree = SOURCE_ROOT; };
 		D7621B9AA750FF5C21B4E26A /* Networking */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Networking; path = Packages/Networking; sourceTree = SOURCE_ROOT; };
 		DE805F56F775B95F520692DA /* DesignSystem */ = {isa = PBXFileReference; lastKnownFileType = folder; name = DesignSystem; path = Packages/DesignSystem; sourceTree = SOURCE_ROOT; };
@@ -353,6 +355,7 @@
 		83F7244B990EF089B98A0B6E /* NutritionTests */ = {
 			isa = PBXGroup;
 			children = (
+				CD2C076E08E25E6CFE03D62A /* DailyLogFailureStateTests.swift */,
 				5984918B00B939F5310CB4F7 /* DailyLogFeatureTests.swift */,
 			);
 			name = NutritionTests;
@@ -839,6 +842,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0251BA598276B026C0C4CAD3 /* DailyLogFailureStateTests.swift in Sources */,
 				0B3148D289DC979131D813F5 /* DailyLogFeatureTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
