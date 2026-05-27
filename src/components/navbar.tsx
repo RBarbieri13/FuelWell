@@ -49,8 +49,8 @@ export function Navbar() {
         }}
       />
       <div className="max-w-7xl mx-auto flex h-[72px] items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="inline-flex items-center gap-3 group">
-          <Image src="/fw-logo.png" alt="FuelWell" width={72} height={72} className="shrink-0 group-hover:scale-105 transition-transform duration-200" />
+        <Link href="/" className="inline-flex items-center gap-2 group">
+          <Image src="/fw-logo.png" alt="FuelWell" width={72} height={72} className="shrink-0 group-hover:scale-105 transition-transform duration-200 self-center" />
           <span className="inline-flex items-baseline gap-1.5 text-[26px] font-bold font-heading text-foreground leading-none">
             <span>Fuel<span className="text-fw-accent transition-colors group-hover:text-fw-orange">Well</span></span>
             <span className="text-base font-semibold text-muted-foreground">Health</span>
