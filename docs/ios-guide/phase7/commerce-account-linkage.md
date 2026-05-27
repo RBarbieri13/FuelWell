@@ -45,6 +45,15 @@ Pilot remains open. The app can show account and Founders 100 status now, but pu
 
 RevenueCat or Stripe validation must happen server-side. The app may submit provider receipt tokens later, but the live client intentionally leaves provider receipt validation unconfigured until a server-owned validation endpoint exists. Only a server-side validation path can write active `subscription_entitlements`.
 
+The website now owns that server write path at `POST /api/subscriptions/validate-provider`. The endpoint:
+
+- Requires `SUBSCRIPTION_VALIDATION_SECRET` and the matching `x-fuelwell-validation-secret` request header.
+- Validates `userId`, `provider`, `productId`, `environment`, `entitlementTier`, provider IDs, and metadata before touching Supabase.
+- Calls `record_subscription_validation_event(...)` with the server-side Supabase service role so the database RPC remains the only entitlement writer.
+- Supports `manual`, `revenue_cat`, and `stripe` events while product-provider verification is finalized.
+
+Use this contract for RevenueCat/Stripe webhook workers and internal Founders 100/manual entitlement backfills. Do not call the RPC directly from iOS.
+
 ## Pricing Source
 
 Founders 100 prices shown in the current website UI match `PRODUCT-CONTEXT.md`:

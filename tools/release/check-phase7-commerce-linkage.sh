@@ -33,7 +33,9 @@ echo
 require_file "ios/supabase/migrations/202605260002_phase7_account_linkage.sql"
 require_file "ios/Packages/SubscriptionClient/Sources/SubscriptionClient/SubscriptionClient.swift"
 require_file "ios/Packages/SubscriptionClient/Sources/SubscriptionClient/SupabaseSubscriptionTransport.swift"
+require_file "src/app/api/subscriptions/validate-provider/route.ts"
 require_file "src/app/api/signup/route.ts"
+require_file "src/lib/subscription-validation.ts"
 require_file "src/components/signup-form.tsx"
 require_file "docs/ios-guide/phase7/commerce-account-linkage.md"
 
@@ -49,6 +51,16 @@ require_match "service_role" "ios/supabase/migrations/202605260002_phase7_accoun
   "paid validation write path is server-only"
 require_match "getSupabaseAdmin" "src/app/api/signup/route.ts" \
   "website signup uses server-side Supabase client"
+require_match "SUBSCRIPTION_VALIDATION_SECRET" "src/app/api/subscriptions/validate-provider/route.ts" \
+  "subscription validation endpoint is secret-gated"
+require_match "record_subscription_validation_event" "src/app/api/subscriptions/validate-provider/route.ts" \
+  "subscription validation endpoint records through server-side RPC"
+require_match "subscriptionValidationSchema" "src/lib/subscription-validation.ts" \
+  "subscription validation payload has a typed schema"
+require_match "timingSafeEqual" "src/lib/subscription-validation.ts" \
+  "subscription validation secret comparison is timing-safe"
+require_match "subscription_validation_events" "src/app/admin/page.tsx" \
+  "admin dashboard surfaces subscription validation events"
 require_match "normalizeEmail" "src/app/api/signup/route.ts" \
   "website signup normalizes email before storage"
 require_match 'onConflict: "normalized_email"' "src/app/api/signup/route.ts" \
