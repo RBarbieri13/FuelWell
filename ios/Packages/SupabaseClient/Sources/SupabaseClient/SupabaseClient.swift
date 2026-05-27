@@ -4,10 +4,12 @@ import Foundation
 public struct SupabaseConfiguration: Equatable, Sendable {
     public var projectURL: URL
     public var anonKey: String
+    public var accessToken: String?
 
-    public init(projectURL: URL, anonKey: String) {
+    public init(projectURL: URL, anonKey: String, accessToken: String? = nil) {
         self.projectURL = projectURL
         self.anonKey = anonKey
+        self.accessToken = accessToken
     }
 
     public static var environment: SupabaseConfiguration? {
@@ -20,7 +22,12 @@ public struct SupabaseConfiguration: Equatable, Sendable {
             return nil
         }
 
-        return SupabaseConfiguration(projectURL: url, anonKey: anonKey)
+        let accessToken = ProcessInfo.processInfo.environment["FUELWELL_SUPABASE_ACCESS_TOKEN"]
+        return SupabaseConfiguration(
+            projectURL: url,
+            anonKey: anonKey,
+            accessToken: accessToken?.isEmpty == false ? accessToken : nil
+        )
     }
 }
 
@@ -43,6 +50,12 @@ public struct Profile: Codable, Equatable, Identifiable, Sendable {
         self.id = id
         self.displayName = displayName
         self.goal = goal
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case displayName = "display_name"
+        case goal
     }
 }
 
@@ -153,7 +166,10 @@ extension SupabaseDatabaseClient: DependencyKey {
         )
     )
 
-    public static func live(configuration: SupabaseConfiguration? = .environment) -> SupabaseDatabaseClient {
+    public static func live(
+        configuration: SupabaseConfiguration? = .environment,
+        session: URLSession = .shared
+    ) -> SupabaseDatabaseClient {
         guard let configuration else {
             return SupabaseDatabaseClient(
                 currentUser: { throw SupabaseClientError.missingConfiguration },
@@ -164,7 +180,7 @@ extension SupabaseDatabaseClient: DependencyKey {
             )
         }
 
-        let transport = SupabaseRESTTransport(configuration: configuration)
+        let transport = SupabaseRESTTransport(configuration: configuration, session: session)
         return SupabaseDatabaseClient(
             currentUser: { try await transport.currentUser() },
             fetchProfile: { try await transport.fetchProfile(userID: $0) },
@@ -177,11 +193,11 @@ extension SupabaseDatabaseClient: DependencyKey {
     public static func inMemory(user: SupabaseUser?) -> SupabaseDatabaseClient {
         let store = InMemorySupabaseStore(user: user)
         return SupabaseDatabaseClient(
-            currentUser: { await store.user },
+            currentUser: { store.user },
             fetchProfile: { await store.profile(id: $0) },
-            upsertProfile: { try await store.upsert(profile: $0) },
-            insertMeal: { try await store.insert(meal: $0) },
-            submitFeedback: { try await store.submit(feedback: $0) }
+            upsertProfile: { await store.upsert(profile: $0) },
+            insertMeal: { await store.insert(meal: $0) },
+            submitFeedback: { await store.submit(feedback: $0) }
         )
     }
 }
@@ -239,7 +255,16 @@ private actor SupabaseRESTTransport {
     }
 
     func currentUser() async throws -> SupabaseUser? {
-        nil
+        guard self.configuration.accessToken != nil else {
+            return nil
+        }
+
+        return try await self.request(
+            path: "auth/v1/user",
+            queryItems: [],
+            method: "GET",
+            body: Optional<Data>.none
+        )
     }
 
     func fetchProfile(userID: UUID) async throws -> Profile? {
@@ -325,7 +350,10 @@ private actor SupabaseRESTTransport {
         request.httpMethod = method
         request.httpBody = body
         request.setValue(self.configuration.anonKey, forHTTPHeaderField: "apikey")
-        request.setValue("Bearer \(self.configuration.anonKey)", forHTTPHeaderField: "Authorization")
+        request.setValue(
+            "Bearer \(self.configuration.accessToken ?? self.configuration.anonKey)",
+            forHTTPHeaderField: "Authorization"
+        )
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         if let prefer {
             request.setValue(prefer, forHTTPHeaderField: "Prefer")

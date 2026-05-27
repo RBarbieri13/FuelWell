@@ -37,7 +37,7 @@ The live client now reads Supabase configuration from:
 - `FUELWELL_SUPABASE_ANON_KEY`
 - `FUELWELL_SUPABASE_ACCESS_TOKEN` for signed-in user RPC calls
 
-When configured, it reads `subscription_entitlements`, calls `reserve_founding100(...)`, calls `link_marketing_signup_to_user(...)`, and reads `subscription_validation_events`. If configuration is missing, dependency injection falls back to the unconfigured client so previews and early local runs do not accidentally hit production.
+When configured, the Supabase database client resolves the current signed-in user through `auth/v1/user` and uses the user bearer token for owner-scoped REST calls. The subscription client reads `subscription_entitlements`, calls `reserve_founding100(...)`, calls `link_marketing_signup_to_user(...)`, and reads `subscription_validation_events`. If configuration is missing, dependency injection falls back to the unconfigured client so previews and early local runs do not accidentally hit production.
 
 Pilot remains open. The app can show account and Founders 100 status now, but public tier gating should wait until provider validation is live.
 
