@@ -31,6 +31,7 @@ echo "FuelWell Phase 7 commerce and account-linkage readiness"
 echo
 
 require_file "ios/supabase/migrations/202605260002_phase7_account_linkage.sql"
+require_file "ios/Packages/SupabaseClient/Sources/SupabaseClient/SupabaseClient.swift"
 require_file "ios/Packages/SubscriptionClient/Sources/SubscriptionClient/SubscriptionClient.swift"
 require_file "ios/Packages/SubscriptionClient/Sources/SubscriptionClient/SupabaseSubscriptionTransport.swift"
 require_file "src/app/api/subscriptions/validate-provider/route.ts"
@@ -49,6 +50,12 @@ require_match "record_subscription_validation_event" "ios/supabase/migrations/20
   "server-side validation ledger RPC is versioned"
 require_match "service_role" "ios/supabase/migrations/202605260002_phase7_account_linkage.sql" \
   "paid validation write path is server-only"
+require_match "FUELWELL_SUPABASE_ACCESS_TOKEN" "ios/Packages/SupabaseClient/Sources/SupabaseClient/SupabaseClient.swift" \
+  "iOS Supabase client reads authenticated access token"
+require_match "auth/v1/user" "ios/Packages/SupabaseClient/Sources/SupabaseClient/SupabaseClient.swift" \
+  "iOS Supabase client resolves signed-in user"
+require_match "accessToken ?? self.configuration.anonKey" "ios/Packages/SupabaseClient/Sources/SupabaseClient/SupabaseClient.swift" \
+  "iOS Supabase REST calls use bearer user token when present"
 require_match "getSupabaseAdmin" "src/app/api/signup/route.ts" \
   "website signup uses server-side Supabase client"
 require_match "SUBSCRIPTION_VALIDATION_SECRET" "src/app/api/subscriptions/validate-provider/route.ts" \

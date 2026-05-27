@@ -119,6 +119,87 @@ func liveFeatureFlagClientUsesCacheWithinTTL() async throws {
     #expect(FeatureFlagURLProtocol.requests.count == 1)
 }
 
+@Test
+func liveDatabaseClientReadsAuthenticatedSupabaseUser() async throws {
+    SupabaseDatabaseURLProtocol.reset(
+        responses: [
+            Data(
+                #"""
+                {
+                  "id": "00000000-0000-0000-0000-000000000001",
+                  "email": "founder@fuelwell.app"
+                }
+                """#.utf8
+            )
+        ]
+    )
+
+    let client = try liveDatabaseTestClient(accessToken: "user-access-token")
+    let user = try await client.currentUser()
+    let request = try #require(SupabaseDatabaseURLProtocol.requests.first)
+
+    #expect(user?.id == UUID(uuidString: "00000000-0000-0000-0000-000000000001"))
+    #expect(user?.email == "founder@fuelwell.app")
+    #expect(request.url?.path == "/auth/v1/user")
+    #expect(request.value(forHTTPHeaderField: "apikey") == "anon-test-key")
+    #expect(request.value(forHTTPHeaderField: "Authorization") == "Bearer user-access-token")
+}
+
+@Test
+func liveDatabaseClientReturnsNilUserWithoutAccessToken() async throws {
+    SupabaseDatabaseURLProtocol.reset()
+    let client = try liveDatabaseTestClient(accessToken: nil)
+
+    let user = try await client.currentUser()
+
+    #expect(user == nil)
+    #expect(SupabaseDatabaseURLProtocol.requests.isEmpty)
+}
+
+@Test
+func liveDatabaseClientUsesAccessTokenForOwnerScopedREST() async throws {
+    SupabaseDatabaseURLProtocol.reset(
+        responses: [
+            Data(
+                #"""
+                [
+                  {
+                    "id": "00000000-0000-0000-0000-000000000001",
+                    "display_name": "Jordan",
+                    "goal": "recomp"
+                  }
+                ]
+                """#.utf8
+            )
+        ]
+    )
+
+    let userID = try #require(UUID(uuidString: "00000000-0000-0000-0000-000000000001"))
+    let client = try liveDatabaseTestClient(accessToken: "user-access-token")
+    let profile = try await client.fetchProfile(userID)
+    let request = try #require(SupabaseDatabaseURLProtocol.requests.first)
+
+    #expect(profile?.id == userID)
+    #expect(profile?.displayName == "Jordan")
+    #expect(request.url?.path == "/rest/v1/profiles")
+    #expect(request.url?.query?.contains("id=eq.00000000-0000-0000-0000-000000000001") == true)
+    #expect(request.value(forHTTPHeaderField: "Authorization") == "Bearer user-access-token")
+}
+
+private func liveDatabaseTestClient(accessToken: String?) throws -> SupabaseDatabaseClient {
+    let sessionConfiguration = URLSessionConfiguration.ephemeral
+    sessionConfiguration.protocolClasses = [SupabaseDatabaseURLProtocol.self]
+
+    return SupabaseDatabaseClient.live(
+        configuration: SupabaseConfiguration(
+            projectURL: try #require(URL(string: "https://fuelwell.test")),
+            anonKey: "anon-test-key",
+            accessToken: accessToken
+        ),
+        session: URLSession(configuration: sessionConfiguration)
+    )
+}
+
 private final class FeatureFlagURLProtocol: URLProtocol, @unchecked Sendable {
     nonisolated(unsafe) private static var responseData = Data()
     nonisolated(unsafe) static var requests: [URLRequest] = []
@@ -154,6 +235,48 @@ private final class FeatureFlagURLProtocol: URLProtocol, @unchecked Sendable {
 
         self.client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
         self.client?.urlProtocol(self, didLoad: Self.responseData)
+        self.client?.urlProtocolDidFinishLoading(self)
+    }
+
+    override func stopLoading() {}
+}
+
+private final class SupabaseDatabaseURLProtocol: URLProtocol, @unchecked Sendable {
+    nonisolated(unsafe) private static var responseQueue: [Data] = []
+    nonisolated(unsafe) static var requests: [URLRequest] = []
+
+    static func reset(responses: [Data] = []) {
+        self.responseQueue = responses
+        self.requests = []
+    }
+
+    override static func canInit(with request: URLRequest) -> Bool {
+        true
+    }
+
+    override static func canonicalRequest(for request: URLRequest) -> URLRequest {
+        request
+    }
+
+    override func startLoading() {
+        Self.requests.append(self.request)
+
+        guard
+            let url = self.request.url,
+            let response = HTTPURLResponse(
+                url: url,
+                statusCode: 200,
+                httpVersion: nil,
+                headerFields: ["Content-Type": "application/json"]
+            )
+        else {
+            self.client?.urlProtocol(self, didFailWithError: URLError(.badURL))
+            return
+        }
+
+        let data = Self.responseQueue.isEmpty ? Data("{}".utf8) : Self.responseQueue.removeFirst()
+        self.client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
+        self.client?.urlProtocol(self, didLoad: data)
         self.client?.urlProtocolDidFinishLoading(self)
     }
 
