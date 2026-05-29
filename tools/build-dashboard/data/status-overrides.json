@@ -1,0 +1,6 @@
+{
+  "0.5": {
+    "status": "complete",
+    "note": "Visual design (App Map, Flow Chart, wireframes, full-color mockups) was completed and reviewed in Claude Design. Those artifacts live outside this repo's git history, so auto-inference can't see them — pinned complete by hand."
+  }
+}
