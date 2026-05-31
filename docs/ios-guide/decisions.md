@@ -198,3 +198,9 @@ Applied to: Dashboard Verdict CTA, Coach Chat responses, Health Score hero, Infl
 | Weight | Manual entry | **HealthKit auto-pull** — manual entry is the fallback |
 
 Principle: manual logging is the exception, not the baseline. The Coach voice should reinforce this — e.g., "I'll pull your weight automatically from HealthKit. Tell me if you want to override it."
+
+## 2026-05-31 — W2 data-layer execution defaults
+
+- **D20:** Use a dedicated app Supabase project for app data by default. Do not mutate the existing marketing/Founding 100 production project or any live `founders_100` rows until Robert explicitly approves the target and the production snapshot step.
+- **D21:** Supabase is the server source of truth. The app keeps a local read-through/write-behind cache for Pilot, with a durable local pending-write queue and last-write-wins conflict handling for a single user's own records.
+- **D22:** Migration authorship and live migration application are owned by W2 only. Other workstreams may consume `feature_flags`, `coach_usage`, commerce tables, and profile data only after W2 lands the migration files and Robert runs the guarded apply path against the chosen project.

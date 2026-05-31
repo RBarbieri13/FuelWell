@@ -115,3 +115,9 @@ $$;
 
 revoke all on function reserve_founding100(uuid, text) from public;
 grant execute on function reserve_founding100(uuid, text) to authenticated;
+
+insert into schema_migrations (version, name)
+values ('202605260001', 'phase7_founding100')
+on conflict (version) do update
+set name = excluded.name,
+    applied_at = schema_migrations.applied_at;

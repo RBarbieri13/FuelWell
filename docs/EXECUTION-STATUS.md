@@ -4,9 +4,9 @@ Updated: 2026-05-31
 
 ## Current Workstream
 
-**W1 - Backend Activation: Anthropic Proxy + Cost Controls**
+**W2 - Data Layer, Migrations & Persistence-of-Record**
 
-Current branch: `feature/w1-coach-proxy-foundation`
+Current branch: `feature/w2-schema-apply-foundation`
 
 ## Baseline Re-Verification
 
@@ -30,20 +30,21 @@ Note: the handoff's `iPhone 15 Pro` simulator is not installed on this Mac. The 
 
 ## In Progress
 
-W1 foundation slice:
+W2 schema/apply foundation slice:
 
-- Added `/api/coach` route scaffold on the existing Next/Fly website.
-- Added coach proxy request validation, secret validation, usage-cap helpers, and usage-record shape.
-- Added Anthropic SDK dependency and `bun.lock` update for Fly's frozen Bun install.
-- Added website contract tests for coach proxy helpers.
-- Added `coach_chat` to preview feature flags.
-- Updated the iOS Anthropic readiness probe to use `coach_chat`.
-- Updated disabled-coach readiness behavior so a disabled AI feature is not reported as ready.
-- Added optional runtime proxy-secret header support to the live iOS Anthropic client.
-- Restored root website lint/build scope after the dashboard merge by excluding repo-local agent skills and nested tools from the main website TypeScript/ESLint pass.
+- PR #77, W1 coach proxy foundation, merged into `main`.
+- Added migration tracking with `schema_migrations`.
+- Added the W1-required `coach_usage` schema.
+- Added guarded migration apply tooling.
+- Added Supabase config scaffold.
+- Recorded W2 data-layer execution defaults in `docs/ios-guide/decisions.md`.
+- Added the migration apply runbook.
 
 ## Verification For Current Slice
 
+- `bash -n tools/supabase/apply-migrations.sh tools/supabase/kill-switch-drill.sh` - passed
+- `tools/supabase/apply-migrations.sh plan` - passed without secrets and lists the planned migration order
+- Production apply guard check - passed; script refuses `FUELWELL_SUPABASE_TARGET=production` without `FUELWELL_SUPABASE_ALLOW_PRODUCTION_APPLY=1`
 - `npm run test:website` - passed
 - `npm run lint` - passed with existing warnings only
 - `npm run build` - passed
@@ -53,11 +54,8 @@ W1 foundation slice:
 - `swiftlint --strict --config .swiftlint.yml` - passed
 - `scripts/check-feature-imports.sh` - passed
 - `scripts/check-theme-drift.sh` - passed
-- Focused iOS tests: `AnthropicClientTests`, `AppTests`, `SupabaseClientTests` - passed
-- Full iOS suite on `iPhone 17` - passed on clean rerun
-- DesignSystem snapshot suite on `iPhone 17` with snapshot recording disabled - passed
-
-Note: an earlier full iOS run hit simulator runner interruptions (`signal kill`/`signal term`) on two UI tests. Both interrupted tests passed when rerun directly, and the full suite passed on the subsequent clean rerun.
+- Release/operate shell syntax and feedback triage JS syntax - passed
+- Focused iOS tests: `SupabaseClientTests`, `SubscriptionClientTests` - passed
 
 ## Vital Blockers
 
@@ -68,7 +66,8 @@ These are required before W1 can pass its live acceptance gate:
 - Supabase service-role key for the chosen project.
 - W2 migration/application of `feature_flags` and `coach_usage`.
 - Confirmation before any production migration touching live `founders_100` rows.
+- Direct Postgres URL for the chosen staging/app Supabase project before `tools/supabase/apply-migrations.sh apply` can run.
 
 ## Next
 
-Open the W1 foundation PR, wait for GitHub checks/CodeRabbit, then proceed to the next safe W2/W3 preparation slice while live secrets and migration approval remain outstanding.
+Finish W2 schema/apply verification, open the PR, then continue into live dependency wiring and auth/onboarding preparation while live secrets and migration approval remain outstanding.
