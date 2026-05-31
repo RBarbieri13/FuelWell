@@ -4,6 +4,8 @@ Canonical, version-controlled source of truth for the AI tool/skill catalog. Eac
 
 **Legend (in Description):** ✅ used and worked · ⚠️ used with a gotcha · ❌ attempted, failed, abandoned · 📋 configured/available but deferred
 
+**Status:** This file is the canonical, version-controlled source of truth for the AI outline. Edit here, then sync into Claude Design when you want the visual view. A few tools (e.g. shadcn, Base UI) appear twice with different `Source` tags — that's intentional; each row preserves where it came from.
+
 ---
 
 ## Tools
@@ -48,6 +50,26 @@ Canonical, version-controlled source of truth for the AI tool/skill catalog. Eac
 | Skills | *code-review / simplify / security-review / verify / run | Skills | 2026-05-31 | 📋 Core QA + execution skills (code-review incl. `ultra` cloud multi-agent). | Claude Code Stepping Stone Website |
 | Skills | *`web-artifacts-builder` | Skill | 2026-05-31 | 📋 For standalone claude.ai React/Tailwind/shadcn artifacts (different target than a deployed Next app). | Claude Code Stepping Stone Website |
 | Skills | *`fewer-permission-prompts` / `update-config` | Skill | 2026-05-31 | 📋 Harness ergonomics. | Claude Code Stepping Stone Website |
+| AI Environment & Orchestration | *Claude Code | Core Developer CLI | 2026-05-31 | The terminal-based agentic coding tool hosting the project, workflows, and skills. | from Google AI query |
+| UI Design | *Figma MCP Server | MCP Plugin / Integration | 2026-05-31 | Connects Claude directly to design files to extract spacing tokens, typography, and colors. | from Google AI query |
+| Front-End Design | */frontend-design | Official Claude Skill | 2026-05-31 | Translates text prompts into polished, animated, responsive front-end code. | from Google AI query |
+| UI Design | */skill-creator | Official Claude Skill | 2026-05-31 | Captures specific UI rules and design principles into a persistent project rule. | from Google AI query |
+| User Experience | */webapp-testing | Playwright Integration | 2026-05-31 | Automates interface verification, testing layouts, responsive adjustments, and broken links. | from Google AI query |
+| User Experience | */code-review | Official Claude Skill | 2026-05-31 | Scans pull requests against scoring frameworks to ensure pristine layout uniformity. | from Google AI query |
+| Graphics & Assets | *Lucide / Heroicons | Vector Icon Libraries | 2026-05-31 | Clean, semantic icon packs imported directly by the AI to secure visual balance. | from Google AI query |
+| Visual Consistency | *design-tokens.json | Configuration Architecture | 2026-05-31 | A custom structural file that forces Claude to use strict padding, margins, and hex codes. | from Google AI query |
+| Front-End & UI Design | *shadcn/ui | Copy-and-Paste Architecture | 2026-05-31 | High-polish primitives on Radix + Tailwind that give 100% code ownership. | from Google AI query |
+| Front-End Design | *HeroUI (formerly NextUI) | Copy/Package Hybrid | 2026-05-31 | Tailwind-native library with smooth micro-interactions and sleek dark-mode options. | from Google AI query |
+| Front-End Design | *Park UI | Copy-and-Paste Component Library | 2026-05-31 | Uses Ark UI primitives for a clean, ultra-minimalist look for dense apps. | from Google AI query |
+| Front-End Design | *Kibo UI | Specialized Component Library | 2026-05-31 | Purpose-built extensions targeting structural dashboard features like task feeds. | from Google AI query |
+| Front-End Design | *Gluestack | Cross-Platform Architecture | 2026-05-31 | Type-safe library optimized for uniform scaling between web dashboards and mobile views. | from Google AI query |
+| Graphics & Polish | *Aceternity UI | CSS/Tailwind Motion Effects | 2026-05-31 | Copy-paste code engineered for visual effects and modern animations. | from Google AI query |
+| User Experience | *Tremor | Analytical Components | 2026-05-31 | Industry-standard Tailwind components for highly dense data charts and metrics. | from Google AI query |
+| UI Design & Wireframing | *Relume Library | Sitemaps & Layout Engine | 2026-05-31 | Massive block ecosystem mapped to Figma for immediate application layout planning. | from Google AI query |
+| Visual Consistency | *DaisyUI | Semantic Class Framework | 2026-05-31 | Speeds up styling through shortcut utility names (btn-primary) and themes. | from Google AI query |
+| Front-End Design | *Preline UI | Responsive Utility Kit | 2026-05-31 | Large catalog of pre-built sidebar and form layouts using pure Tailwind. | from Google AI query |
+| User Experience | *Radix UI Primitives | Unstyled Headless Core | 2026-05-31 | The low-level, fully accessible skeletal engine underpinning shadcn/ui layouts. | from Google AI query |
+| User Experience | *Base UI | Unstyled Headless Core | 2026-05-31 | Modern accessible primitive layers serving as an unstyled replacement for custom CSS. | from Google AI query |
 
 ---
 
