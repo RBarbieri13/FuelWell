@@ -77,6 +77,11 @@ public struct AppFeature: Sendable {
         case mainTabs
     }
 
+    public enum AccountAuthResult: Equatable {
+        case success
+        case failure(SupabaseClientError)
+    }
+
     public enum Action: Equatable {
         case onAppear
         case architectureChecked(ArchitectureState)
@@ -84,6 +89,9 @@ public struct AppFeature: Sendable {
         case themeLoaded(Theme)
         case minimumSplashElapsed
         case onboarding(OnboardingFeature.Action)
+        case accountSignOutTapped
+        case accountDeleteTapped
+        case accountAuthFinished(AccountAuthResult)
         case tabSelected(AppTab)
     }
 
@@ -128,6 +136,40 @@ public struct AppFeature: Sendable {
                 return .none
 
             case .onboarding:
+                return .none
+
+            case .accountSignOutTapped:
+                return .run { send in
+                    do {
+                        try await self.supabaseAuth.signOut()
+                        await send(.accountAuthFinished(.success))
+                    } catch let error as SupabaseClientError {
+                        await send(.accountAuthFinished(.failure(error)))
+                    } catch {
+                        await send(.accountAuthFinished(.failure(.transport(error.localizedDescription))))
+                    }
+                }
+
+            case .accountDeleteTapped:
+                return .run { send in
+                    do {
+                        try await self.supabaseAuth.deleteAccount()
+                        await send(.accountAuthFinished(.success))
+                    } catch let error as SupabaseClientError {
+                        await send(.accountAuthFinished(.failure(error)))
+                    } catch {
+                        await send(.accountAuthFinished(.failure(.transport(error.localizedDescription))))
+                    }
+                }
+
+            case .accountAuthFinished(.success):
+                state.currentUser = nil
+                state.onboarding = OnboardingFeature.State()
+                state.phase = .onboarding
+                state.selectedTab = .home
+                return .none
+
+            case .accountAuthFinished(.failure):
                 return .none
 
             case let .tabSelected(tab):

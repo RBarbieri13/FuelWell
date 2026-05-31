@@ -268,6 +268,54 @@ func onboardingCompletionEntersMainTabs() async {
 
 @MainActor
 @Test
+func accountSignOutRoutesBackToOnboarding() async {
+    let store = TestStore(initialState: AppFeature.State(
+        phase: .mainTabs,
+        currentUser: appTestUser,
+        selectedTab: .progress
+    )) {
+        AppFeature()
+    } withDependencies: {
+        $0.supabaseAuth = SupabaseAuthClient.inMemory(
+            session: SupabaseSession(user: appTestUser, accessToken: "preview-token")
+        )
+    }
+
+    await store.send(.accountSignOutTapped)
+    await store.receive(.accountAuthFinished(.success)) {
+        $0.currentUser = nil
+        $0.onboarding = OnboardingFeature.State()
+        $0.phase = .onboarding
+        $0.selectedTab = .home
+    }
+}
+
+@MainActor
+@Test
+func accountDeleteRoutesBackToOnboarding() async {
+    let store = TestStore(initialState: AppFeature.State(
+        phase: .mainTabs,
+        currentUser: appTestUser,
+        selectedTab: .coach
+    )) {
+        AppFeature()
+    } withDependencies: {
+        $0.supabaseAuth = SupabaseAuthClient.inMemory(
+            session: SupabaseSession(user: appTestUser, accessToken: "preview-token")
+        )
+    }
+
+    await store.send(.accountDeleteTapped)
+    await store.receive(.accountAuthFinished(.success)) {
+        $0.currentUser = nil
+        $0.onboarding = OnboardingFeature.State()
+        $0.phase = .onboarding
+        $0.selectedTab = .home
+    }
+}
+
+@MainActor
+@Test
 func tabSelectionUpdatesRootState() async {
     let recorder = AnalyticsRecorder()
     let store = TestStore(initialState: AppFeature.State(phase: .mainTabs)) {

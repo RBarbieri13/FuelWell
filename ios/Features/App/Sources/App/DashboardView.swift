@@ -1,13 +1,19 @@
+import ComposableArchitecture
 import DesignSystem
 import NutritionDomain
 import SwiftUI
 
 struct DashboardView: View {
+    @Bindable var store: StoreOf<AppFeature>
     @Environment(\.theme) private var theme
     @State private var isMenuPresented = false
     @State private var isHelpPresented = false
 
     private let snapshot = MacroDaySnapshot.preview
+
+    init(store: StoreOf<AppFeature>) {
+        self.store = store
+    }
 
     var body: some View {
         ScrollView {
@@ -53,7 +59,7 @@ struct DashboardView: View {
             }
         }
         .sheet(isPresented: self.$isMenuPresented) {
-            MenuSheetView()
+            MenuSheetView(store: self.store)
         }
         .sheet(isPresented: self.$isHelpPresented) {
             HelpView()

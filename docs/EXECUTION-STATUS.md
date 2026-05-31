@@ -41,6 +41,8 @@ W4 auth/onboarding/profile slice:
 - Added a dedicated `Onboarding` feature package with account creation/sign-in, goal, body baseline, dietary, lifestyle, HealthKit, notifications, and plan reveal steps.
 - App launch now restores an auth session, routes unauthenticated users to onboarding, and enters the main tabs after onboarding completion.
 - Live dependency wiring now includes Supabase auth while default simulator/CI behavior remains preview-safe.
+- Expanded the account surface into a profile-backed "Your plan" view with identity, onboarding profile fields, subscription state, Founders 100 linking, sign out, and delete-account controls.
+- Account sign out and delete now route through `AppFeature`, clear the app user, reset onboarding state, and return to onboarding.
 
 ## Verification For Current Slice
 
@@ -51,6 +53,7 @@ W4 auth/onboarding/profile slice:
 - Supabase migration script syntax checks - passed
 - Focused iOS tests: `SupabaseClientTests`, `OnboardingTests`, and `AppTests` on `iPhone 17` - passed
 - Full iOS suite: `FuelWellApp` on `iPhone 17` - passed
+- Focused account routing tests in `AppTests` - passed
 - `npm run test:website` - passed
 - `npm run lint` - passed with 4 existing warnings only
 - `npm run build` - passed
@@ -70,4 +73,4 @@ These are required before the live backend acceptance gates can pass end-to-end:
 
 ## Next
 
-Open the W4 PR, then continue into live auth acceptance, profile/settings polish, and migration application once the staging database target is confirmed.
+PR #80 is open for W4. Continue into live auth acceptance and migration application once the staging database target is confirmed.
