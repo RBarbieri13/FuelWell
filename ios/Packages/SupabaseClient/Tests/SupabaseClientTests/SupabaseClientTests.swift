@@ -2,6 +2,8 @@ import Foundation
 import SupabaseClient
 import Testing
 
+@Suite(.serialized)
+struct SupabaseClientTests {
 @Test
 func inMemoryClientRoundTripsProfileAndMeal() async throws {
     let userID = UUID()
@@ -42,6 +44,89 @@ func inMemoryClientAcceptsFeedbackReports() async throws {
 }
 
 @Test
+func inMemoryAuthClientSignsUpAndDeletesAccount() async throws {
+    let client = SupabaseAuthClient.inMemory(session: nil)
+
+    let session = try await client.signUp("founder@fuelwell.app", "correct-horse")
+    let restored = try await client.currentSession()
+
+    #expect(session.user.email == "founder@fuelwell.app")
+    #expect(restored?.user.email == "founder@fuelwell.app")
+
+    try await client.deleteAccount()
+    #expect(try await client.currentSession() == nil)
+}
+
+@Test
+func liveAuthClientUsesSupabasePasswordEndpoints() async throws {
+    SupabaseAuthURLProtocol.reset(
+        responses: [
+            Data(
+                #"""
+                {
+                  "access_token": "access-token",
+                  "refresh_token": "refresh-token",
+                  "expires_in": 3600,
+                  "user": {
+                    "id": "00000000-0000-0000-0000-000000000001",
+                    "email": "founder@fuelwell.app"
+                  }
+                }
+                """#.utf8
+            )
+        ]
+    )
+
+    let client = try liveAuthTestClient(accessToken: nil)
+    let session = try await client.signUp("founder@fuelwell.app", "correct-horse")
+    let request = try #require(SupabaseAuthURLProtocol.requests.first)
+
+    #expect(session.user.email == "founder@fuelwell.app")
+    #expect(session.accessToken == "access-token")
+    #expect(request.url?.path == "/auth/v1/signup")
+    #expect(request.value(forHTTPHeaderField: "apikey") == "anon-test-key")
+    #expect(request.value(forHTTPHeaderField: "Authorization") == "Bearer anon-test-key")
+}
+
+@Test
+func liveAuthClientRestoresConfiguredAccessToken() async throws {
+    SupabaseAuthURLProtocol.reset(
+        responses: [
+            Data(
+                #"""
+                {
+                  "id": "00000000-0000-0000-0000-000000000001",
+                  "email": "founder@fuelwell.app"
+                }
+                """#.utf8
+            )
+        ]
+    )
+
+    let client = try liveAuthTestClient(accessToken: "user-access-token")
+    let session = try await client.currentSession()
+    let request = try #require(SupabaseAuthURLProtocol.requests.first)
+
+    #expect(session?.accessToken == "user-access-token")
+    #expect(session?.user.email == "founder@fuelwell.app")
+    #expect(request.url?.path == "/auth/v1/user")
+    #expect(request.value(forHTTPHeaderField: "Authorization") == "Bearer user-access-token")
+}
+
+@Test
+func liveAuthClientCallsDeleteAccountRPC() async throws {
+    SupabaseAuthURLProtocol.reset(responses: [Data()])
+
+    let client = try liveAuthTestClient(accessToken: "user-access-token")
+    try await client.deleteAccount()
+    let request = try #require(SupabaseAuthURLProtocol.requests.first)
+
+    #expect(request.url?.path == "/rest/v1/rpc/delete_current_user")
+    #expect(request.httpMethod == "POST")
+    #expect(request.value(forHTTPHeaderField: "Authorization") == "Bearer user-access-token")
+}
+
+@Test
 func featureFlagConstantReadsKnownFlags() async throws {
     let flags = FeatureFlagClient.constant([
         FeatureFlag(name: "ai_meal_plan", enabled: false)
@@ -75,7 +160,7 @@ func liveFeatureFlagClientFetchesSupabaseRows() async throws {
 
     let client = FeatureFlagClient.live(
         configuration: SupabaseConfiguration(
-            projectURL: try #require(URL(string: "https://fuelwell.test")),
+            projectURL: try #require(URL(string: "https://feature-flags.test")),
             anonKey: "anon-test-key"
         ),
         ttl: 30,
@@ -104,7 +189,7 @@ func liveFeatureFlagClientUsesCacheWithinTTL() async throws {
 
     let client = FeatureFlagClient.live(
         configuration: SupabaseConfiguration(
-            projectURL: try #require(URL(string: "https://fuelwell.test")),
+            projectURL: try #require(URL(string: "https://feature-flags.test")),
             anonKey: "anon-test-key"
         ),
         ttl: 30,
@@ -185,6 +270,7 @@ func liveDatabaseClientUsesAccessTokenForOwnerScopedREST() async throws {
     #expect(request.url?.query?.contains("id=eq.00000000-0000-0000-0000-000000000001") == true)
     #expect(request.value(forHTTPHeaderField: "Authorization") == "Bearer user-access-token")
 }
+}
 
 private func liveDatabaseTestClient(accessToken: String?) throws -> SupabaseDatabaseClient {
     let sessionConfiguration = URLSessionConfiguration.ephemeral
@@ -192,7 +278,21 @@ private func liveDatabaseTestClient(accessToken: String?) throws -> SupabaseData
 
     return SupabaseDatabaseClient.live(
         configuration: SupabaseConfiguration(
-            projectURL: try #require(URL(string: "https://fuelwell.test")),
+            projectURL: try #require(URL(string: "https://database.test")),
+            anonKey: "anon-test-key",
+            accessToken: accessToken
+        ),
+        session: URLSession(configuration: sessionConfiguration)
+    )
+}
+
+private func liveAuthTestClient(accessToken: String?) throws -> SupabaseAuthClient {
+    let sessionConfiguration = URLSessionConfiguration.ephemeral
+    sessionConfiguration.protocolClasses = [SupabaseAuthURLProtocol.self]
+
+    return SupabaseAuthClient.live(
+        configuration: SupabaseConfiguration(
+            projectURL: try #require(URL(string: "https://auth.test")),
             anonKey: "anon-test-key",
             accessToken: accessToken
         ),
@@ -210,7 +310,7 @@ private final class FeatureFlagURLProtocol: URLProtocol, @unchecked Sendable {
     }
 
     override static func canInit(with request: URLRequest) -> Bool {
-        true
+        request.url?.host == "feature-flags.test"
     }
 
     override static func canonicalRequest(for request: URLRequest) -> URLRequest {
@@ -251,7 +351,49 @@ private final class SupabaseDatabaseURLProtocol: URLProtocol, @unchecked Sendabl
     }
 
     override static func canInit(with request: URLRequest) -> Bool {
-        true
+        request.url?.host == "database.test"
+    }
+
+    override static func canonicalRequest(for request: URLRequest) -> URLRequest {
+        request
+    }
+
+    override func startLoading() {
+        Self.requests.append(self.request)
+
+        guard
+            let url = self.request.url,
+            let response = HTTPURLResponse(
+                url: url,
+                statusCode: 200,
+                httpVersion: nil,
+                headerFields: ["Content-Type": "application/json"]
+            )
+        else {
+            self.client?.urlProtocol(self, didFailWithError: URLError(.badURL))
+            return
+        }
+
+        let data = Self.responseQueue.isEmpty ? Data("{}".utf8) : Self.responseQueue.removeFirst()
+        self.client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
+        self.client?.urlProtocol(self, didLoad: data)
+        self.client?.urlProtocolDidFinishLoading(self)
+    }
+
+    override func stopLoading() {}
+}
+
+private final class SupabaseAuthURLProtocol: URLProtocol, @unchecked Sendable {
+    nonisolated(unsafe) private static var responseQueue: [Data] = []
+    nonisolated(unsafe) static var requests: [URLRequest] = []
+
+    static func reset(responses: [Data] = []) {
+        self.responseQueue = responses
+        self.requests = []
+    }
+
+    override static func canInit(with request: URLRequest) -> Bool {
+        request.url?.host == "auth.test"
     }
 
     override static func canonicalRequest(for request: URLRequest) -> URLRequest {

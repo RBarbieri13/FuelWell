@@ -29,6 +29,8 @@ packages:
     path: Packages/NutritionDomain
   NutritionFeature:
     path: Features/Nutrition
+  OnboardingFeature:
+    path: Features/Onboarding
   Networking:
     path: Packages/Networking
   Persistence:
@@ -66,6 +68,8 @@ targets:
         product: NutritionDomain
       - package: NutritionFeature
         product: Nutrition
+      - package: OnboardingFeature
+        product: Onboarding
       - package: SupabaseClient
         product: SupabaseClient
       - package: SubscriptionClient
@@ -100,6 +104,8 @@ targets:
         product: HealthKitClient
       - package: NutritionDomain
         product: NutritionDomain
+      - package: OnboardingFeature
+        product: Onboarding
       - package: SupabaseClient
         product: SupabaseClient
       - package: SubscriptionClient
@@ -229,6 +235,22 @@ targets:
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES
+  OnboardingTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: Features/Onboarding/Tests/OnboardingTests
+    dependencies:
+      - package: OnboardingFeature
+        product: Onboarding
+      - package: HealthKitClient
+        product: HealthKitClient
+      - package: SupabaseClient
+        product: SupabaseClient
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
   NutritionFeatureTests:
     type: bundle.unit-test
     platform: iOS
@@ -277,5 +299,6 @@ schemes:
         - AnalyticsTests
         - CrashReportingTests
         - NutritionDomainTests
+        - OnboardingTests
         - NutritionFeatureTests
         - FuelWellUITests
