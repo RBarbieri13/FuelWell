@@ -27,12 +27,16 @@ packages:
     path: Packages/CrashReporting
   NutritionDomain:
     path: Packages/NutritionDomain
+  ActivityFeature:
+    path: Features/Activity
   CoachFeature:
     path: Features/Coach
   NutritionFeature:
     path: Features/Nutrition
   OnboardingFeature:
     path: Features/Onboarding
+  ProgressFeature:
+    path: Features/Progress
   Networking:
     path: Packages/Networking
   Persistence:
@@ -62,6 +66,8 @@ targets:
         product: Analytics
       - package: AnthropicClient
         product: AnthropicClient
+      - package: ActivityFeature
+        product: Activity
       - package: CoachFeature
         product: Coach
       - package: CrashReporting
@@ -74,6 +80,8 @@ targets:
         product: Nutrition
       - package: OnboardingFeature
         product: Onboarding
+      - package: ProgressFeature
+        product: Progress
       - package: SupabaseClient
         product: SupabaseClient
       - package: SubscriptionClient
@@ -289,6 +297,34 @@ targets:
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES
+  ActivityTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: Features/Activity/Tests/ActivityTests
+    dependencies:
+      - package: ActivityFeature
+        product: Activity
+      - package: HealthKitClient
+        product: HealthKitClient
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+  ProgressTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: Features/Progress/Tests/ProgressTests
+    dependencies:
+      - package: ProgressFeature
+        product: Progress
+      - package: NutritionDomain
+        product: NutritionDomain
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
   FuelWellUITests:
     type: bundle.ui-testing
     platform: iOS
@@ -326,4 +362,6 @@ schemes:
         - NutritionDomainTests
         - OnboardingTests
         - NutritionFeatureTests
+        - ActivityTests
+        - ProgressTests
         - FuelWellUITests

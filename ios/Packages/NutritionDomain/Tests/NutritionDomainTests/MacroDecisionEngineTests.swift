@@ -84,3 +84,35 @@ func recommendationsStaySmallAndPhotoFirst() {
     #expect(snapshot.recommendations.count <= 3)
     #expect(snapshot.recommendations.first?.title == "Photo log first")
 }
+
+@Test
+func healthScoreUsesNutritionAndActivityWhenEnergyOutExists() {
+    let score = MacroDecisionEngine.healthScore(snapshot: .preview)
+
+    #expect(score.value == 89)
+    #expect(score.nutrition == 89)
+    #expect(score.activity == 89)
+    #expect(score.recovery == nil)
+    #expect(score.headline == "Progress is steady")
+}
+
+@Test
+func healthScoreFallsBackToNutritionWhenHealthKitUnavailable() {
+    let snapshot = MacroDecisionEngine.evaluate(
+        target: MacroTarget(
+            calories: 2_100,
+            macros: MacroGrams(protein: 150, carbs: 220, fat: 70)
+        ),
+        intake: MacroIntake(
+            calories: 980,
+            macros: MacroGrams(protein: 62, carbs: 118, fat: 28)
+        ),
+        nextMeal: .lunch
+    )
+
+    let score = MacroDecisionEngine.healthScore(snapshot: snapshot)
+
+    #expect(snapshot.energyOut.source == .unavailable)
+    #expect(score.value == score.nutrition)
+    #expect(score.detail.contains("Apple Health"))
+}

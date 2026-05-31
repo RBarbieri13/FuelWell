@@ -4,9 +4,9 @@ Updated: 2026-05-31
 
 ## Current Workstream
 
-**W5 - AI Coach and Proactive Coaching Brain**
+**W6 - Feature Completeness: Dashboard, Progress, Activity, Plans, Menu**
 
-Current branch: `feature/w5-coach-brain-foundation`
+Current branch: `feature/w6-feature-navigation-main`
 
 ## Baseline Re-Verification
 
@@ -30,19 +30,20 @@ Note: the handoff's `iPhone 15 Pro` simulator is not installed on this Mac. The 
 
 ## In Progress
 
-W5 coach brain foundation:
+W6 feature completeness foundation:
 
 - PR #77, W1 coach proxy foundation, merged into `main`.
 - PR #78, W2 schema/apply foundation, merged into `main`.
 - PR #79, W3 live dependency toggle, merged into `main`.
 - PR #80, W4 auth/onboarding/profile foundation, merged into `main`.
-- Added a dedicated `Coach` feature package with reducer, transcript state, quick prompts, composer, feature-disabled/budget/offline banners, and proactive local notification scheduling.
-- Replaced the static `CoachChatView` placeholder with a store-backed `CoachView` in the main tab shell.
-- Added a versioned coach prompt contract with non-judgmental safety rules, medical/eating-disorder/self-harm redirect language, and bounded response shape.
-- Added a `CoachContext` builder that summarizes recent meals, macro verdicts, remaining macros, and HealthKit trend context while bounding prompt size and redacting email-like tokens.
-- Extended `AnthropicClient` with streaming support, SSE parsing, feature-gate checks, and 429 budget-cap mapping.
-- Extended the Next.js coach proxy to return `text/event-stream` responses for streaming clients while preserving usage cap and usage logging behavior.
-- Added reducer tests for streaming transcript updates, `coach_chat=false`, budget-cap banners, proactive nudge copy, prompt safety, and context redaction.
+- PR #81, W5 coach brain foundation, merged into `main`.
+- PR #83 keeps W6 intentionally large: tab shortcuts, Dashboard drill-ins, Nutrition detail cards, HealthKit/Health Score v1, Activity package, and Progress package are grouped together.
+- Dashboard Today rows now route to the real Meals, Exercise, and Progress tabs.
+- Dashboard Health Score and Inflows/Outflows summary cards now open real detail pages.
+- Nutrition search, restaurant, and recipe rows now open detail/portion cards before quick-use actions.
+- Activity is now a dedicated reducer-backed feature package using HealthKit snapshot dependency state for steps, active energy, and workouts.
+- Progress is now a dedicated reducer-backed feature package using the Health Score v1 model and owned topic lists for health score detail and tracking destinations.
+- Menu tools/settings and Help featured articles now open real detail subpages instead of static list rows.
 
 ## Verification For Current Slice
 
@@ -50,12 +51,10 @@ W5 coach brain foundation:
 - `swiftlint --strict --config .swiftlint.yml` - passed
 - `scripts/check-feature-imports.sh` - passed
 - `scripts/check-theme-drift.sh` - passed
-- Focused iOS tests: `CoachTests`, `AnthropicClientTests`, and `AppTests` on `iPhone 17` - passed
+- Focused Swift package tests: `ActivityTests` and `ProgressTests` - passed
+- Focused UI test: `testMenuAndHelpRowsOpenDetailPages` on `iPhone 17` - passed
+- Focused iOS tests: `AppTests` on `iPhone 17` - passed
 - Full iOS suite: `FuelWellApp` on `iPhone 17` - passed
-- `npm run test:website` - passed
-- `npm run lint` - passed with 4 existing warnings only
-- `bun install` - passed for this worktree dependency hydrate
-- `npm run build` - passed
 
 ## Vital Blockers
 
@@ -70,4 +69,8 @@ These are required before the live backend acceptance gates can pass end-to-end:
 
 ## Next
 
-Continue W5 with live proxy end-to-end simulator testing, then expand proactive coaching triggers beyond the local macro-gap harness.
+PR #81 (`feature/w5-coach-brain-foundation`) is merged into `main`.
+
+Continue W6 by closing the remaining Learn-home deferral decision, physical-device HealthKit acceptance, and any final profile/settings depth required before W6 close.
+
+PR #83 now expands W6 beyond tab shortcuts: Dashboard Health Score and Inflows/Outflows summary cards open real detail pages, Nutrition now has recipe, restaurant, and food/portion detail cards before quick-use actions, W6 has a concrete Health Score v1 / HealthKit energy-out model recorded in `decisions.md`, and Activity/Progress are reducer-backed feature packages rather than static App-only views.

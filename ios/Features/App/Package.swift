@@ -20,9 +20,11 @@ let package = Package(
         .package(path: "../../Packages/CrashReporting"),
         .package(path: "../../Packages/NutritionDomain"),
         .package(path: "../../Packages/SubscriptionClient"),
+        .package(path: "../Activity"),
         .package(path: "../Coach"),
         .package(path: "../Nutrition"),
         .package(path: "../Onboarding"),
+        .package(path: "../Progress"),
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.17.0"),
         .package(url: "https://github.com/johnpatrickmorgan/TCACoordinators", from: "0.9.0")
     ],
@@ -32,6 +34,7 @@ let package = Package(
             dependencies: [
                 "Analytics",
                 "AnthropicClient",
+                "Activity",
                 "Coach",
                 "Core",
                 "CrashReporting",
@@ -40,6 +43,7 @@ let package = Package(
                 "Nutrition",
                 "NutritionDomain",
                 "Onboarding",
+                "Progress",
                 "SupabaseClient",
                 "SubscriptionClient",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture")

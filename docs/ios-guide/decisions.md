@@ -204,3 +204,9 @@ Principle: manual logging is the exception, not the baseline. The Coach voice sh
 - **D20:** Use a dedicated app Supabase project for app data by default. Do not mutate the existing marketing/Founding 100 production project or any live `founders_100` rows until Robert explicitly approves the target and the production snapshot step.
 - **D21:** Supabase is the server source of truth. The app keeps a local read-through/write-behind cache for Pilot, with a durable local pending-write queue and last-write-wins conflict handling for a single user's own records.
 - **D22:** Migration authorship and live migration application are owned by W2 only. Other workstreams may consume `feature_flags`, `coach_usage`, commerce tables, and profile data only after W2 lands the migration files and Robert runs the guarded apply path against the chosen project.
+
+## 2026-05-31 — W6 Health Score v1 model
+
+- **D23:** Health Score v1 is a decision-readiness score, not a diagnostic score. Until a profile-derived BMR/resting-energy model lands, Inflows/Outflows uses HealthKit active energy plus a conservative fixed resting-energy estimate for the elapsed day.
+- **D24:** Recovery remains excluded until wearable recovery signals exist, matching D11. Nutrition and activity re-weight proportionally; if HealthKit is unavailable, Dashboard shows a nutrition-only score with clear Apple Health unlock copy.
+- **D25:** Activity v1 inputs are steps, active energy, and same-day workout count/duration from HealthKit. This is enough to explain the next meal/walk decision without turning FuelWell into a workout analytics app.
