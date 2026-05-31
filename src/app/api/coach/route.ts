@@ -7,6 +7,7 @@ import {
   coachUsageCapsFromEnv,
   coachUserIDFromHeaders,
   decideCoachUsage,
+  encodeCoachStreamEvent,
   isValidCoachProxySecret,
   parseCoachProxyRequest,
   textFromAnthropicMessage,
@@ -90,78 +91,126 @@ export async function POST(request: NextRequest) {
   }
 
   const userID = coachUserIDFromHeaders(request.headers);
+  if (!userID) {
+    return NextResponse.json(
+      { error: "Missing or unstable user ID." },
+      { status: 401 },
+    );
+  }
+
   const caps = coachUsageCapsFromEnv();
-  let usageTotals;
-  try {
-    usageTotals = await readUsageState(userID);
-  } catch {
-    return NextResponse.json(
-      { error: "Coach usage state could not be read." },
-      { status: 502 },
-    );
-  }
-
-  const usageDecision = decideCoachUsage(
-    usageTotals,
-    caps,
-  );
-
-  if (!usageDecision.allowed) {
-    await recordUsage(
-      buildCoachUsageRecord({
-        userID,
-        featureFlag: coachRequest.feature_flag,
-        model: coachRequest.model,
-        status: "blocked",
-      }),
-    );
-
-    return NextResponse.json(
-      { error: "Coach usage cap reached.", reason: usageDecision.reason },
-      { status: usageDecision.status },
-    );
-  }
-
   const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+  const acceptsStream =
+    request.headers.get("accept")?.includes("text/event-stream") === true;
 
-  try {
-    const message = await anthropic.messages.create(
-      buildAnthropicMessageParams(coachRequest),
-    );
-    const text = textFromAnthropicMessage(message);
-    const requestID = message.id;
+  return withCoachUsageLock(async () => {
+    let usageTotals;
+    try {
+      usageTotals = await readUsageState(userID);
+    } catch {
+      return NextResponse.json(
+        { error: "Coach usage state could not be read." },
+        { status: 502 },
+      );
+    }
 
-    await recordUsage(
-      buildCoachUsageRecord({
-        requestID,
-        userID,
-        featureFlag: coachRequest.feature_flag,
-        model: coachRequest.model,
-        usage: {
-          inputTokens: message.usage.input_tokens,
-          outputTokens: message.usage.output_tokens,
-        },
-        status: "success",
-      }),
+    const usageDecision = decideCoachUsage(
+      usageTotals,
+      caps,
     );
 
-    return NextResponse.json({ text, request_id: requestID });
-  } catch (error) {
-    console.error("Anthropic coach proxy error:", error);
-    await recordUsage(
-      buildCoachUsageRecord({
-        userID,
-        featureFlag: coachRequest.feature_flag,
-        model: coachRequest.model,
-        status: "failed",
-      }),
-    );
+    if (!usageDecision.allowed) {
+      await recordUsage(
+        buildCoachUsageRecord({
+          userID,
+          featureFlag: coachRequest.feature_flag,
+          model: coachRequest.model,
+          status: "blocked",
+        }),
+      );
 
-    return NextResponse.json(
-      { error: "Coach proxy request failed." },
-      { status: 502 },
-    );
-  }
+      return NextResponse.json(
+        { error: "Coach usage cap reached.", reason: usageDecision.reason },
+        { status: usageDecision.status },
+      );
+    }
+
+    try {
+      const message = await anthropic.messages.create(
+        buildAnthropicMessageParams(coachRequest),
+      );
+      const text = textFromAnthropicMessage(message);
+      const requestID = message.id;
+
+      await recordUsage(
+        buildCoachUsageRecord({
+          requestID,
+          userID,
+          featureFlag: coachRequest.feature_flag,
+          model: coachRequest.model,
+          usage: {
+            inputTokens: message.usage.input_tokens,
+            outputTokens: message.usage.output_tokens,
+          },
+          status: "success",
+        }),
+      );
+
+      if (acceptsStream) {
+        const encoder = new TextEncoder();
+        return new Response(
+          new ReadableStream({
+            start(controller) {
+              controller.enqueue(
+                encoder.encode(
+                  encodeCoachStreamEvent({
+                    textDelta: text,
+                    requestID,
+                    isComplete: false,
+                  }),
+                ),
+              );
+              controller.enqueue(
+                encoder.encode(
+                  encodeCoachStreamEvent({
+                    textDelta: "",
+                    requestID,
+                    isComplete: true,
+                  }),
+                ),
+              );
+              controller.enqueue(encoder.encode("data: [DONE]\n\n"));
+              controller.close();
+            },
+          }),
+          {
+            headers: {
+              "Cache-Control": "no-cache, no-transform",
+              Connection: "keep-alive",
+              "Content-Type": "text/event-stream; charset=utf-8",
+            },
+          },
+        );
+      }
+
+      return NextResponse.json({ text, request_id: requestID });
+    } catch (error) {
+      console.error("Anthropic coach proxy error:", error);
+      await recordUsage(
+        buildCoachUsageRecord({
+          userID,
+          featureFlag: coachRequest.feature_flag,
+          model: coachRequest.model,
+          status: "failed",
+        }),
+      );
+
+      return NextResponse.json(
+        { error: "Coach proxy request failed." },
+        { status: 502 },
+      );
+    }
+  });
 
   async function isFeatureEnabled(featureFlag: string): Promise<
     | { ok: true; enabled: boolean }
@@ -217,9 +266,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  async function readRecentRequestCount(targetUserID: string | null) {
-    if (!targetUserID) return 0;
-
+  async function readRecentRequestCount(targetUserID: string) {
     const since = new Date(Date.now() - 60_000).toISOString();
     const { count, error } = await supabase
       .from("coach_usage")
@@ -235,15 +282,10 @@ export async function POST(request: NextRequest) {
     return count ?? 0;
   }
 
-  async function readUsageState(targetUserID: string | null) {
-    const emptyTotals = {
-      inputTokens: 0,
-      outputTokens: 0,
-      estimatedCostUsd: 0,
-    };
+  async function readUsageState(targetUserID: string) {
     const [userDay, userMonth, globalDay, recentRequestCount] = await Promise.all([
-      targetUserID ? readUsageTotals("day", targetUserID) : emptyTotals,
-      targetUserID ? readUsageTotals("month", targetUserID) : emptyTotals,
+      readUsageTotals("day", targetUserID),
+      readUsageTotals("month", targetUserID),
       readUsageTotals("day", null),
       readRecentRequestCount(targetUserID),
     ]);
@@ -255,6 +297,31 @@ export async function POST(request: NextRequest) {
     const { error } = await supabase.from("coach_usage").insert(record);
     if (error) {
       console.error("Supabase coach usage write failed:", error);
+    }
+  }
+}
+
+const coachUsageLocks = new Map<string, Promise<unknown>>();
+
+async function withCoachUsageLock<T>(
+  operation: () => Promise<T>,
+): Promise<T> {
+  const lockKey = "coach:usage:global";
+  const previous = coachUsageLocks.get(lockKey) ?? Promise.resolve();
+  let release!: () => void;
+  const current = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  const chained = previous.then(() => current);
+  coachUsageLocks.set(lockKey, chained);
+
+  await previous.catch(() => undefined);
+  try {
+    return await operation();
+  } finally {
+    release();
+    if (coachUsageLocks.get(lockKey) === chained) {
+      coachUsageLocks.delete(lockKey);
     }
   }
 }

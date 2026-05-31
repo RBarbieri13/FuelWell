@@ -58,6 +58,12 @@ export type CoachUsageRecord = {
   created_at: string;
 };
 
+export type CoachStreamEvent = {
+  textDelta: string;
+  requestID?: string;
+  isComplete: boolean;
+};
+
 const defaultCaps: CoachUsageCaps = {
   userDailyTokens: 20_000,
   globalDailyUsd: 25,
@@ -195,6 +201,14 @@ export function buildCoachUsageRecord(params: {
     status: params.status,
     created_at: (params.now ?? new Date()).toISOString(),
   };
+}
+
+export function encodeCoachStreamEvent(event: CoachStreamEvent): string {
+  return `data: ${JSON.stringify({
+    text_delta: event.textDelta,
+    request_id: event.requestID,
+    is_complete: event.isComplete,
+  })}\n\n`;
 }
 
 export function coachUserIDFromHeaders(headers: Headers): string | null {
