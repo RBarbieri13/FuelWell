@@ -155,7 +155,11 @@ public struct CoachFeature: Sendable {
             case .macroGapDetected:
                 let message = "A protein-forward dinner keeps the day flexible."
                 return .run { send in
-                    _ = try? await self.proactiveCoaching.requestAuthorization()
+                    let isAuthorized = try await self.proactiveCoaching.requestAuthorization()
+                    guard isAuthorized else {
+                        await send(.notificationScheduled(.failure(.authorizationDenied)))
+                        return
+                    }
                     try await self.proactiveCoaching.scheduleMacroGapNudge(message)
                     await send(.notificationScheduled(.success))
                 } catch: { error, send in

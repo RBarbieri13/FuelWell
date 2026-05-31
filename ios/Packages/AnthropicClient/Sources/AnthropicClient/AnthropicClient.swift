@@ -71,7 +71,7 @@ public struct AnthropicClient: Sendable {
             complete: complete,
             stream: { request in
                 AsyncThrowingStream { continuation in
-                    Task {
+                    let task = Task {
                         do {
                             let response = try await complete(request)
                             continuation.yield(
@@ -85,6 +85,9 @@ public struct AnthropicClient: Sendable {
                         } catch {
                             continuation.finish(throwing: error)
                         }
+                    }
+                    continuation.onTermination = { _ in
+                        task.cancel()
                     }
                 }
             }
@@ -149,7 +152,7 @@ extension AnthropicClient: DependencyKey {
             },
             stream: { request in
                 AsyncThrowingStream { continuation in
-                    Task {
+                    let task = Task {
                         do {
                             guard let endpoint, !endpoint.absoluteString.isEmpty else {
                                 throw AnthropicClientError.missingConfiguration
@@ -166,6 +169,9 @@ extension AnthropicClient: DependencyKey {
                         } catch {
                             continuation.finish(throwing: error)
                         }
+                    }
+                    continuation.onTermination = { _ in
+                        task.cancel()
                     }
                 }
             }
@@ -232,7 +238,7 @@ private final class LiveAnthropicClient: @unchecked Sendable {
 
     func stream(_ request: AnthropicRequest) -> AsyncThrowingStream<AnthropicStreamEvent, any Error> {
         AsyncThrowingStream { continuation in
-            Task {
+            let task = Task {
                 do {
                     let urlRequest = try self.urlRequest(request: request, acceptsStream: true)
                     let (bytes, response) = try await self.session.bytes(for: urlRequest)
@@ -251,6 +257,9 @@ private final class LiveAnthropicClient: @unchecked Sendable {
                 } catch {
                     continuation.finish(throwing: error)
                 }
+            }
+            continuation.onTermination = { _ in
+                task.cancel()
             }
         }
     }

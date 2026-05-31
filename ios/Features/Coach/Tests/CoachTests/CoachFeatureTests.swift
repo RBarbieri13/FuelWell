@@ -229,6 +229,29 @@ func macroGapSchedulesVoiceCompliantLocalNudge() async {
     #expect(containsForbiddenCoachLanguage(scheduledBody ?? "") == false)
 }
 
+@MainActor
+@Test
+func macroGapDoesNotScheduleWhenNotificationPermissionDenied() async {
+    nonisolated(unsafe) var scheduledBody: String?
+    let store = TestStore(initialState: CoachFeature.State()) {
+        CoachFeature()
+    } withDependencies: {
+        $0.proactiveCoaching = ProactiveCoachingClient(
+            requestAuthorization: { false },
+            scheduleMacroGapNudge: {
+                scheduledBody = $0
+            }
+        )
+    }
+
+    await store.send(.macroGapDetected)
+    await store.receive(.notificationScheduled(.failure(.authorizationDenied))) {
+        $0.banner = .offline
+    }
+
+    #expect(scheduledBody == nil)
+}
+
 @Test
 func coachSystemPromptUsesNonJudgmentSafetyContract() {
     #expect(CoachPrompt.system.contains("non-judgmental"))

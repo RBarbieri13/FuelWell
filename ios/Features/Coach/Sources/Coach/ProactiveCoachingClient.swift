@@ -68,5 +68,6 @@ extension DependencyValues {
 }
 
 public enum ProactiveCoachingError: Error, Equatable, Sendable {
+    case authorizationDenied
     case unimplemented
 }

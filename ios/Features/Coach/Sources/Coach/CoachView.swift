@@ -65,7 +65,7 @@ public struct CoachView: View {
 
                                         Spacer()
 
-                                        Image(systemName: "chevron.right")
+                                        Image(systemName: "paperplane.fill")
                                             .font(.system(size: 14, weight: .bold))
                                             .foregroundStyle(self.theme.color.text.muted.color)
                                     }
@@ -77,6 +77,7 @@ public struct CoachView: View {
                         }
                     }
 
+#if DEBUG
                     Button {
                         self.store.send(.macroGapDetected)
                     } label: {
@@ -89,6 +90,7 @@ public struct CoachView: View {
                     .tint(self.theme.color.bg.elevated.color)
                     .disabled(self.store.isStreaming)
                     .accessibilityIdentifier("coach.nudge-test")
+#endif
                 }
                 .padding(self.theme.spacing.md)
                 .padding(.bottom, self.theme.spacing.xl)

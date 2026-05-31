@@ -7,10 +7,14 @@ import SwiftUI
 
 public struct RootTabView: View {
     @Bindable public var store: StoreOf<AppFeature>
+    private let coachStore: StoreOf<CoachFeature>
     @Environment(\.theme) private var theme
 
     public init(store: StoreOf<AppFeature>) {
         self.store = store
+        self.coachStore = Store(initialState: CoachFeature.State()) {
+            CoachFeature()
+        }
     }
 
     public var body: some View {
@@ -30,11 +34,7 @@ public struct RootTabView: View {
                         } else if tab == .home {
                             DashboardView(store: self.store)
                         } else if tab == .coach {
-                            CoachView(
-                                store: Store(initialState: CoachFeature.State()) {
-                                    CoachFeature()
-                                }
-                            )
+                            CoachView(store: self.coachStore)
                         } else if tab == .exercise {
                             ExerciseActivityView()
                         } else if tab == .progress {
