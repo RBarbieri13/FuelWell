@@ -7,6 +7,7 @@ import {
   coachUsageCapsFromEnv,
   coachUserIDFromHeaders,
   decideCoachUsage,
+  encodeCoachStreamEvent,
   isValidCoachProxySecret,
   parseCoachProxyRequest,
   textFromAnthropicMessage,
@@ -123,6 +124,8 @@ export async function POST(request: NextRequest) {
   }
 
   const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+  const acceptsStream =
+    request.headers.get("accept")?.includes("text/event-stream") === true;
 
   try {
     const message = await anthropic.messages.create(
@@ -144,6 +147,43 @@ export async function POST(request: NextRequest) {
         status: "success",
       }),
     );
+
+    if (acceptsStream) {
+      const encoder = new TextEncoder();
+      return new Response(
+        new ReadableStream({
+          start(controller) {
+            controller.enqueue(
+              encoder.encode(
+                encodeCoachStreamEvent({
+                  textDelta: text,
+                  requestID,
+                  isComplete: false,
+                }),
+              ),
+            );
+            controller.enqueue(
+              encoder.encode(
+                encodeCoachStreamEvent({
+                  textDelta: "",
+                  requestID,
+                  isComplete: true,
+                }),
+              ),
+            );
+            controller.enqueue(encoder.encode("data: [DONE]\n\n"));
+            controller.close();
+          },
+        }),
+        {
+          headers: {
+            "Cache-Control": "no-cache, no-transform",
+            Connection: "keep-alive",
+            "Content-Type": "text/event-stream; charset=utf-8",
+          },
+        },
+      );
+    }
 
     return NextResponse.json({ text, request_id: requestID });
   } catch (error) {

@@ -1,3 +1,4 @@
+import Coach
 import ComposableArchitecture
 import DesignSystem
 import Nutrition
@@ -29,7 +30,11 @@ public struct RootTabView: View {
                         } else if tab == .home {
                             DashboardView(store: self.store)
                         } else if tab == .coach {
-                            CoachChatView()
+                            CoachView(
+                                store: Store(initialState: CoachFeature.State()) {
+                                    CoachFeature()
+                                }
+                            )
                         } else if tab == .exercise {
                             ExerciseActivityView()
                         } else if tab == .progress {

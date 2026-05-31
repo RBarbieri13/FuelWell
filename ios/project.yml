@@ -27,6 +27,8 @@ packages:
     path: Packages/CrashReporting
   NutritionDomain:
     path: Packages/NutritionDomain
+  CoachFeature:
+    path: Features/Coach
   NutritionFeature:
     path: Features/Nutrition
   OnboardingFeature:
@@ -60,6 +62,8 @@ targets:
         product: Analytics
       - package: AnthropicClient
         product: AnthropicClient
+      - package: CoachFeature
+        product: Coach
       - package: CrashReporting
         product: CrashReporting
       - package: HealthKitClient
@@ -160,6 +164,26 @@ targets:
     dependencies:
       - package: AnthropicClient
         product: AnthropicClient
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+  CoachTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: Features/Coach/Tests/CoachTests
+    dependencies:
+      - package: CoachFeature
+        product: Coach
+      - package: AnthropicClient
+        product: AnthropicClient
+      - package: Core
+        product: Core
+      - package: HealthKitClient
+        product: HealthKitClient
+      - package: SupabaseClient
+        product: SupabaseClient
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES
@@ -293,6 +317,7 @@ schemes:
         - CoreTests
         - PersistenceTests
         - AnthropicClientTests
+        - CoachTests
         - SupabaseClientTests
         - SubscriptionClientTests
         - HealthKitClientTests

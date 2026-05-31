@@ -3,45 +3,32 @@
 import PackageDescription
 
 let package = Package(
-    name: "App",
+    name: "Coach",
     platforms: [
         .iOS(.v17)
     ],
     products: [
-        .library(name: "App", type: .static, targets: ["App"])
+        .library(name: "Coach", type: .static, targets: ["Coach"])
     ],
     dependencies: [
+        .package(path: "../../Packages/AnthropicClient"),
         .package(path: "../../Packages/Core"),
         .package(path: "../../Packages/DesignSystem"),
-        .package(path: "../../Packages/AnthropicClient"),
-        .package(path: "../../Packages/SupabaseClient"),
         .package(path: "../../Packages/HealthKitClient"),
-        .package(path: "../../Packages/Analytics"),
-        .package(path: "../../Packages/CrashReporting"),
         .package(path: "../../Packages/NutritionDomain"),
-        .package(path: "../../Packages/SubscriptionClient"),
-        .package(path: "../Coach"),
-        .package(path: "../Nutrition"),
-        .package(path: "../Onboarding"),
-        .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.17.0"),
-        .package(url: "https://github.com/johnpatrickmorgan/TCACoordinators", from: "0.9.0")
+        .package(path: "../../Packages/SupabaseClient"),
+        .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.17.0")
     ],
     targets: [
         .target(
-            name: "App",
+            name: "Coach",
             dependencies: [
-                "Analytics",
                 "AnthropicClient",
-                "Coach",
                 "Core",
-                "CrashReporting",
                 "DesignSystem",
                 "HealthKitClient",
-                "Nutrition",
                 "NutritionDomain",
-                "Onboarding",
                 "SupabaseClient",
-                "SubscriptionClient",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
             ],
             swiftSettings: [
@@ -50,19 +37,20 @@ let package = Package(
             ]
         ),
         .testTarget(
-            name: "AppTests",
+            name: "CoachTests",
             dependencies: [
-                "App",
-                "Analytics",
+                "Coach",
                 "AnthropicClient",
-                "CrashReporting",
+                "Core",
                 "HealthKitClient",
-                "Onboarding",
                 "SupabaseClient",
-                "SubscriptionClient",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
             ],
-            path: "Tests/AppTests"
+            path: "Tests/CoachTests",
+            swiftSettings: [
+                .enableExperimentalFeature("StrictConcurrency"),
+                .enableUpcomingFeature("ExistentialAny")
+            ]
         )
     ],
     swiftLanguageModes: [.v6]

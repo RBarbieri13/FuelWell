@@ -4,6 +4,7 @@ import {
   buildCoachUsageRecord,
   coachUsageCapsFromEnv,
   decideCoachUsage,
+  encodeCoachStreamEvent,
   estimateCoachUsageUsd,
   isValidCoachProxySecret,
   parseCoachProxyRequest,
@@ -105,5 +106,17 @@ describe("coach proxy contract helpers", () => {
       created_at: "2026-05-31T00:00:00.000Z",
     });
     expect(Object.keys(record)).not.toContain("prompt");
+  });
+
+  it("encodes stream events in the Swift client SSE shape", () => {
+    expect(
+      encodeCoachStreamEvent({
+        textDelta: "One useful next action.",
+        requestID: "msg_123",
+        isComplete: false,
+      }),
+    ).toBe(
+      'data: {"text_delta":"One useful next action.","request_id":"msg_123","is_complete":false}\n\n',
+    );
   });
 });

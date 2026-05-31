@@ -1,38 +1,6 @@
 import DesignSystem
 import SwiftUI
 
-struct CoachChatView: View {
-    @Environment(\.theme) private var theme
-
-    var body: some View {
-        PhaseScroll(title: "Coach Chat") {
-            CoachBubble(
-                title: "FuelWell",
-                detail: "Lunch should be protein-forward. Keep carbs moderate and save room for dinner."
-            )
-            CoachBubble(title: "You", detail: "What is the easiest option?")
-            CoachBubble(
-                title: "FuelWell",
-                detail: "Chicken bowl, half rice, extra vegetables, salsa. Log it with a photo when it arrives."
-            )
-            DashboardSection(
-                title: "Quick prompts",
-                items: [
-                    .init(title: "Adjust my day", detail: "Rebalance after a meal", icon: "wand.and.stars"),
-                    .init(title: "What should I order?", detail: "Restaurant decision help", icon: "fork.knife"),
-                    .init(title: "Explain today", detail: "Short recap with next step", icon: "text.bubble")
-                ]
-            )
-            DashboardSection(
-                title: "Learn inline",
-                items: [
-                    .init(title: "Protein anchors", detail: "3-minute guide with one action", icon: "book.pages")
-                ]
-            )
-        }
-    }
-}
-
 struct ExerciseActivityView: View {
     var body: some View {
         PhaseScroll(title: "Exercise & Activity") {
@@ -94,25 +62,5 @@ struct ProgressOverviewView: View {
                 ]
             )
         }
-    }
-}
-
-private struct CoachBubble: View {
-    let title: String
-    let detail: String
-    @Environment(\.theme) private var theme
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: self.theme.spacing.xs) {
-            Text(self.title)
-                .font(.custom(self.theme.font.body, size: self.theme.text.bodySM.size))
-                .fontWeight(.bold)
-                .foregroundStyle(self.theme.color.text.secondary.color)
-            Text(self.detail)
-                .font(.custom(self.theme.font.body, size: self.theme.text.bodyLG.size))
-                .fontWeight(.semibold)
-                .foregroundStyle(self.theme.color.text.primary.color)
-        }
-        .phaseCard()
     }
 }

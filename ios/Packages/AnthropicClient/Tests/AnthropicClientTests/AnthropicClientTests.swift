@@ -3,6 +3,8 @@ import Foundation
 import SupabaseClient
 import Testing
 
+@Suite(.serialized)
+struct AnthropicClientTests {
 @Test
 func previewClientReturnsDeterministicText() async throws {
     let response = try await AnthropicClient.previewValue.complete(
@@ -99,15 +101,87 @@ func liveClientMapsProxyDisabledStatusToFeatureDisabled() async throws {
     #expect(AnthropicURLProtocol.requests.count == 1)
 }
 
+@Test
+func liveClientStreamsServerSentEventsFromProxy() async throws {
+    AnthropicURLProtocol.reset(
+        responseData: Data(
+            """
+            data: {"text_delta":"First ","request_id":"req_stream","is_complete":false}
+
+            data: {"text_delta":"second.","request_id":"req_stream","is_complete":true}
+
+            data: [DONE]
+
+            """.utf8
+        ),
+        contentType: "text/event-stream"
+    )
+
+    let sessionConfiguration = URLSessionConfiguration.ephemeral
+    sessionConfiguration.protocolClasses = [AnthropicURLProtocol.self]
+    let endpoint = try #require(URL(string: proxyEndpointString))
+
+    let client = AnthropicClient.live(
+        endpoint: endpoint,
+        proxySecret: "test-secret",
+        featureFlags: .constant([FeatureFlag(name: "coach_chat", enabled: true)]),
+        session: URLSession(configuration: sessionConfiguration)
+    )
+
+    var events: [AnthropicStreamEvent] = []
+    for try await event in client.stream(
+        AnthropicRequest(prompt: "Coach me.", featureFlag: "coach_chat")
+    ) {
+        events.append(event)
+    }
+
+    #expect(events == [
+        AnthropicStreamEvent(textDelta: "First ", requestID: "req_stream"),
+        AnthropicStreamEvent(textDelta: "second.", requestID: "req_stream", isComplete: true)
+    ])
+    #expect(AnthropicURLProtocol.requests.first?.value(forHTTPHeaderField: "Accept") == "text/event-stream")
+}
+
+@Test
+func liveClientMapsProxyBudgetStatusToBudgetExceeded() async throws {
+    AnthropicURLProtocol.reset(
+        responseData: Data(#"{"error":"Budget reached."}"#.utf8),
+        statusCode: 429
+    )
+
+    let sessionConfiguration = URLSessionConfiguration.ephemeral
+    sessionConfiguration.protocolClasses = [AnthropicURLProtocol.self]
+    let endpoint = try #require(URL(string: proxyEndpointString))
+
+    let client = AnthropicClient.live(
+        endpoint: endpoint,
+        proxySecret: "test-secret",
+        featureFlags: .constant([FeatureFlag(name: "coach_chat", enabled: true)]),
+        session: URLSession(configuration: sessionConfiguration)
+    )
+
+    await #expect(throws: AnthropicClientError.budgetExceeded) {
+        _ = try await client.complete(
+            AnthropicRequest(prompt: "Coach me.", featureFlag: "coach_chat")
+        )
+    }
+}
+
 private final class AnthropicURLProtocol: URLProtocol, @unchecked Sendable {
     nonisolated(unsafe) private static var responseData = Data()
     nonisolated(unsafe) private static var statusCode = 200
+    nonisolated(unsafe) private static var contentType = "application/json"
     nonisolated(unsafe) static var requests: [URLRequest] = []
     nonisolated(unsafe) static var bodies: [Data] = []
 
-    static func reset(responseData: Data, statusCode: Int = 200) {
+    static func reset(
+        responseData: Data,
+        statusCode: Int = 200,
+        contentType: String = "application/json"
+    ) {
         self.responseData = responseData
         self.statusCode = statusCode
+        self.contentType = contentType
         self.requests = []
         self.bodies = []
     }
@@ -134,7 +208,7 @@ private final class AnthropicURLProtocol: URLProtocol, @unchecked Sendable {
                 url: url,
                 statusCode: Self.statusCode,
                 httpVersion: nil,
-                headerFields: ["Content-Type": "application/json"]
+                headerFields: ["Content-Type": Self.contentType]
             )
         else {
             self.client?.urlProtocol(self, didFailWithError: URLError(.badURL))
@@ -171,3 +245,4 @@ private final class AnthropicURLProtocol: URLProtocol, @unchecked Sendable {
 }
 
 private let proxyEndpointString = "https://anthropic-proxy.test/generate"
+}

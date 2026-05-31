@@ -23,7 +23,7 @@ final class FuelWellCriticalPathUITests: XCTestCase {
             XCTAssertTrue(app.navigationBars["Meals & Nutrition"].waitForExistence(timeout: 2))
 
             app.tabBars.buttons["Coach"].tap()
-            XCTAssertTrue(app.navigationBars["Coach Chat"].waitForExistence(timeout: 2))
+            XCTAssertTrue(app.navigationBars["Coach"].waitForExistence(timeout: 2))
 
             app.tabBars.buttons["Exercise"].tap()
             XCTAssertTrue(app.navigationBars["Exercise & Activity"].waitForExistence(timeout: 2))
@@ -107,7 +107,7 @@ final class FuelWellCriticalPathUITests: XCTestCase {
         defer { app.terminate() }
 
         app.tabBars.buttons["Coach"].tap()
-        XCTAssertTrue(app.navigationBars["Coach Chat"].waitForExistence(timeout: 2))
+        XCTAssertTrue(app.navigationBars["Coach"].waitForExistence(timeout: 2))
 
         app.tabBars.buttons["Exercise"].tap()
         XCTAssertTrue(app.navigationBars["Exercise & Activity"].waitForExistence(timeout: 2))
