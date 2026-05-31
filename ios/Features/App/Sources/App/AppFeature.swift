@@ -130,7 +130,7 @@ public struct AppFeature: Sendable {
     }
 
     private func checkFeatureFlags() async -> Bool {
-        (try? await self.featureFlags.isEnabled("ai_meal_plan")) != nil
+        (try? await self.featureFlags.isEnabled("coach_chat")) != nil
     }
 
     private func checkHealthKit() async -> Bool {
@@ -144,11 +144,11 @@ public struct AppFeature: Sendable {
     private func checkAnthropic() async -> Bool {
         do {
             _ = try await self.anthropicClient.complete(
-                AnthropicRequest(prompt: "Return the word ready.", maxTokens: 16)
+                AnthropicRequest(prompt: "Return the word ready.", maxTokens: 16, featureFlag: "coach_chat")
             )
             return true
         } catch AnthropicClientError.featureDisabled {
-            return true
+            return false
         } catch {
             return false
         }

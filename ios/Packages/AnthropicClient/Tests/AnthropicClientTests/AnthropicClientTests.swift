@@ -49,6 +49,7 @@ func liveClientSendsFeatureFlagToProxyWhenEnabled() async throws {
 
     let client = AnthropicClient.live(
         endpoint: endpoint,
+        proxySecret: "test-secret",
         featureFlags: .constant([FeatureFlag(name: "coach_chat", enabled: true)]),
         session: URLSession(configuration: sessionConfiguration)
     )
@@ -63,18 +64,50 @@ func liveClientSendsFeatureFlagToProxyWhenEnabled() async throws {
     #expect(response.text == "Dinner plan")
     #expect(response.requestID == "req_123")
     #expect(AnthropicURLProtocol.requests.count == 1)
+    #expect(
+        AnthropicURLProtocol.requests.first?.value(forHTTPHeaderField: "x-fuelwell-coach-secret") ==
+            "test-secret"
+    )
     #expect(decoded?["prompt"] as? String == "Coach me.")
     #expect(decoded?["maxTokens"] as? Int == 42)
     #expect(decoded?["feature_flag"] as? String == "coach_chat")
 }
 
+@Test
+func liveClientMapsProxyDisabledStatusToFeatureDisabled() async throws {
+    AnthropicURLProtocol.reset(
+        responseData: Data(#"{"error":"Feature disabled.","feature_flag":"coach_chat"}"#.utf8),
+        statusCode: 403
+    )
+
+    let sessionConfiguration = URLSessionConfiguration.ephemeral
+    sessionConfiguration.protocolClasses = [AnthropicURLProtocol.self]
+    let endpoint = try #require(URL(string: proxyEndpointString))
+
+    let client = AnthropicClient.live(
+        endpoint: endpoint,
+        proxySecret: "test-secret",
+        featureFlags: .constant([FeatureFlag(name: "coach_chat", enabled: true)]),
+        session: URLSession(configuration: sessionConfiguration)
+    )
+
+    await #expect(throws: AnthropicClientError.featureDisabled("coach_chat")) {
+        _ = try await client.complete(
+            AnthropicRequest(prompt: "Coach me.", featureFlag: "coach_chat")
+        )
+    }
+    #expect(AnthropicURLProtocol.requests.count == 1)
+}
+
 private final class AnthropicURLProtocol: URLProtocol, @unchecked Sendable {
     nonisolated(unsafe) private static var responseData = Data()
+    nonisolated(unsafe) private static var statusCode = 200
     nonisolated(unsafe) static var requests: [URLRequest] = []
     nonisolated(unsafe) static var bodies: [Data] = []
 
-    static func reset(responseData: Data) {
+    static func reset(responseData: Data, statusCode: Int = 200) {
         self.responseData = responseData
+        self.statusCode = statusCode
         self.requests = []
         self.bodies = []
     }
@@ -99,7 +132,7 @@ private final class AnthropicURLProtocol: URLProtocol, @unchecked Sendable {
             let url = self.request.url,
             let response = HTTPURLResponse(
                 url: url,
-                statusCode: 200,
+                statusCode: Self.statusCode,
                 httpVersion: nil,
                 headerFields: ["Content-Type": "application/json"]
             )
