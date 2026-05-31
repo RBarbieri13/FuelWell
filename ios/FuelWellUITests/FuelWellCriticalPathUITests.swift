@@ -116,6 +116,90 @@ final class FuelWellCriticalPathUITests: XCTestCase {
         XCTAssertTrue(app.navigationBars["Progress"].waitForExistence(timeout: 2))
     }
 
+    func testDashboardShortcutsSwitchToRealTabs() {
+        let app = self.launchApp()
+        defer { app.terminate() }
+
+        app.buttons["dashboard.shortcut.meals"].tap()
+        XCTAssertTrue(app.navigationBars["Meals & Nutrition"].waitForExistence(timeout: 2))
+
+        app.tabBars.buttons["Home"].tap()
+        XCTAssertTrue(app.navigationBars["Dashboard"].waitForExistence(timeout: 2))
+
+        app.buttons["dashboard.shortcut.exercise"].tap()
+        XCTAssertTrue(app.navigationBars["Exercise & Activity"].waitForExistence(timeout: 2))
+
+        app.tabBars.buttons["Home"].tap()
+        XCTAssertTrue(app.navigationBars["Dashboard"].waitForExistence(timeout: 2))
+
+        app.buttons["dashboard.shortcut.progress"].tap()
+        XCTAssertTrue(app.navigationBars["Progress"].waitForExistence(timeout: 2))
+    }
+
+    func testProgressAndActivityRowsOpenDetailPages() {
+        let app = self.launchApp()
+        defer { app.terminate() }
+
+        app.tabBars.buttons["Progress"].tap()
+        XCTAssertTrue(app.navigationBars["Progress"].waitForExistence(timeout: 2))
+        app.buttons["progress.topic.macro-adherence"].tap()
+        XCTAssertTrue(app.navigationBars["Macro Adherence"].waitForExistence(timeout: 2))
+        XCTAssertTrue(app.staticTexts["82% this week"].exists)
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+
+        app.tabBars.buttons["Exercise"].tap()
+        XCTAssertTrue(app.navigationBars["Exercise & Activity"].waitForExistence(timeout: 2))
+        app.buttons["activity.tool.workout-log"].tap()
+        XCTAssertTrue(app.navigationBars["Workout Log"].waitForExistence(timeout: 2))
+        XCTAssertTrue(app.staticTexts["Record the session without turning FuelWell into a workout app"].exists)
+    }
+
+    func testDashboardMetricCardsOpenDetailPages() {
+        let app = self.launchApp()
+        defer { app.terminate() }
+
+        app.buttons["dashboard.health-score"].tap()
+        XCTAssertTrue(app.navigationBars["Health Score Detail"].waitForExistence(timeout: 2))
+        XCTAssertTrue(app.staticTexts["89 · progress is steady"].exists)
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+
+        app.buttons["dashboard.inflows-outflows"].tap()
+        XCTAssertTrue(app.navigationBars["Inflows / Outflows"].waitForExistence(timeout: 2))
+        XCTAssertTrue(app.staticTexts["Your day is still flexible"].exists)
+    }
+
+    func testNutritionRecipeDetailAndFoodPortionDetailOpen() {
+        let app = self.launchApp()
+        defer { app.terminate() }
+
+        app.tabBars.buttons["Meals"].tap()
+        XCTAssertTrue(app.navigationBars["Meals & Nutrition"].waitForExistence(timeout: 2))
+
+        app.buttons["nutrition.destination.recipeBrowser"].tap()
+        XCTAssertTrue(app.staticTexts["Recipe Browser"].waitForExistence(timeout: 2))
+        let recipeRow = app.buttons.matching(
+            NSPredicate(format: "identifier BEGINSWITH %@", "recipe.suggestion.")
+        ).element(boundBy: 0)
+        XCTAssertTrue(recipeRow.waitForExistence(timeout: 2))
+        recipeRow.tap()
+        XCTAssertTrue(app.descendants(matching: .any)["recipe.detail"].waitForExistence(timeout: 2))
+        XCTAssertTrue(app.staticTexts["Use Recipe"].exists)
+
+        app.buttons.matching(NSPredicate(format: "label == %@", "Close")).element(boundBy: 1).tap()
+        app.buttons["xmark"].tap()
+
+        app.buttons["nutrition.add-meal"].tap()
+        XCTAssertTrue(app.staticTexts["Add Meal"].waitForExistence(timeout: 2))
+        app.segmentedControls.buttons["Search"].tap()
+        let foodRow = app.buttons.matching(
+            NSPredicate(format: "identifier BEGINSWITH %@", "food.search.suggestion.")
+        ).element(boundBy: 0)
+        XCTAssertTrue(foodRow.waitForExistence(timeout: 2))
+        foodRow.tap()
+        XCTAssertTrue(app.descendants(matching: .any)["food.detail.portion"].waitForExistence(timeout: 2))
+        XCTAssertTrue(app.staticTexts["Use This Food"].exists)
+    }
+
     private func launchApp() -> XCUIApplication {
         self.continueAfterFailure = false
 

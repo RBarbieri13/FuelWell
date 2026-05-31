@@ -1,12 +1,14 @@
 import Dependencies
 import Foundation
-#if canImport(HealthKit)
+#if canImport(HealthKit) && !os(macOS)
 import HealthKit
 #endif
 
 public struct HealthSnapshot: Equatable, Sendable {
     public var steps: Double
     public var activeEnergyKilocalories: Double
+    public var workoutCount: Int
+    public var workoutDurationMinutes: Double
     public var bodyMassKilograms: Double?
     public var sleepOnset: Date?
     public var fetchedAt: Date
@@ -14,12 +16,16 @@ public struct HealthSnapshot: Equatable, Sendable {
     public init(
         steps: Double,
         activeEnergyKilocalories: Double,
+        workoutCount: Int = 0,
+        workoutDurationMinutes: Double = 0,
         bodyMassKilograms: Double? = nil,
         sleepOnset: Date? = nil,
         fetchedAt: Date
     ) {
         self.steps = steps
         self.activeEnergyKilocalories = activeEnergyKilocalories
+        self.workoutCount = workoutCount
+        self.workoutDurationMinutes = workoutDurationMinutes
         self.bodyMassKilograms = bodyMassKilograms
         self.sleepOnset = sleepOnset
         self.fetchedAt = fetchedAt
@@ -62,6 +68,8 @@ extension HealthKitClient: DependencyKey {
         snapshot: HealthSnapshot(
             steps: 8_420,
             activeEnergyKilocalories: 540,
+            workoutCount: 1,
+            workoutDurationMinutes: 42,
             bodyMassKilograms: 82.4,
             sleepOnset: Date(timeIntervalSince1970: 1_773_446_400),
             fetchedAt: Date(timeIntervalSince1970: 1_773_500_000)
@@ -77,7 +85,7 @@ extension HealthKitClient: DependencyKey {
     }
 
     public static func live() -> HealthKitClient {
-        #if canImport(HealthKit)
+        #if canImport(HealthKit) && !os(macOS)
         let client = LiveHealthKitClient()
         return HealthKitClient(
             requestReadAuthorization: { try await client.requestReadAuthorization() },
@@ -101,7 +109,7 @@ extension DependencyValues {
     }
 }
 
-#if canImport(HealthKit)
+#if canImport(HealthKit) && !os(macOS)
 private actor LiveHealthKitClient {
     private let store = HKHealthStore()
 
@@ -114,6 +122,7 @@ private actor LiveHealthKitClient {
             HKQuantityType(.stepCount),
             HKQuantityType(.activeEnergyBurned),
             HKQuantityType(.bodyMass),
+            HKObjectType.workoutType(),
             HKCategoryType(.sleepAnalysis)
         ])
 
@@ -127,10 +136,13 @@ private actor LiveHealthKitClient {
         async let steps = self.quantitySum(.stepCount, unit: .count(), start: start, end: Date())
         async let energy = self.quantitySum(.activeEnergyBurned, unit: .kilocalorie(), start: start, end: Date())
         async let weight = self.latestQuantity(.bodyMass, unit: .gramUnit(with: .kilo))
+        async let workouts = self.workouts(start: start, end: Date())
 
         return try await HealthSnapshot(
             steps: steps,
             activeEnergyKilocalories: energy,
+            workoutCount: workouts.count,
+            workoutDurationMinutes: workouts.durationMinutes,
             bodyMassKilograms: weight,
             sleepOnset: self.sevenDaySleepOnsetMedian(),
             fetchedAt: Date()
@@ -189,6 +201,30 @@ private actor LiveHealthKitClient {
 
                 let sample = samples?.first as? HKQuantitySample
                 continuation.resume(returning: sample?.quantity.doubleValue(for: unit))
+            }
+
+            self.store.execute(query)
+        }
+    }
+
+    private func workouts(start: Date, end: Date) async throws -> (count: Int, durationMinutes: Double) {
+        let predicate = HKQuery.predicateForSamples(withStart: start, end: end)
+
+        return try await withCheckedThrowingContinuation { continuation in
+            let query = HKSampleQuery(
+                sampleType: HKObjectType.workoutType(),
+                predicate: predicate,
+                limit: HKObjectQueryNoLimit,
+                sortDescriptors: nil
+            ) { _, samples, error in
+                if let error {
+                    continuation.resume(throwing: HealthKitClientError.queryFailed(error.localizedDescription))
+                    return
+                }
+
+                let workouts = samples?.compactMap { $0 as? HKWorkout } ?? []
+                let duration = workouts.reduce(0.0) { $0 + $1.duration } / 60
+                continuation.resume(returning: (workouts.count, duration))
             }
 
             self.store.execute(query)

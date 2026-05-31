@@ -9,6 +9,8 @@ func stubReturnsConfiguredSnapshot() async throws {
         snapshot: HealthSnapshot(
             steps: 1_500,
             activeEnergyKilocalories: 120,
+            workoutCount: 1,
+            workoutDurationMinutes: 38,
             fetchedAt: fetchedAt
         )
     )
@@ -18,5 +20,7 @@ func stubReturnsConfiguredSnapshot() async throws {
 
     #expect(authorized)
     #expect(snapshot.steps == 1_500)
+    #expect(snapshot.workoutCount == 1)
+    #expect(snapshot.workoutDurationMinutes == 38)
     #expect(snapshot.fetchedAt == fetchedAt)
 }

@@ -239,6 +239,7 @@ private struct NutritionDestinationGrid: View {
                         DestinationRow(destination: destination)
                     }
                     .buttonStyle(.plain)
+                    .accessibilityIdentifier("nutrition.destination.\(destination.rawValue)")
                 }
             }
         }
