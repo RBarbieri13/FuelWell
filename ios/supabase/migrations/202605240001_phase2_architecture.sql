@@ -179,3 +179,9 @@ create index if not exists meals_user_logged_at_idx on meals (user_id, logged_at
 create index if not exists progress_entries_user_measured_at_idx on progress_entries (user_id, measured_at desc);
 create index if not exists coach_messages_user_created_at_idx on coach_messages (user_id, created_at desc);
 create index if not exists feedback_created_at_idx on feedback (created_at desc);
+
+insert into schema_migrations (version, name)
+values ('202605240001', 'phase2_architecture')
+on conflict (version) do update
+set name = excluded.name,
+    applied_at = schema_migrations.applied_at;

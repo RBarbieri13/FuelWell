@@ -254,3 +254,9 @@ grant execute on function record_subscription_validation_event(
     text,
     jsonb
 ) to service_role;
+
+insert into schema_migrations (version, name)
+values ('202605260002', 'phase7_account_linkage')
+on conflict (version) do update
+set name = excluded.name,
+    applied_at = schema_migrations.applied_at;
