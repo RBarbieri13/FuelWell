@@ -29,3 +29,15 @@ For Moonchild, design-system, PRD-to-UI, design-to-code, design MCP, or UI consi
 - iOS generated tokens live in `ios/Packages/DesignSystem/Sources/DesignSystem/Theme.swift`.
 - Moonchild MCP requires Robert to install/authenticate it from Moonchild account settings. If it is not connected, ask for the Moonchild MCP install command or a Moonchild structured export before claiming design fidelity.
 - After any design-token or UI implementation work, run build/tests plus `ios/scripts/check-theme-drift.sh`, `ios/scripts/check-feature-imports.sh`, and SwiftLint.
+
+# UI quality skill stack
+
+For meaningful FuelWell UI work, use these local skills together instead of relying on generic SwiftUI defaults:
+
+1. Start with Moonchild when the task touches the design system, route structure, PRD-to-UI work, or visual consistency.
+2. Use `impeccable` to critique, polish, typeset, lay out, and harden screens against generic AI UI patterns before shipping.
+3. Use `imagegen-frontend-mobile` when a new iOS screen or major visual flow needs a high-fidelity mobile reference before coding.
+4. Use `imagegen-frontend-web` for shareable web artifacts, planning boards, landing pages, or browser-based prototypes.
+5. Use `image-to-code` when implementing from an approved reference image, screenshot, Moonchild export, or visual mock.
+
+Before opening a UI PR, check that visible chevrons, buttons, and cards either navigate to a real destination or are explicitly disabled/hidden. Do not leave dead affordances in preview screens.
