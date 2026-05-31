@@ -83,13 +83,13 @@ func appFeatureReportsUnavailableArchitectureClients() async {
 
 @MainActor
 @Test
-func disabledAnthropicFeatureStillCountsAsReady() async {
+func disabledAnthropicFeatureReportsNotReady() async {
     let store = TestStore(initialState: AppFeature.State()) {
         AppFeature()
     } withDependencies: {
         $0.analytics = .noop
         $0.anthropicClient = AnthropicClient { _ in
-            throw AnthropicClientError.featureDisabled("ai_meal_plan")
+            throw AnthropicClientError.featureDisabled("coach_chat")
         }
         $0.crashReporter = .noop
         $0.featureFlags = .previewValue
@@ -104,7 +104,7 @@ func disabledAnthropicFeatureStillCountsAsReady() async {
             featureFlagsReady: true,
             healthKitReadReady: true,
             supabaseReady: true,
-            anthropicReady: true
+            anthropicReady: false
         )
     }
 }

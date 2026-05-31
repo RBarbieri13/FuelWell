@@ -50,36 +50,30 @@ type Message =
 
 export function InteractiveCoach() {
   const [activePromptIdx, setActivePromptIdx] = useState(0);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [isTyping, setIsTyping] = useState(false);
+  const [messages, setMessages] = useState<Message[]>(() => buildPromptMessages(0));
+  const [isTyping, setIsTyping] = useState(true);
 
   function handleAsk(idx: number) {
     if (isTyping) return;
     const prompt = PROMPTS[idx];
     setActivePromptIdx(idx);
-    const now = Date.now();
-    setMessages((prev) => [
-      ...prev.slice(-3),
-      { role: "user", content: prompt.question, id: now },
-      { role: "ai", content: prompt.answer, id: now + 1, typed: "" },
-    ]);
+    setMessages((prev) => {
+      const nextID = prev.reduce((maxID, message) => Math.max(maxID, message.id), 0) + 1;
+      return [
+        ...prev.slice(-3),
+        { role: "user", content: prompt.question, id: nextID },
+        { role: "ai", content: prompt.answer, id: nextID + 1, typed: "" },
+      ];
+    });
     setIsTyping(true);
   }
-
-  // Auto-ask the first prompt on mount so the UI is populated immediately
-  useEffect(() => {
-    handleAsk(0);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   // Type out the latest AI message character by character
   useEffect(() => {
     const last = messages[messages.length - 1];
     if (!last || last.role !== "ai") return;
-    if (last.typed === last.content) {
-      setIsTyping(false);
-      return;
-    }
+    if (last.typed === last.content) return;
+
     const nextLen = Math.min(last.content.length, last.typed.length + 2);
     const timeout = setTimeout(() => {
       setMessages((prev) => {
@@ -91,6 +85,9 @@ export function InteractiveCoach() {
         }
         return copy;
       });
+      if (nextLen === last.content.length) {
+        setIsTyping(false);
+      }
     }, 14);
     return () => clearTimeout(timeout);
   }, [messages]);
@@ -243,4 +240,12 @@ export function InteractiveCoach() {
       </div>
     </div>
   );
+}
+
+function buildPromptMessages(idx: number): Message[] {
+  const prompt = PROMPTS[idx];
+  return [
+    { role: "user", content: prompt.question, id: 1 },
+    { role: "ai", content: prompt.answer, id: 2, typed: "" },
+  ];
 }

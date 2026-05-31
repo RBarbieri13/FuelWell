@@ -62,6 +62,7 @@ extension AnthropicClient: DependencyKey {
 
     public static func live(
         endpoint: URL? = URL(string: ProcessInfo.processInfo.environment["FUELWELL_ANTHROPIC_PROXY_URL"] ?? ""),
+        proxySecret: String? = ProcessInfo.processInfo.environment["FUELWELL_COACH_PROXY_SECRET"],
         featureFlags: FeatureFlagClient = .liveValue,
         session: URLSession = .shared
     ) -> AnthropicClient {
@@ -74,7 +75,12 @@ extension AnthropicClient: DependencyKey {
                 throw AnthropicClientError.featureDisabled(request.featureFlag)
             }
 
-            return try await LiveAnthropicClient(endpoint: endpoint, session: session).complete(request)
+            return try await LiveAnthropicClient(
+                endpoint: endpoint,
+                proxySecret: proxySecret,
+                session: session
+            )
+            .complete(request)
         }
     }
 }
@@ -88,10 +94,12 @@ extension DependencyValues {
 
 private actor LiveAnthropicClient {
     private let endpoint: URL
+    private let proxySecret: String?
     private let session: URLSession
 
-    init(endpoint: URL, session: URLSession = .shared) {
+    init(endpoint: URL, proxySecret: String?, session: URLSession = .shared) {
         self.endpoint = endpoint
+        self.proxySecret = proxySecret
         self.session = session
     }
 
@@ -99,11 +107,20 @@ private actor LiveAnthropicClient {
         var urlRequest = URLRequest(url: self.endpoint)
         urlRequest.httpMethod = "POST"
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        if let proxySecret, !proxySecret.isEmpty {
+            urlRequest.setValue(proxySecret, forHTTPHeaderField: "x-fuelwell-coach-secret")
+        }
         urlRequest.httpBody = try JSONEncoder().encode(AnthropicProxyBody(request: request))
 
         do {
             let (data, response) = try await self.session.data(for: urlRequest)
-            guard let httpResponse = response as? HTTPURLResponse, (200..<300).contains(httpResponse.statusCode) else {
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw AnthropicClientError.invalidResponse
+            }
+            if httpResponse.statusCode == 403 {
+                throw AnthropicClientError.featureDisabled(request.featureFlag)
+            }
+            guard (200..<300).contains(httpResponse.statusCode) else {
                 throw AnthropicClientError.invalidResponse
             }
 
