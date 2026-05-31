@@ -8,6 +8,39 @@ import HealthKitClient
 import SupabaseClient
 import Testing
 
+@Test
+func launchDependencyPlanDefaultsToPreview() {
+    let plan = FuelWellLaunchDependencyPlan.resolve(environment: [:])
+
+    #expect(plan.backend == .preview)
+    #expect(plan.healthKit == .preview)
+}
+
+@Test(arguments: ["1", "true", "TRUE", "yes", "live", "enabled"])
+func launchDependencyPlanAcceptsTruthyLiveBackendFlag(value: String) {
+    let plan = FuelWellLaunchDependencyPlan.resolve(
+        environment: ["FUELWELL_USE_LIVE_BACKEND": value]
+    )
+
+    #expect(plan.backend == .live)
+
+    #if targetEnvironment(simulator)
+    #expect(plan.healthKit == .preview)
+    #else
+    #expect(plan.healthKit == .live)
+    #endif
+}
+
+@Test(arguments: ["", "0", "false", "preview", "disabled"])
+func launchDependencyPlanRejectsFalsyLiveBackendFlag(value: String) {
+    let plan = FuelWellLaunchDependencyPlan.resolve(
+        environment: ["FUELWELL_USE_LIVE_BACKEND": value]
+    )
+
+    #expect(plan.backend == .preview)
+    #expect(plan.healthKit == .preview)
+}
+
 @MainActor
 @Test
 func appFeatureLoadsThemeOnAppear() async {
