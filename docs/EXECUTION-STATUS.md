@@ -4,9 +4,9 @@ Updated: 2026-05-31
 
 ## Current Workstream
 
-**W5 - AI Coach and Proactive Coaching Brain**
+**W6 - Feature Completeness: Dashboard, Progress, Activity, Plans, Menu**
 
-Current branch: `feature/w5-coach-brain-foundation`
+Current branch: `feature/w6-feature-completeness`
 
 ## Baseline Re-Verification
 
@@ -70,4 +70,6 @@ These are required before the live backend acceptance gates can pass end-to-end:
 
 ## Next
 
-Continue W5 with live proxy end-to-end simulator testing, then expand proactive coaching triggers beyond the local macro-gap harness.
+PR #81 (`feature/w5-coach-brain-foundation`) is clean and ready to merge first.
+
+Continue W6 by replacing remaining static Dashboard/Progress/Activity/Menu affordances with real destinations, closing the parity matrix, and trailing quality tests behind each surface.

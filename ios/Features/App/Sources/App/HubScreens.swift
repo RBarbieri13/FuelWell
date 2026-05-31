@@ -17,22 +17,22 @@ struct ExerciseActivityView: View {
                     .init(title: "Wed", detail: "Lower body planned", icon: "calendar")
                 ]
             )
-            DashboardSection(
-                title: "Training tools",
-                items: [
-                    .init(
-                        title: "Workout Log",
-                        detail: "Record trainer or solo sessions",
-                        icon: "list.bullet.clipboard"
-                    ),
-                    .init(
-                        title: "Activity Tracker",
-                        detail: "Steps, active minutes, energy",
-                        icon: "waveform.path.ecg"
-                    ),
-                    .init(title: "Workout Plans", detail: "Next sessions matched to recovery", icon: "dumbbell")
-                ]
-            )
+            VStack(alignment: .leading, spacing: Theme.app.spacing.md) {
+                Text("Training tools")
+                    .font(.custom(Theme.app.font.display, size: Theme.app.text.title.size))
+                    .fontWeight(.bold)
+                VStack(spacing: Theme.app.spacing.sm) {
+                    ForEach(ActivityTool.allCases) { tool in
+                        NavigationLink {
+                            ActivityToolDetailView(tool: tool)
+                        } label: {
+                            PhaseNavigationRow(item: tool.row)
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityIdentifier("activity.tool.\(tool.accessibilityID)")
+                    }
+                }
+            }
         }
     }
 }
@@ -45,22 +45,40 @@ struct ProgressOverviewView: View {
                 title: "Progress is steady",
                 detail: "Weight trend and macro adherence point in the same direction."
             )
-            DashboardSection(
+            ProgressNavigationSection(
                 title: "Health score detail",
-                items: [
-                    .init(title: "Nutrition", detail: "82 · protein consistency is improving", icon: "fork.knife"),
-                    .init(title: "Activity", detail: "76 · active minutes are stable", icon: "figure.run"),
-                    .init(title: "Recovery", detail: "Unlocks with wearable data", icon: "heart")
-                ]
+                topics: [.nutrition, .activity, .recovery]
             )
-            DashboardSection(
+            ProgressNavigationSection(
                 title: "Tracking",
-                items: [
-                    .init(title: "Macro adherence", detail: "82% this week", icon: "chart.bar.fill"),
-                    .init(title: "Body photos", detail: "Add weekly check-in", icon: "camera.fill"),
-                    .init(title: "Habits", detail: "Last 14 days · 4 habits", icon: "circle.grid.3x3.fill")
-                ]
+                topics: [.macroAdherence, .bodyPhotos, .habits]
             )
+        }
+    }
+}
+
+private struct ProgressNavigationSection: View {
+    let title: String
+    let topics: [ProgressTopic]
+
+    @Environment(\.theme) private var theme
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: self.theme.spacing.md) {
+            Text(self.title)
+                .font(.custom(self.theme.font.display, size: self.theme.text.title.size))
+                .fontWeight(.bold)
+            VStack(spacing: self.theme.spacing.sm) {
+                ForEach(self.topics) { topic in
+                    NavigationLink {
+                        ProgressDetailView(topic: topic)
+                    } label: {
+                        PhaseNavigationRow(item: topic.row)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityIdentifier("progress.topic.\(topic.accessibilityID)")
+                }
+            }
         }
     }
 }

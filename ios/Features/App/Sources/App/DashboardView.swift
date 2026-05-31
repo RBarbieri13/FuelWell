@@ -20,20 +20,11 @@ struct DashboardView: View {
             VStack(alignment: .leading, spacing: self.theme.spacing.lg) {
                 HealthScoreHero()
                 InflowsOutflowsCard(snapshot: self.snapshot)
-                VerdictCard(snapshot: self.snapshot)
+                VerdictCard(snapshot: self.snapshot) {
+                    self.store.send(.tabSelected(.meals))
+                }
                 ProactiveNudgeCard()
-                DashboardSection(
-                    title: "Today",
-                    items: [
-                        .init(title: "Meals", detail: "2 logged, dinner still open", icon: "fork.knife"),
-                        .init(title: "Activity", detail: "34 active minutes, walk after dinner", icon: "figure.walk"),
-                        .init(
-                            title: "Progress",
-                            detail: "Weekly adherence is holding at 82%",
-                            icon: "chart.line.uptrend.xyaxis"
-                        )
-                    ]
-                )
+                DashboardShortcutSection(store: self.store)
             }
             .padding(self.theme.spacing.md)
         }
@@ -151,6 +142,7 @@ private struct InflowsOutflowsCard: View {
 
 private struct VerdictCard: View {
     let snapshot: MacroDaySnapshot
+    let onLogMeal: () -> Void
     @Environment(\.theme) private var theme
 
     var body: some View {
@@ -166,7 +158,7 @@ private struct VerdictCard: View {
                 .font(.custom(self.theme.font.body, size: self.theme.text.bodyLG.size))
                 .fontWeight(.semibold)
                 .foregroundStyle(self.theme.color.text.body.color)
-            Button("Log Meal", systemImage: "camera.fill") {}
+            Button("Log Meal", systemImage: "camera.fill", action: self.onLogMeal)
                 .buttonStyle(.borderedProminent)
                 .tint(self.theme.color.primary.accent.color)
                 .fontWeight(.bold)
@@ -175,6 +167,49 @@ private struct VerdictCard: View {
         .accessibilityElement(children: .contain)
         .accessibilityLabel("Next action")
         .qualityID(QualityIdentifier.dashboardVerdict)
+    }
+}
+
+private struct DashboardShortcutSection: View {
+    @Bindable var store: StoreOf<AppFeature>
+    @Environment(\.theme) private var theme
+
+    private let shortcuts: [(tab: AppTab, item: PhaseRowItem)] = [
+        (
+            .meals,
+            .init(title: "Meals", detail: "2 logged, dinner still open", icon: "fork.knife")
+        ),
+        (
+            .exercise,
+            .init(title: "Activity", detail: "34 active minutes, walk after dinner", icon: "figure.walk")
+        ),
+        (
+            .progress,
+            .init(
+                title: "Progress",
+                detail: "Weekly adherence is holding at 82%",
+                icon: "chart.line.uptrend.xyaxis"
+            )
+        )
+    ]
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: self.theme.spacing.md) {
+            Text("Today")
+                .font(.custom(self.theme.font.display, size: self.theme.text.title.size))
+                .fontWeight(.bold)
+            VStack(spacing: self.theme.spacing.sm) {
+                ForEach(self.shortcuts, id: \.tab) { shortcut in
+                    Button {
+                        self.store.send(.tabSelected(shortcut.tab))
+                    } label: {
+                        PhaseNavigationRow(item: shortcut.item)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityIdentifier("dashboard.shortcut.\(shortcut.tab.rawValue)")
+                }
+            }
+        }
     }
 }
 

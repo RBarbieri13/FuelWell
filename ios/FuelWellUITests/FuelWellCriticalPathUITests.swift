@@ -116,6 +116,44 @@ final class FuelWellCriticalPathUITests: XCTestCase {
         XCTAssertTrue(app.navigationBars["Progress"].waitForExistence(timeout: 2))
     }
 
+    func testDashboardShortcutsSwitchToRealTabs() {
+        let app = self.launchApp()
+        defer { app.terminate() }
+
+        app.buttons["dashboard.shortcut.meals"].tap()
+        XCTAssertTrue(app.navigationBars["Meals & Nutrition"].waitForExistence(timeout: 2))
+
+        app.tabBars.buttons["Home"].tap()
+        XCTAssertTrue(app.navigationBars["Dashboard"].waitForExistence(timeout: 2))
+
+        app.buttons["dashboard.shortcut.exercise"].tap()
+        XCTAssertTrue(app.navigationBars["Exercise & Activity"].waitForExistence(timeout: 2))
+
+        app.tabBars.buttons["Home"].tap()
+        XCTAssertTrue(app.navigationBars["Dashboard"].waitForExistence(timeout: 2))
+
+        app.buttons["dashboard.shortcut.progress"].tap()
+        XCTAssertTrue(app.navigationBars["Progress"].waitForExistence(timeout: 2))
+    }
+
+    func testProgressAndActivityRowsOpenDetailPages() {
+        let app = self.launchApp()
+        defer { app.terminate() }
+
+        app.tabBars.buttons["Progress"].tap()
+        XCTAssertTrue(app.navigationBars["Progress"].waitForExistence(timeout: 2))
+        app.buttons["progress.topic.macro-adherence"].tap()
+        XCTAssertTrue(app.navigationBars["Macro Adherence"].waitForExistence(timeout: 2))
+        XCTAssertTrue(app.staticTexts["82% this week"].exists)
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+
+        app.tabBars.buttons["Exercise"].tap()
+        XCTAssertTrue(app.navigationBars["Exercise & Activity"].waitForExistence(timeout: 2))
+        app.buttons["activity.tool.workout-log"].tap()
+        XCTAssertTrue(app.navigationBars["Workout Log"].waitForExistence(timeout: 2))
+        XCTAssertTrue(app.staticTexts["Record the session without turning FuelWell into a workout app"].exists)
+    }
+
     private func launchApp() -> XCUIApplication {
         self.continueAfterFailure = false
 
