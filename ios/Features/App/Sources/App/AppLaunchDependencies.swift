@@ -70,11 +70,13 @@ public func prepareFuelWellDependencies(plan: FuelWellLaunchDependencyPlan) {
         case .preview:
             $0.anthropicClient = .previewValue
             $0.featureFlags = .previewValue
+            $0.supabaseAuth = .previewValue
             $0.subscriptionClient = .previewValue
             $0.supabaseDatabase = .previewValue
         case .live:
             $0.anthropicClient = .liveValue
             $0.featureFlags = .liveValue
+            $0.supabaseAuth = .liveValue
             $0.subscriptionClient = .liveValue
             $0.supabaseDatabase = .liveValue
         }

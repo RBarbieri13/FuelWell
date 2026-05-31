@@ -1,5 +1,6 @@
 import ComposableArchitecture
 import DesignSystem
+import Onboarding
 import SwiftUI
 
 public struct AppCoordinator: View {
@@ -14,6 +15,11 @@ public struct AppCoordinator: View {
             switch self.store.phase {
             case .splash:
                 SplashView(store: self.store)
+
+            case .onboarding:
+                OnboardingView(
+                    store: self.store.scope(state: \.onboarding, action: \.onboarding)
+                )
 
             case .mainTabs:
                 RootTabView(store: self.store)

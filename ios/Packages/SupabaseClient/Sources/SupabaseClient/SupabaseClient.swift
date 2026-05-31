@@ -45,17 +45,83 @@ public struct Profile: Codable, Equatable, Identifiable, Sendable {
     public var id: UUID
     public var displayName: String?
     public var goal: String?
+    public var bodyBaseline: BodyBaseline?
+    public var dietaryConstraints: DietaryConstraints?
+    public var lifestyle: LifestyleProfile?
+    public var onboardingCompletedAt: Date?
 
-    public init(id: UUID, displayName: String? = nil, goal: String? = nil) {
+    public init(
+        id: UUID,
+        displayName: String? = nil,
+        goal: String? = nil,
+        bodyBaseline: BodyBaseline? = nil,
+        dietaryConstraints: DietaryConstraints? = nil,
+        lifestyle: LifestyleProfile? = nil,
+        onboardingCompletedAt: Date? = nil
+    ) {
         self.id = id
         self.displayName = displayName
         self.goal = goal
+        self.bodyBaseline = bodyBaseline
+        self.dietaryConstraints = dietaryConstraints
+        self.lifestyle = lifestyle
+        self.onboardingCompletedAt = onboardingCompletedAt
     }
 
     enum CodingKeys: String, CodingKey {
         case id
         case displayName = "display_name"
         case goal
+        case bodyBaseline = "body_baseline"
+        case dietaryConstraints = "dietary_constraints"
+        case lifestyle
+        case onboardingCompletedAt = "onboarding_completed_at"
+    }
+}
+
+public struct BodyBaseline: Codable, Equatable, Sendable {
+    public var heightInches: Int?
+    public var weightPounds: Double?
+    public var activityLevel: String
+
+    public init(heightInches: Int? = nil, weightPounds: Double? = nil, activityLevel: String) {
+        self.heightInches = heightInches
+        self.weightPounds = weightPounds
+        self.activityLevel = activityLevel
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case heightInches = "height_inches"
+        case weightPounds = "weight_pounds"
+        case activityLevel = "activity_level"
+    }
+}
+
+public struct DietaryConstraints: Codable, Equatable, Sendable {
+    public var preferences: [String]
+    public var allergies: [String]
+
+    public init(preferences: [String] = [], allergies: [String] = []) {
+        self.preferences = preferences
+        self.allergies = allergies
+    }
+}
+
+public struct LifestyleProfile: Codable, Equatable, Sendable {
+    public var workoutsPerWeek: Int
+    public var sleepGoalHours: Double
+    public var mealPrepStyle: String
+
+    public init(workoutsPerWeek: Int, sleepGoalHours: Double, mealPrepStyle: String) {
+        self.workoutsPerWeek = workoutsPerWeek
+        self.sleepGoalHours = sleepGoalHours
+        self.mealPrepStyle = mealPrepStyle
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case workoutsPerWeek = "workouts_per_week"
+        case sleepGoalHours = "sleep_goal_hours"
+        case mealPrepStyle = "meal_prep_style"
     }
 }
 
@@ -121,6 +187,7 @@ public struct FeedbackReport: Codable, Equatable, Identifiable, Sendable {
 public enum SupabaseClientError: Error, Equatable, Sendable {
     case disabled
     case invalidResponse
+    case invalidCredentials
     case missingConfiguration
     case transport(String)
     case unimplemented

@@ -27,7 +27,7 @@ public struct RootTabView: View {
                                 }
                             )
                         } else if tab == .home {
-                            DashboardView()
+                            DashboardView(store: self.store)
                         } else if tab == .coach {
                             CoachChatView()
                         } else if tab == .exercise {

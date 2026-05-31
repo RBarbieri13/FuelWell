@@ -5,6 +5,7 @@ import CrashReporting
 import DesignSystem
 import Foundation
 import HealthKitClient
+import Onboarding
 import SupabaseClient
 
 @Reducer
@@ -14,6 +15,7 @@ public struct AppFeature: Sendable {
     @Dependency(\.crashReporter) private var crashReporter
     @Dependency(\.featureFlags) private var featureFlags
     @Dependency(\.healthKit) private var healthKit
+    @Dependency(\.supabaseAuth) private var supabaseAuth
     @Dependency(\.supabaseDatabase) private var supabaseDatabase
 
     public init() {}
@@ -23,17 +25,29 @@ public struct AppFeature: Sendable {
         public var phase: Phase
         public var theme: Theme
         public var architecture: ArchitectureState
+        public var launchSessionChecked: Bool
+        public var minimumSplashElapsed: Bool
+        public var currentUser: SupabaseUser?
+        public var onboarding: OnboardingFeature.State
         public var selectedTab: AppTab
 
         public init(
             phase: Phase = .splash,
             theme: Theme = .app,
             architecture: ArchitectureState = .init(),
+            launchSessionChecked: Bool = false,
+            minimumSplashElapsed: Bool = false,
+            currentUser: SupabaseUser? = nil,
+            onboarding: OnboardingFeature.State = .init(),
             selectedTab: AppTab = .home
         ) {
             self.phase = phase
             self.theme = theme
             self.architecture = architecture
+            self.launchSessionChecked = launchSessionChecked
+            self.minimumSplashElapsed = minimumSplashElapsed
+            self.currentUser = currentUser
+            self.onboarding = onboarding
             self.selectedTab = selectedTab
         }
     }
@@ -59,24 +73,40 @@ public struct AppFeature: Sendable {
 
     public enum Phase: Equatable {
         case splash
+        case onboarding
         case mainTabs
+    }
+
+    public enum AccountAuthResult: Equatable {
+        case success
+        case failure(SupabaseClientError)
     }
 
     public enum Action: Equatable {
         case onAppear
         case architectureChecked(ArchitectureState)
+        case launchSessionChecked(SupabaseUser?)
         case themeLoaded(Theme)
         case minimumSplashElapsed
+        case onboarding(OnboardingFeature.Action)
+        case accountSignOutTapped
+        case accountDeleteTapped
+        case accountAuthFinished(AccountAuthResult)
         case tabSelected(AppTab)
     }
 
     public var body: some ReducerOf<Self> {
+        Scope(state: \.onboarding, action: \.onboarding) {
+            OnboardingFeature()
+        }
+
         Reduce { state, action in
             switch action {
             case .onAppear:
                 state.theme = .app
                 return .run { send in
                     await send(.themeLoaded(.app))
+                    await send(.launchSessionChecked(await self.restoreLaunchUser()))
                     await send(.architectureChecked(await self.checkArchitecture()))
                 }
 
@@ -84,12 +114,62 @@ public struct AppFeature: Sendable {
                 state.architecture = architecture
                 return .none
 
+            case let .launchSessionChecked(user):
+                state.launchSessionChecked = true
+                state.currentUser = user
+                state.onboarding.currentUser = user
+                self.routeAfterLaunch(state: &state)
+                return .none
+
             case let .themeLoaded(theme):
                 state.theme = theme
                 return .none
 
             case .minimumSplashElapsed:
+                state.minimumSplashElapsed = true
+                self.routeAfterLaunch(state: &state)
+                return .none
+
+            case let .onboarding(.delegate(.completed(user))):
+                state.currentUser = user
                 state.phase = .mainTabs
+                return .none
+
+            case .onboarding:
+                return .none
+
+            case .accountSignOutTapped:
+                return .run { send in
+                    do {
+                        try await self.supabaseAuth.signOut()
+                        await send(.accountAuthFinished(.success))
+                    } catch let error as SupabaseClientError {
+                        await send(.accountAuthFinished(.failure(error)))
+                    } catch {
+                        await send(.accountAuthFinished(.failure(.transport(error.localizedDescription))))
+                    }
+                }
+
+            case .accountDeleteTapped:
+                return .run { send in
+                    do {
+                        try await self.supabaseAuth.deleteAccount()
+                        await send(.accountAuthFinished(.success))
+                    } catch let error as SupabaseClientError {
+                        await send(.accountAuthFinished(.failure(error)))
+                    } catch {
+                        await send(.accountAuthFinished(.failure(.transport(error.localizedDescription))))
+                    }
+                }
+
+            case .accountAuthFinished(.success):
+                state.currentUser = nil
+                state.onboarding = OnboardingFeature.State()
+                state.phase = .onboarding
+                state.selectedTab = .home
+                return .none
+
+            case .accountAuthFinished(.failure):
                 return .none
 
             case let .tabSelected(tab):
@@ -99,6 +179,26 @@ public struct AppFeature: Sendable {
                 }
             }
         }
+    }
+
+    private func routeAfterLaunch(state: inout State) {
+        guard state.minimumSplashElapsed, state.launchSessionChecked else {
+            return
+        }
+
+        state.phase = state.currentUser == nil ? .onboarding : .mainTabs
+    }
+
+    private func restoreLaunchUser() async -> SupabaseUser? {
+        do {
+            if let session = try await self.supabaseAuth.currentSession() {
+                return session.user
+            }
+        } catch {
+            return try? await self.supabaseDatabase.currentUser()
+        }
+
+        return try? await self.supabaseDatabase.currentUser()
     }
 
     private func checkArchitecture() async -> ArchitectureState {

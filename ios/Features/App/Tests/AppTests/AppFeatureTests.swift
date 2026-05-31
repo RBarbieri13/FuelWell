@@ -4,9 +4,16 @@ import AnthropicClient
 import ComposableArchitecture
 import CrashReporting
 import DesignSystem
+import Foundation
 import HealthKitClient
+import Onboarding
 import SupabaseClient
 import Testing
+
+private let appTestUser = SupabaseUser(
+    id: UUID(uuid: (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1)),
+    email: "preview@fuelwell.app"
+)
 
 @Test
 func launchDependencyPlanDefaultsToPreview() {
@@ -52,11 +59,19 @@ func appFeatureLoadsThemeOnAppear() async {
         $0.crashReporter = .noop
         $0.featureFlags = .previewValue
         $0.healthKit = .previewValue
+        $0.supabaseAuth = SupabaseAuthClient.inMemory(
+            session: SupabaseSession(user: appTestUser, accessToken: "preview-token")
+        )
         $0.supabaseDatabase = .previewValue
     }
 
     await store.send(.onAppear)
     await store.receive(.themeLoaded(.app))
+    await store.receive(.launchSessionChecked(appTestUser)) {
+        $0.launchSessionChecked = true
+        $0.currentUser = appTestUser
+        $0.onboarding.currentUser = appTestUser
+    }
     await store.receive(\.architectureChecked) {
         $0.architecture = AppFeature.ArchitectureState(
             featureFlagsReady: true,
@@ -93,6 +108,13 @@ func appFeatureReportsUnavailableArchitectureClients() async {
             todaySnapshot: { throw HealthKitClientError.notAvailable },
             sevenDaySleepOnsetMedian: { throw HealthKitClientError.notAvailable }
         )
+        $0.supabaseAuth = SupabaseAuthClient(
+            currentSession: { throw SupabaseClientError.missingConfiguration },
+            signUp: { _, _ in throw SupabaseClientError.missingConfiguration },
+            signIn: { _, _ in throw SupabaseClientError.missingConfiguration },
+            signOut: { throw SupabaseClientError.missingConfiguration },
+            deleteAccount: { throw SupabaseClientError.missingConfiguration }
+        )
         $0.supabaseDatabase = SupabaseDatabaseClient(
             currentUser: { throw SupabaseClientError.missingConfiguration },
             fetchProfile: { _ in throw SupabaseClientError.missingConfiguration },
@@ -104,6 +126,9 @@ func appFeatureReportsUnavailableArchitectureClients() async {
 
     await store.send(.onAppear)
     await store.receive(.themeLoaded(.app))
+    await store.receive(.launchSessionChecked(nil)) {
+        $0.launchSessionChecked = true
+    }
     await store.receive(\.architectureChecked) {
         $0.architecture = AppFeature.ArchitectureState(
             featureFlagsReady: false,
@@ -127,11 +152,19 @@ func disabledAnthropicFeatureReportsNotReady() async {
         $0.crashReporter = .noop
         $0.featureFlags = .previewValue
         $0.healthKit = .previewValue
+        $0.supabaseAuth = SupabaseAuthClient.inMemory(
+            session: SupabaseSession(user: appTestUser, accessToken: "preview-token")
+        )
         $0.supabaseDatabase = .previewValue
     }
 
     await store.send(.onAppear)
     await store.receive(.themeLoaded(.app))
+    await store.receive(.launchSessionChecked(appTestUser)) {
+        $0.launchSessionChecked = true
+        $0.currentUser = appTestUser
+        $0.onboarding.currentUser = appTestUser
+    }
     await store.receive(\.architectureChecked) {
         $0.architecture = AppFeature.ArchitectureState(
             featureFlagsReady: true,
@@ -162,11 +195,19 @@ func launchDependencyFailureIsCapturedForCrashDiagnostics() async {
         )
         $0.featureFlags = .previewValue
         $0.healthKit = .previewValue
+        $0.supabaseAuth = SupabaseAuthClient.inMemory(
+            session: SupabaseSession(user: appTestUser, accessToken: "preview-token")
+        )
         $0.supabaseDatabase = .previewValue
     }
 
     await store.send(.onAppear)
     await store.receive(.themeLoaded(.app))
+    await store.receive(.launchSessionChecked(appTestUser)) {
+        $0.launchSessionChecked = true
+        $0.currentUser = appTestUser
+        $0.onboarding.currentUser = appTestUser
+    }
     await store.receive(\.architectureChecked) {
         $0.architecture = AppFeature.ArchitectureState(
             featureFlagsReady: true,
@@ -186,12 +227,90 @@ func launchDependencyFailureIsCapturedForCrashDiagnostics() async {
 @MainActor
 @Test
 func splashCompletesIntoMainTabs() async {
-    let store = TestStore(initialState: AppFeature.State()) {
+    let store = TestStore(initialState: AppFeature.State(
+        launchSessionChecked: true,
+        currentUser: appTestUser
+    )) {
         AppFeature()
     }
 
     await store.send(.minimumSplashElapsed) {
+        $0.minimumSplashElapsed = true
         $0.phase = .mainTabs
+    }
+}
+
+@MainActor
+@Test
+func splashRoutesUnauthenticatedUsersToOnboarding() async {
+    let store = TestStore(initialState: AppFeature.State(launchSessionChecked: true)) {
+        AppFeature()
+    }
+
+    await store.send(.minimumSplashElapsed) {
+        $0.minimumSplashElapsed = true
+        $0.phase = .onboarding
+    }
+}
+
+@MainActor
+@Test
+func onboardingCompletionEntersMainTabs() async {
+    let store = TestStore(initialState: AppFeature.State(phase: .onboarding)) {
+        AppFeature()
+    }
+
+    await store.send(.onboarding(.delegate(.completed(appTestUser)))) {
+        $0.currentUser = appTestUser
+        $0.phase = .mainTabs
+    }
+}
+
+@MainActor
+@Test
+func accountSignOutRoutesBackToOnboarding() async {
+    let store = TestStore(initialState: AppFeature.State(
+        phase: .mainTabs,
+        currentUser: appTestUser,
+        selectedTab: .progress
+    )) {
+        AppFeature()
+    } withDependencies: {
+        $0.supabaseAuth = SupabaseAuthClient.inMemory(
+            session: SupabaseSession(user: appTestUser, accessToken: "preview-token")
+        )
+    }
+
+    await store.send(.accountSignOutTapped)
+    await store.receive(.accountAuthFinished(.success)) {
+        $0.currentUser = nil
+        $0.onboarding = OnboardingFeature.State()
+        $0.phase = .onboarding
+        $0.selectedTab = .home
+    }
+}
+
+@MainActor
+@Test
+func accountDeleteRoutesBackToOnboarding() async {
+    let store = TestStore(initialState: AppFeature.State(
+        phase: .mainTabs,
+        currentUser: appTestUser,
+        selectedTab: .coach
+    )) {
+        AppFeature()
+    } withDependencies: {
+        $0.supabaseAuth = SupabaseAuthClient.inMemory(
+            session: SupabaseSession(user: appTestUser, accessToken: "preview-token")
+        )
+    }
+
+    await store.send(.accountDeleteTapped)
+    await store.receive(.accountAuthFinished(.success)) {
+        $0.currentUser = nil
+        $0.onboarding = OnboardingFeature.State()
+        $0.phase = .onboarding
+        $0.selectedTab = .home
     }
 }
 
