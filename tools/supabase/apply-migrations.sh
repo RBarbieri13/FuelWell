@@ -35,6 +35,10 @@ if [[ ! -d "${migrations_dir}" ]]; then
   exit 2
 fi
 
+checksum_for() {
+  shasum -a 256 "$1" | awk '{print $1}'
+}
+
 if [[ -f "${env_file}" ]]; then
   set -a
   # shellcheck source=/dev/null
@@ -75,6 +79,7 @@ psql_base=(psql "${db_url}" -v ON_ERROR_STOP=1 -X -q)
 
 ensure_tracking_table() {
   "${psql_base[@]}" -c "create table if not exists public.schema_migrations (version text primary key, name text not null, checksum text, applied_at timestamptz not null default now());" >/dev/null
+  "${psql_base[@]}" -c "alter table public.schema_migrations add column if not exists checksum text;" >/dev/null
 }
 
 is_applied() {
@@ -84,13 +89,24 @@ is_applied() {
   [[ "${result}" == "1" ]]
 }
 
+applied_checksum() {
+  local version="$1"
+  "${psql_base[@]}" -At -c "select coalesce(checksum, '') from public.schema_migrations where version = '${version}' limit 1;" 2>/dev/null || true
+}
+
+record_checksum() {
+  local version="$1"
+  local checksum="$2"
+  "${psql_base[@]}" -c "update public.schema_migrations set checksum = '${checksum}' where version = '${version}';" >/dev/null
+}
+
 echo "Supabase target: ${target}"
 echo "Migration directory: ${migrations_dir}"
 echo
 
 if [[ -z "${db_url}" ]]; then
   for migration in "${migrations[@]}"; do
-    printf 'planned  %s\n' "$(basename "${migration}")"
+    printf 'planned  %s  checksum=%s\n' "$(basename "${migration}")" "$(checksum_for "${migration}")"
   done
   echo
   echo "Plan only. Set FUELWELL_SUPABASE_DB_URL to compare against schema_migrations or apply."
@@ -103,11 +119,23 @@ pending=()
 for migration in "${migrations[@]}"; do
   filename="$(basename "${migration}")"
   version="${filename%%_*}"
+  expected_checksum="$(checksum_for "${migration}")"
   if is_applied "${version}"; then
-    printf 'applied  %s\n' "${filename}"
+    current_checksum="$(applied_checksum "${version}")"
+    if [[ -z "${current_checksum}" ]]; then
+      printf 'applied  %s  checksum=%s  tracked=missing\n' "${filename}" "${expected_checksum}"
+    elif [[ "${current_checksum}" == "${expected_checksum}" ]]; then
+      printf 'applied  %s  checksum=%s\n' "${filename}" "${expected_checksum}"
+    else
+      printf 'changed  %s  expected=%s  database=%s\n' "${filename}" "${expected_checksum}" "${current_checksum}"
+      if [[ "${command_name}" == "apply" ]]; then
+        echo "Refusing apply because an already-applied migration checksum differs from the repository file." >&2
+        exit 4
+      fi
+    fi
   else
     pending+=("${migration}")
-    printf 'pending  %s\n' "${filename}"
+    printf 'pending  %s  checksum=%s\n' "${filename}" "${expected_checksum}"
   fi
 done
 
@@ -128,8 +156,11 @@ echo "Applying ${#pending[@]} pending migration(s)."
 
 for migration in "${pending[@]}"; do
   filename="$(basename "${migration}")"
+  version="${filename%%_*}"
+  expected_checksum="$(checksum_for "${migration}")"
   echo "Applying ${filename}"
   "${psql_base[@]}" -f "${migration}"
+  record_checksum "${version}" "${expected_checksum}"
 done
 
 echo
