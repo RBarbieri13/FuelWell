@@ -31,6 +31,9 @@ let package = Package(
                 "SupabaseClient",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
             ],
+            resources: [
+                .process("Resources")
+            ],
             swiftSettings: [
                 .enableExperimentalFeature("StrictConcurrency"),
                 .enableUpcomingFeature("ExistentialAny")

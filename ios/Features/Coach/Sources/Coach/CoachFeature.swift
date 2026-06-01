@@ -153,14 +153,35 @@ public struct CoachFeature: Sendable {
                 return .none
 
             case .macroGapDetected:
-                let message = "A protein-forward dinner keeps the day flexible."
                 return .run { send in
+                    guard try await self.featureFlags.isEnabled("coach_chat"),
+                          try await self.featureFlags.isEnabled("proactive_nudges") else {
+                        await send(.notificationScheduled(.failure(.featureDisabled)))
+                        return
+                    }
+
+                    let meals = try await self.nutritionRepository.recentEntries(limit: 5)
+                    let healthSnapshot = try? await self.healthKit.todaySnapshot()
+                    let context = CoachContextBuilder.build(
+                        recentMeals: meals,
+                        healthSnapshot: healthSnapshot,
+                        generatedAt: self.date.now
+                    )
+                    guard let nudge = CoachContextBuilder.proactiveMacroGapNudge(context: context) else {
+                        await send(.notificationScheduled(.notNeeded))
+                        return
+                    }
+                    guard !CoachSafetyContract.containsForbiddenLanguage(nudge.body) else {
+                        await send(.notificationScheduled(.failure(.unsafeLanguage)))
+                        return
+                    }
+
                     let isAuthorized = try await self.proactiveCoaching.requestAuthorization()
                     guard isAuthorized else {
                         await send(.notificationScheduled(.failure(.authorizationDenied)))
                         return
                     }
-                    try await self.proactiveCoaching.scheduleMacroGapNudge(message)
+                    try await self.proactiveCoaching.schedule(nudge)
                     await send(.notificationScheduled(.success))
                 } catch: { error, send in
                     await send(
@@ -174,8 +195,11 @@ public struct CoachFeature: Sendable {
                 state.banner = .nudgeScheduled
                 return .none
 
-            case .notificationScheduled(.failure):
-                state.banner = .offline
+            case .notificationScheduled(.notNeeded):
+                return .none
+
+            case let .notificationScheduled(.failure(error)):
+                state.banner = error == .featureDisabled ? .featureDisabled : .offline
                 return .none
             }
         }
@@ -201,6 +225,7 @@ public struct CoachFeature: Sendable {
 
 public enum ProactiveScheduleResult: Equatable, Sendable {
     case success
+    case notNeeded
     case failure(ProactiveCoachingError)
 }
 
