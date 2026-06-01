@@ -27,7 +27,7 @@ This matrix maps the locked iOS mockup files to their owning implementation surf
 | 19-grocery-list | Nutrition/Plans | Implemented | Deterministic grocery surface exists. |
 | 20-coach-chat | Coach | Implemented | W5 streaming coach PR #81. |
 | 21-learn-home | Menu/Help | Deferred | MVP ships Help/menu articles before Learn tab. Needs dated product sign-off before final W6 close. |
-| 22-article-detail | Menu/Help | Deferred | Same Learn deferral as row 21. |
+| 22-article-detail | Menu/Help | Implemented | Help featured rows now open article detail pages; standalone Learn remains deferred. |
 | 23-progress-overview | Progress | Implemented | Reducer-backed Progress package owns the overview, score topics, tracking topics, and visible destinations. |
 | 24-your-plan-profile | Profile/Menu | Implemented | W4 account/profile foundation and menu account route. |
 | 25-workout-detail | Activity | Implemented | Workout Log and Plans now have real destination pages; detailed set/rep editor remains a post-W6 depth follow-up. |
@@ -41,7 +41,7 @@ This matrix maps the locked iOS mockup files to their owning implementation surf
 | 32-exercise-activity-tab | Activity | Implemented | Reducer-backed Activity package owns the tab headline, weekly rows, and Workout Log/Activity Tracker/Workout Plans destinations. |
 | 33-meals-nutrition-tab | Nutrition | Implemented | Reducer-backed tab. |
 | 34-progress-tab-v2 | Progress | Implemented | Reducer-backed Progress package owns all visible tracking/detail destinations. |
-| 35-menu-hierarchical | Menu | In progress | Menu account route exists; passive settings rows have no misleading chevrons. |
+| 35-menu-hierarchical | Menu | Implemented | Menu tools, settings, account, and Founders status have real hierarchy or passive cards. |
 | 36-help-screen | Help | Implemented | Help sheet and feedback route exist. |
 | 37-tab-bar-component | App Shell | Implemented | Primary tabs are reachable in UI tests. |
 

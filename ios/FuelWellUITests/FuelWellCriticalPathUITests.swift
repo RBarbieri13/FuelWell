@@ -56,6 +56,30 @@ final class FuelWellCriticalPathUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["Search articles, settings, or ask a question"].exists)
     }
 
+    func testMenuAndHelpRowsOpenDetailPages() {
+        let app = self.launchApp()
+        defer { app.terminate() }
+
+        app.buttons["nav.menu"].tap()
+        XCTAssertTrue(app.staticTexts["Menu"].waitForExistence(timeout: 2))
+        app.buttons["menu.tool.snapshot"].tap()
+        XCTAssertTrue(app.navigationBars["Snapshot"].waitForExistence(timeout: 2))
+        XCTAssertTrue(app.staticTexts["One place to understand today"].exists)
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+
+        app.buttons["menu.settings.permissions"].tap()
+        XCTAssertTrue(app.navigationBars["Permissions"].waitForExistence(timeout: 2))
+        XCTAssertTrue(app.staticTexts["Control what FuelWell can read"].exists)
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        app.buttons["Close"].tap()
+
+        app.buttons["nav.help"].tap()
+        XCTAssertTrue(app.staticTexts["Help"].waitForExistence(timeout: 2))
+        app.buttons["help.article.eating-out"].tap()
+        XCTAssertTrue(app.navigationBars["Eating Out"].waitForExistence(timeout: 2))
+        XCTAssertTrue(app.staticTexts["Pick the easiest high-protein win"].exists)
+    }
+
     func testFeedbackCanBeSubmittedFromHelp() {
         let app = self.launchApp()
         defer { app.terminate() }
