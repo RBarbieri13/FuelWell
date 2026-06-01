@@ -1,0 +1,179 @@
+{
+  "generatedAt": "2026-06-01T16:37:48.416Z",
+  "status": "schema_blocked",
+  "counts": {
+    "pass": 2,
+    "blocker": 19,
+    "fail": 0
+  },
+  "projectHost": "xzsftuxvnkgxtbiibvac.supabase.co",
+  "envPath": "~/.fuelwell/supabase-staging.env",
+  "results": [
+    {
+      "area": "env",
+      "status": "pass",
+      "name": "supabase-staging.env",
+      "detail": "Required non-secret staging values are present."
+    },
+    {
+      "area": "table",
+      "status": "blocker",
+      "name": "schema_migrations",
+      "detail": "Could not find the table 'public.schema_migrations' in the schema cache",
+      "httpStatus": 404,
+      "code": "PGRST205"
+    },
+    {
+      "area": "table",
+      "status": "blocker",
+      "name": "profiles",
+      "detail": "Could not find the table 'public.profiles' in the schema cache",
+      "httpStatus": 404,
+      "code": "PGRST205"
+    },
+    {
+      "area": "table",
+      "status": "blocker",
+      "name": "foods",
+      "detail": "Could not find the table 'public.foods' in the schema cache",
+      "httpStatus": 404,
+      "code": "PGRST205"
+    },
+    {
+      "area": "table",
+      "status": "blocker",
+      "name": "meals",
+      "detail": "Could not find the table 'public.meals' in the schema cache",
+      "httpStatus": 404,
+      "code": "PGRST205"
+    },
+    {
+      "area": "table",
+      "status": "blocker",
+      "name": "recipes",
+      "detail": "Could not find the table 'public.recipes' in the schema cache",
+      "httpStatus": 404,
+      "code": "PGRST205"
+    },
+    {
+      "area": "table",
+      "status": "blocker",
+      "name": "grocery_items",
+      "detail": "Could not find the table 'public.grocery_items' in the schema cache",
+      "httpStatus": 404,
+      "code": "PGRST205"
+    },
+    {
+      "area": "table",
+      "status": "blocker",
+      "name": "progress_entries",
+      "detail": "Could not find the table 'public.progress_entries' in the schema cache",
+      "httpStatus": 404,
+      "code": "PGRST205"
+    },
+    {
+      "area": "table",
+      "status": "blocker",
+      "name": "coach_messages",
+      "detail": "Could not find the table 'public.coach_messages' in the schema cache",
+      "httpStatus": 404,
+      "code": "PGRST205"
+    },
+    {
+      "area": "table",
+      "status": "blocker",
+      "name": "restaurants",
+      "detail": "Could not find the table 'public.restaurants' in the schema cache",
+      "httpStatus": 404,
+      "code": "PGRST205"
+    },
+    {
+      "area": "table",
+      "status": "blocker",
+      "name": "feedback",
+      "detail": "Could not find the table 'public.feedback' in the schema cache",
+      "httpStatus": 404,
+      "code": "PGRST205"
+    },
+    {
+      "area": "table",
+      "status": "blocker",
+      "name": "feature_flags",
+      "detail": "Could not find the table 'public.feature_flags' in the schema cache",
+      "httpStatus": 404,
+      "code": "PGRST205"
+    },
+    {
+      "area": "table",
+      "status": "blocker",
+      "name": "subscription_entitlements",
+      "detail": "Could not find the table 'public.subscription_entitlements' in the schema cache",
+      "httpStatus": 404,
+      "code": "PGRST205"
+    },
+    {
+      "area": "table",
+      "status": "blocker",
+      "name": "founding100_reservations",
+      "detail": "Could not find the table 'public.founding100_reservations' in the schema cache",
+      "httpStatus": 404,
+      "code": "PGRST205"
+    },
+    {
+      "area": "table",
+      "status": "blocker",
+      "name": "marketing_signups",
+      "detail": "Could not find the table 'public.marketing_signups' in the schema cache",
+      "httpStatus": 404,
+      "code": "PGRST205"
+    },
+    {
+      "area": "table",
+      "status": "pass",
+      "name": "founders_100",
+      "detail": "Table is reachable through PostgREST.",
+      "httpStatus": 206,
+      "rowCountHeader": "0-0/21"
+    },
+    {
+      "area": "table",
+      "status": "blocker",
+      "name": "subscription_validation_events",
+      "detail": "Could not find the table 'public.subscription_validation_events' in the schema cache",
+      "httpStatus": 404,
+      "code": "PGRST205"
+    },
+    {
+      "area": "table",
+      "status": "blocker",
+      "name": "coach_usage",
+      "detail": "Could not find the table 'public.coach_usage' in the schema cache",
+      "httpStatus": 404,
+      "code": "PGRST205"
+    },
+    {
+      "area": "rpc",
+      "status": "blocker",
+      "name": "reserve_founding100",
+      "detail": "Could not find the function public.reserve_founding100(target_email, target_user_id) in the schema cache",
+      "httpStatus": 404,
+      "code": "PGRST202"
+    },
+    {
+      "area": "rpc",
+      "status": "blocker",
+      "name": "link_marketing_signup_to_user",
+      "detail": "Could not find the function public.link_marketing_signup_to_user(target_email, target_user_id) in the schema cache",
+      "httpStatus": 404,
+      "code": "PGRST202"
+    },
+    {
+      "area": "rpc",
+      "status": "blocker",
+      "name": "delete_current_user",
+      "detail": "Could not find the function public.delete_current_user without parameters in the schema cache",
+      "httpStatus": 404,
+      "code": "PGRST202"
+    }
+  ]
+}
