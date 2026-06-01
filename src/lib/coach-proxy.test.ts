@@ -1,11 +1,15 @@
 import { describe, expect, it } from "vitest";
 import {
+  allowedCoachModelsFromEnv,
   buildAnthropicMessageParams,
   buildCoachUsageRecord,
   coachUsageCapsFromEnv,
+  coachUserIDFromHeaders,
   decideCoachUsage,
   encodeCoachStreamEvent,
   estimateCoachUsageUsd,
+  isAllowedCoachModel,
+  isStableUserID,
   isValidCoachProxySecret,
   parseCoachProxyRequest,
 } from "./coach-proxy";
@@ -36,6 +40,37 @@ describe("coach proxy contract helpers", () => {
         feature_flag: "coach_chat",
       }),
     ).toThrow();
+  });
+
+  it("loads a default and env-configured model allow list", () => {
+    expect(allowedCoachModelsFromEnv({})).toEqual([
+      "claude-3-5-sonnet-latest",
+      "claude-3-5-haiku-latest",
+    ]);
+
+    const configured = allowedCoachModelsFromEnv({
+      FUELWELL_COACH_ALLOWED_MODELS: "claude-sonnet-4-5, claude-haiku-4-5",
+    });
+
+    expect(configured).toEqual(["claude-sonnet-4-5", "claude-haiku-4-5"]);
+    expect(isAllowedCoachModel("claude-sonnet-4-5", configured)).toBe(true);
+    expect(isAllowedCoachModel("unapproved-model", configured)).toBe(false);
+  });
+
+  it("requires a stable UUID user id for coach usage attribution", () => {
+    const headers = new Headers({
+      "x-fuelwell-user-id": "00000000-0000-4000-8000-000000000001",
+    });
+    const invalidHeaders = new Headers({
+      "x-fuelwell-user-id": "temporary-preview-user",
+    });
+
+    expect(isStableUserID("00000000-0000-4000-8000-000000000001")).toBe(true);
+    expect(isStableUserID("temporary-preview-user")).toBe(false);
+    expect(coachUserIDFromHeaders(headers)).toBe(
+      "00000000-0000-4000-8000-000000000001",
+    );
+    expect(coachUserIDFromHeaders(invalidHeaders)).toBeNull();
   });
 
   it("validates the proxy secret with an exact timing-safe match", () => {

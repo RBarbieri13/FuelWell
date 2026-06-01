@@ -64,6 +64,11 @@ export type CoachStreamEvent = {
   isComplete: boolean;
 };
 
+const defaultAllowedModels = [
+  "claude-3-5-sonnet-latest",
+  "claude-3-5-haiku-latest",
+];
+
 const defaultCaps: CoachUsageCaps = {
   userDailyTokens: 20_000,
   globalDailyUsd: 25,
@@ -126,6 +131,27 @@ export function buildAnthropicMessageParams(
     max_tokens: request.maxTokens,
     messages: [{ role: "user", content: request.prompt }],
   };
+}
+
+export function allowedCoachModelsFromEnv(
+  env: NodeJS.ProcessEnv = process.env,
+): string[] {
+  const rawModels = env.FUELWELL_COACH_ALLOWED_MODELS;
+  if (!rawModels) return defaultAllowedModels;
+
+  const parsed = rawModels
+    .split(",")
+    .map((model) => model.trim())
+    .filter(Boolean);
+
+  return parsed.length > 0 ? parsed : defaultAllowedModels;
+}
+
+export function isAllowedCoachModel(
+  model: string,
+  allowedModels = allowedCoachModelsFromEnv(),
+): boolean {
+  return allowedModels.includes(model);
 }
 
 export function textFromAnthropicMessage(message: Message): string {
@@ -213,9 +239,15 @@ export function encodeCoachStreamEvent(event: CoachStreamEvent): string {
 
 export function coachUserIDFromHeaders(headers: Headers): string | null {
   const explicitUser = headers.get("x-fuelwell-user-id")?.trim();
-  if (explicitUser) return explicitUser;
+  if (explicitUser && isStableUserID(explicitUser)) return explicitUser;
 
   return null;
+}
+
+export function isStableUserID(value: string): boolean {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+    value,
+  );
 }
 
 function textFromContentBlock(block: ContentBlock): string {
