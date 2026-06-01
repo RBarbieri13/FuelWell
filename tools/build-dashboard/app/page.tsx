@@ -9,13 +9,17 @@ import {
 import { getSnapshot } from "@/lib/data";
 import { PhaseCard } from "@/components/PhaseCard";
 import { LastWorkPanel } from "@/components/LastWork";
+import { ExecutionQueue } from "@/components/ExecutionQueue";
 import { statusMeta, relativeTime, fmtDate } from "@/components/ui";
+import executionStatusJson from "@/data/execution-status.json";
+import type { ExecutionStatus } from "@/lib/types";
 
 export const revalidate = 60;
 
 export default async function Page() {
   const snap = await getSnapshot();
   const { overall } = snap;
+  const executionStatus = executionStatusJson as ExecutionStatus;
   const pct = overall.phasesTotal
     ? Math.round((overall.phasesComplete / overall.phasesTotal) * 100)
     : 0;
@@ -129,6 +133,8 @@ export default async function Page() {
           </span>
         </div>
       )}
+
+      <ExecutionQueue status={executionStatus} />
 
       {/* Last completed work */}
       {snap.lastWork && (
