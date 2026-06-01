@@ -1,0 +1,150 @@
+{
+  "generatedAt": "2026-06-01T17:16:13.991Z",
+  "source": "github-cli",
+  "currentMilestone": "W10 - Execution cockpit readiness",
+  "summary": "1 PR(s) are mergeable with all required checks passing or expected skips.",
+  "readyToMerge": [
+    {
+      "number": 93,
+      "title": "W2 - Staging schema evidence probe",
+      "url": "https://github.com/RBarbieri13/FuelWell/pull/93",
+      "branch": "feature/w2-staging-schema-evidence",
+      "base": "main",
+      "mergeable": "MERGEABLE",
+      "reviewDecision": null,
+      "state": "ready",
+      "checks": {
+        "rows": [
+          {
+            "name": "Quality Gates",
+            "state": "pass"
+          },
+          {
+            "name": "Build and Test",
+            "state": "pass"
+          },
+          {
+            "name": "Snapshot Tests",
+            "state": "pass"
+          },
+          {
+            "name": "Fastlane Config",
+            "state": "pass"
+          },
+          {
+            "name": "Supabase Preview",
+            "state": "skipped"
+          },
+          {
+            "name": "CodeRabbit",
+            "state": "pass"
+          }
+        ],
+        "pass": 5,
+        "pending": 0,
+        "fail": 0,
+        "skipped": 1
+      }
+    }
+  ],
+  "inProgress": [
+    {
+      "number": 91,
+      "title": "W10 - Execution cockpit queue",
+      "url": "https://github.com/RBarbieri13/FuelWell/pull/91",
+      "branch": "feature/w10-execution-cockpit-readiness",
+      "base": "main",
+      "mergeable": "MERGEABLE",
+      "reviewDecision": null,
+      "state": "in_progress",
+      "checks": {
+        "rows": [
+          {
+            "name": "CodeRabbit",
+            "state": "pending"
+          },
+          {
+            "name": "Supabase Preview",
+            "state": "skipped"
+          }
+        ],
+        "pass": 0,
+        "pending": 1,
+        "fail": 0,
+        "skipped": 1
+      }
+    }
+  ],
+  "blocked": [],
+  "mergedRecent": [
+    {
+      "headRefName": "feature/w9-release-evidence-readiness",
+      "mergedAt": "2026-06-01T16:55:35Z",
+      "number": 92,
+      "title": "W9 - App Store evidence readiness",
+      "url": "https://github.com/RBarbieri13/FuelWell/pull/92"
+    },
+    {
+      "headRefName": "feature/w7-ci-coverage-readiness",
+      "mergedAt": "2026-06-01T16:54:57Z",
+      "number": 90,
+      "title": "W7 - CI coverage readiness",
+      "url": "https://github.com/RBarbieri13/FuelWell/pull/90"
+    },
+    {
+      "headRefName": "feature/w6-progress-activity-detail-foundation",
+      "mergedAt": "2026-06-01T16:54:44Z",
+      "number": 89,
+      "title": "W6 - Navigation detail foundation",
+      "url": "https://github.com/RBarbieri13/FuelWell/pull/89"
+    },
+    {
+      "headRefName": "feature/w1-coach-proxy-hardening",
+      "mergedAt": "2026-06-01T16:54:28Z",
+      "number": 88,
+      "title": "W1 - Coach proxy hardening",
+      "url": "https://github.com/RBarbieri13/FuelWell/pull/88"
+    },
+    {
+      "headRefName": "feature/w2-sqlite-persistence-foundation",
+      "mergedAt": "2026-06-01T16:54:00Z",
+      "number": 87,
+      "title": "W2 - SQLite persistence foundation",
+      "url": "https://github.com/RBarbieri13/FuelWell/pull/87"
+    },
+    {
+      "headRefName": "feature/w7-release-readiness-hardening",
+      "mergedAt": "2026-06-01T04:26:16Z",
+      "number": 86,
+      "title": "W7 - Release readiness gate hardening",
+      "url": "https://github.com/RBarbieri13/FuelWell/pull/86"
+    },
+    {
+      "headRefName": "feature/w6-closeout-readiness",
+      "mergedAt": "2026-06-01T03:58:08Z",
+      "number": 85,
+      "title": "W6 - Closeout readiness",
+      "url": "https://github.com/RBarbieri13/FuelWell/pull/85"
+    },
+    {
+      "headRefName": "feature/w6-menu-help-hierarchy",
+      "mergedAt": "2026-06-01T03:01:50Z",
+      "number": 84,
+      "title": "W6 - Menu and help hierarchy",
+      "url": "https://github.com/RBarbieri13/FuelWell/pull/84"
+    }
+  ],
+  "vitalBlockers": [
+    "Anthropic API key for server-side proxy.",
+    "FUELWELL_COACH_PROXY_SECRET for proxy authentication.",
+    "Supabase service-role key and direct Postgres URL for the selected app project.",
+    "Human confirmation before applying migrations to production data.",
+    "Apple Developer, payment provider, and App Store Connect actions before TestFlight/App Store work."
+  ],
+  "nextActions": [
+    "Merge ready PRs: #93.",
+    "No blocked PRs reported by the live queue.",
+    "Regenerate this status artifact after each merge so the cockpit reflects main.",
+    "Continue plan-backed work from latest main once the review queue is clear enough to avoid hot-file conflicts."
+  ]
+}

@@ -96,3 +96,55 @@ export interface StatusOverride {
   status: PhaseStatus;
   note: string;
 }
+
+export interface ExecutionCheckSummary {
+  rows: Array<{
+    name: string;
+    state: "pass" | "pending" | "fail" | "skipped";
+  }>;
+  pass: number;
+  pending: number;
+  fail: number;
+  skipped: number;
+}
+
+export interface ExecutionPullRequest {
+  number: number;
+  title: string;
+  url: string;
+  branch: string;
+  base: string;
+  mergeable: "MERGEABLE" | "CONFLICTING" | "UNKNOWN";
+  reviewDecision:
+    | "APPROVED"
+    | "CHANGES_REQUESTED"
+    | "REVIEW_REQUIRED"
+    | "DISMISSED"
+    | null;
+  state: "ready" | "in_progress" | "blocked";
+  checks: ExecutionCheckSummary;
+}
+
+export interface ExecutionStatus {
+  generatedAt: string;
+  source: string;
+  currentMilestone: string;
+  summary: string;
+  local?: {
+    branch: string;
+    head: string;
+    dirtyFiles: string[];
+  };
+  readyToMerge: ExecutionPullRequest[];
+  inProgress: ExecutionPullRequest[];
+  blocked: ExecutionPullRequest[];
+  mergedRecent: Array<{
+    number: number;
+    title: string;
+    url: string;
+    mergedAt: string;
+    headRefName: string;
+  }>;
+  vitalBlockers: string[];
+  nextActions: string[];
+}

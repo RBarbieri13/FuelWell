@@ -18,6 +18,8 @@ project**. It does not touch the marketing site or the iOS app.
 - **Last completed work** — the newest commit (subject, PR #, diffstat, files,
   GitHub links) **and** a prose narrative from your most recent Claude Code
   session.
+- **Review queue** — generated from live GitHub PR/check state so Robert and Max
+  can see what is ready to merge, what is still running, and what needs action.
 - **Drill-down** — expand any phase for its goal, plan deliverables (with the
   plan's own ✅/⏳ marks), gate criteria, and the commits/PRs mapped to it.
   Deep-link per phase at `/phase/<id>`.
@@ -33,6 +35,7 @@ project**. It does not touch the marketing site or the iOS app.
 | Git commits on the watched branch (GitHub API) | live progress — commits are mapped to phases |
 | `data/status-overrides.json` | manual corrections when inference is wrong |
 | `data/session-digest.json` | the "what we last worked on" narrative |
+| `data/execution-status.json` | generated PR queue, blockers, and next actions |
 
 **Commit → phase mapping.** A commit whose subject says `Phase N` maps there
 explicitly. Untagged commits inherit the phase of the most recent tagged commit
@@ -66,6 +69,16 @@ your Mac). Regenerate it, then commit the result so Vercel picks it up:
 npm run digest                       # newest session for this repo
 npm run digest -- path/to.jsonl      # or a specific transcript
 git add data/session-digest.json && git commit -m "Refresh session digest"
+```
+
+## Refresh the execution queue
+
+The queue comes from live GitHub PR/check state and also rewrites
+`docs/EXECUTION-STATUS.md` so the repo keeps a committed operating snapshot:
+
+```bash
+npm run status:generate
+git add data/execution-status.json ../../docs/EXECUTION-STATUS.md
 ```
 
 ## Configuration (env)

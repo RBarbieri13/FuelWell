@@ -1,104 +1,55 @@
 # FuelWell Execution Status
 
-Updated: 2026-05-31
+Updated: 2026-06-01T17:16:13.991Z
 
-## Current Workstream
+Generated from live GitHub PR/check state by `tools/build-dashboard/scripts/generate-execution-status.mjs`.
 
-**W2 - SQLite Persistence Foundation**
+## Current Milestone
 
-Current branch: `feature/w2-sqlite-persistence-foundation`
+**W10 - Execution cockpit readiness**
 
-## Baseline Re-Verification
+1 PR(s) are mergeable with all required checks passing or expected skips.
 
-Baseline was re-run before implementation on 2026-05-31.
+## Ready To Merge
 
-- `xcodegen generate --spec project.yml` - passed
-- `swiftlint --strict --config .swiftlint.yml` - passed
-- `scripts/check-feature-imports.sh` - passed
-- `scripts/check-theme-drift.sh` - passed
-- Release/operate shell syntax and JSON checks - passed from repo root
-- Full iOS suite on this Mac's available CI simulator (`iPhone 17`) - passed
-- DesignSystem snapshot suite on `iPhone 17` - passed
-
-Note: the handoff's `iPhone 15 Pro` simulator is not installed on this Mac. The repo CI workflow uses `iPhone 17`, which is installed and was used for local verification.
-
-## PR Queue Resolved
-
-- PR #74, build-status dashboard - merged into `main`.
-- PR #75, design workflow skills - already merged into `main`.
-- PR #76, execution plan and handoff - merged into `main`.
+| PR | Title | Mergeable | Checks | Link |
+|---|---|---|---|---|
+| #93 | W2 - Staging schema evidence probe | MERGEABLE | 5 pass, 0 pending, 0 fail, 1 skipped | [Open](https://github.com/RBarbieri13/FuelWell/pull/93) |
 
 ## In Progress
 
-W6 feature completeness foundation:
+| PR | Title | Mergeable | Checks | Link |
+|---|---|---|---|---|
+| #91 | W10 - Execution cockpit queue | MERGEABLE | 0 pass, 1 pending, 0 fail, 1 skipped | [Open](https://github.com/RBarbieri13/FuelWell/pull/91) |
 
-- PR #77, W1 coach proxy foundation, merged into `main`.
-- PR #78, W2 schema/apply foundation, merged into `main`.
-- PR #79, W3 live dependency toggle, merged into `main`.
-- PR #80, W4 auth/onboarding/profile foundation, merged into `main`.
-- PR #81, W5 coach brain foundation, merged into `main`.
-- PR #83, W6 feature navigation foundation, merged into `main`.
-- PR #84, W6 menu/help hierarchy, merged into `main`.
-- PR #85, W6 closeout readiness, merged into `main`.
-- Dashboard Today rows now route to the real Meals, Exercise, and Progress tabs.
-- Dashboard Health Score and Inflows/Outflows summary cards now open real detail pages.
-- Nutrition search, restaurant, and recipe rows now open detail/portion cards before quick-use actions.
-- Activity is now a dedicated reducer-backed feature package using HealthKit snapshot dependency state for steps, active energy, and workouts.
-- Progress is now a dedicated reducer-backed feature package using the Health Score v1 model and owned topic lists for health score detail and tracking destinations.
-- Menu tools/settings and Help featured articles now open real detail subpages instead of static list rows.
-- Permissions now exposes a HealthKit Acceptance subpage so the physical-device gate is visible in-app before TestFlight.
-- The W6 parity matrix now aligns with D10: standalone Learn Home is removed from Pilot, while Help carries article content and article detail pages.
+## Blocked Or Needs Attention
 
-W7 release-readiness hardening:
+| PR | Title | Mergeable | Checks | Link |
+|---|---|---|---|---|
+| - | None | - | - | - |
 
-- Phase 4 quick readiness now detects the direct staging Postgres URL as a first-class blocker before migration apply.
-- Phase 4 full readiness now uses the repo/CI simulator destination (`iPhone 17` by default) instead of the unavailable handoff `iPhone 15`.
-- Phase 4 full readiness runs through explicit `xcodegen`, SwiftLint, `AppTests`, full `FuelWellApp`, and simulator-live launch commands.
-- `tools/release/check-w7-readiness.sh` now aggregates Phase 4, Phase 7, operate, and coach-proxy website checks with separate PASS/BLOCKED/FAIL outcomes.
+## Recently Merged
 
-W2 SQLite persistence foundation:
-
-- `SQLiteDataStore` now creates a real local database instead of accepting a store and doing nothing.
-- Local persistence now creates `schema_migrations`, `meal_entries`, `pending_writes`, and `sync_state` tables with WAL and foreign keys enabled.
-- `LocalNutritionRepository` now stores meal entries in SQLite while keeping the public `NutritionRepository` protocol stable and meal photos on disk.
-- Existing JSON meal logs import into SQLite on first repository access so development/test data is not silently dropped.
-- `PendingWriteQueue` now uses the SQLite `pending_writes` table so offline-sync intent shares the same durable local store as meal logs.
-- Meal save/delete mutations now enqueue durable pending writes in the same SQLite database.
-- `PendingWriteSyncClient` can flush queued meal-log writes to `SupabaseDatabaseClient.insertMeal` for the authenticated user while leaving unsupported write types queued for later sync slices.
-
-## Verification For Current Slice
-
-- `xcodegen generate --spec project.yml` - passed
-- `swiftlint --strict --config .swiftlint.yml` - passed
-- `scripts/check-feature-imports.sh` - passed
-- `scripts/check-theme-drift.sh` - passed
-- Focused Swift package tests: `ActivityTests` and `ProgressTests` - passed
-- Focused UI test: `testMenuAndHelpRowsOpenDetailPages` on `iPhone 17` - passed
-- Focused iOS tests: `AppTests` on `iPhone 17` - passed
-- Full iOS suite: `FuelWellApp` on `iPhone 17` - passed
-- Phase 4 quick readiness: 6 passed, 4 blockers, 0 failures. Blockers are service-role key, direct Postgres URL, missing staging `feature_flags`, and physical-device evidence.
-- Phase 4 full readiness: 11 passed, 4 blockers, 0 failures. Full mode now regenerates Xcode, runs SwiftLint, `AppTests`, full `FuelWellApp`, and simulator-live launch on `iPhone 17`.
-- W7 aggregate readiness: 4 passed, 1 blocked, 0 failed. The only blocked aggregate node is Phase 4 live evidence.
-- W2 focused verification: SwiftLint passed; feature-import and theme-drift checks passed; `PersistenceTests`, `CoreTests`, `SupabaseClientTests`, `NutritionTests`, `AppTests`, and the full `FuelWellApp` scheme passed on `iPhone 17`.
+- #92, W9 - App Store evidence readiness (2026-06-01T16:55:35Z)
+- #90, W7 - CI coverage readiness (2026-06-01T16:54:57Z)
+- #89, W6 - Navigation detail foundation (2026-06-01T16:54:44Z)
+- #88, W1 - Coach proxy hardening (2026-06-01T16:54:28Z)
+- #87, W2 - SQLite persistence foundation (2026-06-01T16:54:00Z)
+- #86, W7 - Release readiness gate hardening (2026-06-01T04:26:16Z)
+- #85, W6 - Closeout readiness (2026-06-01T03:58:08Z)
+- #84, W6 - Menu and help hierarchy (2026-06-01T03:01:50Z)
 
 ## Vital Blockers
 
-These are required before the live backend acceptance gates can pass end-to-end:
+- Anthropic API key for server-side proxy.
+- FUELWELL_COACH_PROXY_SECRET for proxy authentication.
+- Supabase service-role key and direct Postgres URL for the selected app project.
+- Human confirmation before applying migrations to production data.
+- Apple Developer, payment provider, and App Store Connect actions before TestFlight/App Store work.
 
-- Anthropic API key for server-side use.
-- `FUELWELL_COACH_PROXY_SECRET` value for the proxy.
-- Supabase service-role key for the chosen project.
-- Direct Postgres URL for the chosen staging/app Supabase project before `tools/supabase/apply-migrations.sh apply` can run.
-- W2/W4 migration application to the selected app Supabase project.
-- Confirmation before any production migration touching live `founders_100` rows.
-- Physical iOS device for Instruments and live HealthKit acceptance evidence.
+## Next Actions
 
-## Next
-
-Continue W7 by keeping release gates runnable and non-destructive while Robert supplies the live staging inputs:
-
-1. Add `FUELWELL_SUPABASE_DB_URL` and `FUELWELL_SUPABASE_SERVICE_ROLE_KEY` to `~/.fuelwell/supabase-staging.env`.
-2. Run `tools/supabase/apply-migrations.sh plan` and inspect pending migrations.
-3. Apply migrations only to the confirmed staging target.
-4. Rerun `tools/supabase/kill-switch-drill.sh read`, then `drill`.
-5. Attach physical-device Instruments and HealthKit acceptance evidence before TestFlight.
+- Merge ready PRs: #93.
+- No blocked PRs reported by the live queue.
+- Regenerate this status artifact after each merge so the cockpit reflects main.
+- Continue plan-backed work from latest main once the review queue is clear enough to avoid hot-file conflicts.
