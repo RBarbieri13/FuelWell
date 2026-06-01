@@ -1,5 +1,6 @@
 import Core
 import Foundation
+import Persistence
 import Testing
 
 @Test
@@ -57,4 +58,67 @@ func localNutritionRepositoryPersistsEntriesAndPhotos() async throws {
 
     #expect(try await reloaded.entries(for: date) == [])
     #expect(try await reloaded.photoData(for: entry) == nil)
+}
+
+@Test
+func localNutritionRepositoryImportsLegacyJSONEntriesIntoSQLite() async throws {
+    let rootURL = FileManager.default.temporaryDirectory
+        .appendingPathComponent(UUID().uuidString, isDirectory: true)
+    let legacyStore = JSONFileStore<[MealEntry]>(
+        fileURL: rootURL
+            .appendingPathComponent("nutrition", isDirectory: true)
+            .appendingPathComponent("meal-entries.json")
+    )
+    let date = Date(timeIntervalSince1970: 1_714_046_400)
+    let entry = MealEntry(
+        name: "Legacy bowl",
+        calories: 520,
+        protein: 38,
+        carbs: 55,
+        fat: 14,
+        loggedAt: date
+    )
+
+    try legacyStore.save([entry])
+
+    let repository = LocalNutritionRepository(rootDirectory: rootURL)
+    let imported = try await repository.entries(for: date)
+    let databaseStore = SQLiteDataStore(
+        databaseURL: rootURL
+            .appendingPathComponent("nutrition", isDirectory: true)
+            .appendingPathComponent("fuelwell.sqlite")
+    )
+
+    #expect(imported == [entry])
+    #expect(try databaseStore.tableExists("meal_entries"))
+    #expect(try databaseStore.activeMealEntryCount() == 1)
+}
+
+@Test
+func localNutritionRepositoryQueuesMealMutationsForSync() async throws {
+    let rootURL = FileManager.default.temporaryDirectory
+        .appendingPathComponent(UUID().uuidString, isDirectory: true)
+    let repository = LocalNutritionRepository(rootDirectory: rootURL)
+    let date = Date(timeIntervalSince1970: 1_714_046_400)
+    let entry = MealEntry(
+        name: "Queued meal",
+        calories: 410,
+        protein: 34,
+        carbs: 38,
+        fat: 11,
+        loggedAt: date
+    )
+
+    try await repository.save(entry, photoData: nil)
+    try await repository.delete(id: entry.id)
+
+    let queue = PendingWriteQueue(
+        databaseURL: rootURL
+            .appendingPathComponent("nutrition", isDirectory: true)
+            .appendingPathComponent("fuelwell.sqlite")
+    )
+    let writes = try queue.all()
+
+    #expect(writes.map(\.operation) == [.mealLog, .mealLogDelete])
+    #expect(writes.map(\.route) == ["meals", "meals"])
 }
