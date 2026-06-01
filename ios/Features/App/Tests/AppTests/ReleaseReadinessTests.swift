@@ -95,6 +95,36 @@ func phase5ShipFoundationsStayWired() throws {
 }
 
 @Test
+func w7CIReadinessStaysEnforced() throws {
+    let root = repoRoot()
+    let workflow = try String(
+        contentsOf: root.appendingPathComponent(".github/workflows/ios-ci.yml"),
+        encoding: .utf8
+    )
+    let readinessScript = try String(
+        contentsOf: root.appendingPathComponent("tools/release/check-w7-ci-readiness.sh"),
+        encoding: .utf8
+    )
+    let coverageScript = try String(
+        contentsOf: root.appendingPathComponent("tools/release/check-coverage-floor.sh"),
+        encoding: .utf8
+    )
+
+    #expect(workflow.contains("workflow_dispatch:"))
+    #expect(workflow.contains("schedule:"))
+    #expect(workflow.contains("-resultBundlePath build/reports/FuelWellApp.xcresult"))
+    #expect(workflow.contains("tools/release/check-coverage-floor.sh ios/build/reports/FuelWellApp.xcresult"))
+    #expect(workflow.contains("tools/release/check-w7-ci-readiness.sh"))
+    #expect(!pushTriggerIsPathFiltered(workflow))
+
+    #expect(readinessScript.contains("main push runs must not be path-filtered"))
+    #expect(coverageScript.contains("CoreTests.xctest"))
+    #expect(coverageScript.contains("CoachTests.xctest"))
+    #expect(coverageScript.contains("NutritionDomainTests.xctest"))
+    #expect(coverageScript.contains("FUELWELL_COVERAGE_FLOOR_PERCENT"))
+}
+
+@Test
 func feedbackSchemaAndAnalyticsStayReleaseReady() throws {
     let migration = try String(
         contentsOf: iosRoot().appendingPathComponent("supabase/migrations/202605240001_phase2_architecture.sql"),
@@ -104,6 +134,34 @@ func feedbackSchemaAndAnalyticsStayReleaseReady() throws {
     #expect(migration.contains("create table if not exists feedback"))
     #expect(migration.contains("feedback anonymous or owner-writable"))
     #expect(migration.contains("feedback_created_at_idx"))
+}
+
+private func pushTriggerIsPathFiltered(_ workflow: String) -> Bool {
+    let lines = workflow.split(separator: "\n", omittingEmptySubsequences: false)
+    var inPush = false
+    var pushIndent = 0
+
+    for line in lines {
+        let trimmed = line.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty, !trimmed.hasPrefix("#") else { continue }
+
+        let indent = line.prefix { $0 == " " }.count
+        if trimmed == "push:" {
+            inPush = true
+            pushIndent = indent
+            continue
+        }
+
+        if inPush, indent <= pushIndent, !trimmed.hasPrefix("-") {
+            inPush = false
+        }
+
+        if inPush, trimmed == "paths:" {
+            return true
+        }
+    }
+
+    return false
 }
 
 private func privacyManifest() throws -> [String: Any] {
