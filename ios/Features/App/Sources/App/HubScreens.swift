@@ -15,14 +15,35 @@ struct ExerciseActivityView: View {
                 title: self.store.headline,
                 detail: self.store.detail
             )
-            DashboardSection(
-                title: "This week",
-                items: self.store.today.map(PhaseRowItem.init(activityRow:))
-            )
+            ActivitySignalSection(rows: self.store.today)
             TrainingToolsSection(tools: self.store.tools)
         }
         .onAppear {
             self.store.send(.onAppear)
+        }
+    }
+}
+
+private struct ActivitySignalSection: View {
+    let rows: [ActivityRow]
+    @Environment(\.theme) private var theme
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: self.theme.spacing.md) {
+            Text("This week")
+                .font(.custom(self.theme.font.display, size: self.theme.text.title.size))
+                .fontWeight(.bold)
+            VStack(spacing: self.theme.spacing.sm) {
+                ForEach(Array(self.rows.enumerated()), id: \.element.id) { index, row in
+                    NavigationLink {
+                        ActivitySignalDetailView(row: row)
+                    } label: {
+                        PhaseNavigationRow(item: PhaseRowItem(activityRow: row))
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityIdentifier("activity.signal.\(index)")
+                }
+            }
         }
     }
 }

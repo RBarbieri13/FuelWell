@@ -42,7 +42,14 @@ struct DashboardView: View {
                 VerdictCard(snapshot: self.snapshot) {
                     self.store.send(.tabSelected(.meals))
                 }
-                ProactiveNudgeCard()
+                NavigationLink {
+                    ProactiveNudgeDetailView()
+                } label: {
+                    ProactiveNudgeCard()
+                }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier("dashboard.nudge.detail")
+
                 DashboardShortcutSection(store: self.store)
             }
             .padding(self.theme.spacing.md)
@@ -217,39 +224,20 @@ private struct DashboardShortcutSection: View {
     @Bindable var store: StoreOf<AppFeature>
     @Environment(\.theme) private var theme
 
-    private let shortcuts: [(tab: AppTab, item: PhaseRowItem)] = [
-        (
-            .meals,
-            .init(title: "Meals", detail: "2 logged, dinner still open", icon: "fork.knife")
-        ),
-        (
-            .exercise,
-            .init(title: "Activity", detail: "34 active minutes, walk after dinner", icon: "figure.walk")
-        ),
-        (
-            .progress,
-            .init(
-                title: "Progress",
-                detail: "Weekly adherence is holding at 82%",
-                icon: "chart.line.uptrend.xyaxis"
-            )
-        )
-    ]
-
     var body: some View {
         VStack(alignment: .leading, spacing: self.theme.spacing.md) {
             Text("Today")
                 .font(.custom(self.theme.font.display, size: self.theme.text.title.size))
                 .fontWeight(.bold)
             VStack(spacing: self.theme.spacing.sm) {
-                ForEach(self.shortcuts, id: \.tab) { shortcut in
-                    Button {
-                        self.store.send(.tabSelected(shortcut.tab))
+                ForEach(DashboardShortcutTopic.allCases) { topic in
+                    NavigationLink {
+                        TodayShortcutDetailView(topic: topic, store: self.store)
                     } label: {
-                        PhaseNavigationRow(item: shortcut.item)
+                        PhaseNavigationRow(item: topic.row)
                     }
                     .buttonStyle(.plain)
-                    .accessibilityIdentifier("dashboard.shortcut.\(shortcut.tab.rawValue)")
+                    .accessibilityIdentifier("dashboard.shortcut.\(topic.rawValue)")
                 }
             }
         }
@@ -260,14 +248,21 @@ private struct ProactiveNudgeCard: View {
     @Environment(\.theme) private var theme
 
     var body: some View {
-        Label("Nudge: take a 12-minute walk after dinner if dinner lands heavy.", systemImage: "bell.badge")
-            .font(.custom(self.theme.font.body, size: self.theme.text.body.size))
-            .fontWeight(.semibold)
-            .foregroundStyle(self.theme.color.text.onDark.color)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(self.theme.spacing.md)
-            .background(self.theme.color.bg.elevated.color)
-            .clipShape(RoundedRectangle(cornerRadius: self.theme.radius.md))
+        HStack(spacing: self.theme.spacing.sm) {
+            Label("Nudge: take a 12-minute walk after dinner if dinner lands heavy.", systemImage: "bell.badge")
+                .font(.custom(self.theme.font.body, size: self.theme.text.body.size))
+                .fontWeight(.semibold)
+                .foregroundStyle(self.theme.color.text.onDark.color)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            Image(systemName: "chevron.right")
+                .font(.system(size: 14, weight: .bold))
+                .foregroundStyle(self.theme.color.text.onDark.color.opacity(0.75))
+                .accessibilityHidden(true)
+        }
+        .padding(self.theme.spacing.md)
+        .background(self.theme.color.bg.elevated.color)
+        .clipShape(RoundedRectangle(cornerRadius: self.theme.radius.md))
     }
 }
 
