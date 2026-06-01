@@ -95,6 +95,50 @@ func phase5ShipFoundationsStayWired() throws {
 }
 
 @Test
+func testFlightUploadRouteStaysWiredForInternalPilot() throws {
+    let root = repoRoot()
+    let testFlightWorkflow = try String(
+        contentsOf: root.appendingPathComponent(".github/workflows/ios-testflight.yml"),
+        encoding: .utf8
+    )
+    let readinessScript = try String(
+        contentsOf: root.appendingPathComponent("tools/release/check-testflight-readiness.sh"),
+        encoding: .utf8
+    )
+    let localUploadScript = try String(
+        contentsOf: root.appendingPathComponent("tools/release/run-testflight-beta.sh"),
+        encoding: .utf8
+    )
+    let fastfile = try String(
+        contentsOf: iosRoot().appendingPathComponent("fastlane/Fastfile"),
+        encoding: .utf8
+    )
+    let routeDoc = try String(
+        contentsOf: root.appendingPathComponent("docs/ios-guide/operate/testflight-route.md"),
+        encoding: .utf8
+    )
+
+    #expect(testFlightWorkflow.contains("workflow_dispatch:"))
+    #expect(testFlightWorkflow.contains("SwiftLint strict"))
+    #expect(testFlightWorkflow.contains("Run full test suite"))
+    #expect(testFlightWorkflow.contains("check-coverage-floor.sh"))
+    #expect(testFlightWorkflow.contains("bundle exec fastlane beta"))
+    #expect(testFlightWorkflow.contains("MATCH_DEPLOY_KEY"))
+    #expect(testFlightWorkflow.contains("FUELWELL_ASC_KEY_P8_BASE64"))
+
+    #expect(fastfile.contains("app_store_connect_api_key"))
+    #expect(fastfile.contains("distribute_external: false"))
+    #expect(fastfile.contains("notify_external_testers: false"))
+    #expect(fastfile.contains("check-testflight-readiness.sh --ci"))
+
+    #expect(readinessScript.contains("FUELWELL_MATCH_GIT_URL"))
+    #expect(readinessScript.contains("FUELWELL_ASC_KEY_ID"))
+    #expect(readinessScript.contains("MATCH_DEPLOY_KEY"))
+    #expect(localUploadScript.contains(".fuelwell/apple-testflight.env"))
+    #expect(routeDoc.contains("Robert and Max"))
+}
+
+@Test
 func w7CIReadinessStaysEnforced() throws {
     let root = repoRoot()
     let workflow = try String(
