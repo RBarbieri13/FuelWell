@@ -114,8 +114,13 @@ export interface ExecutionPullRequest {
   url: string;
   branch: string;
   base: string;
-  mergeable: string;
-  reviewDecision: string;
+  mergeable: "MERGEABLE" | "CONFLICTING" | "UNKNOWN";
+  reviewDecision:
+    | "APPROVED"
+    | "CHANGES_REQUESTED"
+    | "REVIEW_REQUIRED"
+    | "DISMISSED"
+    | null;
   state: "ready" | "in_progress" | "blocked";
   checks: ExecutionCheckSummary;
 }

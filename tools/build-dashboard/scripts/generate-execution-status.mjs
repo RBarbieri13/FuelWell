@@ -54,6 +54,7 @@ function checkState(check) {
 }
 
 function summarizeChecks(checks = []) {
+  checks = checks ?? [];
   const rows = checks.map((check) => ({
     name: check.name ?? check.context ?? "Unnamed check",
     state: checkState(check),
@@ -83,8 +84,11 @@ function prSummary(pr) {
     url: pr.url,
     branch: pr.headRefName,
     base: pr.baseRefName,
-    mergeable: pr.mergeable,
-    reviewDecision: pr.reviewDecision || "",
+    mergeable:
+      pr.mergeable === "MERGEABLE" || pr.mergeable === "CONFLICTING"
+        ? pr.mergeable
+        : "UNKNOWN",
+    reviewDecision: pr.reviewDecision || null,
     state: classifyPullRequest(pr),
     checks,
   };
@@ -199,6 +203,16 @@ function main() {
   const inProgress = open.filter((pr) => pr.state === "in_progress");
   const blocked = open.filter((pr) => pr.state === "blocked");
   const mergedRecent = listMergedPullRequests();
+  const nextActions = [
+    readyToMerge.length > 0
+      ? `Merge ready PRs: ${readyToMerge.map((pr) => `#${pr.number}`).join(", ")}.`
+      : "No ready PRs right now; clear blocked or in-progress items before adding more review load.",
+    blocked.length > 0
+      ? `Resolve blocked PRs: ${blocked.map((pr) => `#${pr.number}`).join(", ")}.`
+      : "No blocked PRs reported by the live queue.",
+    "Regenerate this status artifact after each merge so the cockpit reflects main.",
+    "Continue plan-backed work from latest main once the review queue is clear enough to avoid hot-file conflicts.",
+  ];
 
   const status = {
     generatedAt: new Date().toISOString(),
@@ -219,11 +233,7 @@ function main() {
       "Human confirmation before applying migrations to production data.",
       "Apple Developer, payment provider, and App Store Connect actions before TestFlight/App Store work.",
     ],
-    nextActions: [
-      "Merge green queued PRs in dependency order: data layer, coach hardening, navigation detail, CI readiness.",
-      "Regenerate this status artifact after each merge so the cockpit reflects main.",
-      "Continue plan-backed work from latest main once the review queue is clear enough to avoid hot-file conflicts.",
-    ],
+    nextActions,
   };
 
   writeFileSync(outputJson, `${JSON.stringify(status, null, 2)}\n`);

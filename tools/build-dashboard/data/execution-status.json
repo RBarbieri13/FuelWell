@@ -1,143 +1,17 @@
 {
-  "generatedAt": "2026-06-01T13:34:44.665Z",
+  "generatedAt": "2026-06-01T17:16:13.991Z",
   "source": "github-cli",
   "currentMilestone": "W10 - Execution cockpit readiness",
-  "summary": "4 PR(s) are mergeable with all required checks passing or expected skips.",
+  "summary": "1 PR(s) are mergeable with all required checks passing or expected skips.",
   "readyToMerge": [
     {
-      "number": 90,
-      "title": "W7 - CI coverage readiness",
-      "url": "https://github.com/RBarbieri13/FuelWell/pull/90",
-      "branch": "feature/w7-ci-coverage-readiness",
+      "number": 93,
+      "title": "W2 - Staging schema evidence probe",
+      "url": "https://github.com/RBarbieri13/FuelWell/pull/93",
+      "branch": "feature/w2-staging-schema-evidence",
       "base": "main",
       "mergeable": "MERGEABLE",
-      "reviewDecision": "",
-      "state": "ready",
-      "checks": {
-        "rows": [
-          {
-            "name": "Quality Gates",
-            "state": "pass"
-          },
-          {
-            "name": "Build and Test",
-            "state": "pass"
-          },
-          {
-            "name": "Snapshot Tests",
-            "state": "pass"
-          },
-          {
-            "name": "Fastlane Config",
-            "state": "pass"
-          },
-          {
-            "name": "Supabase Preview",
-            "state": "skipped"
-          },
-          {
-            "name": "CodeRabbit",
-            "state": "pass"
-          }
-        ],
-        "pass": 5,
-        "pending": 0,
-        "fail": 0,
-        "skipped": 1
-      }
-    },
-    {
-      "number": 89,
-      "title": "W6 - Navigation detail foundation",
-      "url": "https://github.com/RBarbieri13/FuelWell/pull/89",
-      "branch": "feature/w6-progress-activity-detail-foundation",
-      "base": "main",
-      "mergeable": "MERGEABLE",
-      "reviewDecision": "",
-      "state": "ready",
-      "checks": {
-        "rows": [
-          {
-            "name": "Quality Gates",
-            "state": "pass"
-          },
-          {
-            "name": "Build and Test",
-            "state": "pass"
-          },
-          {
-            "name": "Snapshot Tests",
-            "state": "pass"
-          },
-          {
-            "name": "Fastlane Config",
-            "state": "pass"
-          },
-          {
-            "name": "Supabase Preview",
-            "state": "skipped"
-          },
-          {
-            "name": "CodeRabbit",
-            "state": "pass"
-          }
-        ],
-        "pass": 5,
-        "pending": 0,
-        "fail": 0,
-        "skipped": 1
-      }
-    },
-    {
-      "number": 88,
-      "title": "W1 - Coach proxy hardening",
-      "url": "https://github.com/RBarbieri13/FuelWell/pull/88",
-      "branch": "feature/w1-coach-proxy-hardening",
-      "base": "main",
-      "mergeable": "MERGEABLE",
-      "reviewDecision": "",
-      "state": "ready",
-      "checks": {
-        "rows": [
-          {
-            "name": "Quality Gates",
-            "state": "pass"
-          },
-          {
-            "name": "Build and Test",
-            "state": "pass"
-          },
-          {
-            "name": "Snapshot Tests",
-            "state": "pass"
-          },
-          {
-            "name": "Fastlane Config",
-            "state": "pass"
-          },
-          {
-            "name": "Supabase Preview",
-            "state": "skipped"
-          },
-          {
-            "name": "CodeRabbit",
-            "state": "pass"
-          }
-        ],
-        "pass": 5,
-        "pending": 0,
-        "fail": 0,
-        "skipped": 1
-      }
-    },
-    {
-      "number": 87,
-      "title": "W2 - SQLite persistence foundation",
-      "url": "https://github.com/RBarbieri13/FuelWell/pull/87",
-      "branch": "feature/w2-sqlite-persistence-foundation",
-      "base": "main",
-      "mergeable": "MERGEABLE",
-      "reviewDecision": "",
+      "reviewDecision": null,
       "state": "ready",
       "checks": {
         "rows": [
@@ -173,9 +47,71 @@
       }
     }
   ],
-  "inProgress": [],
+  "inProgress": [
+    {
+      "number": 91,
+      "title": "W10 - Execution cockpit queue",
+      "url": "https://github.com/RBarbieri13/FuelWell/pull/91",
+      "branch": "feature/w10-execution-cockpit-readiness",
+      "base": "main",
+      "mergeable": "MERGEABLE",
+      "reviewDecision": null,
+      "state": "in_progress",
+      "checks": {
+        "rows": [
+          {
+            "name": "CodeRabbit",
+            "state": "pending"
+          },
+          {
+            "name": "Supabase Preview",
+            "state": "skipped"
+          }
+        ],
+        "pass": 0,
+        "pending": 1,
+        "fail": 0,
+        "skipped": 1
+      }
+    }
+  ],
   "blocked": [],
   "mergedRecent": [
+    {
+      "headRefName": "feature/w9-release-evidence-readiness",
+      "mergedAt": "2026-06-01T16:55:35Z",
+      "number": 92,
+      "title": "W9 - App Store evidence readiness",
+      "url": "https://github.com/RBarbieri13/FuelWell/pull/92"
+    },
+    {
+      "headRefName": "feature/w7-ci-coverage-readiness",
+      "mergedAt": "2026-06-01T16:54:57Z",
+      "number": 90,
+      "title": "W7 - CI coverage readiness",
+      "url": "https://github.com/RBarbieri13/FuelWell/pull/90"
+    },
+    {
+      "headRefName": "feature/w6-progress-activity-detail-foundation",
+      "mergedAt": "2026-06-01T16:54:44Z",
+      "number": 89,
+      "title": "W6 - Navigation detail foundation",
+      "url": "https://github.com/RBarbieri13/FuelWell/pull/89"
+    },
+    {
+      "headRefName": "feature/w1-coach-proxy-hardening",
+      "mergedAt": "2026-06-01T16:54:28Z",
+      "number": 88,
+      "title": "W1 - Coach proxy hardening",
+      "url": "https://github.com/RBarbieri13/FuelWell/pull/88"
+    },
+    {
+      "headRefName": "feature/w2-sqlite-persistence-foundation",
+      "mergedAt": "2026-06-01T16:54:00Z",
+      "number": 87,
+      "title": "W2 - SQLite persistence foundation",
+      "url": "https://github.com/RBarbieri13/FuelWell/pull/87"
+    },
     {
       "headRefName": "feature/w7-release-readiness-hardening",
       "mergedAt": "2026-06-01T04:26:16Z",
@@ -196,41 +132,6 @@
       "number": 84,
       "title": "W6 - Menu and help hierarchy",
       "url": "https://github.com/RBarbieri13/FuelWell/pull/84"
-    },
-    {
-      "headRefName": "feature/w6-feature-navigation-main",
-      "mergedAt": "2026-06-01T02:44:08Z",
-      "number": 83,
-      "title": "W6 - Feature navigation foundation",
-      "url": "https://github.com/RBarbieri13/FuelWell/pull/83"
-    },
-    {
-      "headRefName": "feature/w5-coach-brain-foundation",
-      "mergedAt": "2026-05-31T23:30:28Z",
-      "number": 81,
-      "title": "W5 - Coach brain foundation",
-      "url": "https://github.com/RBarbieri13/FuelWell/pull/81"
-    },
-    {
-      "headRefName": "feature/w4-auth-onboarding-profile-foundation",
-      "mergedAt": "2026-05-31T22:15:38Z",
-      "number": 80,
-      "title": "Add W4 auth onboarding foundation",
-      "url": "https://github.com/RBarbieri13/FuelWell/pull/80"
-    },
-    {
-      "headRefName": "feature/w3-live-dependency-toggle",
-      "mergedAt": "2026-05-31T21:47:45Z",
-      "number": 79,
-      "title": "W3: Live dependency wiring toggle",
-      "url": "https://github.com/RBarbieri13/FuelWell/pull/79"
-    },
-    {
-      "headRefName": "feature/w2-schema-apply-foundation",
-      "mergedAt": "2026-05-31T21:05:12Z",
-      "number": 78,
-      "title": "W2 Supabase migration foundation",
-      "url": "https://github.com/RBarbieri13/FuelWell/pull/78"
     }
   ],
   "vitalBlockers": [
@@ -241,7 +142,8 @@
     "Apple Developer, payment provider, and App Store Connect actions before TestFlight/App Store work."
   ],
   "nextActions": [
-    "Merge green queued PRs in dependency order: data layer, coach hardening, navigation detail, CI readiness.",
+    "Merge ready PRs: #93.",
+    "No blocked PRs reported by the live queue.",
     "Regenerate this status artifact after each merge so the cockpit reflects main.",
     "Continue plan-backed work from latest main once the review queue is clear enough to avoid hot-file conflicts."
   ]
