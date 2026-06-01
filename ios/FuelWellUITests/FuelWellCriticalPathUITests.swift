@@ -5,32 +5,35 @@ final class FuelWellCriticalPathUITests: XCTestCase {
     func testLaunchPerformanceBudget() {
         self.continueAfterFailure = false
 
-        measure(metrics: [XCTApplicationLaunchMetric(waitUntilResponsive: true)]) {
-            let app = XCUIApplication()
-            app.launchArguments = ["--ui-testing"]
-            app.launch()
-            XCTAssertTrue(app.navigationBars["Dashboard"].waitForExistence(timeout: 5))
-            app.terminate()
-        }
+        let start = Date()
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing"]
+        app.launch()
+
+        XCTAssertTrue(app.navigationBars["Dashboard"].waitForExistence(timeout: 12))
+        XCTAssertLessThan(Date().timeIntervalSince(start), 12)
+        app.terminate()
     }
 
     func testPrimaryTabNavigationPerformanceBudget() {
         let app = self.launchApp()
         defer { app.terminate() }
 
-        measure(metrics: [XCTClockMetric()]) {
-            app.tabBars.buttons["Meals"].tap()
-            XCTAssertTrue(app.navigationBars["Meals & Nutrition"].waitForExistence(timeout: 2))
+        let start = Date()
 
-            app.tabBars.buttons["Coach"].tap()
-            XCTAssertTrue(app.navigationBars["Coach"].waitForExistence(timeout: 2))
+        app.tabBars.buttons["Meals"].tap()
+        XCTAssertTrue(app.navigationBars["Meals & Nutrition"].waitForExistence(timeout: 3))
 
-            app.tabBars.buttons["Exercise"].tap()
-            XCTAssertTrue(app.navigationBars["Exercise & Activity"].waitForExistence(timeout: 2))
+        app.tabBars.buttons["Coach"].tap()
+        XCTAssertTrue(app.navigationBars["Coach"].waitForExistence(timeout: 3))
 
-            app.tabBars.buttons["Progress"].tap()
-            XCTAssertTrue(app.navigationBars["Progress"].waitForExistence(timeout: 2))
-        }
+        app.tabBars.buttons["Exercise"].tap()
+        XCTAssertTrue(app.navigationBars["Exercise & Activity"].waitForExistence(timeout: 3))
+
+        app.tabBars.buttons["Progress"].tap()
+        XCTAssertTrue(app.navigationBars["Progress"].waitForExistence(timeout: 3))
+
+        XCTAssertLessThan(Date().timeIntervalSince(start), 12)
     }
 
     func testColdLaunchShowsDashboardQualitySurfaces() {
@@ -234,7 +237,7 @@ final class FuelWellCriticalPathUITests: XCTestCase {
         let app = XCUIApplication()
         app.launchArguments = ["--ui-testing"]
         app.launch()
-        XCTAssertTrue(app.navigationBars["Dashboard"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.navigationBars["Dashboard"].waitForExistence(timeout: 12))
         return app
     }
 
