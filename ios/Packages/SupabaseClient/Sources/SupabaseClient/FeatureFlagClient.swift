@@ -46,7 +46,8 @@ extension FeatureFlagClient: DependencyKey {
     public static let previewValue = FeatureFlagClient.constant([
         FeatureFlag(name: "ai_meal_plan", enabled: true, description: "Preview AI meal-plan switch"),
         FeatureFlag(name: "ai_workout_suggestion", enabled: true, description: "Preview AI workout switch"),
-        FeatureFlag(name: "coach_chat", enabled: true, description: "Preview AI coach chat switch")
+        FeatureFlag(name: "coach_chat", enabled: true, description: "Preview AI coach chat switch"),
+        FeatureFlag(name: "proactive_nudges", enabled: true, description: "Preview proactive coaching switch")
     ])
 
     public static func constant(_ flags: [FeatureFlag]) -> FeatureFlagClient {

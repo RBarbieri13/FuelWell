@@ -6,14 +6,39 @@ import Foundation
 
 public struct ProactiveCoachingClient: Sendable {
     public var requestAuthorization: @Sendable () async throws -> Bool
-    public var scheduleMacroGapNudge: @Sendable (_ body: String) async throws -> Void
+    public var schedule: @Sendable (_ nudge: ProactiveNudge) async throws -> Void
 
     public init(
         requestAuthorization: @escaping @Sendable () async throws -> Bool,
-        scheduleMacroGapNudge: @escaping @Sendable (_ body: String) async throws -> Void
+        schedule: @escaping @Sendable (_ nudge: ProactiveNudge) async throws -> Void
     ) {
         self.requestAuthorization = requestAuthorization
-        self.scheduleMacroGapNudge = scheduleMacroGapNudge
+        self.schedule = schedule
+    }
+}
+
+public struct ProactiveNudge: Equatable, Identifiable, Sendable {
+    public var id: String
+    public var category: String
+    public var trigger: String
+    public var title: String
+    public var body: String
+    public var delaySeconds: TimeInterval
+
+    public init(
+        id: String,
+        category: String,
+        trigger: String,
+        title: String,
+        body: String,
+        delaySeconds: TimeInterval
+    ) {
+        self.id = id
+        self.category = category
+        self.trigger = trigger
+        self.title = title
+        self.body = body
+        self.delaySeconds = delaySeconds
     }
 }
 
@@ -22,12 +47,12 @@ extension ProactiveCoachingClient: DependencyKey {
 
     public static let testValue = ProactiveCoachingClient(
         requestAuthorization: { throw ProactiveCoachingError.unimplemented },
-        scheduleMacroGapNudge: { _ in throw ProactiveCoachingError.unimplemented }
+        schedule: { _ in throw ProactiveCoachingError.unimplemented }
     )
 
     public static let previewValue = ProactiveCoachingClient(
         requestAuthorization: { true },
-        scheduleMacroGapNudge: { _ in }
+        schedule: { _ in }
     )
 
     public static func live() -> ProactiveCoachingClient {
@@ -37,16 +62,21 @@ extension ProactiveCoachingClient: DependencyKey {
             requestAuthorization: {
                 try await center.requestAuthorization(options: [.alert, .sound, .badge])
             },
-            scheduleMacroGapNudge: { body in
+            schedule: { nudge in
                 let content = UNMutableNotificationContent()
-                content.title = "FuelWell"
-                content.body = body
+                content.title = nudge.title
+                content.body = nudge.body
                 content.sound = .default
+                content.userInfo = [
+                    "nudge_id": nudge.id,
+                    "category": nudge.category,
+                    "trigger": nudge.trigger
+                ]
 
                 let request = UNNotificationRequest(
-                    identifier: "fuelwell.macro-gap.\(UUID().uuidString)",
+                    identifier: "fuelwell.\(nudge.id)",
                     content: content,
-                    trigger: UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+                    trigger: UNTimeIntervalNotificationTrigger(timeInterval: nudge.delaySeconds, repeats: false)
                 )
                 try await center.add(request)
             }
@@ -54,7 +84,7 @@ extension ProactiveCoachingClient: DependencyKey {
         #else
         return ProactiveCoachingClient(
             requestAuthorization: { false },
-            scheduleMacroGapNudge: { _ in }
+            schedule: { _ in }
         )
         #endif
     }
@@ -69,5 +99,7 @@ extension DependencyValues {
 
 public enum ProactiveCoachingError: Error, Equatable, Sendable {
     case authorizationDenied
+    case featureDisabled
+    case unsafeLanguage
     case unimplemented
 }
