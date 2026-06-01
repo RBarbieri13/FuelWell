@@ -112,6 +112,36 @@ WHERE name = 'ai_meal_plan';
 
 Current readiness note: package and app-unit coverage verify the local kill-switch contract: `ai_meal_plan` reads from Supabase REST with the expected auth headers, client-side caching honors the configured TTL, disabled AI features stop before calling the proxy, and launch readiness treats disabled AI as an intentional safe-off state. The staging read path was attempted on 2026-05-26 and is blocked until the existing Phase 2 schema migration is applied to staging.
 
+## Coach Proxy Controls
+
+The Coach proxy is the only server path allowed to call Anthropic for in-app coaching. Keep the server-side controls tighter than the app UI.
+
+Required server-only environment values:
+
+- `ANTHROPIC_API_KEY`
+- `FUELWELL_COACH_PROXY_SECRET`
+- `FUELWELL_COACH_ALLOWED_MODELS`
+- `FUELWELL_COACH_USER_DAILY_TOKENS`
+- `FUELWELL_COACH_GLOBAL_DAILY_USD`
+- `FUELWELL_COACH_USER_MONTHLY_SOFT_USD`
+- `FUELWELL_COACH_USER_MONTHLY_KILL_USD`
+- `FUELWELL_COACH_REQUESTS_PER_MINUTE`
+
+Default model allow-list when `FUELWELL_COACH_ALLOWED_MODELS` is unset:
+
+```text
+claude-3-5-sonnet-latest,claude-3-5-haiku-latest
+```
+
+Requests must include a stable Supabase/auth UUID in `x-fuelwell-user-id`. Preview strings, email addresses, and temporary local identifiers are rejected before the proxy reads usage state or calls Anthropic. This keeps cost accounting and incident triage tied to one durable user key.
+
+Rotate `FUELWELL_COACH_PROXY_SECRET` if a client build, log, or external tool leaks the value. After rotating, verify:
+
+1. Old secret returns `401`.
+2. New secret reaches the feature-flag read path.
+3. An unapproved model returns `400` without an Anthropic request.
+4. A valid UUID user id reaches usage-cap evaluation.
+
 ## Production Database Access
 
 Access is restricted to the Supabase project owner and approved maintainers. Before running any production SQL:

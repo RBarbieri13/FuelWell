@@ -4,10 +4,12 @@ import { ZodError } from "zod";
 import {
   buildAnthropicMessageParams,
   buildCoachUsageRecord,
+  allowedCoachModelsFromEnv,
   coachUsageCapsFromEnv,
   coachUserIDFromHeaders,
   decideCoachUsage,
   encodeCoachStreamEvent,
+  isAllowedCoachModel,
   isValidCoachProxySecret,
   parseCoachProxyRequest,
   textFromAnthropicMessage,
@@ -69,6 +71,17 @@ export async function POST(request: NextRequest) {
     }
 
     throw error;
+  }
+
+  const allowedModels = allowedCoachModelsFromEnv();
+  if (!isAllowedCoachModel(coachRequest.model, allowedModels)) {
+    return NextResponse.json(
+      {
+        error: "Coach model is not allowed.",
+        allowed_models: allowedModels,
+      },
+      { status: 400 },
+    );
   }
 
   const supabase = getSupabaseAdmin();
