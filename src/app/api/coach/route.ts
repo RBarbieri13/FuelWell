@@ -5,11 +5,13 @@ import {
   buildAnthropicMessageParams,
   buildCoachUsageRecord,
   allowedCoachModelsFromEnv,
+  coachBearerTokenFromHeaders,
   coachUsageCapsFromEnv,
   coachUserIDFromHeaders,
   decideCoachUsage,
   encodeCoachStreamEvent,
   isAllowedCoachModel,
+  isStableUserID,
   isValidCoachProxySecret,
   parseCoachProxyRequest,
   textFromAnthropicMessage,
@@ -20,6 +22,11 @@ import { getSupabaseAdmin } from "@/lib/supabase-admin";
 export const runtime = "nodejs";
 
 type CoachUsageWindow = "day" | "month";
+type CoachUsageRow = {
+  input_tokens: number | string | null;
+  output_tokens: number | string | null;
+  estimated_cost_usd: number | string | null;
+};
 
 export async function POST(request: NextRequest) {
   if (!process.env.ANTHROPIC_API_KEY) {
@@ -103,13 +110,14 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const userID = coachUserIDFromHeaders(request.headers);
-  if (!userID) {
+  const userIdentity = await resolveCoachUserID();
+  if (!userIdentity.ok) {
     return NextResponse.json(
-      { error: "Missing or unstable user ID." },
-      { status: 401 },
+      { error: userIdentity.error },
+      { status: userIdentity.status },
     );
   }
+  const userID = userIdentity.userID;
 
   const caps = coachUsageCapsFromEnv();
   const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
@@ -268,7 +276,7 @@ export async function POST(request: NextRequest) {
       throw new Error("Coach usage state could not be read.");
     }
 
-    return (data ?? []).reduce<CoachUsageTotals>(
+    return ((data ?? []) as CoachUsageRow[]).reduce<CoachUsageTotals>(
       (totals, row) => ({
         inputTokens: totals.inputTokens + numberValue(row.input_tokens),
         outputTokens: totals.outputTokens + numberValue(row.output_tokens),
@@ -304,6 +312,50 @@ export async function POST(request: NextRequest) {
     ]);
 
     return { userDay, userMonth, globalDay, recentRequestCount };
+  }
+
+  async function resolveCoachUserID(): Promise<
+    | { ok: true; userID: string }
+    | { ok: false; status: 401 | 502; error: string }
+  > {
+    const bearerToken = coachBearerTokenFromHeaders(request.headers);
+    if (!bearerToken) {
+      return {
+        ok: false,
+        status: 401,
+        error: "Missing Supabase session.",
+      };
+    }
+
+    const { data, error } = await supabase.auth.getUser(bearerToken);
+    if (error) {
+      console.error("Supabase coach auth verification failed:", error);
+      return {
+        ok: false,
+        status: 401,
+        error: "Invalid Supabase session.",
+      };
+    }
+
+    const verifiedUserID = data.user?.id;
+    if (!verifiedUserID || !isStableUserID(verifiedUserID)) {
+      return {
+        ok: false,
+        status: 502,
+        error: "Supabase session did not include a stable user ID.",
+      };
+    }
+
+    const claimedUserID = coachUserIDFromHeaders(request.headers);
+    if (claimedUserID && claimedUserID !== verifiedUserID) {
+      return {
+        ok: false,
+        status: 401,
+        error: "Coach user does not match Supabase session.",
+      };
+    }
+
+    return { ok: true, userID: verifiedUserID };
   }
 
   async function recordUsage(record: Record<string, unknown>) {
