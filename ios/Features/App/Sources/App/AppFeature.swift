@@ -30,6 +30,8 @@ public struct AppFeature: Sendable {
         public var currentUser: SupabaseUser?
         public var onboarding: OnboardingFeature.State
         public var selectedTab: AppTab
+        public var accountAuthInFlight: Bool
+        public var accountAuthMessage: String?
 
         public init(
             phase: Phase = .splash,
@@ -39,7 +41,9 @@ public struct AppFeature: Sendable {
             minimumSplashElapsed: Bool = false,
             currentUser: SupabaseUser? = nil,
             onboarding: OnboardingFeature.State = .init(),
-            selectedTab: AppTab = .home
+            selectedTab: AppTab = .home,
+            accountAuthInFlight: Bool = false,
+            accountAuthMessage: String? = nil
         ) {
             self.phase = phase
             self.theme = theme
@@ -49,6 +53,8 @@ public struct AppFeature: Sendable {
             self.currentUser = currentUser
             self.onboarding = onboarding
             self.selectedTab = selectedTab
+            self.accountAuthInFlight = accountAuthInFlight
+            self.accountAuthMessage = accountAuthMessage
         }
     }
 
@@ -139,6 +145,8 @@ public struct AppFeature: Sendable {
                 return .none
 
             case .accountSignOutTapped:
+                state.accountAuthInFlight = true
+                state.accountAuthMessage = nil
                 return .run { send in
                     do {
                         try await self.supabaseAuth.signOut()
@@ -151,6 +159,8 @@ public struct AppFeature: Sendable {
                 }
 
             case .accountDeleteTapped:
+                state.accountAuthInFlight = true
+                state.accountAuthMessage = nil
                 return .run { send in
                     do {
                         try await self.supabaseAuth.deleteAccount()
@@ -167,9 +177,13 @@ public struct AppFeature: Sendable {
                 state.onboarding = OnboardingFeature.State()
                 state.phase = .onboarding
                 state.selectedTab = .home
+                state.accountAuthInFlight = false
+                state.accountAuthMessage = nil
                 return .none
 
             case .accountAuthFinished(.failure):
+                state.accountAuthInFlight = false
+                state.accountAuthMessage = "Account action could not finish. Check your connection and try again."
                 return .none
 
             case let .tabSelected(tab):

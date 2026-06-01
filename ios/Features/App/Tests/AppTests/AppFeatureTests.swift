@@ -281,12 +281,17 @@ func accountSignOutRoutesBackToOnboarding() async {
         )
     }
 
-    await store.send(.accountSignOutTapped)
+    await store.send(.accountSignOutTapped) {
+        $0.accountAuthInFlight = true
+        $0.accountAuthMessage = nil
+    }
     await store.receive(.accountAuthFinished(.success)) {
         $0.currentUser = nil
         $0.onboarding = OnboardingFeature.State()
         $0.phase = .onboarding
         $0.selectedTab = .home
+        $0.accountAuthInFlight = false
+        $0.accountAuthMessage = nil
     }
 }
 
@@ -305,12 +310,47 @@ func accountDeleteRoutesBackToOnboarding() async {
         )
     }
 
-    await store.send(.accountDeleteTapped)
+    await store.send(.accountDeleteTapped) {
+        $0.accountAuthInFlight = true
+        $0.accountAuthMessage = nil
+    }
     await store.receive(.accountAuthFinished(.success)) {
         $0.currentUser = nil
         $0.onboarding = OnboardingFeature.State()
         $0.phase = .onboarding
         $0.selectedTab = .home
+        $0.accountAuthInFlight = false
+        $0.accountAuthMessage = nil
+    }
+}
+
+@MainActor
+@Test
+func accountAuthFailureKeepsUserInPlaceAndShowsMessage() async {
+    let store = TestStore(initialState: AppFeature.State(
+        phase: .mainTabs,
+        currentUser: appTestUser,
+        selectedTab: .progress,
+        accountAuthMessage: "Older account warning"
+    )) {
+        AppFeature()
+    } withDependencies: {
+        $0.supabaseAuth = SupabaseAuthClient(
+            currentSession: { SupabaseSession(user: appTestUser, accessToken: "preview-token") },
+            signUp: { _, _ in SupabaseSession(user: appTestUser, accessToken: "preview-token") },
+            signIn: { _, _ in SupabaseSession(user: appTestUser, accessToken: "preview-token") },
+            signOut: { throw SupabaseClientError.transport("offline") },
+            deleteAccount: { throw SupabaseClientError.transport("offline") }
+        )
+    }
+
+    await store.send(.accountSignOutTapped) {
+        $0.accountAuthInFlight = true
+        $0.accountAuthMessage = nil
+    }
+    await store.receive(.accountAuthFinished(.failure(.transport("offline")))) {
+        $0.accountAuthInFlight = false
+        $0.accountAuthMessage = "Account action could not finish. Check your connection and try again."
     }
 }
 

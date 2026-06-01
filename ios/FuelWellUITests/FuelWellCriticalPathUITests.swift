@@ -65,6 +65,12 @@ final class FuelWellCriticalPathUITests: XCTestCase {
 
         app.buttons["nav.menu"].tap()
         XCTAssertTrue(app.staticTexts["Menu"].waitForExistence(timeout: 2))
+        app.buttons["account.subscription"].tap()
+        XCTAssertTrue(app.navigationBars["Account"].waitForExistence(timeout: 2))
+        XCTAssertTrue(app.descendants(matching: .any)["account.plan"].exists)
+        XCTAssertTrue(app.descendants(matching: .any)["account.controls"].exists)
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+
         app.buttons["menu.tool.snapshot"].tap()
         XCTAssertTrue(app.navigationBars["Snapshot"].waitForExistence(timeout: 2))
         XCTAssertTrue(app.staticTexts["One place to understand today"].exists)
