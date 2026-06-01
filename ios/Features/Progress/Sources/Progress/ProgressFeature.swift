@@ -1,4 +1,5 @@
 import ComposableArchitecture
+import Foundation
 import NutritionDomain
 
 @Reducer
@@ -13,11 +14,15 @@ public struct ProgressFeature: Sendable {
         public var detail: String
         public var healthScoreTopics: [ProgressTopic]
         public var trackingTopics: [ProgressTopic]
+        public var bodyPhotoCheckIns: [BodyPhotoCheckIn]
+        public var habits: [ProgressHabit]
 
         public init(
             snapshot: MacroDaySnapshot = .preview,
             healthScoreTopics: [ProgressTopic] = [.nutrition, .activity, .recovery],
-            trackingTopics: [ProgressTopic] = [.macroAdherence, .bodyPhotos, .habits]
+            trackingTopics: [ProgressTopic] = [.macroAdherence, .bodyPhotos, .habits],
+            bodyPhotoCheckIns: [BodyPhotoCheckIn] = BodyPhotoCheckIn.preview,
+            habits: [ProgressHabit] = ProgressHabit.preview
         ) {
             let score = MacroDecisionEngine.healthScore(snapshot: snapshot)
             self.snapshot = snapshot
@@ -26,16 +31,31 @@ public struct ProgressFeature: Sendable {
             self.detail = score.detail
             self.healthScoreTopics = healthScoreTopics
             self.trackingTopics = trackingTopics
+            self.bodyPhotoCheckIns = bodyPhotoCheckIns
+            self.habits = habits
         }
     }
 
     public enum Action: Equatable {
+        case bodyPhotoCheckInAdded
+        case habitToggled(ProgressHabit.ID)
         case snapshotUpdated(MacroDaySnapshot)
     }
 
     public var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
+            case .bodyPhotoCheckInAdded:
+                state.bodyPhotoCheckIns.insert(.next(after: state.bodyPhotoCheckIns), at: 0)
+                return .none
+
+            case let .habitToggled(id):
+                guard let index = state.habits.firstIndex(where: { $0.id == id }) else {
+                    return .none
+                }
+                state.habits[index].isComplete.toggle()
+                return .none
+
             case let .snapshotUpdated(snapshot):
                 state.snapshot = snapshot
                 state.score = MacroDecisionEngine.healthScore(snapshot: snapshot)
@@ -45,6 +65,91 @@ public struct ProgressFeature: Sendable {
             }
         }
     }
+}
+
+public struct BodyPhotoCheckIn: Equatable, Identifiable, Sendable {
+    public let id: UUID
+    public var label: String
+    public var capturedAt: Date
+    public var angles: [String]
+    public var note: String
+
+    public init(
+        id: UUID,
+        label: String,
+        capturedAt: Date,
+        angles: [String],
+        note: String
+    ) {
+        self.id = id
+        self.label = label
+        self.capturedAt = capturedAt
+        self.angles = angles
+        self.note = note
+    }
+
+    public static let preview: [Self] = [
+        .init(
+            id: UUID(uuid: (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21)),
+            label: "Week 2",
+            capturedAt: Date(timeIntervalSince1970: 1_773_446_400),
+            angles: ["Front", "Side", "Back"],
+            note: "Optional check-in captured privately."
+        ),
+        .init(
+            id: UUID(uuid: (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20)),
+            label: "Week 1",
+            capturedAt: Date(timeIntervalSince1970: 1_772_841_600),
+            angles: ["Front", "Side", "Back"],
+            note: "Baseline for visual trend."
+        )
+    ]
+
+    static func next(after checkIns: [Self]) -> Self {
+        let week = checkIns.count + 1
+        return .init(
+            id: UUID(uuid: (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, UInt8(min(week, 255)))),
+            label: "Week \(week)",
+            capturedAt: Date(timeIntervalSince1970: 1_773_446_400 + Double(week * 604_800)),
+            angles: ["Front", "Side", "Back"],
+            note: "New check-in ready for photo attachment."
+        )
+    }
+}
+
+public struct ProgressHabit: Equatable, Identifiable, Sendable {
+    public let id: UUID
+    public var title: String
+    public var detail: String
+    public var isComplete: Bool
+
+    public init(id: UUID, title: String, detail: String, isComplete: Bool) {
+        self.id = id
+        self.title = title
+        self.detail = detail
+        self.isComplete = isComplete
+    }
+
+    public static let preview: [Self] = [
+        .init(
+            id: UUID(uuid: (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31)),
+            title: "Meal photo before edits",
+            detail: "10 of 14 days",
+            isComplete: true
+        ),
+        .init(
+            id: UUID(uuid: (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 32)),
+            title: "Post-dinner walk",
+            detail: "4 of 7 evenings",
+            isComplete: false
+        ),
+        .init(
+            id: UUID(uuid: (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 33)),
+            title: "Protein anchor at first meal",
+            detail: "5 of 7 mornings",
+            isComplete: true
+        )
+    ]
 }
 
 public enum ProgressTopic: String, CaseIterable, Equatable, Identifiable, Sendable {

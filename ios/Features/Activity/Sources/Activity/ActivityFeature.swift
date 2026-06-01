@@ -15,19 +15,25 @@ public struct ActivityFeature: Sendable {
         public var healthState: HealthState
         public var today: [ActivityRow]
         public var tools: [ActivityTool]
+        public var workoutLog: [WorkoutSession]
+        public var plan: WorkoutPlan
 
         public init(
             headline: String = "Rest day with movement",
             detail: String = "Walk after dinner and keep lifting for tomorrow.",
             healthState: HealthState = .preview(HealthSnapshot.preview),
             today: [ActivityRow] = Self.previewRows,
-            tools: [ActivityTool] = ActivityTool.allCases
+            tools: [ActivityTool] = ActivityTool.allCases,
+            workoutLog: [WorkoutSession] = WorkoutSession.preview,
+            plan: WorkoutPlan = .preview
         ) {
             self.headline = headline
             self.detail = detail
             self.healthState = healthState
             self.today = today
             self.tools = tools
+            self.workoutLog = workoutLog
+            self.plan = plan
         }
 
         public static let previewRows: [ActivityRow] = [
@@ -40,6 +46,8 @@ public struct ActivityFeature: Sendable {
     public enum Action: Equatable {
         case onAppear
         case healthSnapshotResponse(Result<HealthSnapshot, HealthKitClientError>)
+        case quickWorkoutLogged
+        case workoutPlanAdvanced
     }
 
     public var body: some ReducerOf<Self> {
@@ -81,6 +89,16 @@ public struct ActivityFeature: Sendable {
                     )
                 ]
                 return .none
+
+            case .quickWorkoutLogged:
+                state.workoutLog.insert(.quickSession(number: state.workoutLog.count + 1), at: 0)
+                state.headline = "Training is logged"
+                state.detail = "Workout captured. Dinner guidance can account for the session."
+                return .none
+
+            case .workoutPlanAdvanced:
+                state.plan = state.plan.advanced()
+                return .none
             }
         }
     }
@@ -115,6 +133,66 @@ public enum HealthState: Equatable {
     case preview(HealthSnapshot)
     case loaded(HealthSnapshot)
     case unavailable(HealthKitClientError)
+}
+
+public struct WorkoutSession: Equatable, Identifiable, Sendable {
+    public let id: UUID
+    public var title: String
+    public var detail: String
+    public var loggedAt: Date
+
+    public init(id: UUID, title: String, detail: String, loggedAt: Date) {
+        self.id = id
+        self.title = title
+        self.detail = detail
+        self.loggedAt = loggedAt
+    }
+
+    public static let preview: [Self] = [
+        .init(
+            id: UUID(uuid: (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41)),
+            title: "Upper body",
+            detail: "42 min · moderate effort",
+            loggedAt: Date(timeIntervalSince1970: 1_773_432_000)
+        )
+    ]
+
+    static func quickSession(number: Int) -> Self {
+        .init(
+            id: UUID(uuid: (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, UInt8(min(number, 255)))),
+            title: "Workout \(number)",
+            detail: "Quick log · 30 min · moderate effort",
+            loggedAt: Date(timeIntervalSince1970: 1_773_446_400 + Double(number * 3_600))
+        )
+    }
+}
+
+public struct WorkoutPlan: Equatable, Sendable {
+    public var title: String
+    public var detail: String
+    public var nextSessions: [String]
+
+    public init(title: String, detail: String, nextSessions: [String]) {
+        self.title = title
+        self.detail = detail
+        self.nextSessions = nextSessions
+    }
+
+    public static let preview = Self(
+        title: "Lower body tomorrow",
+        detail: "45 min · moderate effort · recovery-friendly",
+        nextSessions: ["Lower body", "Active recovery", "Upper body"]
+    )
+
+    func advanced() -> Self {
+        guard let first = self.nextSessions.first else { return self }
+        let rotated = Array(self.nextSessions.dropFirst()) + [first]
+        return Self(
+            title: "\(rotated[0]) next",
+            detail: "Plan advanced after today’s decision",
+            nextSessions: rotated
+        )
+    }
 }
 
 public enum ActivityTool: String, CaseIterable, Equatable, Identifiable, Sendable {

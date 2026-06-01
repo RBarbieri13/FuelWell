@@ -16,7 +16,7 @@ struct ExerciseActivityView: View {
                 detail: self.store.detail
             )
             ActivitySignalSection(rows: self.store.today)
-            TrainingToolsSection(tools: self.store.tools)
+            TrainingToolsSection(tools: self.store.tools, store: self.store)
         }
         .onAppear {
             self.store.send(.onAppear)
@@ -50,6 +50,7 @@ private struct ActivitySignalSection: View {
 
 private struct TrainingToolsSection: View {
     let tools: [ActivityTool]
+    @Bindable var store: StoreOf<ActivityFeature>
     @Environment(\.theme) private var theme
 
     var body: some View {
@@ -60,7 +61,7 @@ private struct TrainingToolsSection: View {
             VStack(spacing: self.theme.spacing.sm) {
                 ForEach(self.tools) { tool in
                     NavigationLink {
-                        ActivityToolDetailView(tool: tool)
+                        ActivityToolDetailView(tool: tool, store: self.store)
                     } label: {
                         PhaseNavigationRow(item: tool.row)
                     }
@@ -85,12 +86,14 @@ struct ProgressOverviewView: View {
             ProgressNavigationSection(
                 title: "Health score detail",
                 topics: self.store.healthScoreTopics,
-                score: self.store.score
+                score: self.store.score,
+                store: self.store
             )
             ProgressNavigationSection(
                 title: "Tracking",
                 topics: self.store.trackingTopics,
-                score: self.store.score
+                score: self.store.score,
+                store: self.store
             )
         }
     }
@@ -100,6 +103,7 @@ private struct ProgressNavigationSection: View {
     let title: String
     let topics: [ProgressTopic]
     let score: HealthScore
+    @Bindable var store: StoreOf<ProgressFeature>
 
     @Environment(\.theme) private var theme
 
@@ -111,7 +115,7 @@ private struct ProgressNavigationSection: View {
             VStack(spacing: self.theme.spacing.sm) {
                 ForEach(self.topics) { topic in
                     NavigationLink {
-                        ProgressDetailView(topic: topic)
+                        ProgressDetailView(topic: topic, store: self.store)
                     } label: {
                         PhaseNavigationRow(item: topic.row(score: self.score))
                     }

@@ -82,3 +82,46 @@ func deniedHealthKitShowsConnectState() async {
         ]
     }
 }
+
+@MainActor
+@Test
+func quickWorkoutLogAddsSessionAndUpdatesHeadline() async {
+    let store = TestStore(initialState: ActivityFeature.State(workoutLog: [])) {
+        ActivityFeature()
+    }
+
+    await store.send(.quickWorkoutLogged) {
+        $0.workoutLog = [
+            WorkoutSession(
+                id: UUID(uuid: (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1)),
+                title: "Workout 1",
+                detail: "Quick log · 30 min · moderate effort",
+                loggedAt: Date(timeIntervalSince1970: 1_773_450_000)
+            )
+        ]
+        $0.headline = "Training is logged"
+        $0.detail = "Workout captured. Dinner guidance can account for the session."
+    }
+}
+
+@MainActor
+@Test
+func advancingWorkoutPlanRotatesUpcomingSessions() async {
+    let store = TestStore(initialState: ActivityFeature.State(
+        plan: WorkoutPlan(
+            title: "Lower body tomorrow",
+            detail: "45 min",
+            nextSessions: ["Lower body", "Active recovery", "Upper body"]
+        )
+    )) {
+        ActivityFeature()
+    }
+
+    await store.send(.workoutPlanAdvanced) {
+        $0.plan = WorkoutPlan(
+            title: "Active recovery next",
+            detail: "Plan advanced after today’s decision",
+            nextSessions: ["Active recovery", "Upper body", "Lower body"]
+        )
+    }
+}
