@@ -1,6 +1,9 @@
 name: iOS CI
 
 on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 10 * * *"
   pull_request:
     paths:
       - "ios/**"
@@ -13,14 +16,6 @@ on:
   push:
     branches:
       - main
-    paths:
-      - "ios/**"
-      - ".github/workflows/ios-ci.yml"
-      - "tools/release/**"
-      - "tools/supabase/**"
-      - "tools/operate/**"
-      - "docs/ios-guide/operate/**"
-      - "docs/ios-guide/phase7/**"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -74,9 +69,12 @@ jobs:
           bash -n tools/supabase/kill-switch-drill.sh
           bash -n tools/release/check-phase7-founding100.sh
           bash -n tools/release/check-phase7-commerce-linkage.sh
+          bash -n tools/release/check-w7-ci-readiness.sh
+          bash -n tools/release/check-coverage-floor.sh
           bash -n tools/operate/check-operate-readiness.sh
           node --check tools/operate/triage-feedback.js
           node -e "JSON.parse(require('fs').readFileSync('docs/ios-guide/operate/posthog-decision-engine-dashboard.json', 'utf8'))"
+          tools/release/check-w7-ci-readiness.sh
 
   test:
     name: Build and Test
@@ -102,11 +100,17 @@ jobs:
 
       - name: Run full test suite
         run: |
+          rm -rf build/reports/FuelWellApp.xcresult
           xcodebuild test \
             -scheme FuelWellApp \
             -destination "${IOS_CI_DESTINATION}" \
             -skipMacroValidation \
-            -skipPackagePluginValidation
+            -skipPackagePluginValidation \
+            -resultBundlePath build/reports/FuelWellApp.xcresult
+
+      - name: Enforce coverage floor
+        working-directory: .
+        run: tools/release/check-coverage-floor.sh ios/build/reports/FuelWellApp.xcresult
 
   snapshots:
     name: Snapshot Tests
