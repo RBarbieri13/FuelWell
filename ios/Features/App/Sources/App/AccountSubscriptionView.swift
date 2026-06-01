@@ -7,11 +7,10 @@ import SupabaseClient
 import SwiftUI
 
 struct AccountSubscriptionView: View {
-    let store: StoreOf<AppFeature>
+    @Bindable var store: StoreOf<AppFeature>
 
     @Dependency(\.subscriptionClient) private var subscriptionClient
     @Dependency(\.supabaseDatabase) private var supabaseDatabase
-    @Environment(\.dismiss) private var dismiss
     @Environment(\.theme) private var theme
     @State private var currentUser: SupabaseUser?
     @State private var profile: Profile?
@@ -21,8 +20,6 @@ struct AccountSubscriptionView: View {
     @State private var message: String?
     @State private var isLoading = false
     @State private var isJoiningFounding100 = false
-    @State private var isSigningOut = false
-    @State private var isDeletingAccount = false
     @State private var isConfirmingDelete = false
 
     var body: some View {
@@ -39,13 +36,7 @@ struct AccountSubscriptionView: View {
             self.founding100Card
             self.accountControlsCard
 
-            if let message = self.message {
-                Text(message)
-                    .font(.custom(self.theme.font.body, size: self.theme.text.body.size))
-                    .fontWeight(.semibold)
-                    .foregroundStyle(self.theme.color.text.body.color)
-                    .phaseCard()
-            }
+            self.messageCard
         }
         .task {
             await self.load()
@@ -111,6 +102,7 @@ struct AccountSubscriptionView: View {
             PhaseDetailRow(label: "Lifestyle", value: self.lifestyleSummary)
         }
         .phaseCard()
+        .qualityID(QualityIdentifier.accountPlan)
     }
 
     private var subscriptionCard: some View {
@@ -137,15 +129,17 @@ struct AccountSubscriptionView: View {
                 .font(.custom(self.theme.font.display, size: self.theme.text.title.size))
                 .fontWeight(.bold)
 
-            Button(self.isSigningOut ? "Signing Out" : "Sign Out", systemImage: "rectangle.portrait.and.arrow.right") {
-                Task {
-                    await self.signOut()
-                }
+            Button(
+                self.store.accountAuthInFlight ? "Working" : "Sign Out",
+                systemImage: "rectangle.portrait.and.arrow.right"
+            ) {
+                self.signOut()
             }
             .buttonStyle(.borderedProminent)
             .tint(self.theme.color.bg.elevated.color)
             .fontWeight(.bold)
-            .disabled(self.isSigningOut || self.isDeletingAccount)
+            .disabled(self.store.accountAuthInFlight)
+            .qualityID(QualityIdentifier.accountSignOut)
 
             Button("Delete Account", systemImage: "trash") {
                 self.isConfirmingDelete = true
@@ -153,7 +147,8 @@ struct AccountSubscriptionView: View {
             .buttonStyle(.bordered)
             .tint(self.theme.color.semantic.error.color)
             .fontWeight(.bold)
-            .disabled(self.currentUser == nil || self.isSigningOut || self.isDeletingAccount)
+            .disabled(self.currentUser == nil || self.store.accountAuthInFlight)
+            .qualityID(QualityIdentifier.accountDelete)
 
             Text(
                 "Delete account is required for App Store account apps. " +
@@ -164,6 +159,20 @@ struct AccountSubscriptionView: View {
             .foregroundStyle(self.theme.color.text.secondary.color)
         }
         .phaseCard()
+        .qualityID(QualityIdentifier.accountControls)
+    }
+
+    @ViewBuilder
+    private var messageCard: some View {
+        let visibleMessage = self.store.accountAuthMessage ?? self.message
+        if let visibleMessage {
+            Text(visibleMessage)
+                .font(.custom(self.theme.font.body, size: self.theme.text.body.size))
+                .fontWeight(.semibold)
+                .foregroundStyle(self.theme.color.text.body.color)
+                .phaseCard()
+                .qualityID(QualityIdentifier.accountMessage)
+        }
     }
 
     private var founding100Card: some View {
@@ -305,20 +314,12 @@ struct AccountSubscriptionView: View {
         }
     }
 
-    private func signOut() async {
-        self.isSigningOut = true
-        defer { self.isSigningOut = false }
-
+    private func signOut() {
         self.store.send(.accountSignOutTapped)
-        self.dismiss()
     }
 
-    private func deleteAccount() async {
-        self.isDeletingAccount = true
-        defer { self.isDeletingAccount = false }
-
+    private func deleteAccount() {
         self.store.send(.accountDeleteTapped)
-        self.dismiss()
     }
 }
 
