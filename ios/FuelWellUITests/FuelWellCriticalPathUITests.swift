@@ -147,23 +147,32 @@ final class FuelWellCriticalPathUITests: XCTestCase {
         XCTAssertTrue(app.navigationBars["Progress"].waitForExistence(timeout: 2))
     }
 
-    func testDashboardShortcutsSwitchToRealTabs() {
+    func testDashboardShortcutsOpenDetailPagesAndThenFullTabs() {
         let app = self.launchApp()
         defer { app.terminate() }
 
         app.buttons["dashboard.shortcut.meals"].tap()
+        XCTAssertTrue(app.navigationBars["Meals Today"].waitForExistence(timeout: 2))
+        XCTAssertTrue(app.staticTexts["Dinner is the open decision"].exists)
+        app.buttons["dashboard.shortcut.meals.open-tab"].tap()
         XCTAssertTrue(app.navigationBars["Meals & Nutrition"].waitForExistence(timeout: 2))
 
         app.tabBars.buttons["Home"].tap()
         XCTAssertTrue(app.navigationBars["Dashboard"].waitForExistence(timeout: 2))
 
-        app.buttons["dashboard.shortcut.exercise"].tap()
+        app.buttons["dashboard.shortcut.activity"].tap()
+        XCTAssertTrue(app.navigationBars["Activity Today"].waitForExistence(timeout: 2))
+        XCTAssertTrue(app.staticTexts["A short walk keeps the day flexible"].exists)
+        app.buttons["dashboard.shortcut.activity.open-tab"].tap()
         XCTAssertTrue(app.navigationBars["Exercise & Activity"].waitForExistence(timeout: 2))
 
         app.tabBars.buttons["Home"].tap()
         XCTAssertTrue(app.navigationBars["Dashboard"].waitForExistence(timeout: 2))
 
         app.buttons["dashboard.shortcut.progress"].tap()
+        XCTAssertTrue(app.navigationBars["Progress Today"].waitForExistence(timeout: 2))
+        XCTAssertTrue(app.staticTexts["Adherence is steady this week"].exists)
+        app.buttons["dashboard.shortcut.progress.open-tab"].tap()
         XCTAssertTrue(app.navigationBars["Progress"].waitForExistence(timeout: 2))
     }
 
@@ -180,6 +189,11 @@ final class FuelWellCriticalPathUITests: XCTestCase {
 
         app.tabBars.buttons["Exercise"].tap()
         XCTAssertTrue(app.navigationBars["Exercise & Activity"].waitForExistence(timeout: 2))
+        app.buttons["activity.signal.0"].tap()
+        XCTAssertTrue(app.staticTexts["What this means"].waitForExistence(timeout: 2))
+        XCTAssertTrue(app.staticTexts["Next action"].exists)
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+
         app.buttons["activity.tool.workout-log"].tap()
         XCTAssertTrue(app.navigationBars["Workout Log"].waitForExistence(timeout: 2))
         XCTAssertTrue(app.staticTexts["Record the session without turning FuelWell into a workout app"].exists)
@@ -197,6 +211,16 @@ final class FuelWellCriticalPathUITests: XCTestCase {
         app.buttons["dashboard.inflows-outflows"].tap()
         XCTAssertTrue(app.navigationBars["Inflows / Outflows"].waitForExistence(timeout: 2))
         XCTAssertTrue(app.staticTexts["Your day is still flexible"].exists)
+    }
+
+    func testDashboardNudgeOpensDetailPage() {
+        let app = self.launchApp()
+        defer { app.terminate() }
+
+        app.buttons["dashboard.nudge.detail"].tap()
+        XCTAssertTrue(app.navigationBars["Dinner Nudge"].waitForExistence(timeout: 2))
+        XCTAssertTrue(app.staticTexts["A walk is queued only if dinner lands heavy"].exists)
+        XCTAssertTrue(app.staticTexts["No nudge is sent when dinner is already balanced"].exists)
     }
 
     func testNutritionRecipeDetailAndFoodPortionDetailOpen() {
