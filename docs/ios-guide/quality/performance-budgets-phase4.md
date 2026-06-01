@@ -8,9 +8,9 @@ Phase 4 now has repeatable simulator measurements in the UI test target and a co
 
 | Area | Phase 4 budget | Current evidence |
 | --- | --- | --- |
-| Cold launch | P95 under 400ms to first interactive frame on a real device | `testLaunchPerformanceBudget` records launch-to-responsive timing with `XCTApplicationLaunchMetric`. |
+| Cold launch | P95 under 400ms to first interactive frame on a real device | `testLaunchPerformanceBudget` asserts the CI smoke launch budget; real-device Instruments provides release evidence. |
 | Warm launch | P95 under 200ms on a real device | Pending real-device Instruments run before TestFlight. |
-| Primary tab navigation | No visible stalls across Dashboard, Meals, Coach, Exercise, and Progress | `testPrimaryTabNavigationPerformanceBudget` records tab switching with `XCTClockMetric`. |
+| Primary tab navigation | No visible stalls across Dashboard, Meals, Coach, Exercise, and Progress | `testPrimaryTabNavigationPerformanceBudget` asserts the CI smoke navigation budget; real-device Instruments provides release evidence. |
 | Scroll | 60fps sustained, 120fps where supported | Pending Instruments SwiftUI/Animation Hitches pass on dashboard and nutrition lists. |
 | Idle memory | Under 150MB resident at idle | Pending real-device Allocations pass before TestFlight. |
 | Blocking I/O | No blocking disk or network work during SwiftUI body evaluation | Covered by code review and future Time Profiler sampling. |

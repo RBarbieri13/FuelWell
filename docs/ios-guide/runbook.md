@@ -40,8 +40,8 @@ The gate exits `3` when the local code path is healthy but external release evid
 
 Automated Phase 4 checks:
 
-- `FuelWellCriticalPathUITests.testLaunchPerformanceBudget` records launch-to-responsive timing.
-- `FuelWellCriticalPathUITests.testPrimaryTabNavigationPerformanceBudget` records primary tab switching.
+- `FuelWellCriticalPathUITests.testLaunchPerformanceBudget` asserts launch-to-responsive timing stays within the CI smoke budget.
+- `FuelWellCriticalPathUITests.testPrimaryTabNavigationPerformanceBudget` asserts primary tab switching stays within the CI smoke budget.
 - Existing UI smoke tests cover Dashboard, Menu, Help, Add Meal, and tab reachability.
 
 Real-device values are required before a TestFlight release is called production-ready:
@@ -49,6 +49,9 @@ Real-device values are required before a TestFlight release is called production
 | Release | Device | Cold launch P95 | Warm launch P95 | Scroll result | Idle memory | Notes |
 | --- | --- | --- | --- | --- | --- | --- |
 | Pending | Pending | Pending | Pending | Pending | Pending | Add physical-device Instruments results before TestFlight. |
+
+HealthKit live-data acceptance is tracked separately in `docs/ios-guide/quality/healthkit-physical-device-acceptance.md`.
+The in-app path is `Menu` -> `Permissions` -> `HealthKit acceptance`.
 
 ## Kill-switch Activation
 

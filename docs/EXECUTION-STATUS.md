@@ -6,7 +6,7 @@ Updated: 2026-05-31
 
 **W6 - Feature Completeness: Dashboard, Progress, Activity, Plans, Menu**
 
-Current branch: `feature/w6-menu-help-hierarchy`
+Current branch: `feature/w6-closeout-readiness`
 
 ## Baseline Re-Verification
 
@@ -38,12 +38,15 @@ W6 feature completeness foundation:
 - PR #80, W4 auth/onboarding/profile foundation, merged into `main`.
 - PR #81, W5 coach brain foundation, merged into `main`.
 - PR #83, W6 feature navigation foundation, merged into `main`.
+- PR #84, W6 menu/help hierarchy, merged into `main`.
 - Dashboard Today rows now route to the real Meals, Exercise, and Progress tabs.
 - Dashboard Health Score and Inflows/Outflows summary cards now open real detail pages.
 - Nutrition search, restaurant, and recipe rows now open detail/portion cards before quick-use actions.
 - Activity is now a dedicated reducer-backed feature package using HealthKit snapshot dependency state for steps, active energy, and workouts.
 - Progress is now a dedicated reducer-backed feature package using the Health Score v1 model and owned topic lists for health score detail and tracking destinations.
 - Menu tools/settings and Help featured articles now open real detail subpages instead of static list rows.
+- Permissions now exposes a HealthKit Acceptance subpage so the physical-device gate is visible in-app before TestFlight.
+- The W6 parity matrix now aligns with D10: standalone Learn Home is removed from Pilot, while Help carries article content and article detail pages.
 
 ## Verification For Current Slice
 
@@ -69,8 +72,8 @@ These are required before the live backend acceptance gates can pass end-to-end:
 
 ## Next
 
-PR #81 (`feature/w5-coach-brain-foundation`) is merged into `main`.
+Close W6 by merging the closeout readiness branch after local and GitHub checks pass.
 
-Continue W6 by closing the remaining Learn-home deferral decision, physical-device HealthKit acceptance, and any final profile/settings depth required before W6 close.
+PR #83 expanded W6 beyond tab shortcuts: Dashboard Health Score and Inflows/Outflows summary cards open real detail pages, Nutrition now has recipe, restaurant, and food/portion detail cards before quick-use actions, W6 has a concrete Health Score v1 / HealthKit energy-out model recorded in `decisions.md`, and Activity/Progress are reducer-backed feature packages rather than static App-only views.
 
-PR #83 now expands W6 beyond tab shortcuts: Dashboard Health Score and Inflows/Outflows summary cards open real detail pages, Nutrition now has recipe, restaurant, and food/portion detail cards before quick-use actions, W6 has a concrete Health Score v1 / HealthKit energy-out model recorded in `decisions.md`, and Activity/Progress are reducer-backed feature packages rather than static App-only views.
+PR #84 expanded Menu and Help into a real hierarchy. The closeout branch adds the final product/documentation alignment: Learn Home is removed from Pilot by D10, and HealthKit acceptance is surfaced as a physical-device checklist rather than claimed complete from Simulator-only evidence.
