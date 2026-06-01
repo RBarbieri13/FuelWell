@@ -64,6 +64,8 @@ export type CoachStreamEvent = {
   isComplete: boolean;
 };
 
+type CoachProxyEnv = Record<string, string | undefined>;
+
 const defaultAllowedModels = [
   "claude-3-5-sonnet-latest",
   "claude-3-5-haiku-latest",
@@ -103,7 +105,7 @@ export function isValidCoachProxySecret(
 }
 
 export function coachUsageCapsFromEnv(
-  env: NodeJS.ProcessEnv = process.env,
+  env: CoachProxyEnv = process.env,
 ): CoachUsageCaps {
   return {
     userDailyTokens: readNumber(env.FUELWELL_COACH_USER_DAILY_TOKENS, defaultCaps.userDailyTokens),
@@ -134,7 +136,7 @@ export function buildAnthropicMessageParams(
 }
 
 export function allowedCoachModelsFromEnv(
-  env: NodeJS.ProcessEnv = process.env,
+  env: CoachProxyEnv = process.env,
 ): string[] {
   const rawModels = env.FUELWELL_COACH_ALLOWED_MODELS;
   if (!rawModels) return defaultAllowedModels;
@@ -242,6 +244,15 @@ export function coachUserIDFromHeaders(headers: Headers): string | null {
   if (explicitUser && isStableUserID(explicitUser)) return explicitUser;
 
   return null;
+}
+
+export function coachBearerTokenFromHeaders(headers: Headers): string | null {
+  const authorization = headers.get("authorization")?.trim();
+  if (!authorization) return null;
+
+  const [scheme, token] = authorization.split(/\s+/, 2);
+  if (scheme?.toLowerCase() !== "bearer") return null;
+  return token?.trim() || null;
 }
 
 export function isStableUserID(value: string): boolean {

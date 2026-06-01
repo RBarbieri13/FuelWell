@@ -130,11 +130,13 @@ extension AnthropicClient: DependencyKey {
         endpoint: URL? = URL(string: ProcessInfo.processInfo.environment["FUELWELL_ANTHROPIC_PROXY_URL"] ?? ""),
         proxySecret: String? = ProcessInfo.processInfo.environment["FUELWELL_COACH_PROXY_SECRET"],
         featureFlags: FeatureFlagClient = .liveValue,
+        auth: SupabaseAuthClient = .liveValue,
         session: URLSession = .shared
     ) -> AnthropicClient {
         let liveClient = LiveAnthropicClient(
             endpoint: endpoint,
             proxySecret: proxySecret,
+            auth: auth,
             session: session
         )
 
@@ -212,16 +214,23 @@ extension AnthropicClient {
 private final class LiveAnthropicClient: @unchecked Sendable {
     private let endpoint: URL?
     private let proxySecret: String?
+    private let auth: SupabaseAuthClient
     private let session: URLSession
 
-    init(endpoint: URL?, proxySecret: String?, session: URLSession = .shared) {
+    init(
+        endpoint: URL?,
+        proxySecret: String?,
+        auth: SupabaseAuthClient,
+        session: URLSession = .shared
+    ) {
         self.endpoint = endpoint
         self.proxySecret = proxySecret
+        self.auth = auth
         self.session = session
     }
 
     func complete(_ request: AnthropicRequest) async throws -> AnthropicResponse {
-        let urlRequest = try self.urlRequest(request: request, acceptsStream: false)
+        let urlRequest = try await self.urlRequest(request: request, acceptsStream: false)
 
         do {
             let (data, response) = try await self.session.data(for: urlRequest)
@@ -240,7 +249,7 @@ private final class LiveAnthropicClient: @unchecked Sendable {
         AsyncThrowingStream { continuation in
             let task = Task {
                 do {
-                    let urlRequest = try self.urlRequest(request: request, acceptsStream: true)
+                    let urlRequest = try await self.urlRequest(request: request, acceptsStream: true)
                     let (bytes, response) = try await self.session.bytes(for: urlRequest)
                     try self.validate(response: response, featureFlag: request.featureFlag)
 
@@ -264,8 +273,12 @@ private final class LiveAnthropicClient: @unchecked Sendable {
         }
     }
 
-    private func urlRequest(request: AnthropicRequest, acceptsStream: Bool) throws -> URLRequest {
+    private func urlRequest(request: AnthropicRequest, acceptsStream: Bool) async throws -> URLRequest {
         guard let endpoint, !endpoint.absoluteString.isEmpty else {
+            throw AnthropicClientError.missingConfiguration
+        }
+
+        guard let session = try await self.auth.currentSession() else {
             throw AnthropicClientError.missingConfiguration
         }
 
@@ -278,6 +291,8 @@ private final class LiveAnthropicClient: @unchecked Sendable {
         if let proxySecret, !proxySecret.isEmpty {
             urlRequest.setValue(proxySecret, forHTTPHeaderField: "x-fuelwell-coach-secret")
         }
+        urlRequest.setValue("Bearer \(session.accessToken)", forHTTPHeaderField: "Authorization")
+        urlRequest.setValue(session.user.id.uuidString, forHTTPHeaderField: "x-fuelwell-user-id")
         urlRequest.httpBody = try JSONEncoder().encode(AnthropicProxyBody(request: request))
         return urlRequest
     }

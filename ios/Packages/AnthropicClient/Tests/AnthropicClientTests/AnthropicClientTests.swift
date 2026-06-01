@@ -53,6 +53,7 @@ func liveClientSendsFeatureFlagToProxyWhenEnabled() async throws {
         endpoint: endpoint,
         proxySecret: "test-secret",
         featureFlags: .constant([FeatureFlag(name: "coach_chat", enabled: true)]),
+        auth: .inMemory(session: testSession),
         session: URLSession(configuration: sessionConfiguration)
     )
 
@@ -70,9 +71,41 @@ func liveClientSendsFeatureFlagToProxyWhenEnabled() async throws {
         AnthropicURLProtocol.requests.first?.value(forHTTPHeaderField: "x-fuelwell-coach-secret") ==
             "test-secret"
     )
+    #expect(
+        AnthropicURLProtocol.requests.first?.value(forHTTPHeaderField: "Authorization") ==
+            "Bearer test-access-token"
+    )
+    #expect(
+        AnthropicURLProtocol.requests.first?.value(forHTTPHeaderField: "x-fuelwell-user-id") ==
+            testUserID.uuidString
+    )
     #expect(decoded?["prompt"] as? String == "Coach me.")
     #expect(decoded?["maxTokens"] as? Int == 42)
     #expect(decoded?["feature_flag"] as? String == "coach_chat")
+}
+
+@Test
+func liveClientRequiresSignedInSessionBeforeProxyCall() async throws {
+    AnthropicURLProtocol.reset(responseData: Data(#"{"text":"should not be used"}"#.utf8))
+
+    let sessionConfiguration = URLSessionConfiguration.ephemeral
+    sessionConfiguration.protocolClasses = [AnthropicURLProtocol.self]
+    let endpoint = try #require(URL(string: proxyEndpointString))
+
+    let client = AnthropicClient.live(
+        endpoint: endpoint,
+        proxySecret: "test-secret",
+        featureFlags: .constant([FeatureFlag(name: "coach_chat", enabled: true)]),
+        auth: .inMemory(session: nil),
+        session: URLSession(configuration: sessionConfiguration)
+    )
+
+    await #expect(throws: AnthropicClientError.missingConfiguration) {
+        _ = try await client.complete(
+            AnthropicRequest(prompt: "Coach me.", featureFlag: "coach_chat")
+        )
+    }
+    #expect(AnthropicURLProtocol.requests.isEmpty)
 }
 
 @Test
@@ -90,6 +123,7 @@ func liveClientMapsProxyDisabledStatusToFeatureDisabled() async throws {
         endpoint: endpoint,
         proxySecret: "test-secret",
         featureFlags: .constant([FeatureFlag(name: "coach_chat", enabled: true)]),
+        auth: .inMemory(session: testSession),
         session: URLSession(configuration: sessionConfiguration)
     )
 
@@ -125,6 +159,7 @@ func liveClientStreamsServerSentEventsFromProxy() async throws {
         endpoint: endpoint,
         proxySecret: "test-secret",
         featureFlags: .constant([FeatureFlag(name: "coach_chat", enabled: true)]),
+        auth: .inMemory(session: testSession),
         session: URLSession(configuration: sessionConfiguration)
     )
 
@@ -157,6 +192,7 @@ func liveClientMapsProxyBudgetStatusToBudgetExceeded() async throws {
         endpoint: endpoint,
         proxySecret: "test-secret",
         featureFlags: .constant([FeatureFlag(name: "coach_chat", enabled: true)]),
+        auth: .inMemory(session: testSession),
         session: URLSession(configuration: sessionConfiguration)
     )
 
@@ -244,5 +280,11 @@ private final class AnthropicURLProtocol: URLProtocol, @unchecked Sendable {
     }
 }
 
-private let proxyEndpointString = "https://anthropic-proxy.test/generate"
 }
+
+private let testUserID = UUID(uuid: (0, 0, 0, 0, 0, 0, 64, 0, 128, 0, 0, 0, 0, 0, 0, 1))
+private let testSession = SupabaseSession(
+    user: SupabaseUser(id: testUserID, email: "coach@fuelwell.app"),
+    accessToken: "test-access-token"
+)
+private let proxyEndpointString = "https://anthropic-proxy.test/generate"

@@ -3,6 +3,7 @@ import {
   allowedCoachModelsFromEnv,
   buildAnthropicMessageParams,
   buildCoachUsageRecord,
+  coachBearerTokenFromHeaders,
   coachUsageCapsFromEnv,
   coachUserIDFromHeaders,
   decideCoachUsage,
@@ -71,6 +72,19 @@ describe("coach proxy contract helpers", () => {
       "00000000-0000-4000-8000-000000000001",
     );
     expect(coachUserIDFromHeaders(invalidHeaders)).toBeNull();
+  });
+
+  it("extracts a bearer token for server-verified user attribution", () => {
+    expect(
+      coachBearerTokenFromHeaders(
+        new Headers({ authorization: "Bearer supabase-access-token" }),
+      ),
+    ).toBe("supabase-access-token");
+    expect(
+      coachBearerTokenFromHeaders(
+        new Headers({ authorization: "Basic abc123" }),
+      ),
+    ).toBeNull();
   });
 
   it("validates the proxy secret with an exact timing-safe match", () => {
