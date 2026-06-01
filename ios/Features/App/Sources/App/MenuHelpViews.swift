@@ -114,7 +114,74 @@ private struct MenuSettingsDetailView: View {
         PhaseScroll(title: self.topic.title) {
             PhaseHero(icon: self.topic.icon, title: self.topic.headline, detail: self.topic.detail)
             DashboardSection(title: self.topic.primarySectionTitle, items: self.topic.primaryItems)
+            if self.topic == .permissions {
+                PermissionAcceptanceSection()
+            }
             DashboardSection(title: "What changes next", items: self.topic.nextItems)
+        }
+    }
+}
+
+private struct PermissionAcceptanceSection: View {
+    var body: some View {
+        NavigationLink {
+            PermissionAcceptanceDetailView()
+        } label: {
+            PhaseNavigationRow(
+                item: .init(
+                    title: "HealthKit acceptance",
+                    detail: "Physical-device checklist before TestFlight",
+                    icon: "checkmark.seal"
+                )
+            )
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier("permissions.healthkit.acceptance")
+    }
+}
+
+private struct PermissionAcceptanceDetailView: View {
+    private let readinessItems: [PhaseRowItem] = [
+        .init(
+            title: "Grant access on iPhone",
+            detail: "Enable steps, active energy, workouts, body mass, and sleep in the live Health prompt.",
+            icon: "iphone"
+        ),
+        .init(
+            title: "Verify live metrics",
+            detail: "Confirm Dashboard, Activity, and Progress update from real HealthKit samples.",
+            icon: "waveform.path.ecg"
+        ),
+        .init(
+            title: "Deny-state fallback",
+            detail: "Turn Health access off and confirm manual logging remains usable.",
+            icon: "hand.raised"
+        )
+    ]
+
+    private let evidenceItems: [PhaseRowItem] = [
+        .init(
+            title: "Attach release evidence",
+            detail: "Capture device, iOS version, screenshots, and Instruments notes for the release candidate.",
+            icon: "doc.badge.plus"
+        ),
+        .init(
+            title: "Keep Simulator honest",
+            detail: "Simulator checks prove navigation only; they do not close the live HealthKit gate.",
+            icon: "exclamationmark.triangle"
+        )
+    ]
+
+    var body: some View {
+        PhaseScroll(title: "HealthKit Acceptance") {
+            PhaseHero(
+                icon: "checkmark.seal",
+                title: "Physical-device gate",
+                detail: "FuelWell can ship the navigation path in Simulator, but live HealthKit acceptance " +
+                    "must be proven on an iPhone before TestFlight."
+            )
+            DashboardSection(title: "Device checklist", items: self.readinessItems)
+            DashboardSection(title: "Release evidence", items: self.evidenceItems)
         }
     }
 }

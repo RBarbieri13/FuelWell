@@ -70,6 +70,10 @@ final class FuelWellCriticalPathUITests: XCTestCase {
         app.buttons["menu.settings.permissions"].tap()
         XCTAssertTrue(app.navigationBars["Permissions"].waitForExistence(timeout: 2))
         XCTAssertTrue(app.staticTexts["Control what FuelWell can read"].exists)
+        app.buttons["permissions.healthkit.acceptance"].tap()
+        XCTAssertTrue(app.navigationBars["HealthKit Acceptance"].waitForExistence(timeout: 2))
+        XCTAssertTrue(app.staticTexts["Physical-device gate"].exists)
+        app.navigationBars.buttons.element(boundBy: 0).tap()
         app.navigationBars.buttons.element(boundBy: 0).tap()
         app.buttons["Close"].tap()
 

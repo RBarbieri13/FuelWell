@@ -2,7 +2,7 @@
 
 Updated: 2026-05-31
 
-This matrix maps the locked iOS mockup files to their owning implementation surface. It is the W6 cut-line authority: a row is either implemented, in progress in W6, or explicitly deferred with a reason.
+This matrix maps the locked iOS mockup files to their owning implementation surface. It is the W6 cut-line authority: a row is either implemented, in progress in W6, or explicitly removed from the Pilot inventory with a dated decision.
 
 | Mockup | Owner | Status | Notes |
 |---|---|---|---|
@@ -26,8 +26,8 @@ This matrix maps the locked iOS mockup files to their owning implementation surf
 | 18-meal-plan-generator | Nutrition/Plans | Implemented | Deterministic generator surface exists. |
 | 19-grocery-list | Nutrition/Plans | Implemented | Deterministic grocery surface exists. |
 | 20-coach-chat | Coach | Implemented | W5 streaming coach PR #81. |
-| 21-learn-home | Menu/Help | Deferred | MVP ships Help/menu articles before Learn tab. Needs dated product sign-off before final W6 close. |
-| 22-article-detail | Menu/Help | Implemented | Help featured rows now open article detail pages; standalone Learn remains deferred. |
+| 21-learn-home | Menu/Help | Removed from Pilot | D10 removes standalone Learn Home from the Pilot inventory. Help carries article content and article detail pages. |
+| 22-article-detail | Menu/Help | Implemented | Help featured rows now open article detail pages; standalone Learn Home is out of Pilot by D10. |
 | 23-progress-overview | Progress | Implemented | Reducer-backed Progress package owns the overview, score topics, tracking topics, and visible destinations. |
 | 24-your-plan-profile | Profile/Menu | Implemented | W4 account/profile foundation and menu account route. |
 | 25-workout-detail | Activity | Implemented | Workout Log and Plans now have real destination pages; detailed set/rep editor remains a post-W6 depth follow-up. |

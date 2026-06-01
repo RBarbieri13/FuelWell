@@ -50,6 +50,9 @@ Real-device values are required before a TestFlight release is called production
 | --- | --- | --- | --- | --- | --- | --- |
 | Pending | Pending | Pending | Pending | Pending | Pending | Add physical-device Instruments results before TestFlight. |
 
+HealthKit live-data acceptance is tracked separately in `docs/ios-guide/quality/healthkit-physical-device-acceptance.md`.
+The in-app path is `Menu` -> `Permissions` -> `HealthKit acceptance`.
+
 ## Kill-switch Activation
 
 Canonical feature flag: `ai_meal_plan`.
