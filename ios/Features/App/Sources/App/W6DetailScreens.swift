@@ -137,19 +137,6 @@ enum DashboardDetailTopic: CaseIterable, Equatable, Identifiable {
     }
 }
 
-struct ActivityToolDetailView: View {
-    let tool: ActivityTool
-    @Environment(\.theme) private var theme
-
-    var body: some View {
-        PhaseScroll(title: self.tool.title) {
-            PhaseHero(icon: self.tool.icon, title: self.tool.headline, detail: self.tool.detail)
-            DashboardSection(title: "Today", items: self.tool.todayItems)
-            DashboardSection(title: "Next", items: self.tool.nextItems)
-        }
-    }
-}
-
 extension ActivityTool {
     var headline: String {
         switch self {
@@ -242,18 +229,6 @@ extension ActivityTool {
                     icon: "shield.lefthalf.filled"
                 )
             ]
-        }
-    }
-}
-
-struct ProgressDetailView: View {
-    let topic: ProgressTopic
-
-    var body: some View {
-        PhaseScroll(title: self.topic.title) {
-            PhaseHero(icon: self.topic.icon, title: self.topic.headline, detail: self.topic.detail)
-            DashboardSection(title: self.topic.primarySectionTitle, items: self.topic.primaryItems)
-            DashboardSection(title: "Next decision", items: self.topic.nextItems)
         }
     }
 }
