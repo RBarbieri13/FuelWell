@@ -1,4 +1,5 @@
 import Foundation
+import Persistence
 import SupabaseClient
 import Testing
 
@@ -270,6 +271,79 @@ func liveDatabaseClientUsesAccessTokenForOwnerScopedREST() async throws {
     #expect(request.url?.query?.contains("id=eq.00000000-0000-0000-0000-000000000001") == true)
     #expect(request.value(forHTTPHeaderField: "Authorization") == "Bearer user-access-token")
 }
+
+@Test
+func pendingWriteSyncFlushesMealLogsToSupabaseAndLeavesUnsupportedWritesQueued() async throws {
+    let databaseURL = FileManager.default.temporaryDirectory
+        .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        .appendingPathComponent("fuelwell.sqlite")
+    let queue = PendingWriteQueue(databaseURL: databaseURL)
+    let userID = try #require(UUID(uuidString: "00000000-0000-0000-0000-000000000001"))
+    let mealID = try #require(UUID(uuidString: "00000000-0000-0000-0000-000000000002"))
+    let capturedMeals = CapturedMeals()
+    let encoder = JSONEncoder()
+    encoder.dateEncodingStrategy = .iso8601
+
+    _ = try queue.enqueue(
+        PendingWrite(
+            route: "meals",
+            operation: .mealLog,
+            payload: String(
+                data: encoder.encode(
+                    MealLogPendingWritePayload(
+                        id: mealID,
+                        name: "Synced bowl",
+                        loggedAt: Date(timeIntervalSince1970: 1_714_046_400)
+                    )
+                ),
+                encoding: .utf8
+            ) ?? "{}"
+        )
+    )
+    _ = try queue.enqueue(
+        PendingWrite(
+            route: "meals",
+            operation: .mealLogDelete,
+            payload: #"{"id":"00000000-0000-0000-0000-000000000002"}"#
+        )
+    )
+
+    let sync = PendingWriteSyncClient.live(
+        queue: queue,
+        database: SupabaseDatabaseClient(
+            currentUser: { SupabaseUser(id: userID, email: "founder@fuelwell.app") },
+            fetchProfile: { _ in nil },
+            upsertProfile: { $0 },
+            insertMeal: { meal in
+                await capturedMeals.append(meal)
+                return meal
+            },
+            submitFeedback: { $0 }
+        )
+    )
+
+    let result = try await sync.flush()
+    let syncedMeals = await capturedMeals.all()
+    let remainingWrites = try queue.all()
+
+    #expect(result == PendingWriteSyncResult(attempted: 2, synced: 1, skipped: 1))
+    #expect(syncedMeals.map(\.id) == [mealID])
+    #expect(syncedMeals.map(\.userID) == [userID])
+    #expect(syncedMeals.map(\.name) == ["Synced bowl"])
+    #expect(remainingWrites.map(\.operation) == [.mealLogDelete])
+}
+}
+
+private actor CapturedMeals {
+    private var meals: [MealRecord] = []
+
+    func append(_ meal: MealRecord) {
+        self.meals.append(meal)
+    }
+
+    func all() -> [MealRecord] {
+        self.meals
+    }
 }
 
 private func liveDatabaseTestClient(accessToken: String?) throws -> SupabaseDatabaseClient {

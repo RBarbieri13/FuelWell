@@ -12,6 +12,7 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../Core"),
+        .package(path: "../Persistence"),
         .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.9.0")
     ],
     targets: [
@@ -19,6 +20,7 @@ let package = Package(
             name: "SupabaseClient",
             dependencies: [
                 "Core",
+                "Persistence",
                 .product(name: "Dependencies", package: "swift-dependencies")
             ],
             swiftSettings: [

@@ -61,12 +61,22 @@ public actor InMemoryNutritionRepository: NutritionRepository {
 }
 
 public actor LocalNutritionRepository: NutritionRepository {
-    private let entriesStore: JSONFileStore<[MealEntry]>
+    private let databaseStore: SQLiteDataStore
+    private let legacyEntriesStore: JSONFileStore<[MealEntry]>
     private let attachmentsStore: FileAttachmentStore
+    private let pendingWriteQueue: PendingWriteQueue
+    private let encoder: JSONEncoder
+    private let decoder: JSONDecoder
+    private var didImportLegacyEntries: Bool
 
     public init(rootDirectory: URL? = nil) {
         let rootDirectory = rootDirectory ?? LocalNutritionRepository.defaultRootDirectory()
-        self.entriesStore = JSONFileStore(
+        let databaseURL = rootDirectory
+            .appendingPathComponent("nutrition", isDirectory: true)
+            .appendingPathComponent("fuelwell.sqlite")
+        self.databaseStore = SQLiteDataStore(databaseURL: databaseURL)
+        self.pendingWriteQueue = PendingWriteQueue(databaseURL: databaseURL)
+        self.legacyEntriesStore = JSONFileStore(
             fileURL: rootDirectory
                 .appendingPathComponent("nutrition", isDirectory: true)
                 .appendingPathComponent("meal-entries.json")
@@ -76,6 +86,12 @@ public actor LocalNutritionRepository: NutritionRepository {
                 .appendingPathComponent("nutrition", isDirectory: true)
                 .appendingPathComponent("meal-photos", isDirectory: true)
         )
+        self.encoder = JSONEncoder()
+        self.decoder = JSONDecoder()
+        self.encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+        self.encoder.dateEncodingStrategy = .iso8601
+        self.decoder.dateDecodingStrategy = .iso8601
+        self.didImportLegacyEntries = false
     }
 
     public func entries(for date: Date) async throws -> [MealEntry] {
@@ -94,12 +110,7 @@ public actor LocalNutritionRepository: NutritionRepository {
     }
 
     public func save(_ entry: MealEntry, photoData: Data? = nil) async throws {
-        var entries = try self.loadEntries()
-        if let index = entries.firstIndex(where: { $0.id == entry.id }) {
-            entries[index] = entry
-        } else {
-            entries.append(entry)
-        }
+        try self.prepareStore()
 
         if let photoData, let photoAttachmentID = entry.photoAttachmentID {
             _ = try self.attachmentsStore.save(
@@ -108,17 +119,37 @@ public actor LocalNutritionRepository: NutritionRepository {
             )
         }
 
-        try self.entriesStore.save(entries)
+        try self.databaseStore.upsertMealEntry(
+            id: entry.id.uuidString,
+            payloadJSON: self.encode(entry),
+            loggedAt: entry.loggedAt
+        )
+        _ = try self.pendingWriteQueue.enqueue(
+            PendingWrite(
+                route: "meals",
+                operation: .mealLog,
+                payload: self.encodePendingMeal(entry)
+            )
+        )
     }
 
     public func delete(id: MealEntry.ID) async throws {
-        var entries = try self.loadEntries()
-        let removed = entries.first { $0.id == id }
-        entries.removeAll { $0.id == id }
-        try self.entriesStore.save(entries)
+        try self.prepareStore()
+        let removed = try self.loadEntry(id: id)
+        try self.databaseStore.markMealEntryDeleted(id: id.uuidString)
 
         if let photoAttachmentID = removed?.photoAttachmentID {
             try self.attachmentsStore.delete(named: Self.photoFilename(id: photoAttachmentID))
+        }
+
+        if let removed {
+            _ = try self.pendingWriteQueue.enqueue(
+                PendingWrite(
+                    route: "meals",
+                    operation: .mealLogDelete,
+                    payload: self.encodePendingMeal(removed)
+                )
+            )
         }
     }
 
@@ -128,7 +159,62 @@ public actor LocalNutritionRepository: NutritionRepository {
     }
 
     private func loadEntries() throws -> [MealEntry] {
-        try self.entriesStore.load(default: [])
+        try self.prepareStore()
+        return try self.databaseStore.activeMealEntryPayloads()
+            .map(self.decode)
+    }
+
+    private func loadEntry(id: MealEntry.ID) throws -> MealEntry? {
+        guard let payload = try self.databaseStore.activeMealEntryPayload(id: id.uuidString) else {
+            return nil
+        }
+        return try self.decode(payload)
+    }
+
+    private func prepareStore() throws {
+        try self.databaseStore.migrate()
+        guard !self.didImportLegacyEntries else { return }
+
+        if try self.databaseStore.activeMealEntryCount() == 0 {
+            let legacyEntries = try self.legacyEntriesStore.load(default: [])
+            for entry in legacyEntries {
+                try self.databaseStore.upsertMealEntry(
+                    id: entry.id.uuidString,
+                    payloadJSON: self.encode(entry),
+                    loggedAt: entry.loggedAt
+                )
+            }
+        }
+
+        self.didImportLegacyEntries = true
+    }
+
+    private func encode(_ entry: MealEntry) throws -> String {
+        let data = try self.encoder.encode(entry)
+        guard let json = String(data: data, encoding: .utf8) else {
+            throw NutritionRepositoryError.invalidStoredMealEntry
+        }
+        return json
+    }
+
+    private func encodePendingMeal(_ entry: MealEntry) throws -> String {
+        let payload = MealLogPendingWritePayload(
+            id: entry.id,
+            name: entry.name,
+            loggedAt: entry.loggedAt
+        )
+        let data = try self.encoder.encode(payload)
+        guard let json = String(data: data, encoding: .utf8) else {
+            throw NutritionRepositoryError.invalidStoredMealEntry
+        }
+        return json
+    }
+
+    private func decode(_ payload: String) throws -> MealEntry {
+        guard let data = payload.data(using: .utf8) else {
+            throw NutritionRepositoryError.invalidStoredMealEntry
+        }
+        return try self.decoder.decode(MealEntry.self, from: data)
     }
 
     private static func photoFilename(id: UUID) -> String {
@@ -143,6 +229,10 @@ public actor LocalNutritionRepository: NutritionRepository {
 
         return baseURL.appendingPathComponent("FuelWell", isDirectory: true)
     }
+}
+
+public enum NutritionRepositoryError: Error, Equatable, Sendable {
+    case invalidStoredMealEntry
 }
 
 extension DependencyValues {

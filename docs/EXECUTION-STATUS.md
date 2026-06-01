@@ -4,9 +4,9 @@ Updated: 2026-05-31
 
 ## Current Workstream
 
-**W7 - Release Readiness, Quality Gates, and Live Evidence**
+**W2 - SQLite Persistence Foundation**
 
-Current branch: `feature/w7-release-readiness-hardening`
+Current branch: `feature/w2-sqlite-persistence-foundation`
 
 ## Baseline Re-Verification
 
@@ -56,6 +56,16 @@ W7 release-readiness hardening:
 - Phase 4 full readiness runs through explicit `xcodegen`, SwiftLint, `AppTests`, full `FuelWellApp`, and simulator-live launch commands.
 - `tools/release/check-w7-readiness.sh` now aggregates Phase 4, Phase 7, operate, and coach-proxy website checks with separate PASS/BLOCKED/FAIL outcomes.
 
+W2 SQLite persistence foundation:
+
+- `SQLiteDataStore` now creates a real local database instead of accepting a store and doing nothing.
+- Local persistence now creates `schema_migrations`, `meal_entries`, `pending_writes`, and `sync_state` tables with WAL and foreign keys enabled.
+- `LocalNutritionRepository` now stores meal entries in SQLite while keeping the public `NutritionRepository` protocol stable and meal photos on disk.
+- Existing JSON meal logs import into SQLite on first repository access so development/test data is not silently dropped.
+- `PendingWriteQueue` now uses the SQLite `pending_writes` table so offline-sync intent shares the same durable local store as meal logs.
+- Meal save/delete mutations now enqueue durable pending writes in the same SQLite database.
+- `PendingWriteSyncClient` can flush queued meal-log writes to `SupabaseDatabaseClient.insertMeal` for the authenticated user while leaving unsupported write types queued for later sync slices.
+
 ## Verification For Current Slice
 
 - `xcodegen generate --spec project.yml` - passed
@@ -69,6 +79,7 @@ W7 release-readiness hardening:
 - Phase 4 quick readiness: 6 passed, 4 blockers, 0 failures. Blockers are service-role key, direct Postgres URL, missing staging `feature_flags`, and physical-device evidence.
 - Phase 4 full readiness: 11 passed, 4 blockers, 0 failures. Full mode now regenerates Xcode, runs SwiftLint, `AppTests`, full `FuelWellApp`, and simulator-live launch on `iPhone 17`.
 - W7 aggregate readiness: 4 passed, 1 blocked, 0 failed. The only blocked aggregate node is Phase 4 live evidence.
+- W2 focused verification: SwiftLint passed; feature-import and theme-drift checks passed; `PersistenceTests`, `CoreTests`, `SupabaseClientTests`, `NutritionTests`, `AppTests`, and the full `FuelWellApp` scheme passed on `iPhone 17`.
 
 ## Vital Blockers
 

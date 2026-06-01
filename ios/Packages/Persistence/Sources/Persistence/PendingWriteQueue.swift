@@ -25,29 +25,45 @@ public struct PendingWrite: Codable, Equatable, Identifiable, Sendable {
 public enum PendingWriteOperation: String, Codable, Equatable, Sendable {
     case feedback
     case mealLog
+    case mealLogDelete
     case measurement
     case moodEntry
     case weightEntry
     case workoutSummary
 }
 
+public struct MealLogPendingWritePayload: Codable, Equatable, Sendable {
+    public var id: UUID
+    public var name: String
+    public var loggedAt: Date
+
+    public init(id: UUID, name: String, loggedAt: Date) {
+        self.id = id
+        self.name = name
+        self.loggedAt = loggedAt
+    }
+}
+
 public struct PendingWriteQueue: Sendable {
-    private let store: JSONFileStore<[PendingWrite]>
+    private let store: SQLiteDataStore
 
     public init(fileURL: URL) {
-        self.store = JSONFileStore(fileURL: fileURL)
+        self.init(databaseURL: fileURL)
+    }
+
+    public init(databaseURL: URL) {
+        self.store = SQLiteDataStore(databaseURL: databaseURL)
     }
 
     public func enqueue(_ write: PendingWrite) throws -> [PendingWrite] {
-        var writes = try self.all()
-        writes.append(write)
-        let sortedWrites = writes.sorted { $0.createdAt < $1.createdAt }
-        try self.store.save(sortedWrites)
-        return sortedWrites
+        try self.store.migrate()
+        try self.store.upsertPendingWrite(write)
+        return try self.all()
     }
 
     public func all() throws -> [PendingWrite] {
-        try self.store.load(default: [])
+        try self.store.migrate()
+        return try self.store.pendingWrites()
     }
 
     public func count() throws -> Int {
@@ -55,13 +71,13 @@ public struct PendingWriteQueue: Sendable {
     }
 
     public func markSynced(id: PendingWrite.ID) throws -> [PendingWrite] {
-        var writes = try self.all()
-        writes.removeAll { $0.id == id }
-        try self.store.save(writes)
-        return writes
+        try self.store.migrate()
+        try self.store.markPendingWriteSynced(id: id)
+        return try self.all()
     }
 
     public func removeAll() throws {
-        try self.store.save([])
+        try self.store.migrate()
+        try self.store.removeAllPendingWrites()
     }
 }
