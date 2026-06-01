@@ -4,9 +4,9 @@ Updated: 2026-05-31
 
 ## Current Workstream
 
-**W6 - Feature Completeness: Dashboard, Progress, Activity, Plans, Menu**
+**W7 - Release Readiness, Quality Gates, and Live Evidence**
 
-Current branch: `feature/w6-closeout-readiness`
+Current branch: `feature/w7-release-readiness-hardening`
 
 ## Baseline Re-Verification
 
@@ -39,6 +39,7 @@ W6 feature completeness foundation:
 - PR #81, W5 coach brain foundation, merged into `main`.
 - PR #83, W6 feature navigation foundation, merged into `main`.
 - PR #84, W6 menu/help hierarchy, merged into `main`.
+- PR #85, W6 closeout readiness, merged into `main`.
 - Dashboard Today rows now route to the real Meals, Exercise, and Progress tabs.
 - Dashboard Health Score and Inflows/Outflows summary cards now open real detail pages.
 - Nutrition search, restaurant, and recipe rows now open detail/portion cards before quick-use actions.
@@ -47,6 +48,13 @@ W6 feature completeness foundation:
 - Menu tools/settings and Help featured articles now open real detail subpages instead of static list rows.
 - Permissions now exposes a HealthKit Acceptance subpage so the physical-device gate is visible in-app before TestFlight.
 - The W6 parity matrix now aligns with D10: standalone Learn Home is removed from Pilot, while Help carries article content and article detail pages.
+
+W7 release-readiness hardening:
+
+- Phase 4 quick readiness now detects the direct staging Postgres URL as a first-class blocker before migration apply.
+- Phase 4 full readiness now uses the repo/CI simulator destination (`iPhone 17` by default) instead of the unavailable handoff `iPhone 15`.
+- Phase 4 full readiness runs through explicit `xcodegen`, SwiftLint, `AppTests`, full `FuelWellApp`, and simulator-live launch commands.
+- `tools/release/check-w7-readiness.sh` now aggregates Phase 4, Phase 7, operate, and coach-proxy website checks with separate PASS/BLOCKED/FAIL outcomes.
 
 ## Verification For Current Slice
 
@@ -58,6 +66,9 @@ W6 feature completeness foundation:
 - Focused UI test: `testMenuAndHelpRowsOpenDetailPages` on `iPhone 17` - passed
 - Focused iOS tests: `AppTests` on `iPhone 17` - passed
 - Full iOS suite: `FuelWellApp` on `iPhone 17` - passed
+- Phase 4 quick readiness: 6 passed, 4 blockers, 0 failures. Blockers are service-role key, direct Postgres URL, missing staging `feature_flags`, and physical-device evidence.
+- Phase 4 full readiness: 11 passed, 4 blockers, 0 failures. Full mode now regenerates Xcode, runs SwiftLint, `AppTests`, full `FuelWellApp`, and simulator-live launch on `iPhone 17`.
+- W7 aggregate readiness: 4 passed, 1 blocked, 0 failed. The only blocked aggregate node is Phase 4 live evidence.
 
 ## Vital Blockers
 
@@ -66,14 +77,17 @@ These are required before the live backend acceptance gates can pass end-to-end:
 - Anthropic API key for server-side use.
 - `FUELWELL_COACH_PROXY_SECRET` value for the proxy.
 - Supabase service-role key for the chosen project.
+- Direct Postgres URL for the chosen staging/app Supabase project before `tools/supabase/apply-migrations.sh apply` can run.
 - W2/W4 migration application to the selected app Supabase project.
 - Confirmation before any production migration touching live `founders_100` rows.
-- Direct Postgres URL for the chosen staging/app Supabase project before `tools/supabase/apply-migrations.sh apply` can run.
+- Physical iOS device for Instruments and live HealthKit acceptance evidence.
 
 ## Next
 
-Close W6 by merging the closeout readiness branch after local and GitHub checks pass.
+Continue W7 by keeping release gates runnable and non-destructive while Robert supplies the live staging inputs:
 
-PR #83 expanded W6 beyond tab shortcuts: Dashboard Health Score and Inflows/Outflows summary cards open real detail pages, Nutrition now has recipe, restaurant, and food/portion detail cards before quick-use actions, W6 has a concrete Health Score v1 / HealthKit energy-out model recorded in `decisions.md`, and Activity/Progress are reducer-backed feature packages rather than static App-only views.
-
-PR #84 expanded Menu and Help into a real hierarchy. The closeout branch adds the final product/documentation alignment: Learn Home is removed from Pilot by D10, and HealthKit acceptance is surfaced as a physical-device checklist rather than claimed complete from Simulator-only evidence.
+1. Add `FUELWELL_SUPABASE_DB_URL` and `FUELWELL_SUPABASE_SERVICE_ROLE_KEY` to `~/.fuelwell/supabase-staging.env`.
+2. Run `tools/supabase/apply-migrations.sh plan` and inspect pending migrations.
+3. Apply migrations only to the confirmed staging target.
+4. Rerun `tools/supabase/kill-switch-drill.sh read`, then `drill`.
+5. Attach physical-device Instruments and HealthKit acceptance evidence before TestFlight.

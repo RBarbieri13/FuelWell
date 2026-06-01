@@ -19,7 +19,12 @@ Required for the full disable/observe/restore drill:
 
 - `FUELWELL_SUPABASE_SERVICE_ROLE_KEY`
 
-The service-role key must stay outside the repository.
+Required before a migration apply can be inspected or run:
+
+- `FUELWELL_SUPABASE_DB_URL`
+- `FUELWELL_SUPABASE_TARGET=staging`
+
+The service-role key and direct Postgres URL must stay outside the repository.
 
 ## Drill Command
 
@@ -49,6 +54,12 @@ That means the existing Phase 2 migration has not been applied to this staging p
 
 ```text
 ios/supabase/migrations/202605240001_phase2_architecture.sql
+```
+
+Before applying, add `FUELWELL_SUPABASE_DB_URL` locally and run:
+
+```bash
+tools/supabase/apply-migrations.sh plan
 ```
 
 After the migration is applied, rerun `tools/supabase/kill-switch-drill.sh read`. Once that succeeds, add `FUELWELL_SUPABASE_SERVICE_ROLE_KEY` to the local env file and run the full drill.

@@ -53,6 +53,20 @@ Real-device values are required before a TestFlight release is called production
 HealthKit live-data acceptance is tracked separately in `docs/ios-guide/quality/healthkit-physical-device-acceptance.md`.
 The in-app path is `Menu` -> `Permissions` -> `HealthKit acceptance`.
 
+## Staging Migration Inputs
+
+The Phase 4 gate is non-destructive by default. It reads `~/.fuelwell/supabase-staging.env` and blocks live readiness until the staging database can be inspected safely.
+
+Required local-only values:
+
+- `FUELWELL_SUPABASE_URL`
+- `FUELWELL_SUPABASE_ANON_KEY`
+- `FUELWELL_SUPABASE_SERVICE_ROLE_KEY`
+- `FUELWELL_SUPABASE_DB_URL`
+- `FUELWELL_SUPABASE_TARGET=staging`
+
+Use `tools/supabase/apply-migrations.sh plan` before any apply. The apply command refuses production unless `FUELWELL_SUPABASE_ALLOW_PRODUCTION_APPLY=1` is set, and production `founders_100` changes still require Robert confirmation.
+
 ## Kill-switch Activation
 
 Canonical feature flag: `ai_meal_plan`.

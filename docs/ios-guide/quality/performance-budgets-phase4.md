@@ -17,7 +17,7 @@ Phase 4 now has repeatable simulator measurements in the UI test target and a co
 
 ## Automated Coverage
 
-The Phase 4 UI test target now records:
+The Phase 4 UI test target now asserts:
 
 - Launch to Dashboard interactive state.
 - Primary tab switching across the app's highest-traffic navigation surfaces.
@@ -26,7 +26,7 @@ The Phase 4 UI test target now records:
 Run the focused suite from the iOS workspace:
 
 ```bash
-xcodebuild -scheme FuelWellApp -destination 'platform=iOS Simulator,name=iPhone 15' -only-testing:FuelWellUITests test
+IOS_CI_DESTINATION='platform=iOS Simulator,name=iPhone 17' tools/release/check-phase4-readiness.sh --full
 ```
 
 ## Real-device Release Checklist

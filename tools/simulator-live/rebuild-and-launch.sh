@@ -2,7 +2,7 @@
 set -euo pipefail
 
 repo_root="${1:-$(git rev-parse --show-toplevel)}"
-simulator_name="${FUELWELL_SIMULATOR_NAME:-iPhone 15}"
+simulator_name="${FUELWELL_SIMULATOR_NAME:-iPhone 17}"
 scheme="${FUELWELL_SCHEME:-FuelWellApp}"
 bundle_id="${FUELWELL_BUNDLE_ID:-com.fuelwell.app}"
 derived_data_path="${FUELWELL_DERIVED_DATA_PATH:-/tmp/fuelwell-live-derived}"
