@@ -32,6 +32,12 @@ FUELWELL_SUPABASE_SERVICE_ROLE_KEY="..."
 
 ## Commands
 
+Regenerate the audited migration manifest:
+
+```bash
+tools/supabase/generate-migration-manifest.mjs --write
+```
+
 List the migration order without secrets:
 
 ```bash
@@ -69,3 +75,10 @@ tools/supabase/kill-switch-drill.sh drill
 3. `202605260001_phase7_founding100.sql`
 4. `202605260002_phase7_account_linkage.sql`
 5. `202605310001_w2_coach_usage.sql`
+6. `202605310002_w4_auth_profile_onboarding.sql`
+
+## Checksum Policy
+
+`tools/supabase/apply-migrations.sh` prints a SHA-256 checksum for every migration. After a migration is applied through the script, the checksum is written into `schema_migrations.checksum`.
+
+If an already-applied migration has a different checksum than the repository file, `apply` refuses to continue. Treat that as a release blocker until the database state and repository file are reconciled.

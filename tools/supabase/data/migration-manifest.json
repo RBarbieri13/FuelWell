@@ -1,0 +1,91 @@
+{
+  "generatedAt": "2026-06-01T17:22:50.492Z",
+  "source": "ios/supabase/migrations",
+  "migrationCount": 6,
+  "duplicateVersions": [],
+  "migrations": [
+    {
+      "order": 1,
+      "file": "202605230001_schema_migrations.sql",
+      "version": "202605230001",
+      "name": "schema_migrations",
+      "sha256": "aa69581d3c3fd2ee31a793c67b8dc020c9d40019afb26fcdad79eaa71baeb6a9",
+      "bytes": 543,
+      "hasTrackingInsert": true,
+      "hasIdempotencySignals": true,
+      "riskNotes": [
+        "alters table"
+      ]
+    },
+    {
+      "order": 2,
+      "file": "202605240001_phase2_architecture.sql",
+      "version": "202605240001",
+      "name": "phase2_architecture",
+      "sha256": "0fb547448c7ca92b9990e08dde35f147715cee0101ef34a6ac17c7388ea0fb84",
+      "bytes": 7798,
+      "hasTrackingInsert": true,
+      "hasIdempotencySignals": true,
+      "riskNotes": [
+        "alters table"
+      ]
+    },
+    {
+      "order": 3,
+      "file": "202605260001_phase7_founding100.sql",
+      "version": "202605260001",
+      "name": "phase7_founding100",
+      "sha256": "cc326228f073f9bf688e4c4933adbc03c056389eca344b00dcf3af30054b45cc",
+      "bytes": 4120,
+      "hasTrackingInsert": true,
+      "hasIdempotencySignals": true,
+      "riskNotes": [
+        "alters table",
+        "security definer function"
+      ]
+    },
+    {
+      "order": 4,
+      "file": "202605260002_phase7_account_linkage.sql",
+      "version": "202605260002",
+      "name": "phase7_account_linkage",
+      "sha256": "c5a56985fda57d6a5d3c2396adbb10b3b0ee3d7b235aee05c29ead9d201f331a",
+      "bytes": 8708,
+      "hasTrackingInsert": true,
+      "hasIdempotencySignals": true,
+      "riskNotes": [
+        "touches founders_100",
+        "alters table",
+        "security definer function"
+      ]
+    },
+    {
+      "order": 5,
+      "file": "202605310001_w2_coach_usage.sql",
+      "version": "202605310001",
+      "name": "w2_coach_usage",
+      "sha256": "521e44c288c1cc6d2aae78cd1ed7bbfeb3cff8f67d2e14c91c97c39cd60d571e",
+      "bytes": 1431,
+      "hasTrackingInsert": true,
+      "hasIdempotencySignals": true,
+      "riskNotes": [
+        "alters table"
+      ]
+    },
+    {
+      "order": 6,
+      "file": "202605310002_w4_auth_profile_onboarding.sql",
+      "version": "202605310002",
+      "name": "w4_auth_profile_onboarding",
+      "sha256": "37053b64aac34ccfd8b21f79483c2ca7259964dd68b17d9825823c3c47060cfc",
+      "bytes": 1209,
+      "hasTrackingInsert": true,
+      "hasIdempotencySignals": true,
+      "riskNotes": [
+        "delete statement present",
+        "alters table",
+        "security definer function"
+      ]
+    }
+  ]
+}
