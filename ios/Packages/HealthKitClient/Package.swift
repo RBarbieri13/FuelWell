@@ -5,7 +5,8 @@ import PackageDescription
 let package = Package(
     name: "HealthKitClient",
     platforms: [
-        .iOS(.v17)
+        .iOS(.v17),
+        .macOS(.v12)
     ],
     products: [
         .library(name: "HealthKitClient", type: .static, targets: ["HealthKitClient"])

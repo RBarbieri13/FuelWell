@@ -199,6 +199,28 @@
             parallelizable = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "143AD08A4843ED3D4C1F4369"
+               BuildableName = "ActivityTests.xctest"
+               BlueprintName = "ActivityTests"
+               ReferencedContainer = "container:FuelWellApp.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "AC73953C466E60D838BCEF01"
+               BuildableName = "ProgressTests.xctest"
+               BlueprintName = "ProgressTests"
+               ReferencedContainer = "container:FuelWellApp.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "8ACFA4D29183B335B7029E31"
                BuildableName = "FuelWellUITests.xctest"
                BlueprintName = "FuelWellUITests"

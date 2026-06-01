@@ -8,6 +8,7 @@ struct AddMealSheet: View {
     @Bindable var store: StoreOf<DailyLogFeature>
     @Environment(\.theme) private var theme
     @State private var selectedPhotoItem: PhotosPickerItem?
+    @State private var selectedFoodDetail: FoodSearchSuggestion?
 
     var body: some View {
         NavigationStack {
@@ -27,7 +28,13 @@ struct AddMealSheet: View {
                         BackupLoggingCard(
                             mode: self.store.addMealDraft.mode,
                             suggestions: self.store.foodSearchSuggestions,
-                            onChoose: { self.store.send(.foodSearchSuggestionTapped($0)) }
+                            selectedSuggestion: self.selectedFoodDetail,
+                            onInspect: { self.selectedFoodDetail = $0 },
+                            onDismissDetail: { self.selectedFoodDetail = nil },
+                            onChoose: {
+                                self.selectedFoodDetail = nil
+                                self.store.send(.foodSearchSuggestionTapped($0))
+                            }
                         )
                     }
                     MacroEntryFields(store: self.store)
@@ -73,6 +80,9 @@ struct AddMealSheet: View {
                         self.selectedPhotoItem = nil
                     }
                 }
+            }
+            .onChange(of: self.store.addMealDraft.mode) { _, _ in
+                self.selectedFoodDetail = nil
             }
         }
     }

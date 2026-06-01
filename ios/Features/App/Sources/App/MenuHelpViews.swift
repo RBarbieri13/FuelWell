@@ -38,7 +38,7 @@ struct MenuSheetView: View {
                 NavigationLink {
                     AccountSubscriptionView(store: self.store)
                 } label: {
-                    PhaseActionRow(
+                    PhaseNavigationRow(
                         item: .init(title: "Account", detail: "Profile, auth, subscription", icon: "person")
                     )
                 }

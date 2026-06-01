@@ -54,25 +54,42 @@ struct DashboardSection: View {
                 .fontWeight(.bold)
             VStack(spacing: self.theme.spacing.sm) {
                 ForEach(self.items) { item in
-                    PhaseActionRow(item: item)
+                    PhaseInfoRow(item: item)
                 }
             }
         }
     }
 }
 
-struct PhaseActionRow: View {
+struct PhaseInfoRow: View {
     let item: PhaseRowItem
     @Environment(\.theme) private var theme
 
     var body: some View {
         HStack(spacing: self.theme.spacing.md) {
-            Image(systemName: self.item.icon)
-                .font(.system(size: 18, weight: .semibold))
-                .foregroundStyle(self.theme.color.primary.accent.color)
-                .frame(width: 42, height: 42)
-                .background(self.theme.color.primary.accent.color.opacity(0.12))
-                .clipShape(RoundedRectangle(cornerRadius: self.theme.radius.sm))
+            PhaseInfoRowIcon(icon: self.item.icon)
+            VStack(alignment: .leading, spacing: self.theme.spacing.xs) {
+                Text(self.item.title)
+                    .font(.custom(self.theme.font.body, size: self.theme.text.bodyLG.size))
+                    .fontWeight(.bold)
+                Text(self.item.detail)
+                    .font(.custom(self.theme.font.body, size: self.theme.text.body.size))
+                    .fontWeight(.semibold)
+                    .foregroundStyle(self.theme.color.text.body.color)
+            }
+            Spacer()
+        }
+        .phaseCard(padding: self.theme.spacing.md)
+    }
+}
+
+struct PhaseNavigationRow: View {
+    let item: PhaseRowItem
+    @Environment(\.theme) private var theme
+
+    var body: some View {
+        HStack(spacing: self.theme.spacing.md) {
+            PhaseInfoRowIcon(icon: self.item.icon)
             VStack(alignment: .leading, spacing: self.theme.spacing.xs) {
                 Text(self.item.title)
                     .font(.custom(self.theme.font.body, size: self.theme.text.bodyLG.size))
@@ -88,6 +105,20 @@ struct PhaseActionRow: View {
                 .foregroundStyle(self.theme.color.text.muted.color)
         }
         .phaseCard(padding: self.theme.spacing.md)
+    }
+}
+
+private struct PhaseInfoRowIcon: View {
+    let icon: String
+    @Environment(\.theme) private var theme
+
+    var body: some View {
+        Image(systemName: self.icon)
+            .font(.system(size: 18, weight: .semibold))
+            .foregroundStyle(self.theme.color.primary.accent.color)
+            .frame(width: 42, height: 42)
+            .background(self.theme.color.primary.accent.color.opacity(0.12))
+            .clipShape(RoundedRectangle(cornerRadius: self.theme.radius.sm))
     }
 }
 
