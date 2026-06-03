@@ -35,7 +35,8 @@ platform :ios do
     build_app(
       scheme: "FuelWellApp",
       export_method: "app-store",
-      output_directory: "fastlane/build"
+      output_directory: "fastlane/build",
+      xcargs: "-skipMacroValidation -skipPackagePluginValidation"
     )
     upload_to_testflight(
       skip_waiting_for_build_processing: false,
