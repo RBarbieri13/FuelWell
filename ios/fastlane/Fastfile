@@ -36,7 +36,12 @@ platform :ios do
       scheme: "FuelWellApp",
       export_method: "app-store",
       output_directory: "fastlane/build",
-      xcargs: "-skipMacroValidation -skipPackagePluginValidation"
+      export_team_id: ENV.fetch("FUELWELL_APPLE_TEAM_ID"),
+      xcargs: [
+        "-skipMacroValidation",
+        "-skipPackagePluginValidation",
+        "DEVELOPMENT_TEAM=#{ENV.fetch('FUELWELL_APPLE_TEAM_ID')}"
+      ].join(" ")
     )
     upload_to_testflight(
       skip_waiting_for_build_processing: false,
