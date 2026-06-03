@@ -1270,7 +1270,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "Apple Distribution";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = 9HZA3WU92Q;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "FuelWell uses the camera to log meal photos for nutrition tracking.";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "FuelWell reads workouts, sleep, steps, energy, and body measurements to personalize coaching.";
@@ -1284,6 +1286,7 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.fuelwell.app;
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.fuelwell.app";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

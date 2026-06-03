@@ -97,6 +97,12 @@ targets:
         INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents: YES
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         TARGETED_DEVICE_FAMILY: "1,2"
+      configs:
+        Release:
+          CODE_SIGN_IDENTITY: Apple Distribution
+          CODE_SIGN_STYLE: Manual
+          DEVELOPMENT_TEAM: 9HZA3WU92Q
+          PROVISIONING_PROFILE_SPECIFIER: match AppStore com.fuelwell.app
   AppTests:
     type: bundle.unit-test
     platform: iOS
