@@ -94,6 +94,9 @@ jobs:
           latest_log="$(ls -t "$HOME/Library/Logs/gym/"*.log 2>/dev/null | head -n 1 || true)"
           if [ -n "$latest_log" ]; then
             echo "Showing archive log: $latest_log"
+            echo "--- archive log head ---"
+            sed -n '1,220p' "$latest_log"
+            echo "--- archive log tail ---"
             tail -n 400 "$latest_log"
           else
             echo "No gym archive log found."
