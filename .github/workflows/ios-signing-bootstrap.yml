@@ -57,4 +57,4 @@ jobs:
         run: tools/release/check-testflight-readiness.sh --ci
 
       - name: Create certificates and provisioning profiles
-        run: bundle exec fastlane match appstore --readonly false
+        run: bundle exec fastlane bootstrap_signing
