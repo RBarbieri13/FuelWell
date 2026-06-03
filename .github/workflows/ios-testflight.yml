@@ -39,15 +39,16 @@ env:
 jobs:
   testflight:
     name: Build and Upload TestFlight
-    runs-on: macos-15
+    runs-on: macos-26
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Select Xcode
         run: |
-          if [ -d /Applications/Xcode_26.app ]; then
-            sudo xcode-select -s /Applications/Xcode_26.app
+          xcode_26_path="$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -Vr | head -n 1 || true)"
+          if [ -n "$xcode_26_path" ]; then
+            sudo xcode-select -s "$xcode_26_path"
           else
             sudo xcode-select -s /Applications/Xcode.app
           fi
