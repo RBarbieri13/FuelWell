@@ -1,0 +1,60 @@
+name: iOS Signing Bootstrap
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ios-signing-bootstrap
+  cancel-in-progress: false
+
+defaults:
+  run:
+    working-directory: ios
+
+env:
+  FASTLANE_SKIP_UPDATE_CHECK: "1"
+  FUELWELL_APP_IDENTIFIER: ${{ secrets.FUELWELL_APP_IDENTIFIER }}
+  FUELWELL_APPLE_ID: ${{ secrets.FUELWELL_APPLE_ID }}
+  FUELWELL_APPLE_TEAM_ID: ${{ secrets.FUELWELL_APPLE_TEAM_ID }}
+  FUELWELL_APP_STORE_CONNECT_TEAM_ID: ${{ secrets.FUELWELL_APP_STORE_CONNECT_TEAM_ID }}
+  FUELWELL_MATCH_GIT_URL: ${{ secrets.FUELWELL_MATCH_GIT_URL }}
+  FUELWELL_MATCH_READONLY: "false"
+  MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+  MATCH_DEPLOY_KEY: ${{ secrets.MATCH_DEPLOY_KEY }}
+  FUELWELL_ASC_KEY_ID: ${{ secrets.FUELWELL_ASC_KEY_ID }}
+  FUELWELL_ASC_ISSUER_ID: ${{ secrets.FUELWELL_ASC_ISSUER_ID }}
+  FUELWELL_ASC_KEY_P8_BASE64: ${{ secrets.FUELWELL_ASC_KEY_P8_BASE64 }}
+
+jobs:
+  bootstrap-signing:
+    name: Create App Store Signing Assets
+    runs-on: macos-15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          if [ -d /Applications/Xcode_26.app ]; then
+            sudo xcode-select -s /Applications/Xcode_26.app
+          else
+            sudo xcode-select -s /Applications/Xcode.app
+          fi
+          xcodebuild -version
+
+      - name: Install Ruby dependencies
+        run: |
+          bundle config set path vendor/bundle
+          bundle install
+
+      - name: Load signing key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.MATCH_DEPLOY_KEY }}
+
+      - name: Verify TestFlight configuration
+        working-directory: .
+        run: tools/release/check-testflight-readiness.sh --ci
+
+      - name: Create certificates and provisioning profiles
+        run: bundle exec fastlane match appstore --readonly false

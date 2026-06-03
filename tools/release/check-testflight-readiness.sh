@@ -105,12 +105,17 @@ fi
 require_env "FUELWELL_APP_IDENTIFIER"
 require_env "FUELWELL_APPLE_ID"
 require_env "FUELWELL_APPLE_TEAM_ID" "DEVELOPMENT_TEAM"
-require_env "FUELWELL_APP_STORE_CONNECT_TEAM_ID"
 require_env "FUELWELL_MATCH_GIT_URL"
 require_env "MATCH_PASSWORD"
 require_env "FUELWELL_ASC_KEY_ID" "ASC_KEY_ID"
 require_env "FUELWELL_ASC_ISSUER_ID" "ASC_ISSUER_ID"
 require_env "FUELWELL_ASC_KEY_P8_BASE64" "ASC_KEY_P8_BASE64"
+
+if [[ -n "${FUELWELL_APP_STORE_CONNECT_TEAM_ID:-}" ]]; then
+  pass "FUELWELL_APP_STORE_CONNECT_TEAM_ID is set"
+else
+  pass "FUELWELL_APP_STORE_CONNECT_TEAM_ID is unset; Fastlane will use the API key default provider"
+fi
 
 if [[ "${mode}" == "ci" ]]; then
   require_env "MATCH_DEPLOY_KEY"
