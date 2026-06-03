@@ -86,3 +86,14 @@ jobs:
 
       - name: Upload internal TestFlight build
         run: bundle exec fastlane beta
+
+      - name: Show archive log on failure
+        if: failure()
+        run: |
+          latest_log="$(ls -t "$HOME/Library/Logs/gym/"*.log 2>/dev/null | head -n 1 || true)"
+          if [ -n "$latest_log" ]; then
+            echo "Showing archive log: $latest_log"
+            tail -n 400 "$latest_log"
+          else
+            echo "No gym archive log found."
+          fi
