@@ -83,6 +83,7 @@
 		E452520C8E3688317A97CD65 /* AnthropicClient in Frameworks */ = {isa = PBXBuildFile; productRef = FF0357DB14B82BEF78F23A72 /* AnthropicClient */; };
 		ECC5001D545629BE54652737 /* SupabaseClient in Frameworks */ = {isa = PBXBuildFile; productRef = C8C0CC9A8E4CE014A35C4BD5 /* SupabaseClient */; };
 		F86E044D2CD7EC516B7BC3C5 /* CrashReporting in Frameworks */ = {isa = PBXBuildFile; productRef = 67FC99E3A4D52CF6EF835CAD /* CrashReporting */; };
+		FB7821B1527F8E8A71383015 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2419642363D1E40A99EB66C7 /* Assets.xcassets */; };
 		FCAB2DF9200C4452946B7C4D /* SubscriptionClient in Frameworks */ = {isa = PBXBuildFile; productRef = A1DF7496FAE6BC457A8FAAED /* SubscriptionClient */; };
 		FCBD0876C8D0895EFAD842C7 /* MacroDecisionEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06F6BEFBE2E4B674A50B733F /* MacroDecisionEngineTests.swift */; };
 /* End PBXBuildFile section */
@@ -104,6 +105,7 @@
 		0F1922BF3BEBD3C27002F2D7 /* CoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreTests.swift; sourceTree = "<group>"; };
 		165F0021ABA3E00997286AAC /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		231F591E67A99C4846848A4B /* NutritionFeatureTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = NutritionFeatureTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		2419642363D1E40A99EB66C7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2BFE4A0D114885235E740870 /* AnthropicClientTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = AnthropicClientTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2EAECD2204EB655CAAAFD5E5 /* Analytics */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Analytics; path = Packages/Analytics; sourceTree = SOURCE_ROOT; };
 		31C57EA7EB3516BFB4923EDE /* PersistenceTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = PersistenceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -532,6 +534,7 @@
 		9E6F1252CC99F34C624C985F /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				2419642363D1E40A99EB66C7 /* Assets.xcassets */,
 				165F0021ABA3E00997286AAC /* PrivacyInfo.xcprivacy */,
 				8C40DF50F6D8387735D9AF24 /* Fonts */,
 			);
@@ -1079,6 +1082,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FB7821B1527F8E8A71383015 /* Assets.xcassets in Resources */,
 				C5595E55CDF1FE9BBA5220FF /* DMSans-Variable.ttf in Resources */,
 				755DFAFADA641F8D3367431F /* Inter-Variable.ttf in Resources */,
 				50A890D6205BB70A187E71B5 /* Outfit-Variable.ttf in Resources */,
@@ -1275,12 +1279,19 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9HZA3WU92Q;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleIconName = AppIcon;
 				INFOPLIST_KEY_NSCameraUsageDescription = "FuelWell uses the camera to log meal photos for nutrition tracking.";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "FuelWell reads workouts, sleep, steps, energy, and body measurements to personalize coaching.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "FuelWell does not write Health data in this phase.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = (
+					UIInterfaceOrientationPortrait,
+					UIInterfaceOrientationPortraitUpsideDown,
+					UIInterfaceOrientationLandscapeLeft,
+					UIInterfaceOrientationLandscapeRight,
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1888,12 +1899,19 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleIconName = AppIcon;
 				INFOPLIST_KEY_NSCameraUsageDescription = "FuelWell uses the camera to log meal photos for nutrition tracking.";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "FuelWell reads workouts, sleep, steps, energy, and body measurements to personalize coaching.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "FuelWell does not write Health data in this phase.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = (
+					UIInterfaceOrientationPortrait,
+					UIInterfaceOrientationPortraitUpsideDown,
+					UIInterfaceOrientationLandscapeLeft,
+					UIInterfaceOrientationLandscapeRight,
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
