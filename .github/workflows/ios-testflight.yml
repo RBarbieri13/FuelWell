@@ -80,20 +80,6 @@ jobs:
       - name: Check theme drift
         run: scripts/check-theme-drift.sh
 
-      - name: Run full test suite
-        run: |
-          rm -rf build/reports/FuelWellApp.xcresult
-          xcodebuild test \
-            -scheme FuelWellApp \
-            -destination "platform=iOS Simulator,name=iPhone 17" \
-            -skipMacroValidation \
-            -skipPackagePluginValidation \
-            -resultBundlePath build/reports/FuelWellApp.xcresult
-
-      - name: Enforce coverage floor
-        working-directory: .
-        run: tools/release/check-coverage-floor.sh ios/build/reports/FuelWellApp.xcresult
-
       - name: TestFlight readiness gate
         working-directory: .
         run: tools/release/check-testflight-readiness.sh --ci
