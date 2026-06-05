@@ -7,16 +7,16 @@ import {
   MessageSquare,
   PlusCircle,
   TrendingUp,
-  User,
+  Dumbbell,
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 
 const mobileNavItems = [
   { href: "/app/dashboard", label: "Home", icon: LayoutDashboard },
-  { href: "/app/coach", label: "Coach", icon: MessageSquare },
   { href: "/app/log", label: "Log", icon: PlusCircle, highlight: true },
+  { href: "/app/coach", label: "Coach", icon: MessageSquare },
+  { href: "/app/workouts", label: "Move", icon: Dumbbell },
   { href: "/app/progress", label: "Progress", icon: TrendingUp },
-  { href: "/app/profile", label: "Profile", icon: User },
 ];
 
 export function MobileNav() {
@@ -24,7 +24,7 @@ export function MobileNav() {
 
   return (
     <nav
-      className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-lg border-t border-neutral-200/80 pb-[env(safe-area-inset-bottom)]"
+      className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/94 backdrop-blur-xl border-t border-white/80 shadow-[0_-12px_30px_rgba(23,23,23,0.08)] pb-[env(safe-area-inset-bottom)]"
       role="navigation"
       aria-label="Mobile navigation"
     >
@@ -37,7 +37,7 @@ export function MobileNav() {
               href={item.href}
               aria-current={isActive ? "page" : undefined}
               className={cn(
-                "flex flex-col items-center gap-0.5 px-3 py-1.5 text-[11px] font-medium transition-colors",
+                "flex flex-col items-center gap-0.5 px-2.5 py-1.5 text-[11px] font-semibold transition-colors",
                 item.highlight && !isActive
                   ? "text-primary-600"
                   : isActive
