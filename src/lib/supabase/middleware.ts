@@ -14,7 +14,7 @@ export async function updateSession(request: NextRequest) {
   if (isPreview) {
     if (isAuthRoute) {
       const url = request.nextUrl.clone();
-      url.pathname = "/app/dashboard";
+      url.pathname = "/ios-preview";
       url.search = "";
       return NextResponse.redirect(url);
     }
