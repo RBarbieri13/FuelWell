@@ -2,6 +2,8 @@ import { createClient } from "@/lib/supabase/server";
 import { DashboardClient } from "./dashboard-client";
 import type { MealItem, MealRecord, MealType } from "@/lib/fuelwell-data";
 import { DEFAULT_TARGETS, todayIsoDate } from "@/lib/fuelwell-data";
+import { headers } from "next/headers";
+import { getSampleDay, isPreviewHost } from "@/lib/preview-session";
 
 type SupabaseMealItem = {
   id: string;
@@ -44,10 +46,28 @@ function mapMeal(meal: SupabaseMeal): MealRecord {
 }
 
 export default async function DashboardPage() {
+  const host = (await headers()).get("host");
+  const isPreview = isPreviewHost(host);
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  if (!user && isPreview) {
+    const sample = getSampleDay();
+    return (
+      <DashboardClient
+        displayName={sample.user.displayName}
+        targets={sample.targets}
+        fallbackTotals={sample.totals}
+        meals={sample.meals}
+        onboardingComplete
+        goal={sample.user.goal}
+        dietaryPreference={sample.user.dietaryPreference}
+        allergies={sample.user.allergies}
+      />
+    );
+  }
 
   const today = todayIsoDate();
   const start = `${today}T00:00:00.000Z`;

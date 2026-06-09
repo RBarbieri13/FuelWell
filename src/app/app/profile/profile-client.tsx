@@ -33,6 +33,7 @@ interface ProfileClientProps {
   weightKg: number | null;
   heightCm: number | null;
   onboardingComplete: boolean;
+  isPreview?: boolean;
 }
 
 export function ProfileClient({
@@ -47,6 +48,7 @@ export function ProfileClient({
   weightKg,
   heightCm,
   onboardingComplete,
+  isPreview = false,
 }: ProfileClientProps) {
   const router = useRouter();
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
@@ -55,6 +57,11 @@ export function ProfileClient({
   const [savingName, setSavingName] = useState(false);
 
   async function handleSaveName() {
+    if (isPreview) {
+      setEditingName(false);
+      return;
+    }
+
     setSavingName(true);
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -70,6 +77,11 @@ export function ProfileClient({
   }
 
   async function handleSignOut() {
+    if (isPreview) {
+      router.push("/app/dashboard");
+      return;
+    }
+
     const supabase = createClient();
     await supabase.auth.signOut();
     router.push("/login");
@@ -81,6 +93,14 @@ export function ProfileClient({
       <h1 className="text-2xl font-bold text-neutral-900 tracking-tight">
         Profile
       </h1>
+
+      {isPreview && (
+        <Card className="border-primary-100 bg-primary-50/70">
+          <p className="text-sm font-bold text-primary-900">
+            Preview mode is using a sample user. Edits are local-only for this demo.
+          </p>
+        </Card>
+      )}
 
       {/* User info */}
       <Card>

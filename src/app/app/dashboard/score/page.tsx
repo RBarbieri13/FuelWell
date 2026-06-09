@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Activity, ArrowRight, HeartPulse, Salad } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+import { headers } from "next/headers";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,13 +11,28 @@ import {
   todayIsoDate,
   type MacroTotals,
 } from "@/lib/fuelwell-data";
+import { getSampleDay, isPreviewHost } from "@/lib/preview-session";
 
 export default async function ScoreDetailPage() {
+  const host = (await headers()).get("host");
+  const isPreview = isPreviewHost(host);
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   const today = todayIsoDate();
+
+  if (!user && isPreview) {
+    const sample = getSampleDay();
+    const contributors = buildScoreContributors(
+      sample.totals,
+      sample.targets,
+      sample.meals.length
+    );
+    const healthScore = calculateHealthScore(contributors);
+
+    return <ScoreDetail contributors={contributors} healthScore={healthScore} />;
+  }
 
   const [profileResult, logResult] = await Promise.all([
     supabase
@@ -49,6 +65,16 @@ export default async function ScoreDetailPage() {
   const contributors = buildScoreContributors(totals, targets, mealCount);
   const healthScore = calculateHealthScore(contributors);
 
+  return <ScoreDetail contributors={contributors} healthScore={healthScore} />;
+}
+
+function ScoreDetail({
+  contributors,
+  healthScore,
+}: {
+  contributors: ReturnType<typeof buildScoreContributors>;
+  healthScore: number | null;
+}) {
   return (
     <div className="mx-auto max-w-5xl space-y-6 p-4 md:p-8">
       <Card variant="elevated" className="bg-neutral-950 text-white">

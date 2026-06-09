@@ -1,11 +1,35 @@
 import { createClient } from "@/lib/supabase/server";
 import { ProfileClient } from "./profile-client";
+import { headers } from "next/headers";
+import { getSampleDay, isPreviewHost } from "@/lib/preview-session";
 
 export default async function ProfilePage() {
+  const host = (await headers()).get("host");
+  const isPreview = isPreviewHost(host);
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  if (!user && isPreview) {
+    const sample = getSampleDay();
+    return (
+      <ProfileClient
+        email={sample.user.email}
+        displayName={sample.user.displayName}
+        calorieTarget={sample.targets.calories}
+        proteinTarget={sample.targets.protein}
+        carbsTarget={sample.targets.carbs}
+        fatTarget={sample.targets.fat}
+        goal={sample.user.goal}
+        activityLevel={sample.user.activityLevel}
+        weightKg={sample.user.weightKg}
+        heightCm={sample.user.heightCm}
+        onboardingComplete
+        isPreview
+      />
+    );
+  }
 
   const { data: profile } = await supabase
     .from("profiles")
@@ -28,6 +52,7 @@ export default async function ProfilePage() {
       weightKg={profile?.weight_kg ?? null}
       heightCm={profile?.height_cm ?? null}
       onboardingComplete={profile?.onboarding_complete ?? false}
+      isPreview={false}
     />
   );
 }

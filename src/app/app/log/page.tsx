@@ -64,6 +64,20 @@ function LogContent() {
       data: { user },
       error: userError,
     } = await supabase.auth.getUser();
+    const isPreview =
+      window.location.hostname.includes("localhost") ||
+      window.location.hostname.includes("127.0.0.1") ||
+      window.location.hostname.includes("trycloudflare.com");
+
+    if (!user && isPreview) {
+      setStatus("saved");
+      setMessage(
+        `${selectedFood.name} was added in preview mode. The sample dashboard stays fixed for coworkers.`
+      );
+      setSelectedFood(null);
+      setServings(1);
+      return;
+    }
 
     if (userError || !user) {
       setStatus("error");

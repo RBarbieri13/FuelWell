@@ -55,6 +55,59 @@ export const DEFAULT_TARGETS: MacroTargets = {
   fat: 65,
 };
 
+export const SAMPLE_TARGETS: MacroTargets = {
+  calories: 2250,
+  protein: 175,
+  carbs: 240,
+  fat: 75,
+};
+
+export const SAMPLE_MEALS: MealRecord[] = [
+  {
+    id: "sample-breakfast",
+    mealType: "breakfast",
+    name: "Greek yogurt power bowl",
+    loggedAt: new Date().toISOString(),
+    items: [
+      {
+        id: "sample-yogurt",
+        name: "Greek yogurt with berries",
+        servings: 1,
+        calories: 190,
+        protein: 23,
+        carbs: 22,
+        fat: 2,
+      },
+      {
+        id: "sample-granola",
+        name: "Protein granola",
+        servings: 0.5,
+        calories: 140,
+        protein: 8,
+        carbs: 18,
+        fat: 5,
+      },
+    ],
+  },
+  {
+    id: "sample-lunch",
+    mealType: "lunch",
+    name: "Chicken quinoa bowl",
+    loggedAt: new Date().toISOString(),
+    items: [
+      {
+        id: "sample-chicken-bowl",
+        name: "Chicken quinoa bowl",
+        servings: 1,
+        calories: 520,
+        protein: 42,
+        carbs: 48,
+        fat: 18,
+      },
+    ],
+  },
+];
+
 export const DEMO_FOODS: FoodItem[] = [
   {
     id: "chicken-bowl",

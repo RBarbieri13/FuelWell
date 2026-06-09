@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, Plus, UtensilsCrossed } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+import { headers } from "next/headers";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,6 +16,7 @@ import {
   type MealRecord,
   type MealType,
 } from "@/lib/fuelwell-data";
+import { getSampleDay, isPreviewHost } from "@/lib/preview-session";
 
 type SupabaseMealItem = {
   id: string;
@@ -57,10 +59,17 @@ function mapMeal(meal: SupabaseMeal): MealRecord {
 }
 
 export default async function NutritionPage() {
+  const host = (await headers()).get("host");
+  const isPreview = isPreviewHost(host);
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  if (!user && isPreview) {
+    const sample = getSampleDay();
+    return <NutritionDetail meals={sample.meals} targets={sample.targets} />;
+  }
 
   const today = todayIsoDate();
   const start = `${today}T00:00:00.000Z`;
@@ -88,6 +97,22 @@ export default async function NutritionPage() {
     fat: profileResult.data?.fat_target ?? DEFAULT_TARGETS.fat,
   };
   const meals = ((mealsResult.data || []) as SupabaseMeal[]).map(mapMeal);
+
+  return <NutritionDetail meals={meals} targets={targets} />;
+}
+
+function NutritionDetail({
+  meals,
+  targets,
+}: {
+  meals: MealRecord[];
+  targets: {
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+  };
+}) {
   const totals = sumMeals(meals);
 
   return (
