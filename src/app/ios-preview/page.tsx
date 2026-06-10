@@ -22,6 +22,13 @@ export default function IOSPreviewPage() {
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
             <Link
+              href="/preview"
+              className="inline-flex items-center gap-2 rounded-2xl bg-primary-300 px-5 py-3 text-sm font-black text-neutral-950 transition hover:bg-primary-200"
+            >
+              Open review hub
+              <ArrowUpRight className="h-4 w-4" />
+            </Link>
+            <Link
               href="/app/dashboard"
               className="inline-flex items-center gap-2 rounded-2xl bg-white px-5 py-3 text-sm font-black text-neutral-950 transition hover:bg-primary-100"
             >

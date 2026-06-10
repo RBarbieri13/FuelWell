@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils/cn";
+import { isPreviewHost } from "@/lib/preview-session";
 import {
   DEMO_FOODS,
   formatMealType,
@@ -64,10 +65,7 @@ function LogContent() {
       data: { user },
       error: userError,
     } = await supabase.auth.getUser();
-    const isPreview =
-      window.location.hostname.includes("localhost") ||
-      window.location.hostname.includes("127.0.0.1") ||
-      window.location.hostname.includes("trycloudflare.com");
+    const isPreview = isPreviewHost(window.location.host);
 
     if (!user && isPreview) {
       setStatus("saved");

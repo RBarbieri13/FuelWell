@@ -17,6 +17,7 @@ import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils/cn";
 import { createClient } from "@/lib/supabase/client";
 import { DEFAULT_TARGETS, percentOf, remaining, SAMPLE_MEALS, SAMPLE_TARGETS, sumMeals, todayIsoDate } from "@/lib/fuelwell-data";
+import { isPreviewHost } from "@/lib/preview-session";
 
 type CoachAction = {
   label: string;
@@ -87,10 +88,7 @@ export default function CoachPage() {
 
   useEffect(() => {
     async function loadContext() {
-      const isPreview =
-        window.location.hostname.includes("localhost") ||
-        window.location.hostname.includes("127.0.0.1") ||
-        window.location.hostname.includes("trycloudflare.com");
+      const isPreview = isPreviewHost(window.location.host);
       const supabase = createClient();
       const {
         data: { user },
