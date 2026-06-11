@@ -12,6 +12,7 @@ import {
   Dumbbell,
   HeartPulse,
   ShoppingBasket,
+  Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { Logo } from "@/components/ui/logo";
@@ -26,6 +27,7 @@ const navItems = [
   { href: "/app/recovery", label: "Recovery", icon: HeartPulse },
   { href: "/app/progress", label: "Progress", icon: TrendingUp },
   { href: "/app/profile", label: "Profile", icon: User },
+  { href: "/app/settings", label: "Settings", icon: Settings },
 ];
 
 export function Sidebar() {

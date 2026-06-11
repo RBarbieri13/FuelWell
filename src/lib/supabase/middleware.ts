@@ -12,13 +12,11 @@ export async function updateSession(request: NextRequest) {
   const isPreview = isPreviewHost(request.headers.get("host"));
 
   if (isPreview) {
-    if (isAuthRoute) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/preview";
-      url.search = "";
-      return NextResponse.redirect(url);
-    }
-
+    // Preview bypasses the /app auth wall so reviewers land in the product
+    // without signing in. Auth routes are intentionally still reachable so the
+    // real Google/Facebook/Apple OAuth buttons can be demoed and tested — the
+    // bypass only skips the gate, it never fakes a production session.
+    void isAuthRoute;
     return NextResponse.next({ request });
   }
 
