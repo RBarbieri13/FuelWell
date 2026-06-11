@@ -12,10 +12,12 @@ export const SAMPLE_USER = {
   heightCm: 180,
 };
 
+const TRUTHY = new Set(["true", "1", "yes", "on"]);
+
 export function isPreviewHost(host?: string | null) {
   const envPreviewMode =
-    process.env.FUELWELL_PREVIEW_MODE === "true" ||
-    process.env.NEXT_PUBLIC_FUELWELL_PREVIEW_MODE === "true";
+    TRUTHY.has((process.env.FUELWELL_PREVIEW_MODE ?? "").toLowerCase()) ||
+    TRUTHY.has((process.env.NEXT_PUBLIC_FUELWELL_PREVIEW_MODE ?? "").toLowerCase());
 
   if (envPreviewMode) return true;
   if (!host) return false;
