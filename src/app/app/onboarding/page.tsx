@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { calculateMacroTargets, calculateAge } from "@/lib/macros";
@@ -10,6 +10,13 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils/cn";
 import { Sparkles, ArrowRight, ArrowLeft } from "lucide-react";
+
+const STORAGE_KEY = "fuelwell:onboarding:v1";
+
+interface PersistedProgress {
+  step: number;
+  data: OnboardingData;
+}
 
 interface OnboardingData {
   displayName: string;
@@ -56,8 +63,54 @@ export default function OnboardingPage() {
   const [data, setData] = useState<OnboardingData>(INITIAL_DATA);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [resumed, setResumed] = useState(false);
+  const hydrated = useRef(false);
 
   const totalSteps = 10;
+
+  // Resume in-progress onboarding from localStorage.
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const saved = JSON.parse(raw) as PersistedProgress;
+        // Post-hydration resume from localStorage: setState here is intentional
+        // and avoids an SSR hydration mismatch a lazy initializer would cause.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        if (saved.data) setData({ ...INITIAL_DATA, ...saved.data });
+        if (typeof saved.step === "number") {
+          setStep(Math.min(Math.max(saved.step, 0), totalSteps - 1));
+        }
+        setResumed(true);
+      }
+    } catch {
+      // Corrupt/blocked storage — start fresh, nothing to surface.
+    }
+    hydrated.current = true;
+  }, []);
+
+  // Persist progress so it survives a refresh or leaving the page.
+  useEffect(() => {
+    if (!hydrated.current) return;
+    try {
+      const payload: PersistedProgress = { step, data };
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    } catch {
+      // Storage unavailable — progress simply won't persist this session.
+    }
+  }, [step, data]);
+
+  function clearProgress() {
+    try {
+      window.localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      // ignore
+    }
+  }
+
+  function handleSkip() {
+    router.push("/app/dashboard");
+  }
 
   function update<K extends keyof OnboardingData>(key: K, value: OnboardingData[K]) {
     setData((prev) => ({ ...prev, [key]: value }));
@@ -152,6 +205,7 @@ export default function OnboardingPage() {
       return;
     }
 
+    clearProgress();
     router.push("/app/dashboard");
     router.refresh();
   }
@@ -176,7 +230,16 @@ export default function OnboardingPage() {
         <div className="mb-6">
           <div className="flex items-center justify-between text-xs font-medium text-neutral-400 mb-2">
             <span>Step {step + 1} of {totalSteps}</span>
-            <span>{Math.round(((step + 1) / totalSteps) * 100)}%</span>
+            <div className="flex items-center gap-3">
+              <span>{Math.round(((step + 1) / totalSteps) * 100)}%</span>
+              <button
+                type="button"
+                onClick={handleSkip}
+                className="text-neutral-400 hover:text-neutral-600 transition-colors underline-offset-2 hover:underline"
+              >
+                Skip for now
+              </button>
+            </div>
           </div>
           <div className="h-1.5 bg-neutral-200 rounded-full overflow-hidden">
             <div
@@ -184,6 +247,11 @@ export default function OnboardingPage() {
               style={{ width: `${((step + 1) / totalSteps) * 100}%` }}
             />
           </div>
+          {resumed && (
+            <p className="mt-2 text-xs text-primary-600">
+              Picked up where you left off. Your progress is saved on this device.
+            </p>
+          )}
         </div>
 
         <Card padding="lg" className="min-h-[420px] flex flex-col">
@@ -439,6 +507,10 @@ export default function OnboardingPage() {
                           <p><strong className="text-neutral-700">Allergies:</strong> {data.allergies.join(", ")}</p>
                         )}
                       </div>
+                      <p className="text-xs text-neutral-400">
+                        Completing setup saves these targets to your FuelWell
+                        profile and opens your dashboard.
+                      </p>
                     </div>
                   );
                 })()}

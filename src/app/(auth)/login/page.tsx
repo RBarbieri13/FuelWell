@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { Logo } from "@/components/ui/logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { GoogleIcon } from "@/components/ui/google-icon";
+import { OAuthButtons } from "@/components/auth/oauth-buttons";
 import { Utensils, BarChart3, Brain } from "lucide-react";
 
 function LoginForm() {
@@ -19,6 +19,10 @@ function LoginForm() {
   const [loading, setLoading] = useState(false);
 
   const redirectTo = searchParams.get("redirect") || "/app/dashboard";
+  const authError =
+    searchParams.get("error") === "auth_failed"
+      ? "Sign-in could not be completed. Please try again."
+      : null;
 
   async function handleEmailLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -39,16 +43,6 @@ function LoginForm() {
 
     router.push(redirectTo);
     router.refresh();
-  }
-
-  async function handleGoogleLogin() {
-    const supabase = createClient();
-    await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: `${window.location.origin}/callback?next=${encodeURIComponent(redirectTo)}`,
-      },
-    });
   }
 
   return (
@@ -107,15 +101,16 @@ function LoginForm() {
           </div>
 
           <div className="space-y-6">
-            <Button
-              variant="secondary"
-              size="lg"
-              className="w-full"
-              onClick={handleGoogleLogin}
-            >
-              <GoogleIcon className="w-5 h-5" />
-              Continue with Google
-            </Button>
+            {authError && (
+              <p
+                className="text-sm text-red-600 bg-red-50 px-3.5 py-2.5 rounded-xl"
+                role="alert"
+              >
+                {authError}
+              </p>
+            )}
+
+            <OAuthButtons next={redirectTo} />
 
             <div className="relative">
               <div className="absolute inset-0 flex items-center">

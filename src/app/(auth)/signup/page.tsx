@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { Logo } from "@/components/ui/logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { GoogleIcon } from "@/components/ui/google-icon";
+import { OAuthButtons } from "@/components/auth/oauth-buttons";
 import { Check } from "lucide-react";
 
 export default function SignupPage() {
@@ -41,16 +41,6 @@ export default function SignupPage() {
 
     router.push("/app/onboarding");
     router.refresh();
-  }
-
-  async function handleGoogleSignup() {
-    const supabase = createClient();
-    await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: `${window.location.origin}/callback?next=/app/onboarding`,
-      },
-    });
   }
 
   return (
@@ -107,15 +97,7 @@ export default function SignupPage() {
           </div>
 
           <div className="space-y-6">
-            <Button
-              variant="secondary"
-              size="lg"
-              className="w-full"
-              onClick={handleGoogleSignup}
-            >
-              <GoogleIcon className="w-5 h-5" />
-              Continue with Google
-            </Button>
+            <OAuthButtons next="/app/onboarding" />
 
             <div className="relative">
               <div className="absolute inset-0 flex items-center">

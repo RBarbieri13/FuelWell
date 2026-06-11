@@ -4,23 +4,29 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import {
   ArrowRight,
+  BarChart3,
   CalendarCheck,
   CheckCircle2,
   Flame,
   Gauge,
   Scale,
   Sparkles,
-  TrendingDown,
   TrendingUp,
   Utensils,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils/cn";
+import {
+  MacroStackedBars,
+  MACRO_META,
+  type MacroDay,
+  type MacroKey,
+} from "@/components/progress/macro-stacked-bars";
+import { SeriesToggle } from "@/components/progress/series-toggle";
+import { buildSampleHistory } from "@/components/progress/sample-history";
 
 type ProgressState = "day0" | "day1" | "day3";
-
-type MacroKey = "protein" | "carbs" | "fat";
 
 interface MacroStat {
   key: MacroKey;
@@ -29,13 +35,6 @@ interface MacroStat {
   target: number;
   unit: "g";
   colorClass: string;
-}
-
-interface CaloriePoint {
-  day: string;
-  value: number;
-  target: number;
-  source: "sample" | "logged";
 }
 
 interface MealStat {
@@ -56,7 +55,6 @@ interface ProgressSnapshot {
   caloriesAverage: number;
   adherence: number;
   macroStats: MacroStat[];
-  calorieTrend: CaloriePoint[];
   meals: MealStat[];
   startingWeight: number;
   currentWeight: number;
@@ -76,9 +74,9 @@ const snapshots: Record<ProgressState, ProgressSnapshot> = {
     label: "Day 0",
     title: "Your baseline is ready",
     subtitle: "FuelWell is using sample analytics until your first logged meal lands.",
-    verdict: "Start with one complete meal today.",
+    verdict: "One meal starts the picture.",
     verdictDetail:
-      "The numbers below show exactly what will unlock as soon as you begin logging.",
+      "The chart below is sample history for now. Your own pattern begins the moment you log.",
     dataNote: "Sample model only. No logged nutrition data yet.",
     loggedDays: 0,
     calorieTarget: 2140,
@@ -87,12 +85,7 @@ const snapshots: Record<ProgressState, ProgressSnapshot> = {
     macroStats: [
       { key: "protein", label: "Protein", consumed: 0, target: 150, unit: "g", colorClass: "bg-blue-500" },
       { key: "carbs", label: "Carbs", consumed: 0, target: 230, unit: "g", colorClass: "bg-amber-500" },
-      { key: "fat", label: "Fat", consumed: 0, target: 70, unit: "g", colorClass: "bg-red-500" },
-    ],
-    calorieTrend: [
-      { day: "Today", value: 0, target: 2140, source: "sample" },
-      { day: "Next", value: 1760, target: 2140, source: "sample" },
-      { day: "Then", value: 2025, target: 2140, source: "sample" },
+      { key: "fat", label: "Fat", consumed: 0, target: 70, unit: "g", colorClass: "bg-rose-500" },
     ],
     meals: [
       { label: "Breakfast", logged: false },
@@ -115,11 +108,11 @@ const snapshots: Record<ProgressState, ProgressSnapshot> = {
     state: "day1",
     label: "Day 1",
     title: "First signal captured",
-    subtitle: "One logged day is enough to spot the biggest macro gap.",
-    verdict: "Protein is the clearest lever today.",
+    subtitle: "One logged day is enough to see where today leaned.",
+    verdict: "Protein has the most room to grow.",
     verdictDetail:
-      "You were close on calories, but protein finished 32g under target.",
-    dataNote: "1 logged day plus sample projection for upcoming days.",
+      "Calories landed close to plan. Protein has the widest gap left, so it is the easiest lever to lean into next.",
+    dataNote: "1 logged day plus sample history for context.",
     loggedDays: 1,
     calorieTarget: 2140,
     caloriesAverage: 2015,
@@ -127,12 +120,7 @@ const snapshots: Record<ProgressState, ProgressSnapshot> = {
     macroStats: [
       { key: "protein", label: "Protein", consumed: 118, target: 150, unit: "g", colorClass: "bg-blue-500" },
       { key: "carbs", label: "Carbs", consumed: 218, target: 230, unit: "g", colorClass: "bg-amber-500" },
-      { key: "fat", label: "Fat", consumed: 68, target: 70, unit: "g", colorClass: "bg-red-500" },
-    ],
-    calorieTrend: [
-      { day: "Mon", value: 2015, target: 2140, source: "logged" },
-      { day: "Tue", value: 2060, target: 2140, source: "sample" },
-      { day: "Wed", value: 2110, target: 2140, source: "sample" },
+      { key: "fat", label: "Fat", consumed: 68, target: 70, unit: "g", colorClass: "bg-rose-500" },
     ],
     meals: [
       { label: "Breakfast", logged: true },
@@ -148,7 +136,7 @@ const snapshots: Record<ProgressState, ProgressSnapshot> = {
     nextAction: {
       label: "Add protein snack",
       href: "/app/log?mode=search",
-      detail: "Greek yogurt or a shake would close most of the remaining gap.",
+      detail: "Greek yogurt or a shake would lean protein further toward your target.",
     },
   },
   day3: {
@@ -156,10 +144,10 @@ const snapshots: Record<ProgressState, ProgressSnapshot> = {
     label: "3+ days",
     title: "A real pattern is forming",
     subtitle: "Three logged days unlock trend confidence and consistency coaching.",
-    verdict: "You are on pace with one dinner risk.",
+    verdict: "The trend is holding steady.",
     verdictDetail:
-      "Calories average 4% under target and breakfast consistency is strong.",
-    dataNote: "3 logged days. Remaining future bars are clearly marked as sample.",
+      "Calories are tracking near plan across the week, and breakfast is your most consistent meal so far.",
+    dataNote: "3 logged days. Older bars are sample history for context.",
     loggedDays: 3,
     calorieTarget: 2140,
     caloriesAverage: 2058,
@@ -167,14 +155,7 @@ const snapshots: Record<ProgressState, ProgressSnapshot> = {
     macroStats: [
       { key: "protein", label: "Protein", consumed: 144, target: 150, unit: "g", colorClass: "bg-blue-500" },
       { key: "carbs", label: "Carbs", consumed: 224, target: 230, unit: "g", colorClass: "bg-amber-500" },
-      { key: "fat", label: "Fat", consumed: 66, target: 70, unit: "g", colorClass: "bg-red-500" },
-    ],
-    calorieTrend: [
-      { day: "Mon", value: 2015, target: 2140, source: "logged" },
-      { day: "Tue", value: 2168, target: 2140, source: "logged" },
-      { day: "Wed", value: 1992, target: 2140, source: "logged" },
-      { day: "Thu", value: 2075, target: 2140, source: "sample" },
-      { day: "Fri", value: 2120, target: 2140, source: "sample" },
+      { key: "fat", label: "Fat", consumed: 66, target: 70, unit: "g", colorClass: "bg-rose-500" },
     ],
     meals: [
       { label: "Breakfast", logged: true },
@@ -190,12 +171,21 @@ const snapshots: Record<ProgressState, ProgressSnapshot> = {
     nextAction: {
       label: "Plan dinner",
       href: "/app/recipes",
-      detail: "Choose a higher-protein dinner before the day gets noisy.",
+      detail: "Picking a protein-forward dinner keeps the week's trend moving your way.",
     },
   },
 };
 
 const stateOrder: ProgressState[] = ["day0", "day1", "day3"];
+
+type WindowKey = "7d" | "30d";
+
+const windowOptions: { key: WindowKey; label: string; days: number }[] = [
+  { key: "7d", label: "7 days", days: 7 },
+  { key: "30d", label: "30 days", days: 30 },
+];
+
+const ALL_MACROS: MacroKey[] = ["protein", "carbs", "fat"];
 
 function percent(value: number, target: number) {
   if (target === 0) {
@@ -209,10 +199,54 @@ function formatPounds(value: number) {
   return `${value.toFixed(1)} lb`;
 }
 
+/**
+ * Overlay the snapshot's logged days onto the tail of the sample history so the
+ * most-recent N bars reflect "logged" intake while older bars stay sample.
+ */
+function buildSeries(
+  windowDays: number,
+  snapshot: ProgressSnapshot
+): MacroDay[] {
+  const sample = buildSampleHistory(windowDays);
+  const loggedCount = Math.min(snapshot.loggedDays, windowDays);
+  if (loggedCount === 0) {
+    return sample;
+  }
+
+  const logged = snapshot.macroStats.reduce(
+    (acc, stat) => {
+      acc[stat.key] = stat.consumed;
+      return acc;
+    },
+    { protein: 0, carbs: 0, fat: 0 } as Record<MacroKey, number>
+  );
+
+  return sample.map((day, index) => {
+    const isLoggedDay = index >= windowDays - loggedCount;
+    if (!isLoggedDay) {
+      return day;
+    }
+
+    // Spread the snapshot's macro values across the logged tail with the same
+    // deterministic wobble already baked into the sample day, so logged bars
+    // vary slightly day-to-day without inventing precise fake measurements.
+    const drift = (day.protein - 138) / 138;
+    return {
+      ...day,
+      protein: Math.max(0, Math.round(logged.protein * (1 + drift * 0.15))),
+      carbs: Math.max(0, Math.round(logged.carbs * (1 + drift * 0.15))),
+      fat: Math.max(0, Math.round(logged.fat * (1 + drift * 0.1))),
+      source: "logged",
+    };
+  });
+}
+
 export default function ProgressPage() {
   const [selectedState, setSelectedState] = useState<ProgressState>("day3");
   const snapshot = snapshots[selectedState];
   const [weightEntry, setWeightEntry] = useState(snapshot.currentWeight.toFixed(1));
+  const [windowKey, setWindowKey] = useState<WindowKey>("7d");
+  const [activeMacros, setActiveMacros] = useState<MacroKey[]>(ALL_MACROS);
 
   const previewWeight = Number.parseFloat(weightEntry);
   const projectedDelta = Number.isFinite(previewWeight)
@@ -221,10 +255,34 @@ export default function ProgressPage() {
 
   const loggedMealCount = snapshot.meals.filter((meal) => meal.logged).length;
 
-  const calorieDomain = useMemo(
-    () => Math.max(...snapshot.calorieTrend.map((point) => point.value), snapshot.calorieTarget),
-    [snapshot]
+  const windowDays = useMemo(
+    () => windowOptions.find((option) => option.key === windowKey)?.days ?? 7,
+    [windowKey]
   );
+
+  const series = useMemo(
+    () => buildSeries(windowDays, snapshot),
+    [windowDays, snapshot]
+  );
+
+  const loggedInWindow = useMemo(
+    () => series.filter((day) => day.source === "logged").length,
+    [series]
+  );
+
+  const toggleMacro = (key: MacroKey) => {
+    setActiveMacros((current) => {
+      if (current.includes(key)) {
+        // Never allow zero series — the disabled state in SeriesToggle guards
+        // this, but enforce it here too.
+        if (current.length === 1) {
+          return current;
+        }
+        return current.filter((macro) => macro !== key);
+      }
+      return ALL_MACROS.filter((macro) => macro === key || current.includes(macro));
+    });
+  };
 
   return (
     <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-6">
@@ -234,7 +292,7 @@ export default function ProgressPage() {
             Progress
           </h1>
           <p className="text-sm text-neutral-500 mt-1 max-w-2xl">
-            Early progress analytics that stay useful before charts have a full history.
+            Trends and direction over time — no targets to fail, just the shape of your days.
           </p>
         </div>
 
@@ -280,9 +338,61 @@ export default function ProgressPage() {
 
           <div className="grid grid-cols-3 gap-3">
             <StatTile label="Logged days" value={snapshot.loggedDays.toString()} icon={CalendarCheck} />
-            <StatTile label="Adherence" value={`${snapshot.adherence}%`} icon={Gauge} />
+            <StatTile label="Consistency" value={`${snapshot.adherence}%`} icon={Gauge} />
             <StatTile label="Avg cals" value={snapshot.caloriesAverage ? snapshot.caloriesAverage.toLocaleString() : "—"} icon={Flame} />
           </div>
+        </div>
+      </Card>
+
+      <Card className="space-y-5">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+          <SectionHeader
+            icon={BarChart3}
+            label="Macro split per day"
+            detail="Each bar is a day, segmented by calories from protein, carbs, and fat."
+          />
+          <div className="flex gap-1 p-1 bg-neutral-100 rounded-xl self-start">
+            {windowOptions.map((option) => (
+              <button
+                key={option.key}
+                type="button"
+                onClick={() => setWindowKey(option.key)}
+                aria-pressed={windowKey === option.key}
+                className={cn(
+                  "px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150",
+                  windowKey === option.key
+                    ? "bg-white text-neutral-900 shadow-sm"
+                    : "text-neutral-500 hover:text-neutral-700"
+                )}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <SeriesToggle active={activeMacros} onToggle={toggleMacro} />
+
+        <MacroStackedBars days={series} active={activeMacros} />
+
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-wrap items-center gap-3 text-xs text-neutral-500">
+            {ALL_MACROS.map((key) => (
+              <span key={key} className="inline-flex items-center gap-1.5">
+                <span className={cn("h-2.5 w-2.5 rounded-[3px]", MACRO_META[key].swatchClass)} />
+                {MACRO_META[key].label}
+              </span>
+            ))}
+            <span className="inline-flex items-center gap-1.5">
+              <span className="h-2.5 w-2.5 rounded-[3px] bg-neutral-300 bg-[image:repeating-linear-gradient(135deg,rgba(255,255,255,0.6)_0,rgba(255,255,255,0.6)_2px,transparent_2px,transparent_4px)]" />
+              Sample day
+            </span>
+          </div>
+          <p className="text-xs text-neutral-400">
+            {loggedInWindow > 0
+              ? `${loggedInWindow} logged ${loggedInWindow === 1 ? "day" : "days"} in this window — older bars are sample history.`
+              : "Sample history shown until you start logging. None of these bars are measured intake yet."}
+          </p>
         </div>
       </Card>
 
@@ -290,8 +400,8 @@ export default function ProgressPage() {
         <Card className="space-y-5">
           <SectionHeader
             icon={CheckCircle2}
-            label="Macro adherence"
-            detail={snapshot.loggedDays === 0 ? "Targets shown until logging starts" : "Average intake vs daily targets"}
+            label="Where your macros lean"
+            detail={snapshot.loggedDays === 0 ? "Targets shown until logging starts" : "Average intake next to your daily targets"}
           />
           <div className="space-y-5">
             {snapshot.macroStats.map((macro) => {
@@ -319,45 +429,6 @@ export default function ProgressPage() {
 
         <Card className="space-y-5">
           <SectionHeader
-            icon={TrendingUp}
-            label="Calories trend"
-            detail="Logged bars are solid; sample bars are striped"
-          />
-          <div className="h-48 flex items-end gap-3 border-b border-neutral-200 pb-3">
-            {snapshot.calorieTrend.map((point) => {
-              const height = Math.max(8, Math.round((point.value / calorieDomain) * 100));
-
-              return (
-                <div key={point.day} className="flex-1 min-w-0 flex flex-col items-center justify-end gap-2">
-                  <div className="relative w-full flex items-end justify-center h-36">
-                    <div
-                      className={cn(
-                        "w-full max-w-12 rounded-t-lg border transition-all duration-300",
-                        point.source === "logged"
-                          ? "bg-primary-500 border-primary-600"
-                          : "bg-[repeating-linear-gradient(135deg,#dcfce7_0,#dcfce7_5px,#f0fdf4_5px,#f0fdf4_10px)] border-primary-200"
-                      )}
-                      style={{ height: `${height}%` }}
-                      title={`${point.day}: ${point.value} calories`}
-                    />
-                  </div>
-                  <div className="text-center">
-                    <p className="text-xs font-medium text-neutral-600">{point.day}</p>
-                    <p className="text-[11px] text-neutral-400 tabular-nums">{point.value || "—"}</p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-          <p className="text-xs text-neutral-500">
-            Target: <span className="font-medium text-neutral-700 tabular-nums">{snapshot.calorieTarget.toLocaleString()} cal</span>
-          </p>
-        </Card>
-      </div>
-
-      <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
-        <Card className="space-y-5">
-          <SectionHeader
             icon={Utensils}
             label="Meal consistency"
             detail={`${loggedMealCount} of ${snapshot.meals.length} meals represented`}
@@ -383,64 +454,64 @@ export default function ProgressPage() {
                   <p className="text-sm font-semibold text-neutral-800">{meal.label}</p>
                 </div>
                 <p className="text-xs text-neutral-500 mt-2">
-                  {meal.logged ? "Logged" : "Needs signal"}
+                  {meal.logged ? "Logged" : "Not logged yet"}
                 </p>
               </div>
             ))}
           </div>
         </Card>
+      </div>
 
-        <Card className="space-y-5">
-          <SectionHeader
-            icon={Scale}
-            label="Weight and goal projection"
-            detail="Mock entry for planning only"
-          />
-          <div className="grid gap-4 sm:grid-cols-[0.85fr_1.15fr]">
-            <label className="block">
-              <span className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">
-                Today&apos;s weight
+      <Card className="space-y-5">
+        <SectionHeader
+          icon={Scale}
+          label="Weight and goal projection"
+          detail="Mock entry for planning only"
+        />
+        <div className="grid gap-4 sm:grid-cols-[0.85fr_1.15fr]">
+          <label className="block">
+            <span className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">
+              Today&apos;s weight
+            </span>
+            <div className="mt-2 flex items-center gap-2 rounded-xl border border-neutral-200 bg-white px-3 py-2.5">
+              <input
+                value={weightEntry}
+                onChange={(event) => setWeightEntry(event.target.value)}
+                inputMode="decimal"
+                className="w-full bg-transparent text-lg font-semibold text-neutral-900 tabular-nums focus:outline-none"
+                aria-label="Mock weight entry"
+              />
+              <span className="text-sm text-neutral-400">lb</span>
+            </div>
+            <p className="text-xs text-neutral-500 mt-2">
+              This updates the preview only; it is not saved.
+            </p>
+          </label>
+
+          <div className="rounded-xl bg-neutral-50 border border-neutral-200 p-4 space-y-3">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-neutral-500">Start</span>
+              <span className="font-medium text-neutral-900 tabular-nums">{formatPounds(snapshot.startingWeight)}</span>
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-neutral-500">Goal</span>
+              <span className="font-medium text-neutral-900 tabular-nums">{formatPounds(snapshot.goalWeight)}</span>
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-neutral-500">Preview change</span>
+              <span className="font-medium text-neutral-900 tabular-nums">
+                {projectedDelta >= 0 ? "-" : "+"}{Math.abs(projectedDelta).toFixed(1)} lb
               </span>
-              <div className="mt-2 flex items-center gap-2 rounded-xl border border-neutral-200 bg-white px-3 py-2.5">
-                <input
-                  value={weightEntry}
-                  onChange={(event) => setWeightEntry(event.target.value)}
-                  inputMode="decimal"
-                  className="w-full bg-transparent text-lg font-semibold text-neutral-900 tabular-nums focus:outline-none"
-                  aria-label="Mock weight entry"
-                />
-                <span className="text-sm text-neutral-400">lb</span>
-              </div>
-              <p className="text-xs text-neutral-500 mt-2">
-                This updates the preview only; it is not saved.
+            </div>
+            <div className="pt-2 border-t border-neutral-200">
+              <p className="text-xs text-neutral-500">Projected time to goal</p>
+              <p className="text-lg font-bold text-neutral-950 mt-1">
+                {snapshot.weeklyPace > 0 ? `${snapshot.projectionWeeks} weeks` : "After 3 logged days"}
               </p>
-            </label>
-
-            <div className="rounded-xl bg-neutral-50 border border-neutral-200 p-4 space-y-3">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-neutral-500">Start</span>
-                <span className="font-medium text-neutral-900 tabular-nums">{formatPounds(snapshot.startingWeight)}</span>
-              </div>
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-neutral-500">Goal</span>
-                <span className="font-medium text-neutral-900 tabular-nums">{formatPounds(snapshot.goalWeight)}</span>
-              </div>
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-neutral-500">Preview change</span>
-                <span className="font-medium text-neutral-900 tabular-nums">
-                  {projectedDelta >= 0 ? "-" : "+"}{Math.abs(projectedDelta).toFixed(1)} lb
-                </span>
-              </div>
-              <div className="pt-2 border-t border-neutral-200">
-                <p className="text-xs text-neutral-500">Projected time to goal</p>
-                <p className="text-lg font-bold text-neutral-950 mt-1">
-                  {snapshot.weeklyPace > 0 ? `${snapshot.projectionWeeks} weeks` : "After 3 logged days"}
-                </p>
-              </div>
             </div>
           </div>
-        </Card>
-      </div>
+        </div>
+      </Card>
 
       <Card
         variant="elevated"
@@ -449,14 +520,10 @@ export default function ProgressPage() {
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start gap-4">
             <div className="p-2.5 bg-white/10 rounded-xl shrink-0">
-              {snapshot.state === "day3" ? (
-                <TrendingDown className="w-4 h-4 text-primary-300" />
-              ) : (
-                <ArrowRight className="w-4 h-4 text-primary-300" />
-              )}
+              <TrendingUp className="w-4 h-4 text-primary-300" />
             </div>
             <div>
-              <p className="text-sm font-semibold">Next best action</p>
+              <p className="text-sm font-semibold">One next step</p>
               <p className="text-sm text-neutral-300 mt-1 leading-relaxed">
                 {snapshot.nextAction.detail}
               </p>

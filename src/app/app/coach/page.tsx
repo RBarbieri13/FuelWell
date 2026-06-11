@@ -16,21 +16,33 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils/cn";
 import { createClient } from "@/lib/supabase/client";
-import { DEFAULT_TARGETS, percentOf, remaining, SAMPLE_MEALS, SAMPLE_TARGETS, sumMeals, todayIsoDate } from "@/lib/fuelwell-data";
+import { percentOf, remaining } from "@/lib/fuelwell-data";
 import { isPreviewHost } from "@/lib/preview-session";
+import { useDayLog } from "@/lib/use-day-log";
+import { parseLogIntent, type LogIntent } from "@/components/coach/coach-logging";
+import { LogConfirmChip } from "@/components/coach/log-confirm-chip";
 
 type CoachAction = {
   label: string;
   href: string;
 };
 
+type LogStatus = "pending" | "confirmed" | "dismissed";
+
 type Message = {
   id: string;
   role: "user" | "assistant";
   content: string;
   actions?: CoachAction[];
+  intent?: LogIntent;
+  logStatus?: LogStatus;
 };
 
+/**
+ * DayContext now only carries profile-level facts (goal/diet/allergies).
+ * Today's macro totals + targets are read live from useDayLog so anything
+ * logged from the coach (or Log surface) updates the same numbers everywhere.
+ */
 type DayContext = {
   calories: number;
   protein: number;
@@ -46,30 +58,44 @@ type DayContext = {
   loaded: boolean;
 };
 
-const INITIAL_CONTEXT: DayContext = {
-  calories: 0,
-  protein: 0,
-  carbs: 0,
-  fat: 0,
-  calorieTarget: DEFAULT_TARGETS.calories,
-  proteinTarget: DEFAULT_TARGETS.protein,
-  carbsTarget: DEFAULT_TARGETS.carbs,
-  fatTarget: DEFAULT_TARGETS.fat,
+type ProfileContext = {
+  goal: string;
+  diet: string;
+  allergies: string[];
+  loaded: boolean;
+};
+
+const INITIAL_PROFILE: ProfileContext = {
   goal: "lose",
   diet: "none",
   allergies: [],
   loaded: false,
 };
 
-const QUICK_PROMPTS = [
-  "Am I on track today?",
-  "Plan a workout",
-  "What can I eat tonight?",
-  "Show nutrition details",
-];
-
 export default function CoachPage() {
-  const [context, setContext] = useState<DayContext>(INITIAL_CONTEXT);
+  const { totals, targets, addMeal } = useDayLog();
+  const [profile, setProfile] = useState<ProfileContext>(INITIAL_PROFILE);
+
+  const context: DayContext = useMemo(
+    () => ({
+      calories: totals.calories,
+      protein: totals.protein,
+      carbs: totals.carbs,
+      fat: totals.fat,
+      calorieTarget: targets.calories,
+      proteinTarget: targets.protein,
+      carbsTarget: targets.carbs,
+      fatTarget: targets.fat,
+      goal: profile.goal,
+      diet: profile.diet,
+      allergies: profile.allergies,
+      loaded: profile.loaded,
+    }),
+    [totals, targets, profile],
+  );
+
+  const quickPrompts = useMemo(() => buildQuickPrompts(context), [context]);
+
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "welcome",
@@ -94,16 +120,7 @@ export default function CoachPage() {
         data: { user },
       } = await supabase.auth.getUser();
       if (!user && isPreview) {
-        const totals = sumMeals(SAMPLE_MEALS);
-        setContext({
-          calories: totals.calories,
-          protein: totals.protein,
-          carbs: totals.carbs,
-          fat: totals.fat,
-          calorieTarget: SAMPLE_TARGETS.calories,
-          proteinTarget: SAMPLE_TARGETS.protein,
-          carbsTarget: SAMPLE_TARGETS.carbs,
-          fatTarget: SAMPLE_TARGETS.fat,
+        setProfile({
           goal: "lose",
           diet: "none",
           allergies: ["Shellfish"],
@@ -114,33 +131,16 @@ export default function CoachPage() {
 
       if (!user) return;
 
-      const today = todayIsoDate();
-      const [profileResult, logResult] = await Promise.all([
-        supabase
-          .from("profiles")
-          .select("calorie_target, protein_target, carbs_target, fat_target, goal, dietary_preference, allergies")
-          .eq("id", user.id)
-          .single(),
-        supabase
-          .from("daily_logs")
-          .select("calories_consumed, protein_consumed, carbs_consumed, fat_consumed")
-          .eq("user_id", user.id)
-          .eq("log_date", today)
-          .maybeSingle(),
-      ]);
+      const { data } = await supabase
+        .from("profiles")
+        .select("goal, dietary_preference, allergies")
+        .eq("id", user.id)
+        .single();
 
-      setContext({
-        calories: Number(logResult.data?.calories_consumed ?? 0),
-        protein: Number(logResult.data?.protein_consumed ?? 0),
-        carbs: Number(logResult.data?.carbs_consumed ?? 0),
-        fat: Number(logResult.data?.fat_consumed ?? 0),
-        calorieTarget: profileResult.data?.calorie_target ?? DEFAULT_TARGETS.calories,
-        proteinTarget: profileResult.data?.protein_target ?? DEFAULT_TARGETS.protein,
-        carbsTarget: profileResult.data?.carbs_target ?? DEFAULT_TARGETS.carbs,
-        fatTarget: profileResult.data?.fat_target ?? DEFAULT_TARGETS.fat,
-        goal: profileResult.data?.goal ?? "lose",
-        diet: profileResult.data?.dietary_preference ?? "none",
-        allergies: profileResult.data?.allergies ?? [],
+      setProfile({
+        goal: data?.goal ?? "lose",
+        diet: data?.dietary_preference ?? "none",
+        allergies: data?.allergies ?? [],
         loaded: true,
       });
     }
@@ -171,6 +171,25 @@ export default function CoachPage() {
     setIsTyping(true);
 
     window.setTimeout(() => {
+      const intent = parseLogIntent(clean);
+      if (intent) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: `assistant-${Date.now()}`,
+            role: "assistant",
+            content:
+              intent.kind === "meal"
+                ? "Got it — tap to confirm and I'll add it to today."
+                : "Nice work. Tap to log this session.",
+            intent,
+            logStatus: "pending",
+          },
+        ]);
+        setIsTyping(false);
+        return;
+      }
+
       const response = getCoachResponse(clean, context);
       setMessages((prev) => [
         ...prev,
@@ -183,6 +202,58 @@ export default function CoachPage() {
       ]);
       setIsTyping(false);
     }, 450);
+  }
+
+  function handleConfirmLog(messageId: string, intent: LogIntent) {
+    setMessages((prev) =>
+      prev.map((m) =>
+        m.id === messageId ? { ...m, logStatus: "confirmed" } : m,
+      ),
+    );
+
+    if (intent.kind === "meal") {
+      addMeal({
+        mealType: intent.mealType,
+        name: intent.name,
+        items: intent.foods.map((f) => ({
+          name: f.food.name,
+          servings: f.quantity,
+          calories: f.macros.kcal,
+          protein: f.macros.protein,
+          carbs: f.macros.carbs,
+          fat: f.macros.fat,
+        })),
+      });
+    }
+
+    const ack =
+      intent.kind === "meal"
+        ? `Saved to ${intent.mealType}. You're now at ${nextTotals(intent).calories}/${targets.calories} calories and ${nextTotals(intent).protein}/${targets.protein}g protein for today.`
+        : `Logged ${intent.label} for this session. A saved workout history is coming soon, so this won't persist past today yet.`;
+
+    setMessages((prev) => [
+      ...prev,
+      { id: `assistant-${Date.now()}`, role: "assistant", content: ack },
+    ]);
+  }
+
+  function nextTotals(intent: Extract<LogIntent, { kind: "meal" }>) {
+    return {
+      calories:
+        totals.calories +
+        intent.foods.reduce((s, f) => s + f.macros.kcal, 0),
+      protein:
+        totals.protein +
+        intent.foods.reduce((s, f) => s + f.macros.protein, 0),
+    };
+  }
+
+  function handleDismissLog(messageId: string) {
+    setMessages((prev) =>
+      prev.map((m) =>
+        m.id === messageId ? { ...m, logStatus: "dismissed" } : m,
+      ),
+    );
   }
 
   function handleSubmit(event: React.FormEvent) {
@@ -275,6 +346,16 @@ export default function CoachPage() {
                   )}
                 >
                   <p>{message.content}</p>
+                  {message.intent && message.logStatus && (
+                    <LogConfirmChip
+                      intent={message.intent}
+                      status={message.logStatus}
+                      onConfirm={() =>
+                        handleConfirmLog(message.id, message.intent!)
+                      }
+                      onDismiss={() => handleDismissLog(message.id)}
+                    />
+                  )}
                   {message.actions && message.actions.length > 0 && (
                     <div className="mt-3 flex flex-wrap gap-2">
                       {message.actions.map((action) => (
@@ -313,7 +394,7 @@ export default function CoachPage() {
                   Try asking
                 </p>
                 <div className="flex flex-wrap gap-2">
-                  {QUICK_PROMPTS.map((prompt) => (
+                  {quickPrompts.map((prompt) => (
                     <button
                       key={prompt}
                       onClick={() => addMessage(prompt)}
@@ -351,6 +432,31 @@ export default function CoachPage() {
       </main>
     </div>
   );
+}
+
+/**
+ * Quick prompts adapt to today's data so the first tap is the most useful one.
+ * No meals yet -> nudge logging; protein gap high -> suggest a protein idea.
+ */
+function buildQuickPrompts(context: DayContext): string[] {
+  if (context.calories === 0) {
+    return [
+      "Log my breakfast",
+      "What should I eat first?",
+      "Plan a workout",
+      "Show nutrition details",
+    ];
+  }
+
+  const proteinLeft = remaining(context.protein, context.proteinTarget);
+  const prompts: string[] = ["Am I on track today?"];
+  if (proteinLeft >= 40) {
+    prompts.push(`Find a high-protein meal (${proteinLeft}g to go)`);
+  } else {
+    prompts.push("What can I eat tonight?");
+  }
+  prompts.push("Log a 30 min walk", "Show nutrition details");
+  return prompts;
 }
 
 function getCoachResponse(message: string, context: DayContext): { content: string; actions: CoachAction[] } {
