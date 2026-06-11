@@ -13,10 +13,10 @@
   --color-primary-300: #6ee7bd;
   --color-primary-400: #47e7b0;
   --color-primary-500: #1fcf9b;
-  --color-primary-600: #0fa880;
-  --color-primary-700: #0c876a;
-  --color-primary-800: #0b6b55;
-  --color-primary-900: #0a5645;
+  --color-primary-600: #0b7a5f; /* button bg: white text passes WCAG AA (>=4.5:1) */
+  --color-primary-700: #0a6650;
+  --color-primary-800: #084d3d;
+  --color-primary-900: #073b2f;
 
   --color-accent-50: #fff7ed;
   --color-accent-100: #ffedd5;
