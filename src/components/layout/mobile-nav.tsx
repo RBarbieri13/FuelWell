@@ -24,11 +24,11 @@ export function MobileNav() {
 
   return (
     <nav
-      className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/94 backdrop-blur-xl border-t border-white/80 shadow-[0_-12px_30px_rgba(23,23,23,0.08)] pb-[env(safe-area-inset-bottom)]"
+      className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/94 backdrop-blur-xl border-t border-white/80 shadow-[0_-12px_30px_rgba(23,23,23,0.08)] pb-[max(env(safe-area-inset-bottom),0.5rem)]"
       role="navigation"
       aria-label="Mobile navigation"
     >
-      <div className="flex items-center justify-around py-1.5">
+      <div className="flex items-center justify-around pt-2 pb-1">
         {mobileNavItems.map((item) => {
           const isActive = pathname.startsWith(item.href);
           return (
@@ -48,7 +48,7 @@ export function MobileNav() {
                   item.highlight && "w-6 h-6"
                 )}
               />
-              <span>{item.label}</span>
+              <span className="leading-none">{item.label}</span>
             </Link>
           );
         })}
