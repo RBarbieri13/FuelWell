@@ -2,8 +2,10 @@ import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { getSampleDay, isPreviewHost } from "@/lib/preview-session";
 import { SettingsClient } from "@/components/settings/settings-client";
+import { version } from "../../../../package.json";
 
-const APP_VERSION = "0.1.0";
+// Single source of truth: bump package.json to release the next version (1.4+).
+const APP_VERSION = version;
 
 export default async function SettingsPage() {
   const host = (await headers()).get("host");

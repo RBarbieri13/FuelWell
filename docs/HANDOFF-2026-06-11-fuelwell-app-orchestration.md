@@ -1,5 +1,6 @@
 # FuelWell Autonomous Improvement Session — Handoff (2026-06-11)
 
+**Release:** **v1.3** (current shipped). Next release is **v1.4** — version lives in `package.json` (single source; Settings → About reads it).
 **Branch:** `feature/fuelwell-app-orchestration` (pushed to origin; HEAD `709bbd8`)
 **Live preview:** https://fuelwell-preview.vercel.app/preview · app at `/app/dashboard`
 **Production deployment:** `dpl_E2UHNM3drnmRp5a5ww4cjBafA3mV` (READY, aliased to fuelwell-preview.vercel.app)
