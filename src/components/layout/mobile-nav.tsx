@@ -12,11 +12,11 @@ import {
 import { cn } from "@/lib/utils/cn";
 
 const mobileNavItems = [
-  { href: "/app/dashboard", label: "Home", icon: LayoutDashboard },
-  { href: "/app/log", label: "Log", icon: PlusCircle, highlight: true },
-  { href: "/app/coach", label: "Coach", icon: MessageSquare },
-  { href: "/app/workouts", label: "Move", icon: Dumbbell },
-  { href: "/app/progress", label: "Progress", icon: TrendingUp },
+  { href: "/app/dashboard", label: "Home", icon: LayoutDashboard, color: "text-primary-600" },
+  { href: "/app/log", label: "Log", icon: PlusCircle, highlight: true, color: "text-accent-600" },
+  { href: "/app/coach", label: "Coach", icon: MessageSquare, color: "text-violet-600" },
+  { href: "/app/workouts", label: "Move", icon: Dumbbell, color: "text-sky-600" },
+  { href: "/app/progress", label: "Progress", icon: TrendingUp, color: "text-amber-600" },
 ];
 
 export function MobileNav() {
@@ -38,11 +38,7 @@ export function MobileNav() {
               aria-current={isActive ? "page" : undefined}
               className={cn(
                 "flex flex-col items-center gap-0.5 px-2.5 py-1.5 text-[11px] font-semibold transition-colors",
-                item.highlight && !isActive
-                  ? "text-primary-600"
-                  : isActive
-                    ? "text-primary-600"
-                    : "text-neutral-400"
+                isActive || item.highlight ? item.color : "text-neutral-400"
               )}
             >
               <item.icon

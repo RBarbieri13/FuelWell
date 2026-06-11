@@ -93,20 +93,18 @@ export function DashboardClient({
                     {hasLoggedToday ? coachVerdict.title : `Hey, ${displayName}. Start with one real input.`}
                   </h1>
                 </div>
-                <Link
-                  href="/app/dashboard/score"
-                  className="rounded-2xl bg-white/10 px-5 py-4 text-center backdrop-blur transition hover:bg-white/15"
-                >
-                  <p className="text-xs font-semibold uppercase text-neutral-300">
-                    Health score
-                  </p>
-                  <p className="mt-1 text-4xl font-black tabular-nums">
-                    {healthScore ?? "--"}
-                  </p>
-                  <p className="text-xs font-medium text-neutral-300">
-                    {healthScore === null ? "waiting for inputs" : "tap for detail"}
-                  </p>
-                </Link>
+                {hasLoggedToday && (
+                  <div className="flex gap-3">
+                    <EnergyStat
+                      label="Calories left"
+                      value={`${remaining(totals.calories, targets.calories)}`}
+                    />
+                    <EnergyStat
+                      label="Protein left"
+                      value={`${remaining(totals.protein, targets.protein)}g`}
+                    />
+                  </div>
+                )}
               </div>
 
               <p className="max-w-2xl text-base font-medium leading-7 text-neutral-200">
@@ -115,22 +113,20 @@ export function DashboardClient({
                   : "No meals, workouts, or recovery inputs are logged yet. FuelWell will show the missing pieces instead of inventing green progress."}
               </p>
 
-              <div className="mt-6 flex flex-wrap gap-3">
+              <div className="mt-6 flex flex-wrap items-center gap-3">
                 <Link href={coachVerdict.href}>
                   <Button size="lg">
                     <Sparkles className="h-4 w-4" />
                     {coachVerdict.action}
                   </Button>
                 </Link>
-                <Link href="/app/dashboard/score">
-                  <Button
-                    size="lg"
-                    variant="secondary"
-                    className="border-white/20 bg-white/10 text-white hover:bg-white/15"
-                  >
-                    See score inputs
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
+                <Link
+                  href="/app/dashboard/score"
+                  className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-neutral-200 backdrop-blur transition hover:bg-white/15"
+                >
+                  <span className="text-neutral-400">Health score</span>
+                  <span className="tabular-nums text-white">{healthScore ?? "--"}</span>
+                  <ChevronRight className="h-3.5 w-3.5 text-neutral-400" />
                 </Link>
               </div>
             </div>
@@ -185,10 +181,7 @@ export function DashboardClient({
 
         <Card className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-neutral-900">Score inputs</h2>
-            <Link href="/app/dashboard/score" className="text-sm font-bold text-primary-700">
-              Explain score
-            </Link>
+            <h2 className="text-lg font-bold text-neutral-900">Today&apos;s focus</h2>
           </div>
           <div className="grid gap-3">
             {contributors.map((contributor) => (
@@ -209,12 +202,7 @@ export function DashboardClient({
                       <p className="text-sm font-medium text-neutral-500">{contributor.status}</p>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-2xl font-black tabular-nums text-neutral-900">
-                      {contributor.score ?? "--"}
-                    </p>
-                    <p className="text-xs font-bold uppercase text-neutral-400">score</p>
-                  </div>
+                  <ChevronRight className="h-5 w-5 shrink-0 text-neutral-300 transition group-hover:translate-x-0.5 group-hover:text-primary-500" />
                 </div>
               </Link>
             ))}
@@ -245,7 +233,7 @@ export function DashboardClient({
             <div className="rounded-2xl border border-dashed border-neutral-300 bg-neutral-50 p-5">
               <p className="font-bold text-neutral-900">No meals logged yet.</p>
               <p className="mt-1 text-sm text-neutral-500">
-                This is why the health score is blank. Add a meal to unlock nutrition detail.
+                Add your first meal to unlock today&apos;s nutrition detail and plate.
               </p>
               <Link href="/app/log" className="mt-4 inline-flex">
                 <Button>
@@ -310,6 +298,17 @@ export function DashboardClient({
       <p className="text-xs font-medium text-neutral-400">
         Profile context: goal {goal}, diet {dietaryPreference}
         {allergies.length > 0 ? `, allergies ${allergies.join(", ")}` : ""}.
+      </p>
+    </div>
+  );
+}
+
+function EnergyStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-2xl bg-white/10 px-4 py-3 text-center backdrop-blur">
+      <p className="text-2xl font-black tabular-nums text-white">{value}</p>
+      <p className="mt-0.5 text-[11px] font-semibold uppercase tracking-wide text-neutral-300">
+        {label}
       </p>
     </div>
   );
