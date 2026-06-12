@@ -141,7 +141,7 @@ function WorkoutCard({ workout }: { workout: WorkoutRow }) {
               </div>
             </div>
           </div>
-          <ArrowRight className="h-4 w-4 shrink-0 text-neutral-300 transition-transform group-hover:translate-x-0.5 group-hover:text-primary-500" />
+          <ArrowRight className="hidden sm:block h-4 w-4 shrink-0 text-neutral-300 transition-transform group-hover:translate-x-0.5 group-hover:text-primary-500" />
         </div>
       </Card>
     </Link>
@@ -185,7 +185,7 @@ export function WorkoutsView({ verdict }: { verdict: DailyVerdict }) {
                       {w.category} · {w.durationMin} min
                     </p>
                   </div>
-                  <span className="shrink-0 text-xs font-medium text-neutral-400">
+                  <span className="shrink-0 text-xs font-medium text-neutral-500">
                     {new Date(w.loggedAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}
                   </span>
                 </li>
@@ -251,7 +251,7 @@ export function WorkoutsView({ verdict }: { verdict: DailyVerdict }) {
               </div>
               <Link
                 href={`/app/workouts/${recommended.id}`}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm shadow-primary-600/25 transition-colors hover:bg-primary-700"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm shadow-primary-600/25 transition-colors hover:bg-primary-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
               >
                 Start this workout
                 <ArrowRight className="h-4 w-4" />
@@ -267,7 +267,7 @@ export function WorkoutsView({ verdict }: { verdict: DailyVerdict }) {
           <h2 className="text-xs font-semibold uppercase tracking-wider text-neutral-400">
             {filter === "all" ? "All workouts" : `${filters.find((f) => f.id === filter)?.label} workouts`}
           </h2>
-          <span className="text-xs text-neutral-400">
+          <span className="text-xs text-neutral-500">
             {visible.length} {visible.length === 1 ? "option" : "options"}
           </span>
         </div>
