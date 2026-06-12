@@ -25,9 +25,9 @@ const recoverySignals = [
 ];
 
 const nextActions = [
-  { label: "Log a recovery snack", href: "/log", detail: "25g protein plus fruit keeps tomorrow's plan on track." },
-  { label: "Choose today's workout", href: "/workouts", detail: "Recommendations already account for soreness." },
-  { label: "Review activity verdict", href: "/activity", detail: "See why the app is keeping intensity capped." },
+  { label: "Log a recovery snack", href: "/app/log", detail: "25g protein plus fruit keeps tomorrow's plan on track." },
+  { label: "Choose today's workout", href: "/app/workouts", detail: "Recommendations already account for soreness." },
+  { label: "Review activity verdict", href: "/app/activity", detail: "See why the app is keeping intensity capped." },
 ];
 
 function SourceBadge({ children }: { children: string }) {
@@ -97,7 +97,7 @@ export default function RecoveryPage() {
       <section className="grid gap-4 lg:grid-cols-[1fr_0.9fr]">
         <Card padding="sm">
           <div className="px-2 pb-3">
-            <h2 className="text-xs font-semibold uppercase tracking-wider text-neutral-400">Recovery checklist</h2>
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-neutral-500">Recovery checklist</h2>
           </div>
           <div className="divide-y divide-neutral-100">
             {checklist.map((item) => (
@@ -126,7 +126,7 @@ export default function RecoveryPage() {
               <div>
                 <h2 className="text-sm font-semibold text-neutral-900">What is estimated?</h2>
                 <p className="mt-1 text-sm leading-relaxed text-neutral-600">
-                  Readiness is calculated from the user-entered sleep, hydration, and soreness examples above. HRV, resting heart rate, and live workout load are intentionally missing until integrations exist.
+                  Readiness is calculated from your logged sleep, hydration, and soreness above. HRV, resting heart rate, and workout load aren&apos;t included yet — connect a wearable to add them.
                 </p>
               </div>
             </div>
