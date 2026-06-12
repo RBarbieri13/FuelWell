@@ -61,14 +61,14 @@ export function LoggedMeals({
         {meals.map((meal) => (
           <div key={meal.id} className="space-y-2">
             <div className="flex items-center justify-between">
-              <p className="text-xs font-black uppercase tracking-wider text-neutral-400">
+              <p className="text-xs font-black uppercase tracking-wider text-neutral-500">
                 {formatMealType(meal.mealType)} &middot; {meal.name}
               </p>
               <button
                 type="button"
                 onClick={() => onRemoveMeal(meal.id)}
                 aria-label={`Remove ${meal.name}`}
-                className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-bold text-neutral-400 transition hover:bg-red-50 hover:text-red-600"
+                className="flex min-h-11 items-center gap-1 rounded-lg px-2 py-1 text-xs font-bold text-neutral-500 transition hover:bg-red-50 hover:text-red-600 md:min-h-0"
               >
                 <Trash2 className="h-3.5 w-3.5" />
                 Remove
@@ -144,7 +144,7 @@ function LoggedItem({
       <div className="flex items-center justify-between gap-3 rounded-2xl border border-neutral-100 bg-neutral-50/70 p-3">
         <div className="min-w-0">
           <p className="truncate font-black text-neutral-900">{item.name}</p>
-          <p className="text-xs font-bold text-neutral-400">
+          <p className="text-xs font-bold text-neutral-500">
             {item.calories} cal &middot; {item.protein}p &middot; {item.carbs}c
             &middot; {item.fat}f
           </p>
@@ -153,7 +153,7 @@ function LoggedItem({
           type="button"
           onClick={startEdit}
           aria-label={`Edit ${item.name}`}
-          className="rounded-lg p-2 text-neutral-400 transition hover:bg-white hover:text-primary-600"
+          className="-m-1 rounded-lg p-3 text-neutral-500 transition hover:bg-white hover:text-primary-600"
         >
           <Pencil className="h-4 w-4" />
         </button>
@@ -175,7 +175,7 @@ function LoggedItem({
       <div className="grid grid-cols-4 gap-2">
         {MACRO_FIELDS.map((field) => (
           <div key={field.key}>
-            <label className="mb-1 block text-[10px] font-bold uppercase text-neutral-400">
+            <label className="mb-1 block text-[10px] font-bold uppercase text-neutral-500">
               {field.label}
             </label>
             <input
