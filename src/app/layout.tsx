@@ -16,6 +16,14 @@ export const metadata: Metadata = {
   title: "FuelWell — AI Nutrition Coach",
   description:
     "Your personal AI-powered nutrition coach. Track meals, hit macros, and reach your goals.",
+  appleWebApp: {
+    capable: true,
+    title: "FuelWell",
+    statusBarStyle: "black-translucent",
+  },
+  icons: {
+    apple: "/apple-touch-icon.png",
+  },
 };
 
 export default function RootLayout({
