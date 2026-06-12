@@ -28,6 +28,7 @@ import {
   sumMealItems,
   sumMeals,
 } from "@/lib/fuelwell-data";
+import { useDayLog } from "@/lib/use-day-log";
 
 interface DashboardClientProps {
   displayName: string;
@@ -50,11 +51,16 @@ export function DashboardClient({
   dietaryPreference,
   allergies,
 }: DashboardClientProps) {
-  const totals = sumMeals(meals, fallbackTotals);
+  // Live client store wins for today's view: meals logged from Log or Coach
+  // chat update these totals immediately (D-gate). Server meals are the
+  // fallback for first paint / signed-in history.
+  const { meals: liveMeals } = useDayLog();
+  const todaysMeals = liveMeals.length > 0 ? liveMeals : meals;
+  const totals = sumMeals(todaysMeals, fallbackTotals);
   const hasLoggedToday = totals.calories > 0;
-  const contributors = buildScoreContributors(totals, targets, meals.length);
+  const contributors = buildScoreContributors(totals, targets, todaysMeals.length);
   const healthScore = calculateHealthScore(contributors);
-  const coachVerdict = buildCoachVerdict(totals, targets, meals.length);
+  const coachVerdict = buildCoachVerdict(totals, targets, todaysMeals.length);
 
   return (
     <div className="mx-auto max-w-6xl space-y-6 p-4 md:p-8">
@@ -155,7 +161,7 @@ export function DashboardClient({
           <div className="grid grid-cols-3 gap-2">
             <MiniMetric label="Protein left" value={`${remaining(totals.protein, targets.protein)}g`} />
             <MiniMetric label="Calories left" value={`${remaining(totals.calories, targets.calories)}`} />
-            <MiniMetric label="Meals" value={`${meals.length}`} />
+            <MiniMetric label="Meals" value={`${todaysMeals.length}`} />
           </div>
         </Card>
       </section>
@@ -229,7 +235,7 @@ export function DashboardClient({
             <UtensilsCrossed className="h-6 w-6 text-primary-600" />
           </div>
 
-          {meals.length === 0 ? (
+          {todaysMeals.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-neutral-300 bg-neutral-50 p-5">
               <p className="font-bold text-neutral-900">No meals logged yet.</p>
               <p className="mt-1 text-sm text-neutral-500">
@@ -244,7 +250,7 @@ export function DashboardClient({
             </div>
           ) : (
             <div className="space-y-2">
-              {meals.slice(0, 4).map((meal) => {
+              {todaysMeals.slice(0, 4).map((meal) => {
                 const mealTotals = sumMealItems(meal.items);
                 return (
                   <Link

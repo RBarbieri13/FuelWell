@@ -16,6 +16,7 @@ import {
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils/cn";
+import { useWorkoutLog } from "@/lib/use-workout-log";
 
 type Category = "upper" | "lower" | "full";
 
@@ -150,6 +151,8 @@ function WorkoutCard({ workout }: { workout: WorkoutRow }) {
 export function WorkoutsView({ verdict }: { verdict: DailyVerdict }) {
   const [filter, setFilter] = useState<CategoryFilter>("all");
   const [showRecommendation, setShowRecommendation] = useState(false);
+  // Shared store: workouts logged from Coach chat show up here too (D-gate).
+  const { workouts: loggedWorkouts } = useWorkoutLog();
 
   const visible =
     filter === "all" ? workouts : workouts.filter((w) => w.category === filter);
@@ -166,6 +169,30 @@ export function WorkoutsView({ verdict }: { verdict: DailyVerdict }) {
           Two easy ways to start: browse on your own, or let your coach suggest today&apos;s pick.
         </p>
       </header>
+
+      {loggedWorkouts.length > 0 && (
+        <Card className="space-y-3" data-testid="logged-workouts">
+          <h2 className="text-lg font-semibold text-neutral-900">Logged</h2>
+          <ul className="divide-y divide-neutral-100">
+            {loggedWorkouts
+              .slice(-5)
+              .reverse()
+              .map((w) => (
+                <li key={w.id} className="flex items-center justify-between gap-3 py-2.5">
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-semibold text-neutral-900">{w.name}</p>
+                    <p className="text-xs text-neutral-500">
+                      {w.category} · {w.durationMin} min
+                    </p>
+                  </div>
+                  <span className="shrink-0 text-xs font-medium text-neutral-400">
+                    {new Date(w.loggedAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}
+                  </span>
+                </li>
+              ))}
+          </ul>
+        </Card>
+      )}
 
       <div className="grid gap-4 lg:grid-cols-2">
         {/* Path 1: Pick my own */}

@@ -92,6 +92,15 @@ export function addMeal(input: NewMealInput): MealRecord {
   return meal;
 }
 
+/** Add a fully-built MealRecord (Coach tools issue their own ids). */
+export function addMealRecord(meal: MealRecord) {
+  persist([...meals, meal]);
+}
+
+export function replaceMeal(mealId: string, next: MealRecord) {
+  persist(meals.map((meal) => (meal.id === mealId ? next : meal)));
+}
+
 export function updateMealItem(
   mealId: string,
   itemId: string,

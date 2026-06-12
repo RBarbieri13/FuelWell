@@ -16,101 +16,13 @@ import {
   Trash2,
 } from "lucide-react";
 
-type GroceryCategory = "Protein" | "Produce" | "Pantry" | "Dairy" | "Frozen";
+import {
+  useGroceryList,
+  setGroceryItems,
+  type GroceryCategory,
+} from "@/lib/use-grocery-list";
 
-type GroceryItem = {
-  id: string;
-  name: string;
-  amount: string;
-  category: GroceryCategory;
-  source: string;
-  checked: boolean;
-};
-
-const initialItems: GroceryItem[] = [
-  {
-    id: "turkey",
-    name: "Lean ground turkey",
-    amount: "1.5 lb",
-    category: "Protein",
-    source: "Turkey Quinoa Bowl",
-    checked: false,
-  },
-  {
-    id: "salmon",
-    name: "Salmon fillets",
-    amount: "2 portions",
-    category: "Protein",
-    source: "Salmon Dinner",
-    checked: false,
-  },
-  {
-    id: "greek-yogurt",
-    name: "Plain Greek yogurt",
-    amount: "32 oz",
-    category: "Dairy",
-    source: "Yogurt Berry Crunch",
-    checked: true,
-  },
-  {
-    id: "eggs",
-    name: "Liquid egg whites",
-    amount: "16 oz",
-    category: "Dairy",
-    source: "Breakfast Wrap",
-    checked: false,
-  },
-  {
-    id: "sweet-potatoes",
-    name: "Sweet potatoes",
-    amount: "3 medium",
-    category: "Produce",
-    source: "Salmon Dinner",
-    checked: false,
-  },
-  {
-    id: "berries",
-    name: "Blueberries",
-    amount: "2 cups",
-    category: "Produce",
-    source: "Yogurt Berry Crunch",
-    checked: true,
-  },
-  {
-    id: "greens",
-    name: "Baby spinach",
-    amount: "1 large box",
-    category: "Produce",
-    source: "Breakfast Wrap",
-    checked: false,
-  },
-  {
-    id: "quinoa",
-    name: "Quinoa",
-    amount: "1 bag",
-    category: "Pantry",
-    source: "Turkey Quinoa Bowl",
-    checked: false,
-  },
-  {
-    id: "tortillas",
-    name: "High-fiber tortillas",
-    amount: "1 pack",
-    category: "Pantry",
-    source: "Breakfast Wrap",
-    checked: false,
-  },
-  {
-    id: "frozen-broccoli",
-    name: "Frozen broccoli florets",
-    amount: "1 bag",
-    category: "Frozen",
-    source: "Backup sides",
-    checked: false,
-  },
-];
-
-const categories: GroceryCategory[] = ["Protein", "Produce", "Pantry", "Dairy", "Frozen"];
+const categories: GroceryCategory[] = ["Protein", "Produce", "Pantry", "Dairy", "Frozen", "Other"];
 
 const categoryTone: Record<GroceryCategory, string> = {
   Protein: "bg-blue-50 text-blue-700 border-blue-100",
@@ -118,15 +30,16 @@ const categoryTone: Record<GroceryCategory, string> = {
   Pantry: "bg-amber-50 text-amber-700 border-amber-100",
   Dairy: "bg-sky-50 text-sky-700 border-sky-100",
   Frozen: "bg-purple-50 text-purple-700 border-purple-100",
+  Other: "bg-neutral-50 text-neutral-600 border-neutral-200",
 };
 
 export default function GroceryListPage() {
-  const [items, setItems] = useState<GroceryItem[]>(initialItems);
+  // Shared persisted store — the same list Coach reads and mutates (D-gate).
+  const { items } = useGroceryList();
   const [activeCategory, setActiveCategory] = useState<GroceryCategory | "All">("All");
   const [newItemName, setNewItemName] = useState("");
   const [newItemAmount, setNewItemAmount] = useState("");
   const [newItemCategory, setNewItemCategory] = useState<GroceryCategory>("Produce");
-  const [customItemCount, setCustomItemCount] = useState(0);
 
   const checkedCount = items.filter((item) => item.checked).length;
   const remainingCount = items.length - checkedCount;
@@ -136,15 +49,15 @@ export default function GroceryListPage() {
       : items.filter((item) => item.category === activeCategory);
 
   function toggleItem(itemId: string) {
-    setItems((current) =>
-      current.map((item) =>
+    setGroceryItems(
+      items.map((item) =>
         item.id === itemId ? { ...item, checked: !item.checked } : item
       )
     );
   }
 
   function removeItem(itemId: string) {
-    setItems((current) => current.filter((item) => item.id !== itemId));
+    setGroceryItems(items.filter((item) => item.id !== itemId));
   }
 
   function addItem(event: FormEvent<HTMLFormElement>) {
@@ -153,18 +66,17 @@ export default function GroceryListPage() {
     const trimmedName = newItemName.trim();
     if (!trimmedName) return;
 
-    setItems((current) => [
+    setGroceryItems([
       {
-        id: `custom-${customItemCount}`,
+        id: `custom-${Date.now().toString(36)}`,
         name: trimmedName,
         amount: newItemAmount.trim() || "1 item",
         category: newItemCategory,
         source: "Added manually",
         checked: false,
       },
-      ...current,
+      ...items,
     ]);
-    setCustomItemCount((current) => current + 1);
     setNewItemName("");
     setNewItemAmount("");
   }
@@ -184,11 +96,7 @@ export default function GroceryListPage() {
         <Button
           type="button"
           size="sm"
-          onClick={() =>
-            setItems((current) =>
-              current.map((item) => ({ ...item, checked: true }))
-            )
-          }
+          onClick={() => setGroceryItems(items.map((item) => ({ ...item, checked: true })))}
         >
           <CheckCircle2 className="w-4 h-4" />
           Mark all shopped
