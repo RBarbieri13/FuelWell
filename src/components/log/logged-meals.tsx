@@ -153,7 +153,7 @@ function LoggedItem({
           type="button"
           onClick={startEdit}
           aria-label={`Edit ${item.name}`}
-          className="-m-1 rounded-lg p-3 text-neutral-500 transition hover:bg-white hover:text-primary-600"
+          className="-m-1.5 rounded-lg p-3.5 md:-m-0 md:p-2 text-neutral-500 transition hover:bg-white hover:text-primary-600"
         >
           <Pencil className="h-4 w-4" />
         </button>

@@ -120,7 +120,7 @@ export default function CoachPage() {
             <button
               type="button"
               onClick={newConversation}
-              className="px-2 py-2 -my-2 text-xs font-bold text-neutral-600 transition hover:text-neutral-700"
+              className="whitespace-nowrap px-2 py-2 -my-2 text-xs font-bold text-neutral-600 transition hover:text-neutral-700"
             >
               New chat
             </button>
@@ -190,7 +190,7 @@ export default function CoachPage() {
                   <button
                     key={prompt}
                     onClick={() => void sendMessage(prompt)}
-                    className="min-h-11 rounded-full border border-neutral-200 bg-white px-4 py-2 text-sm font-bold text-neutral-600 transition hover:border-primary-300 hover:bg-primary-50/70 hover:text-primary-700"
+                    className="min-h-11 md:min-h-0 rounded-full border border-neutral-200 bg-white px-4 py-2 text-sm font-bold text-neutral-600 transition hover:border-primary-300 hover:bg-primary-50/70 hover:text-primary-700"
                   >
                     {prompt}
                   </button>

@@ -70,6 +70,7 @@ export function FoodSearch({
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Search 500+ foods by name"
+          aria-label="Search 500+ foods by name"
           className="w-full rounded-2xl border border-neutral-200 bg-white py-4 pl-12 pr-4 text-base font-medium text-neutral-900 placeholder:text-neutral-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary-500"
           autoFocus
         />

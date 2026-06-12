@@ -43,6 +43,7 @@ export default function RecipesPage() {
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search title, ingredients, or tags"
+            aria-label="Search title, ingredients, or tags"
             className="w-full rounded-xl border border-neutral-200 bg-white py-3 pl-10 pr-4 text-sm outline-none placeholder:text-neutral-400 focus:border-transparent focus:ring-2 focus:ring-primary-500"
           />
         </div>

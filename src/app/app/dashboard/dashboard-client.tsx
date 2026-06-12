@@ -313,7 +313,7 @@ function EnergyStat({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-2xl bg-white/10 px-4 py-3 text-center backdrop-blur">
       <p className="text-2xl font-black tabular-nums text-white">{value}</p>
-      <p className="mt-0.5 text-xs font-semibold uppercase tracking-wide text-neutral-300">
+      <p className="mt-0.5 whitespace-nowrap text-xs font-semibold uppercase tracking-tight text-neutral-300">
         {label}
       </p>
     </div>
@@ -324,7 +324,7 @@ function MiniMetric({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-2xl bg-neutral-100/80 p-3 text-center">
       <p className="text-xl font-black tabular-nums text-neutral-900">{value}</p>
-      <p className="mt-0.5 text-xs font-bold uppercase text-neutral-400">{label}</p>
+      <p className="mt-0.5 whitespace-nowrap text-xs font-bold uppercase tracking-tight text-neutral-400">{label}</p>
     </div>
   );
 }

@@ -141,7 +141,7 @@ export default function GroceryListPage() {
                   type="button"
                   onClick={() => setActiveCategory(category)}
                   className={cn(
-                    "rounded-full border px-3 py-2.5 text-sm font-medium transition-all",
+                    "rounded-full border px-3 py-2.5 md:py-1.5 text-sm font-medium transition-all",
                     activeCategory === category
                       ? "border-primary-300 bg-primary-50 text-primary-700"
                       : "border-neutral-200 text-neutral-500 hover:border-neutral-300 hover:text-neutral-800"
@@ -216,7 +216,7 @@ export default function GroceryListPage() {
                           type="button"
                           onClick={() => removeItem(item.id)}
                           aria-label={`Remove ${item.name}`}
-                          className="rounded-xl p-3 -m-1 text-neutral-300 transition-colors hover:bg-red-50 hover:text-red-500"
+                          className="rounded-xl p-3.5 -m-1.5 md:p-2 md:m-0 text-neutral-300 transition-colors hover:bg-red-50 hover:text-red-500"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
