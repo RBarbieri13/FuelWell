@@ -134,7 +134,7 @@ export function MacroStackedBars({
           return (
             <div key={day.date} className="flex-1 min-w-0 text-center">
               {showLabel ? (
-                <span className="text-[10px] text-neutral-400 tabular-nums">{day.label}</span>
+                <span className="text-xs text-neutral-500 tabular-nums">{day.label}</span>
               ) : null}
             </div>
           );

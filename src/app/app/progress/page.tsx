@@ -576,7 +576,7 @@ function StatTile({
     <div className="rounded-xl bg-white/75 border border-white p-3 shadow-sm shadow-primary-100/50">
       <Icon className="w-4 h-4 text-primary-600 mb-2" />
       <p className="text-lg font-bold text-neutral-950 tabular-nums">{value}</p>
-      <p className="text-[11px] font-medium text-neutral-500 mt-0.5">{label}</p>
+      <p className="text-xs font-medium text-neutral-500 mt-0.5">{label}</p>
     </div>
   );
 }
