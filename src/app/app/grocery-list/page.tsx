@@ -4,6 +4,7 @@ import { FormEvent, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import { cn } from "@/lib/utils/cn";
 import {
   Check,
@@ -113,11 +114,14 @@ export default function GroceryListPage() {
                   This week
                 </div>
                 <h2 className="mt-4 text-xl font-semibold tracking-tight text-neutral-900">
-                  {remainingCount} items left for 4 planned days.
+                  {remainingCount === 0
+                    ? "All shopped for this week."
+                    : `${remainingCount} items left for 4 planned days.`}
                 </h2>
                 <p className="mt-2 text-sm leading-relaxed text-neutral-600">
-                  Protein and produce are the priority. Pantry items can wait if
-                  you are doing a quick store run.
+                  {remainingCount === 0
+                    ? "You're set — check back when new meals are planned."
+                    : "Protein and produce are the priority. Pantry items can wait if you are doing a quick store run."}
                 </p>
               </div>
               <div className="rounded-2xl bg-white/85 border border-white px-5 py-4 text-center">
@@ -137,7 +141,7 @@ export default function GroceryListPage() {
                   type="button"
                   onClick={() => setActiveCategory(category)}
                   className={cn(
-                    "rounded-full border px-3 py-1.5 text-sm font-medium transition-all",
+                    "rounded-full border px-3 py-2.5 text-sm font-medium transition-all",
                     activeCategory === category
                       ? "border-primary-300 bg-primary-50 text-primary-700"
                       : "border-neutral-200 text-neutral-500 hover:border-neutral-300 hover:text-neutral-800"
@@ -185,7 +189,7 @@ export default function GroceryListPage() {
                           onClick={() => toggleItem(item.id)}
                           aria-label={item.checked ? `Uncheck ${item.name}` : `Check ${item.name}`}
                           className={cn(
-                            "rounded-full transition-colors",
+                            "rounded-full p-3 -m-3 transition-colors",
                             item.checked ? "text-primary-600" : "text-neutral-300 hover:text-primary-500"
                           )}
                         >
@@ -212,7 +216,7 @@ export default function GroceryListPage() {
                           type="button"
                           onClick={() => removeItem(item.id)}
                           aria-label={`Remove ${item.name}`}
-                          className="rounded-xl p-2 text-neutral-300 transition-colors hover:bg-red-50 hover:text-red-500"
+                          className="rounded-xl p-3 -m-1 text-neutral-300 transition-colors hover:bg-red-50 hover:text-red-500"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -222,6 +226,13 @@ export default function GroceryListPage() {
                 </Card>
               );
             })}
+            {filteredItems.length === 0 && (
+              <EmptyState
+                icon={ShoppingBasket}
+                title="Nothing to shop"
+                description="Items from your planned meals will appear here, or add one manually."
+              />
+            )}
           </div>
         </div>
 
