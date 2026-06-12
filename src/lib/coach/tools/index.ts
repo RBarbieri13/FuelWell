@@ -2,6 +2,13 @@ import { z } from "zod";
 import { registerTools } from "../registry";
 import { remaining, sumMealItems } from "@/lib/fuelwell-data";
 
+import "./meal-tools";
+import "./workout-tools";
+import "./recipe-tools";
+import "./progress-tools";
+import "./lifestyle-tools";
+import "./meta-tools";
+
 /**
  * Tool modules register here. Section B adds meal/workout/recipe/progress/
  * restaurant/grocery/settings/meta modules; each module file calls

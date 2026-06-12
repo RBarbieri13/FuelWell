@@ -130,7 +130,11 @@ export type CoachSseEvent =
   | { type: "artifact"; artifact: ArtifactSpec; toolName: string }
   | { type: "mutation"; mutations: CoachMutation[] }
   | { type: "confirm_required"; toolName: string; input: unknown; prompt: string }
-  | { type: "turn_done"; usage: { inputTokens: number; outputTokens: number; costUsdCents: number; model: string } }
+  | {
+      type: "turn_done";
+      usage: { inputTokens: number; outputTokens: number; costUsdCents: number; model: string };
+      conversationId?: string;
+    }
   | { type: "error"; message: string };
 
 export type CoachTurnMessage = {

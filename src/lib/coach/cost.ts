@@ -2,13 +2,16 @@
  * Cost ledger + circuit breaker.
  *
  * Caps (locked Phase 0): $5/user/day soft, $10/user/day hard kill. The hard
- * cap is checked BEFORE any model call. Backed by the coach_usage Supabase
- * table for signed-in users; preview users fall back to an in-memory ledger
- * (per server instance — good enough for the demo sample user).
+ * cap is checked BEFORE any model call. Signed-in users are metered against
+ * the coach_usage Supabase table (see persistence.ts); preview users use the
+ * in-memory ledger here (per server instance — fine for the demo sample user).
  */
 
 export const SOFT_CAP_USD = Number(process.env.ANTHROPIC_DAILY_BUDGET_USD ?? 5);
 export const HARD_CAP_USD = Number(process.env.ANTHROPIC_HARD_KILL_USD ?? 10);
+
+export const BUDGET_EXCEEDED_MESSAGE =
+  "Coach needs to catch its breath — today's session budget is used up. Everything you logged is saved, and Coach is back tomorrow.";
 
 /** USD per million tokens. */
 const PRICING: Record<string, { input: number; output: number }> = {
@@ -23,62 +26,26 @@ export function costUsdCents(model: string, inputTokens: number, outputTokens: n
   return Math.ceil(usd * 100);
 }
 
-type LedgerStore = {
-  getDayCents(userId: string, day: string): Promise<number>;
-  addUsage(row: {
-    userId: string;
-    day: string;
-    inputTokens: number;
-    outputTokens: number;
-    costUsdCents: number;
-    model: string;
-  }): Promise<void>;
-};
-
-const memory = new Map<string, { cents: number }>();
-
-const memoryStore: LedgerStore = {
-  async getDayCents(userId, day) {
-    return memory.get(`${userId}:${day}`)?.cents ?? 0;
-  },
-  async addUsage({ userId, day, costUsdCents: cents }) {
-    const key = `${userId}:${day}`;
-    memory.set(key, { cents: (memory.get(key)?.cents ?? 0) + cents });
-  },
-};
-
-// Supabase-backed store is wired in Section D (coach_usage table). Until the
-// table exists every caller uses the in-memory ledger.
-let store: LedgerStore = memoryStore;
-export function setLedgerStore(next: LedgerStore) {
-  store = next;
-}
-
 export type BudgetCheck =
   | { allowed: true; softCapReached: boolean; spentCents: number }
   | { allowed: false; spentCents: number; message: string };
 
-export async function checkBudget(userId: string, day: string): Promise<BudgetCheck> {
-  const spentCents = await store.getDayCents(userId, day);
+/** Pure threshold check — caller supplies today's spend from the right ledger. */
+export function evaluateBudget(spentCents: number): BudgetCheck {
   if (spentCents >= HARD_CAP_USD * 100) {
-    return {
-      allowed: false,
-      spentCents,
-      message:
-        "Coach needs to catch its breath — today's session budget is used up. Everything you logged is saved, and Coach is back tomorrow.",
-    };
+    return { allowed: false, spentCents, message: BUDGET_EXCEEDED_MESSAGE };
   }
   return { allowed: true, softCapReached: spentCents >= SOFT_CAP_USD * 100, spentCents };
 }
 
-export async function recordUsage(
-  userId: string,
-  day: string,
-  model: string,
-  inputTokens: number,
-  outputTokens: number
-): Promise<number> {
-  const cents = costUsdCents(model, inputTokens, outputTokens);
-  await store.addUsage({ userId, day, inputTokens, outputTokens, costUsdCents: cents, model });
-  return cents;
+// In-memory ledger for preview users.
+const memory = new Map<string, number>();
+
+export function memoryGetDayCents(userId: string, day: string): number {
+  return memory.get(`${userId}:${day}`) ?? 0;
+}
+
+export function memoryAddCents(userId: string, day: string, cents: number): void {
+  const key = `${userId}:${day}`;
+  memory.set(key, (memory.get(key) ?? 0) + cents);
 }

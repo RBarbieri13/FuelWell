@@ -4,10 +4,16 @@ import { headers } from "next/headers";
 import { isPreviewHost, SAMPLE_USER } from "@/lib/preview-session";
 import { createClient } from "@/lib/supabase/server";
 import { buildSystemPrompt } from "@/lib/coach/system-prompt";
-import { checkBudget, recordUsage } from "@/lib/coach/cost";
+import {
+  costUsdCents,
+  evaluateBudget,
+  memoryAddCents,
+  memoryGetDayCents,
+} from "@/lib/coach/cost";
 import { getTool, toAnthropicTools } from "@/lib/coach/registry";
 import "@/lib/coach/tools";
 import type {
+  ArtifactSpec,
   CoachDaySnapshot,
   CoachMutation,
   CoachSseEvent,
@@ -17,6 +23,13 @@ import type {
 import { applySnapshotMutation } from "@/lib/coach/apply-mutation";
 import { enforceVoice } from "@/lib/coach/voice-filter";
 import { writeAudit } from "@/lib/coach/audit";
+import {
+  ensureConversation,
+  getSupabaseDayCents,
+  insertSupabaseAudit,
+  insertSupabaseUsage,
+  saveMessages,
+} from "@/lib/coach/persistence";
 
 export const maxDuration = 120;
 
@@ -85,10 +98,18 @@ export async function POST(request: Request) {
 
   // Cost circuit breaker — fires BEFORE any model call (non-negotiable).
   const day = new Date().toISOString().split("T")[0];
-  const budget = await checkBudget(userId, day);
+  const spentCents = user
+    ? await getSupabaseDayCents(supabase, userId, day)
+    : memoryGetDayCents(userId, day);
+  const budget = evaluateBudget(spentCents);
   if (!budget.allowed) {
     return Response.json({ error: budget.message, budgetExceeded: true }, { status: 429 });
   }
+
+  // Signed-in: pin the conversation row before streaming starts.
+  const conversationId = user
+    ? await ensureConversation(supabase, userId, body.conversationId)
+    : null;
 
   const snapshot = body.snapshot as CoachDaySnapshot;
   const model = pickModel(body);
@@ -108,6 +129,17 @@ export async function POST(request: Request) {
       const emit = (e: CoachSseEvent) => controller.enqueue(encoder.encode(sse(e)));
       let totalIn = 0;
       let totalOut = 0;
+      let assistantText = "";
+      const turnToolCalls: Array<{ name: string; input: unknown }> = [];
+      const turnArtifacts: ArtifactSpec[] = [];
+
+      const audit = async (tool: string, args: unknown, resultSummary: string) => {
+        if (user) {
+          await insertSupabaseAudit(supabase, { userId, tool, args, resultSummary });
+        } else {
+          await writeAudit({ userId, tool, args, resultSummary, isPreview });
+        }
+      };
 
       const toolCtx: ToolContext = {
         snapshot,
@@ -126,9 +158,13 @@ export async function POST(request: Request) {
             const input = def.schema.parse(body.confirmedTool.input);
             const result = await def.run(input, toolCtx);
             result.mutations?.forEach(toolCtx.applyMutation);
-            if (result.artifact) emit({ type: "artifact", artifact: result.artifact, toolName: def.name });
+            if (result.artifact) {
+              turnArtifacts.push(result.artifact);
+              emit({ type: "artifact", artifact: result.artifact, toolName: def.name });
+            }
             if (result.mutations?.length) emit({ type: "mutation", mutations: result.mutations });
-            await writeAudit({ userId, tool: def.name, args: input, resultSummary: "confirmed-destructive", isPreview });
+            turnToolCalls.push({ name: def.name, input });
+            await audit(def.name, input, "confirmed-destructive");
             apiMessages.push({
               role: "assistant",
               content: `[Confirmed action ${def.name} executed: ${JSON.stringify(result.modelResult).slice(0, 400)}]`,
@@ -159,10 +195,12 @@ export async function POST(request: Request) {
           const final = await msgStream.finalMessage();
           totalIn += final.usage.input_tokens;
           totalOut += final.usage.output_tokens;
+          assistantText += pendingText;
 
-          // E4: voice filter — banned phrases trigger one rewrite pass.
+          // E4: voice filter — banned phrases trigger a correction pass.
           const voice = enforceVoice(pendingText);
           if (!voice.ok) {
+            assistantText += voice.correctionNotice;
             emit({ type: "text_delta", text: voice.correctionNotice });
           }
 
@@ -214,18 +252,14 @@ export async function POST(request: Request) {
               const result = await def.run(input, toolCtx);
               result.mutations?.forEach(toolCtx.applyMutation);
               if (result.artifact) {
+                turnArtifacts.push(result.artifact);
                 emit({ type: "artifact", artifact: result.artifact, toolName: tu.name });
               }
               if (result.mutations?.length) {
                 emit({ type: "mutation", mutations: result.mutations });
               }
-              await writeAudit({
-                userId,
-                tool: tu.name,
-                args: input,
-                resultSummary: JSON.stringify(result.modelResult).slice(0, 200),
-                isPreview,
-              });
+              turnToolCalls.push({ name: tu.name, input });
+              await audit(tu.name, input, JSON.stringify(result.modelResult).slice(0, 200));
               toolResults.push({
                 type: "tool_result",
                 tool_use_id: tu.id,
@@ -244,10 +278,41 @@ export async function POST(request: Request) {
           apiMessages.push({ role: "user", content: toolResults });
         }
 
-        const costCents = await recordUsage(userId, day, model, totalIn, totalOut);
+        const cents = costUsdCents(model, totalIn, totalOut);
+        if (user) {
+          await insertSupabaseUsage(supabase, {
+            userId,
+            day,
+            inputTokens: totalIn,
+            outputTokens: totalOut,
+            costUsdCents: cents,
+            model,
+          });
+          if (conversationId) {
+            const lastUser = body.messages[body.messages.length - 1];
+            await saveMessages(supabase, conversationId, [
+              ...(lastUser?.role === "user"
+                ? [{ role: "user" as const, content: lastUser.content }]
+                : []),
+              {
+                role: "assistant" as const,
+                content: assistantText,
+                toolCalls: turnToolCalls,
+                artifacts: turnArtifacts,
+                model,
+                tokensIn: totalIn,
+                tokensOut: totalOut,
+              },
+            ]);
+          }
+        } else {
+          memoryAddCents(userId, day, cents);
+        }
+
         emit({
           type: "turn_done",
-          usage: { inputTokens: totalIn, outputTokens: totalOut, costUsdCents: costCents, model },
+          usage: { inputTokens: totalIn, outputTokens: totalOut, costUsdCents: cents, model },
+          conversationId: conversationId ?? undefined,
         });
       } catch (err) {
         emit({
