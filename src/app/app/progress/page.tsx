@@ -305,8 +305,9 @@ export default function ProgressPage() {
                 setSelectedState(state);
                 setWeightEntry(snapshots[state].currentWeight.toFixed(1));
               }}
+              aria-pressed={selectedState === state}
               className={cn(
-                "px-3 py-2 rounded-lg text-xs font-semibold transition-all duration-150",
+                "min-h-[44px] md:min-h-0 px-3 py-2 rounded-lg text-xs font-semibold transition-all duration-150",
                 selectedState === state
                   ? "bg-white text-neutral-900 shadow-sm"
                   : "text-neutral-500 hover:text-neutral-700"
@@ -359,7 +360,7 @@ export default function ProgressPage() {
                 onClick={() => setWindowKey(option.key)}
                 aria-pressed={windowKey === option.key}
                 className={cn(
-                  "px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150",
+                  "min-h-[44px] md:min-h-0 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150",
                   windowKey === option.key
                     ? "bg-white text-neutral-900 shadow-sm"
                     : "text-neutral-500 hover:text-neutral-700"
@@ -479,7 +480,6 @@ export default function ProgressPage() {
                 onChange={(event) => setWeightEntry(event.target.value)}
                 inputMode="decimal"
                 className="w-full bg-transparent text-lg font-semibold text-neutral-900 tabular-nums focus:outline-none"
-                aria-label="Mock weight entry"
               />
               <span className="text-sm text-neutral-400">lb</span>
             </div>

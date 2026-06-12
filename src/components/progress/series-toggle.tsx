@@ -28,7 +28,7 @@ export function SeriesToggle({
             onClick={() => onToggle(key)}
             title={isLast ? "Keep at least one macro visible" : undefined}
             className={cn(
-              "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors",
+              "min-h-[44px] md:min-h-0 inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors",
               isOn
                 ? "border-neutral-300 bg-white text-neutral-800 shadow-sm"
                 : "border-neutral-200 bg-neutral-50 text-neutral-400",
