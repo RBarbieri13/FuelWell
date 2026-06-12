@@ -7,6 +7,13 @@ import { Card } from "@/components/ui/card";
 
 type AuditRow = { tool: string; summary: string | null; ts?: string };
 
+function formatTimestamp(ts: string) {
+  const date = new Date(ts);
+  const time = date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+  if (date.toDateString() === new Date().toDateString()) return time;
+  return `${date.toLocaleDateString([], { month: "short", day: "numeric" })}, ${time}`;
+}
+
 export function CoachActivity() {
   const [rows, setRows] = useState<AuditRow[] | null>(null);
 
@@ -33,7 +40,7 @@ export function CoachActivity() {
                 {row.tool.replaceAll("_", " ")}
               </span>
               <span className="shrink-0 text-xs font-medium text-neutral-400">
-                {row.ts ? new Date(row.ts).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) : ""}
+                {row.ts ? formatTimestamp(row.ts) : ""}
               </span>
             </li>
           ))}

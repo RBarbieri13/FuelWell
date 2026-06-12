@@ -38,7 +38,6 @@ export function SettingsClient({
   const router = useRouter();
   const { units, setUnits } = useUnits();
   const { diets, allergies } = usePreferences();
-  const [showExportNote, setShowExportNote] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
 
   // Known filters get their display label; free-form diets set via Coach
@@ -81,7 +80,7 @@ export function SettingsClient({
             </span>
           </Row>
           <Row icon={Mail} label="Email">
-            <span className="text-sm font-medium text-neutral-900 truncate">
+            <span className="block min-w-0 truncate text-sm font-medium text-neutral-900">
               {email || <span className="text-neutral-400">Not set</span>}
             </span>
           </Row>
@@ -179,17 +178,6 @@ export function SettingsClient({
             </div>
             <Badge>Coming soon</Badge>
           </div>
-          <div
-            aria-disabled="true"
-            className="mt-3 ml-7 inline-flex items-center rounded-full bg-neutral-100 p-1 opacity-50 cursor-not-allowed"
-          >
-            <span className="px-3 py-1 text-xs font-medium text-neutral-400">
-              Off
-            </span>
-            <span className="px-3 py-1 text-xs font-medium text-neutral-400">
-              On
-            </span>
-          </div>
         </Card>
       </Section>
 
@@ -214,17 +202,16 @@ export function SettingsClient({
             <Button
               variant="secondary"
               size="sm"
-              onClick={() => setShowExportNote(true)}
+              disabled
+              className="opacity-50 cursor-not-allowed"
             >
               <Download className="w-3.5 h-3.5" />
               Request export
             </Button>
-            {showExportNote && (
-              <p className="mt-2 text-xs text-neutral-500">
-                Data export isn&apos;t available yet. We&apos;ll enable this in a
-                future release.
-              </p>
-            )}
+            <p className="mt-2 text-xs text-neutral-500">
+              Data export isn&apos;t available yet. We&apos;ll enable this in a
+              future release.
+            </p>
           </div>
         </Card>
       </Section>
