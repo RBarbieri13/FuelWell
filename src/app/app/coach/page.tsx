@@ -102,7 +102,7 @@ export default function CoachPage() {
   }
 
   return (
-    <div className="flex min-h-dvh flex-col bg-neutral-50">
+    <div className="flex h-full flex-col bg-neutral-50">
       <div className="border-b border-white/70 bg-white/72 px-4 py-4 backdrop-blur-xl md:px-8">
         <div className="mx-auto flex max-w-3xl items-center justify-between gap-4">
           <div className="flex items-center gap-3">
@@ -111,7 +111,7 @@ export default function CoachPage() {
             </div>
             <div>
               <h1 className="text-base font-black text-neutral-900">Coach</h1>
-              <p className="text-xs font-bold text-neutral-400">
+              <p className="text-xs font-bold text-neutral-600">
                 {busy ? "Working..." : "Logs meals, plans workouts, answers — right here"}
               </p>
             </div>
@@ -120,7 +120,7 @@ export default function CoachPage() {
             <button
               type="button"
               onClick={newConversation}
-              className="text-xs font-bold text-neutral-400 transition hover:text-neutral-700"
+              className="px-2 py-2 -my-2 text-xs font-bold text-neutral-600 transition hover:text-neutral-700"
             >
               New chat
             </button>
@@ -190,7 +190,7 @@ export default function CoachPage() {
                   <button
                     key={prompt}
                     onClick={() => void sendMessage(prompt)}
-                    className="rounded-full border border-neutral-200 bg-white px-4 py-2 text-sm font-bold text-neutral-600 transition hover:border-primary-300 hover:bg-primary-50/70 hover:text-primary-700"
+                    className="min-h-11 rounded-full border border-neutral-200 bg-white px-4 py-2 text-sm font-bold text-neutral-600 transition hover:border-primary-300 hover:bg-primary-50/70 hover:text-primary-700"
                   >
                     {prompt}
                   </button>
