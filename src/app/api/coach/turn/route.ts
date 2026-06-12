@@ -100,9 +100,11 @@ export async function POST(request: Request) {
   const day = new Date().toISOString().split("T")[0];
   // Test hook (preview only): lets the E2E suite simulate a spent budget
   // without burning $10 of real tokens.
-  const testSpend = Number(request.headers.get("x-coach-test-spend-cents") ?? 0);
-  if (isPreview && testSpend > 0) {
-    memoryAddCents(userId, day, testSpend - memoryGetDayCents(userId, day));
+  const testSpendHeader = request.headers.get("x-coach-test-spend-cents");
+  if (isPreview && testSpendHeader !== null) {
+    // Absolute set (incl. "0" to reset) so one test's simulated spend can't
+    // starve the rest of the suite.
+    memoryAddCents(userId, day, Number(testSpendHeader) - memoryGetDayCents(userId, day));
   }
   const spentCents = user
     ? await getSupabaseDayCents(supabase, userId, day)
@@ -161,20 +163,29 @@ export async function POST(request: Request) {
         if (body.confirmedTool) {
           const def = getTool(body.confirmedTool.name);
           if (def) {
-            const input = def.schema.parse(body.confirmedTool.input);
-            const result = await def.run(input, toolCtx);
-            result.mutations?.forEach(toolCtx.applyMutation);
-            if (result.artifact) {
-              turnArtifacts.push(result.artifact);
-              emit({ type: "artifact", artifact: result.artifact, toolName: def.name });
+            try {
+              const input = def.schema.parse(body.confirmedTool.input);
+              const result = await def.run(input, toolCtx);
+              result.mutations?.forEach(toolCtx.applyMutation);
+              if (result.artifact) {
+                turnArtifacts.push(result.artifact);
+                emit({ type: "artifact", artifact: result.artifact, toolName: def.name });
+              }
+              if (result.mutations?.length) emit({ type: "mutation", mutations: result.mutations });
+              turnToolCalls.push({ name: def.name, input });
+              await audit(def.name, input, "confirmed-destructive");
+              apiMessages.push({
+                role: "assistant",
+                content: `[Confirmed action ${def.name} executed: ${JSON.stringify(result.modelResult).slice(0, 400)}]`,
+              });
+            } catch (err) {
+              apiMessages.push({
+                role: "assistant",
+                content: `[Confirmed action ${def.name} was rejected: ${
+                  err instanceof Error ? err.message.slice(0, 400) : "invalid input"
+                }. Tell the user it couldn't be applied.]`,
+              });
             }
-            if (result.mutations?.length) emit({ type: "mutation", mutations: result.mutations });
-            turnToolCalls.push({ name: def.name, input });
-            await audit(def.name, input, "confirmed-destructive");
-            apiMessages.push({
-              role: "assistant",
-              content: `[Confirmed action ${def.name} executed: ${JSON.stringify(result.modelResult).slice(0, 400)}]`,
-            });
           }
         }
 

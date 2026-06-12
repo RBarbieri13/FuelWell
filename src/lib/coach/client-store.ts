@@ -128,7 +128,7 @@ export function formatActionAsMessage(action: CoachCardAction): string | null {
     case "send_message":
       return action.text;
     case "invoke_tool":
-      return `Do this now with the ${action.name} tool: ${JSON.stringify(action.input)}`;
+      return `[BUTTON TAP] Execute ${action.name} now with input ${JSON.stringify(action.input)}. This is a direct UI action the user already chose — call the tool immediately, do not ask for confirmation.`;
     default:
       return null;
   }
@@ -141,18 +141,39 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
   const { items: groceryItems } = useGroceryList();
   const { entries: bodyLog } = useBodyLog();
 
-  const [items, setItems] = useState<ChatItem[]>(() => {
-    const stored = loadStoredChat();
-    if (stored?.items?.length) return stored.items.map((i) => ({ ...i, streaming: false }));
-    return initialItems ?? [];
-  });
+  // Start from the SSR-safe empty state and hydrate the stored chat after
+  // mount — reading localStorage in the initializer causes a hydration
+  // mismatch (server renders empty, client renders the replay).
+  const [items, setItems] = useState<ChatItem[]>(initialItems ?? []);
   const [busy, setBusy] = useState(false);
-  const conversationIdRef = useRef<string | undefined>(
-    loadStoredChat()?.conversationId ?? initialConversationId
-  );
+  const [hydrated, setHydrated] = useState(false);
+  const conversationIdRef = useRef<string | undefined>(initialConversationId);
+  const busyRef = useRef(false);
+  const queuedTurnRef = useRef<{ userText: string; confirmedTool?: { name: string; input: unknown } } | null>(null);
 
-  // Persist chat (preview replay; harmless for signed-in too).
   useEffect(() => {
+    let cancelled = false;
+    // Microtask defer keeps the setState out of the synchronous effect body
+    // (react-hooks/set-state-in-effect) while still hydrating before paint
+    // matters for anything interactive.
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+      const stored = loadStoredChat();
+      if (stored?.items?.length) {
+        setItems(stored.items.map((i) => ({ ...i, streaming: false })));
+      }
+      if (stored?.conversationId) conversationIdRef.current = stored.conversationId;
+      setHydrated(true);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // Persist chat (preview replay; harmless for signed-in too). Waits for
+  // hydration so the stored replay isn't clobbered by the initial empty state.
+  useEffect(() => {
+    if (!hydrated) return;
     try {
       window.localStorage.setItem(
         CHAT_KEY,
@@ -165,7 +186,7 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
     } catch {
       // best-effort
     }
-  }, [items]);
+  }, [items, hydrated]);
 
   const buildSnapshot = useCallback((): CoachDaySnapshot => {
     return {
@@ -191,7 +212,13 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
       userText: string,
       confirmedTool?: { name: string; input: unknown }
     ): Promise<void> => {
-      if (busy) return;
+      // Taps that land mid-stream queue instead of vanishing (e.g. hitting
+      // "Start workout" the moment the plan card renders).
+      if (busyRef.current) {
+        queuedTurnRef.current = { userText, confirmedTool };
+        return;
+      }
+      busyRef.current = true;
       setBusy(true);
 
       const userItem: ChatItem = { id: nextItemId(), role: "user", text: userText, artifacts: [] };
@@ -239,6 +266,7 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
             error: !err?.budgetExceeded,
             text: err?.error ?? "Coach is unavailable right now. Try again in a moment.",
           });
+          busyRef.current = false;
           setBusy(false);
           return;
         }
@@ -267,7 +295,12 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
                 patchAssistant((cur) => ({ text: cur.text + event.text }));
                 break;
               case "artifact":
-                patchAssistant((cur) => ({ artifacts: [...cur.artifacts, event.artifact] }));
+                // Paragraph-break any text that continues after this card so
+                // round boundaries don't render as run-on sentences.
+                patchAssistant((cur) => ({
+                  artifacts: [...cur.artifacts, event.artifact],
+                  text: cur.text && !cur.text.endsWith("\n") ? `${cur.text}\n\n` : cur.text,
+                }));
                 break;
               case "mutation":
                 event.mutations.forEach(applyMutationToStores);
@@ -294,10 +327,20 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
       }
 
       patchAssistant({ streaming: false });
+      busyRef.current = false;
       setBusy(false);
     },
-    [busy, items, buildSnapshot]
+    [items, buildSnapshot]
   );
+
+  // Drain a queued mid-stream tap once the current turn settles.
+  useEffect(() => {
+    if (!busy && queuedTurnRef.current) {
+      const next = queuedTurnRef.current;
+      queuedTurnRef.current = null;
+      void runTurn(next.userText, next.confirmedTool);
+    }
+  }, [busy, runTurn]);
 
   const sendMessage = useCallback((text: string) => runTurn(text), [runTurn]);
 

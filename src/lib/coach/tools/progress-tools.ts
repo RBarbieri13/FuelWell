@@ -257,7 +257,7 @@ registerTools([
     description:
       "Log the user's body weight for today. Accepts kg or lb (converted and stored in kg). Use when the user states their current weight.",
     schema: z.object({
-      weight: z.number().describe("Body weight value in the given unit."),
+      weight: z.number().min(20).max(700).describe("Body weight value in the given unit."),
       unit: z.enum(["kg", "lb"]).describe("Unit of the weight value: kg or lb."),
     }),
     run: (input, ctx) => {
@@ -307,7 +307,7 @@ registerTools([
     description:
       "Log water intake for today in milliliters. Use when the user mentions drinking water (convert cups/oz to ml first: 1 cup = 240 ml, 1 oz = 30 ml).",
     schema: z.object({
-      amount_ml: z.number().describe("Water amount in milliliters."),
+      amount_ml: z.number().min(1).max(10000).describe("Water amount in milliliters (1-10000)."),
     }),
     run: (input, ctx) => {
       const mutation = {

@@ -48,16 +48,13 @@ test("Log: add-your-own custom meal creates an entry / updates the day log", asy
   await expect(page.getByText("Smoke Test Meal").first()).toBeVisible();
 });
 
-test("Coach: chat-logs a meal via confirm chip", async ({ page }) => {
+test("Coach: agentic chat surface renders", async ({ page }) => {
+  // Full live-model log flow is covered in coach.spec.ts ("log meal updates
+  // dashboard"); the smoke check just verifies the new surface renders.
   await page.goto("/app/coach");
-  await page
-    .getByPlaceholder("Ask for food, workouts, nutrition, recovery, or progress...")
-    .fill("log a chicken breast");
-  await page.keyboard.press("Enter");
-  const confirm = page.getByRole("button", { name: /Confirm/i }).first();
-  await expect(confirm).toBeVisible();
-  await confirm.click();
-  await expect(page.getByText(/Saved to/i).first()).toBeVisible();
+  await expect(page.getByLabel("Message Coach")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Send" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "New chat" })).toBeVisible();
 });
 
 test("Workouts: two paths and working category filters", async ({ page }) => {

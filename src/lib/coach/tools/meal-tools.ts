@@ -84,6 +84,27 @@ function suggestionPool(preference?: string): FoodItem[] {
   }
 }
 
+/**
+ * Food-name keywords per allergy (mirrors the allergen keys recipes-data
+ * uses). FoodItem has no allergens field, so suggestions match on name.
+ */
+const ALLERGY_FOOD_KEYWORDS: Record<string, RegExp> = {
+  shellfish: /shrimp|prawn|crab|lobster|scallop|mussel|oyster|clam|calamari|squid|octopus/i,
+  fish: /\bfish\b|salmon|tuna|cod|tilapia|halibut|mahi|sea bass|trout|sardine|anchov|mackerel|swordfish|catfish/i,
+  dairy: /milk|cheese|yogurt|butter|cream|whey|casein/i,
+  egg: /\begg/i,
+  peanut: /peanut/i,
+  "tree nuts": /almond|walnut|cashew|pecan|pistachio|hazelnut|macadamia/i,
+  soy: /\bsoy|tofu|edamame|tempeh/i,
+  gluten: /bread|pasta|wheat|barley|rye|cracker|tortilla|bagel|cereal/i,
+};
+
+function violatesAllergies(food: FoodItem, allergies: string[]): boolean {
+  return allergies.some((a) =>
+    ALLERGY_FOOD_KEYWORDS[a.trim().toLowerCase()]?.test(food.name),
+  );
+}
+
 registerTools([
   tool({
     name: "search_foods",
@@ -134,7 +155,9 @@ registerTools([
       food_id: z.string().describe("Food id from search_foods results."),
       portion: z
         .number()
-        .describe("Portion size in grams (or ml for beverages), e.g. 140."),
+        .min(1)
+        .max(2000)
+        .describe("Portion size in grams (or ml for beverages), 1-2000, e.g. 140."),
       meal_slot: mealSlot,
       note: z.string().optional().describe("Optional short note about the meal."),
     }),
@@ -179,10 +202,10 @@ registerTools([
       "Log a meal with user-provided macros when it isn't in the food database (restaurant dish, homemade recipe). kcal in calories, protein/carbs/fat in grams.",
     schema: z.object({
       name: z.string().describe("Name of the meal, e.g. 'Mom's lasagna'."),
-      kcal: z.number().describe("Total calories of the meal."),
-      protein: z.number().describe("Protein in grams."),
-      carbs: z.number().describe("Carbs in grams."),
-      fat: z.number().describe("Fat in grams."),
+      kcal: z.number().min(0).max(5000).describe("Total calories of the meal (0-5000)."),
+      protein: z.number().min(0).max(500).describe("Protein in grams (0-500)."),
+      carbs: z.number().min(0).max(500).describe("Carbs in grams (0-500)."),
+      fat: z.number().min(0).max(500).describe("Fat in grams (0-500)."),
       meal_slot: mealSlot,
     }),
     run: (input, ctx) => {
@@ -222,10 +245,10 @@ registerTools([
         .object({
           name: z.string().optional().describe("New meal name."),
           meal_slot: mealSlot.optional(),
-          kcal: z.number().optional().describe("Corrected total calories."),
-          protein: z.number().optional().describe("Corrected protein in grams."),
-          carbs: z.number().optional().describe("Corrected carbs in grams."),
-          fat: z.number().optional().describe("Corrected fat in grams."),
+          kcal: z.number().min(0).max(5000).optional().describe("Corrected total calories (0-5000)."),
+          protein: z.number().min(0).max(500).optional().describe("Corrected protein in grams (0-500)."),
+          carbs: z.number().min(0).max(500).optional().describe("Corrected carbs in grams (0-500)."),
+          fat: z.number().min(0).max(500).optional().describe("Corrected fat in grams (0-500)."),
         })
         .describe("Fields to change; omit anything that stays the same."),
     }),
@@ -311,10 +334,14 @@ registerTools([
     schema: z.object({
       target_kcal: z
         .number()
+        .min(0)
+        .max(5000)
         .optional()
         .describe("Calorie budget for the suggestion. Defaults to remaining calories vs today's target."),
       target_protein: z
         .number()
+        .min(0)
+        .max(500)
         .optional()
         .describe("Protein goal in grams. Defaults to remaining protein vs today's target."),
       preference: z
@@ -335,7 +362,9 @@ registerTools([
         (["breakfast", "lunch", "dinner"] as const).find((s) => !loggedSlots.has(s)) ??
         "snack";
 
-      const pool = suggestionPool(input.preference);
+      const pool = suggestionPool(input.preference).filter(
+        (f) => !violatesAllergies(f, ctx.snapshot.preferences.allergies),
+      );
       const candidates: Array<{ food: FoodItem; portion: number; macros: ReturnType<typeof macrosForPortion> }> = [];
       for (const food of pool) {
         const portion =

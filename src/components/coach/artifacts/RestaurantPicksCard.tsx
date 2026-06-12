@@ -53,7 +53,7 @@ export function RestaurantPicksCard({ artifact, onAction }: ArtifactCardProps<Re
               <button
                 key={s}
                 type="button"
-                aria-label={`Log picks as ${s}`}
+                aria-label={`Use ${s} slot`}
                 aria-pressed={slot === s}
                 onClick={() => setSlot(s)}
                 className={

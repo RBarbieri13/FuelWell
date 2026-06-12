@@ -127,7 +127,7 @@ registerTools([
       "Log a completed workout for today. Use when the user says they finished a workout. Duration in minutes; exercise weights in kg.",
     schema: z.object({
       name: z.string().describe("Short workout name, e.g. 'Morning run' or 'Push day'"),
-      duration_min: z.number().describe("Total workout duration in minutes"),
+      duration_min: z.number().min(1).max(600).describe("Total workout duration in minutes (1-600)"),
       category: z
         .enum(["strength", "cardio", "mobility", "sport", "other"])
         .describe("Workout category"),
@@ -135,9 +135,9 @@ registerTools([
         .array(
           z.object({
             name: z.string().describe("Exercise name"),
-            sets: z.number().optional().describe("Number of sets performed"),
-            reps: z.number().optional().describe("Reps per set"),
-            weight_kg: z.number().optional().describe("Weight used in kg"),
+            sets: z.number().int().min(1).max(50).optional().describe("Number of sets performed"),
+            reps: z.number().int().min(1).max(200).optional().describe("Reps per set"),
+            weight_kg: z.number().min(0).max(500).optional().describe("Weight used in kg"),
           }),
         )
         .optional()
@@ -190,7 +190,7 @@ registerTools([
       focus: z
         .enum(["upper", "lower", "push", "pull", "legs", "core", "full_body", "cardio"])
         .describe("Training focus for the session"),
-      duration_min: z.number().describe("Target session length in minutes"),
+      duration_min: z.number().min(1).max(600).describe("Target session length in minutes (1-600)"),
       equipment: z
         .enum(["none", "dumbbell", "barbell", "full_gym"])
         .optional()
@@ -260,8 +260,8 @@ registerTools([
       "Log one completed set in the active workout session. Weight in kg (use 0 for bodyweight). Requires start_workout_session to be active.",
     schema: z.object({
       exercise: z.string().describe("Exercise name for this set"),
-      weight_kg: z.number().describe("Weight used in kg; 0 for bodyweight"),
-      reps: z.number().describe("Reps completed in this set"),
+      weight_kg: z.number().min(0).max(500).describe("Weight used in kg; 0 for bodyweight"),
+      reps: z.number().int().min(1).max(200).describe("Reps completed in this set"),
     }),
     run: (input, ctx) => {
       const session = sessionsByUser.get(ctx.userId);

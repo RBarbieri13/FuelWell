@@ -137,8 +137,10 @@ registerTools([
       recipe_id: z.string().describe("Recipe id to log."),
       servings: z
         .number()
+        .min(0.25)
+        .max(20)
         .optional()
-        .describe("Number of servings eaten. Defaults to 1."),
+        .describe("Number of servings eaten (0.25-20). Defaults to 1."),
       meal_slot: z
         .enum(["breakfast", "lunch", "dinner", "snack"])
         .describe("Which meal slot to log this under."),

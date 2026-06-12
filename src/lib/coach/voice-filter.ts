@@ -5,7 +5,7 @@
  * retry — the phrase list is narrow enough that this fires rarely.
  */
 
-const BANNED = [/you (?:'ve\s+|have\s+)?missed/i, /you skipped/i, /you went over/i];
+const BANNED = [/you(?:'ve|\s+have)?\s+missed/i, /you skipped/i, /you went over/i];
 
 export function enforceVoice(text: string): { ok: true } | { ok: false; correctionNotice: string } {
   if (!BANNED.some((re) => re.test(text))) return { ok: true };
