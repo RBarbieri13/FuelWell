@@ -1,10 +1,12 @@
 import { Sidebar } from "@/components/layout/sidebar";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { MobileHeader } from "@/components/layout/mobile-header";
+import { PreferencesSync } from "@/lib/preferences-sync";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex h-dvh overflow-hidden bg-transparent">
+      <PreferencesSync />
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
         <MobileHeader />

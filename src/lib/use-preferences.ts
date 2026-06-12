@@ -63,6 +63,27 @@ function subscribe(listener: () => void) {
   return () => listeners.delete(listener);
 }
 
+/** Current state, for non-React consumers (server sync, coach store). */
+export function getPreferences(): PreferenceState {
+  return state;
+}
+
+/** Subscribe outside React (server sync). Returns an unsubscribe fn. */
+export function subscribePreferences(listener: () => void): () => void {
+  listeners.add(listener);
+  return () => {
+    listeners.delete(listener);
+  };
+}
+
+/**
+ * Merge a partial state into the store (server hydration on sign-in, or a
+ * coach set_preferences mutation). Persists and notifies like any toggle.
+ */
+export function mergePreferences(patch: Partial<PreferenceState>) {
+  persist({ ...state, ...patch });
+}
+
 function toggle(list: string[], id: string): string[] {
   return list.includes(id) ? list.filter((x) => x !== id) : [...list, id];
 }

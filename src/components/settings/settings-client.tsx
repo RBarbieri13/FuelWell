@@ -41,8 +41,10 @@ export function SettingsClient({
   const [showExportNote, setShowExportNote] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
 
-  const dietLabels = DIET_FILTERS.filter((d) => diets.includes(d.id)).map(
-    (d) => d.label
+  // Known filters get their display label; free-form diets set via Coach
+  // (e.g. "vegetarian") render as-is so they don't silently disappear.
+  const dietLabels = diets.map(
+    (d) => DIET_FILTERS.find((f) => f.id === d)?.label ?? d
   );
 
   async function handleSignOut() {

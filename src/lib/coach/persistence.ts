@@ -97,6 +97,29 @@ export async function loadRecentMessages(
   };
 }
 
+/**
+ * Merge a coach set_preferences patch into profiles.preferences_jsonb so
+ * preference changes made in chat survive across devices and sessions.
+ * Read-merge-write (no concurrent-writer hazard: one user, one turn at a time).
+ */
+export async function mergeProfilePreferences(
+  supabase: SupabaseClient,
+  userId: string,
+  patch: Record<string, unknown>
+): Promise<void> {
+  const { data } = await supabase
+    .from("profiles")
+    .select("preferences_jsonb")
+    .eq("id", userId)
+    .maybeSingle();
+  const current = (data?.preferences_jsonb ?? {}) as Record<string, unknown>;
+  const { error } = await supabase
+    .from("profiles")
+    .update({ preferences_jsonb: { ...current, ...patch } })
+    .eq("id", userId);
+  if (error) console.error("profiles preferences merge failed", error.message);
+}
+
 export async function getSupabaseDayCents(
   supabase: SupabaseClient,
   userId: string,

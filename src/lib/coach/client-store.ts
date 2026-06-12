@@ -20,7 +20,7 @@ import {
   replaceMeal,
   removeMeal as storeRemoveMeal,
 } from "@/lib/use-day-log";
-import { usePreferences } from "@/lib/use-preferences";
+import { mergePreferences, usePreferences, type PreferenceState } from "@/lib/use-preferences";
 import { useWorkoutLog, addWorkout, removeWorkout } from "@/lib/use-workout-log";
 import { useGroceryList, applyCoachGrocery, toCoachGrocery } from "@/lib/use-grocery-list";
 import { useBodyLog, addBodyLogEntry } from "@/lib/use-body-log";
@@ -109,18 +109,14 @@ function applyMutationToStores(m: CoachMutation) {
 }
 
 function applyPreferencePatch(patch: Partial<CoachDaySnapshot["preferences"]>) {
-  try {
-    const raw = window.localStorage.getItem("fuelwell-preferences-v1");
-    const parsed = raw ? JSON.parse(raw) : {};
-    const next = {
-      ...parsed,
-      ...(patch.diets ? { diets: patch.diets } : {}),
-      ...(patch.allergies ? { allergies: patch.allergies } : {}),
-    };
-    window.localStorage.setItem("fuelwell-preferences-v1", JSON.stringify(next));
-  } catch {
-    // best-effort
-  }
+  // Route through the shared store so Log/Recipes/Settings re-render and the
+  // signed-in server sync (PreferencesSync) picks it up.
+  mergePreferences({
+    ...(patch.diets ? { diets: patch.diets } : {}),
+    ...(patch.allergies ? { allergies: patch.allergies } : {}),
+    ...(patch.likes ? { likes: patch.likes } : {}),
+    ...(patch.dislikes ? { dislikes: patch.dislikes } : {}),
+  } as Partial<PreferenceState>);
 }
 
 export function formatActionAsMessage(action: CoachCardAction): string | null {
@@ -153,18 +149,47 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
 
   useEffect(() => {
     let cancelled = false;
-    // Microtask defer keeps the setState out of the synchronous effect body
-    // (react-hooks/set-state-in-effect) while still hydrating before paint
-    // matters for anything interactive.
-    void Promise.resolve().then(() => {
-      if (cancelled) return;
-      const stored = loadStoredChat();
-      if (stored?.items?.length) {
-        setItems(stored.items.map((i) => ({ ...i, streaming: false })));
+    // Signed-in users replay their latest conversation from Supabase (survives
+    // devices and days); preview/signed-out users fall back to the same-day
+    // localStorage replay. Async fetch also keeps the setState out of the
+    // synchronous effect body (react-hooks/set-state-in-effect).
+    void (async () => {
+      let hydratedFromServer = false;
+      try {
+        const res = await fetch("/api/coach/history");
+        if (res.ok) {
+          const data = (await res.json()) as {
+            signedIn: boolean;
+            conversationId: string | null;
+            messages: Array<{ role: "user" | "assistant"; content: string; artifacts: ArtifactSpec[] }>;
+          };
+          if (!cancelled && data.signedIn && data.messages.length > 0) {
+            setItems(
+              data.messages.map((m) => ({
+                id: nextItemId(),
+                role: m.role,
+                text: m.content,
+                artifacts: m.artifacts ?? [],
+                streaming: false,
+              }))
+            );
+            if (data.conversationId) conversationIdRef.current = data.conversationId;
+            hydratedFromServer = true;
+          }
+        }
+      } catch {
+        // fall back to local replay
       }
-      if (stored?.conversationId) conversationIdRef.current = stored.conversationId;
+      if (cancelled) return;
+      if (!hydratedFromServer) {
+        const stored = loadStoredChat();
+        if (stored?.items?.length) {
+          setItems(stored.items.map((i) => ({ ...i, streaming: false })));
+        }
+        if (stored?.conversationId) conversationIdRef.current = stored.conversationId;
+      }
       setHydrated(true);
-    });
+    })();
     return () => {
       cancelled = true;
     };
@@ -375,6 +400,9 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
     } catch {
       // ignore
     }
+    // Signed-in: archive the server conversation so a reload doesn't replay
+    // it. Fire-and-forget; no-op for preview users.
+    void fetch("/api/coach/history", { method: "DELETE" }).catch(() => {});
   }, []);
 
   return { items, busy, sendMessage, handleCardAction, newConversation };

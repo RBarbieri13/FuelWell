@@ -28,6 +28,7 @@ import {
   getSupabaseDayCents,
   insertSupabaseAudit,
   insertSupabaseUsage,
+  mergeProfilePreferences,
   saveMessages,
 } from "@/lib/coach/persistence";
 
@@ -140,6 +141,14 @@ export async function POST(request: Request) {
       let assistantText = "";
       const turnToolCalls: Array<{ name: string; input: unknown }> = [];
       const turnArtifacts: ArtifactSpec[] = [];
+      // set_preferences patches accumulated across the turn; persisted to
+      // profiles.preferences_jsonb for signed-in users after the stream.
+      const turnPrefPatch: Record<string, unknown> = {};
+      const collectPrefPatch = (mutations: CoachMutation[] | undefined) => {
+        for (const m of mutations ?? []) {
+          if (m.kind === "set_preferences") Object.assign(turnPrefPatch, m.patch);
+        }
+      };
 
       const audit = async (tool: string, args: unknown, resultSummary: string) => {
         if (user) {
@@ -167,6 +176,7 @@ export async function POST(request: Request) {
               const input = def.schema.parse(body.confirmedTool.input);
               const result = await def.run(input, toolCtx);
               result.mutations?.forEach(toolCtx.applyMutation);
+              collectPrefPatch(result.mutations);
               if (result.artifact) {
                 turnArtifacts.push(result.artifact);
                 emit({ type: "artifact", artifact: result.artifact, toolName: def.name });
@@ -268,6 +278,7 @@ export async function POST(request: Request) {
               const input = def.schema.parse(tu.input);
               const result = await def.run(input, toolCtx);
               result.mutations?.forEach(toolCtx.applyMutation);
+              collectPrefPatch(result.mutations);
               if (result.artifact) {
                 turnArtifacts.push(result.artifact);
                 emit({ type: "artifact", artifact: result.artifact, toolName: tu.name });
@@ -297,6 +308,9 @@ export async function POST(request: Request) {
 
         const cents = costUsdCents(model, totalIn, totalOut);
         if (user) {
+          if (Object.keys(turnPrefPatch).length > 0) {
+            await mergeProfilePreferences(supabase, userId, turnPrefPatch);
+          }
           await insertSupabaseUsage(supabase, {
             userId,
             day,
