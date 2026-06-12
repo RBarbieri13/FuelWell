@@ -1,0 +1,101 @@
+[
+  {
+    "id": "buffalo-wild-wings",
+    "name": "Buffalo Wild Wings",
+    "items": [
+      { "name": "Traditional Bone-In Wings (6), plain (add sauce or dry rub)", "serving": "6 wings", "calories": 430, "protein": 53, "carbs": 0, "fat": 24, "sourceUrl": "https://assets.ctfassets.net/6dxmiqksdkqb/4WACoRDzMah36duJPDyTJ9/a9e9b891dbd27a7042e0e7499080501e/26_BWW_2320050_IS_AW2_Nutrition_Guide.pdf" },
+      { "name": "Boneless Wings (6), plain (add sauce or dry rub)", "serving": "6 wings", "calories": 360, "protein": 29, "carbs": 20, "fat": 19, "sourceUrl": "https://assets.ctfassets.net/6dxmiqksdkqb/4WACoRDzMah36duJPDyTJ9/a9e9b891dbd27a7042e0e7499080501e/26_BWW_2320050_IS_AW2_Nutrition_Guide.pdf" },
+      { "name": "All-American Cheeseburger", "serving": "1 burger", "calories": 820, "protein": 48, "carbs": 38, "fat": 53, "sourceUrl": "https://assets.ctfassets.net/6dxmiqksdkqb/4WACoRDzMah36duJPDyTJ9/a9e9b891dbd27a7042e0e7499080501e/26_BWW_2320050_IS_AW2_Nutrition_Guide.pdf" },
+      { "name": "Triple-Bacon Cheeseburger", "serving": "1 burger", "calories": 1200, "protein": 72, "carbs": 41, "fat": 83, "sourceUrl": "https://assets.ctfassets.net/6dxmiqksdkqb/4WACoRDzMah36duJPDyTJ9/a9e9b891dbd27a7042e0e7499080501e/26_BWW_2320050_IS_AW2_Nutrition_Guide.pdf" },
+      { "name": "Classic Chicken Sandwich", "serving": "1 sandwich", "calories": 640, "protein": 31, "carbs": 55, "fat": 33, "sourceUrl": "https://assets.ctfassets.net/6dxmiqksdkqb/4WACoRDzMah36duJPDyTJ9/a9e9b891dbd27a7042e0e7499080501e/26_BWW_2320050_IS_AW2_Nutrition_Guide.pdf" },
+      { "name": "Grilled Classic Chicken Sandwich", "serving": "1 sandwich", "calories": 410, "protein": 27, "carbs": 34, "fat": 19, "sourceUrl": "https://assets.ctfassets.net/6dxmiqksdkqb/4WACoRDzMah36duJPDyTJ9/a9e9b891dbd27a7042e0e7499080501e/26_BWW_2320050_IS_AW2_Nutrition_Guide.pdf" },
+      { "name": "Buffalo Ranch Chicken Wrap", "serving": "1 wrap", "calories": 860, "protein": 35, "carbs": 71, "fat": 49, "sourceUrl": "https://assets.ctfassets.net/6dxmiqksdkqb/4WACoRDzMah36duJPDyTJ9/a9e9b891dbd27a7042e0e7499080501e/26_BWW_2320050_IS_AW2_Nutrition_Guide.pdf" },
+      { "name": "Street Tacos", "serving": "1 order", "calories": 630, "protein": 28, "carbs": 43, "fat": 39, "sourceUrl": "https://assets.ctfassets.net/6dxmiqksdkqb/4WACoRDzMah36duJPDyTJ9/a9e9b891dbd27a7042e0e7499080501e/26_BWW_2320050_IS_AW2_Nutrition_Guide.pdf" },
+      { "name": "Mozzarella Sticks with Marinara", "serving": "1 order", "calories": 520, "protein": 21, "carbs": 53, "fat": 25, "sourceUrl": "https://assets.ctfassets.net/6dxmiqksdkqb/4WACoRDzMah36duJPDyTJ9/a9e9b891dbd27a7042e0e7499080501e/26_BWW_2320050_IS_AW2_Nutrition_Guide.pdf" },
+      { "name": "Fried Pickles with B-Dubs Dip", "serving": "1 order", "calories": 710, "protein": 8, "carbs": 56, "fat": 51, "sourceUrl": "https://assets.ctfassets.net/6dxmiqksdkqb/4WACoRDzMah36duJPDyTJ9/a9e9b891dbd27a7042e0e7499080501e/26_BWW_2320050_IS_AW2_Nutrition_Guide.pdf" },
+      { "name": "Ultimate Nachos", "serving": "1 order", "calories": 1760, "protein": 48, "carbs": 184, "fat": 95, "sourceUrl": "https://assets.ctfassets.net/6dxmiqksdkqb/4WACoRDzMah36duJPDyTJ9/a9e9b891dbd27a7042e0e7499080501e/26_BWW_2320050_IS_AW2_Nutrition_Guide.pdf" },
+      { "name": "Chicken Caesar Salad with Caesar Dressing", "serving": "1 salad", "calories": 1020, "protein": 56, "carbs": 36, "fat": 73, "sourceUrl": "https://assets.ctfassets.net/6dxmiqksdkqb/4WACoRDzMah36duJPDyTJ9/a9e9b891dbd27a7042e0e7499080501e/26_BWW_2320050_IS_AW2_Nutrition_Guide.pdf" },
+      { "name": "French Fries (Regular)", "serving": "regular", "calories": 420, "protein": 4, "carbs": 78, "fat": 11, "sourceUrl": "https://assets.ctfassets.net/6dxmiqksdkqb/4WACoRDzMah36duJPDyTJ9/a9e9b891dbd27a7042e0e7499080501e/26_BWW_2320050_IS_AW2_Nutrition_Guide.pdf" },
+      { "name": "New York Style Cheesecake", "serving": "1 slice", "calories": 670, "protein": 12, "carbs": 52, "fat": 46, "sourceUrl": "https://assets.ctfassets.net/6dxmiqksdkqb/4WACoRDzMah36duJPDyTJ9/a9e9b891dbd27a7042e0e7499080501e/26_BWW_2320050_IS_AW2_Nutrition_Guide.pdf" }
+    ]
+  },
+  {
+    "id": "ihop",
+    "name": "IHOP",
+    "items": [
+      { "name": "Original Buttermilk Pancakes (5)", "serving": "5 pancakes", "calories": 741, "protein": 21, "carbs": 98, "fat": 30, "sourceUrl": "https://fastfoodnutrition.org/ihop/original-buttermilk-pancakes/5" },
+      { "name": "Breakfast Sampler", "serving": "1 order", "calories": 881, "protein": 32, "carbs": 62, "fat": 56, "sourceUrl": "https://fastfoodnutrition.org/ihop/breakfast-sampler" },
+      { "name": "Big Steak Omelette", "serving": "1 omelette", "calories": 1041, "protein": 66, "carbs": 40, "fat": 69, "sourceUrl": "https://fastfoodnutrition.org/ihop/big-steak-omelette" },
+      { "name": "Colorado Omelette", "serving": "1 omelette", "calories": 1251, "protein": 77, "carbs": 19, "fat": 96, "sourceUrl": "https://fastfoodnutrition.org/ihop/colorado-omelette" },
+      { "name": "Bacon Temptation Omelette", "serving": "1 omelette", "calories": 1111, "protein": 74, "carbs": 16, "fat": 83, "sourceUrl": "https://fastfoodnutrition.org/ihop/bacon-temptation-omelette" },
+      { "name": "Chicken & Waffles", "serving": "1 order", "calories": 1051, "protein": 45, "carbs": 101, "fat": 52, "sourceUrl": "https://fastfoodnutrition.org/ihop/chicken-waffles" },
+      { "name": "Belgian Waffle with Whipped Butter", "serving": "1 waffle", "calories": 591, "protein": 11, "carbs": 69, "fat": 30, "sourceUrl": "https://fastfoodnutrition.org/ihop/belgian-waffle-with-whipped-butter" },
+      { "name": "Original French Toast with Whipped Butter", "serving": "1 order", "calories": 741, "protein": 20, "carbs": 84, "fat": 36, "sourceUrl": "https://fastfoodnutrition.org/ihop/original-french-toast-with-whipped-butter" },
+      { "name": "Split Decision Breakfast Combo", "serving": "1 order", "calories": 911, "protein": 27, "carbs": 69, "fat": 59, "sourceUrl": "https://fastfoodnutrition.org/ihop/split-decision-breakfast-combo-" },
+      { "name": "Classic Steakburger", "serving": "1 burger", "calories": 671, "protein": 32, "carbs": 42, "fat": 42, "sourceUrl": "https://fastfoodnutrition.org/ihop/classic-steakburger" },
+      { "name": "New York Cheesecake Pancakes (4)", "serving": "4 pancakes", "calories": 931, "protein": 23, "carbs": 130, "fat": 36, "sourceUrl": "https://fastfoodnutrition.org/ihop/new-york-cheesecake-pancakes/4" },
+      { "name": "Hash Browns", "serving": "1 side order", "calories": 210, "protein": 2, "carbs": 19, "fat": 14, "sourceUrl": "https://fastfoodnutrition.org/ihop/hash-browns" }
+    ]
+  },
+  {
+    "id": "dennys",
+    "name": "Denny's",
+    "items": [
+      { "name": "Original Grand Slam (add egg choice)", "serving": "11 oz", "calories": 740, "protein": 27, "carbs": 79, "fat": 34, "sourceUrl": "https://www.dennys.com/sites/default/files/2025-12/391600_OCT25_MENU_Core%20Nutrition%20Guide_V4_R2R.pdf" },
+      { "name": "All-American Slam with hash browns & white toast", "serving": "18 oz", "calories": 1200, "protein": 55, "carbs": 58, "fat": 81, "sourceUrl": "https://www.dennys.com/sites/default/files/2025-12/391600_OCT25_MENU_Core%20Nutrition%20Guide_V4_R2R.pdf" },
+      { "name": "Lumberjack Slam with hash browns & white toast (add egg choice)", "serving": "21 oz", "calories": 1260, "protein": 48, "carbs": 136, "fat": 57, "sourceUrl": "https://www.dennys.com/sites/default/files/2025-12/391600_OCT25_MENU_Core%20Nutrition%20Guide_V4_R2R.pdf" },
+      { "name": "Moons Over My Hammy with hash browns", "serving": "17 oz", "calories": 960, "protein": 45, "carbs": 68, "fat": 55, "sourceUrl": "https://www.dennys.com/sites/default/files/2025-12/391600_OCT25_MENU_Core%20Nutrition%20Guide_V4_R2R.pdf" },
+      { "name": "Grand Slamwich with hash browns", "serving": "19 oz", "calories": 1300, "protein": 59, "carbs": 92, "fat": 77, "sourceUrl": "https://www.dennys.com/sites/default/files/2025-12/391600_OCT25_MENU_Core%20Nutrition%20Guide_V4_R2R.pdf" },
+      { "name": "Country-Fried Steak & Eggs with gravy, hash browns & white toast", "serving": "14 oz", "calories": 810, "protein": 22, "carbs": 82, "fat": 43, "sourceUrl": "https://www.dennys.com/sites/default/files/2025-12/391600_OCT25_MENU_Core%20Nutrition%20Guide_V4_R2R.pdf" },
+      { "name": "T-Bone Steak & Eggs with hash browns & white toast (add egg choice)", "serving": "18 oz", "calories": 910, "protein": 59, "carbs": 55, "fat": 49, "sourceUrl": "https://www.dennys.com/sites/default/files/2025-12/391600_OCT25_MENU_Core%20Nutrition%20Guide_V4_R2R.pdf" },
+      { "name": "Bacon Avocado Cheeseburger (add side choice)", "serving": "15 oz", "calories": 1050, "protein": 54, "carbs": 53, "fat": 70, "sourceUrl": "https://www.dennys.com/sites/default/files/2025-12/391600_OCT25_MENU_Core%20Nutrition%20Guide_V4_R2R.pdf" },
+      { "name": "Super Bird (add side choice)", "serving": "11 oz", "calories": 680, "protein": 47, "carbs": 47, "fat": 34, "sourceUrl": "https://www.dennys.com/sites/default/files/2025-12/391600_OCT25_MENU_Core%20Nutrition%20Guide_V4_R2R.pdf" },
+      { "name": "Zesty Nachos", "serving": "25 oz", "calories": 1660, "protein": 44, "carbs": 170, "fat": 106, "sourceUrl": "https://www.dennys.com/sites/default/files/2025-12/391600_OCT25_MENU_Core%20Nutrition%20Guide_V4_R2R.pdf" },
+      { "name": "Mozzarella Cheese Sticks (8)", "serving": "8 sticks", "calories": 690, "protein": 32, "carbs": 70, "fat": 32, "sourceUrl": "https://www.dennys.com/sites/default/files/2025-12/391600_OCT25_MENU_Core%20Nutrition%20Guide_V4_R2R.pdf" },
+      { "name": "Santa Fe Sizzlin' Skillet (add egg choice)", "serving": "12 oz", "calories": 770, "protein": 27, "carbs": 38, "fat": 58, "sourceUrl": "https://www.dennys.com/sites/default/files/2025-12/391600_OCT25_MENU_Core%20Nutrition%20Guide_V4_R2R.pdf" },
+      { "name": "Buttermilk Pancakes (2)", "serving": "2 pancakes", "calories": 450, "protein": 10, "carbs": 77, "fat": 11, "sourceUrl": "https://www.dennys.com/sites/default/files/2025-12/391600_OCT25_MENU_Core%20Nutrition%20Guide_V4_R2R.pdf" },
+      { "name": "Chocolate Milk Shake", "serving": "12 oz", "calories": 680, "protein": 12, "carbs": 89, "fat": 32, "sourceUrl": "https://www.dennys.com/sites/default/files/2025-12/391600_OCT25_MENU_Core%20Nutrition%20Guide_V4_R2R.pdf" }
+    ]
+  },
+  {
+    "id": "cracker-barrel",
+    "name": "Cracker Barrel",
+    "items": [
+      { "name": "Country Fried Steak with sawmill gravy", "serving": "1 entree (sides not included)", "calories": 600, "protein": 37, "carbs": 49, "fat": 28, "sourceUrl": "https://prod-cbdigitalstore.azurefd.net/-/media/Project/cb-brandsite/brandsite/pdfs/Nutrition-Guide.pdf?rev=13a87877b54a40e29c65b38fa002d38e" },
+      { "name": "Meatloaf", "serving": "1 entree (sides not included)", "calories": 450, "protein": 32, "carbs": 14, "fat": 29, "sourceUrl": "https://prod-cbdigitalstore.azurefd.net/-/media/Project/cb-brandsite/brandsite/pdfs/Nutrition-Guide.pdf?rev=13a87877b54a40e29c65b38fa002d38e" },
+      { "name": "Chicken n' Dumplins", "serving": "1 entree (sides not included)", "calories": 360, "protein": 19, "carbs": 53, "fat": 8, "sourceUrl": "https://prod-cbdigitalstore.azurefd.net/-/media/Project/cb-brandsite/brandsite/pdfs/Nutrition-Guide.pdf?rev=13a87877b54a40e29c65b38fa002d38e" },
+      { "name": "Pot Roast", "serving": "1 entree (sides not included)", "calories": 520, "protein": 74, "carbs": 14, "fat": 19, "sourceUrl": "https://prod-cbdigitalstore.azurefd.net/-/media/Project/cb-brandsite/brandsite/pdfs/Nutrition-Guide.pdf?rev=13a87877b54a40e29c65b38fa002d38e" },
+      { "name": "Chicken Fried Chicken (Homestyle Chicken Breasts with sawmill gravy)", "serving": "1 entree (sides not included)", "calories": 1140, "protein": 74, "carbs": 70, "fat": 60, "sourceUrl": "https://prod-cbdigitalstore.azurefd.net/-/media/Project/cb-brandsite/brandsite/pdfs/Nutrition-Guide.pdf?rev=13a87877b54a40e29c65b38fa002d38e" },
+      { "name": "Hand-breaded Fried Chicken Tenders (6)", "serving": "6 tenders", "calories": 600, "protein": 57, "carbs": 26, "fat": 30, "sourceUrl": "https://prod-cbdigitalstore.azurefd.net/-/media/Project/cb-brandsite/brandsite/pdfs/Nutrition-Guide.pdf?rev=13a87877b54a40e29c65b38fa002d38e" },
+      { "name": "Grilled Chicken Tenders (6)", "serving": "6 tenders", "calories": 320, "protein": 57, "carbs": 6, "fat": 8, "sourceUrl": "https://prod-cbdigitalstore.azurefd.net/-/media/Project/cb-brandsite/brandsite/pdfs/Nutrition-Guide.pdf?rev=13a87877b54a40e29c65b38fa002d38e" },
+      { "name": "Momma's Pancake Breakfast (three pancakes with butter and two eggs)", "serving": "1 breakfast", "calories": 960, "protein": 22, "carbs": 89, "fat": 57, "sourceUrl": "https://prod-cbdigitalstore.azurefd.net/-/media/Project/cb-brandsite/brandsite/pdfs/Nutrition-Guide.pdf?rev=13a87877b54a40e29c65b38fa002d38e" },
+      { "name": "Two Buttermilk Pancakes with whipped butter", "serving": "2 pancakes", "calories": 600, "protein": 6, "carbs": 59, "fat": 38, "sourceUrl": "https://prod-cbdigitalstore.azurefd.net/-/media/Project/cb-brandsite/brandsite/pdfs/Nutrition-Guide.pdf?rev=13a87877b54a40e29c65b38fa002d38e" },
+      { "name": "Biscuits n' Gravy", "serving": "1 order", "calories": 500, "protein": 13, "carbs": 53, "fat": 27, "sourceUrl": "https://prod-cbdigitalstore.azurefd.net/-/media/Project/cb-brandsite/brandsite/pdfs/Nutrition-Guide.pdf?rev=13a87877b54a40e29c65b38fa002d38e" },
+      { "name": "Hashbrown Casserole", "serving": "1 side", "calories": 140, "protein": 3, "carbs": 16, "fat": 8, "sourceUrl": "https://prod-cbdigitalstore.azurefd.net/-/media/Project/cb-brandsite/brandsite/pdfs/Nutrition-Guide.pdf?rev=13a87877b54a40e29c65b38fa002d38e" },
+      { "name": "Loaded Hashbrown Casserole Tots", "serving": "1 order", "calories": 590, "protein": 17, "carbs": 48, "fat": 38, "sourceUrl": "https://prod-cbdigitalstore.azurefd.net/-/media/Project/cb-brandsite/brandsite/pdfs/Nutrition-Guide.pdf?rev=13a87877b54a40e29c65b38fa002d38e" },
+      { "name": "Buttermilk Biscuit", "serving": "1 biscuit", "calories": 140, "protein": 3, "carbs": 20, "fat": 6, "sourceUrl": "https://prod-cbdigitalstore.azurefd.net/-/media/Project/cb-brandsite/brandsite/pdfs/Nutrition-Guide.pdf?rev=13a87877b54a40e29c65b38fa002d38e" },
+      { "name": "Double Fudge Coca-Cola Cake", "serving": "1 slice", "calories": 650, "protein": 8, "carbs": 87, "fat": 32, "sourceUrl": "https://prod-cbdigitalstore.azurefd.net/-/media/Project/cb-brandsite/brandsite/pdfs/Nutrition-Guide.pdf?rev=13a87877b54a40e29c65b38fa002d38e" }
+    ]
+  },
+  {
+    "id": "red-lobster",
+    "name": "Red Lobster",
+    "items": [
+      { "name": "Ultimate Feast", "serving": "1 entree", "calories": 1280, "protein": 52, "carbs": 35, "fat": 98, "sourceUrl": "https://img-ecomm-rl-prod-fye5gqbxdtbghqer.a03.azurefd.net/brandsite/documents/US_Nutrition_6-23-25.pdf" },
+      { "name": "Admiral's Feast", "serving": "1 entree", "calories": 1670, "protein": 57, "carbs": 131, "fat": 99, "sourceUrl": "https://img-ecomm-rl-prod-fye5gqbxdtbghqer.a03.azurefd.net/brandsite/documents/US_Nutrition_6-23-25.pdf" },
+      { "name": "Walt's Favorite Shrimp", "serving": "1 entree", "calories": 520, "protein": 22, "carbs": 60, "fat": 24, "sourceUrl": "https://img-ecomm-rl-prod-fye5gqbxdtbghqer.a03.azurefd.net/brandsite/documents/US_Nutrition_6-23-25.pdf" },
+      { "name": "Parrot Isle Jumbo Coconut Shrimp", "serving": "1 entree", "calories": 940, "protein": 32, "carbs": 82, "fat": 64, "sourceUrl": "https://img-ecomm-rl-prod-fye5gqbxdtbghqer.a03.azurefd.net/brandsite/documents/US_Nutrition_6-23-25.pdf" },
+      { "name": "Cheddar Bay Biscuit", "serving": "1 biscuit", "calories": 160, "protein": 3, "carbs": 16, "fat": 10, "sourceUrl": "https://img-ecomm-rl-prod-fye5gqbxdtbghqer.a03.azurefd.net/brandsite/documents/US_Nutrition_6-23-25.pdf" },
+      { "name": "Atlantic Salmon, Grilled", "serving": "1 entree", "calories": 510, "protein": 47, "carbs": 1, "fat": 34, "sourceUrl": "https://img-ecomm-rl-prod-fye5gqbxdtbghqer.a03.azurefd.net/brandsite/documents/US_Nutrition_6-23-25.pdf" },
+      { "name": "Fish & Chips with fries, coleslaw, hush puppies", "serving": "1 entree", "calories": 1660, "protein": 39, "carbs": 148, "fat": 100, "sourceUrl": "https://img-ecomm-rl-prod-fye5gqbxdtbghqer.a03.azurefd.net/brandsite/documents/US_Nutrition_6-23-25.pdf" },
+      { "name": "New England Clam Chowder, Bowl", "serving": "1 bowl", "calories": 460, "protein": 15, "carbs": 40, "fat": 27, "sourceUrl": "https://img-ecomm-rl-prod-fye5gqbxdtbghqer.a03.azurefd.net/brandsite/documents/US_Nutrition_6-23-25.pdf" },
+      { "name": "Lobster & Shrimp Linguini", "serving": "1 entree", "calories": 1240, "protein": 63, "carbs": 85, "fat": 74, "sourceUrl": "https://img-ecomm-rl-prod-fye5gqbxdtbghqer.a03.azurefd.net/brandsite/documents/US_Nutrition_6-23-25.pdf" },
+      { "name": "Salmon New Orleans", "serving": "1 entree", "calories": 1160, "protein": 102, "carbs": 9, "fat": 77, "sourceUrl": "https://img-ecomm-rl-prod-fye5gqbxdtbghqer.a03.azurefd.net/brandsite/documents/US_Nutrition_6-23-25.pdf" },
+      { "name": "Crispy Dragon Shrimp", "serving": "1 order", "calories": 1010, "protein": 25, "carbs": 67, "fat": 72, "sourceUrl": "https://img-ecomm-rl-prod-fye5gqbxdtbghqer.a03.azurefd.net/brandsite/documents/US_Nutrition_6-23-25.pdf" },
+      { "name": "Surf & Turf - Maine Lobster Tail & 7 oz. Sirloin", "serving": "1 entree", "calories": 740, "protein": 56, "carbs": 1, "fat": 59, "sourceUrl": "https://img-ecomm-rl-prod-fye5gqbxdtbghqer.a03.azurefd.net/brandsite/documents/US_Nutrition_6-23-25.pdf" },
+      { "name": "Mozzarella Cheesesticks", "serving": "1 order", "calories": 730, "protein": 31, "carbs": 58, "fat": 41, "sourceUrl": "https://img-ecomm-rl-prod-fye5gqbxdtbghqer.a03.azurefd.net/brandsite/documents/US_Nutrition_6-23-25.pdf" },
+      { "name": "Key Lime Pie", "serving": "1 slice", "calories": 580, "protein": 10, "carbs": 76, "fat": 27, "sourceUrl": "https://img-ecomm-rl-prod-fye5gqbxdtbghqer.a03.azurefd.net/brandsite/documents/US_Nutrition_6-23-25.pdf" },
+      { "name": "Brownie Overboard", "serving": "1 dessert", "calories": 1020, "protein": 13, "carbs": 121, "fat": 57, "sourceUrl": "https://img-ecomm-rl-prod-fye5gqbxdtbghqer.a03.azurefd.net/brandsite/documents/US_Nutrition_6-23-25.pdf" }
+    ]
+  }
+]

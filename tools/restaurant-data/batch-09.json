@@ -1,0 +1,96 @@
+[
+  {
+    "id": "olive-garden",
+    "name": "Olive Garden",
+    "items": [
+      { "name": "Chicken Alfredo (with grilled chicken)", "serving": "1 dinner entree", "calories": 1480, "protein": 79, "carbs": 79, "fat": 95, "sourceUrl": "https://media.olivegarden.com/en_us/pdf/olive_garden_nutrition.pdf" },
+      { "name": "Chicken Tortelloni Alfredo", "serving": "1 dinner entree", "calories": 1980, "protein": 112, "carbs": 95, "fat": 131, "sourceUrl": "https://media.olivegarden.com/en_us/pdf/olive_garden_nutrition.pdf" },
+      { "name": "Fettuccine Alfredo", "serving": "1 dinner entree", "calories": 1220, "protein": 27, "carbs": 78, "fat": 89, "sourceUrl": "https://media.olivegarden.com/en_us/pdf/olive_garden_nutrition.pdf" },
+      { "name": "Tour of Italy", "serving": "1 dinner entree", "calories": 1550, "protein": 72, "carbs": 99, "fat": 97, "sourceUrl": "https://media.olivegarden.com/en_us/pdf/olive_garden_nutrition.pdf" },
+      { "name": "Lasagna Classico", "serving": "1 dinner entree", "calories": 940, "protein": 54, "carbs": 61, "fat": 55, "sourceUrl": "https://media.olivegarden.com/en_us/pdf/olive_garden_nutrition.pdf" },
+      { "name": "Chicken Parmigiana", "serving": "1 dinner entree", "calories": 1020, "protein": 64, "carbs": 80, "fat": 51, "sourceUrl": "https://media.olivegarden.com/en_us/pdf/olive_garden_nutrition.pdf" },
+      { "name": "Five Cheese Ziti al Forno", "serving": "1 dinner entree", "calories": 1170, "protein": 46, "carbs": 98, "fat": 69, "sourceUrl": "https://media.olivegarden.com/en_us/pdf/olive_garden_nutrition.pdf" },
+      { "name": "Shrimp Alfredo", "serving": "1 dinner entree", "calories": 1390, "protein": 60, "carbs": 79, "fat": 93, "sourceUrl": "https://media.olivegarden.com/en_us/pdf/olive_garden_nutrition.pdf" },
+      { "name": "Fried Mozzarella", "serving": "1 appetizer", "calories": 800, "protein": 33, "carbs": 57, "fat": 49, "sourceUrl": "https://media.olivegarden.com/en_us/pdf/olive_garden_nutrition.pdf" },
+      { "name": "Breadstick with garlic topping", "serving": "1 breadstick", "calories": 140, "protein": 4, "carbs": 25, "fat": 2.5, "sourceUrl": "https://media.olivegarden.com/en_us/pdf/olive_garden_nutrition.pdf" },
+      { "name": "Zuppa Toscana Soup", "serving": "1 bowl", "calories": 220, "protein": 7, "carbs": 15, "fat": 15, "sourceUrl": "https://media.olivegarden.com/en_us/pdf/olive_garden_nutrition.pdf" },
+      { "name": "Tiramisu", "serving": "1 dessert", "calories": 470, "protein": 6, "carbs": 54, "fat": 27, "sourceUrl": "https://media.olivegarden.com/en_us/pdf/olive_garden_nutrition.pdf" }
+    ]
+  },
+  {
+    "id": "applebees",
+    "name": "Applebee's",
+    "items": [
+      { "name": "Bourbon Street Chicken & Shrimp", "serving": "1 entree", "calories": 780, "protein": 55, "carbs": 48, "fat": 43, "sourceUrl": "https://fastfoodnutrition.org/applebees/bourbon-street-chicken-shrimp" },
+      { "name": "Fiesta Lime Chicken", "serving": "1 entree", "calories": 1170, "protein": 60, "carbs": 97, "fat": 61, "sourceUrl": "https://fastfoodnutrition.org/applebees/fiesta-lime-chicken" },
+      { "name": "Classic Bacon Cheeseburger", "serving": "1 burger", "calories": 881, "protein": 50, "carbs": 46, "fat": 55, "sourceUrl": "https://fastfoodnutrition.org/applebees/classic-bacon-cheeseburger" },
+      { "name": "Quesadilla Burger", "serving": "1 burger", "calories": 1331, "protein": 74, "carbs": 50, "fat": 93, "sourceUrl": "https://fastfoodnutrition.org/applebees/quesadilla-burger" },
+      { "name": "Double-Glazed Baby Back Ribs (Full Rack)", "serving": "1 rack", "calories": 910, "protein": 80, "carbs": 2, "fat": 65, "sourceUrl": "https://fastfoodnutrition.org/applebees/double-glazed-baby-back-ribs/full-rack" },
+      { "name": "Classic Broccoli Chicken Alfredo", "serving": "1 entree", "calories": 1271, "protein": 75, "carbs": 78, "fat": 76, "sourceUrl": "https://fastfoodnutrition.org/applebees/classic-broccoli-chicken-alfredo-pasta" },
+      { "name": "8 oz. Top Sirloin", "serving": "1 steak", "calories": 270, "protein": 45, "carbs": 1, "fat": 10, "sourceUrl": "https://fastfoodnutrition.org/applebees/sirloin-steak/8-oz" },
+      { "name": "Mozzarella Sticks with Marinara Sauce", "serving": "1 appetizer", "calories": 901, "protein": 43, "carbs": 80, "fat": 46, "sourceUrl": "https://fastfoodnutrition.org/applebees/mozzarella-sticks/with-marinara-sauce" },
+      { "name": "Boneless Wings", "serving": "1 appetizer", "calories": 681, "protein": 39, "carbs": 52, "fat": 35, "sourceUrl": "https://fastfoodnutrition.org/applebees/boneless-wings" },
+      { "name": "Chicken Wonton Tacos", "serving": "1 appetizer", "calories": 571, "protein": 36, "carbs": 46, "fat": 27, "sourceUrl": "https://fastfoodnutrition.org/applebees/chicken-wonton-tacos" },
+      { "name": "Spinach & Artichoke Dip with Salsa & Chips", "serving": "1 appetizer", "calories": 931, "protein": 18, "carbs": 88, "fat": 57, "sourceUrl": "https://fastfoodnutrition.org/applebees/spinach-artichoke-dip-with-salsa-chips" },
+      { "name": "Garlic Mashed Potatoes", "serving": "1 side", "calories": 280, "protein": 5, "carbs": 37, "fat": 14, "sourceUrl": "https://fastfoodnutrition.org/applebees/garlic-mashed-potatoes" },
+      { "name": "Blue Ribbon Brownie with Vanilla Ice Cream", "serving": "1 dessert", "calories": 1522, "protein": 26, "carbs": 211, "fat": 65, "sourceUrl": "https://fastfoodnutrition.org/applebees/blue-ribbon-brownie-with-vanilla-ice-cream" }
+    ]
+  },
+  {
+    "id": "chilis",
+    "name": "Chili's",
+    "items": [
+      { "name": "Original Chicken Crispers (Original Tempura, as served)", "serving": "1 entree", "calories": 1350, "protein": 62, "carbs": 127, "fat": 67, "sourceUrl": "https://brinker-chilis.cdn.prismic.io/brinker-chilis/0490d3e7-a1ca-4c83-b9df-8e4135497613_chilis-nutrition-menu-generic.pdf" },
+      { "name": "Crispy Honey-Chipotle Chicken Crispers (as served)", "serving": "1 entree", "calories": 1800, "protein": 57, "carbs": 193, "fat": 90, "sourceUrl": "https://brinker-chilis.cdn.prismic.io/brinker-chilis/0490d3e7-a1ca-4c83-b9df-8e4135497613_chilis-nutrition-menu-generic.pdf" },
+      { "name": "Cajun Pasta with Grilled Chicken", "serving": "1 entree", "calories": 1180, "protein": 65, "carbs": 111, "fat": 53, "sourceUrl": "https://brinker-chilis.cdn.prismic.io/brinker-chilis/0490d3e7-a1ca-4c83-b9df-8e4135497613_chilis-nutrition-menu-generic.pdf" },
+      { "name": "Just Bacon Beef Burger (no fries)", "serving": "1 burger", "calories": 1060, "protein": 56, "carbs": 48, "fat": 72, "sourceUrl": "https://brinker-chilis.cdn.prismic.io/brinker-chilis/0490d3e7-a1ca-4c83-b9df-8e4135497613_chilis-nutrition-menu-generic.pdf" },
+      { "name": "Oldtimer Beef Burger (no fries)", "serving": "1 burger", "calories": 890, "protein": 51, "carbs": 47, "fat": 55, "sourceUrl": "https://brinker-chilis.cdn.prismic.io/brinker-chilis/0490d3e7-a1ca-4c83-b9df-8e4135497613_chilis-nutrition-menu-generic.pdf" },
+      { "name": "Original BBQ Baby Back Ribs (Full Rack, no sides)", "serving": "1 full rack", "calories": 1430, "protein": 98, "carbs": 21, "fat": 106, "sourceUrl": "https://brinker-chilis.cdn.prismic.io/brinker-chilis/0490d3e7-a1ca-4c83-b9df-8e4135497613_chilis-nutrition-menu-generic.pdf" },
+      { "name": "Grilled Chicken Fajitas (as served)", "serving": "1 entree", "calories": 1300, "protein": 65, "carbs": 131, "fat": 59, "sourceUrl": "https://brinker-chilis.cdn.prismic.io/brinker-chilis/0490d3e7-a1ca-4c83-b9df-8e4135497613_chilis-nutrition-menu-generic.pdf" },
+      { "name": "Skillet Queso (with chips)", "serving": "1 appetizer", "calories": 1590, "protein": 45, "carbs": 137, "fat": 97, "sourceUrl": "https://brinker-chilis.cdn.prismic.io/brinker-chilis/0490d3e7-a1ca-4c83-b9df-8e4135497613_chilis-nutrition-menu-generic.pdf" },
+      { "name": "Chips & Salsa", "serving": "1 appetizer", "calories": 910, "protein": 13, "carbs": 113, "fat": 45, "sourceUrl": "https://brinker-chilis.cdn.prismic.io/brinker-chilis/0490d3e7-a1ca-4c83-b9df-8e4135497613_chilis-nutrition-menu-generic.pdf" },
+      { "name": "Quesadilla Bacon Ranch Chicken", "serving": "1 entree", "calories": 1700, "protein": 69, "carbs": 71, "fat": 129, "sourceUrl": "https://brinker-chilis.cdn.prismic.io/brinker-chilis/0490d3e7-a1ca-4c83-b9df-8e4135497613_chilis-nutrition-menu-generic.pdf" },
+      { "name": "Quesadilla Explosion Salad", "serving": "1 entree salad", "calories": 1400, "protein": 61, "carbs": 81, "fat": 93, "sourceUrl": "https://brinker-chilis.cdn.prismic.io/brinker-chilis/0490d3e7-a1ca-4c83-b9df-8e4135497613_chilis-nutrition-menu-generic.pdf" },
+      { "name": "Molten Chocolate Cake", "serving": "1 dessert", "calories": 1150, "protein": 11, "carbs": 142, "fat": 61, "sourceUrl": "https://brinker-chilis.cdn.prismic.io/brinker-chilis/0490d3e7-a1ca-4c83-b9df-8e4135497613_chilis-nutrition-menu-generic.pdf" }
+    ]
+  },
+  {
+    "id": "texas-roadhouse",
+    "name": "Texas Roadhouse",
+    "items": [
+      { "name": "6 oz Sirloin Steak", "serving": "1 steak (6 oz)", "calories": 250, "protein": 46, "carbs": 3, "fat": 6, "sourceUrl": "https://fastfoodnutrition.org/texas-roadhouse/sirloin-steak/6-oz" },
+      { "name": "12 oz Ft. Worth Ribeye", "serving": "1 steak (12 oz)", "calories": 960, "protein": 78, "carbs": 2, "fat": 72, "sourceUrl": "https://fastfoodnutrition.org/texas-roadhouse/ft.-worth-ribeye/12-oz" },
+      { "name": "6 oz Dallas Filet", "serving": "1 steak (6 oz)", "calories": 270, "protein": 45, "carbs": 6, "fat": 10, "sourceUrl": "https://fastfoodnutrition.org/texas-roadhouse/dallas-filet/6-oz" },
+      { "name": "Cactus Blossom", "serving": "1 appetizer", "calories": 1700, "protein": 27, "carbs": 202, "fat": 89, "sourceUrl": "https://fastfoodnutrition.org/texas-roadhouse/cactus-blossom" },
+      { "name": "Rattlesnake Bites", "serving": "1 appetizer", "calories": 560, "protein": 25, "carbs": 34, "fat": 36, "sourceUrl": "https://fastfoodnutrition.org/texas-roadhouse/rattlesnake-bites" },
+      { "name": "Country Fried Chicken", "serving": "1 entree", "calories": 750, "protein": 47, "carbs": 43, "fat": 43, "sourceUrl": "https://fastfoodnutrition.org/texas-roadhouse/country-fried-chicken" },
+      { "name": "Grilled BBQ Chicken", "serving": "1 entree", "calories": 260, "protein": 46, "carbs": 10, "fat": 3.5, "sourceUrl": "https://fastfoodnutrition.org/texas-roadhouse/grilled-bbq-chicken" },
+      { "name": "Pulled Pork Dinner", "serving": "1 entree", "calories": 860, "protein": 80, "carbs": 50, "fat": 40, "sourceUrl": "https://fastfoodnutrition.org/texas-roadhouse/pulled-pork-dinner" },
+      { "name": "Half Slab Fall-Off-The-Bone Ribs", "serving": "1 half slab", "calories": 900, "protein": 72, "carbs": 9, "fat": 63, "sourceUrl": "https://fastfoodnutrition.org/texas-roadhouse/ribs/half-slab" },
+      { "name": "Smokehouse Burger", "serving": "1 burger", "calories": 1200, "protein": 60, "carbs": 62, "fat": 80, "sourceUrl": "https://fastfoodnutrition.org/texas-roadhouse/smokehouse-burger" },
+      { "name": "Fresh Baked Bread (Roll)", "serving": "1 roll", "calories": 120, "protein": 4, "carbs": 24, "fat": 1, "sourceUrl": "https://fastfoodnutrition.org/texas-roadhouse/fresh-baked-bread" },
+      { "name": "Loaded Sweet Potato", "serving": "1 side", "calories": 770, "protein": 7, "carbs": 126, "fat": 28, "sourceUrl": "https://fastfoodnutrition.org/texas-roadhouse/loaded-sweet-potato" },
+      { "name": "Big Ol' Brownie", "serving": "1 dessert", "calories": 1230, "protein": 9, "carbs": 205, "fat": 42, "sourceUrl": "https://fastfoodnutrition.org/texas-roadhouse/big-ol039-brownie" }
+    ]
+  },
+  {
+    "id": "outback-steakhouse",
+    "name": "Outback Steakhouse",
+    "items": [
+      { "name": "Bloomin' Onion", "serving": "1 appetizer", "calories": 1620, "protein": 15, "carbs": 107, "fat": 126, "sourceUrl": "https://outback.blob.core.windows.net/content/images/OBS_Full_Nutrition_Information_Core_Menu_Items.pdf" },
+      { "name": "Aussie Cheese Fries", "serving": "1 appetizer", "calories": 2620, "protein": 89, "carbs": 153, "fat": 182, "sourceUrl": "https://outback.blob.core.windows.net/content/images/OBS_Full_Nutrition_Information_Core_Menu_Items.pdf" },
+      { "name": "Gold Coast Coconut Shrimp", "serving": "1 appetizer", "calories": 520, "protein": 31, "carbs": 49, "fat": 21, "sourceUrl": "https://outback.blob.core.windows.net/content/images/OBS_Full_Nutrition_Information_Core_Menu_Items.pdf" },
+      { "name": "Grilled Shrimp on the Barbie", "serving": "1 appetizer", "calories": 580, "protein": 34, "carbs": 29, "fat": 37, "sourceUrl": "https://outback.blob.core.windows.net/content/images/OBS_Full_Nutrition_Information_Core_Menu_Items.pdf" },
+      { "name": "Victoria's Filet Mignon 6 oz", "serving": "1 steak (6 oz)", "calories": 380, "protein": 47, "carbs": 1, "fat": 19, "sourceUrl": "https://outback.blob.core.windows.net/content/images/OBS_Full_Nutrition_Information_Core_Menu_Items.pdf" },
+      { "name": "Outback Center-Cut Sirloin 6 oz", "serving": "1 steak (6 oz)", "calories": 370, "protein": 46, "carbs": 1, "fat": 20, "sourceUrl": "https://outback.blob.core.windows.net/content/images/OBS_Full_Nutrition_Information_Core_Menu_Items.pdf" },
+      { "name": "Ribeye 12 oz", "serving": "1 steak (12 oz)", "calories": 900, "protein": 58, "carbs": 1, "fat": 72, "sourceUrl": "https://outback.blob.core.windows.net/content/images/OBS_Full_Nutrition_Information_Core_Menu_Items.pdf" },
+      { "name": "Alice Springs Chicken", "serving": "1 entree", "calories": 780, "protein": 79, "carbs": 14, "fat": 47, "sourceUrl": "https://outback.blob.core.windows.net/content/images/OBS_Full_Nutrition_Information_Core_Menu_Items.pdf" },
+      { "name": "Grilled Chicken on the Barbie", "serving": "1 entree", "calories": 410, "protein": 62, "carbs": 22, "fat": 9, "sourceUrl": "https://outback.blob.core.windows.net/content/images/OBS_Full_Nutrition_Information_Core_Menu_Items.pdf" },
+      { "name": "Toowoomba Salmon", "serving": "1 entree", "calories": 760, "protein": 61, "carbs": 7, "fat": 53, "sourceUrl": "https://outback.blob.core.windows.net/content/images/OBS_Full_Nutrition_Information_Core_Menu_Items.pdf" },
+      { "name": "Aussie Fries", "serving": "1 side", "calories": 500, "protein": 7, "carbs": 67, "fat": 23, "sourceUrl": "https://outback.blob.core.windows.net/content/images/OBS_Full_Nutrition_Information_Core_Menu_Items.pdf" },
+      { "name": "Baked Potato with Everything", "serving": "1 side", "calories": 440, "protein": 13, "carbs": 58, "fat": 17, "sourceUrl": "https://outback.blob.core.windows.net/content/images/OBS_Full_Nutrition_Information_Core_Menu_Items.pdf" },
+      { "name": "Salted Caramel Cookie", "serving": "1 dessert", "calories": 930, "protein": 10, "carbs": 132, "fat": 42, "sourceUrl": "https://outback.blob.core.windows.net/content/images/OBS_Full_Nutrition_Information_Core_Menu_Items.pdf" },
+      { "name": "Cheesecake with Raspberry Sauce", "serving": "1 dessert", "calories": 1040, "protein": 17, "carbs": 105, "fat": 62, "sourceUrl": "https://outback.blob.core.windows.net/content/images/OBS_Full_Nutrition_Information_Core_Menu_Items.pdf" }
+    ]
+  }
+]

@@ -21,12 +21,6 @@ type RestaurantPicksArtifact = ArtifactSpec & {
 const SLOTS = ["breakfast", "lunch", "dinner", "snack"] as const;
 type Slot = (typeof SLOTS)[number];
 
-/** log_meal takes portion in grams; the pick's portion label embeds it, e.g. "Full portion (300 g)". */
-function portionGrams(portion: string): number {
-  const match = portion.match(/(\d+)\s*g/);
-  return match ? Number(match[1]) : 300;
-}
-
 export function RestaurantPicksCard({ artifact, onAction }: ArtifactCardProps<RestaurantPicksArtifact>) {
   const [slot, setSlot] = useState<Slot>("dinner");
   const picks = artifact.picks ?? [];
@@ -88,12 +82,18 @@ export function RestaurantPicksCard({ artifact, onAction }: ArtifactCardProps<Re
                     type="button"
                     aria-label={`Log ${pick.name} as ${slot}`}
                     onClick={() =>
+                      // Restaurant items live in the restaurant DB (per-serving
+                      // published macros), not the per-100g food DB — log them
+                      // as a custom meal with their exact macros.
                       onAction({
                         kind: "invoke_tool",
-                        name: "log_meal",
+                        name: "log_custom_meal",
                         input: {
-                          food_id: pick.foodId,
-                          portion: portionGrams(pick.portion),
+                          name: pick.name,
+                          kcal: pick.macros.calories,
+                          protein: pick.macros.protein,
+                          carbs: pick.macros.carbs,
+                          fat: pick.macros.fat,
                           meal_slot: slot,
                         },
                       })

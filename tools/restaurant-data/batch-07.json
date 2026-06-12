@@ -1,0 +1,96 @@
+[
+  {
+    "id": "shake-shack",
+    "name": "Shake Shack",
+    "items": [
+      { "name": "ShackBurger (single)", "serving": "1 burger", "calories": 500, "protein": 29, "carbs": 26, "fat": 30, "sourceUrl": "https://shakeshack.com/sites/default/files/2021-09/SHA_NutritionFacts_ShakeShack-tables-August%2031,%202021%20.pdf" },
+      { "name": "Double ShackBurger", "serving": "1 burger", "calories": 760, "protein": 51, "carbs": 27, "fat": 48, "sourceUrl": "https://shakeshack.com/sites/default/files/2021-09/SHA_NutritionFacts_ShakeShack-tables-August%2031,%202021%20.pdf" },
+      { "name": "Single Cheeseburger", "serving": "1 burger", "calories": 440, "protein": 29, "carbs": 25, "fat": 24, "sourceUrl": "https://shakeshack.com/sites/default/files/2021-09/SHA_NutritionFacts_ShakeShack-tables-August%2031,%202021%20.pdf" },
+      { "name": "SmokeShack (single)", "serving": "1 burger", "calories": 570, "protein": 36, "carbs": 28, "fat": 35, "sourceUrl": "https://shakeshack.com/sites/default/files/2021-09/SHA_NutritionFacts_ShakeShack-tables-August%2031,%202021%20.pdf" },
+      { "name": "'Shroom Burger", "serving": "1 burger", "calories": 510, "protein": 18, "carbs": 49, "fat": 27, "sourceUrl": "https://shakeshack.com/sites/default/files/2021-09/SHA_NutritionFacts_ShakeShack-tables-August%2031,%202021%20.pdf" },
+      { "name": "Shack Stack", "serving": "1 burger", "calories": 770, "protein": 40, "carbs": 50, "fat": 45, "sourceUrl": "https://shakeshack.com/sites/default/files/2021-09/SHA_NutritionFacts_ShakeShack-tables-August%2031,%202021%20.pdf" },
+      { "name": "Chick'n Shack", "serving": "1 sandwich", "calories": 550, "protein": 33, "carbs": 34, "fat": 31, "sourceUrl": "https://shakeshack.com/sites/default/files/2021-09/SHA_NutritionFacts_ShakeShack-tables-August%2031,%202021%20.pdf" },
+      { "name": "Chick'n Bites (10 piece)", "serving": "10 pieces", "calories": 510, "protein": 29, "carbs": 26, "fat": 32, "sourceUrl": "https://shakeshack.com/sites/default/files/2021-09/SHA_NutritionFacts_ShakeShack-tables-August%2031,%202021%20.pdf" },
+      { "name": "Hot Dog", "serving": "1 hot dog", "calories": 350, "protein": 16, "carbs": 25, "fat": 22, "sourceUrl": "https://shakeshack.com/sites/default/files/2021-09/SHA_NutritionFacts_ShakeShack-tables-August%2031,%202021%20.pdf" },
+      { "name": "Fries (regular)", "serving": "1 regular order", "calories": 470, "protein": 6, "carbs": 63, "fat": 22, "sourceUrl": "https://shakeshack.com/sites/default/files/2021-09/SHA_NutritionFacts_ShakeShack-tables-August%2031,%202021%20.pdf" },
+      { "name": "Cheese Fries", "serving": "1 order", "calories": 710, "protein": 12, "carbs": 64, "fat": 44, "sourceUrl": "https://shakeshack.com/sites/default/files/2021-09/SHA_NutritionFacts_ShakeShack-tables-August%2031,%202021%20.pdf" },
+      { "name": "Vanilla Shake", "serving": "1 shake", "calories": 680, "protein": 18, "carbs": 72, "fat": 36, "sourceUrl": "https://shakeshack.com/sites/default/files/2021-09/SHA_NutritionFacts_ShakeShack-tables-August%2031,%202021%20.pdf" },
+      { "name": "Chocolate Shake", "serving": "1 shake", "calories": 750, "protein": 16, "carbs": 76, "fat": 45, "sourceUrl": "https://shakeshack.com/sites/default/files/2021-09/SHA_NutritionFacts_ShakeShack-tables-August%2031,%202021%20.pdf" }
+    ]
+  },
+  {
+    "id": "bojangles",
+    "name": "Bojangles",
+    "items": [
+      { "name": "Cajun Filet Biscuit", "serving": "1 biscuit", "calories": 570, "protein": 23, "carbs": 57, "fat": 27, "sourceUrl": "https://storyblok.pleinaircdn.com/f/110020/x/6c7b2a7e6a/m25-099-2025_02-nutritiongudeupdates_bobitessalad_master.pdf" },
+      { "name": "Sausage & Egg Biscuit", "serving": "1 biscuit", "calories": 550, "protein": 21, "carbs": 38, "fat": 34, "sourceUrl": "https://storyblok.pleinaircdn.com/f/110020/x/6c7b2a7e6a/m25-099-2025_02-nutritiongudeupdates_bobitessalad_master.pdf" },
+      { "name": "Bacon, Egg & Cheese Biscuit", "serving": "1 biscuit", "calories": 510, "protein": 28, "carbs": 40, "fat": 27, "sourceUrl": "https://storyblok.pleinaircdn.com/f/110020/x/6c7b2a7e6a/m25-099-2025_02-nutritiongudeupdates_bobitessalad_master.pdf" },
+      { "name": "Steak Biscuit", "serving": "1 biscuit", "calories": 620, "protein": 16, "carbs": 48, "fat": 40, "sourceUrl": "https://storyblok.pleinaircdn.com/f/110020/x/6c7b2a7e6a/m25-099-2025_02-nutritiongudeupdates_bobitessalad_master.pdf" },
+      { "name": "Fried Chicken Breast", "serving": "1 piece", "calories": 540, "protein": 41, "carbs": 24, "fat": 29, "sourceUrl": "https://storyblok.pleinaircdn.com/f/110020/x/6c7b2a7e6a/m25-099-2025_02-nutritiongudeupdates_bobitessalad_master.pdf" },
+      { "name": "Fried Chicken Thigh", "serving": "1 piece", "calories": 240, "protein": 21, "carbs": 14, "fat": 10, "sourceUrl": "https://storyblok.pleinaircdn.com/f/110020/x/6c7b2a7e6a/m25-099-2025_02-nutritiongudeupdates_bobitessalad_master.pdf" },
+      { "name": "Fried Chicken Leg", "serving": "1 piece", "calories": 190, "protein": 10, "carbs": 8, "fat": 13, "sourceUrl": "https://storyblok.pleinaircdn.com/f/110020/x/6c7b2a7e6a/m25-099-2025_02-nutritiongudeupdates_bobitessalad_master.pdf" },
+      { "name": "Chicken Supremes (4 pc)", "serving": "4 pieces", "calories": 500, "protein": 32, "carbs": 33, "fat": 25, "sourceUrl": "https://storyblok.pleinaircdn.com/f/110020/x/6c7b2a7e6a/m25-099-2025_02-nutritiongudeupdates_bobitessalad_master.pdf" },
+      { "name": "Bo's Chicken Tenders (4 pc)", "serving": "4 pieces", "calories": 410, "protein": 48, "carbs": 23, "fat": 14, "sourceUrl": "https://storyblok.pleinaircdn.com/f/110020/x/6c7b2a7e6a/m25-099-2025_02-nutritiongudeupdates_bobitessalad_master.pdf" },
+      { "name": "Seasoned Fries (medium)", "serving": "1 medium order", "calories": 450, "protein": 4, "carbs": 49, "fat": 26, "sourceUrl": "https://storyblok.pleinaircdn.com/f/110020/x/6c7b2a7e6a/m25-099-2025_02-nutritiongudeupdates_bobitessalad_master.pdf" },
+      { "name": "Bo-Tato Rounds (medium)", "serving": "1 medium order", "calories": 390, "protein": 3, "carbs": 40, "fat": 24, "sourceUrl": "https://storyblok.pleinaircdn.com/f/110020/x/6c7b2a7e6a/m25-099-2025_02-nutritiongudeupdates_bobitessalad_master.pdf" },
+      { "name": "Macaroni 'N Cheese (individual)", "serving": "1 individual side", "calories": 280, "protein": 8, "carbs": 21, "fat": 18, "sourceUrl": "https://storyblok.pleinaircdn.com/f/110020/x/6c7b2a7e6a/m25-099-2025_02-nutritiongudeupdates_bobitessalad_master.pdf" },
+      { "name": "Cajun Pintos (individual)", "serving": "1 individual side", "calories": 130, "protein": 7, "carbs": 24, "fat": 0.5, "sourceUrl": "https://storyblok.pleinaircdn.com/f/110020/x/6c7b2a7e6a/m25-099-2025_02-nutritiongudeupdates_bobitessalad_master.pdf" },
+      { "name": "Bo-Berry Biscuit", "serving": "1 biscuit", "calories": 370, "protein": 5, "carbs": 49, "fat": 17, "sourceUrl": "https://storyblok.pleinaircdn.com/f/110020/x/6c7b2a7e6a/m25-099-2025_02-nutritiongudeupdates_bobitessalad_master.pdf" },
+      { "name": "Vanilla Milkshake (regular)", "serving": "1 regular shake", "calories": 620, "protein": 12, "carbs": 86, "fat": 26, "sourceUrl": "https://storyblok.pleinaircdn.com/f/110020/x/6c7b2a7e6a/m25-099-2025_02-nutritiongudeupdates_bobitessalad_master.pdf" }
+    ]
+  },
+  {
+    "id": "carls-jr",
+    "name": "Carl's Jr.",
+    "items": [
+      { "name": "Famous Star with Cheese (single)", "serving": "1 burger (285g)", "calories": 680, "protein": 28, "carbs": 57, "fat": 38, "sourceUrl": "https://www.carlsjr.com/getContentAsset/cccf694a-3d94-4cbc-adfc-28c255939f92/dfc3d011-8f63-43f6-9ed8-4b444333a1d0/nutritional-info.pdf?language=en-US" },
+      { "name": "Western Bacon Cheeseburger (single)", "serving": "1 burger (248g)", "calories": 770, "protein": 35, "carbs": 77, "fat": 36, "sourceUrl": "https://www.carlsjr.com/getContentAsset/cccf694a-3d94-4cbc-adfc-28c255939f92/dfc3d011-8f63-43f6-9ed8-4b444333a1d0/nutritional-info.pdf?language=en-US" },
+      { "name": "The Big Carl (single)", "serving": "1 burger (237g)", "calories": 670, "protein": 28, "carbs": 55, "fat": 38, "sourceUrl": "https://www.carlsjr.com/getContentAsset/cccf694a-3d94-4cbc-adfc-28c255939f92/dfc3d011-8f63-43f6-9ed8-4b444333a1d0/nutritional-info.pdf?language=en-US" },
+      { "name": "Double Cheeseburger", "serving": "1 burger (159g)", "calories": 370, "protein": 19, "carbs": 34, "fat": 21, "sourceUrl": "https://www.carlsjr.com/getContentAsset/cccf694a-3d94-4cbc-adfc-28c255939f92/dfc3d011-8f63-43f6-9ed8-4b444333a1d0/nutritional-info.pdf?language=en-US" },
+      { "name": "Hand-Breaded Chicken Sandwich", "serving": "1 sandwich (255g)", "calories": 660, "protein": 31, "carbs": 50, "fat": 37, "sourceUrl": "https://www.carlsjr.com/getContentAsset/cccf694a-3d94-4cbc-adfc-28c255939f92/dfc3d011-8f63-43f6-9ed8-4b444333a1d0/nutritional-info.pdf?language=en-US" },
+      { "name": "Hand-Breaded Chicken Tenders (5 pc)", "serving": "5 pieces (213g)", "calories": 440, "protein": 41, "carbs": 21, "fat": 21, "sourceUrl": "https://www.carlsjr.com/getContentAsset/cccf694a-3d94-4cbc-adfc-28c255939f92/dfc3d011-8f63-43f6-9ed8-4b444333a1d0/nutritional-info.pdf?language=en-US" },
+      { "name": "Spicy Chicken Sandwich", "serving": "1 sandwich (177g)", "calories": 490, "protein": 14, "carbs": 43, "fat": 29, "sourceUrl": "https://www.carlsjr.com/getContentAsset/cccf694a-3d94-4cbc-adfc-28c255939f92/dfc3d011-8f63-43f6-9ed8-4b444333a1d0/nutritional-info.pdf?language=en-US" },
+      { "name": "The Breakfast Burger", "serving": "1 burger (279g)", "calories": 780, "protein": 40, "carbs": 67, "fat": 40, "sourceUrl": "https://www.carlsjr.com/getContentAsset/cccf694a-3d94-4cbc-adfc-28c255939f92/dfc3d011-8f63-43f6-9ed8-4b444333a1d0/nutritional-info.pdf?language=en-US" },
+      { "name": "Loaded Breakfast Burrito", "serving": "1 burrito (308g)", "calories": 830, "protein": 39, "carbs": 49, "fat": 53, "sourceUrl": "https://www.carlsjr.com/getContentAsset/cccf694a-3d94-4cbc-adfc-28c255939f92/dfc3d011-8f63-43f6-9ed8-4b444333a1d0/nutritional-info.pdf?language=en-US" },
+      { "name": "Natural-Cut Fries (medium)", "serving": "1 medium order (137g)", "calories": 400, "protein": 4, "carbs": 51, "fat": 19, "sourceUrl": "https://www.carlsjr.com/getContentAsset/cccf694a-3d94-4cbc-adfc-28c255939f92/dfc3d011-8f63-43f6-9ed8-4b444333a1d0/nutritional-info.pdf?language=en-US" },
+      { "name": "Onion Rings", "serving": "1 order (116g)", "calories": 560, "protein": 9, "carbs": 66, "fat": 30, "sourceUrl": "https://www.carlsjr.com/getContentAsset/cccf694a-3d94-4cbc-adfc-28c255939f92/dfc3d011-8f63-43f6-9ed8-4b444333a1d0/nutritional-info.pdf?language=en-US" },
+      { "name": "Chocolate Hand-Scooped Ice Cream Shake", "serving": "1 shake (397g)", "calories": 710, "protein": 13, "carbs": 86, "fat": 36, "sourceUrl": "https://www.carlsjr.com/getContentAsset/cccf694a-3d94-4cbc-adfc-28c255939f92/dfc3d011-8f63-43f6-9ed8-4b444333a1d0/nutritional-info.pdf?language=en-US" }
+    ]
+  },
+  {
+    "id": "hardees",
+    "name": "Hardee's",
+    "items": [
+      { "name": "Original Thickburger (single)", "serving": "1 burger", "calories": 820, "protein": 39, "carbs": 56, "fat": 51, "sourceUrl": "https://fastfoodnutrition.org/hardees/original-thickburger/single" },
+      { "name": "Frisco Thickburger (single)", "serving": "1 burger", "calories": 760, "protein": 38, "carbs": 43, "fat": 50, "sourceUrl": "https://fastfoodnutrition.org/hardees/frisco-thickburger/single" },
+      { "name": "Western Bacon Cheeseburger (single)", "serving": "1 burger", "calories": 810, "protein": 38, "carbs": 80, "fat": 38, "sourceUrl": "https://fastfoodnutrition.org/hardees/western-bacon-cheeseburger/single" },
+      { "name": "Hand-Breaded Chicken Tenders (5 pc)", "serving": "5 tenders", "calories": 440, "protein": 41, "carbs": 21, "fat": 21, "sourceUrl": "https://fastfoodnutrition.org/hardees/hand-breaded-chicken-tenders/5-piece" },
+      { "name": "Big Chicken Fillet Sandwich", "serving": "1 sandwich", "calories": 590, "protein": 21, "carbs": 61, "fat": 29, "sourceUrl": "https://fastfoodnutrition.org/hardees/big-chicken-fillet-sandwich" },
+      { "name": "Bacon, Egg & Cheese Biscuit", "serving": "1 biscuit", "calories": 620, "protein": 20, "carbs": 44, "fat": 40, "sourceUrl": "https://fastfoodnutrition.org/hardees/bacon-egg-cheese-biscuit" },
+      { "name": "Sausage & Egg Biscuit", "serving": "1 biscuit", "calories": 700, "protein": 19, "carbs": 44, "fat": 50, "sourceUrl": "https://fastfoodnutrition.org/hardees/sausage-egg-biscuit" },
+      { "name": "Monster Biscuit", "serving": "1 biscuit", "calories": 890, "protein": 35, "carbs": 45, "fat": 63, "sourceUrl": "https://fastfoodnutrition.org/hardees/monster-biscuit" },
+      { "name": "Natural-Cut French Fries (medium)", "serving": "1 medium order (147g)", "calories": 420, "protein": 5, "carbs": 55, "fat": 21, "sourceUrl": "https://fastfoodnutrition.org/hardees/natural-cut-french-fries/medium" },
+      { "name": "Chocolate Hand-Scooped Ice Cream Shake", "serving": "1 shake", "calories": 690, "protein": 12, "carbs": 84, "fat": 36, "sourceUrl": "https://fastfoodnutrition.org/hardees/hand-scooped-ice-cream-shake/chocolate" }
+    ]
+  },
+  {
+    "id": "el-pollo-loco",
+    "name": "El Pollo Loco",
+    "items": [
+      { "name": "Fire-Grilled Chicken Breast", "serving": "1 piece (4.3 oz)", "calories": 200, "protein": 34, "carbs": 0, "fat": 8, "sourceUrl": "https://www.elpolloloco.com/content/pdfs/epl_web_nutrition_guide_mod_1_2023_hr.pdf" },
+      { "name": "Fire-Grilled Chicken Thigh", "serving": "1 piece (3.1 oz)", "calories": 200, "protein": 21, "carbs": 2, "fat": 12, "sourceUrl": "https://www.elpolloloco.com/content/pdfs/epl_web_nutrition_guide_mod_1_2023_hr.pdf" },
+      { "name": "Fire-Grilled Chicken Leg", "serving": "1 piece (1.6 oz)", "calories": 110, "protein": 11, "carbs": 0, "fat": 7, "sourceUrl": "https://www.elpolloloco.com/content/pdfs/epl_web_nutrition_guide_mod_1_2023_hr.pdf" },
+      { "name": "Original Pollo Bowl", "serving": "1 bowl (18.1 oz)", "calories": 580, "protein": 40, "carbs": 83, "fat": 10, "sourceUrl": "https://www.elpolloloco.com/content/pdfs/epl_web_nutrition_guide_mod_1_2023_hr.pdf" },
+      { "name": "Double Chicken Bowl", "serving": "1 bowl (24.1 oz)", "calories": 930, "protein": 74, "carbs": 87, "fat": 33, "sourceUrl": "https://www.elpolloloco.com/content/pdfs/epl_web_nutrition_guide_mod_1_2023_hr.pdf" },
+      { "name": "Classic Chicken Burrito", "serving": "1 burrito (9.9 oz)", "calories": 450, "protein": 23, "carbs": 57, "fat": 15, "sourceUrl": "https://www.elpolloloco.com/content/pdfs/epl_web_nutrition_guide_mod_1_2023_hr.pdf" },
+      { "name": "Chicken Avocado Burrito", "serving": "1 burrito (17.4 oz)", "calories": 920, "protein": 60, "carbs": 69, "fat": 46, "sourceUrl": "https://www.elpolloloco.com/content/pdfs/epl_web_nutrition_guide_mod_1_2023_hr.pdf" },
+      { "name": "Chicken Tortilla Soup (small)", "serving": "1 small (13.7 oz)", "calories": 240, "protein": 23, "carbs": 19, "fat": 9, "sourceUrl": "https://www.elpolloloco.com/content/pdfs/epl_web_nutrition_guide_mod_1_2023_hr.pdf" },
+      { "name": "Double Chicken Avocado Salad (no dressing)", "serving": "1 salad (13.3 oz)", "calories": 350, "protein": 51, "carbs": 12, "fat": 12, "sourceUrl": "https://www.elpolloloco.com/content/pdfs/epl_web_nutrition_guide_mod_1_2023_hr.pdf" },
+      { "name": "Pinto Beans (small)", "serving": "1 small side (6 oz)", "calories": 140, "protein": 9, "carbs": 25, "fat": 0.5, "sourceUrl": "https://www.elpolloloco.com/content/pdfs/epl_web_nutrition_guide_mod_1_2023_hr.pdf" },
+      { "name": "Rice (small)", "serving": "1 small side (4.5 oz)", "calories": 160, "protein": 3, "carbs": 33, "fat": 1.5, "sourceUrl": "https://www.elpolloloco.com/content/pdfs/epl_web_nutrition_guide_mod_1_2023_hr.pdf" },
+      { "name": "Macaroni & Cheese (small)", "serving": "1 small side (6 oz)", "calories": 310, "protein": 9, "carbs": 24, "fat": 19, "sourceUrl": "https://www.elpolloloco.com/content/pdfs/epl_web_nutrition_guide_mod_1_2023_hr.pdf" },
+      { "name": "Churro", "serving": "1 churro (1.3 oz)", "calories": 150, "protein": 1, "carbs": 15, "fat": 9, "sourceUrl": "https://www.elpolloloco.com/content/pdfs/epl_web_nutrition_guide_mod_1_2023_hr.pdf" },
+      { "name": "Horchata (regular)", "serving": "1 regular (22 oz)", "calories": 170, "protein": 0, "carbs": 28, "fat": 6, "sourceUrl": "https://www.elpolloloco.com/content/pdfs/epl_web_nutrition_guide_mod_1_2023_hr.pdf" }
+    ]
+  }
+]

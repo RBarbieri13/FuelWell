@@ -4,13 +4,11 @@ import { recordAction } from "../last-action";
 import { newEntityId } from "../ids";
 import type { CoachToolDef, GroceryItem } from "../types";
 import { buildCoachVerdict, remaining } from "@/lib/fuelwell-data";
-import { FOOD_DATABASE, macrosForPortion } from "@/lib/food-database";
+import { RESTAURANT_DATABASE } from "@/lib/restaurant-database";
 
 /**
  * Lifestyle tools: restaurant picks, grocery list, preferences, daily recap.
  */
-
-const FULL_PORTION_G = 300;
 
 /** Preserves the per-tool input type that the registerTools array literal erases. */
 function tool<S extends z.ZodTypeAny>(def: CoachToolDef<S>): CoachToolDef {
@@ -21,76 +19,82 @@ registerTools([
   tool({
     name: "find_restaurant_picks",
     description:
-      "Find the top 3 restaurant/fast-food menu items that fit the user's remaining macros for today (fit remaining calories, maximize protein coverage). Optionally filter by restaurant name (e.g. 'Chipotle') and/or a preference like 'high-protein' or 'low-carb'. Use when the user is eating out and wants to know what to order.",
+      "Find the top 3 menu items across 50 major US chain restaurants (published nutrition data, per-serving) that fit the user's remaining macros for today (fit remaining calories, maximize protein coverage). Optionally filter by restaurant name (e.g. 'Chipotle', 'Olive Garden') and/or a preference like 'high-protein', 'low-carb', or a keyword like 'chicken'. Use when the user is eating out and wants to know what to order.",
     schema: z.object({
       restaurant: z
         .string()
         .optional()
-        .describe("Restaurant or chain name to filter by, e.g. 'Chipotle' or 'KFC'. Omit to search all restaurant foods."),
+        .describe("Restaurant or chain name to filter by, e.g. 'Chipotle' or 'KFC'. Omit to search all 50 chains."),
       preference: z
         .string()
         .optional()
-        .describe("Optional preference filter matched against item names and tags, e.g. 'high-protein', 'low-carb', 'chicken', 'salad'."),
+        .describe("Optional preference: 'high-protein', 'low-carb', 'low-fat', or a keyword matched against item names, e.g. 'chicken', 'salad'."),
     }),
     run: (input, ctx) => {
       const { totals, targets } = ctx.snapshot;
       const remainingKcal = remaining(totals.calories, targets.calories);
       const remainingProtein = remaining(totals.protein, targets.protein);
 
-      let items = FOOD_DATABASE.filter((f) => f.category === "restaurant");
-
+      let restaurants = [...RESTAURANT_DATABASE];
       let matchedRestaurant = true;
       if (input.restaurant) {
         const q = input.restaurant.trim().toLowerCase();
-        const matches = items.filter(
-          (f) =>
-            f.name.toLowerCase().includes(q) ||
-            f.tags.some((t) => t.toLowerCase().includes(q))
+        const matches = restaurants.filter(
+          (r) => r.name.toLowerCase().includes(q) || r.id.includes(q.replace(/[^a-z0-9]+/g, "-"))
         );
         if (matches.length > 0) {
-          items = matches;
+          restaurants = matches;
         } else {
           matchedRestaurant = false;
         }
       }
 
+      let items = restaurants.flatMap((r) =>
+        r.items.map((item) => ({ restaurant: r.name, item }))
+      );
+
       if (input.preference) {
         const p = input.preference.trim().toLowerCase();
-        const matches = items.filter(
-          (f) =>
-            f.name.toLowerCase().includes(p) ||
-            f.tags.some((t) => t.toLowerCase().includes(p))
-        );
+        let matches: typeof items;
+        if (p.includes("high-protein") || p.includes("high protein")) {
+          matches = items.filter(({ item }) => item.calories > 0 && (item.protein * 4) / item.calories >= 0.3);
+        } else if (p.includes("low-carb") || p.includes("low carb")) {
+          matches = items.filter(({ item }) => item.carbs <= 20);
+        } else if (p.includes("low-fat") || p.includes("low fat")) {
+          matches = items.filter(({ item }) => item.fat <= 15);
+        } else {
+          matches = items.filter(({ item }) => item.name.toLowerCase().includes(p));
+        }
         if (matches.length > 0) items = matches;
       }
 
-      const scored = items.map((f) => {
-        const macros = macrosForPortion(f, FULL_PORTION_G);
+      const scored = items.map((entry) => {
+        const { item } = entry;
         const proteinCoverage =
-          remainingProtein > 0 ? Math.min(macros.protein / remainingProtein, 1) : 0.5;
+          remainingProtein > 0 ? Math.min(item.protein / remainingProtein, 1) : 0.5;
         const kcalOverage =
-          remainingKcal > 0 ? Math.max(0, macros.kcal - remainingKcal) / remainingKcal : macros.kcal / 500;
+          remainingKcal > 0 ? Math.max(0, item.calories - remainingKcal) / remainingKcal : item.calories / 500;
         const score = proteinCoverage - kcalOverage * 1.5;
-        return { food: f, macros, score };
+        return { ...entry, score };
       });
       scored.sort((a, b) => b.score - a.score);
 
-      const picks = scored.slice(0, 3).map(({ food, macros }) => {
-        const fitsKcal = macros.kcal <= remainingKcal;
+      const picks = scored.slice(0, 3).map(({ restaurant, item }) => {
+        const fitsKcal = item.calories <= remainingKcal;
         const why = fitsKcal
-          ? `${macros.protein}g protein for ${macros.kcal} kcal — fits your remaining ${remainingKcal} kcal budget.`
-          : `${macros.protein}g protein, but ${macros.kcal} kcal runs over your remaining ${remainingKcal} kcal — consider a half portion.`;
+          ? `${item.protein}g protein for ${item.calories} kcal — fits your remaining ${remainingKcal} kcal budget.`
+          : `${item.protein}g protein, but ${item.calories} kcal runs over your remaining ${remainingKcal} kcal — consider a smaller size.`;
         return {
-          foodId: food.id,
-          name: food.name,
+          foodId: item.id,
+          name: input.restaurant ? item.name : `${item.name} (${restaurant})`,
           macros: {
-            calories: macros.kcal,
-            protein: macros.protein,
-            carbs: macros.carbs,
-            fat: macros.fat,
+            calories: item.calories,
+            protein: item.protein,
+            carbs: item.carbs,
+            fat: item.fat,
           },
           why,
-          portion: `Full portion (${FULL_PORTION_G} g)`,
+          portion: item.serving,
         };
       });
 
