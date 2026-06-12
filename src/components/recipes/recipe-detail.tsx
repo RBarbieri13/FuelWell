@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
 import { Clock, Users, X } from "lucide-react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { PreferenceToggle } from "@/components/food/preference-toggle";
 import type { Recipe } from "@/lib/recipes-data";
 
@@ -17,14 +17,6 @@ export function RecipeDetail({
   recipe: Recipe;
   onClose: () => void;
 }) {
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [onClose]);
-
   const nutrition: { label: string; value: string }[] = [
     { label: "Calories", value: `${recipe.perServing.calories}` },
     { label: "Protein", value: `${recipe.perServing.protein}g` },
@@ -34,16 +26,16 @@ export function RecipeDetail({
   ];
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-neutral-900/40 p-0 sm:items-center sm:p-4"
-      role="dialog"
-      aria-modal="true"
-      aria-label={recipe.title}
-      onClick={onClose}
+    <Dialog
+      open
+      onOpenChange={(open) => {
+        if (!open) onClose();
+      }}
     >
-      <div
-        className="max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-t-3xl bg-white shadow-xl sm:rounded-3xl"
-        onClick={(e) => e.stopPropagation()}
+      <DialogContent
+        aria-label={recipe.title}
+        showCloseButton={false}
+        className="top-auto bottom-0 block max-h-[92vh] w-full max-w-full -translate-x-1/2 translate-y-0 overflow-y-auto rounded-none rounded-t-3xl bg-white p-0 shadow-xl ring-0 sm:top-1/2 sm:bottom-auto sm:max-w-2xl sm:-translate-y-1/2 sm:rounded-3xl"
       >
         <div className="sticky top-0 flex items-start justify-between gap-3 border-b border-neutral-100 bg-white/95 px-5 py-4 backdrop-blur">
           <div className="min-w-0">
@@ -148,7 +140,7 @@ export function RecipeDetail({
             </div>
           )}
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
