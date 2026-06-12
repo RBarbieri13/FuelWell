@@ -21,7 +21,7 @@ import type {
   ToolContext,
 } from "@/lib/coach/types";
 import { applySnapshotMutation } from "@/lib/coach/apply-mutation";
-import { enforceVoice } from "@/lib/coach/voice-filter";
+import { enforceVoice, redactPii } from "@/lib/coach/voice-filter";
 import { writeAudit } from "@/lib/coach/audit";
 import {
   ensureConversation,
@@ -98,6 +98,12 @@ export async function POST(request: Request) {
 
   // Cost circuit breaker — fires BEFORE any model call (non-negotiable).
   const day = new Date().toISOString().split("T")[0];
+  // Test hook (preview only): lets the E2E suite simulate a spent budget
+  // without burning $10 of real tokens.
+  const testSpend = Number(request.headers.get("x-coach-test-spend-cents") ?? 0);
+  if (isPreview && testSpend > 0) {
+    memoryAddCents(userId, day, testSpend - memoryGetDayCents(userId, day));
+  }
   const spentCents = user
     ? await getSupabaseDayCents(supabase, userId, day)
     : memoryGetDayCents(userId, day);
@@ -189,7 +195,7 @@ export async function POST(request: Request) {
           let pendingText = "";
           msgStream.on("text", (delta) => {
             pendingText += delta;
-            emit({ type: "text_delta", text: delta });
+            emit({ type: "text_delta", text: redactPii(delta) });
           });
 
           const final = await msgStream.finalMessage();

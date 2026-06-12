@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils/cn";
 import { usePreferences, DIET_FILTERS } from "@/lib/use-preferences";
 import { useUnits, type UnitSystem } from "./use-units";
+import { CoachActivity } from "./coach-activity";
 import {
   User,
   Mail,
@@ -224,6 +225,11 @@ export function SettingsClient({
             )}
           </div>
         </Card>
+      </Section>
+
+      {/* Coach activity (E6 audit trail) */}
+      <Section title="Coach activity">
+        <CoachActivity />
       </Section>
 
       {/* Sign out */}
