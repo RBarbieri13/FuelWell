@@ -33,6 +33,10 @@ export default function PreviewHubPage() {
               the same sample user, so the product can be reviewed without
               signup, OAuth, or a local tunnel.
             </p>
+            <p className="mt-2 inline-flex items-center gap-2 rounded-full border border-accent-300/20 bg-accent-300/10 px-3 py-1 text-xs font-black text-accent-200">
+              New in v1.4: agentic Coach — log meals, plan workouts, and pull up
+              charts directly in chat at /app/coach.
+            </p>
           </div>
           <div className="flex flex-wrap gap-2">
             {previewLinks.map((link) => (
