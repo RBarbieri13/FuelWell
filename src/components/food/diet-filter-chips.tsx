@@ -28,7 +28,7 @@ export function DietFilterChips({
             aria-pressed={isOn}
             onClick={() => onToggle(filter.id)}
             className={cn(
-              "rounded-full px-3.5 py-1.5 text-sm font-semibold transition",
+              "min-h-11 md:min-h-0 rounded-full px-3.5 py-1.5 text-sm font-semibold transition",
               isOn
                 ? "bg-primary-600 text-white shadow-sm shadow-primary-600/25"
                 : "bg-white text-neutral-600 border border-neutral-200 hover:border-primary-300 hover:text-primary-700"

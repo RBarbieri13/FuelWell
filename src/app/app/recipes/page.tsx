@@ -48,7 +48,7 @@ export default function RecipesPage() {
         </div>
 
         <div className="space-y-2">
-          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-neutral-400">
+          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-neutral-500">
             <SlidersHorizontal className="h-3.5 w-3.5" />
             Diet filters
           </div>
@@ -72,7 +72,7 @@ export default function RecipesPage() {
         </Card>
       ) : (
         <>
-          <p className="text-xs font-medium text-neutral-400">
+          <p className="text-xs font-medium text-neutral-500">
             {results.length} {results.length === 1 ? "recipe" : "recipes"}
           </p>
           <div className="grid gap-3 md:grid-cols-2">

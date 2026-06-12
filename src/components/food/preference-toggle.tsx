@@ -19,7 +19,7 @@ export function PreferenceToggle({
 }) {
   const { isLiked, isDisliked, toggleLike, toggleDislike } = usePreferences();
   const dim = size === "sm" ? "h-4 w-4" : "h-5 w-5";
-  const pad = size === "sm" ? "p-1.5" : "p-2";
+  const pad = size === "sm" ? "p-3.5 -m-2" : "p-2";
 
   return (
     <div className={cn("flex items-center gap-1", className)}>
