@@ -149,7 +149,7 @@ export function DashboardClient({
                 Nutrition is calculated from logged meals only.
               </p>
             </div>
-            <Link href="/app/nutrition" className="text-sm font-bold text-primary-700">
+            <Link href="/app/nutrition" className="-m-3 p-3 text-sm font-bold text-primary-700">
               Details
             </Link>
           </div>

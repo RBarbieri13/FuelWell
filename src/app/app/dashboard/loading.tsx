@@ -3,29 +3,20 @@ import { Card } from "@/components/ui/card";
 
 export default function DashboardLoading() {
   return (
-    <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
-      {/* Greeting skeleton */}
-      <div>
-        <Skeleton className="h-8 w-48 mb-2" />
-        <Skeleton className="h-4 w-72" />
-      </div>
-
-      {/* Ring + Macros */}
-      <div className="grid md:grid-cols-2 gap-4">
-        <Card className="flex items-center justify-center py-8">
-          <Skeleton className="w-[200px] h-[200px] rounded-full" />
-        </Card>
+    <div className="mx-auto max-w-6xl space-y-6 p-4 md:p-8">
+      {/* Hero + Today's plate */}
+      <div className="grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
+        <Skeleton className="h-72 rounded-2xl bg-neutral-900/80" />
         <Card className="space-y-5">
-          <Skeleton className="h-3 w-16" />
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="space-y-2">
-              <div className="flex justify-between">
-                <Skeleton className="h-4 w-20" />
-                <Skeleton className="h-4 w-24" />
-              </div>
-              <Skeleton className="h-2 w-full rounded-full" />
-            </div>
-          ))}
+          <Skeleton className="h-5 w-32" />
+          <div className="flex justify-center">
+            <Skeleton className="w-[200px] h-[200px] rounded-full" />
+          </div>
+          <div className="grid grid-cols-3 gap-2">
+            {[1, 2, 3].map((i) => (
+              <Skeleton key={i} className="h-16 rounded-2xl" />
+            ))}
+          </div>
         </Card>
       </div>
 
