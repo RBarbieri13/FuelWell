@@ -97,6 +97,7 @@ function LogContent() {
               <button
                 key={modeOption.key}
                 onClick={() => setMode(modeOption.key)}
+                aria-pressed={mode === modeOption.key}
                 className={cn(
                   "flex flex-1 items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold transition-all duration-150",
                   mode === modeOption.key
@@ -108,6 +109,10 @@ function LogContent() {
                 {modeOption.label}
               </button>
             ))}
+          </div>
+
+          <div className="lg:hidden">
+            <MealTypeSelector mealType={mealType} onSelect={setMealType} />
           </div>
 
           {mode === "search" && (
@@ -153,25 +158,9 @@ function LogContent() {
         </div>
 
         <div className="space-y-5">
-          <Card className="space-y-4">
-            <h2 className="text-lg font-black text-neutral-900">Logging for</h2>
-            <div className="grid grid-cols-2 gap-2">
-              {MEAL_TYPES.map((type) => (
-                <button
-                  key={type}
-                  onClick={() => setMealType(type)}
-                  className={cn(
-                    "rounded-2xl border px-4 py-3 text-sm font-black transition",
-                    mealType === type
-                      ? "border-primary-300 bg-primary-50 text-primary-800"
-                      : "border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300"
-                  )}
-                >
-                  {formatMealType(type)}
-                </button>
-              ))}
-            </div>
-          </Card>
+          <div className="hidden lg:block">
+            <MealTypeSelector mealType={mealType} onSelect={setMealType} />
+          </div>
 
           <Card variant="elevated" className="space-y-5">
             <div className="flex items-center gap-3">
@@ -220,6 +209,37 @@ function LogContent() {
         </div>
       </div>
     </div>
+  );
+}
+
+function MealTypeSelector({
+  mealType,
+  onSelect,
+}: {
+  mealType: MealType;
+  onSelect: (type: MealType) => void;
+}) {
+  return (
+    <Card className="space-y-4">
+      <h2 className="text-lg font-black text-neutral-900">Logging for</h2>
+      <div className="grid grid-cols-2 gap-2">
+        {MEAL_TYPES.map((type) => (
+          <button
+            key={type}
+            onClick={() => onSelect(type)}
+            aria-pressed={mealType === type}
+            className={cn(
+              "rounded-2xl border px-4 py-3 text-sm font-black transition",
+              mealType === type
+                ? "border-primary-300 bg-primary-50 text-primary-800"
+                : "border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300"
+            )}
+          >
+            {formatMealType(type)}
+          </button>
+        ))}
+      </div>
+    </Card>
   );
 }
 
