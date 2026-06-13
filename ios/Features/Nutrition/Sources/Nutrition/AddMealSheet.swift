@@ -14,7 +14,6 @@ struct AddMealSheet: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: self.theme.spacing.lg) {
-                    FuelWellSheetGrabber()
                     self.header
                     self.modePicker
                     RecentMealsStrip(store: self.store)
@@ -44,6 +43,10 @@ struct AddMealSheet: View {
                 .padding(self.theme.spacing.md)
             }
             .background(self.theme.color.bg.base.color)
+            .overlay(alignment: .top) {
+                FuelWellSheetGrabber()
+                    .allowsHitTesting(false)
+            }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button("Cancel") {
