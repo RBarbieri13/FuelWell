@@ -20,6 +20,7 @@
 - `swiftlint --strict` from `ios/` passed with 0 violations.
 - XcodeBuildMCP `build_run_sim` passed on iPhone 17 / iOS 26.3.
 - XcodeBuildMCP targeted UI test `FuelWellUITests/FuelWellCriticalPathUITests/testAddMealCriticalPath` passed after moving the shared sheet grabber to an overlay so it does not push number-pad fields below the keyboard.
+- XcodeBuildMCP full UI test suite passed: 13 tests, 0 failures, result bundle `test_sim_2026-06-13T07-59-39-292Z_pid9635_ff332d14.xcresult`.
 - Final simulator preview captured at `/var/folders/mk/4zpvpljs7757dgf6h9qswksh0000gn/T/screenshot_optimized_194ee5b1-5389-434f-ba0d-bb15bc6ebdc3.jpg`.
 
 ## Deferred
