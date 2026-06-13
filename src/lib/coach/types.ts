@@ -4,6 +4,11 @@ import type {
   MacroTotals,
   MealRecord,
 } from "@/lib/fuelwell-data";
+import type {
+  DailyGoalContext,
+  GoalPlan,
+  IntegrationDailySummary,
+} from "@/lib/goal-context";
 
 /**
  * Coach agentic core types.
@@ -57,6 +62,9 @@ export type CoachDaySnapshot = {
     weightKg?: number;
     heightCm?: number;
   };
+  goalPlan?: GoalPlan;
+  integration?: IntegrationDailySummary;
+  goalContext?: DailyGoalContext;
 };
 
 // ---------------------------------------------------------------------------
@@ -71,7 +79,9 @@ export type CoachMutation =
   | { kind: "remove_workout"; workoutId: string }
   | { kind: "set_grocery"; items: GroceryItem[] }
   | { kind: "add_body_log"; entry: BodyLogEntry }
-  | { kind: "set_preferences"; patch: Partial<CoachDaySnapshot["preferences"]> };
+  | { kind: "set_preferences"; patch: Partial<CoachDaySnapshot["preferences"]> }
+  | { kind: "set_goal_plan"; plan: GoalPlan }
+  | { kind: "set_integration_summary"; summary: IntegrationDailySummary };
 
 // ---------------------------------------------------------------------------
 // Artifacts: what the chat renders inline for a tool call

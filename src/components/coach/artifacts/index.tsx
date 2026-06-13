@@ -7,6 +7,7 @@ import { BodyLogConfirmCard } from "./BodyLogConfirmCard";
 import { DailyRecapCard } from "./DailyRecapCard";
 import { FoodSearchResultsCard } from "./FoodSearchResultsCard";
 import { GroceryListCard } from "./GroceryListCard";
+import { GoalProgressCard } from "./GoalProgressCard";
 import { HealthScoreChip } from "./HealthScoreChip";
 import { InflowsOutflowsRing } from "./InflowsOutflowsRing";
 import { MacroHistoryChart } from "./MacroHistoryChart";
@@ -21,9 +22,11 @@ import { QuickReplyChips } from "./QuickReplyChips";
 import { RecipeDetailCard } from "./RecipeDetailCard";
 import { RecipeListCard } from "./RecipeListCard";
 import { RestaurantPicksCard } from "./RestaurantPicksCard";
+import { TargetChangeProposalCard } from "./TargetChangeProposalCard";
 import { TodaysPlateCard } from "./TodaysPlateCard";
 import { UndoConfirmCard } from "./UndoConfirmCard";
 import { WeightTrendSpark } from "./WeightTrendSpark";
+import { WeeklyGoalReviewCard } from "./WeeklyGoalReviewCard";
 import { WorkoutLoggedCard } from "./WorkoutLoggedCard";
 import { WorkoutPlanCard } from "./WorkoutPlanCard";
 import { WorkoutSessionCard } from "./WorkoutSessionCard";
@@ -73,6 +76,12 @@ export function ArtifactRenderer({ artifact, onAction }: ArtifactRendererProps) 
       return <RecipeDetailCard artifact={a} onAction={onAction} />;
     case "grocery_list":
       return <GroceryListCard artifact={a} onAction={onAction} />;
+    case "goal_progress":
+      return <GoalProgressCard artifact={a} onAction={onAction} />;
+    case "target_change_proposal":
+      return <TargetChangeProposalCard artifact={a} onAction={onAction} />;
+    case "weekly_goal_review":
+      return <WeeklyGoalReviewCard artifact={a} onAction={onAction} />;
     case "restaurant_picks":
       return <RestaurantPicksCard artifact={a} onAction={onAction} />;
     case "preferences_updated":

@@ -25,6 +25,12 @@ import { useWorkoutLog, addWorkout, removeWorkout } from "@/lib/use-workout-log"
 import { useGroceryList, applyCoachGrocery, toCoachGrocery } from "@/lib/use-grocery-list";
 import { useBodyLog, addBodyLogEntry } from "@/lib/use-body-log";
 import { todayIsoDate } from "@/lib/fuelwell-data";
+import { buildDailyGoalContext } from "@/lib/goal-context";
+import {
+  setGoalPlan,
+  setIntegrationSummary,
+  useGoalContextStore,
+} from "@/lib/use-goal-context";
 import type {
   ArtifactSpec,
   CoachDaySnapshot,
@@ -105,6 +111,12 @@ function applyMutationToStores(m: CoachMutation) {
       // render; the snapshot patch keeps the server consistent within a turn.
       applyPreferencePatch(m.patch);
       break;
+    case "set_goal_plan":
+      setGoalPlan(m.plan);
+      break;
+    case "set_integration_summary":
+      setIntegrationSummary(m.summary);
+      break;
   }
 }
 
@@ -136,6 +148,7 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
   const { workouts } = useWorkoutLog();
   const { items: groceryItems } = useGroceryList();
   const { entries: bodyLog } = useBodyLog();
+  const { goalPlan, integrationSummary } = useGoalContextStore();
 
   // Start from the SSR-safe empty state and hydrate the stored chat after
   // mount — reading localStorage in the initializer causes a hydration
@@ -214,11 +227,20 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
   }, [items, hydrated]);
 
   const buildSnapshot = useCallback((): CoachDaySnapshot => {
-    return {
+    const goalContext = buildDailyGoalContext({
       date: todayIsoDate(),
       meals,
       totals,
       targets,
+      profile,
+      goalPlan,
+      integration: integrationSummary,
+    });
+    return {
+      date: todayIsoDate(),
+      meals,
+      totals,
+      targets: goalContext.targets,
       workouts,
       grocery: toCoachGrocery(groceryItems),
       bodyLog,
@@ -229,8 +251,11 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
         dislikes: prefs.dislikes,
       },
       profile,
+      goalPlan: goalContext.goalPlan,
+      integration: integrationSummary,
+      goalContext,
     };
-  }, [meals, totals, targets, workouts, groceryItems, bodyLog, prefs, profile]);
+  }, [meals, totals, targets, workouts, groceryItems, bodyLog, prefs, profile, goalPlan, integrationSummary]);
 
   const runTurn = useCallback(
     async (
@@ -375,7 +400,14 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
         case "send_message":
         case "invoke_tool": {
           const text = formatActionAsMessage(action);
-          if (text) void runTurn(text);
+          if (text) {
+            void runTurn(
+              text,
+              action.kind === "invoke_tool"
+                ? { name: action.name, input: action.input }
+                : undefined
+            );
+          }
           break;
         }
         case "confirm_tool":

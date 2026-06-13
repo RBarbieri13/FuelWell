@@ -1,14 +1,16 @@
 import { z } from "zod";
 import { registerTools } from "../registry";
-import type { CoachToolDef } from "../types";
+import type { CoachToolDef, ToolContext } from "../types";
 import { recordAction } from "../last-action";
 import { newEntityId } from "../ids";
 import {
   remaining,
+  sumMeals,
   sumMealItems,
   type MealRecord,
   type MealType,
 } from "@/lib/fuelwell-data";
+import { buildMealGoalImpact, type MealConfidence } from "@/lib/goal-context";
 import {
   FOOD_DATABASE,
   filterFoods,
@@ -38,24 +40,47 @@ function remainingAfter(
 }
 
 function mealLoggedResult(
-  ctx: {
-    snapshot: { totals: { calories: number; protein: number }; targets: { calories: number; protein: number } };
-    newArtifactId: () => string;
-  },
+  ctx: Pick<ToolContext, "snapshot" | "newArtifactId">,
   meal: MealRecord,
-  opts?: { updated?: boolean; remainingOverride?: { calories: number; protein: number } },
+  opts?: {
+    updated?: boolean;
+    remainingOverride?: { calories: number; protein: number };
+    confidence?: MealConfidence;
+    totalsAfter?: { calories: number; protein: number; carbs: number; fat: number };
+  },
 ) {
   const macros = sumMealItems(meal.items);
   const left = opts?.remainingOverride ?? remainingAfter(ctx, macros);
+  const totalsAfter =
+    opts?.totalsAfter ??
+    {
+      calories: ctx.snapshot.totals.calories + macros.calories,
+      protein: ctx.snapshot.totals.protein + macros.protein,
+      carbs: ctx.snapshot.totals.carbs + macros.carbs,
+      fat: ctx.snapshot.totals.fat + macros.fat,
+    };
+  const goalImpact = buildMealGoalImpact({
+    totalsAfter,
+    targets: {
+      calories: ctx.snapshot.targets.calories,
+      protein: ctx.snapshot.targets.protein,
+      carbs: ctx.snapshot.targets.carbs,
+      fat: ctx.snapshot.targets.fat,
+    },
+    confidence: opts?.confidence ?? "database",
+    source: opts?.confidence === "manual" ? "user_entered" : "database",
+    integration: ctx.snapshot.integration,
+  });
   const summary = { id: meal.id, slot: meal.mealType, name: meal.name, macros };
   return {
     persisted: true as const,
-    modelResult: { meal: summary, remaining: left },
+    modelResult: { meal: summary, remaining: left, meal_goal_impact: goalImpact },
     artifact: {
       id: ctx.newArtifactId(),
       type: "meal_logged",
       meal: summary,
       remaining: left,
+      goalImpact,
       undoable: true,
       ...(opts?.updated ? { updated: true } : {}),
     },
@@ -191,7 +216,7 @@ registerTools([
         { kind: "remove_meal", mealId: meal.id },
       ]);
       return {
-        ...mealLoggedResult(ctx, meal),
+        ...mealLoggedResult(ctx, meal, { confidence: "database" }),
         mutations: [{ kind: "add_meal", meal }],
       };
     },
@@ -230,7 +255,7 @@ registerTools([
         { kind: "remove_meal", mealId: meal.id },
       ]);
       return {
-        ...mealLoggedResult(ctx, meal),
+        ...mealLoggedResult(ctx, meal, { confidence: "manual" }),
         mutations: [{ kind: "add_meal", meal }],
       };
     },
@@ -284,13 +309,21 @@ registerTools([
       ]);
       const originalMacros = sumMealItems(original.items);
       const updatedMacros = sumMealItems(updated.items);
+      const mealsAfter = ctx.snapshot.meals.map((meal) =>
+        meal.id === updated.id ? updated : meal,
+      );
       // remaining reflects the macro delta from this edit on top of snapshot totals
       const remainingOverride = remainingAfter(ctx, {
         calories: updatedMacros.calories - originalMacros.calories,
         protein: updatedMacros.protein - originalMacros.protein,
       });
       return {
-        ...mealLoggedResult(ctx, updated, { updated: true, remainingOverride }),
+        ...mealLoggedResult(ctx, updated, {
+          updated: true,
+          remainingOverride,
+          confidence: "manual",
+          totalsAfter: sumMeals(mealsAfter),
+        }),
         mutations: [{ kind: "update_meal", mealId: updated.id, meal: updated }],
       };
     },

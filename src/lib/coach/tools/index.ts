@@ -8,6 +8,7 @@ import "./recipe-tools";
 import "./progress-tools";
 import "./lifestyle-tools";
 import "./meta-tools";
+import "./goal-tools";
 
 /**
  * Tool modules register here. Section B adds meal/workout/recipe/progress/

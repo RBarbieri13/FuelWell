@@ -18,6 +18,8 @@ const MUTATION_KINDS = new Set<CoachMutation["kind"]>([
   "set_grocery",
   "add_body_log",
   "set_preferences",
+  "set_goal_plan",
+  "set_integration_summary",
 ]);
 
 const SHELLFISH_RE = /shrimp|prawn|crab|lobster|scallop|mussel|oyster|clam|calamari|squid|octopus/i;
@@ -32,6 +34,32 @@ function runTool(name: string, input: unknown): Promise<ToolRunResult> | ToolRun
 /** One representative valid + invalid input per registered tool. */
 const SCHEMA_CASES: Record<string, { valid: unknown; invalid: unknown }> = {
   get_todays_plate: { valid: {}, invalid: 42 },
+  get_goal_plan: { valid: {}, invalid: 42 },
+  update_goal_plan: {
+    valid: { primary_goal: "perform", protein_strategy: "performance", target_calories: 2400 },
+    invalid: { primary_goal: "sleep-more" },
+  },
+  explain_goal_progress: { valid: { detail: true }, invalid: { detail: "yes" } },
+  adapt_today_target: { valid: { reason: "Training day" }, invalid: { reason: 42 } },
+  get_weekly_goal_review: { valid: {}, invalid: 42 },
+  propose_target_change: {
+    valid: {
+      target_calories: 2350,
+      target_protein: 180,
+      target_carbs: 260,
+      target_fat: 75,
+      reason: "Several training days need more fuel.",
+      evidence: ["Garmin shows higher active calories.", "Protein target is still stable."],
+    },
+    invalid: {
+      target_calories: 2350,
+      target_protein: 180,
+      target_carbs: 260,
+      target_fat: 75,
+      reason: "short",
+      evidence: [],
+    },
+  },
   search_foods: { valid: { query: "chicken" }, invalid: {} },
   log_meal: {
     valid: { food_id: CHICKEN_ID, portion: 140, meal_slot: "dinner" },
@@ -164,6 +192,54 @@ describe("edge cases", () => {
       expect(m.meal.items[0].protein).toBe(43);
     }
     expect(result.artifact?.type).toBe("meal_logged");
+  });
+
+  it("propose_target_change renders an approval card without mutating targets", async () => {
+    const result = await runTool("propose_target_change", {
+      target_calories: 2400,
+      target_protein: 180,
+      target_carbs: 260,
+      target_fat: 80,
+      reason: "Several training days need more fuel.",
+      evidence: ["Garmin shows higher active calories."],
+    });
+    expect(result.persisted).toBe(false);
+    expect(result.mutations).toBeUndefined();
+    expect(result.artifact?.type).toBe("target_change_proposal");
+  });
+
+  it("find_restaurant_picks uses the expanded Log restaurant database", async () => {
+    const result = await runTool("find_restaurant_picks", {
+      restaurant: "CAVA",
+      preference: "chicken",
+    });
+    expect(result.persisted).toBe(false);
+    expect((result.modelResult as { matchedRestaurant: boolean }).matchedRestaurant).toBe(true);
+    expect(result.artifact?.type).toBe("restaurant_picks");
+    const artifact = result.artifact as unknown as { picks: { name: string; why: string }[] };
+    expect(artifact.picks.length).toBeGreaterThan(0);
+    expect(artifact.picks[0].why).toMatch(/protein/i);
+  });
+
+  it("update_goal_plan can persist accepted macro target changes", async () => {
+    const result = await runTool("update_goal_plan", {
+      target_calories: 2400,
+      target_protein: 180,
+      target_carbs: 260,
+      target_fat: 80,
+      goal_reason: "Accepted target proposal.",
+    });
+    expect(result.persisted).toBe(true);
+    expect(result.mutations?.[0].kind).toBe("set_goal_plan");
+    const mutation = result.mutations?.[0];
+    if (mutation?.kind === "set_goal_plan") {
+      expect(mutation.plan.macroTargets).toEqual({
+        calories: 2400,
+        protein: 180,
+        carbs: 260,
+        fat: 80,
+      });
+    }
   });
 
   it("edit_meal with an unknown meal id returns an error-shaped result", async () => {

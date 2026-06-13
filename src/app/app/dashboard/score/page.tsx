@@ -12,6 +12,7 @@ import {
   type MacroTotals,
 } from "@/lib/fuelwell-data";
 import { getSampleDay, isPreviewHost } from "@/lib/preview-session";
+import { loadServerDailyGoalContext } from "@/lib/server-goal-context";
 
 export default async function ScoreDetailPage() {
   const host = (await headers()).get("host");
@@ -37,7 +38,7 @@ export default async function ScoreDetailPage() {
   const [profileResult, logResult] = await Promise.all([
     supabase
       .from("profiles")
-      .select("calorie_target, protein_target, carbs_target, fat_target")
+      .select("calorie_target, protein_target, carbs_target, fat_target, goal")
       .eq("id", user!.id)
       .single(),
     supabase
@@ -62,7 +63,15 @@ export default async function ScoreDetailPage() {
   };
 
   const mealCount = totals.calories > 0 ? 1 : 0;
-  const contributors = buildScoreContributors(totals, targets, mealCount);
+  const goalContext = await loadServerDailyGoalContext(supabase, {
+    userId: user!.id,
+    date: today,
+    meals: [],
+    totals,
+    targets,
+    profile: { goal: profileResult.data?.goal },
+  });
+  const contributors = buildScoreContributors(totals, goalContext.targets, mealCount);
   const healthScore = calculateHealthScore(contributors);
 
   return <ScoreDetail contributors={contributors} healthScore={healthScore} />;

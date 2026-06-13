@@ -1,9 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
 import { DashboardClient } from "./dashboard-client";
 import type { MealItem, MealRecord, MealType } from "@/lib/fuelwell-data";
-import { DEFAULT_TARGETS, todayIsoDate } from "@/lib/fuelwell-data";
+import { DEFAULT_TARGETS, sumMeals, todayIsoDate } from "@/lib/fuelwell-data";
 import { headers } from "next/headers";
 import { getSampleDay, isPreviewHost } from "@/lib/preview-session";
+import { loadServerDailyGoalContext } from "@/lib/server-goal-context";
 
 type SupabaseMealItem = {
   id: string;
@@ -99,22 +100,33 @@ export default async function DashboardPage() {
   const profile = profileResult.data;
   const log = logResult.data;
   const meals = ((mealsResult.data || []) as SupabaseMeal[]).map(mapMeal);
+  const profileTargets = {
+    calories: profile?.calorie_target ?? DEFAULT_TARGETS.calories,
+    protein: profile?.protein_target ?? DEFAULT_TARGETS.protein,
+    carbs: profile?.carbs_target ?? DEFAULT_TARGETS.carbs,
+    fat: profile?.fat_target ?? DEFAULT_TARGETS.fat,
+  };
+  const fallbackTotals = {
+    calories: Number(log?.calories_consumed ?? 0),
+    protein: Number(log?.protein_consumed ?? 0),
+    carbs: Number(log?.carbs_consumed ?? 0),
+    fat: Number(log?.fat_consumed ?? 0),
+  };
+  const mealTotals = sumMeals(meals);
+  const goalContext = await loadServerDailyGoalContext(supabase, {
+    userId: user!.id,
+    date: today,
+    meals,
+    totals: mealTotals.calories > 0 ? mealTotals : fallbackTotals,
+    targets: profileTargets,
+    profile: { goal: profile?.goal },
+  });
 
   return (
     <DashboardClient
       displayName={profile?.display_name || user?.email?.split("@")[0] || "there"}
-      targets={{
-        calories: profile?.calorie_target ?? DEFAULT_TARGETS.calories,
-        protein: profile?.protein_target ?? DEFAULT_TARGETS.protein,
-        carbs: profile?.carbs_target ?? DEFAULT_TARGETS.carbs,
-        fat: profile?.fat_target ?? DEFAULT_TARGETS.fat,
-      }}
-      fallbackTotals={{
-        calories: Number(log?.calories_consumed ?? 0),
-        protein: Number(log?.protein_consumed ?? 0),
-        carbs: Number(log?.carbs_consumed ?? 0),
-        fat: Number(log?.fat_consumed ?? 0),
-      }}
+      targets={goalContext.targets}
+      fallbackTotals={fallbackTotals}
       meals={meals}
       onboardingComplete={profile?.onboarding_complete ?? false}
       goal={profile?.goal || "lose"}

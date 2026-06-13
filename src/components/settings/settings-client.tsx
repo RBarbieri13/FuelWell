@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils/cn";
 import { usePreferences, DIET_FILTERS } from "@/lib/use-preferences";
 import { useUnits, type UnitSystem } from "./use-units";
 import { CoachActivity } from "./coach-activity";
+import { useGoalContextStore } from "@/lib/use-goal-context";
 import {
   User,
   Mail,
@@ -20,6 +21,7 @@ import {
   Download,
   LogOut,
   Info,
+  Watch,
 } from "lucide-react";
 
 interface SettingsClientProps {
@@ -38,6 +40,11 @@ export function SettingsClient({
   const router = useRouter();
   const { units, setUnits } = useUnits();
   const { diets, allergies } = usePreferences();
+  const {
+    integrationSummary,
+    enablePreviewGarminSummary,
+    disconnectIntegrationSummary,
+  } = useGoalContextStore();
   const [signingOut, setSigningOut] = useState(false);
 
   // Known filters get their display label; free-form diets set via Coach
@@ -156,6 +163,68 @@ export function SettingsClient({
               </div>
             ) : (
               <p className="text-sm text-neutral-400">No allergies recorded.</p>
+            )}
+          </div>
+        </Card>
+      </Section>
+
+      {/* Notifications */}
+      <Section title="Integrations">
+        <Card padding="sm">
+          <div className="flex items-start justify-between gap-3 px-1">
+            <div className="flex items-start gap-3">
+              <Watch className="mt-0.5 h-4 w-4 text-neutral-400" />
+              <div>
+                <p className="text-sm font-medium text-neutral-700">
+                  Garmin Connect
+                </p>
+                <p className="mt-0.5 text-xs leading-5 text-neutral-500">
+                  Top priority for active calories, steps, sleep, recovery,
+                  and planned workouts. Nutrition remains saved in FuelWell.
+                </p>
+              </div>
+            </div>
+            <Badge
+              variant={
+                integrationSummary.status === "connected" ||
+                integrationSummary.status === "preview_sample"
+                  ? "success"
+                  : undefined
+              }
+            >
+              {integrationSummary.status === "preview_sample"
+                ? "Preview sample"
+                : integrationSummary.status === "connected"
+                  ? "Connected"
+                  : "Disconnected"}
+            </Badge>
+          </div>
+          <div className="mt-3 ml-7 rounded-2xl bg-neutral-50 px-4 py-3">
+            <p className="text-xs font-medium leading-5 text-neutral-500">
+              {integrationSummary.note ??
+                "Connect Garmin to bring goal context into meal guidance."}
+            </p>
+            {integrationSummary.activeCalories !== undefined && (
+              <p className="mt-2 text-sm font-black text-neutral-900">
+                {integrationSummary.activeCalories} active calories ·{" "}
+                {integrationSummary.steps?.toLocaleString()} steps ·{" "}
+                {integrationSummary.recoveryLabel}
+              </p>
+            )}
+          </div>
+          <div className="mt-3 ml-7 flex flex-wrap gap-2">
+            <Button variant="secondary" size="sm" disabled>
+              Request Garmin access
+            </Button>
+            {isPreview && integrationSummary.status !== "preview_sample" && (
+              <Button variant="secondary" size="sm" onClick={enablePreviewGarminSummary}>
+                Use preview sample
+              </Button>
+            )}
+            {integrationSummary.status === "preview_sample" && (
+              <Button variant="secondary" size="sm" onClick={disconnectIntegrationSummary}>
+                Clear preview sample
+              </Button>
             )}
           </div>
         </Card>

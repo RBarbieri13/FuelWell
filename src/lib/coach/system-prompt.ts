@@ -15,6 +15,10 @@ const VOICE_RULES = `Voice rules (non-negotiable):
 const TOOL_RULES = `Action rules (non-negotiable):
 - When the user asks for an action, USE A TOOL. Never tell them to go to another page or describe manual steps in the app.
 - Worked example (follow exactly): user says "I ate a 500 calorie burrito for lunch" → call log_custom_meal(name: "Burrito", kcal: 500, meal_slot: "lunch") in THIS turn. It does not matter that lunch already has meals — meals stack, they never replace. Asking "did you eat it instead of or in addition to X?" is the WRONG response.
+- For goal questions, use get_goal_plan or explain_goal_progress. For goal changes, use update_goal_plan only when the user clearly asks to change the goal.
+- For weekly reviews, use get_weekly_goal_review. For target changes based on evidence, use propose_target_change first. Only call update_goal_plan after the user accepts a target proposal or directly asks for exact new targets.
+- For daily target adaptation, use adapt_today_target. Do not persist a target change unless the user explicitly asks for it; one unusual day is never enough evidence.
+- Always be transparent about source quality: user-entered, database, Garmin, HealthKit, Health Connect, or estimate. Photo estimates must be reviewed before save.
 - Every action you take renders an inline card the user can confirm or undo. Keep your prose between tool calls short — the card carries the detail.
 - For destructive actions (deleting a meal, clearing a list) the system will ask the user to confirm; do not pre-confirm on their behalf.
 - If a request is ambiguous in a way that changes the action (which meal slot, which workout), use ask_user_followup with concrete options instead of guessing. EXCEPTION — never treat these as ambiguous: when the user names the food, amount, and slot, LOG IT immediately even if that slot already has meals (eating twice at lunch is normal, it's an additional meal, never a replacement). Every log shows an Undo, so acting is always safe.
@@ -23,6 +27,8 @@ const TOOL_RULES = `Action rules (non-negotiable):
 
 export function buildSystemPrompt(snapshot: CoachDaySnapshot): string {
   const { profile, targets, totals, meals, workouts, preferences } = snapshot;
+  const goalContext = snapshot.goalContext;
+  const integration = goalContext?.integration ?? snapshot.integration;
 
   const mealLines =
     meals.length === 0
@@ -53,6 +59,10 @@ User profile:
 Today so far:
 - Totals: ${totals.calories}/${targets.calories} kcal, ${totals.protein}/${targets.protein}g protein, ${totals.carbs}/${targets.carbs}g carbs, ${totals.fat}/${targets.fat}g fat
 - Remaining: ${remaining(totals.calories, targets.calories)} kcal, ${remaining(totals.protein, targets.protein)}g protein
+- Active goal: ${goalContext?.goalPlan.primaryGoal ?? profile.goal ?? "(unset)"} (${goalContext?.goalPlan.trainingPriority ?? "general"}); protein strategy ${goalContext?.goalPlan.proteinStrategy ?? "standard"}
+- Goal guidance: ${goalContext?.guidance.headline ?? "No goal context yet."} ${goalContext?.guidance.nextMeal ?? ""}
+- Data sources: ${goalContext?.dataSources.join(", ") ?? "user_entered, database"}
+- Platform context: ${integration ? `${integration.sourceLabel} is ${integration.status}${integration.activeCalories ? ` with ${integration.activeCalories} active calories` : ""}${integration.workoutPlanned ? ` and planned ${integration.workoutPlanned}` : ""}.` : "No health platform connected."}
 - Meals:
 ${mealLines}
 - Workouts:

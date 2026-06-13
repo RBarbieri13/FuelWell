@@ -29,6 +29,7 @@ import {
   insertSupabaseAudit,
   insertSupabaseUsage,
   mergeProfilePreferences,
+  persistCoachMutations,
   saveMessages,
 } from "@/lib/coach/persistence";
 
@@ -141,6 +142,7 @@ export async function POST(request: Request) {
       let assistantText = "";
       const turnToolCalls: Array<{ name: string; input: unknown }> = [];
       const turnArtifacts: ArtifactSpec[] = [];
+      const turnMutations: CoachMutation[] = [];
       // set_preferences patches accumulated across the turn; persisted to
       // profiles.preferences_jsonb for signed-in users after the stream.
       const turnPrefPatch: Record<string, unknown> = {};
@@ -176,6 +178,7 @@ export async function POST(request: Request) {
               const input = def.schema.parse(body.confirmedTool.input);
               const result = await def.run(input, toolCtx);
               result.mutations?.forEach(toolCtx.applyMutation);
+              turnMutations.push(...(result.mutations ?? []));
               collectPrefPatch(result.mutations);
               if (result.artifact) {
                 turnArtifacts.push(result.artifact);
@@ -278,6 +281,7 @@ export async function POST(request: Request) {
               const input = def.schema.parse(tu.input);
               const result = await def.run(input, toolCtx);
               result.mutations?.forEach(toolCtx.applyMutation);
+              turnMutations.push(...(result.mutations ?? []));
               collectPrefPatch(result.mutations);
               if (result.artifact) {
                 turnArtifacts.push(result.artifact);
@@ -311,6 +315,7 @@ export async function POST(request: Request) {
           if (Object.keys(turnPrefPatch).length > 0) {
             await mergeProfilePreferences(supabase, userId, turnPrefPatch);
           }
+          await persistCoachMutations(supabase, userId, turnMutations, snapshot.goalContext);
           await insertSupabaseUsage(supabase, {
             userId,
             day,

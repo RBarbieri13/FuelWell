@@ -1,5 +1,6 @@
 import type { CoachDaySnapshot, CoachMutation } from "./types";
 import { sumMeals } from "@/lib/fuelwell-data";
+import { buildDailyGoalContext } from "@/lib/goal-context";
 
 /**
  * Applies a mutation to the in-turn snapshot draft so later tool calls in the
@@ -32,6 +33,22 @@ export function applySnapshotMutation(snapshot: CoachDaySnapshot, m: CoachMutati
     case "set_preferences":
       snapshot.preferences = { ...snapshot.preferences, ...m.patch };
       break;
+    case "set_goal_plan":
+      snapshot.goalPlan = m.plan;
+      break;
+    case "set_integration_summary":
+      snapshot.integration = m.summary;
+      break;
   }
   snapshot.totals = sumMeals(snapshot.meals);
+  snapshot.goalContext = buildDailyGoalContext({
+    date: snapshot.date,
+    meals: snapshot.meals,
+    totals: snapshot.totals,
+    targets: snapshot.targets,
+    profile: snapshot.profile,
+    goalPlan: snapshot.goalPlan,
+    integration: snapshot.integration,
+  });
+  snapshot.targets = snapshot.goalContext.targets;
 }

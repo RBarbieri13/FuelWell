@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { ArtifactSpec } from "./types";
+import type { ArtifactSpec, CoachMutation } from "./types";
+import type { DailyGoalContext, GoalPlan, IntegrationDailySummary } from "@/lib/goal-context";
 
 /**
  * Server-side Supabase persistence for signed-in users. Preview users skip
@@ -166,4 +167,136 @@ export async function insertSupabaseAudit(
     result_summary: row.resultSummary,
   });
   if (error) console.error("coach_audit insert failed", error.message);
+}
+
+function goalPlanRow(userId: string, plan: GoalPlan) {
+  return {
+    id: plan.id.startsWith("goal-default") ? undefined : plan.id,
+    user_id: userId,
+    primary_goal: plan.primaryGoal,
+    goal_reason: plan.goalReason,
+    target_weight_kg: plan.targetWeightKg,
+    weekly_rate_kg: plan.weeklyRateKg,
+    protein_strategy: plan.proteinStrategy,
+    training_priority: plan.trainingPriority,
+    calorie_floor: plan.calorieFloor,
+    calorie_ceiling: plan.calorieCeiling,
+    macro_targets: plan.macroTargets,
+    adaptation_policy: plan.adaptationPolicy,
+    status: plan.status,
+    updated_at: plan.updatedAt,
+  };
+}
+
+export async function persistGoalPlan(
+  supabase: SupabaseClient,
+  userId: string,
+  plan: GoalPlan,
+  reason: string,
+): Promise<void> {
+  const row = goalPlanRow(userId, plan);
+  const { data, error } = await supabase
+    .from("goal_plans")
+    .upsert(row, { onConflict: "id" })
+    .select("id")
+    .single();
+  if (error) {
+    console.error("goal_plans upsert failed", error.message);
+    return;
+  }
+  const { error: eventError } = await supabase.from("goal_events").insert({
+    user_id: userId,
+    goal_plan_id: data?.id ?? null,
+    event_type: "updated",
+    reason,
+    after_jsonb: plan,
+  });
+  if (eventError) console.error("goal_events insert failed", eventError.message);
+}
+
+export async function persistIntegrationSummary(
+  supabase: SupabaseClient,
+  userId: string,
+  summary: IntegrationDailySummary,
+): Promise<void> {
+  const { data: account, error: accountError } = await supabase
+    .from("connected_accounts")
+    .upsert(
+      {
+        user_id: userId,
+        provider: summary.provider,
+        status: summary.status,
+        metadata_jsonb: { sourceLabel: summary.sourceLabel, note: summary.note },
+        last_sync_at: summary.lastSyncAt,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "user_id,provider" },
+    )
+    .select("id")
+    .single();
+  if (accountError) {
+    console.error("connected_accounts upsert failed", accountError.message);
+    return;
+  }
+  const { error } = await supabase.from("integration_daily_summaries").upsert(
+    {
+      user_id: userId,
+      connected_account_id: account?.id ?? null,
+      provider: summary.provider,
+      summary_date: summary.date,
+      steps: summary.steps,
+      active_calories: summary.activeCalories,
+      sleep_hours: summary.sleepHours,
+      stress_level: summary.stressLevel,
+      body_battery: summary.bodyBattery,
+      recovery_label: summary.recoveryLabel,
+      workout_planned: summary.workoutPlanned,
+      confidence_jsonb: { status: summary.status },
+      raw_jsonb: summary,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: "user_id,provider,summary_date" },
+  );
+  if (error) console.error("integration_daily_summaries upsert failed", error.message);
+}
+
+export async function persistDailyGoalContext(
+  supabase: SupabaseClient,
+  userId: string,
+  context: DailyGoalContext,
+): Promise<void> {
+  const { error } = await supabase.from("daily_goal_contexts").upsert(
+    {
+      user_id: userId,
+      goal_plan_id: context.goalPlan.id.startsWith("goal-default") ? null : context.goalPlan.id,
+      context_date: context.date,
+      targets_jsonb: context.targets,
+      totals_jsonb: context.totals,
+      remaining_jsonb: context.remaining,
+      data_sources: context.dataSources,
+      guidance_jsonb: context.guidance,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: "user_id,context_date" },
+  );
+  if (error) console.error("daily_goal_contexts upsert failed", error.message);
+}
+
+export async function persistCoachMutations(
+  supabase: SupabaseClient,
+  userId: string,
+  mutations: CoachMutation[],
+  context?: DailyGoalContext,
+): Promise<void> {
+  for (const mutation of mutations) {
+    if (mutation.kind === "set_goal_plan") {
+      await persistGoalPlan(supabase, userId, mutation.plan, "Coach goal tool update");
+    }
+    if (mutation.kind === "set_integration_summary") {
+      await persistIntegrationSummary(supabase, userId, mutation.summary);
+    }
+  }
+  if (context) {
+    await persistDailyGoalContext(supabase, userId, context);
+  }
 }

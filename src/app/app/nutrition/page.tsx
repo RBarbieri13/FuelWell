@@ -17,6 +17,7 @@ import {
   type MealType,
 } from "@/lib/fuelwell-data";
 import { getSampleDay, isPreviewHost } from "@/lib/preview-session";
+import { loadServerDailyGoalContext } from "@/lib/server-goal-context";
 
 type SupabaseMealItem = {
   id: string;
@@ -78,7 +79,7 @@ export default async function NutritionPage() {
   const [profileResult, mealsResult] = await Promise.all([
     supabase
       .from("profiles")
-      .select("calorie_target, protein_target, carbs_target, fat_target")
+      .select("calorie_target, protein_target, carbs_target, fat_target, goal")
       .eq("id", user!.id)
       .single(),
     supabase
@@ -97,8 +98,16 @@ export default async function NutritionPage() {
     fat: profileResult.data?.fat_target ?? DEFAULT_TARGETS.fat,
   };
   const meals = ((mealsResult.data || []) as SupabaseMeal[]).map(mapMeal);
+  const goalContext = await loadServerDailyGoalContext(supabase, {
+    userId: user!.id,
+    date: today,
+    meals,
+    totals: sumMeals(meals),
+    targets,
+    profile: { goal: profileResult.data?.goal },
+  });
 
-  return <NutritionDetail meals={meals} targets={targets} />;
+  return <NutritionDetail meals={meals} targets={goalContext.targets} />;
 }
 
 function NutritionDetail({

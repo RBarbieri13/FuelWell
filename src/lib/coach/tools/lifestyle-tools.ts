@@ -4,7 +4,10 @@ import { recordAction } from "../last-action";
 import { newEntityId } from "../ids";
 import type { CoachToolDef, GroceryItem } from "../types";
 import { buildCoachVerdict, remaining } from "@/lib/fuelwell-data";
-import { RESTAURANT_DATABASE } from "@/lib/restaurant-database";
+import {
+  matchRestaurantByName,
+  searchRestaurantMenus,
+} from "@/lib/restaurant-menu";
 
 /**
  * Lifestyle tools: restaurant picks, grocery list, preferences, daily recap.
@@ -19,7 +22,7 @@ registerTools([
   tool({
     name: "find_restaurant_picks",
     description:
-      "Find the top 3 menu items across 50 major US chain restaurants (published nutrition data, per-serving) that fit the user's remaining macros for today (fit remaining calories, maximize protein coverage). Optionally filter by restaurant name (e.g. 'Chipotle', 'Olive Garden') and/or a preference like 'high-protein', 'low-carb', or a keyword like 'chicken'. Use when the user is eating out and wants to know what to order.",
+      "Find the top 3 menu items across FuelWell's expanded US chain restaurant database (published nutrition data, per-serving) that fit the user's remaining macros for today. Optionally filter by restaurant name (e.g. 'Chipotle', 'CAVA', 'Olive Garden') and/or a preference like 'high-protein', 'low-carb', or a keyword like 'chicken'. Use when the user is eating out and wants to know what to order.",
     schema: z.object({
       restaurant: z
         .string()
@@ -34,66 +37,41 @@ registerTools([
       const { totals, targets } = ctx.snapshot;
       const remainingKcal = remaining(totals.calories, targets.calories);
       const remainingProtein = remaining(totals.protein, targets.protein);
+      const remainingCarbs = remaining(totals.carbs, targets.carbs);
+      const remainingFat = remaining(totals.fat, targets.fat);
 
-      let restaurants = [...RESTAURANT_DATABASE];
       let matchedRestaurant = true;
+      let restaurantId: string | null = null;
       if (input.restaurant) {
-        const q = input.restaurant.trim().toLowerCase();
-        const matches = restaurants.filter(
-          (r) => r.name.toLowerCase().includes(q) || r.id.includes(q.replace(/[^a-z0-9]+/g, "-"))
-        );
-        if (matches.length > 0) {
-          restaurants = matches;
-        } else {
-          matchedRestaurant = false;
-        }
+        const match = matchRestaurantByName(input.restaurant);
+        restaurantId = match?.id ?? null;
+        matchedRestaurant = Boolean(match);
       }
 
-      let items = restaurants.flatMap((r) =>
-        r.items.map((item) => ({ restaurant: r.name, item }))
-      );
-
-      if (input.preference) {
-        const p = input.preference.trim().toLowerCase();
-        let matches: typeof items;
-        if (p.includes("high-protein") || p.includes("high protein")) {
-          matches = items.filter(({ item }) => item.calories > 0 && (item.protein * 4) / item.calories >= 0.3);
-        } else if (p.includes("low-carb") || p.includes("low carb")) {
-          matches = items.filter(({ item }) => item.carbs <= 20);
-        } else if (p.includes("low-fat") || p.includes("low fat")) {
-          matches = items.filter(({ item }) => item.fat <= 15);
-        } else {
-          matches = items.filter(({ item }) => item.name.toLowerCase().includes(p));
-        }
-        if (matches.length > 0) items = matches;
-      }
-
-      const scored = items.map((entry) => {
-        const { item } = entry;
-        const proteinCoverage =
-          remainingProtein > 0 ? Math.min(item.protein / remainingProtein, 1) : 0.5;
-        const kcalOverage =
-          remainingKcal > 0 ? Math.max(0, item.calories - remainingKcal) / remainingKcal : item.calories / 500;
-        const score = proteinCoverage - kcalOverage * 1.5;
-        return { ...entry, score };
+      const scored = searchRestaurantMenus({
+        query: matchedRestaurant ? undefined : input.restaurant,
+        restaurantId,
+        preference: input.preference,
+        remaining: {
+          calories: remainingKcal,
+          protein: remainingProtein,
+          carbs: remainingCarbs,
+          fat: remainingFat,
+        },
+        limit: 3,
       });
-      scored.sort((a, b) => b.score - a.score);
 
-      const picks = scored.slice(0, 3).map(({ restaurant, item }) => {
-        const fitsKcal = item.calories <= remainingKcal;
-        const why = fitsKcal
-          ? `${item.protein}g protein for ${item.calories} kcal — fits your remaining ${remainingKcal} kcal budget.`
-          : `${item.protein}g protein, but ${item.calories} kcal runs over your remaining ${remainingKcal} kcal — consider a smaller size.`;
+      const picks = scored.map(({ restaurant, item, insight }) => {
         return {
           foodId: item.id,
-          name: input.restaurant ? item.name : `${item.name} (${restaurant})`,
+          name: input.restaurant ? item.name : `${item.name} (${restaurant.name})`,
           macros: {
             calories: item.calories,
             protein: item.protein,
             carbs: item.carbs,
             fat: item.fat,
           },
-          why,
+          why: `${insight.headline}. ${insight.proteinLine}. ${insight.nextMove}`,
           portion: item.serving,
         };
       });
@@ -103,7 +81,12 @@ registerTools([
         modelResult: {
           restaurant: input.restaurant ?? null,
           matchedRestaurant,
-          remaining: { calories: remainingKcal, protein: remainingProtein },
+          remaining: {
+            calories: remainingKcal,
+            protein: remainingProtein,
+            carbs: remainingCarbs,
+            fat: remainingFat,
+          },
           picks: picks.map((p) => ({ foodId: p.foodId, name: p.name, ...p.macros })),
         },
         artifact: {

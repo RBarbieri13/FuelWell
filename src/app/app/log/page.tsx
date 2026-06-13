@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import {
   Barcode,
   Camera,
+  MapPinned,
   Search,
   Sparkles,
   UtensilsCrossed,
@@ -13,15 +14,27 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils/cn";
 import { formatMealType, type MacroTotals, type MealType } from "@/lib/fuelwell-data";
+import {
+  buildDailyGoalContext,
+  buildMealGoalImpact,
+  type DataSource,
+  type MealConfidence,
+  type MealGoalImpact,
+} from "@/lib/goal-context";
 import { useDayLog } from "@/lib/use-day-log";
+import { useGoalContextStore } from "@/lib/use-goal-context";
 import type { FoodItem } from "@/lib/food-database";
 import { FoodSearch } from "@/components/log/food-search";
 import { PortionPicker } from "@/components/log/portion-picker";
 import { CustomMealForm, type CustomMealDraft } from "@/components/log/custom-meal-form";
 import { LoggedMeals } from "@/components/log/logged-meals";
 import { TotalsSummary } from "@/components/log/totals-summary";
+import { GoalImpactCard } from "@/components/log/goal-impact-card";
+import { BarcodeLookup } from "@/components/log/barcode-lookup";
+import { PhotoEstimateReview } from "@/components/log/photo-estimate-review";
+import { RestaurantFinder } from "@/components/log/restaurant-finder";
 
-type LogMode = "search" | "photo" | "scan";
+type LogMode = "search" | "restaurant" | "photo" | "scan";
 
 const MEAL_TYPES: MealType[] = ["breakfast", "lunch", "dinner", "snack"];
 
@@ -31,21 +44,53 @@ function LogContent() {
   const initialMode = (searchParams.get("mode") as LogMode) || "search";
   const { meals, totals, targets, addMeal, updateMealItem, removeMeal } =
     useDayLog();
+  const { goalPlan, integrationSummary } = useGoalContextStore();
 
   const [mode, setMode] = useState<LogMode>(initialMode);
   const [mealType, setMealType] = useState<MealType>("breakfast");
   const [selectedFood, setSelectedFood] = useState<FoodItem | null>(null);
   const [confirmation, setConfirmation] = useState("");
+  const [goalImpact, setGoalImpact] = useState<MealGoalImpact | null>(null);
 
   const mealTypeLabel = formatMealType(mealType);
+  const goalContext = buildDailyGoalContext({
+    date: new Date().toISOString().slice(0, 10),
+    meals,
+    totals,
+    targets,
+    goalPlan,
+    integration: integrationSummary,
+  });
 
-  function logItem(name: string, servings: number, totalsToAdd: MacroTotals) {
+  function logItem(
+    name: string,
+    servings: number,
+    totalsToAdd: MacroTotals,
+    source: { confidence: MealConfidence; dataSource: DataSource } = {
+      confidence: "manual",
+      dataSource: "user_entered",
+    }
+  ) {
     addMeal({
       mealType,
       name,
       items: [{ name, servings, ...totalsToAdd }],
     });
     setConfirmation(`${name} added to ${mealTypeLabel.toLowerCase()}.`);
+    setGoalImpact(
+      buildMealGoalImpact({
+        totalsAfter: {
+          calories: totals.calories + totalsToAdd.calories,
+          protein: totals.protein + totalsToAdd.protein,
+          carbs: totals.carbs + totalsToAdd.carbs,
+          fat: totals.fat + totalsToAdd.fat,
+        },
+        targets: goalContext.targets,
+        confidence: source.confidence,
+        source: source.dataSource,
+        integration: integrationSummary,
+      })
+    );
   }
 
   function handleAddPortion(input: {
@@ -54,7 +99,10 @@ function LogContent() {
     totals: MacroTotals;
   }) {
     if (!selectedFood) return;
-    logItem(`${selectedFood.name} (${input.label})`, input.amount, input.totals);
+    logItem(`${selectedFood.name} (${input.label})`, input.amount, input.totals, {
+      confidence: "database",
+      dataSource: "database",
+    });
     setSelectedFood(null);
   }
 
@@ -62,8 +110,32 @@ function LogContent() {
     logItem(`${draft.name} (${draft.portionLabel})`, 1, draft.totals);
   }
 
+  function logRecentMeal(mealName: string, mealTotals: MacroTotals) {
+    logItem(mealName, 1, mealTotals);
+  }
+
+  function logPhotoDraft(name: string, mealTotals: MacroTotals, portionLabel: string) {
+    logItem(`${name} (${portionLabel})`, 1, mealTotals, {
+      confidence: "estimate",
+      dataSource: "estimate",
+    });
+  }
+
+  function logRestaurantItem(input: {
+    restaurantName: string;
+    itemName: string;
+    serving: string;
+    totals: MacroTotals;
+  }) {
+    logItem(`${input.restaurantName} · ${input.itemName} (${input.serving})`, 1, input.totals, {
+      confidence: "database",
+      dataSource: "database",
+    });
+  }
+
   const modes: { key: LogMode; label: string; icon: typeof Search }[] = [
     { key: "search", label: "Search", icon: Search },
+    { key: "restaurant", label: "Restaurants", icon: MapPinned },
     { key: "photo", label: "Photo", icon: Camera },
     { key: "scan", label: "Scan", icon: Barcode },
   ];
@@ -126,24 +198,27 @@ function LogContent() {
           )}
 
           {mode === "photo" && (
-            <ModeUnavailable
-              icon={<Camera className="h-8 w-8" />}
-              title="Photo logging is queued for live AI."
-              body="For this build, use Search to log the meal truthfully. The photo flow will estimate items only after an AI kill-switch and review step exist."
-              action="Search foods instead"
-              onAction={() => setMode("search")}
+            <PhotoEstimateReview onLogCandidate={logPhotoDraft} />
+          )}
+
+          {mode === "restaurant" && (
+            <RestaurantFinder
+              totals={totals}
+              targets={goalContext.targets}
+              onLogItem={logRestaurantItem}
             />
           )}
 
           {mode === "scan" && (
-            <ModeUnavailable
-              icon={<Barcode className="h-8 w-8" />}
-              title="Barcode scanning needs device camera access."
-              body="The app will not show a fake scanner. Search the food manually and add the serving so the macros stay consistent."
-              action="Search foods instead"
-              onAction={() => setMode("search")}
+            <BarcodeLookup
+              onSelect={(food) => {
+                setSelectedFood(food);
+                setConfirmation("Barcode match selected. Review the portion before saving.");
+              }}
             />
           )}
+
+          <RecentMeals meals={meals} onLog={logRecentMeal} />
 
           <CustomMealForm
             mealTypeLabel={mealTypeLabel}
@@ -203,12 +278,61 @@ function LogContent() {
                 {confirmation}
               </div>
             )}
+
+            {goalImpact && <GoalImpactCard impact={goalImpact} />}
           </Card>
 
-          <TotalsSummary totals={totals} targets={targets} />
+          <TotalsSummary totals={totals} targets={goalContext.targets} />
         </div>
       </div>
     </div>
+  );
+}
+
+function RecentMeals({
+  meals,
+  onLog,
+}: {
+  meals: ReturnType<typeof useDayLog>["meals"];
+  onLog: (name: string, totals: MacroTotals) => void;
+}) {
+  const recent = meals.slice(-3).reverse();
+  if (recent.length === 0) return null;
+  return (
+    <Card className="space-y-3">
+      <div>
+        <h2 className="text-lg font-black text-neutral-900">Recent meals</h2>
+        <p className="mt-1 text-sm font-medium text-neutral-500">
+          One tap repeats a meal and updates today&apos;s goal math.
+        </p>
+      </div>
+      <div className="grid gap-2 md:grid-cols-3">
+        {recent.map((meal) => {
+          const mealTotals = meal.items.reduce(
+            (sum, item) => ({
+              calories: sum.calories + item.calories,
+              protein: sum.protein + item.protein,
+              carbs: sum.carbs + item.carbs,
+              fat: sum.fat + item.fat,
+            }),
+            { calories: 0, protein: 0, carbs: 0, fat: 0 }
+          );
+          return (
+            <button
+              key={meal.id}
+              type="button"
+              onClick={() => onLog(meal.name, mealTotals)}
+              className="min-h-12 rounded-2xl border border-neutral-200 bg-white px-3 py-2 text-left transition hover:border-primary-300 hover:bg-primary-50/60"
+            >
+              <p className="truncate text-sm font-black text-neutral-900">{meal.name}</p>
+              <p className="mt-0.5 text-xs font-medium text-neutral-500">
+                {mealTotals.calories} kcal · {mealTotals.protein}g protein
+              </p>
+            </button>
+          );
+        })}
+      </div>
+    </Card>
   );
 }
 
@@ -239,37 +363,6 @@ function MealTypeSelector({
           </button>
         ))}
       </div>
-    </Card>
-  );
-}
-
-function ModeUnavailable({
-  icon,
-  title,
-  body,
-  action,
-  onAction,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  body: string;
-  action: string;
-  onAction: () => void;
-}) {
-  return (
-    <Card className="py-12 text-center">
-      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-accent-50 text-accent-700">
-        {icon}
-      </div>
-      <h2 className="mx-auto mt-5 max-w-md text-2xl font-black text-neutral-900">
-        {title}
-      </h2>
-      <p className="mx-auto mt-2 max-w-md text-sm font-medium leading-6 text-neutral-500">
-        {body}
-      </p>
-      <Button onClick={onAction} className="mt-6">
-        {action}
-      </Button>
     </Card>
   );
 }

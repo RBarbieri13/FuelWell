@@ -1,6 +1,7 @@
 "use client";
 
 import { Check, Undo2 } from "lucide-react";
+import type { MealGoalImpact } from "@/lib/goal-context";
 import type { ArtifactCardProps } from "./contract";
 
 type MealLoggedArtifact = {
@@ -13,6 +14,7 @@ type MealLoggedArtifact = {
     macros: { calories: number; protein: number; carbs: number; fat: number };
   };
   remaining: { calories: number; protein: number };
+  goalImpact?: MealGoalImpact;
   undoable?: boolean;
   updated?: boolean;
 };
@@ -63,6 +65,20 @@ export function MealLoggedCard({
         Left today: {Math.round(remaining?.calories ?? 0)} kcal,{" "}
         {grams(remaining?.protein ?? 0)} protein
       </p>
+
+      {artifact.goalImpact && (
+        <div className="mt-3 rounded-2xl bg-primary-50 px-3 py-2">
+          <p className="text-xs font-black uppercase tracking-wide text-primary-700">
+            Goal impact · {artifact.goalImpact.confidence}
+          </p>
+          <p className="mt-1 text-sm font-bold leading-5 text-neutral-800">
+            {artifact.goalImpact.headline}
+          </p>
+          <p className="mt-1 text-xs font-medium leading-5 text-neutral-500">
+            {artifact.goalImpact.nextAction} {artifact.goalImpact.sourceNote}
+          </p>
+        </div>
+      )}
 
       {artifact.undoable && (
         <button
