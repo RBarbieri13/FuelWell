@@ -21,10 +21,19 @@ struct DashboardView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: self.theme.spacing.lg) {
+                VerdictCard(snapshot: self.snapshot) {
+                    FuelWellHaptics.commit()
+                    self.store.send(.tabSelected(.meals))
+                }
+
                 NavigationLink {
                     DashboardDetailView(topic: .healthScore, snapshot: self.snapshot)
                 } label: {
-                    HealthScoreHero(score: self.healthScore)
+                    FuelWellScoreChip(
+                        value: self.healthScore.value,
+                        trend: self.scoreTrend,
+                        trendDetail: self.healthScore.headline.lowercased()
+                    )
                 }
                 .buttonStyle(.plain)
                 .accessibilityIdentifier("dashboard.detail.health-score")
@@ -39,9 +48,8 @@ struct DashboardView: View {
                 .accessibilityIdentifier("dashboard.detail.inflows-outflows")
                 .qualityID(QualityIdentifier.dashboardInflowsOutflows)
 
-                VerdictCard(snapshot: self.snapshot) {
-                    self.store.send(.tabSelected(.meals))
-                }
+                DashboardShortcutSection(store: self.store)
+
                 NavigationLink {
                     ProactiveNudgeDetailView()
                 } label: {
@@ -49,10 +57,9 @@ struct DashboardView: View {
                 }
                 .buttonStyle(.plain)
                 .accessibilityIdentifier("dashboard.nudge.detail")
-
-                DashboardShortcutSection(store: self.store)
             }
             .padding(self.theme.spacing.md)
+            .padding(.bottom, self.theme.spacing.fourXL)
         }
         .background(self.theme.color.bg.base.color)
         .navigationTitle("Dashboard")
@@ -77,58 +84,24 @@ struct DashboardView: View {
         }
         .sheet(isPresented: self.$isMenuPresented) {
             MenuSheetView(store: self.store)
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
         }
         .sheet(isPresented: self.$isHelpPresented) {
             HelpView()
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
         }
     }
-}
 
-private struct HealthScoreHero: View {
-    let score: HealthScore
-    @Environment(\.theme) private var theme
-
-    var body: some View {
-        HStack(alignment: .center, spacing: self.theme.spacing.lg) {
-            ZStack {
-                Circle()
-                    .stroke(self.theme.color.bg.borderSoft.color, lineWidth: 12)
-                Circle()
-                    .trim(from: 0, to: Double(self.score.value) / 100)
-                    .stroke(self.theme.color.primary.accent.color, style: StrokeStyle(lineWidth: 12, lineCap: .round))
-                    .rotationEffect(.degrees(-90))
-                Text("\(self.score.value)")
-                    .font(.custom(self.theme.font.numeric, size: self.theme.text.display.size))
-                    .fontWeight(.bold)
-            }
-            .frame(width: 96, height: 96)
-
-            VStack(alignment: .leading, spacing: self.theme.spacing.xs) {
-                Text("Health Score")
-                    .font(.custom(self.theme.font.display, size: self.theme.text.titleLG.size))
-                    .fontWeight(.bold)
-                Text(self.score.headline)
-                    .font(.custom(self.theme.font.body, size: self.theme.text.bodyLG.size))
-                    .fontWeight(.semibold)
-                    .foregroundStyle(self.theme.color.text.body.color)
-                Text(self.score.detail)
-                    .font(.custom(self.theme.font.body, size: self.theme.text.bodySM.size))
-                    .fontWeight(.medium)
-                    .foregroundStyle(self.theme.color.text.secondary.color)
-            }
-
-            Spacer(minLength: 0)
-
-            Image(systemName: "chevron.right")
-                .font(.system(size: 16, weight: .bold))
-                .foregroundStyle(self.theme.color.text.muted.color)
-                .accessibilityHidden(true)
+    private var scoreTrend: FuelWellScoreChip.Trend {
+        if self.healthScore.value >= 80 {
+            return .improving
         }
-        .phaseCard()
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("Health Score")
-        .accessibilityValue("\(self.score.value). \(self.score.headline). \(self.score.detail)")
-        .qualityID(QualityIdentifier.dashboardHealthScore)
+        if self.healthScore.value >= 68 {
+            return .steady
+        }
+        return .declining
     }
 }
 
@@ -147,7 +120,7 @@ private struct InflowsOutflowsCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: self.theme.spacing.md) {
             HStack {
-                Text("Inflows / Outflows")
+                Text("Energy balance")
                     .font(.custom(self.theme.font.display, size: self.theme.text.title.size))
                     .fontWeight(.bold)
                 Spacer()
@@ -164,13 +137,31 @@ private struct InflowsOutflowsCard: View {
                     .accessibilityHidden(true)
             }
 
-            HStack(spacing: self.theme.spacing.lg) {
-                MiniRing(value: 0.47, title: "In", detail: "\(self.snapshot.intake.calories) cal")
-                MiniRing(value: 0.58, title: "Out", detail: "\(self.snapshot.energyOut.totalKilocalories) cal")
+            Text("Food in and movement out are close enough to keep the next meal flexible.")
+                .font(.custom(self.theme.font.body, size: self.theme.text.body.size))
+                .fontWeight(.semibold)
+                .foregroundStyle(self.theme.color.text.body.color)
+
+            HStack(alignment: .center, spacing: self.theme.spacing.md) {
+                MiniRing(
+                    value: 0.47,
+                    title: "Food in",
+                    detail: "\(self.snapshot.intake.calories) cal",
+                    icon: "fork.knife",
+                    caption: "Logged"
+                )
+                MiniRing(
+                    value: 0.58,
+                    title: "Move out",
+                    detail: "\(self.snapshot.energyOut.totalKilocalories) cal",
+                    icon: "flame.fill",
+                    caption: "Apple Health"
+                )
                 VStack(alignment: .leading, spacing: self.theme.spacing.xs) {
                     Text(self.netLabel)
-                        .font(.custom(self.theme.font.numeric, size: self.theme.text.display.size))
+                        .font(.custom(self.theme.font.numeric, size: self.theme.text.titleLG.size))
                         .fontWeight(.bold)
+                        .foregroundStyle(self.theme.color.text.primary.color)
                     Text("net calories so far")
                         .font(.custom(self.theme.font.body, size: self.theme.text.body.size))
                         .fontWeight(.semibold)
@@ -270,6 +261,8 @@ private struct MiniRing: View {
     let value: Double
     let title: String
     let detail: String
+    let icon: String
+    let caption: String
     @Environment(\.theme) private var theme
 
     var body: some View {
@@ -280,14 +273,28 @@ private struct MiniRing: View {
                     .trim(from: 0, to: self.value)
                     .stroke(self.theme.color.primary.accent.color, style: StrokeStyle(lineWidth: 8, lineCap: .round))
                     .rotationEffect(.degrees(-90))
-                Text(self.title)
-                    .font(.custom(self.theme.font.body, size: self.theme.text.bodySM.size))
-                    .fontWeight(.bold)
+                Image(systemName: self.icon)
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundStyle(self.theme.color.primary.accent.color)
+                    .accessibilityHidden(true)
             }
-            .frame(width: 76, height: 76)
+            .frame(width: 64, height: 64)
+            Text(self.title)
+                .font(.custom(self.theme.font.body, size: self.theme.text.bodySM.size))
+                .fontWeight(.bold)
+                .foregroundStyle(self.theme.color.text.primary.color)
             Text(self.detail)
                 .font(.custom(self.theme.font.body, size: self.theme.text.bodySM.size))
                 .fontWeight(.semibold)
+                .foregroundStyle(self.theme.color.text.body.color)
+            Text(self.caption)
+                .font(.custom(self.theme.font.body, size: self.theme.text.caption.size))
+                .fontWeight(.semibold)
+                .foregroundStyle(self.theme.color.text.secondary.color)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(self.title), \(self.detail), \(self.caption)")
     }
 }

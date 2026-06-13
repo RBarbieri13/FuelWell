@@ -178,6 +178,8 @@ private struct MacroProgressTile: View {
     let color: Color
 
     @Environment(\.theme) private var theme
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var animatedProgress = 0.0
 
     var body: some View {
         VStack(alignment: .leading, spacing: self.theme.spacing.sm) {
@@ -191,8 +193,18 @@ private struct MacroProgressTile: View {
                 .fontWeight(.bold)
                 .foregroundStyle(self.theme.color.text.primary.color)
 
-            ProgressView(value: self.progress)
-                .tint(self.color)
+            ZStack(alignment: .leading) {
+                Capsule()
+                    .fill(self.theme.color.bg.borderSoft.color)
+                    .frame(height: 10)
+                Capsule()
+                    .fill(self.color)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .scaleEffect(x: self.animatedProgress, y: 1, anchor: .leading)
+                    .frame(height: 10)
+            }
+            .animation(self.progressAnimation, value: self.animatedProgress)
+            .accessibilityHidden(true)
 
             Text("\(self.remaining)\(self.unit) left")
                 .font(.custom(self.theme.font.body, size: self.theme.text.bodySM.size))
@@ -207,6 +219,20 @@ private struct MacroProgressTile: View {
             RoundedRectangle(cornerRadius: self.theme.radius.md)
                 .stroke(self.theme.color.bg.borderSoft.color, lineWidth: 1)
         )
+        .onAppear {
+            self.animatedProgress = self.reduceMotion ? self.progress : 0
+            guard !self.reduceMotion else { return }
+            self.animatedProgress = self.progress
+        }
+        .onChange(of: self.progress) { _, progress in
+            self.animatedProgress = progress
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(self.title)
+        .accessibilityValue(
+            "\(self.consumed)\(self.unit) of \(self.target)\(self.unit). " +
+                "\(self.remaining)\(self.unit) left."
+        )
     }
 
     private var progress: Double {
@@ -216,6 +242,11 @@ private struct MacroProgressTile: View {
 
     private var remaining: Int {
         max(0, self.target - self.consumed)
+    }
+
+    private var progressAnimation: Animation? {
+        guard !self.reduceMotion else { return nil }
+        return .easeOut(duration: self.theme.motion.card)
     }
 }
 

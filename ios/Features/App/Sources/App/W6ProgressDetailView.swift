@@ -20,7 +20,10 @@ struct ProgressDetailView: View {
             case .habits:
                 HabitChecklistSection(
                     habits: self.store.habits,
-                    onToggle: { self.store.send(.habitToggled($0)) }
+                    onToggle: {
+                        FuelWellHaptics.confirm()
+                        self.store.send(.habitToggled($0))
+                    }
                 )
             case .macroAdherence:
                 MacroAdherenceTrendSection()
@@ -140,14 +143,23 @@ private struct HabitChecklistSection: View {
 
 private struct MacroAdherenceTrendSection: View {
     @Environment(\.theme) private var theme
-    private let bars: [MacroTrendBar] = [
-        .init(day: "M", value: 0.74),
-        .init(day: "T", value: 0.81),
-        .init(day: "W", value: 0.69),
-        .init(day: "T", value: 0.86),
-        .init(day: "F", value: 0.82),
-        .init(day: "S", value: 0.88),
-        .init(day: "S", value: 0.82)
+    private let days: [FuelWellStackedBarChart.Day] = [
+        .init(label: "M", protein: 610, carbs: 820, fat: 420),
+        .init(label: "T", protein: 680, carbs: 760, fat: 390),
+        .init(label: "W", protein: 560, carbs: 910, fat: 470),
+        .init(label: "T", protein: 720, carbs: 790, fat: 410),
+        .init(label: "F", protein: 700, carbs: 830, fat: 430),
+        .init(label: "S", protein: 650, carbs: 780, fat: 405),
+        .init(label: "S", protein: 690, carbs: 800, fat: 420)
+    ]
+    private let weights = [
+        188.2,
+        187.8,
+        187.6,
+        187.1,
+        186.9,
+        186.8,
+        186.6
     ]
 
     var body: some View {
@@ -156,45 +168,17 @@ private struct MacroAdherenceTrendSection: View {
                 .font(.custom(self.theme.font.display, size: self.theme.text.title.size))
                 .fontWeight(.bold)
 
-            HStack(alignment: .bottom, spacing: self.theme.spacing.xs) {
-                ForEach(self.bars) { bar in
-                    MacroAdherenceBar(bar: bar)
-                }
-            }
-            .padding(self.theme.spacing.md)
-            .background(self.theme.color.bg.surface.color)
-            .clipShape(RoundedRectangle(cornerRadius: self.theme.radius.md))
-            .accessibilityElement(children: .ignore)
-            .accessibilityLabel("Seven day macro adherence trend")
-            .accessibilityValue("Adherence is holding around 82 percent this week.")
+            FuelWellStackedBarChart(title: "Calories by macro", days: self.days)
+
+            FuelWellMetricTile(
+                title: "Weight trend",
+                value: "186.6",
+                detail: "down 1.6 lb across recent check-ins",
+                icon: "scalemass.fill",
+                tone: .info,
+                sparklineValues: self.weights,
+                sparklineSummary: "Weight is trending down 1.6 pounds across recent check-ins."
+            )
         }
-    }
-}
-
-private struct MacroTrendBar: Equatable, Identifiable {
-    let day: String
-    let value: Double
-    var id: String { self.day + String(self.value) }
-}
-
-private struct MacroAdherenceBar: View {
-    let bar: MacroTrendBar
-    @Environment(\.theme) private var theme
-
-    var body: some View {
-        VStack(spacing: self.theme.spacing.xs) {
-            RoundedRectangle(cornerRadius: self.theme.radius.sm)
-                .fill(self.theme.color.primary.accent.color)
-                .frame(height: self.height)
-            Text(self.bar.day)
-                .font(.custom(self.theme.font.body, size: self.theme.text.bodySM.size))
-                .fontWeight(.bold)
-                .foregroundStyle(self.theme.color.text.secondary.color)
-        }
-        .frame(maxWidth: .infinity)
-    }
-
-    private var height: CGFloat {
-        24 + CGFloat(72 * self.bar.value)
     }
 }

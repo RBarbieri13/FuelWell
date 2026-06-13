@@ -14,6 +14,7 @@ struct AddMealSheet: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: self.theme.spacing.lg) {
+                    FuelWellSheetGrabber()
                     self.header
                     self.modePicker
                     RecentMealsStrip(store: self.store)
@@ -118,6 +119,7 @@ struct AddMealSheet: View {
 
     private var saveButton: some View {
         Button {
+            FuelWellHaptics.commit()
             self.store.send(.saveAddMealTapped)
         } label: {
             Text("Save meal")
