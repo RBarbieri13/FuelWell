@@ -43,6 +43,10 @@ struct AddMealSheet: View {
                 .padding(self.theme.spacing.md)
             }
             .background(self.theme.color.bg.base.color)
+            .overlay(alignment: .top) {
+                FuelWellSheetGrabber()
+                    .allowsHitTesting(false)
+            }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button("Cancel") {
@@ -118,6 +122,7 @@ struct AddMealSheet: View {
 
     private var saveButton: some View {
         Button {
+            FuelWellHaptics.commit()
             self.store.send(.saveAddMealTapped)
         } label: {
             Text("Save meal")

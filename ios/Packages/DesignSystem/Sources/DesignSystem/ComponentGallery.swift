@@ -162,26 +162,49 @@ public struct FuelWellMetricTile: View {
     public let detail: String
     public let icon: String
     public let tone: Tone
+    public let sparklineValues: [Double]?
+    public let sparklineSummary: String?
 
     @Environment(\.theme) private var theme
 
-    public init(title: String, value: String, detail: String, icon: String, tone: Tone) {
+    public init(
+        title: String,
+        value: String,
+        detail: String,
+        icon: String,
+        tone: Tone,
+        sparklineValues: [Double]? = nil,
+        sparklineSummary: String? = nil
+    ) {
         self.title = title
         self.value = value
         self.detail = detail
         self.icon = icon
         self.tone = tone
+        self.sparklineValues = sparklineValues
+        self.sparklineSummary = sparklineSummary
     }
 
     public var body: some View {
         VStack(alignment: .leading, spacing: self.theme.spacing.sm) {
-            Image(systemName: self.icon)
-                .font(.system(size: 20, weight: .semibold))
-                .foregroundStyle(self.toneColor)
-                .frame(width: 42, height: 42)
-                .background(self.toneColor.opacity(0.12))
-                .clipShape(RoundedRectangle(cornerRadius: self.theme.radius.sm))
-                .accessibilityHidden(true)
+            HStack(alignment: .top, spacing: self.theme.spacing.sm) {
+                Image(systemName: self.icon)
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundStyle(self.toneColor)
+                    .frame(width: 42, height: 42)
+                    .background(self.toneColor.opacity(0.12))
+                    .clipShape(RoundedRectangle(cornerRadius: self.theme.radius.sm))
+                    .accessibilityHidden(true)
+
+                if let sparklineValues = self.sparklineValues {
+                    FuelWellSparkline(
+                        values: sparklineValues,
+                        label: "\(self.title) trend",
+                        summary: self.sparklineSummary ?? self.detail
+                    )
+                    .frame(height: 34)
+                }
+            }
             Text(self.value)
                 .font(.custom(self.theme.font.numeric, size: self.theme.text.titleLG.size))
                 .fontWeight(.bold)
