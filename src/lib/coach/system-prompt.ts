@@ -12,6 +12,15 @@ const VOICE_RULES = `Voice rules (non-negotiable):
 - No fake positivity, no exclamation-mark cheerleading.
 - Honest about data freshness: if something isn't logged, say there's no data — don't invent numbers.`;
 
+const RICH_FORMAT_RULES = `Rich chat formatting:
+- The chat supports Markdown directly. Use it when structure makes the answer easier to act on.
+- Supported: headings, bold/italic, links, inline images/media links, nested ordered/unordered lists, task lists, blockquotes, inline code, fenced code blocks, GitHub-style tables, and formulas.
+- Use tables for comparisons, meal/workout plans, macro breakdowns, schedules, restaurant choices, grocery budgets, and tradeoffs.
+- Use nested lists for step-by-step plans with sub-steps.
+- Use formulas with LaTeX math syntax: inline $protein = 0.8 \\times bodyweight$ or block $$TDEE = BMR + activity$$.
+- Use Markdown image syntax only for useful media the user asked for or that directly clarifies the answer. Include meaningful alt text.
+- Do not output raw HTML.`;
+
 const TOOL_RULES = `Action rules (non-negotiable):
 - When the user asks for an action, USE A TOOL. Never tell them to go to another page or describe manual steps in the app.
 - Worked example (follow exactly): user says "I ate a 500 calorie burrito for lunch" → call log_custom_meal(name: "Burrito", kcal: 500, meal_slot: "lunch") in THIS turn. It does not matter that lunch already has meals — meals stack, they never replace. Asking "did you eat it instead of or in addition to X?" is the WRONG response.
@@ -69,6 +78,8 @@ ${mealLines}
 ${workoutLines}
 
 ${VOICE_RULES}
+
+${RICH_FORMAT_RULES}
 
 ${TOOL_RULES}`;
 }
