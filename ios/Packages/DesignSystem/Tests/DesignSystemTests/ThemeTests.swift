@@ -3,8 +3,10 @@ import DesignSystem
 import Testing
 
 @Test func generatedThemeContainsCanonicalBrandMark() {
-    #expect(Theme.app.color.primary.green.hex == "#47E7B0")
-    #expect(Theme.app.color.primary.accent.hex == "#00D278")
+    #expect(Theme.app.color.primary.green.hex == "#1EAE84")
+    #expect(Theme.app.color.primary.orange.hex == "#F0795B")
+    #expect(Theme.app.color.primary.accent.hex == "#15916C")
+    #expect(Theme.app.color.semantic.info.hex == "#3E92C9")
 }
 
 @Test func generatedThemeContainsFoundationTokens() {

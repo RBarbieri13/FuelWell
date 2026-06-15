@@ -89,7 +89,7 @@ private struct HealthScoreHero: View {
     @Environment(\.theme) private var theme
 
     var body: some View {
-        HStack(alignment: .center, spacing: self.theme.spacing.lg) {
+        HStack(alignment: .center, spacing: self.theme.spacing.md) {
             ZStack {
                 Circle()
                     .stroke(self.theme.color.bg.borderSoft.color, lineWidth: 12)
@@ -101,12 +101,14 @@ private struct HealthScoreHero: View {
                     .font(.custom(self.theme.font.numeric, size: self.theme.text.display.size))
                     .fontWeight(.bold)
             }
-            .frame(width: 96, height: 96)
+            .frame(width: 88, height: 88)
 
             VStack(alignment: .leading, spacing: self.theme.spacing.xs) {
                 Text("Health Score")
-                    .font(.custom(self.theme.font.display, size: self.theme.text.titleLG.size))
+                    .font(.custom(self.theme.font.display, size: self.theme.text.title.size))
                     .fontWeight(.bold)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.82)
                 Text(self.score.headline)
                     .font(.custom(self.theme.font.body, size: self.theme.text.bodyLG.size))
                     .fontWeight(.semibold)

@@ -146,6 +146,7 @@ private struct PhaseCardModifier: ViewModifier {
             .padding(self.padding ?? self.theme.spacing.lg)
             .background(self.theme.color.bg.surface.color)
             .clipShape(RoundedRectangle(cornerRadius: self.theme.radius.md))
+            .shadow(color: self.theme.color.primary.accent.color.opacity(0.08), radius: 14, x: 0, y: 6)
             .overlay(
                 RoundedRectangle(cornerRadius: self.theme.radius.md)
                     .stroke(self.theme.color.bg.borderSoft.color, lineWidth: 1)
