@@ -42,7 +42,7 @@ export function CalorieRing({ consumed, target }: CalorieRingProps) {
     requestAnimationFrame(tick);
   }, [remaining]);
 
-  const ringColor = isOver ? "#ef4444" : "#16a34a";
+  const ringColor = isOver ? "#f0795b" : "#1eae84";
 
   return (
     <div className="relative flex items-center justify-center" role="img" aria-label={`${consumed} of ${target} calories consumed, ${remaining} remaining`}>
@@ -52,7 +52,7 @@ export function CalorieRing({ consumed, target }: CalorieRingProps) {
           cy="100"
           r={radius}
           fill="none"
-          stroke="#f5f5f5"
+          stroke="#d6f0e8"
           strokeWidth="14"
         />
         <circle
@@ -69,14 +69,14 @@ export function CalorieRing({ consumed, target }: CalorieRingProps) {
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-3xl font-bold text-neutral-900 tabular-nums">
+        <span className="text-3xl font-black text-neutral-900 tabular-nums">
           {displayRemaining}
         </span>
-        <span className="text-xs font-medium text-neutral-400 uppercase tracking-wider mt-0.5">
+        <span className="text-xs font-bold text-neutral-500 uppercase mt-0.5">
           {isOver ? "over" : "remaining"}
         </span>
-        <div className="mt-2 px-3 py-1 bg-neutral-100 rounded-full">
-          <span className="text-xs font-medium text-neutral-500 tabular-nums">
+        <div className="mt-2 px-3 py-1 bg-primary-50 rounded-full">
+          <span className="text-xs font-bold text-primary-700 tabular-nums">
             {consumed} / {target} kcal
           </span>
         </div>

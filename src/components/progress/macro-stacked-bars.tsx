@@ -27,9 +27,9 @@ export const MACRO_META: Record<
   MacroKey,
   { label: string; barClass: string; swatchClass: string }
 > = {
-  protein: { label: "Protein", barClass: "bg-blue-500", swatchClass: "bg-blue-500" },
-  carbs: { label: "Carbs", barClass: "bg-amber-500", swatchClass: "bg-amber-500" },
-  fat: { label: "Fat", barClass: "bg-rose-500", swatchClass: "bg-rose-500" },
+  protein: { label: "Protein", barClass: "bg-macro-protein", swatchClass: "bg-macro-protein" },
+  carbs: { label: "Carbs", barClass: "bg-macro-carbs", swatchClass: "bg-macro-carbs" },
+  fat: { label: "Fat", barClass: "bg-macro-fat", swatchClass: "bg-macro-fat" },
 };
 
 /** Stack order from bottom to top. */

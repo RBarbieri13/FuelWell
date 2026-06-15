@@ -159,7 +159,7 @@ export default async function WorkoutDetailPage({ params }: { params: Promise<{ 
         <div className="space-y-4">
           <Card className="space-y-3">
             <div className="flex gap-3">
-              <Info className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+              <Info className="mt-0.5 h-4 w-4 shrink-0 text-lemon-600" />
               <div>
                 <h2 className="text-sm font-semibold text-neutral-900">Why this workout?</h2>
                 <p className="mt-1 text-sm leading-relaxed text-neutral-600">{workout.why}</p>
@@ -177,7 +177,7 @@ export default async function WorkoutDetailPage({ params }: { params: Promise<{ 
             </div>
           </Card>
 
-          <Card className="space-y-3 border-amber-200 bg-amber-50/60">
+          <Card className="space-y-3 border-lemon-200 bg-lemon-50/60">
             <h2 className="text-sm font-semibold text-neutral-900">Data honesty</h2>
             <p className="text-sm leading-relaxed text-neutral-600">
               User-entered: soreness, sleep, meals, and planned training preference. Estimated: readiness, calorie burn, and the ranking of workout options. Missing: live wearable strain, exercise history, and equipment availability.

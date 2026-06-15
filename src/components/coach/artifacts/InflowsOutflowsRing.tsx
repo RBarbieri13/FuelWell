@@ -73,7 +73,7 @@ export function InflowsOutflowsRing({ artifact }: ArtifactCardProps<InflowsOutfl
       </div>
 
       <div className="mt-3 flex items-center justify-center gap-6">
-        <Ring fraction={inflow / max} color="#22c55e" label="In" kcal={inflow} />
+        <Ring fraction={inflow / max} color="#1eae84" label="In" kcal={inflow} />
         <Ring fraction={outflow / max} color="#f97316" label="Out" kcal={outflow} />
       </div>
 

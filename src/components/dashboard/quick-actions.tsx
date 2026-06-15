@@ -25,8 +25,8 @@ const actions = [
     href: "/app/coach",
     label: "Ask Coach",
     icon: MessageSquare,
-    iconBg: "bg-violet-50",
-    iconColor: "text-violet-600",
+    iconBg: "bg-sky-50",
+    iconColor: "text-sky-600",
   },
   {
     href: "/app/log?mode=scan",
@@ -44,12 +44,12 @@ export function QuickActions() {
         <Link
           key={action.label}
           href={action.href}
-          className="group flex items-center gap-3 p-4 bg-white rounded-2xl border border-neutral-200/80 hover:border-neutral-300 hover:shadow-sm transition-all duration-150"
+    className="group flex items-center gap-3 p-4 bg-white/88 rounded-2xl border border-primary-100/80 hover:border-primary-200 hover:shadow-sm hover:shadow-primary-900/5 transition-all duration-150"
         >
           <div className={`p-2.5 rounded-xl ${action.iconBg} transition-transform duration-150 group-hover:scale-105`}>
             <action.icon className={`w-4.5 h-4.5 ${action.iconColor}`} />
           </div>
-          <span className="text-sm font-medium text-neutral-700 group-hover:text-neutral-900 transition-colors">
+          <span className="text-sm font-bold text-neutral-700 group-hover:text-primary-800 transition-colors">
             {action.label}
           </span>
         </Link>

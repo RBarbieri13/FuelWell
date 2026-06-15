@@ -38,7 +38,7 @@ function SourceBadge({ children }: { children: string }) {
   return (
     <span
       className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${
-        children === "Estimated" ? "bg-amber-50 text-amber-700" : "bg-primary-50 text-primary-700"
+        children === "Estimated" ? "bg-lemon-50 text-lemon-700" : "bg-primary-50 text-primary-700"
       }`}
     >
       {children}
@@ -120,9 +120,9 @@ export default function RecoveryPage() {
         </Card>
 
         <div className="space-y-4">
-          <Card className="space-y-3 border-amber-200 bg-amber-50/60">
+          <Card className="space-y-3 border-lemon-200 bg-lemon-50/60">
             <div className="flex gap-3">
-              <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+              <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-lemon-600" />
               <div>
                 <h2 className="text-sm font-semibold text-neutral-900">What is estimated?</h2>
                 <p className="mt-1 text-sm leading-relaxed text-neutral-600">

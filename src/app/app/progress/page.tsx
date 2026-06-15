@@ -83,9 +83,9 @@ const snapshots: Record<ProgressState, ProgressSnapshot> = {
     caloriesAverage: 0,
     adherence: 0,
     macroStats: [
-      { key: "protein", label: "Protein", consumed: 0, target: 150, unit: "g", colorClass: "bg-blue-500" },
-      { key: "carbs", label: "Carbs", consumed: 0, target: 230, unit: "g", colorClass: "bg-amber-500" },
-      { key: "fat", label: "Fat", consumed: 0, target: 70, unit: "g", colorClass: "bg-rose-500" },
+      { key: "protein", label: "Protein", consumed: 0, target: 150, unit: "g", colorClass: "bg-macro-protein" },
+      { key: "carbs", label: "Carbs", consumed: 0, target: 230, unit: "g", colorClass: "bg-macro-carbs" },
+      { key: "fat", label: "Fat", consumed: 0, target: 70, unit: "g", colorClass: "bg-macro-fat" },
     ],
     meals: [
       { label: "Breakfast", logged: false },
@@ -118,9 +118,9 @@ const snapshots: Record<ProgressState, ProgressSnapshot> = {
     caloriesAverage: 2015,
     adherence: 86,
     macroStats: [
-      { key: "protein", label: "Protein", consumed: 118, target: 150, unit: "g", colorClass: "bg-blue-500" },
-      { key: "carbs", label: "Carbs", consumed: 218, target: 230, unit: "g", colorClass: "bg-amber-500" },
-      { key: "fat", label: "Fat", consumed: 68, target: 70, unit: "g", colorClass: "bg-rose-500" },
+      { key: "protein", label: "Protein", consumed: 118, target: 150, unit: "g", colorClass: "bg-macro-protein" },
+      { key: "carbs", label: "Carbs", consumed: 218, target: 230, unit: "g", colorClass: "bg-macro-carbs" },
+      { key: "fat", label: "Fat", consumed: 68, target: 70, unit: "g", colorClass: "bg-macro-fat" },
     ],
     meals: [
       { label: "Breakfast", logged: true },
@@ -153,9 +153,9 @@ const snapshots: Record<ProgressState, ProgressSnapshot> = {
     caloriesAverage: 2058,
     adherence: 92,
     macroStats: [
-      { key: "protein", label: "Protein", consumed: 144, target: 150, unit: "g", colorClass: "bg-blue-500" },
-      { key: "carbs", label: "Carbs", consumed: 224, target: 230, unit: "g", colorClass: "bg-amber-500" },
-      { key: "fat", label: "Fat", consumed: 66, target: 70, unit: "g", colorClass: "bg-rose-500" },
+      { key: "protein", label: "Protein", consumed: 144, target: 150, unit: "g", colorClass: "bg-macro-protein" },
+      { key: "carbs", label: "Carbs", consumed: 224, target: 230, unit: "g", colorClass: "bg-macro-carbs" },
+      { key: "fat", label: "Fat", consumed: 66, target: 70, unit: "g", colorClass: "bg-macro-fat" },
     ],
     meals: [
       { label: "Breakfast", logged: true },

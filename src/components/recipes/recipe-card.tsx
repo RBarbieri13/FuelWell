@@ -59,7 +59,7 @@ export function RecipeCard({
         </div>
         <div className="rounded-xl border border-neutral-100 bg-neutral-50/80 px-3 py-2">
           <div className="flex items-center gap-1 text-[11px] font-medium text-neutral-500">
-            <Dumbbell className="h-3.5 w-3.5 text-blue-500" />
+            <Dumbbell className="h-3.5 w-3.5 text-sky-500" />
             Protein
           </div>
           <p className="mt-1 text-sm font-semibold tabular-nums text-neutral-900">

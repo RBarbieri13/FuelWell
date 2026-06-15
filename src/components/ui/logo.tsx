@@ -17,13 +17,13 @@ export function Logo({ href = "/", size = "md", className }: LogoProps) {
   const content = (
     <span
       className={cn(
-        "font-bold tracking-tight",
+        "font-heading font-black tracking-tight",
         sizeStyles[size],
         className
       )}
     >
       <span className="text-primary-600">Fuel</span>
-      <span className="text-neutral-800">Well</span>
+      <span className="text-neutral-900">Well</span>
     </span>
   );
 

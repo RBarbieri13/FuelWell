@@ -26,9 +26,9 @@ import {
 const categories: GroceryCategory[] = ["Protein", "Produce", "Pantry", "Dairy", "Frozen", "Other"];
 
 const categoryTone: Record<GroceryCategory, string> = {
-  Protein: "bg-blue-50 text-blue-700 border-blue-100",
+  Protein: "bg-primary-50 text-primary-700 border-primary-100",
   Produce: "bg-primary-50 text-primary-700 border-primary-100",
-  Pantry: "bg-amber-50 text-amber-700 border-amber-100",
+  Pantry: "bg-lemon-50 text-lemon-700 border-lemon-100",
   Dairy: "bg-sky-50 text-sky-700 border-sky-100",
   Frozen: "bg-purple-50 text-purple-700 border-purple-100",
   Other: "bg-neutral-50 text-neutral-600 border-neutral-200",

@@ -30,7 +30,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             "focus:outline-none focus:ring-2 focus:ring-offset-0 focus:border-transparent",
             error
               ? "border-red-300 focus:ring-red-400"
-              : "border-neutral-300 focus:ring-primary-500",
+              : "border-primary-100 focus:ring-primary-500",
             className
           )}
           aria-invalid={error ? "true" : undefined}

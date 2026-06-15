@@ -34,10 +34,10 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden md:flex md:flex-col md:w-68 md:border-r md:border-white/70 md:bg-white/72 md:backdrop-blur-xl">
-      <div className="px-6 py-5 border-b border-neutral-100/80">
+    <aside className="hidden md:flex md:flex-col md:w-68 md:border-r md:border-primary-100/80 md:bg-white/72 md:backdrop-blur-xl">
+      <div className="px-6 py-5 border-b border-primary-100/80">
         <Logo href="/app/dashboard" size="md" />
-        <p className="mt-2 text-xs font-medium text-neutral-400">
+        <p className="mt-2 text-xs font-bold text-neutral-500">
           Daily decision system
         </p>
       </div>
@@ -53,11 +53,11 @@ export function Sidebar() {
               className={cn(
                 "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-150",
                 isActive
-                  ? "bg-neutral-900 text-white shadow-lg shadow-neutral-300/60"
-                  : "text-neutral-500 hover:bg-white hover:text-neutral-900 hover:shadow-sm"
+                  ? "bg-primary-600 text-white shadow-lg shadow-primary-700/20"
+                  : "text-neutral-500 hover:bg-primary-50 hover:text-primary-800 hover:shadow-sm"
               )}
             >
-              <item.icon className={cn("w-5 h-5 shrink-0", isActive ? "text-primary-300" : "text-neutral-400")} />
+              <item.icon className={cn("w-5 h-5 shrink-0", isActive ? "text-primary-100" : "text-neutral-400")} />
               {item.label}
             </Link>
           );

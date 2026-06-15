@@ -85,14 +85,15 @@ export function DashboardClient({
       <section className="grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
         <Card
           variant="elevated"
-          className="overflow-hidden bg-neutral-950 p-0 text-white"
+          className="overflow-hidden border-primary-200/80 bg-gradient-to-br from-white via-primary-50/85 to-accent-50/70 p-0 text-neutral-900"
         >
           <div className="relative p-6 md:p-8">
-            <div className="absolute right-0 top-0 h-56 w-56 rounded-full bg-primary-500/20 blur-3xl" />
+            <div className="absolute right-0 top-0 h-56 w-56 rounded-full bg-primary-300/28 blur-3xl" />
+            <div className="absolute bottom-0 left-1/2 h-48 w-48 rounded-full bg-accent-300/18 blur-3xl" />
             <div className="relative z-10">
               <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
                 <div>
-                  <p className="text-sm font-semibold text-primary-200">
+                  <p className="text-sm font-black uppercase text-primary-700">
                     Today&apos;s decision
                   </p>
                   <h1 className="mt-2 text-3xl font-black tracking-tight md:text-5xl">
@@ -113,7 +114,7 @@ export function DashboardClient({
                 )}
               </div>
 
-              <p className="max-w-2xl text-base font-medium leading-7 text-neutral-200">
+              <p className="max-w-2xl text-base font-semibold leading-7 text-neutral-600">
                 {hasLoggedToday
                   ? coachVerdict.body
                   : "No meals, workouts, or recovery inputs are logged yet. FuelWell will show the missing pieces instead of inventing green progress."}
@@ -128,11 +129,11 @@ export function DashboardClient({
                 </Link>
                 <Link
                   href="/app/dashboard/score"
-                  className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-neutral-200 backdrop-blur transition hover:bg-white/15"
+                  className="inline-flex items-center gap-2 rounded-full border border-primary-100 bg-white/70 px-4 py-2 text-sm font-bold text-primary-800 backdrop-blur transition hover:bg-white"
                 >
-                  <span className="text-neutral-400">Health score</span>
-                  <span className="tabular-nums text-white">{healthScore ?? "--"}</span>
-                  <ChevronRight className="h-3.5 w-3.5 text-neutral-400" />
+                  <span className="text-neutral-500">Health score</span>
+                  <span className="tabular-nums text-neutral-900">{healthScore ?? "--"}</span>
+                  <ChevronRight className="h-3.5 w-3.5 text-primary-500" />
                 </Link>
               </div>
             </div>
@@ -170,13 +171,13 @@ export function DashboardClient({
         <Card className="space-y-5">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-bold text-neutral-900">Macro truth</h2>
-            <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs font-bold text-neutral-500">
+            <span className="rounded-full bg-primary-50 px-3 py-1 text-xs font-bold text-primary-700">
               {percentOf(totals.calories, targets.calories)}% calories
             </span>
           </div>
-          <MacroBar label="Protein" current={totals.protein} target={targets.protein} color="#3b82f6" />
-          <MacroBar label="Carbs" current={totals.carbs} target={targets.carbs} color="#f59e0b" />
-          <MacroBar label="Fat" current={totals.fat} target={targets.fat} color="#ef4444" />
+          <MacroBar label="Protein" current={totals.protein} target={targets.protein} color="#1eae84" />
+          <MacroBar label="Carbs" current={totals.carbs} target={targets.carbs} color="#c7a91e" />
+          <MacroBar label="Fat" current={totals.fat} target={targets.fat} color="#8e73bd" />
           <Link href="/app/nutrition">
             <Button variant="secondary" className="w-full">
               Open meal breakdown
@@ -194,11 +195,11 @@ export function DashboardClient({
               <Link
                 href={contributor.href}
                 key={contributor.key}
-                className="group rounded-2xl border border-neutral-200/80 bg-white/70 p-4 transition hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-md hover:shadow-neutral-200/70"
+                className="group rounded-2xl border border-primary-100/80 bg-white/70 p-4 transition hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-md hover:shadow-primary-900/10"
               >
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <div className="rounded-xl bg-neutral-100 p-2.5 text-neutral-700 group-hover:bg-primary-50 group-hover:text-primary-700">
+                    <div className="rounded-xl bg-primary-50 p-2.5 text-primary-700 group-hover:bg-primary-100 group-hover:text-primary-800">
                       {contributor.key === "nutrition" && <Salad className="h-5 w-5" />}
                       {contributor.key === "activity" && <Activity className="h-5 w-5" />}
                       {contributor.key === "recovery" && <HeartPulse className="h-5 w-5" />}
@@ -236,7 +237,7 @@ export function DashboardClient({
           </div>
 
           {todaysMeals.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-neutral-300 bg-neutral-50 p-5">
+            <div className="rounded-2xl border border-dashed border-primary-200 bg-primary-50/60 p-5">
               <p className="font-bold text-neutral-900">No meals logged yet.</p>
               <p className="mt-1 text-sm text-neutral-500">
                 Add your first meal to unlock today&apos;s nutrition detail and plate.
@@ -256,7 +257,7 @@ export function DashboardClient({
                   <Link
                     href="/app/nutrition"
                     key={meal.id}
-                    className="flex items-center justify-between rounded-2xl border border-neutral-100 bg-neutral-50/80 p-3 transition hover:border-primary-200 hover:bg-primary-50/40"
+                    className="flex items-center justify-between rounded-2xl border border-primary-100 bg-primary-50/40 p-3 transition hover:border-primary-200 hover:bg-primary-50/80"
                   >
                     <div>
                       <p className="font-bold text-neutral-900">
@@ -311,9 +312,9 @@ export function DashboardClient({
 
 function EnergyStat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl bg-white/10 px-4 py-3 text-center backdrop-blur">
-      <p className="text-2xl font-black tabular-nums text-white">{value}</p>
-      <p className="mt-0.5 whitespace-nowrap text-xs font-semibold uppercase tracking-tight text-neutral-300">
+    <div className="rounded-2xl border border-primary-100 bg-white/72 px-4 py-3 text-center backdrop-blur">
+      <p className="text-2xl font-black tabular-nums text-neutral-900">{value}</p>
+      <p className="mt-0.5 whitespace-nowrap text-xs font-bold uppercase tracking-tight text-neutral-500">
         {label}
       </p>
     </div>
@@ -322,7 +323,7 @@ function EnergyStat({ label, value }: { label: string; value: string }) {
 
 function MiniMetric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl bg-neutral-100/80 p-3 text-center">
+    <div className="rounded-2xl bg-primary-50/80 p-3 text-center">
       <p className="text-xl font-black tabular-nums text-neutral-900">{value}</p>
       <p className="mt-0.5 whitespace-nowrap text-xs font-bold uppercase tracking-tight text-neutral-400">{label}</p>
     </div>
@@ -343,7 +344,7 @@ function DeepLinkCard({
   return (
     <Link
       href={href}
-      className="group rounded-2xl border border-white/80 bg-white/70 p-4 shadow-sm shadow-neutral-200/60 transition hover:-translate-y-0.5 hover:bg-white hover:shadow-lg"
+      className="group rounded-2xl border border-primary-100/80 bg-white/70 p-4 shadow-sm shadow-primary-900/5 transition hover:-translate-y-0.5 hover:bg-white hover:shadow-lg"
     >
       <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-primary-50 text-primary-700">
         {icon}

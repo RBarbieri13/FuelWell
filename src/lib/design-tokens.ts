@@ -1,55 +1,55 @@
-// FuelWell Design Tokens
+// FuelWell Design Tokens — FW.zip Lagoon & Coral system
 export const colors = {
-  // Primary - Energetic green
+  // Primary - Lagoon
   primary: {
-    50: "#f0fdf4",
-    100: "#dcfce7",
-    200: "#bbf7d0",
-    300: "#86efac",
-    400: "#4ade80",
-    500: "#22c55e",
-    600: "#16a34a",
-    700: "#15803d",
-    800: "#166534",
-    900: "#14532d",
+    50: "#edf8f5",
+    100: "#d6f0e8",
+    200: "#aee2d3",
+    300: "#7bd1b9",
+    400: "#45bf9c",
+    500: "#1eae84",
+    600: "#15916c",
+    700: "#117558",
+    800: "#0e5d48",
+    900: "#0a4436",
   },
-  // Accent - Warm orange for CTAs and highlights
+  // Accent - Coral
   accent: {
-    50: "#fff7ed",
-    100: "#ffedd5",
-    200: "#fed7aa",
-    300: "#fdba74",
-    400: "#fb923c",
-    500: "#f97316",
-    600: "#ea580c",
-    700: "#c2410c",
-    800: "#9a3412",
-    900: "#7c2d12",
+    50: "#fff1ed",
+    100: "#ffe0d8",
+    200: "#ffc3b5",
+    300: "#f7a08d",
+    400: "#f0795b",
+    500: "#df6345",
+    600: "#c74f33",
+    700: "#9f3e28",
+    800: "#7d3828",
+    900: "#5e271b",
   },
   // Neutrals
   neutral: {
-    50: "#fafafa",
-    100: "#f5f5f5",
-    200: "#e5e5e5",
-    300: "#d4d4d4",
-    400: "#a3a3a3",
-    500: "#737373",
-    600: "#525252",
-    700: "#404040",
-    800: "#262626",
-    900: "#171717",
-    950: "#0a0a0a",
+    50: "#f7faf8",
+    100: "#eef4f1",
+    200: "#dbe3df",
+    300: "#c7d4ce",
+    400: "#9db0aa",
+    500: "#7c968f",
+    600: "#54635d",
+    700: "#3a4a44",
+    800: "#243832",
+    900: "#16302a",
+    950: "#0b1d19",
   },
   // Semantic
-  success: "#22c55e",
-  warning: "#f59e0b",
+  success: "#1eae84",
+  warning: "#c7a91e",
   error: "#ef4444",
-  info: "#3b82f6",
+  info: "#3e92c9",
   // Macros
-  protein: "#3b82f6", // blue
-  carbs: "#f59e0b", // amber
-  fat: "#ef4444", // red
-  calories: "#22c55e", // green
+  protein: "#1eae84",
+  carbs: "#c7a91e",
+  fat: "#8e73bd",
+  calories: "#1eae84",
 } as const;
 
 export const spacing = {
@@ -64,7 +64,8 @@ export const spacing = {
 
 export const typography = {
   fontFamily: {
-    sans: '"Inter", system-ui, -apple-system, sans-serif',
+    sans: '"Hanken Grotesk", system-ui, -apple-system, sans-serif',
+    display: '"Quicksand", system-ui, -apple-system, sans-serif',
     mono: '"JetBrains Mono", monospace',
   },
 } as const;
