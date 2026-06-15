@@ -2,9 +2,9 @@
 
 > **Format:** Google Labs DESIGN.md (Apache 2.0). This file is the canonical source of truth for FuelWell's design system. Every AI agent in the loop (Claude Code, Claude Design, ChatGPT Images 2.0, Figma for Agents) reads this file. The Swift `Theme` struct in `Packages/DesignSystem` is generated from it, not hand-maintained.
 >
-> **Brand green resolved (May '26, Robert + Max):** the canonical brand green is `#47E7B0` (per commit `63419cb`). The deeper `#3D9B2F` is retired — `src/lib/design-tokens.ts` must be updated and the CI drift check will fail until it is. The action/success green `#00D278` is a *separate* token (semantic + macro use); it is not the brand mark color and is not affected by this resolution.
+> **FW.zip v2 system (June '26):** the second app version uses the Lagoon & Coral system from `FW.zip`. The active product green is lagoon `#1EAE84`, the action/deep lagoon is `#15916C`, and the warm accent is coral `#F0795B`. The prior `#47E7B0` mark remains documented in older artifacts, but `Theme.app` now emits the FW.zip v2 product tokens.
 >
-> **Surfaces note (May '26 review, Robert + Max):** the in-product palette is **light-mode native**. The Core Dashboard, Macro Tracking and Workout Detail screens are all rendered on light surfaces — verdict-led, information-dense, with semantic and macro accents at full saturation so they pop against `#F4F5F7`. A dark variant is documented at the end of the Color section but is **opt-in**, not the default. The marketing site (`fuelwellhealth.com`, in `RBarbieri13/FuelWell`) is a separate light system with its own emerald `#34D399` + warm orange `#F4945E` palette — keep them distinct in code (`Theme.app` vs `Theme.marketing`).
+> **Surfaces note (June '26 review, Robert + Max):** the in-product palette is **light-mode native**. The Core Dashboard, Macro Tracking and Workout Detail screens are all rendered on mint-washed light surfaces — verdict-led, information-dense, with semantic and macro accents at full saturation so they pop against `#ECF1EF`. A dark variant is documented at the end of the Color section but is **opt-in**, not the default. The marketing site (`fuelwellhealth.com`, in `RBarbieri13/FuelWell`) is a separate light system with its own emerald `#34D399` + warm orange `#F4945E` palette — keep them distinct in code (`Theme.app` vs `Theme.marketing`).
 
 ---
 
@@ -45,50 +45,50 @@ Color tokens are **light-mode native** (May '26 review). Surfaces are bright by 
 
 | Token | Hex | Use |
 |---|---|---|
-| `color.primary.orange` | `#E87A1D` | Brand warm accent, CTAs in marketing context, fuel / pre-workout chips |
-| `color.primary.green` | `#47E7B0` | **Canonical brand mark** — logo, splash, brand-mention treatments. Resolved May '26 (was `#3D9B2F`). |
-| `color.primary.accent` | `#00D278` | Action / success green — verdicts, macros, on-track chips. Distinct from the brand mark above; they coexist by role, not by accident. |
+| `color.primary.orange` | `#F0795B` | Coral accent, secondary emphasis, photo / fuel / warm-state chips |
+| `color.primary.green` | `#1EAE84` | Lagoon product green — logo, splash, rings, brand-mention treatments |
+| `color.primary.accent` | `#15916C` | Deep lagoon action — primary buttons, active tabs, decisive verdict CTAs |
 
 ### Background — light (canonical)
 
 | Token | Hex | Use |
 |---|---|---|
-| `color.bg.base` | `#F4F5F7` | Root window |
+| `color.bg.base` | `#ECF1EF` | Root window |
 | `color.bg.surface` | `#FFFFFF` | Cards, sheets |
-| `color.bg.elevated` | `#0F1117` | **Inverted highlight row** — used to feature a single dense row (macros band, fuel callout) against the otherwise-light layout. Acts as the workhorse for emphasis in a light theme. |
-| `color.bg.border` | `#E5E7EB` | Card borders, top-level dividers |
-| `color.bg.borderSoft` | `#EEF0F3` | Inner dividers within a card (e.g. between exercise rows) |
+| `color.bg.elevated` | `#16302A` | **Inverted highlight row** — used to feature a single dense row (macros band, fuel callout) against the otherwise-light layout. Acts as the workhorse for emphasis in a light theme. |
+| `color.bg.border` | `#DBE3DF` | Card borders, top-level dividers |
+| `color.bg.borderSoft` | `#D6ECE6` | Inner dividers within a card (e.g. between exercise rows) |
 
 ### Text — light (canonical)
 
 | Token | Hex | Use |
 |---|---|---|
-| `color.text.primary` | `#0A0A0F` | Headlines, verdicts |
-| `color.text.body` | `#1F2937` | Body copy |
-| `color.text.secondary` | `#6B7280` | Labels, captions |
-| `color.text.muted` | `#9CA3AF` | Placeholder, helper text |
-| `color.text.disabled` | `#C7CCD3` | Disabled controls |
+| `color.text.primary` | `#16302A` | Headlines, verdicts |
+| `color.text.body` | `#54635D` | Body copy |
+| `color.text.secondary` | `#7C968F` | Labels, captions |
+| `color.text.muted` | `#9DB0AA` | Placeholder, helper text |
+| `color.text.disabled` | `#C6D4CF` | Disabled controls |
 | `color.text.onDark` | `#FFFFFF` | Foreground over `bg.elevated` highlight rows |
-| `color.text.onDarkMuted` | `#9AA0AC` | Labels over `bg.elevated` |
+| `color.text.onDarkMuted` | `#B9C9C3` | Labels over `bg.elevated` |
 
 ### Semantic
 
 | Token | Hex | Use |
 |---|---|---|
-| `color.semantic.success` | `#00D278` | On-track, positive verdict |
-| `color.semantic.warning` | `#F59E0B` | Approaching limits, caution |
+| `color.semantic.success` | `#1EAE84` | On-track, positive verdict |
+| `color.semantic.warning` | `#C7A91E` | Approaching limits, caution |
 | `color.semantic.error` | `#EF4444` | Over-limit, blocked action |
-| `color.semantic.info` | `#00B4D8` | Neutral information |
-| `color.semantic.premium` | `#A855F7` | Premium-tier surfaces (post-Pilot) |
+| `color.semantic.info` | `#3E92C9` | Neutral information |
+| `color.semantic.premium` | `#8E73BD` | Premium-tier surfaces (post-Pilot) |
 
 ### Macro-channel colors *(carried over from in-app reference screens)*
 
 | Token | Hex | Use |
 |---|---|---|
-| `color.macro.protein` | `#00D278` | Protein progress, protein chip |
-| `color.macro.carbs` | `#F59E0B` | Carbs progress, carbs chip |
-| `color.macro.fat` | `#A855F7` | Fat progress, fat chip |
-| `color.macro.calories` | `#00D278` | Calorie ring outer stroke |
+| `color.macro.protein` | `#1EAE84` | Protein progress, protein chip |
+| `color.macro.carbs` | `#C7A91E` | Carbs progress, carbs chip |
+| `color.macro.fat` | `#8E73BD` | Fat progress, fat chip |
+| `color.macro.calories` | `#1EAE84` | Calorie ring outer stroke |
 
 **Saturation rule:** these values are used as-is on light surfaces. Do not lighten or tint a macro/semantic token for the foreground — the punch is the point. The only allowed reduction is for *background tints*, at exactly 10% alpha (e.g. `rgba(0,210,120,.10)` for an on-track chip behind protein numerics).
 
