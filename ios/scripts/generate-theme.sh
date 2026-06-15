@@ -16,8 +16,8 @@ design_path = Path(sys.argv[1])
 output_path = Path(sys.argv[2])
 design = design_path.read_text()
 
-if "#47E7B0" not in design:
-    raise SystemExit("DESIGN.md is missing canonical brand green #47E7B0")
+if "#1EAE84" not in design:
+    raise SystemExit("DESIGN.md is missing FW.zip v2 lagoon green #1EAE84")
 retired_green = "#" + "3D" + "9B2F"
 if retired_green in design.split("## Brand", 1)[-1].split("---", 1)[0]:
     raise SystemExit("Retired green appears in active design tokens")

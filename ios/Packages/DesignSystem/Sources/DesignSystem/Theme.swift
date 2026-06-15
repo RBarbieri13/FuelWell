@@ -53,50 +53,50 @@ public struct ThemeColor: Equatable, Sendable {
 }
 
 public struct PrimaryColor: Equatable, Sendable {
-    public let orange = ThemeColorToken(hex: "#E87A1D")
-    public let green = ThemeColorToken(hex: "#47E7B0")
-    public let accent = ThemeColorToken(hex: "#00D278")
+    public let orange = ThemeColorToken(hex: "#F0795B")
+    public let green = ThemeColorToken(hex: "#1EAE84")
+    public let accent = ThemeColorToken(hex: "#15916C")
 
     public init() {}
 }
 
 public struct BackgroundColor: Equatable, Sendable {
-    public let base = ThemeColorToken(hex: "#F4F5F7")
+    public let base = ThemeColorToken(hex: "#ECF1EF")
     public let surface = ThemeColorToken(hex: "#FFFFFF")
-    public let elevated = ThemeColorToken(hex: "#0F1117")
-    public let border = ThemeColorToken(hex: "#E5E7EB")
-    public let borderSoft = ThemeColorToken(hex: "#EEF0F3")
+    public let elevated = ThemeColorToken(hex: "#16302A")
+    public let border = ThemeColorToken(hex: "#DBE3DF")
+    public let borderSoft = ThemeColorToken(hex: "#D6ECE6")
 
     public init() {}
 }
 
 public struct TextColor: Equatable, Sendable {
-    public let primary = ThemeColorToken(hex: "#0A0A0F")
-    public let body = ThemeColorToken(hex: "#1F2937")
-    public let secondary = ThemeColorToken(hex: "#6B7280")
-    public let muted = ThemeColorToken(hex: "#9CA3AF")
-    public let disabled = ThemeColorToken(hex: "#C7CCD3")
+    public let primary = ThemeColorToken(hex: "#16302A")
+    public let body = ThemeColorToken(hex: "#54635D")
+    public let secondary = ThemeColorToken(hex: "#7C968F")
+    public let muted = ThemeColorToken(hex: "#9DB0AA")
+    public let disabled = ThemeColorToken(hex: "#C6D4CF")
     public let onDark = ThemeColorToken(hex: "#FFFFFF")
-    public let onDarkMuted = ThemeColorToken(hex: "#9AA0AC")
+    public let onDarkMuted = ThemeColorToken(hex: "#B9C9C3")
 
     public init() {}
 }
 
 public struct SemanticColor: Equatable, Sendable {
-    public let success = ThemeColorToken(hex: "#00D278")
-    public let warning = ThemeColorToken(hex: "#F59E0B")
+    public let success = ThemeColorToken(hex: "#1EAE84")
+    public let warning = ThemeColorToken(hex: "#C7A91E")
     public let error = ThemeColorToken(hex: "#EF4444")
-    public let info = ThemeColorToken(hex: "#00B4D8")
-    public let premium = ThemeColorToken(hex: "#A855F7")
+    public let info = ThemeColorToken(hex: "#3E92C9")
+    public let premium = ThemeColorToken(hex: "#8E73BD")
 
     public init() {}
 }
 
 public struct MacroColor: Equatable, Sendable {
-    public let protein = ThemeColorToken(hex: "#00D278")
-    public let carbs = ThemeColorToken(hex: "#F59E0B")
-    public let fat = ThemeColorToken(hex: "#A855F7")
-    public let calories = ThemeColorToken(hex: "#00D278")
+    public let protein = ThemeColorToken(hex: "#1EAE84")
+    public let carbs = ThemeColorToken(hex: "#C7A91E")
+    public let fat = ThemeColorToken(hex: "#8E73BD")
+    public let calories = ThemeColorToken(hex: "#1EAE84")
 
     public init() {}
 }
