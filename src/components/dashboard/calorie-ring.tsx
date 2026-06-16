@@ -11,7 +11,7 @@ export function CalorieRing({ consumed, target }: CalorieRingProps) {
   const remaining = Math.max(0, target - consumed);
   const progress = Math.min(consumed / target, 1);
   const isOver = consumed > target;
-  const radius = 80;
+  const radius = 104;
   const circumference = 2 * Math.PI * radius;
 
   // Animate on mount
@@ -46,22 +46,22 @@ export function CalorieRing({ consumed, target }: CalorieRingProps) {
 
   return (
     <div className="relative flex items-center justify-center" role="img" aria-label={`${consumed} of ${target} calories consumed, ${remaining} remaining`}>
-      <svg width="200" height="200" viewBox="0 0 200 200" className="-rotate-90">
+      <svg width="280" height="280" viewBox="0 0 280 280" className="-rotate-90">
         <circle
-          cx="100"
-          cy="100"
+          cx="140"
+          cy="140"
           r={radius}
           fill="none"
           stroke="#d6f0e8"
-          strokeWidth="14"
+          strokeWidth="20"
         />
         <circle
-          cx="100"
-          cy="100"
+          cx="140"
+          cy="140"
           r={radius}
           fill="none"
           stroke={ringColor}
-          strokeWidth="14"
+          strokeWidth="20"
           strokeLinecap="round"
           strokeDasharray={circumference}
           strokeDashoffset={animatedOffset}
@@ -69,14 +69,14 @@ export function CalorieRing({ consumed, target }: CalorieRingProps) {
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-3xl font-black text-neutral-900 tabular-nums">
+        <span className="text-6xl font-black leading-none text-neutral-900 tabular-nums">
           {displayRemaining}
         </span>
-        <span className="text-xs font-bold text-neutral-500 uppercase mt-0.5">
+        <span className="mt-2 text-sm font-black uppercase tracking-[0.14em] text-neutral-500">
           {isOver ? "over" : "remaining"}
         </span>
-        <div className="mt-2 px-3 py-1 bg-primary-50 rounded-full">
-          <span className="text-xs font-bold text-primary-700 tabular-nums">
+        <div className="mt-3 rounded-full bg-primary-50 px-4 py-2 shadow-sm shadow-primary-900/5">
+          <span className="text-sm font-black text-primary-700 tabular-nums">
             {consumed} / {target} kcal
           </span>
         </div>

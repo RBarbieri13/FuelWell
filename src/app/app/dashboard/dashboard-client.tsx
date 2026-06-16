@@ -8,6 +8,7 @@ import {
   ChevronRight,
   Dumbbell,
   HeartPulse,
+  Info,
   Salad,
   Bell,
   Search,
@@ -179,7 +180,9 @@ export function DashboardClient({
           </div>
 
           <div className="flex justify-center">
-            <CalorieRing consumed={totals.calories} target={targets.calories} />
+            <MealMakeupHover meals={todaysMeals}>
+              <CalorieRing consumed={totals.calories} target={targets.calories} />
+            </MealMakeupHover>
           </div>
 
           <div className="grid grid-cols-3 gap-2">
@@ -329,6 +332,74 @@ export function DashboardClient({
         Profile context: goal {goal}, diet {dietaryPreference}
         {allergies.length > 0 ? `, allergies ${allergies.join(", ")}` : ""}.
       </p>
+      </div>
+    </div>
+  );
+}
+
+function MealMakeupHover({
+  meals,
+  children,
+}: {
+  meals: MealRecord[];
+  children: React.ReactNode;
+}) {
+  const mealTypes = ["breakfast", "lunch", "dinner"] as const;
+
+  return (
+    <div className="group relative flex justify-center" tabIndex={0}>
+      {children}
+      <div className="pointer-events-none absolute left-1/2 top-[calc(100%-0.25rem)] z-20 w-[min(24rem,calc(100vw-3rem))] -translate-x-1/2 translate-y-3 rounded-[1.35rem] border border-primary-100 bg-white p-4 text-left opacity-0 shadow-[0_24px_70px_rgba(22,48,42,0.16)] transition duration-150 group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:translate-y-0 group-focus-within:opacity-100">
+        <div className="mb-3 flex items-center gap-2">
+          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-100 text-primary-700">
+            <Info className="h-4 w-4" />
+          </span>
+          <div>
+            <p className="text-sm font-black text-neutral-900">Meal makeup</p>
+            <p className="text-xs font-semibold text-neutral-400">Breakfast, lunch, and dinner counted today</p>
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          {mealTypes.map((mealType) => {
+            const meal = meals.find((entry) => entry.mealType === mealType);
+            const mealTotals = meal ? sumMealItems(meal.items) : null;
+
+            return (
+              <div key={mealType} className="rounded-[1rem] border border-neutral-100 bg-neutral-50/80 p-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="font-black text-neutral-900">{formatMealType(mealType)}</p>
+                    <p className="mt-0.5 text-xs font-semibold text-neutral-500">
+                      {meal ? meal.items.map((item) => item.name).join(", ") : "Not logged yet"}
+                    </p>
+                  </div>
+                  <div className="shrink-0 text-right">
+                    <p className="text-sm font-black tabular-nums text-neutral-900">
+                      {mealTotals ? `${mealTotals.calories} cal` : "--"}
+                    </p>
+                    <p className="text-xs font-bold text-primary-600">
+                      {mealTotals ? `${mealTotals.protein}g protein` : "open"}
+                    </p>
+                  </div>
+                </div>
+                {mealTotals && (
+                  <div className="mt-3 grid grid-cols-3 gap-1 text-center text-[11px] font-black">
+                    <span className="rounded-full bg-sky-100 px-2 py-1 text-sky-700">
+                      {mealTotals.protein}g pro
+                    </span>
+                    <span className="rounded-full bg-lemon-100 px-2 py-1 text-lemon-700">
+                      {mealTotals.carbs}g carb
+                    </span>
+                    <span className="rounded-full bg-accent-100 px-2 py-1 text-accent-700">
+                      {mealTotals.fat}g fat
+                    </span>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

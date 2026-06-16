@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
   Bike,
   Dumbbell,
-  Flame,
   Info,
+  Search,
+  SlidersHorizontal,
   Sparkles,
   Timer,
   Waves,
@@ -18,9 +19,15 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils/cn";
 import { useWorkoutLog } from "@/lib/use-workout-log";
 
-type Category = "upper" | "lower" | "full";
-
-type CategoryFilter = "all" | Category;
+type Category = "upper" | "lower" | "full" | "core" | "mobility" | "cardio";
+type BodyPartFilter = "all" | Category;
+type WorkoutTypeFilter =
+  | "all"
+  | "Strength"
+  | "Cardio"
+  | "Mobility"
+  | "Recovery"
+  | "Conditioning";
 
 interface WorkoutRow {
   id: string;
@@ -30,8 +37,12 @@ interface WorkoutRow {
   focus: string;
   category: Category;
   categoryLabel: string;
+  workoutType: Exclude<WorkoutTypeFilter, "all">;
+  equipment: string;
+  goal: string;
   icon: LucideIcon;
   detail: string;
+  href?: string;
 }
 
 const workouts: WorkoutRow[] = [
@@ -43,8 +54,12 @@ const workouts: WorkoutRow[] = [
     focus: "Full body technique",
     category: "full",
     categoryLabel: "Full body",
+    workoutType: "Strength",
+    equipment: "Dumbbells, bench",
+    goal: "Technique and low soreness cost",
     icon: Dumbbell,
     detail: "Keeps leg volume gentle while still keeping your training streak going.",
+    href: "/app/workouts/low-impact-strength",
   },
   {
     id: "zone-2-ride",
@@ -54,8 +69,12 @@ const workouts: WorkoutRow[] = [
     focus: "Aerobic base",
     category: "lower",
     categoryLabel: "Lower body",
+    workoutType: "Cardio",
+    equipment: "Bike",
+    goal: "Aerobic base",
     icon: Bike,
     detail: "Nice if you want to move without adding soreness before tomorrow.",
+    href: "/app/workouts/zone-2-ride",
   },
   {
     id: "mobility-reset",
@@ -65,16 +84,214 @@ const workouts: WorkoutRow[] = [
     focus: "Hips and upper back",
     category: "full",
     categoryLabel: "Full body",
+    workoutType: "Mobility",
+    equipment: "Mat",
+    goal: "Restore range of motion",
     icon: Waves,
     detail: "A calm reset for the hips and upper back when energy is running low.",
+    href: "/app/workouts/mobility-reset",
+  },
+  {
+    id: "upper-push-base",
+    title: "Upper push base",
+    duration: "38 min",
+    intensity: "Moderate",
+    focus: "Chest, shoulders, triceps",
+    category: "upper",
+    categoryLabel: "Upper body",
+    workoutType: "Strength",
+    equipment: "Dumbbells, cable",
+    goal: "Pressing strength",
+    icon: Dumbbell,
+    detail: "A controlled push session with shoulder-friendly volume.",
+  },
+  {
+    id: "upper-pull-posture",
+    title: "Upper pull posture",
+    duration: "36 min",
+    intensity: "Moderate",
+    focus: "Back and rear delts",
+    category: "upper",
+    categoryLabel: "Upper body",
+    workoutType: "Strength",
+    equipment: "Cable, bands",
+    goal: "Rows and posture",
+    icon: Dumbbell,
+    detail: "Rows, pulldowns, and scapular control for desk-heavy days.",
+  },
+  {
+    id: "lower-hinge-strength",
+    title: "Lower hinge strength",
+    duration: "44 min",
+    intensity: "Hard",
+    focus: "Glutes and hamstrings",
+    category: "lower",
+    categoryLabel: "Lower body",
+    workoutType: "Strength",
+    equipment: "Barbell or dumbbells",
+    goal: "Posterior chain",
+    icon: Dumbbell,
+    detail: "Hinge-dominant strength without turning it into a conditioning test.",
+  },
+  {
+    id: "lower-knee-friendly",
+    title: "Knee-friendly lower",
+    duration: "32 min",
+    intensity: "Moderate",
+    focus: "Glutes, calves, stability",
+    category: "lower",
+    categoryLabel: "Lower body",
+    workoutType: "Strength",
+    equipment: "Mini band, dumbbells",
+    goal: "Leg work with less knee stress",
+    icon: Dumbbell,
+    detail: "A lower-body option when knees need a quieter training day.",
+  },
+  {
+    id: "core-anti-rotation",
+    title: "Core anti-rotation",
+    duration: "22 min",
+    intensity: "Light",
+    focus: "Obliques and trunk control",
+    category: "core",
+    categoryLabel: "Core",
+    workoutType: "Strength",
+    equipment: "Cable or band",
+    goal: "Bracing and rotation control",
+    icon: Dumbbell,
+    detail: "Pallof presses, carries, and dead bug variations.",
+  },
+  {
+    id: "core-finisher",
+    title: "Core finisher",
+    duration: "14 min",
+    intensity: "Moderate",
+    focus: "Abs and carries",
+    category: "core",
+    categoryLabel: "Core",
+    workoutType: "Conditioning",
+    equipment: "Kettlebell optional",
+    goal: "Short trunk finisher",
+    icon: Dumbbell,
+    detail: "A compact finisher when the main workout was short.",
+  },
+  {
+    id: "full-body-circuit",
+    title: "Full-body circuit",
+    duration: "40 min",
+    intensity: "Hard",
+    focus: "Push, pull, squat, carry",
+    category: "full",
+    categoryLabel: "Full body",
+    workoutType: "Conditioning",
+    equipment: "Dumbbells",
+    goal: "Sweat and strength blend",
+    icon: Dumbbell,
+    detail: "Circuit work for days when energy is high and soreness is low.",
+  },
+  {
+    id: "full-body-minimal",
+    title: "Minimal-equipment full body",
+    duration: "28 min",
+    intensity: "Moderate",
+    focus: "Bodyweight strength",
+    category: "full",
+    categoryLabel: "Full body",
+    workoutType: "Strength",
+    equipment: "Bodyweight",
+    goal: "Travel-friendly training",
+    icon: Dumbbell,
+    detail: "Push-ups, split squats, hinges, and planks with no gym dependency.",
+  },
+  {
+    id: "walk-run-intervals",
+    title: "Walk-run intervals",
+    duration: "30 min",
+    intensity: "Moderate",
+    focus: "Aerobic conditioning",
+    category: "cardio",
+    categoryLabel: "Cardio",
+    workoutType: "Cardio",
+    equipment: "Treadmill or outdoors",
+    goal: "Build running tolerance",
+    icon: Bike,
+    detail: "Gentle intervals that keep effort repeatable.",
+  },
+  {
+    id: "incline-walk",
+    title: "Incline walk",
+    duration: "35 min",
+    intensity: "Easy",
+    focus: "Low-impact cardio",
+    category: "cardio",
+    categoryLabel: "Cardio",
+    workoutType: "Cardio",
+    equipment: "Treadmill",
+    goal: "Steps and steady burn",
+    icon: Bike,
+    detail: "A low-impact cardio option that pairs well with strength days.",
+  },
+  {
+    id: "hips-ankles-reset",
+    title: "Hips and ankles reset",
+    duration: "16 min",
+    intensity: "Light",
+    focus: "Hips, ankles, calves",
+    category: "mobility",
+    categoryLabel: "Mobility",
+    workoutType: "Mobility",
+    equipment: "Mat",
+    goal: "Lower-body mobility",
+    icon: Waves,
+    detail: "Mobility prep for squats, rides, and long walks.",
+  },
+  {
+    id: "upper-back-reset",
+    title: "Upper back reset",
+    duration: "15 min",
+    intensity: "Light",
+    focus: "Thoracic spine and shoulders",
+    category: "mobility",
+    categoryLabel: "Mobility",
+    workoutType: "Mobility",
+    equipment: "Foam roller optional",
+    goal: "Undo desk posture",
+    icon: Waves,
+    detail: "A quick upper-back flow for breathing and overhead comfort.",
+  },
+  {
+    id: "recovery-walk",
+    title: "Recovery walk",
+    duration: "25 min",
+    intensity: "Easy",
+    focus: "Steps and downshift",
+    category: "cardio",
+    categoryLabel: "Cardio",
+    workoutType: "Recovery",
+    equipment: "None",
+    goal: "Move without fatigue",
+    icon: Bike,
+    detail: "A walk that counts as momentum without draining tomorrow.",
   },
 ];
 
-const filters: { id: CategoryFilter; label: string }[] = [
+const bodyPartFilters: { id: BodyPartFilter; label: string }[] = [
   { id: "all", label: "All" },
   { id: "upper", label: "Upper" },
   { id: "lower", label: "Lower" },
   { id: "full", label: "Full body" },
+  { id: "core", label: "Core" },
+  { id: "mobility", label: "Mobility" },
+  { id: "cardio", label: "Cardio" },
+];
+
+const workoutTypeFilters: { id: WorkoutTypeFilter; label: string }[] = [
+  { id: "all", label: "All types" },
+  { id: "Strength", label: "Strength" },
+  { id: "Cardio", label: "Cardio" },
+  { id: "Mobility", label: "Mobility" },
+  { id: "Recovery", label: "Recovery" },
+  { id: "Conditioning", label: "Conditioning" },
 ];
 
 interface DailyVerdict {
@@ -86,18 +303,17 @@ interface DailyVerdict {
 
 function FilterButton({
   active,
-  onClick,
+  href,
   children,
 }: {
   active: boolean;
-  onClick: () => void;
+  href: string;
   children: string;
 }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-pressed={active}
+    <a
+      href={href}
+      aria-current={active ? "true" : undefined}
       className={cn(
         "rounded-full px-6 py-3 text-base font-bold transition-all",
         active
@@ -106,60 +322,69 @@ function FilterButton({
       )}
     >
       {children}
-    </button>
+    </a>
   );
 }
 
-function WorkoutCard({ workout }: { workout: WorkoutRow }) {
-  const Icon = workout.icon;
-  return (
-    <Link href={`/app/workouts/${workout.id}`} className="block group">
-      <Card className="transition-all group-hover:-translate-y-0.5 group-hover:border-primary-200 group-hover:shadow-[0_22px_55px_rgba(22,48,42,0.12)]">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex gap-4">
-            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[1.35rem] bg-primary-100 text-primary-600 group-hover:bg-primary-200">
-              <Icon className="h-5 w-5" />
-            </div>
-            <div className="min-w-0">
-              <div className="flex flex-wrap items-center gap-2">
-                <h3 className="text-xl font-black text-neutral-900">{workout.title}</h3>
-                <span className="rounded-full bg-primary-100 px-3 py-1 text-xs font-black text-primary-700">
-                  {workout.categoryLabel}
-                </span>
-              </div>
-              <p className="mt-1 text-base font-semibold leading-relaxed text-neutral-500">{workout.detail}</p>
-              <div className="mt-3 flex flex-wrap gap-2 text-sm font-bold text-neutral-600">
-                <span className="inline-flex items-center gap-1 rounded-full bg-neutral-50 px-3 py-1.5">
-                  <Timer className="h-3.5 w-3.5" />
-                  {workout.duration}
-                </span>
-                <span className="inline-flex items-center gap-1 rounded-full bg-lemon-50 px-3 py-1.5 text-lemon-700">
-                  <Flame className="h-3.5 w-3.5" />
-                  {workout.intensity}
-                </span>
-                <span className="rounded-full bg-neutral-50 px-3 py-1.5">{workout.focus}</span>
-              </div>
-            </div>
-          </div>
-          <ArrowRight className="hidden sm:block h-4 w-4 shrink-0 text-neutral-300 transition-transform group-hover:translate-x-0.5 group-hover:text-primary-500" />
-        </div>
-      </Card>
-    </Link>
-  );
+function parseBodyPart(value?: string): BodyPartFilter {
+  return bodyPartFilters.some((filter) => filter.id === value)
+    ? (value as BodyPartFilter)
+    : "all";
 }
 
-export function WorkoutsView({ verdict }: { verdict: DailyVerdict }) {
-  const [filter, setFilter] = useState<CategoryFilter>("all");
+function parseWorkoutType(value?: string): WorkoutTypeFilter {
+  return workoutTypeFilters.some((filter) => filter.id === value)
+    ? (value as WorkoutTypeFilter)
+    : "all";
+}
+
+export function WorkoutsView({
+  verdict,
+  initialBodyPart,
+  initialWorkoutType,
+  initialQuery,
+}: {
+  verdict: DailyVerdict;
+  initialBodyPart?: string;
+  initialWorkoutType?: string;
+  initialQuery?: string;
+}) {
+  const [bodyPart, setBodyPart] = useState<BodyPartFilter>(parseBodyPart(initialBodyPart));
+  const [workoutType, setWorkoutType] = useState<WorkoutTypeFilter>(
+    parseWorkoutType(initialWorkoutType)
+  );
+  const [workoutQuery, setWorkoutQuery] = useState(initialQuery ?? "");
   const [showRecommendation, setShowRecommendation] = useState(false);
   // Shared store: workouts logged from Coach chat show up here too (D-gate).
   const { workouts: loggedWorkouts } = useWorkoutLog();
 
-  const visible =
-    filter === "all" ? workouts : workouts.filter((w) => w.category === filter);
+  const visible = useMemo(() => {
+    const query = workoutQuery.trim().toLowerCase();
+    return workouts.filter((workout) => {
+      const matchesBodyPart = bodyPart === "all" || workout.category === bodyPart;
+      const matchesType = workoutType === "all" || workout.workoutType === workoutType;
+      const matchesQuery =
+        query.length === 0 ||
+        workout.title.toLowerCase().includes(query) ||
+        workout.focus.toLowerCase().includes(query) ||
+        workout.goal.toLowerCase().includes(query);
+
+      return matchesBodyPart && matchesType && matchesQuery;
+    });
+  }, [bodyPart, workoutQuery, workoutType]);
 
   const recommended =
     workouts.find((w) => w.id === verdict.recommendedId) ?? workouts[0];
   const RecommendedIcon = recommended.icon;
+
+  function filterHref(nextBodyPart: BodyPartFilter) {
+    const params = new URLSearchParams();
+    if (workoutQuery.trim()) params.set("q", workoutQuery.trim());
+    if (nextBodyPart !== "all") params.set("body", nextBodyPart);
+    if (workoutType !== "all") params.set("type", workoutType);
+    const query = params.toString();
+    return query ? `/app/workouts?${query}` : "/app/workouts";
+  }
 
   return (
     <div className="fw-app-surface">
@@ -208,16 +433,16 @@ export function WorkoutsView({ verdict }: { verdict: DailyVerdict }) {
             <div>
               <h2 className="text-2xl font-black text-neutral-900">Pick my own</h2>
               <p className="mt-4 text-lg font-semibold leading-7 text-neutral-500">
-              Browse the list and filter by what you want to work today.
+                Filter the workout database by body part, workout name, and workout type.
               </p>
             </div>
           </div>
           <div className="flex flex-wrap gap-2">
-            {filters.map((f) => (
+            {bodyPartFilters.slice(0, 4).map((f) => (
               <FilterButton
                 key={f.id}
-                active={filter === f.id}
-                onClick={() => setFilter(f.id)}
+                active={bodyPart === f.id}
+                href={filterHref(f.id)}
               >
                 {f.label}
               </FilterButton>
@@ -271,27 +496,150 @@ export function WorkoutsView({ verdict }: { verdict: DailyVerdict }) {
       </div>
 
       {/* Workout list (driven by Pick-my-own filter) */}
-      <section className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-neutral-400">
-            {filter === "all" ? "All workouts" : `${filters.find((f) => f.id === filter)?.label} workouts`}
-          </h2>
-          <span className="text-xs text-neutral-500">
-            {visible.length} {visible.length === 1 ? "option" : "options"}
-          </span>
-        </div>
+      <section className="space-y-4">
+        <Card className="space-y-5 px-6 py-6">
+          <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
+            <div>
+              <h2 className="flex items-center gap-3 text-2xl font-black text-neutral-900">
+                <SlidersHorizontal className="h-5 w-5 text-primary-600" />
+                Workout database
+              </h2>
+              <p className="mt-1 text-sm font-semibold text-neutral-500">
+                {visible.length} of {workouts.length} workouts shown
+              </p>
+            </div>
 
-        {visible.length === 0 ? (
-          <Card className="text-sm text-neutral-500">
-            No workouts in this category yet. Try another filter.
-          </Card>
-        ) : (
-          <div className="space-y-3">
-            {visible.map((workout) => (
-              <WorkoutCard key={workout.id} workout={workout} />
-            ))}
+            <form action="/app/workouts" className="grid gap-3 md:grid-cols-[1.2fr_0.9fr_0.9fr_auto] xl:min-w-[54rem]">
+              <label className="block">
+                <span className="text-xs font-black uppercase tracking-[0.14em] text-neutral-400">
+                  Workout
+                </span>
+                <div className="mt-2 flex items-center gap-2 rounded-[1rem] border border-neutral-200 bg-neutral-50 px-4 py-3">
+                  <Search className="h-4 w-4 text-neutral-400" />
+                  <input
+                    name="q"
+                    value={workoutQuery}
+                    onChange={(event) => setWorkoutQuery(event.target.value)}
+                    placeholder="Search rows, pull, ride..."
+                    className="min-w-0 flex-1 bg-transparent text-sm font-bold text-neutral-800 outline-none placeholder:text-neutral-400"
+                  />
+                </div>
+              </label>
+
+              <label className="block">
+                <span className="text-xs font-black uppercase tracking-[0.14em] text-neutral-400">
+                  Body part
+                </span>
+                <select
+                  name="body"
+                  value={bodyPart}
+                  onChange={(event) => setBodyPart(event.target.value as BodyPartFilter)}
+                  className="mt-2 w-full rounded-[1rem] border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm font-bold text-neutral-800 outline-none focus:border-primary-300 focus:ring-2 focus:ring-primary-200"
+                >
+                  {bodyPartFilters.map((filterOption) => (
+                    <option key={filterOption.id} value={filterOption.id}>
+                      {filterOption.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label className="block">
+                <span className="text-xs font-black uppercase tracking-[0.14em] text-neutral-400">
+                  Workout type
+                </span>
+                <select
+                  name="type"
+                  value={workoutType}
+                  onChange={(event) => setWorkoutType(event.target.value as WorkoutTypeFilter)}
+                  className="mt-2 w-full rounded-[1rem] border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm font-bold text-neutral-800 outline-none focus:border-primary-300 focus:ring-2 focus:ring-primary-200"
+                >
+                  {workoutTypeFilters.map((filterOption) => (
+                    <option key={filterOption.id} value={filterOption.id}>
+                      {filterOption.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <button
+                type="submit"
+                className="self-end rounded-[1rem] bg-primary-600 px-5 py-3 text-sm font-black text-white shadow-[0_12px_24px_rgba(21,145,108,0.18)] transition hover:bg-primary-700"
+              >
+                Apply
+              </button>
+            </form>
           </div>
-        )}
+
+          <div className="overflow-hidden rounded-[1.35rem] border border-primary-100">
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[58rem] border-collapse bg-white text-left">
+                <thead className="bg-primary-50/80 text-xs font-black uppercase tracking-[0.14em] text-primary-800">
+                  <tr>
+                    <th className="px-5 py-4">Workout</th>
+                    <th className="px-5 py-4">Body part</th>
+                    <th className="px-5 py-4">Type</th>
+                    <th className="px-5 py-4">Duration</th>
+                    <th className="px-5 py-4">Intensity</th>
+                    <th className="px-5 py-4">Equipment</th>
+                    <th className="px-5 py-4">Goal</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-neutral-100">
+                  {visible.map((workout) => {
+                    const Icon = workout.icon;
+                    const title = (
+                      <div className="flex items-center gap-3">
+                        <span className="flex h-10 w-10 items-center justify-center rounded-[0.9rem] bg-primary-100 text-primary-700">
+                          <Icon className="h-4 w-4" />
+                        </span>
+                        <div>
+                          <p className="font-black text-neutral-900">{workout.title}</p>
+                          <p className="text-xs font-semibold text-neutral-400">{workout.focus}</p>
+                        </div>
+                      </div>
+                    );
+
+                    return (
+                      <tr key={workout.id} className="transition hover:bg-primary-50/45">
+                        <td className="px-5 py-4">
+                          {workout.href ? (
+                            <Link href={workout.href} className="group inline-flex items-center gap-2">
+                              {title}
+                              <ArrowRight className="h-3.5 w-3.5 text-neutral-300 transition group-hover:translate-x-0.5 group-hover:text-primary-600" />
+                            </Link>
+                          ) : (
+                            title
+                          )}
+                        </td>
+                        <td className="px-5 py-4">
+                          <span className="rounded-full bg-primary-100 px-3 py-1 text-xs font-black text-primary-700">
+                            {workout.categoryLabel}
+                          </span>
+                        </td>
+                        <td className="px-5 py-4 text-sm font-bold text-neutral-700">{workout.workoutType}</td>
+                        <td className="px-5 py-4 text-sm font-bold tabular-nums text-neutral-700">{workout.duration}</td>
+                        <td className="px-5 py-4">
+                          <span className="rounded-full bg-lemon-50 px-3 py-1 text-xs font-black text-lemon-700">
+                            {workout.intensity}
+                          </span>
+                        </td>
+                        <td className="px-5 py-4 text-sm font-semibold text-neutral-500">{workout.equipment}</td>
+                        <td className="px-5 py-4 text-sm font-semibold text-neutral-500">{workout.goal}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {visible.length === 0 && (
+              <div className="bg-white px-5 py-8 text-center text-sm font-semibold text-neutral-500">
+                No workouts match those filters yet.
+              </div>
+            )}
+          </div>
+        </Card>
       </section>
 
       <Card className="space-y-3 border-lemon-200 bg-lemon-50/75">
