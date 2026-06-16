@@ -2,13 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
-import { Logo } from "@/components/ui/logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { OAuthButtons } from "@/components/auth/oauth-buttons";
-import { Check } from "lucide-react";
+import { AuthLink, AuthShell } from "@/components/auth/auth-shell";
+import { Brain, Leaf, Sparkles, Target } from "lucide-react";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -44,67 +43,32 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left — Brand panel (desktop only) */}
-      <div className="hidden lg:flex lg:w-[45%] bg-neutral-900 relative overflow-hidden">
-        <div className="absolute inset-0">
-          <div className="absolute top-40 -right-20 w-80 h-80 bg-primary-600/20 rounded-full blur-3xl" />
-          <div className="absolute bottom-10 left-10 w-60 h-60 bg-accent-500/10 rounded-full blur-3xl" />
-        </div>
-        <div className="relative z-10 flex flex-col justify-between p-12 text-white">
-          <Logo href="/" size="lg" className="[&_span]:text-white" />
-
-          <div className="space-y-8">
-            <h2 className="text-3xl font-bold leading-tight">
-              Start your
-              <br />
-              nutrition journey.
-            </h2>
-            <div className="space-y-3">
-              {[
-                "Personalized macro targets in 2 minutes",
-                "AI coaching that adapts to your lifestyle",
-                "Free to start — upgrade when you're ready",
-              ].map((text) => (
-                <div key={text} className="flex items-center gap-3 text-neutral-300">
-                  <Check className="w-4 h-4 text-primary-400 shrink-0" />
-                  <span className="text-sm">{text}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <p className="text-sm text-neutral-500">
-            &copy; {new Date().getFullYear()} FuelWell
-          </p>
-        </div>
-      </div>
-
-      {/* Right — Signup form */}
-      <div className="flex-1 flex items-center justify-center px-4 sm:px-8 py-12 bg-neutral-50">
-        <div className="w-full max-w-sm">
-          <div className="lg:hidden mb-8">
-            <Logo size="lg" href="/" />
-          </div>
-
-          <div className="mb-8">
-            <h1 className="text-2xl font-bold text-neutral-900 tracking-tight">
-              Create your account
-            </h1>
-            <p className="mt-1.5 text-sm text-neutral-500">
-              Get your personalized nutrition plan in 2 minutes
-            </p>
-          </div>
-
-          <div className="space-y-6">
+    <AuthShell
+      title="Create your account"
+      subtitle="Get a personalized nutrition plan in about 2 minutes."
+      panelTitle="Start with a plan that already knows the job."
+      panelCopy="FuelWell sets targets, preferences, and coaching context before your first logged meal."
+      features={[
+        { icon: Target, text: "Personalized macro targets in setup" },
+        { icon: Brain, text: "Coach responses adapt to your goals" },
+        { icon: Leaf, text: "Diet and allergy rules stay respected" },
+      ]}
+      footer={
+        <>
+          Already have an account?{" "}
+          <AuthLink href="/login">Log in</AuthLink>
+        </>
+      }
+    >
+      <div className="space-y-6">
             <OAuthButtons next="/app/onboarding" />
 
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-neutral-200" />
+                <div className="w-full border-t border-primary-100" />
               </div>
               <div className="relative flex justify-center">
-                <span className="px-3 bg-neutral-50 text-xs font-medium text-neutral-400 uppercase tracking-wider">
+                <span className="bg-white px-3 text-xs font-black uppercase tracking-[0.16em] text-[#91a7a0]">
                   or email
                 </span>
               </div>
@@ -139,21 +103,21 @@ export default function SignupPage() {
                       {[1, 2, 3, 4].map((level) => (
                         <div
                           key={level}
-                          className={`h-1 flex-1 rounded-full transition-colors duration-200 ${
+                          className={`h-1.5 flex-1 rounded-full transition-colors duration-200 ${
                             level <= passwordStrength.level
                               ? passwordStrength.color
-                              : "bg-neutral-200"
+                              : "bg-primary-50"
                           }`}
                         />
                       ))}
                     </div>
                     <p
-                      className={`text-xs ${
+                      className={`text-xs font-bold ${
                         passwordStrength.level <= 1
                           ? "text-red-500"
                           : passwordStrength.level <= 2
-                            ? "text-amber-500"
-                            : "text-green-600"
+                            ? "text-lemon-700"
+                            : "text-primary-700"
                       }`}
                     >
                       {passwordStrength.label}
@@ -163,23 +127,12 @@ export default function SignupPage() {
               </div>
 
               <Button type="submit" size="lg" className="w-full" loading={loading}>
+                <Sparkles className="h-4 w-4" />
                 Create account
               </Button>
             </form>
           </div>
-
-          <p className="mt-8 text-center text-sm text-neutral-500">
-            Already have an account?{" "}
-            <Link
-              href="/login"
-              className="text-primary-600 font-medium hover:text-primary-700 transition-colors"
-            >
-              Log in
-            </Link>
-          </p>
-        </div>
-      </div>
-    </div>
+    </AuthShell>
   );
 }
 
@@ -197,7 +150,7 @@ function getPasswordStrength(password: string): {
   if (/[^A-Za-z0-9]/.test(password)) score++;
 
   if (score <= 1) return { level: 1, label: "Weak", color: "bg-red-400" };
-  if (score <= 2) return { level: 2, label: "Fair", color: "bg-amber-400" };
-  if (score <= 3) return { level: 3, label: "Good", color: "bg-green-400" };
-  return { level: 4, label: "Strong", color: "bg-green-500" };
+  if (score <= 2) return { level: 2, label: "Fair", color: "bg-lemon-500" };
+  if (score <= 3) return { level: 3, label: "Good", color: "bg-primary-400" };
+  return { level: 4, label: "Strong", color: "bg-primary-600" };
 }
