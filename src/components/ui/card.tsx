@@ -14,10 +14,10 @@ const paddingMap = {
 
 const variantMap = {
   default:
-    "bg-white/88 rounded-2xl border border-primary-100/80 shadow-sm shadow-primary-900/5",
-  outlined: "bg-white/58 rounded-2xl border border-primary-100/70",
+    "bg-white rounded-[1.75rem] border border-primary-100/70 shadow-[0_20px_55px_rgba(22,48,42,0.08)]",
+  outlined: "bg-white/72 rounded-[1.75rem] border border-primary-100/70",
   elevated:
-    "bg-white rounded-2xl border border-primary-100/90 shadow-xl shadow-primary-900/10",
+    "bg-white rounded-[2rem] border border-primary-100/80 shadow-[0_28px_70px_rgba(22,48,42,0.12)]",
 };
 
 export function Card({

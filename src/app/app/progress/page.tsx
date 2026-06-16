@@ -285,18 +285,17 @@ export default function ProgressPage() {
   };
 
   return (
-    <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-6">
-      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-neutral-900 tracking-tight">
-            Progress
-          </h1>
-          <p className="text-sm text-neutral-500 mt-1 max-w-2xl">
-            Trends and direction over time — no targets to fail, just the shape of your days.
-          </p>
-        </div>
+    <div className="fw-app-surface">
+      <header className="fw-page-header">
+        <div className="fw-page-inner flex flex-col gap-4 py-7 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h1 className="fw-heading text-3xl md:text-4xl">Progress</h1>
+            <p className="fw-muted mt-1 text-base">
+              Trends and direction over time — no targets to fail.
+            </p>
+          </div>
 
-        <div className="flex gap-1 p-1 bg-neutral-100 rounded-xl self-start md:self-auto">
+        <div className="flex gap-1 rounded-full bg-white p-1 shadow-[0_14px_34px_rgba(22,48,42,0.09)] self-start md:self-auto">
           {stateOrder.map((state) => (
             <button
               key={state}
@@ -307,31 +306,37 @@ export default function ProgressPage() {
               }}
               aria-pressed={selectedState === state}
               className={cn(
-                "min-h-[44px] md:min-h-0 px-3 py-2 rounded-lg text-xs font-semibold transition-all duration-150",
+                "min-h-[44px] px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-150",
                 selectedState === state
-                  ? "bg-white text-neutral-900 shadow-sm"
+                  ? "bg-primary-500 text-white shadow-[0_10px_22px_rgba(21,145,108,0.2)]"
                   : "text-neutral-500 hover:text-neutral-700"
               )}
             >
               {snapshots[state].label}
             </button>
           ))}
+          </div>
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary-600 text-lg font-black text-white shadow-[0_16px_34px_rgba(21,145,108,0.24)]">
+            M
+          </div>
         </div>
-      </div>
+      </header>
 
-      <Card className="bg-gradient-to-br from-primary-50/90 via-white to-white border-primary-100">
-        <div className="grid gap-6 lg:grid-cols-[1.4fr_0.8fr] lg:items-center">
+      <div className="fw-page-inner space-y-6">
+
+      <Card className="fw-mint-panel">
+        <div className="grid gap-6 2xl:grid-cols-[1.4fr_0.8fr] 2xl:items-center">
           <div className="space-y-4">
-            <div className="flex items-center gap-2 text-xs font-semibold text-primary-700">
+            <div className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-black text-primary-700">
               <Sparkles className="w-4 h-4" />
               <span>{snapshot.dataNote}</span>
             </div>
             <div>
-              <p className="text-sm font-medium text-neutral-500">{snapshot.title}</p>
-              <h2 className="text-2xl md:text-3xl font-bold text-neutral-950 tracking-tight mt-1">
+              <p className="text-sm font-black text-primary-800/75">{snapshot.title}</p>
+              <h2 className="text-3xl md:text-4xl font-black text-neutral-950 tracking-tight mt-3">
                 {snapshot.verdict}
               </h2>
-              <p className="text-sm md:text-base text-neutral-600 mt-2 leading-relaxed">
+              <p className="max-w-2xl text-base md:text-lg font-semibold text-primary-900/70 mt-4 leading-relaxed">
                 {snapshot.verdictDetail}
               </p>
             </div>
@@ -345,14 +350,14 @@ export default function ProgressPage() {
         </div>
       </Card>
 
-      <Card className="space-y-5">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+      <Card className="space-y-6 px-8 py-7">
+        <div className="flex flex-col gap-4 2xl:flex-row 2xl:items-start 2xl:justify-between">
           <SectionHeader
             icon={BarChart3}
             label="Macro split per day"
             detail="Each bar is a day, segmented by calories from protein, carbs, and fat."
           />
-          <div className="flex gap-1 p-1 bg-neutral-100 rounded-xl self-start">
+          <div className="flex gap-1 p-1 bg-neutral-100 rounded-full self-start">
             {windowOptions.map((option) => (
               <button
                 key={option.key}
@@ -360,7 +365,7 @@ export default function ProgressPage() {
                 onClick={() => setWindowKey(option.key)}
                 aria-pressed={windowKey === option.key}
                 className={cn(
-                  "min-h-[44px] md:min-h-0 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150",
+                  "min-h-[44px] md:min-h-0 px-5 py-2 rounded-full text-sm font-bold transition-all duration-150",
                   windowKey === option.key
                     ? "bg-white text-neutral-900 shadow-sm"
                     : "text-neutral-500 hover:text-neutral-700"
@@ -397,8 +402,8 @@ export default function ProgressPage() {
         </div>
       </Card>
 
-      <div className="grid gap-4 lg:grid-cols-[1fr_1fr]">
-        <Card className="space-y-5">
+      <div className="grid gap-6 2xl:grid-cols-[1fr_1fr]">
+        <Card className="space-y-6">
           <SectionHeader
             icon={CheckCircle2}
             label="Where your macros lean"
@@ -428,7 +433,7 @@ export default function ProgressPage() {
           </div>
         </Card>
 
-        <Card className="space-y-5">
+        <Card className="space-y-6">
           <SectionHeader
             icon={Utensils}
             label="Meal consistency"
@@ -439,7 +444,7 @@ export default function ProgressPage() {
               <div
                 key={meal.label}
                 className={cn(
-                  "rounded-xl border p-4",
+                  "rounded-[1.25rem] border p-5",
                   meal.logged
                     ? "border-primary-200 bg-primary-50/70"
                     : "border-neutral-200 bg-neutral-50"
@@ -463,7 +468,7 @@ export default function ProgressPage() {
         </Card>
       </div>
 
-      <Card className="space-y-5">
+      <Card className="space-y-6">
         <SectionHeader
           icon={Scale}
           label="Weight and goal projection"
@@ -474,7 +479,7 @@ export default function ProgressPage() {
             <span className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">
               Today&apos;s weight
             </span>
-            <div className="mt-2 flex items-center gap-2 rounded-xl border border-neutral-200 bg-white px-3 py-2.5">
+            <div className="mt-2 flex items-center gap-2 rounded-[1rem] border border-neutral-200 bg-neutral-50 px-4 py-3">
               <input
                 value={weightEntry}
                 onChange={(event) => setWeightEntry(event.target.value)}
@@ -488,7 +493,7 @@ export default function ProgressPage() {
             </p>
           </label>
 
-          <div className="rounded-xl bg-neutral-50 border border-neutral-200 p-4 space-y-3">
+          <div className="rounded-[1.25rem] bg-neutral-50 border border-neutral-200 p-5 space-y-3">
             <div className="flex items-center justify-between text-sm">
               <span className="text-neutral-500">Start</span>
               <span className="font-medium text-neutral-900 tabular-nums">{formatPounds(snapshot.startingWeight)}</span>
@@ -513,13 +518,10 @@ export default function ProgressPage() {
         </div>
       </Card>
 
-      <Card
-        variant="elevated"
-        className="bg-neutral-950 text-white border-neutral-950 shadow-neutral-300/60"
-      >
+      <Card variant="elevated" className="fw-dark-panel">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start gap-4">
-            <div className="p-2.5 bg-white/10 rounded-xl shrink-0">
+            <div className="p-3 bg-primary-500 rounded-[1rem] shrink-0">
               <TrendingUp className="w-4 h-4 text-primary-300" />
             </div>
             <div>
@@ -537,6 +539,7 @@ export default function ProgressPage() {
           </Link>
         </div>
       </Card>
+      </div>
     </div>
   );
 }
@@ -553,11 +556,11 @@ function SectionHeader({
   return (
     <div className="flex items-start justify-between gap-4">
       <div>
-        <h2 className="text-xs font-semibold text-neutral-400 uppercase tracking-wider flex items-center gap-2">
-          <Icon className="w-3.5 h-3.5" />
+        <h2 className="flex items-center gap-2 text-xl font-black text-neutral-900">
+          <Icon className="w-5 h-5 text-primary-600" />
           {label}
         </h2>
-        <p className="text-sm text-neutral-500 mt-1">{detail}</p>
+        <p className="text-base font-semibold text-neutral-500 mt-1">{detail}</p>
       </div>
     </div>
   );
@@ -573,10 +576,12 @@ function StatTile({
   icon: typeof CalendarCheck;
 }) {
   return (
-    <div className="rounded-xl bg-white/75 border border-white p-3 shadow-sm shadow-primary-100/50">
-      <Icon className="w-4 h-4 text-primary-600 mb-2" />
-      <p className="text-lg font-bold text-neutral-950 tabular-nums">{value}</p>
-      <p className="text-xs font-medium text-neutral-500 mt-0.5">{label}</p>
+    <div className="rounded-[1.25rem] bg-white p-5 text-center shadow-sm shadow-primary-100/50">
+      <div className="mx-auto mb-3 flex h-9 w-9 items-center justify-center rounded-[0.85rem] bg-primary-100 text-primary-600">
+        <Icon className="w-4 h-4" />
+      </div>
+      <p className="text-3xl font-black text-neutral-950 tabular-nums">{value}</p>
+      <p className="mt-1 text-xs font-semibold text-neutral-500">{label}</p>
     </div>
   );
 }

@@ -44,12 +44,12 @@ export function QuickActions() {
         <Link
           key={action.label}
           href={action.href}
-    className="group flex items-center gap-3 p-4 bg-white/88 rounded-2xl border border-primary-100/80 hover:border-primary-200 hover:shadow-sm hover:shadow-primary-900/5 transition-all duration-150"
+          className="group flex items-center gap-4 rounded-[1.4rem] border border-primary-100/80 bg-white p-5 shadow-[0_18px_48px_rgba(22,48,42,0.07)] transition-all duration-150 hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-lg"
         >
-          <div className={`p-2.5 rounded-xl ${action.iconBg} transition-transform duration-150 group-hover:scale-105`}>
-            <action.icon className={`w-4.5 h-4.5 ${action.iconColor}`} />
+          <div className={`p-3 rounded-[1rem] ${action.iconBg} transition-transform duration-150 group-hover:scale-105`}>
+            <action.icon className={`w-5 h-5 ${action.iconColor}`} />
           </div>
-          <span className="text-sm font-bold text-neutral-700 group-hover:text-primary-800 transition-colors">
+          <span className="text-base font-black text-neutral-800 transition-colors group-hover:text-primary-800">
             {action.label}
           </span>
         </Link>

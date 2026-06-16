@@ -48,7 +48,7 @@ export const colors = {
   // Macros
   protein: "#1eae84",
   carbs: "#c7a91e",
-  fat: "#8e73bd",
+  fat: "#f0795b",
   calories: "#1eae84",
 } as const;
 

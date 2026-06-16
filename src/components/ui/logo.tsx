@@ -22,8 +22,8 @@ export function Logo({ href = "/", size = "md", className }: LogoProps) {
         className
       )}
     >
-      <span className="text-primary-600">Fuel</span>
-      <span className="text-neutral-900">Well</span>
+      <span className="text-neutral-900">Fuel</span>
+      <span className="text-primary-600">Well</span>
     </span>
   );
 

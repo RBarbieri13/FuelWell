@@ -73,8 +73,8 @@ export function MacroStackedBars({
     <div>
       <div
         className={cn(
-          "flex items-end border-b border-neutral-200 pb-3",
-          dense ? "gap-[3px] h-44" : "gap-2 h-52"
+          "flex items-end border-b border-neutral-100 pb-5",
+          dense ? "gap-[4px] h-48" : "gap-8 h-64"
         )}
         role="img"
         aria-label={`Daily calories split by ${orderedActive
@@ -95,8 +95,8 @@ export function MacroStackedBars({
             >
               <div
                 className={cn(
-                  "relative w-full overflow-hidden rounded-t-md flex flex-col-reverse",
-                  dense ? "max-w-none" : "max-w-10",
+                  "relative w-full overflow-hidden rounded-t-[0.65rem] flex flex-col-reverse",
+                  dense ? "max-w-none" : "max-w-12",
                   day.source === "sample" && "opacity-70 ring-1 ring-inset ring-neutral-300"
                 )}
                 style={{ height: `${Math.max(stackHeightPct, dayKcal > 0 ? 2 : 0)}%` }}

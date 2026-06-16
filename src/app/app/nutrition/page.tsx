@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Plus, UtensilsCrossed } from "lucide-react";
+import { ArrowRight, Beef, Flame, Plus, Salad, Sun, UtensilsCrossed, Wheat } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { headers } from "next/headers";
 import { Card } from "@/components/ui/card";
@@ -125,20 +125,31 @@ function NutritionDetail({
   const totals = sumMeals(meals);
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6 p-4 md:p-8">
-      <Card variant="elevated" className="bg-white">
-        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+    <div className="fw-app-surface">
+      <header className="fw-page-header">
+        <div className="fw-page-inner py-7">
+          <h1 className="fw-heading text-3xl md:text-4xl">Nutrition detail</h1>
+          <p className="fw-muted mt-1 text-base">Today&apos;s plate · what&apos;s counting toward your score</p>
+        </div>
+      </header>
+
+      <div className="fw-page-inner space-y-6">
+      <Card variant="elevated" className="bg-white px-8 py-8">
+        <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
           <div>
-            <p className="text-sm font-bold text-primary-700">Today&apos;s Plate</p>
-            <h1 className="mt-1 text-3xl font-black tracking-tight text-neutral-900">
-              Nutrition detail
-            </h1>
-            <p className="mt-2 max-w-2xl text-sm font-medium leading-6 text-neutral-500">
-              This page shows what makes up the nutrition score today. If a meal is not logged here, it is not counted on the dashboard.
+            <p className="inline-flex items-center gap-2 text-sm font-black uppercase tracking-[0.18em] text-primary-700">
+              <Salad className="h-4 w-4" />
+              Today&apos;s plate
+            </p>
+            <h2 className="mt-4 text-3xl font-black tracking-tight text-neutral-900 md:text-4xl">
+              What makes up today&apos;s score
+            </h2>
+            <p className="mt-3 max-w-3xl text-lg font-semibold leading-8 text-neutral-500">
+              If a meal isn&apos;t logged here, it isn&apos;t counted on the dashboard. Keep it honest and the daily decision stays accurate.
             </p>
           </div>
           <Link href="/app/log">
-            <Button>
+            <Button size="lg" className="rounded-full">
               <Plus className="h-4 w-4" />
               Add food
             </Button>
@@ -146,11 +157,11 @@ function NutritionDetail({
         </div>
       </Card>
 
-      <section className="grid gap-3 md:grid-cols-4">
-        <TargetTile label="Calories" current={totals.calories} target={targets.calories} unit="kcal" />
-        <TargetTile label="Protein" current={totals.protein} target={targets.protein} unit="g" />
-        <TargetTile label="Carbs" current={totals.carbs} target={targets.carbs} unit="g" />
-        <TargetTile label="Fat" current={totals.fat} target={targets.fat} unit="g" />
+      <section className="grid gap-3 sm:grid-cols-2 2xl:grid-cols-4">
+        <TargetTile label="Calories" current={totals.calories} target={targets.calories} unit="kcal" tone="primary" icon="calories" />
+        <TargetTile label="Protein" current={totals.protein} target={targets.protein} unit="g" tone="sky" icon="protein" />
+        <TargetTile label="Carbs" current={totals.carbs} target={targets.carbs} unit="g" tone="lemon" icon="carbs" />
+        <TargetTile label="Fat" current={totals.fat} target={targets.fat} unit="g" tone="accent" icon="fat" />
       </section>
 
       {meals.length === 0 ? (
@@ -176,21 +187,24 @@ function NutritionDetail({
           {meals.map((meal) => {
             const mealTotals = sumMealItems(meal.items);
             return (
-              <Card key={meal.id} className="space-y-4">
+              <Card key={meal.id} className="space-y-5 px-7 py-7">
                 <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                  <div>
-                    <h2 className="text-xl font-black text-neutral-900">
-                      {formatMealType(meal.mealType)}
-                    </h2>
-                    <p className="text-sm font-medium text-neutral-500">
-                      {meal.name} - {meal.items.length} item{meal.items.length === 1 ? "" : "s"}
-                    </p>
+                  <div className="flex items-center gap-4">
+                    <MealIcon mealType={meal.mealType} />
+                    <div>
+                      <h2 className="text-2xl font-black text-neutral-900">
+                        {formatMealType(meal.mealType)}
+                      </h2>
+                      <p className="text-base font-semibold text-neutral-400">
+                        {meal.name} · {meal.items.length} item{meal.items.length === 1 ? "" : "s"}
+                      </p>
+                    </div>
                   </div>
-                  <div className="rounded-2xl bg-neutral-100 px-4 py-2 text-right">
-                    <p className="text-lg font-black tabular-nums text-neutral-900">
+                  <div className="rounded-[1.2rem] bg-neutral-50 px-5 py-3 text-right">
+                    <p className="text-2xl font-black tabular-nums text-neutral-900">
                       {mealTotals.calories} cal
                     </p>
-                    <p className="text-xs font-bold text-neutral-400">
+                    <p className="text-sm font-bold text-primary-600">
                       {mealTotals.protein}g protein
                     </p>
                   </div>
@@ -198,21 +212,18 @@ function NutritionDetail({
 
                 <div className="grid gap-2">
                   {meal.items.map((item) => (
-                    <div
-                      key={item.id}
-                      className="grid gap-3 rounded-2xl border border-neutral-100 bg-neutral-50/80 p-3 md:grid-cols-[1fr_0.6fr]"
-                    >
+                    <div key={item.id} className="grid gap-4 border-t border-neutral-100 py-5 md:grid-cols-[1fr_auto] md:items-center">
                       <div>
-                        <p className="font-bold text-neutral-900">{item.name}</p>
-                        <p className="text-sm font-medium text-neutral-500">
+                        <p className="text-lg font-black text-neutral-900">{item.name}</p>
+                        <p className="text-base font-semibold text-neutral-400">
                           {item.servings} serving{item.servings === 1 ? "" : "s"}
                         </p>
                       </div>
                       <div className="grid grid-cols-4 gap-2 text-center">
-                        <SmallMacro label="Cal" value={item.calories} />
-                        <SmallMacro label="Pro" value={item.protein} />
-                        <SmallMacro label="Carb" value={item.carbs} />
-                        <SmallMacro label="Fat" value={item.fat} />
+                        <SmallMacro label="Cal" value={item.calories} tone="primary" />
+                        <SmallMacro label="Pro" value={item.protein} tone="sky" />
+                        <SmallMacro label="Carb" value={item.carbs} tone="lemon" />
+                        <SmallMacro label="Fat" value={item.fat} tone="accent" />
                       </div>
                     </div>
                   ))}
@@ -222,6 +233,7 @@ function NutritionDetail({
           })}
         </section>
       )}
+      </div>
     </div>
   );
 }
@@ -231,17 +243,52 @@ function TargetTile({
   current,
   target,
   unit,
+  tone,
+  icon,
 }: {
   label: string;
   current: number;
   target: number;
   unit: string;
+  tone: "primary" | "sky" | "lemon" | "accent";
+  icon: "calories" | "protein" | "carbs" | "fat";
 }) {
+  const Icon = icon === "calories" ? Flame : icon === "protein" ? Beef : icon === "carbs" ? Wheat : Salad;
+  const styles = {
+    primary: {
+      chip: "bg-primary-100 text-primary-600",
+      pill: "bg-primary-100 text-primary-700",
+      bar: "bg-primary-500",
+    },
+    sky: {
+      chip: "bg-sky-100 text-sky-600",
+      pill: "bg-sky-100 text-sky-700",
+      bar: "bg-sky-500",
+    },
+    lemon: {
+      chip: "bg-lemon-50 text-lemon-600",
+      pill: "bg-lemon-100 text-lemon-700",
+      bar: "bg-lemon-500",
+    },
+    accent: {
+      chip: "bg-accent-100 text-accent-600",
+      pill: "bg-accent-100 text-accent-700",
+      bar: "bg-accent-400",
+    },
+  }[tone];
+
   return (
-    <Card className="space-y-3">
-      <div className="flex items-baseline justify-between">
-        <p className="text-sm font-bold text-neutral-500">{label}</p>
-        <p className="text-xs font-bold text-neutral-400">{percentOf(current, target)}%</p>
+    <Card className="space-y-4 px-6 py-6">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <span className={`flex h-10 w-10 items-center justify-center rounded-[1rem] ${styles.chip}`}>
+            <Icon className="h-5 w-5" />
+          </span>
+          <p className="text-base font-black text-neutral-600">{label}</p>
+        </div>
+        <p className={`rounded-full px-3 py-1 text-sm font-black ${styles.pill}`}>
+          {percentOf(current, target)}%
+        </p>
       </div>
       <p className="text-3xl font-black tabular-nums text-neutral-900">
         {current}
@@ -252,7 +299,7 @@ function TargetTile({
       </p>
       <div className="h-2 overflow-hidden rounded-full bg-neutral-100">
         <div
-          className="h-full rounded-full bg-primary-500"
+          className={`h-full rounded-full ${styles.bar}`}
           style={{ width: `${Math.min(percentOf(current, target), 100)}%` }}
         />
       </div>
@@ -260,11 +307,43 @@ function TargetTile({
   );
 }
 
-function SmallMacro({ label, value }: { label: string; value: number }) {
+function MealIcon({ mealType }: { mealType: MealType }) {
+  const styles =
+    mealType === "breakfast"
+      ? "bg-lemon-50 text-lemon-600"
+      : mealType === "lunch"
+        ? "bg-accent-100 text-accent-600"
+        : mealType === "dinner"
+          ? "bg-neutral-100 text-neutral-500"
+          : "bg-sky-100 text-sky-600";
+
   return (
-    <div className="rounded-xl bg-white px-2 py-2">
-      <p className="text-sm font-black tabular-nums text-neutral-900">{value}</p>
-      <p className="text-[10px] font-bold uppercase text-neutral-400">{label}</p>
+    <span className={`flex h-14 w-14 items-center justify-center rounded-[1.15rem] ${styles}`}>
+      <Sun className="h-6 w-6" />
+    </span>
+  );
+}
+
+function SmallMacro({
+  label,
+  value,
+  tone,
+}: {
+  label: string;
+  value: number;
+  tone: "primary" | "sky" | "lemon" | "accent";
+}) {
+  const styles = {
+    primary: "bg-primary-100 text-primary-700",
+    sky: "bg-sky-100 text-sky-700",
+    lemon: "bg-lemon-100 text-lemon-700",
+    accent: "bg-accent-100 text-accent-700",
+  }[tone];
+
+  return (
+    <div className={`rounded-[0.9rem] px-3 py-2 ${styles}`}>
+      <p className="text-base font-black tabular-nums">{value}</p>
+      <p className="text-[10px] font-bold uppercase opacity-70">{label}</p>
     </div>
   );
 }
