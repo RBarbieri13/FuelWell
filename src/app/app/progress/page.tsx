@@ -295,7 +295,7 @@ export default function ProgressPage() {
             </p>
           </div>
 
-        <div className="flex gap-1 rounded-full bg-white p-1 shadow-[0_14px_34px_rgba(22,48,42,0.09)] self-start md:self-auto">
+        <div className="flex gap-1 rounded-full border border-primary-100/80 bg-white/92 p-1 shadow-[0_14px_34px_rgba(22,48,42,0.09)] self-start md:self-auto">
           {stateOrder.map((state) => (
             <button
               key={state}
@@ -309,7 +309,7 @@ export default function ProgressPage() {
                 "min-h-[44px] px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-150",
                 selectedState === state
                   ? "bg-primary-500 text-white shadow-[0_10px_22px_rgba(21,145,108,0.2)]"
-                  : "text-neutral-500 hover:text-neutral-700"
+                  : "text-[#78928a] hover:text-primary-800"
               )}
             >
               {snapshots[state].label}
@@ -333,7 +333,7 @@ export default function ProgressPage() {
             </div>
             <div>
               <p className="text-sm font-black text-primary-800/75">{snapshot.title}</p>
-              <h2 className="text-3xl md:text-4xl font-black text-neutral-950 tracking-tight mt-3">
+              <h2 className="text-3xl md:text-4xl font-black text-[#16302a] tracking-normal mt-3">
                 {snapshot.verdict}
               </h2>
               <p className="max-w-2xl text-base md:text-lg font-semibold text-primary-900/70 mt-4 leading-relaxed">
@@ -357,7 +357,7 @@ export default function ProgressPage() {
             label="Macro split per day"
             detail="Each bar is a day, segmented by calories from protein, carbs, and fat."
           />
-          <div className="flex gap-1 p-1 bg-neutral-100 rounded-full self-start">
+          <div className="flex gap-1 rounded-full border border-primary-100/80 bg-primary-50/70 p-1 self-start">
             {windowOptions.map((option) => (
               <button
                 key={option.key}
@@ -367,8 +367,8 @@ export default function ProgressPage() {
                 className={cn(
                   "min-h-[44px] md:min-h-0 px-5 py-2 rounded-full text-sm font-bold transition-all duration-150",
                   windowKey === option.key
-                    ? "bg-white text-neutral-900 shadow-sm"
-                    : "text-neutral-500 hover:text-neutral-700"
+                    ? "bg-primary-600 text-white shadow-[0_10px_22px_rgba(21,145,108,0.18)]"
+                    : "text-[#78928a] hover:text-primary-800"
                 )}
               >
                 {option.label}
@@ -382,7 +382,7 @@ export default function ProgressPage() {
         <MacroStackedBars days={series} active={activeMacros} />
 
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex flex-wrap items-center gap-3 text-xs text-neutral-500">
+          <div className="flex flex-wrap items-center gap-3 text-xs font-semibold text-[#78928a]">
             {ALL_MACROS.map((key) => (
               <span key={key} className="inline-flex items-center gap-1.5">
                 <span className={cn("h-2.5 w-2.5 rounded-[3px]", MACRO_META[key].swatchClass)} />
@@ -390,11 +390,11 @@ export default function ProgressPage() {
               </span>
             ))}
             <span className="inline-flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 rounded-[3px] bg-neutral-300 bg-[image:repeating-linear-gradient(135deg,rgba(255,255,255,0.6)_0,rgba(255,255,255,0.6)_2px,transparent_2px,transparent_4px)]" />
+              <span className="h-2.5 w-2.5 rounded-[3px] bg-[#b8cac4] bg-[image:repeating-linear-gradient(135deg,rgba(255,255,255,0.6)_0,rgba(255,255,255,0.6)_2px,transparent_2px,transparent_4px)]" />
               Sample day
             </span>
           </div>
-          <p className="text-xs text-neutral-400">
+          <p className="text-xs font-semibold text-[#91a7a0]">
             {loggedInWindow > 0
               ? `${loggedInWindow} logged ${loggedInWindow === 1 ? "day" : "days"} in this window — older bars are sample history.`
               : "Sample history shown until you start logging. None of these bars are measured intake yet."}
@@ -416,12 +416,12 @@ export default function ProgressPage() {
               return (
                 <div key={macro.key}>
                   <div className="flex items-center justify-between gap-3 text-sm">
-                    <span className="font-medium text-neutral-800">{macro.label}</span>
-                    <span className="text-neutral-500 tabular-nums">
+                    <span className="font-black text-[#516b63]">{macro.label}</span>
+                    <span className="font-semibold text-[#78928a] tabular-nums">
                       {macro.consumed}{macro.unit} / {macro.target}{macro.unit}
                     </span>
                   </div>
-                  <div className="h-2.5 bg-neutral-100 rounded-full overflow-hidden mt-2">
+                  <div className="h-2.5 bg-[#f2f7f5] rounded-full overflow-hidden mt-2">
                     <div
                       className={cn("h-full rounded-full transition-all duration-300", macro.colorClass)}
                       style={{ width: `${completion}%` }}
@@ -447,19 +447,19 @@ export default function ProgressPage() {
                   "rounded-[1.25rem] border p-5",
                   meal.logged
                     ? "border-primary-200 bg-primary-50/70"
-                    : "border-neutral-200 bg-neutral-50"
+                    : "border-primary-100 bg-[#f7faf8]"
                 )}
               >
                 <div className="flex items-center gap-2">
                   <span
                     className={cn(
                       "w-2.5 h-2.5 rounded-full",
-                      meal.logged ? "bg-primary-500" : "bg-neutral-300"
+                      meal.logged ? "bg-primary-500" : "bg-[#b8cac4]"
                     )}
                   />
-                  <p className="text-sm font-semibold text-neutral-800">{meal.label}</p>
+                  <p className="text-sm font-black text-[#516b63]">{meal.label}</p>
                 </div>
-                <p className="text-xs text-neutral-500 mt-2">
+                <p className="text-xs font-semibold text-[#78928a] mt-2">
                   {meal.logged ? "Logged" : "Not logged yet"}
                 </p>
               </div>
@@ -476,41 +476,41 @@ export default function ProgressPage() {
         />
         <div className="grid gap-4 sm:grid-cols-[0.85fr_1.15fr]">
           <label className="block">
-            <span className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">
+            <span className="text-xs font-black text-[#91a7a0] uppercase tracking-[0.14em]">
               Today&apos;s weight
             </span>
-            <div className="mt-2 flex items-center gap-2 rounded-[1rem] border border-neutral-200 bg-neutral-50 px-4 py-3">
+            <div className="mt-2 flex items-center gap-2 rounded-[1rem] border border-primary-100 bg-primary-50/60 px-4 py-3">
               <input
                 value={weightEntry}
                 onChange={(event) => setWeightEntry(event.target.value)}
                 inputMode="decimal"
-                className="w-full bg-transparent text-lg font-semibold text-neutral-900 tabular-nums focus:outline-none"
+                className="w-full bg-transparent text-lg font-black text-[#16302a] tabular-nums focus:outline-none"
               />
-              <span className="text-sm text-neutral-400">lb</span>
+              <span className="text-sm font-bold text-[#91a7a0]">lb</span>
             </div>
-            <p className="text-xs text-neutral-500 mt-2">
+            <p className="text-xs font-semibold text-[#78928a] mt-2">
               This updates the preview only; it is not saved.
             </p>
           </label>
 
-          <div className="rounded-[1.25rem] bg-neutral-50 border border-neutral-200 p-5 space-y-3">
+          <div className="rounded-[1.25rem] bg-[#f7faf8] border border-primary-100 p-5 space-y-3">
             <div className="flex items-center justify-between text-sm">
-              <span className="text-neutral-500">Start</span>
-              <span className="font-medium text-neutral-900 tabular-nums">{formatPounds(snapshot.startingWeight)}</span>
+              <span className="font-semibold text-[#78928a]">Start</span>
+              <span className="font-black text-[#16302a] tabular-nums">{formatPounds(snapshot.startingWeight)}</span>
             </div>
             <div className="flex items-center justify-between text-sm">
-              <span className="text-neutral-500">Goal</span>
-              <span className="font-medium text-neutral-900 tabular-nums">{formatPounds(snapshot.goalWeight)}</span>
+              <span className="font-semibold text-[#78928a]">Goal</span>
+              <span className="font-black text-[#16302a] tabular-nums">{formatPounds(snapshot.goalWeight)}</span>
             </div>
             <div className="flex items-center justify-between text-sm">
-              <span className="text-neutral-500">Preview change</span>
-              <span className="font-medium text-neutral-900 tabular-nums">
+              <span className="font-semibold text-[#78928a]">Preview change</span>
+              <span className="font-black text-[#16302a] tabular-nums">
                 {projectedDelta >= 0 ? "-" : "+"}{Math.abs(projectedDelta).toFixed(1)} lb
               </span>
             </div>
-            <div className="pt-2 border-t border-neutral-200">
-              <p className="text-xs text-neutral-500">Projected time to goal</p>
-              <p className="text-lg font-bold text-neutral-950 mt-1">
+            <div className="pt-2 border-t border-primary-100">
+              <p className="text-xs font-semibold text-[#78928a]">Projected time to goal</p>
+              <p className="text-lg font-black text-[#16302a] mt-1">
                 {snapshot.weeklyPace > 0 ? `${snapshot.projectionWeeks} weeks` : "After 3 logged days"}
               </p>
             </div>
@@ -526,7 +526,7 @@ export default function ProgressPage() {
             </div>
             <div>
               <p className="text-sm font-semibold">One next step</p>
-              <p className="text-sm text-neutral-300 mt-1 leading-relaxed">
+              <p className="text-sm text-white/70 mt-1 leading-relaxed">
                 {snapshot.nextAction.detail}
               </p>
             </div>
@@ -557,10 +557,10 @@ function SectionHeader({
     <div className="flex items-start justify-between gap-4">
       <div>
         <h2 className="flex items-center gap-2 text-xl font-black text-neutral-900">
-          <Icon className="w-5 h-5 text-primary-600" />
+              <Icon className="w-5 h-5 text-primary-600" />
           {label}
         </h2>
-        <p className="text-base font-semibold text-neutral-500 mt-1">{detail}</p>
+        <p className="text-base font-semibold text-[#78928a] mt-1">{detail}</p>
       </div>
     </div>
   );
@@ -576,12 +576,12 @@ function StatTile({
   icon: typeof CalendarCheck;
 }) {
   return (
-    <div className="rounded-[1.25rem] bg-white p-5 text-center shadow-sm shadow-primary-100/50">
-      <div className="mx-auto mb-3 flex h-9 w-9 items-center justify-center rounded-[0.85rem] bg-primary-100 text-primary-600">
+    <div className="rounded-[1.15rem] bg-white p-3 text-center shadow-sm shadow-primary-100/50 sm:rounded-[1.25rem] sm:p-5">
+      <div className="mx-auto mb-2 flex h-8 w-8 items-center justify-center rounded-[0.85rem] bg-primary-100 text-primary-600 sm:mb-3 sm:h-9 sm:w-9">
         <Icon className="w-4 h-4" />
       </div>
-      <p className="text-3xl font-black text-neutral-950 tabular-nums">{value}</p>
-      <p className="mt-1 text-xs font-semibold text-neutral-500">{label}</p>
+      <p className="text-2xl font-black text-[#16302a] tabular-nums sm:text-3xl">{value}</p>
+      <p className="mt-1 text-[11px] font-semibold leading-tight text-[#78928a] sm:text-xs">{label}</p>
     </div>
   );
 }

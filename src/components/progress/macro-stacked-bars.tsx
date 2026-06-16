@@ -73,7 +73,7 @@ export function MacroStackedBars({
     <div>
       <div
         className={cn(
-          "flex items-end border-b border-neutral-100 pb-5",
+          "flex items-end border-b border-primary-100/80 pb-5",
           dense ? "gap-[4px] h-48" : "gap-8 h-64"
         )}
         role="img"
@@ -97,7 +97,7 @@ export function MacroStackedBars({
                 className={cn(
                   "relative w-full overflow-hidden rounded-t-[0.65rem] flex flex-col-reverse",
                   dense ? "max-w-none" : "max-w-12",
-                  day.source === "sample" && "opacity-70 ring-1 ring-inset ring-neutral-300"
+                  day.source === "sample" && "opacity-70 ring-1 ring-inset ring-[#b8cac4]"
                 )}
                 style={{ height: `${Math.max(stackHeightPct, dayKcal > 0 ? 2 : 0)}%` }}
               >
@@ -134,7 +134,7 @@ export function MacroStackedBars({
           return (
             <div key={day.date} className="flex-1 min-w-0 text-center">
               {showLabel ? (
-                <span className="text-xs text-neutral-500 tabular-nums">{day.label}</span>
+                <span className="text-xs font-semibold text-[#78928a] tabular-nums">{day.label}</span>
               ) : null}
             </div>
           );

@@ -28,17 +28,17 @@ export function SeriesToggle({
             onClick={() => onToggle(key)}
             title={isLast ? "Keep at least one macro visible" : undefined}
             className={cn(
-              "min-h-[44px] md:min-h-0 inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors",
+              "min-h-[44px] md:min-h-0 inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-black transition-colors",
               isOn
-                ? "border-neutral-300 bg-white text-neutral-800 shadow-sm"
-                : "border-neutral-200 bg-neutral-50 text-neutral-400",
+                ? "border-primary-100 bg-white text-[#516b63] shadow-sm"
+                : "border-primary-100 bg-primary-50/50 text-[#91a7a0]",
               isLast ? "cursor-not-allowed opacity-80" : "cursor-pointer"
             )}
           >
             <span
               className={cn(
                 "flex h-3.5 w-3.5 items-center justify-center rounded-[4px]",
-                isOn ? MACRO_META[key].swatchClass : "bg-neutral-300"
+                isOn ? MACRO_META[key].swatchClass : "bg-[#b8cac4]"
               )}
             >
               {isOn ? <Check className="h-2.5 w-2.5 text-white" strokeWidth={3} /> : null}
