@@ -193,19 +193,24 @@ export function DashboardClient({
         </Card>
       </section>
 
-      <section className="grid gap-4 2xl:grid-cols-[0.95fr_1.05fr]">
-        <Card className="space-y-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-neutral-900">Macro truth</h2>
-            <span className="rounded-full bg-primary-50 px-3 py-1 text-xs font-bold text-primary-700">
+      <section className="grid gap-4 2xl:grid-cols-[1.1fr_0.9fr]">
+        <Card variant="elevated" className="space-y-8 px-7 py-8 md:px-9 md:py-9">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h2 className="text-2xl font-black text-neutral-900">Macro truth</h2>
+              <p className="mt-1 text-sm font-semibold leading-5 text-neutral-500">
+                Bigger view of what today&apos;s logged meals have actually covered.
+              </p>
+            </div>
+            <span className="shrink-0 rounded-full bg-primary-50 px-3.5 py-1.5 text-xs font-black text-primary-700">
               {percentOf(totals.calories, targets.calories)}% calories
             </span>
           </div>
-          <MacroBar label="Protein" current={totals.protein} target={targets.protein} color="#1eae84" />
-          <MacroBar label="Carbs" current={totals.carbs} target={targets.carbs} color="#c7a91e" />
-          <MacroBar label="Fat" current={totals.fat} target={targets.fat} color="#f0795b" />
+          <MacroBar label="Protein" current={totals.protein} target={targets.protein} color="#1eae84" size="lg" />
+          <MacroBar label="Carbs" current={totals.carbs} target={targets.carbs} color="#c7a91e" size="lg" />
+          <MacroBar label="Fat" current={totals.fat} target={targets.fat} color="#f0795b" size="lg" />
           <Link href="/app/nutrition">
-            <Button variant="secondary" className="w-full">
+            <Button variant="secondary" size="lg" className="w-full">
               Open meal breakdown
               <ArrowRight className="h-4 w-4" />
             </Button>

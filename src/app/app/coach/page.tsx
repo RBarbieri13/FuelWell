@@ -9,7 +9,19 @@
 
 import Link from "next/link";
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
-import { ArrowRight, MessageCircle, Send, Sparkles, User } from "lucide-react";
+import {
+  ArrowRight,
+  Calculator,
+  Heading2,
+  ImageIcon,
+  Link2,
+  ListTree,
+  MessageCircle,
+  Send,
+  Sparkles,
+  Table2,
+  User,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils/cn";
 import { createClient } from "@/lib/supabase/client";
@@ -28,6 +40,24 @@ const INITIAL_PROFILE: CoachProfile = {
   goal: "lose",
   dietaryPreference: "none",
 };
+
+const richPreviewMarkdown = `## Dinner options for 102g protein left
+
+| Option | Protein | Why it fits |
+| --- | ---: | --- |
+| Salmon bowl | 42g | Balanced fats, easy carbs |
+| Turkey quinoa bowl | 48g | Highest protein density |
+
+1. Build the plate:
+   - Start with protein
+   - Add produce
+   - Finish with the carb gap
+
+Formula check: $102g - 42g = 60g$ left after dinner.
+
+![FuelWell rich chat preview](/icon-512.png)
+
+[Open nutrition detail](/app/nutrition)`;
 
 export default function CoachPage() {
   const { totals, targets } = useDayLog();
@@ -72,7 +102,9 @@ export default function CoachPage() {
   }, []);
 
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (items.length > 0 || busy) {
+      endRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
   }, [items, busy]);
 
   const quickPrompts = useMemo(() => {
@@ -134,7 +166,7 @@ export default function CoachPage() {
       <main className="flex-1 overflow-y-auto px-4 py-6 md:px-8">
         <div className="mx-auto max-w-5xl space-y-5">
           {items.length === 0 && (
-            <div className="grid gap-4 lg:grid-cols-[1fr_0.72fr]">
+            <div className="grid gap-4 xl:grid-cols-[1fr_0.72fr]">
               <section className="fw-dark-panel rounded-[2rem] border p-6 md:p-8">
                 <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-xs font-black uppercase tracking-[0.16em] text-primary-100">
                   <MessageCircle className="h-4 w-4" />
@@ -148,11 +180,36 @@ export default function CoachPage() {
                   choices, render recipes, update groceries, and explain your
                   numbers directly in chat.
                 </p>
+                <div className="mt-7 grid gap-3 sm:grid-cols-3">
+                  {[
+                    ["102g", "protein left"],
+                    ["4", "rich formats"],
+                    ["live", "tools"],
+                  ].map(([value, label]) => (
+                    <div
+                      key={label}
+                      className="rounded-[1.2rem] border border-white/12 bg-white/10 px-4 py-3 backdrop-blur"
+                    >
+                      <p className="text-2xl font-black tabular-nums text-white">{value}</p>
+                      <p className="mt-1 text-[11px] font-black uppercase tracking-[0.12em] text-white/58">
+                        {label}
+                      </p>
+                    </div>
+                  ))}
+                </div>
               </section>
               <section className="rounded-[2rem] border border-primary-100/80 bg-white/90 p-5 shadow-[0_22px_60px_rgba(22,48,42,0.10)]">
-                <p className="text-xs font-black uppercase tracking-[0.16em] text-primary-600">
-                  Try asking
-                </p>
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-black uppercase tracking-[0.16em] text-primary-600">
+                      Try asking
+                    </p>
+                    <h2 className="mt-2 text-2xl font-black text-[#16302a]">Start with a useful question</h2>
+                  </div>
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[1rem] bg-primary-100 text-primary-700">
+                    <Sparkles className="h-5 w-5" />
+                  </span>
+                </div>
                 <div className="mt-4 grid gap-2">
                   {quickPrompts.map((prompt) => (
                     <button
@@ -256,22 +313,63 @@ function UserAvatar() {
 }
 
 function RichTextPreview() {
+  const capabilities = [
+    { label: "Tables", detail: "Meal comparisons and macro rows", icon: Table2, tone: "bg-primary-100 text-primary-700" },
+    { label: "Nested lists", detail: "Steps, substeps, and checklists", icon: ListTree, tone: "bg-sky-100 text-sky-700" },
+    { label: "Formulas", detail: "Math rendered inline with KaTeX", icon: Calculator, tone: "bg-lemon-100 text-lemon-700" },
+    { label: "Media", detail: "Images and links inside replies", icon: ImageIcon, tone: "bg-accent-100 text-accent-700" },
+  ];
+
   return (
-    <section className="rounded-[2rem] border border-primary-100/80 bg-white/82 p-5 shadow-[0_18px_48px_rgba(22,48,42,0.07)]">
-      <p className="text-xs font-black uppercase tracking-[0.16em] text-primary-600">
-        Rich response support
-      </p>
-      <div className="mt-4 grid gap-3 md:grid-cols-3">
-        {[
-          "Tables for meal comparisons",
-          "Nested lists and headings",
-          "Formulas, images, and links",
-        ].map((item) => (
-          <div key={item} className="fw-soft-row p-4">
-            <Sparkles className="h-4 w-4 text-primary-600" />
-            <p className="mt-2 text-sm font-black text-[#16302a]">{item}</p>
+    <section className="rounded-[2rem] border border-primary-100/80 bg-white/88 p-5 shadow-[0_18px_48px_rgba(22,48,42,0.07)]">
+      <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+        <div className="max-w-xl">
+          <p className="text-xs font-black uppercase tracking-[0.16em] text-primary-600">
+            Rich response support
+          </p>
+          <h2 className="mt-2 text-2xl font-black text-[#16302a]">Coach answers can be structured, visual, and math-aware.</h2>
+          <p className="mt-2 text-sm font-semibold leading-6 text-[#78928a]">
+            The same chat bubble supports headers, nested lists, tables, formulas, links, and inline media when the coach replies.
+          </p>
+        </div>
+        <div className="grid gap-2 sm:grid-cols-2 xl:w-[30rem]">
+          {capabilities.map((item) => {
+            const Icon = item.icon;
+            return (
+              <div key={item.label} className="fw-soft-row flex gap-3 p-3">
+                <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-[0.95rem] ${item.tone}`}>
+                  <Icon className="h-4 w-4" />
+                </span>
+                <div>
+                  <p className="text-sm font-black text-[#16302a]">{item.label}</p>
+                  <p className="text-xs font-semibold leading-5 text-[#78928a]">{item.detail}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="mt-5 grid gap-4 xl:grid-cols-[minmax(0,1fr)_18rem]">
+        <div className="flex gap-3">
+          <CoachAvatar />
+          <div className="min-w-0 flex-1">
+            <StreamingTextBubble text={richPreviewMarkdown} streaming={false} />
           </div>
-        ))}
+        </div>
+        <div className="rounded-[1.5rem] border border-primary-100 bg-primary-50/80 p-4">
+          <div className="flex h-11 w-11 items-center justify-center rounded-[1rem] bg-white text-primary-700 shadow-sm">
+            <Heading2 className="h-5 w-5" />
+          </div>
+          <h3 className="mt-4 text-lg font-black text-[#16302a]">Inline artifacts stay in the conversation.</h3>
+          <p className="mt-2 text-sm font-semibold leading-6 text-[#516b63]">
+            The coach can answer in prose, then attach action cards for logging meals, opening pages, or saving preferences.
+          </p>
+          <div className="mt-4 flex items-center gap-2 rounded-full bg-white px-3 py-2 text-xs font-black text-primary-800">
+            <Link2 className="h-3.5 w-3.5" />
+            Chat-native actions
+          </div>
+        </div>
       </div>
     </section>
   );
