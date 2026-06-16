@@ -25,12 +25,12 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           ref={ref}
           id={inputId}
           className={cn(
-            "w-full px-3.5 py-2.5 bg-white border rounded-xl text-sm transition-all duration-150",
+            "w-full px-4 py-3 bg-neutral-50/80 border rounded-[1rem] text-sm font-semibold text-neutral-800 transition-all duration-150",
             "placeholder:text-neutral-400",
             "focus:outline-none focus:ring-2 focus:ring-offset-0 focus:border-transparent",
             error
               ? "border-red-300 focus:ring-red-400"
-              : "border-neutral-300 focus:ring-primary-500",
+              : "border-primary-100 focus:ring-primary-500",
             className
           )}
           aria-invalid={error ? "true" : undefined}

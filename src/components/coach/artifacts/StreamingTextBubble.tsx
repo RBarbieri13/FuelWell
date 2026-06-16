@@ -13,7 +13,7 @@ export type StreamingTextBubbleProps = {
 
 export function StreamingTextBubble({ text, streaming }: StreamingTextBubbleProps) {
   return (
-    <div className="max-w-[95%] rounded-3xl rounded-bl-md bg-white px-4 py-3 text-sm font-medium leading-6 text-neutral-800 shadow-sm md:max-w-[85%]">
+    <div className="max-w-[95%] rounded-3xl rounded-bl-md border border-primary-100 bg-white/92 px-4 py-3 text-sm font-semibold leading-6 text-neutral-800 shadow-sm shadow-primary-900/5 md:max-w-[85%]">
       {text ? (
         <div className="min-w-0">
           <ReactMarkdown
@@ -26,15 +26,15 @@ export function StreamingTextBubble({ text, streaming }: StreamingTextBubbleProp
           {streaming && (
             <span
               aria-hidden
-              className="ml-1 inline-block h-3.5 w-1.5 animate-pulse rounded-sm bg-neutral-300 align-middle"
+              className="ml-1 inline-block h-3.5 w-1.5 animate-pulse rounded-sm bg-primary-300 align-middle"
             />
           )}
         </div>
       ) : (
         <span className="flex gap-1" role="status" aria-label="Coach is typing">
-          <span className="h-2 w-2 animate-bounce rounded-full bg-neutral-400 [animation-delay:0ms]" />
-          <span className="h-2 w-2 animate-bounce rounded-full bg-neutral-400 [animation-delay:150ms]" />
-          <span className="h-2 w-2 animate-bounce rounded-full bg-neutral-400 [animation-delay:300ms]" />
+          <span className="h-2 w-2 animate-bounce rounded-full bg-primary-400 [animation-delay:0ms]" />
+          <span className="h-2 w-2 animate-bounce rounded-full bg-primary-400 [animation-delay:150ms]" />
+          <span className="h-2 w-2 animate-bounce rounded-full bg-primary-400 [animation-delay:300ms]" />
         </span>
       )}
     </div>
@@ -76,7 +76,7 @@ const markdownComponents = {
     <ul className={cn("my-2 ml-4 list-disc space-y-1.5 marker:text-primary-500", className)} {...props} />
   ),
   ol: ({ className, ...props }: React.ComponentProps<"ol">) => (
-    <ol className={cn("my-2 ml-4 list-decimal space-y-1.5 marker:font-black marker:text-neutral-500", className)} {...props} />
+    <ol className={cn("my-2 ml-4 list-decimal space-y-1.5 marker:font-black marker:text-primary-600", className)} {...props} />
   ),
   li: ({ className, ...props }: React.ComponentProps<"li">) => (
     <li className={cn("pl-1 leading-6 [&>ul]:mt-1.5 [&>ol]:mt-1.5", className)} {...props} />
@@ -88,21 +88,21 @@ const markdownComponents = {
     />
   ),
   hr: ({ className, ...props }: React.ComponentProps<"hr">) => (
-    <hr className={cn("my-4 border-neutral-200", className)} {...props} />
+    <hr className={cn("my-4 border-primary-100", className)} {...props} />
   ),
   table: ({ className, ...props }: React.ComponentProps<"table">) => (
-    <div className="my-3 max-w-full overflow-x-auto rounded-2xl border border-neutral-200">
+    <div className="my-3 max-w-full overflow-x-auto rounded-2xl border border-primary-100">
       <table className={cn("w-full min-w-[32rem] border-collapse text-left text-xs", className)} {...props} />
     </div>
   ),
   thead: ({ className, ...props }: React.ComponentProps<"thead">) => (
-    <thead className={cn("bg-neutral-900 text-white", className)} {...props} />
+    <thead className={cn("bg-primary-700 text-white", className)} {...props} />
   ),
   th: ({ className, ...props }: React.ComponentProps<"th">) => (
-    <th className={cn("border-b border-neutral-200 px-3 py-2 font-black", className)} {...props} />
+    <th className={cn("border-b border-primary-200 px-3 py-2 font-black", className)} {...props} />
   ),
   td: ({ className, ...props }: React.ComponentProps<"td">) => (
-    <td className={cn("border-b border-neutral-100 px-3 py-2 align-top", className)} {...props} />
+    <td className={cn("border-b border-primary-100 px-3 py-2 align-top", className)} {...props} />
   ),
   code: ({ className, children, ...props }: React.ComponentProps<"code">) => {
     const isBlock = /language-/.test(className ?? "");
@@ -111,7 +111,7 @@ const markdownComponents = {
         className={cn(
           isBlock
             ? "block overflow-x-auto whitespace-pre rounded-2xl bg-neutral-950 p-3 text-xs font-semibold leading-5 text-neutral-50"
-            : "rounded-md bg-neutral-100 px-1.5 py-0.5 font-mono text-[0.85em] font-bold text-neutral-800",
+            : "rounded-md bg-primary-50 px-1.5 py-0.5 font-mono text-[0.85em] font-bold text-primary-800",
           className
         )}
         {...props}
@@ -128,7 +128,7 @@ const markdownComponents = {
     // needs configured hosts and fixed sizing, so keep this as a plain image.
     // eslint-disable-next-line @next/next/no-img-element
     <img
-      className={cn("my-3 max-h-72 w-full rounded-2xl border border-neutral-200 object-cover", className)}
+      className={cn("my-3 max-h-72 w-full rounded-2xl border border-primary-100 object-cover", className)}
       alt={alt ?? ""}
       loading="lazy"
       referrerPolicy="no-referrer"

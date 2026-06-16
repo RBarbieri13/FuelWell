@@ -19,8 +19,8 @@ type MacroHistoryArtifact = ArtifactSpec & {
   sample?: boolean;
 };
 
-// Macro colors from design tokens: protein blue, carbs amber, fat red.
-const COLORS = { protein: "#3b82f6", carbs: "#f59e0b", fat: "#ef4444" } as const;
+// Macro colors from the FW.zip Lagoon & Coral design system.
+const COLORS = { protein: "#1eae84", carbs: "#c7a91e", fat: "#8e73bd" } as const;
 
 const VIEW_W = 320;
 const VIEW_H = 120;
@@ -30,7 +30,7 @@ export function MacroHistoryChart({ artifact, onAction }: ArtifactCardProps<Macr
 
   if (series.length === 0) {
     return (
-      <div className="mt-3 rounded-2xl border border-neutral-200 bg-white p-4 text-sm font-medium text-neutral-500">
+      <div className="mt-3 rounded-2xl border border-primary-100 bg-white p-4 text-sm font-medium text-neutral-500">
         No history to chart yet
       </div>
     );
@@ -46,7 +46,7 @@ export function MacroHistoryChart({ artifact, onAction }: ArtifactCardProps<Macr
   const summary = `Macro history, last ${artifact.window}: average ${avg("calories")} kcal and ${avg("protein")} g protein per day across ${series.length} days, stacked by protein, carbs, and fat grams.`;
 
   return (
-    <div className="mt-3 rounded-2xl border border-neutral-200 bg-white p-4">
+    <div className="mt-3 rounded-2xl border border-primary-100 bg-white p-4">
       <div className="flex items-baseline justify-between gap-3">
         <p className="text-sm font-black text-neutral-900">Macro history</p>
         <span className="text-xs font-bold text-neutral-400">{artifact.window}</span>

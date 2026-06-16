@@ -1,15 +1,20 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono, Hanken_Grotesk, Quicksand } from "next/font/google";
 import "katex/dist/katex.min.css";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const hankenGrotesk = Hanken_Grotesk({
+  variable: "--font-fw-body",
+  subsets: ["latin"],
+});
+
+const quicksand = Quicksand({
+  variable: "--font-fw-display",
   subsets: ["latin"],
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+  variable: "--font-fw-mono",
   subsets: ["latin"],
 });
 
@@ -35,7 +40,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${hankenGrotesk.variable} ${quicksand.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
         {children}

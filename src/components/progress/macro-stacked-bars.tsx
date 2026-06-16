@@ -27,9 +27,9 @@ export const MACRO_META: Record<
   MacroKey,
   { label: string; barClass: string; swatchClass: string }
 > = {
-  protein: { label: "Protein", barClass: "bg-blue-500", swatchClass: "bg-blue-500" },
-  carbs: { label: "Carbs", barClass: "bg-amber-500", swatchClass: "bg-amber-500" },
-  fat: { label: "Fat", barClass: "bg-rose-500", swatchClass: "bg-rose-500" },
+  protein: { label: "Protein", barClass: "bg-macro-protein", swatchClass: "bg-macro-protein" },
+  carbs: { label: "Carbs", barClass: "bg-macro-carbs", swatchClass: "bg-macro-carbs" },
+  fat: { label: "Fat", barClass: "bg-macro-fat", swatchClass: "bg-macro-fat" },
 };
 
 /** Stack order from bottom to top. */
@@ -73,8 +73,8 @@ export function MacroStackedBars({
     <div>
       <div
         className={cn(
-          "flex items-end border-b border-neutral-200 pb-3",
-          dense ? "gap-[3px] h-44" : "gap-2 h-52"
+          "flex items-end border-b border-neutral-100 pb-5",
+          dense ? "gap-[4px] h-48" : "gap-8 h-64"
         )}
         role="img"
         aria-label={`Daily calories split by ${orderedActive
@@ -95,8 +95,8 @@ export function MacroStackedBars({
             >
               <div
                 className={cn(
-                  "relative w-full overflow-hidden rounded-t-md flex flex-col-reverse",
-                  dense ? "max-w-none" : "max-w-10",
+                  "relative w-full overflow-hidden rounded-t-[0.65rem] flex flex-col-reverse",
+                  dense ? "max-w-none" : "max-w-12",
                   day.source === "sample" && "opacity-70 ring-1 ring-inset ring-neutral-300"
                 )}
                 style={{ height: `${Math.max(stackHeightPct, dayKcal > 0 ? 2 : 0)}%` }}

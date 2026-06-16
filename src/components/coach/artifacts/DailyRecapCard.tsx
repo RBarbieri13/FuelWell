@@ -16,10 +16,10 @@ type DailyRecapArtifact = ArtifactSpec & {
 };
 
 const BARS: Array<{ key: keyof Macros; label: string; color: string; unit: string }> = [
-  { key: "calories", label: "Calories", color: "#22c55e", unit: "kcal" },
-  { key: "protein", label: "Protein", color: "#3b82f6", unit: "g" },
-  { key: "carbs", label: "Carbs", color: "#f59e0b", unit: "g" },
-  { key: "fat", label: "Fat", color: "#ef4444", unit: "g" },
+  { key: "calories", label: "Calories", color: "#1eae84", unit: "kcal" },
+  { key: "protein", label: "Protein", color: "#1eae84", unit: "g" },
+  { key: "carbs", label: "Carbs", color: "#c7a91e", unit: "g" },
+  { key: "fat", label: "Fat", color: "#8e73bd", unit: "g" },
 ];
 
 function formatValue(value: number, unit: string): string {
@@ -32,7 +32,7 @@ export function DailyRecapCard({ artifact, onAction }: ArtifactCardProps<DailyRe
   const highlights = artifact.highlights ?? [];
 
   return (
-    <div className="mt-3 rounded-2xl border border-neutral-200 bg-white p-4">
+    <div className="mt-3 rounded-2xl border border-primary-100 bg-white p-4">
       <div className="flex items-baseline justify-between gap-3">
         <p className="text-sm font-black text-neutral-900">Daily recap</p>
         <span className="shrink-0 text-xs font-bold text-neutral-400">

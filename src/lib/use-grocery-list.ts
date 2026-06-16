@@ -44,7 +44,7 @@ function loadInitial(): RichGroceryItem[] {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw) as RichGroceryItem[];
-      if (Array.isArray(parsed)) return parsed;
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
     }
   } catch {
     // fall through
@@ -54,7 +54,7 @@ function loadInitial(): RichGroceryItem[] {
 
 let items: RichGroceryItem[] = loadInitial();
 const listeners = new Set<() => void>();
-const EMPTY: RichGroceryItem[] = [];
+const SERVER_SNAPSHOT: RichGroceryItem[] = SEED;
 
 function persist(next: RichGroceryItem[]) {
   items = next;
@@ -95,6 +95,6 @@ export function toCoachGrocery(rich: RichGroceryItem[]): CoachGroceryItem[] {
 }
 
 export function useGroceryList() {
-  const current = useSyncExternalStore(subscribe, () => items, () => EMPTY);
+  const current = useSyncExternalStore(subscribe, () => items, () => SERVER_SNAPSHOT);
   return { items: current, setGroceryItems, applyCoachGrocery };
 }

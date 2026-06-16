@@ -168,13 +168,13 @@ export function ProfileClient({
               label="Protein"
               value={`${proteinTarget}`}
               unit="g"
-              color="bg-blue-50 text-blue-700"
+              color="bg-sky-50 text-sky-700"
             />
             <TargetCard
               label="Carbs"
               value={`${carbsTarget}`}
               unit="g"
-              color="bg-amber-50 text-amber-700"
+              color="bg-lemon-50 text-lemon-700"
             />
             <TargetCard
               label="Fat"

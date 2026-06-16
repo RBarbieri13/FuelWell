@@ -12,6 +12,7 @@ import {
   Circle,
   ListPlus,
   Plus,
+  SlidersHorizontal,
   ShoppingBasket,
   Sparkles,
   Trash2,
@@ -26,9 +27,9 @@ import {
 const categories: GroceryCategory[] = ["Protein", "Produce", "Pantry", "Dairy", "Frozen", "Other"];
 
 const categoryTone: Record<GroceryCategory, string> = {
-  Protein: "bg-blue-50 text-blue-700 border-blue-100",
+  Protein: "bg-primary-50 text-primary-700 border-primary-100",
   Produce: "bg-primary-50 text-primary-700 border-primary-100",
-  Pantry: "bg-amber-50 text-amber-700 border-amber-100",
+  Pantry: "bg-lemon-50 text-lemon-700 border-lemon-100",
   Dairy: "bg-sky-50 text-sky-700 border-sky-100",
   Frozen: "bg-purple-50 text-purple-700 border-purple-100",
   Other: "bg-neutral-50 text-neutral-600 border-neutral-200",
@@ -83,52 +84,57 @@ export default function GroceryListPage() {
   }
 
   return (
-    <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-neutral-900 tracking-tight">
-            Grocery List
-          </h1>
-          <p className="text-sm text-neutral-500 mt-1">
-            Shop grouped ingredients from your planned meals, then check off as
-            you go.
-          </p>
+    <div className="fw-app-surface">
+      <header className="fw-page-header">
+        <div className="fw-page-inner flex flex-col gap-4 py-7 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="fw-heading text-3xl md:text-4xl">Grocery list</h1>
+            <p className="fw-muted mt-1 text-base">
+              Grouped from your planned meals — check off as you go.
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <Button
+              type="button"
+              size="lg"
+              onClick={() => setGroceryItems(items.map((item) => ({ ...item, checked: true })))}
+              className="rounded-full"
+            >
+              <CheckCircle2 className="w-5 h-5" />
+              Mark all shopped
+            </Button>
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary-600 text-lg font-black text-white shadow-[0_16px_34px_rgba(21,145,108,0.24)]">
+              M
+            </div>
+          </div>
         </div>
-        <Button
-          type="button"
-          size="sm"
-          onClick={() => setGroceryItems(items.map((item) => ({ ...item, checked: true })))}
-        >
-          <CheckCircle2 className="w-4 h-4" />
-          Mark all shopped
-        </Button>
-      </div>
+      </header>
 
-      <div className="grid gap-4 lg:grid-cols-[1fr_18rem]">
+      <div className="fw-page-inner grid gap-6 2xl:grid-cols-[minmax(0,1fr)_29rem]">
         <div className="space-y-4">
-          <Card className="bg-gradient-to-br from-primary-50/80 via-white to-accent-50/60 border-primary-100">
+          <Card className="fw-mint-panel">
             <div className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-center">
               <div>
                 <div className="inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1 text-xs font-medium text-primary-700 border border-primary-100">
                   <ShoppingBasket className="w-3.5 h-3.5" />
                   This week
                 </div>
-                <h2 className="mt-4 text-xl font-semibold tracking-tight text-neutral-900">
+                <h2 className="mt-5 text-3xl font-black tracking-tight text-neutral-900">
                   {remainingCount === 0
                     ? "All shopped for this week."
-                    : `${remainingCount} items left for 4 planned days.`}
+                    : `${remainingCount} items left for 4 planned days`}
                 </h2>
-                <p className="mt-2 text-sm leading-relaxed text-neutral-600">
+                <p className="mt-3 max-w-xl text-lg font-semibold leading-relaxed text-primary-900/75">
                   {remainingCount === 0
                     ? "You're set — check back when new meals are planned."
                     : "Protein and produce are the priority. Pantry items can wait if you are doing a quick store run."}
                 </p>
               </div>
-              <div className="rounded-2xl bg-white/85 border border-white px-5 py-4 text-center">
-                <p className="text-3xl font-bold tabular-nums text-neutral-900">
+              <div className="rounded-[1.5rem] bg-white px-8 py-6 text-center shadow-sm shadow-primary-900/5">
+                <p className="text-5xl font-black tabular-nums text-primary-600">
                   {checkedCount}/{items.length}
                 </p>
-                <p className="text-xs font-medium text-neutral-500">checked off</p>
+                <p className="text-sm font-bold text-neutral-400">checked off</p>
               </div>
             </div>
           </Card>
@@ -141,10 +147,10 @@ export default function GroceryListPage() {
                   type="button"
                   onClick={() => setActiveCategory(category)}
                   className={cn(
-                    "rounded-full border px-3 py-2.5 md:py-1.5 text-sm font-medium transition-all",
+                    "rounded-full border px-5 py-3 text-sm font-bold transition-all",
                     activeCategory === category
-                      ? "border-primary-300 bg-primary-50 text-primary-700"
-                      : "border-neutral-200 text-neutral-500 hover:border-neutral-300 hover:text-neutral-800"
+                      ? "border-primary-500 bg-primary-500 text-white shadow-[0_12px_24px_rgba(21,145,108,0.18)]"
+                      : "border-neutral-200 bg-neutral-50 text-neutral-600 hover:border-neutral-300 hover:text-neutral-800"
                   )}
                 >
                   {category}
@@ -163,7 +169,7 @@ export default function GroceryListPage() {
               const categoryChecked = categoryItems.filter((item) => item.checked).length;
 
               return (
-                <Card key={category} padding="sm">
+                <Card key={category} className="px-7 py-6">
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex items-center gap-2">
                       <span className={cn("rounded-full border px-2.5 py-1 text-xs font-semibold", categoryTone[category])}>
@@ -178,7 +184,7 @@ export default function GroceryListPage() {
                     </Badge>
                   </div>
 
-                  <div className="mt-3 divide-y divide-neutral-100">
+                  <div className="mt-5 divide-y divide-neutral-100">
                     {categoryItems.map((item) => (
                       <div
                         key={item.id}
@@ -202,14 +208,14 @@ export default function GroceryListPage() {
                         <div className="min-w-0 flex-1">
                           <p
                             className={cn(
-                              "text-sm font-medium text-neutral-900",
+                            "text-base font-black text-neutral-900",
                               item.checked && "text-neutral-400 line-through"
                             )}
                           >
                             {item.name}
                           </p>
-                          <p className="text-xs text-neutral-500 mt-0.5">
-                            {item.amount} / {item.source}
+                          <p className="text-sm font-semibold text-neutral-400 mt-0.5">
+                            {item.amount} · {item.source}
                           </p>
                         </div>
                         <button
@@ -236,15 +242,17 @@ export default function GroceryListPage() {
           </div>
         </div>
 
-        <aside className="space-y-4">
-          <Card padding="sm">
-            <h2 className="flex items-center gap-2 text-sm font-semibold text-neutral-900">
-              <ListPlus className="w-4 h-4 text-primary-600" />
+        <aside className="space-y-5">
+          <Card className="px-7 py-7">
+            <h2 className="flex items-center gap-4 text-2xl font-black text-neutral-900">
+              <span className="fw-icon-chip h-11 w-11 rounded-[1rem]">
+                <ListPlus className="w-5 h-5" />
+              </span>
               Add custom item
             </h2>
             <form onSubmit={addItem} className="mt-4 space-y-3">
               <div>
-                <label htmlFor="item-name" className="text-xs font-medium text-neutral-500">
+                <label htmlFor="item-name" className="text-sm font-black text-neutral-500">
                   Item
                 </label>
                 <input
@@ -252,11 +260,11 @@ export default function GroceryListPage() {
                   value={newItemName}
                   onChange={(event) => setNewItemName(event.target.value)}
                   placeholder="e.g. sparkling water"
-                  className="mt-1 w-full rounded-xl border border-neutral-200 bg-white px-3 py-2.5 text-sm outline-none placeholder:text-neutral-400 focus:border-transparent focus:ring-2 focus:ring-primary-500"
+                  className="mt-2 w-full rounded-[1rem] border border-neutral-200 bg-neutral-50 px-4 py-4 text-base font-semibold outline-none placeholder:text-neutral-400 focus:border-transparent focus:ring-2 focus:ring-primary-500"
                 />
               </div>
               <div>
-                <label htmlFor="item-amount" className="text-xs font-medium text-neutral-500">
+                <label htmlFor="item-amount" className="text-sm font-black text-neutral-500">
                   Amount
                 </label>
                 <input
@@ -264,18 +272,18 @@ export default function GroceryListPage() {
                   value={newItemAmount}
                   onChange={(event) => setNewItemAmount(event.target.value)}
                   placeholder="1 pack"
-                  className="mt-1 w-full rounded-xl border border-neutral-200 bg-white px-3 py-2.5 text-sm outline-none placeholder:text-neutral-400 focus:border-transparent focus:ring-2 focus:ring-primary-500"
+                  className="mt-2 w-full rounded-[1rem] border border-neutral-200 bg-neutral-50 px-4 py-4 text-base font-semibold outline-none placeholder:text-neutral-400 focus:border-transparent focus:ring-2 focus:ring-primary-500"
                 />
               </div>
               <div>
-                <label htmlFor="item-category" className="text-xs font-medium text-neutral-500">
+                <label htmlFor="item-category" className="text-sm font-black text-neutral-500">
                   Category
                 </label>
                 <select
                   id="item-category"
                   value={newItemCategory}
                   onChange={(event) => setNewItemCategory(event.target.value as GroceryCategory)}
-                  className="mt-1 w-full rounded-xl border border-neutral-200 bg-white px-3 py-2.5 text-sm outline-none focus:border-transparent focus:ring-2 focus:ring-primary-500"
+                  className="mt-2 w-full rounded-[1rem] border border-neutral-200 bg-neutral-50 px-4 py-4 text-base font-semibold outline-none focus:border-transparent focus:ring-2 focus:ring-primary-500"
                 >
                   {categories.map((category) => (
                     <option key={category} value={category}>
@@ -284,37 +292,42 @@ export default function GroceryListPage() {
                   ))}
                 </select>
               </div>
-              <Button type="submit" className="w-full">
+              <Button type="submit" size="lg" className="w-full">
                 <Plus className="w-4 h-4" />
                 Add item
               </Button>
             </form>
           </Card>
 
-          <Card padding="sm" className="bg-neutral-900 text-white border-neutral-900">
-            <Sparkles className="w-5 h-5 text-primary-300" />
-            <h2 className="mt-3 text-sm font-semibold">Next best move</h2>
-            <p className="mt-1 text-sm leading-relaxed text-neutral-300">
+          <Card className="fw-dark-panel px-7 py-7">
+            <span className="inline-flex h-12 w-12 items-center justify-center rounded-[1rem] bg-primary-500 text-white">
+              <Sparkles className="w-6 h-6" />
+            </span>
+            <h2 className="mt-5 text-2xl font-black">Next best move</h2>
+            <p className="mt-3 text-lg font-semibold leading-relaxed text-white/75">
               Shop protein first, then produce. If time is short, skip pantry
               items that are already marked as backup sides.
             </p>
           </Card>
 
-          <Card padding="sm">
-            <h2 className="text-sm font-semibold text-neutral-900">Store mode</h2>
-            <div className="mt-3 space-y-2">
+          <Card className="px-7 py-7">
+            <h2 className="flex items-center gap-3 text-2xl font-black text-neutral-900">
+              <SlidersHorizontal className="h-5 w-5 text-primary-600" />
+              Store mode
+            </h2>
+            <div className="mt-5 space-y-4">
               {["Group by aisle", "Hide checked", "Keep screen awake"].map((label, index) => (
-                <div key={label} className="flex items-center justify-between rounded-xl bg-neutral-50 px-3 py-2">
-                  <span className="text-sm text-neutral-700">{label}</span>
+                <div key={label} className="flex items-center justify-between">
+                  <span className="text-base font-bold text-neutral-700">{label}</span>
                   <span
                     className={cn(
-                      "inline-flex h-5 w-5 items-center justify-center rounded-full border",
+                      "inline-flex h-9 w-9 items-center justify-center rounded-full border-2",
                       index === 0
-                        ? "border-primary-200 bg-primary-50 text-primary-600"
-                        : "border-neutral-200 text-neutral-300"
+                        ? "border-primary-500 bg-primary-500 text-white"
+                        : "border-primary-100 text-neutral-300"
                     )}
                   >
-                    {index === 0 && <Check className="w-3 h-3" />}
+                    {index === 0 && <Check className="w-4 h-4" />}
                   </span>
                 </div>
               ))}

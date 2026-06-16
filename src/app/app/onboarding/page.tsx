@@ -487,9 +487,9 @@ export default function OnboardingPage() {
                       </div>
                       <div className="grid grid-cols-3 gap-3">
                         {[
-                          { value: macros.protein, label: "Protein", bg: "bg-blue-50", text: "text-blue-700", sub: "text-blue-500" },
-                          { value: macros.carbs, label: "Carbs", bg: "bg-amber-50", text: "text-amber-700", sub: "text-amber-500" },
-                          { value: macros.fat, label: "Fat", bg: "bg-red-50", text: "text-red-700", sub: "text-red-500" },
+                          { value: macros.protein, label: "Protein", bg: "bg-primary-50", text: "text-primary-700", sub: "text-primary-500" },
+                          { value: macros.carbs, label: "Carbs", bg: "bg-lemon-50", text: "text-lemon-700", sub: "text-lemon-600" },
+                          { value: macros.fat, label: "Fat", bg: "bg-purple-50", text: "text-purple-700", sub: "text-purple-500" },
                         ].map((m) => (
                           <div key={m.label} className={`${m.bg} rounded-xl p-3 text-center`}>
                             <p className={`text-xl font-bold ${m.text} tabular-nums`}>

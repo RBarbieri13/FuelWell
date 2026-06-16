@@ -9,6 +9,8 @@ import {
   Dumbbell,
   HeartPulse,
   Salad,
+  Bell,
+  Search,
   Sparkles,
   UtensilsCrossed,
 } from "lucide-react";
@@ -63,7 +65,29 @@ export function DashboardClient({
   const coachVerdict = buildCoachVerdict(totals, targets, todaysMeals.length);
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6 p-4 md:p-8">
+    <div className="fw-app-surface">
+      <header className="fw-page-header">
+        <div className="fw-page-inner flex flex-col gap-4 py-7 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h1 className="fw-heading text-3xl md:text-4xl">Good evening, {displayName}</h1>
+            <p className="fw-muted mt-1 text-base">Tuesday · time to wind down</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <button className="flex h-14 w-14 items-center justify-center rounded-full bg-white text-neutral-700 shadow-[0_14px_34px_rgba(22,48,42,0.10)]" aria-label="Search">
+              <Search className="h-6 w-6" />
+            </button>
+            <button className="relative flex h-14 w-14 items-center justify-center rounded-full bg-white text-neutral-700 shadow-[0_14px_34px_rgba(22,48,42,0.10)]" aria-label="Notifications">
+              <Bell className="h-6 w-6" />
+              <span className="absolute right-4 top-4 h-2 w-2 rounded-full bg-accent-500" />
+            </button>
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary-600 text-lg font-black text-white shadow-[0_16px_34px_rgba(21,145,108,0.24)]">
+              {displayName.slice(0, 1).toUpperCase()}
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div className="fw-page-inner space-y-6">
       {!onboardingComplete && (
         <Link href="/app/onboarding" className="block group">
           <Card className="border-accent-200/80 bg-accent-50/70 transition-colors group-hover:border-accent-300">
@@ -82,22 +106,22 @@ export function DashboardClient({
         </Link>
       )}
 
-      <section className="grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
+      <section className="grid gap-4 2xl:grid-cols-[1.15fr_0.85fr]">
         <Card
           variant="elevated"
-          className="overflow-hidden bg-neutral-950 p-0 text-white"
+          className="fw-dark-panel overflow-hidden p-0"
         >
           <div className="relative p-6 md:p-8">
-            <div className="absolute right-0 top-0 h-56 w-56 rounded-full bg-primary-500/20 blur-3xl" />
             <div className="relative z-10">
               <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
                 <div>
-                  <p className="text-sm font-semibold text-primary-200">
+                  <p className="inline-flex items-center gap-2 text-sm font-black uppercase text-primary-200">
+                    <Sparkles className="h-4 w-4" />
                     Today&apos;s decision
                   </p>
-                  <h1 className="mt-2 text-3xl font-black tracking-tight md:text-5xl">
+                  <h2 className="mt-5 max-w-3xl text-4xl font-black leading-tight tracking-tight text-white md:text-6xl">
                     {hasLoggedToday ? coachVerdict.title : `Hey, ${displayName}. Start with one real input.`}
-                  </h1>
+                  </h2>
                 </div>
                 {hasLoggedToday && (
                   <div className="flex gap-3">
@@ -113,7 +137,7 @@ export function DashboardClient({
                 )}
               </div>
 
-              <p className="max-w-2xl text-base font-medium leading-7 text-neutral-200">
+              <p className="max-w-2xl text-lg font-semibold leading-8 text-white/76">
                 {hasLoggedToday
                   ? coachVerdict.body
                   : "No meals, workouts, or recovery inputs are logged yet. FuelWell will show the missing pieces instead of inventing green progress."}
@@ -128,18 +152,18 @@ export function DashboardClient({
                 </Link>
                 <Link
                   href="/app/dashboard/score"
-                  className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-neutral-200 backdrop-blur transition hover:bg-white/15"
+                  className="inline-flex items-center gap-2 rounded-[1.15rem] border border-white/15 bg-white/10 px-5 py-3 text-sm font-bold text-white backdrop-blur transition hover:bg-white/15"
                 >
-                  <span className="text-neutral-400">Health score</span>
-                  <span className="tabular-nums text-white">{healthScore ?? "--"}</span>
-                  <ChevronRight className="h-3.5 w-3.5 text-neutral-400" />
+                  <span className="text-white/80">Health score</span>
+                  <span className="tabular-nums text-primary-200">{healthScore ?? "--"}</span>
+                  <ChevronRight className="h-3.5 w-3.5 text-white/70" />
                 </Link>
               </div>
             </div>
           </div>
         </Card>
 
-        <Card className="space-y-5">
+        <Card className="space-y-6">
           <div className="flex items-center justify-between gap-4">
             <div>
               <h2 className="text-lg font-bold text-neutral-900">
@@ -166,17 +190,17 @@ export function DashboardClient({
         </Card>
       </section>
 
-      <section className="grid gap-4 lg:grid-cols-[0.95fr_1.05fr]">
-        <Card className="space-y-5">
+      <section className="grid gap-4 2xl:grid-cols-[0.95fr_1.05fr]">
+        <Card className="space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-bold text-neutral-900">Macro truth</h2>
-            <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs font-bold text-neutral-500">
+            <span className="rounded-full bg-primary-50 px-3 py-1 text-xs font-bold text-primary-700">
               {percentOf(totals.calories, targets.calories)}% calories
             </span>
           </div>
-          <MacroBar label="Protein" current={totals.protein} target={targets.protein} color="#3b82f6" />
-          <MacroBar label="Carbs" current={totals.carbs} target={targets.carbs} color="#f59e0b" />
-          <MacroBar label="Fat" current={totals.fat} target={targets.fat} color="#ef4444" />
+          <MacroBar label="Protein" current={totals.protein} target={targets.protein} color="#1eae84" />
+          <MacroBar label="Carbs" current={totals.carbs} target={targets.carbs} color="#c7a91e" />
+          <MacroBar label="Fat" current={totals.fat} target={targets.fat} color="#f0795b" />
           <Link href="/app/nutrition">
             <Button variant="secondary" className="w-full">
               Open meal breakdown
@@ -194,11 +218,11 @@ export function DashboardClient({
               <Link
                 href={contributor.href}
                 key={contributor.key}
-                className="group rounded-2xl border border-neutral-200/80 bg-white/70 p-4 transition hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-md hover:shadow-neutral-200/70"
+                    className="group fw-soft-row block p-4 transition hover:-translate-y-0.5 hover:border-primary-200 hover:bg-white hover:shadow-md hover:shadow-primary-900/10"
               >
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <div className="rounded-xl bg-neutral-100 p-2.5 text-neutral-700 group-hover:bg-primary-50 group-hover:text-primary-700">
+                    <div className="rounded-[1rem] bg-primary-100 p-3 text-primary-700 group-hover:bg-primary-200 group-hover:text-primary-800">
                       {contributor.key === "nutrition" && <Salad className="h-5 w-5" />}
                       {contributor.key === "activity" && <Activity className="h-5 w-5" />}
                       {contributor.key === "recovery" && <HeartPulse className="h-5 w-5" />}
@@ -216,7 +240,7 @@ export function DashboardClient({
         </Card>
       </section>
 
-      <section className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
+      <section className="grid gap-4 2xl:grid-cols-[0.9fr_1.1fr]">
         <div>
           <h2 className="mb-3 text-xs font-bold uppercase tracking-wider text-neutral-400">
             Quick actions
@@ -236,7 +260,7 @@ export function DashboardClient({
           </div>
 
           {todaysMeals.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-neutral-300 bg-neutral-50 p-5">
+            <div className="rounded-2xl border border-dashed border-primary-200 bg-primary-50/60 p-5">
               <p className="font-bold text-neutral-900">No meals logged yet.</p>
               <p className="mt-1 text-sm text-neutral-500">
                 Add your first meal to unlock today&apos;s nutrition detail and plate.
@@ -256,7 +280,7 @@ export function DashboardClient({
                   <Link
                     href="/app/nutrition"
                     key={meal.id}
-                    className="flex items-center justify-between rounded-2xl border border-neutral-100 bg-neutral-50/80 p-3 transition hover:border-primary-200 hover:bg-primary-50/40"
+                    className="flex items-center justify-between rounded-[1.25rem] bg-neutral-50/85 p-4 transition hover:bg-primary-50/80"
                   >
                     <div>
                       <p className="font-bold text-neutral-900">
@@ -305,15 +329,16 @@ export function DashboardClient({
         Profile context: goal {goal}, diet {dietaryPreference}
         {allergies.length > 0 ? `, allergies ${allergies.join(", ")}` : ""}.
       </p>
+      </div>
     </div>
   );
 }
 
 function EnergyStat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl bg-white/10 px-4 py-3 text-center backdrop-blur">
-      <p className="text-2xl font-black tabular-nums text-white">{value}</p>
-      <p className="mt-0.5 whitespace-nowrap text-xs font-semibold uppercase tracking-tight text-neutral-300">
+    <div className="rounded-[1.25rem] border border-white/14 bg-white/10 px-5 py-4 text-center backdrop-blur">
+      <p className="text-3xl font-black tabular-nums text-white">{value}</p>
+      <p className="mt-1 whitespace-nowrap text-xs font-bold uppercase tracking-[0.1em] text-white/60">
         {label}
       </p>
     </div>
@@ -322,7 +347,7 @@ function EnergyStat({ label, value }: { label: string; value: string }) {
 
 function MiniMetric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl bg-neutral-100/80 p-3 text-center">
+    <div className="rounded-[1.2rem] bg-primary-50/80 p-3 text-center">
       <p className="text-xl font-black tabular-nums text-neutral-900">{value}</p>
       <p className="mt-0.5 whitespace-nowrap text-xs font-bold uppercase tracking-tight text-neutral-400">{label}</p>
     </div>
@@ -343,9 +368,9 @@ function DeepLinkCard({
   return (
     <Link
       href={href}
-      className="group rounded-2xl border border-white/80 bg-white/70 p-4 shadow-sm shadow-neutral-200/60 transition hover:-translate-y-0.5 hover:bg-white hover:shadow-lg"
+      className="group rounded-[1.5rem] border border-primary-100/80 bg-white p-5 shadow-[0_18px_48px_rgba(22,48,42,0.07)] transition hover:-translate-y-0.5 hover:shadow-lg"
     >
-      <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-primary-50 text-primary-700">
+      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-[1.15rem] bg-primary-100 text-primary-700">
         {icon}
       </div>
       <p className="font-black text-neutral-900">{title}</p>

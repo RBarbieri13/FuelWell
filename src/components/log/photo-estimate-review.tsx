@@ -140,8 +140,8 @@ export function PhotoEstimateReview({
 
       {result && (
         <div className="space-y-3">
-          <div className="rounded-2xl bg-amber-50 px-4 py-3">
-            <p className="text-sm font-bold leading-5 text-amber-900">
+          <div className="rounded-2xl bg-lemon-50 px-4 py-3">
+            <p className="text-sm font-bold leading-5 text-lemon-700">
               {result.sourceNote} Review is required before anything is saved.
             </p>
           </div>

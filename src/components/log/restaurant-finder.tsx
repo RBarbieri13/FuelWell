@@ -345,7 +345,7 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
               <div className="absolute bottom-10 left-0 h-8 w-full rotate-6 bg-white/45" />
               <div className="absolute right-0 top-12 h-7 w-3/4 -rotate-3 bg-white/45" />
               <div className="absolute left-12 top-12 h-24 w-28 rounded-full border border-primary-200/60 bg-primary-100/40" />
-              <div className="absolute bottom-8 right-10 h-28 w-36 rounded-full border border-blue-200/60 bg-blue-100/30" />
+              <div className="absolute bottom-8 right-10 h-28 w-36 rounded-full border border-sky-200/60 bg-sky-100/30" />
             </div>
 
             <div className="absolute right-3 top-3 z-20 flex flex-col overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-lg">

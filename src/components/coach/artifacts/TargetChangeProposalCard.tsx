@@ -18,8 +18,8 @@ export function TargetChangeProposalCard({
   onAction,
 }: ArtifactCardProps<TargetChangeProposalArtifact>) {
   return (
-    <div className="max-w-full rounded-2xl border border-blue-100 bg-blue-50/70 p-4 shadow-sm">
-      <p className="text-xs font-black uppercase tracking-wider text-blue-700">
+    <div className="max-w-full rounded-2xl border border-sky-100 bg-sky-50/70 p-4 shadow-sm">
+      <p className="text-xs font-black uppercase tracking-wider text-sky-700">
         Target change proposal
       </p>
       <p className="mt-2 text-sm font-bold leading-5 text-neutral-800">
@@ -55,7 +55,7 @@ export function TargetChangeProposalCard({
               },
             })
           }
-          className="inline-flex min-h-10 items-center gap-1.5 rounded-full bg-blue-700 px-4 py-2 text-xs font-black text-white transition hover:bg-blue-800"
+          className="inline-flex min-h-10 items-center gap-1.5 rounded-full bg-sky-700 px-4 py-2 text-xs font-black text-white transition hover:bg-sky-600"
         >
           <Check className="h-3.5 w-3.5" />
           Accept
@@ -68,7 +68,7 @@ export function TargetChangeProposalCard({
               text: "Decline that target change proposal. Keep my current targets.",
             })
           }
-          className="inline-flex min-h-10 items-center gap-1.5 rounded-full border border-blue-200 bg-white px-4 py-2 text-xs font-black text-blue-800 transition hover:bg-blue-100"
+          className="inline-flex min-h-10 items-center gap-1.5 rounded-full border border-sky-200 bg-white px-4 py-2 text-xs font-black text-sky-700 transition hover:bg-sky-100"
         >
           <X className="h-3.5 w-3.5" />
           Decline

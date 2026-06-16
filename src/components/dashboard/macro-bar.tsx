@@ -35,15 +35,15 @@ export function MacroBar({
             style={{ backgroundColor: color }}
             aria-hidden="true"
           />
-          <span className="text-sm font-medium text-neutral-700">{label}</span>
+          <span className="text-sm font-bold text-neutral-700">{label}</span>
         </div>
-        <span className="text-sm text-neutral-400 tabular-nums">
-          <span className="text-neutral-700 font-medium">{current}</span> / {target}
+        <span className="text-sm font-semibold text-neutral-500 tabular-nums">
+          <span className="text-neutral-800 font-black">{current}</span> / {target}
           {unit}
         </span>
       </div>
       <div
-        className="h-2 bg-neutral-100 rounded-full overflow-hidden"
+        className="h-2 bg-primary-100/70 rounded-full overflow-hidden"
         role="progressbar"
         aria-valuenow={current}
         aria-valuemin={0}

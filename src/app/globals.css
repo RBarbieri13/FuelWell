@@ -7,35 +7,47 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-fw-body);
+  --font-mono: var(--font-fw-mono);
 
-  /* FuelWell Brand Colors — relaxed mint-green family (#47E7B0) */
-  --color-primary-50: #edfdf6;
-  --color-primary-100: #d2f9ea;
-  --color-primary-200: #a6f1d6;
-  --color-primary-300: #6ee7bd;
-  --color-primary-400: #47e7b0;
-  --color-primary-500: #1fcf9b;
-  --color-primary-600: #0b7a5f; /* button bg: white text passes WCAG AA (>=4.5:1) */
-  --color-primary-700: #0a6650;
-  --color-primary-800: #084d3d;
-  --color-primary-900: #073b2f;
+  /* FW.zip design system — Lagoon & Coral */
+  --color-primary-50: #edf8f5;
+  --color-primary-100: #d6f0e8;
+  --color-primary-200: #aee2d3;
+  --color-primary-300: #7bd1b9;
+  --color-primary-400: #45bf9c;
+  --color-primary-500: #1eae84;
+  --color-primary-600: #15916c;
+  --color-primary-700: #117558;
+  --color-primary-800: #0e5d48;
+  --color-primary-900: #0a4436;
 
-  --color-accent-50: #fff7ed;
-  --color-accent-100: #ffedd5;
-  --color-accent-200: #fed7aa;
-  --color-accent-300: #fdba74;
-  --color-accent-400: #fb923c;
-  --color-accent-500: #f97316;
-  --color-accent-600: #ea580c;
-  --color-accent-700: #c2410c;
+  --color-accent-50: #fff1ed;
+  --color-accent-100: #ffe0d8;
+  --color-accent-200: #ffc3b5;
+  --color-accent-300: #f7a08d;
+  --color-accent-400: #f0795b;
+  --color-accent-500: #df6345;
+  --color-accent-600: #c74f33;
+  --color-accent-700: #9f3e28;
 
-  --color-macro-protein: #3b82f6;
-  --color-macro-carbs: #f59e0b;
-  --color-macro-fat: #ef4444;
-  --color-macro-calories: #0fa880;
-  --font-heading: var(--font-sans);
+  --color-sky-50: #edf7fc;
+  --color-sky-100: #d4edf8;
+  --color-sky-200: #addcf0;
+  --color-sky-500: #3e92c9;
+  --color-sky-600: #2f7cad;
+  --color-sky-700: #246389;
+  --color-lemon-50: #fbf6d8;
+  --color-lemon-100: #f3e9a8;
+  --color-lemon-200: #e5d265;
+  --color-lemon-500: #c7a91e;
+  --color-lemon-600: #a98d18;
+  --color-lemon-700: #7a650d;
+  --color-macro-protein: #1eae84;
+  --color-macro-carbs: #c7a91e;
+  --color-macro-fat: #f0795b;
+  --color-macro-calories: #1eae84;
+  --font-heading: var(--font-fw-display);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -77,8 +89,9 @@
 /* Base styles */
 body {
   background:
-    radial-gradient(circle at top left, rgba(71, 231, 176, 0.14), transparent 34rem),
-    linear-gradient(180deg, #f6f8f5 0%, #eaf4ef 100%);
+    radial-gradient(circle at top left, rgba(30, 174, 132, 0.14), transparent 34rem),
+    radial-gradient(circle at bottom right, rgba(240, 121, 91, 0.08), transparent 30rem),
+    linear-gradient(180deg, #f3faf7 0%, #e6f3ef 100%);
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -96,14 +109,14 @@ html {
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-primary-500);
+  outline: 2px solid var(--color-primary-600);
   outline-offset: 2px;
-  border-radius: 8px;
+  border-radius: 12px;
 }
 
 /* Selection color */
 ::selection {
-  background-color: var(--color-primary-200);
+  background-color: var(--color-primary-100);
   color: var(--color-primary-900);
 }
 
@@ -120,41 +133,38 @@ html {
 }
 
 :root {
-  /* shadcn semantic tokens mapped to the FuelWell design system:
-     background/foreground keep the original app values; primary is the
-     WCAG-AA mint (primary-600); ring is the brand mint. */
-  --background: #f6f7f4;
-  --foreground: #171717;
-  --card: oklch(1 0 0);
-  --card-foreground: #171717;
-  --popover: oklch(1 0 0);
-  --popover-foreground: #171717;
-  --primary: #0b7a5f;
+  --background: #e8f5f1;
+  --foreground: #16302a;
+  --card: #ffffff;
+  --card-foreground: #16302a;
+  --popover: #ffffff;
+  --popover-foreground: #16302a;
+  --primary: #15916c;
   --primary-foreground: #ffffff;
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: #1fcf9b;
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --secondary: #d6f0e8;
+  --secondary-foreground: #16302a;
+  --muted: #f2f7f5;
+  --muted-foreground: #7c968f;
+  --accent: #ffe0d8;
+  --accent-foreground: #7d3828;
+  --destructive: #ef4444;
+  --border: #d8e7e1;
+  --input: #dbece6;
+  --ring: #1eae84;
+  --chart-1: #1eae84;
+  --chart-2: #f0795b;
+  --chart-3: #3e92c9;
+  --chart-4: #c7a91e;
+  --chart-5: #8e73bd;
+  --radius: 0.75rem;
+  --sidebar: rgba(250, 253, 252, 0.92);
+  --sidebar-foreground: #16302a;
+  --sidebar-primary: #15916c;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #d6f0e8;
+  --sidebar-accent-foreground: #16302a;
+  --sidebar-border: rgba(214, 236, 230, 0.9);
+  --sidebar-ring: #1eae84;
 }
 
 .dark {
@@ -200,5 +210,84 @@ html {
   }
   html {
     @apply font-sans;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-heading), var(--font-sans), system-ui, sans-serif;
+    letter-spacing: -0.02em;
+  }
+}
+
+@layer components {
+  .fw-app-surface {
+    min-height: 100%;
+    background:
+      linear-gradient(180deg, rgba(232, 246, 242, 0.96), rgba(224, 241, 236, 0.98)),
+      radial-gradient(circle at 78% 6%, rgba(30, 174, 132, 0.12), transparent 22rem);
+  }
+
+  .fw-page-header {
+    border-bottom: 1px solid rgba(190, 218, 209, 0.6);
+    background: rgba(232, 246, 242, 0.9);
+    backdrop-filter: blur(18px);
+  }
+
+  .fw-page-inner {
+    width: 100%;
+    max-width: 92rem;
+    margin-inline: auto;
+    padding: 2rem;
+  }
+
+  .fw-heading {
+    color: #16302a;
+    font-weight: 900;
+    letter-spacing: -0.015em;
+  }
+
+  .fw-muted {
+    color: #78928a;
+    font-weight: 600;
+  }
+
+  .fw-icon-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 1.25rem;
+    background: #d6f0e8;
+    color: #15916c;
+  }
+
+  .fw-dark-panel {
+    border-color: rgba(10, 68, 54, 0.9);
+    background:
+      radial-gradient(circle at 88% 0%, rgba(30, 174, 132, 0.28), transparent 18rem),
+      linear-gradient(135deg, #0b251f 0%, #123d32 54%, #0a4436 100%);
+    color: white;
+    box-shadow: 0 26px 70px rgba(12, 46, 38, 0.24);
+  }
+
+  .fw-mint-panel {
+    border-color: rgba(174, 226, 211, 0.78);
+    background:
+      radial-gradient(circle at 88% 10%, rgba(255, 255, 255, 0.65), transparent 15rem),
+      linear-gradient(135deg, rgba(214, 240, 232, 0.92), rgba(204, 238, 228, 0.72));
+  }
+
+  .fw-soft-row {
+    border: 1px solid rgba(214, 231, 225, 0.8);
+    background: rgba(247, 250, 248, 0.9);
+    border-radius: 1.25rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .fw-page-inner {
+    padding: 1rem;
   }
 }

@@ -38,7 +38,7 @@ function SourceBadge({ children }: { children: string }) {
   return (
     <span
       className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold ${
-        estimated ? "bg-amber-50 text-amber-700" : "bg-primary-50 text-primary-700"
+        estimated ? "bg-lemon-50 text-lemon-700" : "bg-primary-50 text-primary-700"
       }`}
     >
       {children}
@@ -139,9 +139,9 @@ export default function ActivityPage() {
             </div>
           </Card>
 
-          <Card className="space-y-3 border-amber-200 bg-amber-50/60">
+          <Card className="space-y-3 border-lemon-200 bg-lemon-50/60">
             <div className="flex gap-3">
-              <Info className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+              <Info className="mt-0.5 h-4 w-4 shrink-0 text-lemon-600" />
               <div>
                 <h2 className="text-sm font-semibold text-neutral-900">Data honesty</h2>
                 <p className="mt-1 text-sm leading-relaxed text-neutral-600">{activitySummary.sourceNote}</p>

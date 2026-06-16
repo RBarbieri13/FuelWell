@@ -80,14 +80,14 @@ export function TodaysPlateCard({
           unit="g"
           current={totals.protein}
           target={targets.protein}
-          barClass="bg-blue-500"
+          barClass="bg-macro-protein"
         />
         <BudgetBar
           label="Carbs"
           unit="g"
           current={totals.carbs}
           target={targets.carbs}
-          barClass="bg-amber-500"
+          barClass="bg-macro-carbs"
         />
         <BudgetBar
           label="Fat"

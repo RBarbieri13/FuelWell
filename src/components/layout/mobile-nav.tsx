@@ -14,9 +14,9 @@ import { cn } from "@/lib/utils/cn";
 const mobileNavItems = [
   { href: "/app/dashboard", label: "Home", icon: LayoutDashboard, color: "text-primary-600" },
   { href: "/app/log", label: "Log", icon: PlusCircle, highlight: true, color: "text-accent-600" },
-  { href: "/app/coach", label: "Coach", icon: MessageSquare, color: "text-violet-600" },
+  { href: "/app/coach", label: "Coach", icon: MessageSquare, color: "text-sky-600" },
   { href: "/app/workouts", label: "Move", icon: Dumbbell, color: "text-sky-600" },
-  { href: "/app/progress", label: "Progress", icon: TrendingUp, color: "text-amber-600" },
+  { href: "/app/progress", label: "Progress", icon: TrendingUp, color: "text-lemon-600" },
 ];
 
 export function MobileNav() {
@@ -24,7 +24,7 @@ export function MobileNav() {
 
   return (
     <nav
-      className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/94 backdrop-blur-xl border-t border-white/80 shadow-[0_-12px_30px_rgba(23,23,23,0.08)] pb-[max(env(safe-area-inset-bottom),0.5rem)]"
+      className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/94 backdrop-blur-xl border-t border-primary-100/80 shadow-[0_-12px_30px_rgba(21,145,108,0.08)] pb-[max(env(safe-area-inset-bottom),0.5rem)]"
       role="navigation"
       aria-label="Mobile navigation"
     >
@@ -38,7 +38,7 @@ export function MobileNav() {
               aria-current={isActive ? "page" : undefined}
               className={cn(
                 "flex flex-col items-center gap-0.5 px-2.5 py-1.5 text-xs tracking-tight font-semibold transition-colors",
-                isActive || item.highlight ? item.color : "text-neutral-400"
+                isActive || item.highlight ? item.color : "text-neutral-400 hover:text-primary-700"
               )}
             >
               <item.icon

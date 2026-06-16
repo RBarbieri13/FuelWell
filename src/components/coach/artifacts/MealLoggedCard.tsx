@@ -44,7 +44,7 @@ export function MealLoggedCard({
         </div>
         <div className="flex shrink-0 items-center gap-1.5">
           {artifact.updated && (
-            <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-blue-700">
+            <span className="rounded-full bg-primary-50 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-primary-700">
               Updated
             </span>
           )}
