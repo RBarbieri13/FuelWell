@@ -1,5 +1,21 @@
 import Link from "next/link";
-import { ArrowRight, Bed, CheckCircle2, Circle, Droplets, Dumbbell, Info, Moon, ShieldAlert, ShieldCheck, UtensilsCrossed } from "lucide-react";
+import {
+  ArrowRight,
+  Bed,
+  CheckCircle2,
+  Circle,
+  Droplets,
+  Dumbbell,
+  Gauge,
+  HeartPulse,
+  Moon,
+  ShieldAlert,
+  ShieldCheck,
+  Sparkles,
+  UtensilsCrossed,
+  Waves,
+  type LucideIcon,
+} from "lucide-react";
 import { Card } from "@/components/ui/card";
 
 const readiness = {
@@ -10,6 +26,8 @@ const readiness = {
   nextAction: "Pick a lower-intensity workout",
 };
 
+const windows = ["Today", "3 days", "7 days"];
+
 const checklist = [
   { label: "Sleep entered", detail: "7h 10m, quality marked good", done: true, source: "User-entered" },
   { label: "Hydration check", detail: "2 of 3 bottles logged", done: true, source: "User-entered" },
@@ -18,26 +36,47 @@ const checklist = [
 ];
 
 const recoverySignals = [
-  { label: "Sleep", value: "7h 10m", status: "Good", source: "User-entered", icon: Moon },
-  { label: "Hydration", value: "66%", status: "Needs one more bottle", source: "User-entered", icon: Droplets },
-  { label: "Soreness", value: "6/10", status: "High legs", source: "User-entered", icon: Dumbbell },
-  { label: "Readiness", value: "72", status: "Estimated from available inputs", source: "Estimated", icon: Bed },
-];
+  { label: "Sleep", value: "7h 10m", status: "Good", source: "User-entered", icon: Moon, tone: "sky" },
+  { label: "Hydration", value: "66%", status: "Needs one more bottle", source: "User-entered", icon: Droplets, tone: "primary" },
+  { label: "Soreness", value: "6/10", status: "High legs", source: "User-entered", icon: Dumbbell, tone: "accent" },
+  { label: "Readiness", value: "72", status: "Estimated from available inputs", source: "Estimated", icon: Bed, tone: "lemon" },
+] as const;
 
 const nextActions = [
-  { label: "Log a recovery snack", href: "/app/log", detail: "25g protein plus fruit keeps tomorrow's plan on track." },
-  { label: "Choose today's workout", href: "/app/workouts", detail: "Recommendations already account for soreness." },
-  { label: "Review activity verdict", href: "/app/activity", detail: "See why the app is keeping intensity capped." },
+  { label: "Log a recovery snack", href: "/app/log", detail: "25g protein plus fruit keeps tomorrow's plan on track.", icon: UtensilsCrossed },
+  { label: "Choose today's workout", href: "/app/workouts", detail: "Recommendations already account for soreness.", icon: Dumbbell },
+  { label: "Review activity verdict", href: "/app/activity", detail: "See why the app is keeping intensity capped.", icon: HeartPulse },
+] as const;
+
+const readinessStack = [
+  { label: "Sleep quality", value: 82, note: "Good", color: "bg-sky-500" },
+  { label: "Hydration", value: 66, note: "One bottle short", color: "bg-primary-500" },
+  { label: "Leg soreness", value: 58, note: "Cap intensity", color: "bg-accent-500" },
+  { label: "Wearable signal", value: 0, note: "Not connected", color: "bg-neutral-300" },
 ];
+
+const bodyAreas = [
+  { label: "Upper", value: "2/10", tone: "bg-primary-50 text-primary-700 border-primary-100" },
+  { label: "Core", value: "3/10", tone: "bg-primary-50 text-primary-700 border-primary-100" },
+  { label: "Legs", value: "6/10", tone: "bg-accent-50 text-accent-700 border-accent-100" },
+  { label: "Joints", value: "1/10", tone: "bg-sky-50 text-sky-700 border-sky-100" },
+];
+
+const toneMap = {
+  primary: "bg-primary-100 text-primary-700",
+  accent: "bg-accent-100 text-accent-700",
+  sky: "bg-sky-100 text-sky-700",
+  lemon: "bg-lemon-100 text-lemon-700",
+};
 
 function SourceBadge({ children }: { children: string }) {
   if (children === "Missing") {
-    return <span className="rounded-full bg-neutral-100 px-2 py-0.5 text-[11px] font-semibold text-neutral-500">Missing</span>;
+    return <span className="rounded-full bg-neutral-100 px-2.5 py-1 text-[11px] font-black text-neutral-500">Missing</span>;
   }
 
   return (
     <span
-      className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${
+      className={`rounded-full px-2.5 py-1 text-[11px] font-black ${
         children === "Estimated" ? "bg-lemon-50 text-lemon-700" : "bg-primary-50 text-primary-700"
       }`}
     >
@@ -55,43 +94,58 @@ export default function RecoveryPage() {
             <h1 className="fw-heading text-3xl md:text-4xl">Recovery</h1>
             <p className="fw-muted mt-1 text-base">Sleep, soreness, hydration, and readiness signals</p>
           </div>
-          <Link
-            href="/app/workouts"
-            className="inline-flex items-center justify-center gap-2 rounded-full bg-primary-600 px-5 py-3 text-sm font-black text-white shadow-[0_16px_34px_rgba(21,145,108,0.24)] transition hover:bg-primary-700"
-          >
-            {readiness.nextAction}
-            <ArrowRight className="h-4 w-4" />
-          </Link>
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="rounded-full bg-white p-1 shadow-[0_18px_44px_rgba(22,48,42,0.10)]">
+              {windows.map((window, index) => (
+                <span
+                  key={window}
+                  className={`inline-flex rounded-full px-4 py-2 text-sm font-black ${
+                    index === 0 ? "bg-primary-500 text-white" : "text-primary-900/60"
+                  }`}
+                >
+                  {window}
+                </span>
+              ))}
+            </div>
+            <Link
+              href="/app/workouts"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-primary-600 px-5 py-3 text-sm font-black text-white shadow-[0_16px_34px_rgba(21,145,108,0.24)] transition hover:bg-primary-700"
+            >
+              {readiness.nextAction}
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
         </div>
       </header>
 
       <div className="fw-page-inner space-y-6">
-        <section className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-          <Card variant="elevated" className="fw-mint-panel px-8 py-8">
+        <section className="grid gap-6 xl:grid-cols-[1.08fr_0.92fr]">
+          <Card variant="elevated" className="fw-mint-panel overflow-hidden px-6 py-7 md:px-8 md:py-8">
             <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
               <div>
                 <p className="inline-flex items-center gap-2 text-sm font-black uppercase tracking-[0.16em] text-primary-700">
                   <ShieldCheck className="h-4 w-4" />
                   Readiness estimate
                 </p>
-                <h2 className="mt-4 text-4xl font-black leading-tight text-neutral-900 md:text-5xl">
+                <h2 className="mt-4 text-3xl font-black leading-tight text-neutral-900 sm:text-4xl md:text-6xl">
                   {readiness.label}
                 </h2>
-                <p className="mt-4 max-w-3xl text-lg font-semibold leading-8 text-primary-900/70">
+                <p className="mt-4 max-w-3xl text-base font-semibold leading-7 text-primary-900/70 md:text-lg md:leading-8">
                   {readiness.detail}
                 </p>
               </div>
-              <div className="flex h-36 w-36 shrink-0 flex-col items-center justify-center rounded-[2rem] bg-white text-center shadow-[0_24px_58px_rgba(22,48,42,0.10)]">
-                <span className="text-6xl font-black tabular-nums text-primary-700">{readiness.score}</span>
+              <div className="flex h-32 w-32 shrink-0 flex-col items-center justify-center rounded-[1.5rem] bg-white text-center shadow-[0_24px_58px_rgba(22,48,42,0.10)] md:h-40 md:w-40 md:rounded-[2rem]">
+                <Gauge className="mb-1 h-6 w-6 text-primary-600" />
+                <span className="text-5xl font-black tabular-nums text-primary-700 md:text-6xl">{readiness.score}</span>
                 <span className="text-xs font-black uppercase tracking-[0.16em] text-neutral-400">score</span>
               </div>
             </div>
           </Card>
 
-          <Card className="space-y-4">
+          <Card className="space-y-5">
             <div className="flex items-center gap-3">
               <span className="fw-icon-chip">
-                <Info className="h-6 w-6" />
+                <Sparkles className="h-6 w-6" />
               </span>
               <div>
                 <h2 className="text-2xl font-black text-neutral-900">Next actions</h2>
@@ -100,18 +154,22 @@ export default function RecoveryPage() {
             </div>
             <div className="grid gap-3">
               {nextActions.map((action) => (
-                <Link
-                  key={action.label}
-                  href={action.href}
-                  className="fw-soft-row group block p-4 transition hover:-translate-y-0.5 hover:border-primary-200 hover:bg-white"
-                >
-                  <div className="flex items-center justify-between gap-3">
-                    <p className="text-base font-black text-neutral-900">{action.label}</p>
-                    <ArrowRight className="h-4 w-4 shrink-0 text-neutral-300 transition group-hover:translate-x-0.5 group-hover:text-primary-600" />
-                  </div>
-                  <p className="mt-1 text-sm font-semibold leading-6 text-neutral-500">{action.detail}</p>
-                </Link>
+                <ActionLink key={action.label} {...action} />
               ))}
+            </div>
+            <div className="rounded-[1.25rem] border border-primary-100 bg-primary-50/70 p-4">
+              <div className="mb-2 flex items-center justify-between text-xs font-black uppercase tracking-[0.12em] text-primary-800">
+                <span>Tonight target</span>
+                <span>2 tasks</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <span className="rounded-full bg-white px-3 py-2 text-center text-xs font-black text-primary-800">
+                  +1 bottle
+                </span>
+                <span className="rounded-full bg-white px-3 py-2 text-center text-xs font-black text-primary-800">
+                  25g protein
+                </span>
+              </div>
             </div>
           </Card>
         </section>
@@ -120,7 +178,7 @@ export default function RecoveryPage() {
           {recoverySignals.map((signal) => (
             <Card key={signal.label} className="space-y-4 px-5 py-5">
               <div className="flex items-start justify-between gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-[1.15rem] bg-primary-100 text-primary-700">
+                <div className={`flex h-12 w-12 items-center justify-center rounded-[1.15rem] ${toneMap[signal.tone]}`}>
                   <signal.icon className="h-5 w-5" />
                 </div>
                 <SourceBadge>{signal.source}</SourceBadge>
@@ -132,6 +190,55 @@ export default function RecoveryPage() {
               </div>
             </Card>
           ))}
+        </section>
+
+        <section className="grid gap-4 xl:grid-cols-[0.98fr_1.02fr]">
+          <Card className="space-y-5 px-6 py-6">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <h2 className="flex items-center gap-2 text-2xl font-black text-neutral-900">
+                  <HeartPulse className="h-5 w-5 text-primary-600" />
+                  Readiness makeup
+                </h2>
+                <p className="mt-1 text-sm font-semibold text-neutral-500">The ingredients behind today&apos;s cap-intensity call.</p>
+              </div>
+              <span className="rounded-full bg-lemon-50 px-3 py-1 text-xs font-black text-lemon-700">mixed</span>
+            </div>
+            <div className="space-y-4">
+              {readinessStack.map((item) => (
+                <div key={item.label}>
+                  <div className="mb-2 flex items-center justify-between text-sm font-black">
+                    <span className="text-neutral-800">{item.label}</span>
+                    <span className="text-neutral-400">{item.note}</span>
+                  </div>
+                  <div className="h-3 overflow-hidden rounded-full bg-primary-50">
+                    <div className={`${item.color} h-full rounded-full`} style={{ width: `${item.value}%` }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Card>
+
+          <Card className="space-y-5 px-6 py-6">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <h2 className="flex items-center gap-2 text-2xl font-black text-neutral-900">
+                  <Waves className="h-5 w-5 text-primary-600" />
+                  Soreness map
+                </h2>
+                <p className="mt-1 text-sm font-semibold text-neutral-500">Body-area detail for the workout recommendation.</p>
+              </div>
+              <span className="rounded-full bg-accent-50 px-3 py-1 text-xs font-black text-accent-700">legs high</span>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {bodyAreas.map((area) => (
+                <div key={area.label} className={`rounded-[1.25rem] border p-4 ${area.tone}`}>
+                  <p className="text-sm font-black">{area.label}</p>
+                  <p className="mt-2 text-3xl font-black tabular-nums">{area.value}</p>
+                </div>
+              ))}
+            </div>
+          </Card>
         </section>
 
         <section className="grid gap-4 xl:grid-cols-[1.1fr_0.9fr]">
@@ -173,7 +280,7 @@ export default function RecoveryPage() {
               </div>
             </Card>
 
-            <Card className="bg-primary-50/80 border-primary-100">
+            <Card className="border-primary-100 bg-primary-50/80">
               <div className="flex gap-3">
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-primary-700">
                   <UtensilsCrossed className="h-4 w-4" />
@@ -187,5 +294,37 @@ export default function RecoveryPage() {
         </section>
       </div>
     </div>
+  );
+}
+
+function ActionLink({
+  label,
+  href,
+  detail,
+  icon: Icon,
+}: {
+  label: string;
+  href: string;
+  detail: string;
+  icon: LucideIcon;
+}) {
+  return (
+    <Link
+      href={href}
+      className="fw-soft-row group block p-4 transition hover:-translate-y-0.5 hover:border-primary-200 hover:bg-white"
+    >
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex gap-3">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-100 text-primary-700">
+            <Icon className="h-4 w-4" />
+          </span>
+          <div>
+            <p className="text-base font-black text-neutral-900">{label}</p>
+            <p className="mt-1 text-sm font-semibold leading-6 text-neutral-500">{detail}</p>
+          </div>
+        </div>
+        <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-neutral-300 transition group-hover:translate-x-0.5 group-hover:text-primary-600" />
+      </div>
+    </Link>
   );
 }
