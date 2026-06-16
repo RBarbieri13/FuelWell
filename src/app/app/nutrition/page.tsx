@@ -134,22 +134,22 @@ function NutritionDetail({
       </header>
 
       <div className="fw-page-inner space-y-6 pb-28 md:pb-8">
-      <Card variant="elevated" className="bg-white px-8 py-8">
+      <Card variant="elevated" className="rounded-[1.5rem] bg-white px-7 py-7 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
         <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
           <div>
-            <p className="inline-flex items-center gap-2 text-sm font-black uppercase tracking-[0.18em] text-primary-700">
+            <p className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.14em] text-primary-600">
               <Salad className="h-4 w-4" />
               Today&apos;s plate
             </p>
-            <h2 className="mt-4 text-3xl font-black tracking-normal text-[#16302a] md:text-4xl">
+            <h2 className="mt-3 text-2xl font-black tracking-normal text-[#16302a] md:text-3xl">
               What makes up today&apos;s score
             </h2>
-            <p className="mt-3 max-w-3xl text-lg font-semibold leading-8 text-[#60776f]">
+            <p className="mt-2 max-w-3xl text-base font-semibold leading-7 text-[#54635d]">
               If a meal isn&apos;t logged here, it isn&apos;t counted on the dashboard. Keep it honest and the daily decision stays accurate.
             </p>
           </div>
           <Link href="/app/log">
-            <Button size="lg" className="rounded-full">
+            <Button size="lg" className="whitespace-nowrap rounded-full px-6">
               <Plus className="h-4 w-4" />
               Add food
             </Button>
@@ -157,7 +157,7 @@ function NutritionDetail({
         </div>
       </Card>
 
-      <section className="grid gap-3 sm:grid-cols-2 2xl:grid-cols-4">
+      <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <TargetTile label="Calories" current={totals.calories} target={targets.calories} unit="kcal" tone="primary" icon="calories" />
         <TargetTile label="Protein" current={totals.protein} target={targets.protein} unit="g" tone="sky" icon="protein" />
         <TargetTile label="Carbs" current={totals.carbs} target={targets.carbs} unit="g" tone="lemon" icon="carbs" />
@@ -187,24 +187,24 @@ function NutritionDetail({
           {meals.map((meal) => {
             const mealTotals = sumMealItems(meal.items);
             return (
-              <Card key={meal.id} className="space-y-5 px-7 py-7">
+              <Card key={meal.id} className="space-y-4 rounded-[1.5rem] px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
                 <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                   <div className="flex items-center gap-4">
                     <MealIcon mealType={meal.mealType} />
                     <div>
-                      <h2 className="text-2xl font-black text-[#16302a]">
+                      <h2 className="text-xl font-black text-[#16302a]">
                         {formatMealType(meal.mealType)}
                       </h2>
-                      <p className="text-base font-semibold text-[#78928a]">
+                      <p className="text-sm font-semibold text-[#7c968f]">
                         {meal.name} · {meal.items.length} item{meal.items.length === 1 ? "" : "s"}
                       </p>
                     </div>
                   </div>
-                  <div className="rounded-[1.2rem] bg-[#f7faf8] px-5 py-3 text-right">
-                    <p className="text-2xl font-black tabular-nums text-[#16302a]">
+                  <div className="rounded-[0.9rem] bg-[#f4f8f6] px-4 py-3 text-right">
+                    <p className="text-xl font-black tabular-nums text-[#16302a]">
                       {mealTotals.calories} cal
                     </p>
-                    <p className="text-sm font-bold text-primary-600">
+                    <p className="text-xs font-bold text-primary-600">
                       {mealTotals.protein}g protein
                     </p>
                   </div>
@@ -212,10 +212,10 @@ function NutritionDetail({
 
                 <div className="grid gap-2">
                   {meal.items.map((item) => (
-                    <div key={item.id} className="grid gap-4 border-t border-primary-100/70 py-5 md:grid-cols-[1fr_auto] md:items-center">
+                    <div key={item.id} className="grid gap-4 border-t border-primary-100/70 py-4 md:grid-cols-[1fr_auto] md:items-center">
                       <div>
-                        <p className="text-lg font-black text-[#16302a]">{item.name}</p>
-                        <p className="text-base font-semibold text-[#91a7a0]">
+                        <p className="text-base font-black text-[#16302a]">{item.name}</p>
+                        <p className="text-sm font-semibold text-[#9db0aa]">
                           {item.servings} serving{item.servings === 1 ? "" : "s"}
                         </p>
                       </div>
@@ -231,6 +231,25 @@ function NutritionDetail({
               </Card>
             );
           })}
+          {!meals.some((meal) => meal.mealType === "dinner") && (
+            <Card className="flex flex-col gap-4 rounded-[1.5rem] border-dashed border-[#c9ddd6] bg-white px-6 py-6 shadow-none md:flex-row md:items-center md:justify-between">
+              <div className="flex items-center gap-4">
+                <MealIcon mealType="dinner" muted />
+                <div>
+                  <h2 className="text-xl font-black text-[#54635d]">Dinner</h2>
+                  <p className="text-sm font-semibold text-[#9db0aa]">
+                    Not logged yet · {remaining(totals.calories, targets.calories)} kcal of room left
+                  </p>
+                </div>
+              </div>
+              <Link href="/app/log" className="inline-flex">
+                <Button variant="secondary" className="rounded-full bg-primary-100 px-5 text-primary-700">
+                  <Plus className="h-4 w-4" />
+                  Add dinner
+                </Button>
+              </Link>
+            </Card>
+          )}
         </section>
       )}
       </div>
@@ -278,26 +297,26 @@ function TargetTile({
   }[tone];
 
   return (
-    <Card className="space-y-4 px-6 py-6">
+    <Card className="space-y-3 rounded-[1.25rem] px-5 py-5 shadow-[0_8px_22px_rgba(20,90,75,0.06)]">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <span className={`flex h-10 w-10 items-center justify-center rounded-[1rem] ${styles.chip}`}>
-            <Icon className="h-5 w-5" />
+          <span className={`flex h-[30px] w-[30px] items-center justify-center rounded-full ${styles.chip}`}>
+            <Icon className="h-[15px] w-[15px]" />
           </span>
-          <p className="text-base font-black text-[#516b63]">{label}</p>
+          <p className="text-sm font-black text-[#54635d]">{label}</p>
         </div>
-        <p className={`rounded-full px-3 py-1 text-sm font-black ${styles.pill}`}>
+        <p className={`rounded-full px-2.5 py-1 text-xs font-black ${styles.pill}`}>
           {percentOf(current, target)}%
         </p>
       </div>
-      <p className="text-3xl font-black tabular-nums text-[#16302a]">
+      <p className="text-[1.75rem] font-black leading-none tabular-nums text-[#16302a]">
         {current}
-        <span className="ml-1 text-sm font-bold text-[#91a7a0]">{unit}</span>
+        <span className="ml-1 text-[15px] font-bold text-[#a2b5b0]">{unit}</span>
       </p>
-      <p className="text-xs font-bold text-[#78928a]">
+      <p className="text-xs font-semibold text-[#7c968f]">
         {remaining(current, target)} {unit} left of {target}
       </p>
-      <div className="h-2 overflow-hidden rounded-full bg-[#f2f7f5]">
+      <div className="h-[7px] overflow-hidden rounded-full bg-[#edf3f0]">
         <div
           className={`h-full rounded-full ${styles.bar}`}
           style={{ width: `${Math.min(percentOf(current, target), 100)}%` }}
@@ -307,9 +326,11 @@ function TargetTile({
   );
 }
 
-function MealIcon({ mealType }: { mealType: MealType }) {
+function MealIcon({ mealType, muted = false }: { mealType: MealType; muted?: boolean }) {
   const config =
-    mealType === "breakfast"
+    muted
+      ? { styles: "bg-[#f4f8f6] text-[#a2b5b0]", Icon: Moon }
+      : mealType === "breakfast"
       ? { styles: "bg-lemon-50 text-lemon-600", Icon: Sun }
       : mealType === "lunch"
         ? { styles: "bg-accent-100 text-accent-600", Icon: Salad }
@@ -319,8 +340,8 @@ function MealIcon({ mealType }: { mealType: MealType }) {
   const Icon = config.Icon;
 
   return (
-    <span className={`flex h-14 w-14 items-center justify-center rounded-[1.15rem] ${config.styles}`}>
-      <Icon className="h-6 w-6" />
+    <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-[0.9rem] ${config.styles}`}>
+      <Icon className="h-[21px] w-[21px]" />
     </span>
   );
 }
@@ -342,9 +363,9 @@ function SmallMacro({
   }[tone];
 
   return (
-    <div className={`rounded-[0.9rem] px-3 py-2 ${styles}`}>
-      <p className="text-base font-black tabular-nums">{value}</p>
-      <p className="text-[10px] font-bold uppercase opacity-70">{label}</p>
+    <div className={`min-w-[50px] rounded-[11px] px-3 py-2 text-center ${styles}`}>
+      <p className="text-sm font-black tabular-nums">{value}</p>
+      <p className="mt-0.5 text-[9px] font-semibold uppercase tracking-[0.06em] opacity-70">{label}</p>
     </div>
   );
 }
