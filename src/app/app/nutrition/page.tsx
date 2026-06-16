@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Beef, Flame, Plus, Salad, Sun, UtensilsCrossed, Wheat } from "lucide-react";
+import { ArrowRight, Beef, Coffee, Flame, Moon, Plus, Salad, Sun, UtensilsCrossed, Wheat } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { headers } from "next/headers";
 import { Card } from "@/components/ui/card";
@@ -133,7 +133,7 @@ function NutritionDetail({
         </div>
       </header>
 
-      <div className="fw-page-inner space-y-6">
+      <div className="fw-page-inner space-y-6 pb-28 md:pb-8">
       <Card variant="elevated" className="bg-white px-8 py-8">
         <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
           <div>
@@ -141,10 +141,10 @@ function NutritionDetail({
               <Salad className="h-4 w-4" />
               Today&apos;s plate
             </p>
-            <h2 className="mt-4 text-3xl font-black tracking-tight text-neutral-900 md:text-4xl">
+            <h2 className="mt-4 text-3xl font-black tracking-normal text-[#16302a] md:text-4xl">
               What makes up today&apos;s score
             </h2>
-            <p className="mt-3 max-w-3xl text-lg font-semibold leading-8 text-neutral-500">
+            <p className="mt-3 max-w-3xl text-lg font-semibold leading-8 text-[#60776f]">
               If a meal isn&apos;t logged here, it isn&apos;t counted on the dashboard. Keep it honest and the daily decision stays accurate.
             </p>
           </div>
@@ -165,14 +165,14 @@ function NutritionDetail({
       </section>
 
       {meals.length === 0 ? (
-        <Card className="border-dashed border-neutral-300 bg-white/75 text-center">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-50 text-primary-700">
+        <Card className="border-dashed border-primary-200 bg-white/75 text-center">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[1.25rem] bg-primary-50 text-primary-700">
             <UtensilsCrossed className="h-8 w-8" />
           </div>
-          <h2 className="mt-5 text-2xl font-black text-neutral-900">
+          <h2 className="mt-5 text-2xl font-black text-[#16302a]">
             No nutrition inputs yet
           </h2>
-          <p className="mx-auto mt-2 max-w-md text-sm font-medium leading-6 text-neutral-500">
+          <p className="mx-auto mt-2 max-w-md text-sm font-semibold leading-6 text-[#78928a]">
             The dashboard score is blank because there are no meals to inspect. Log one meal and this page becomes the source of truth.
           </p>
           <Link href="/app/log" className="mt-6 inline-flex">
@@ -192,16 +192,16 @@ function NutritionDetail({
                   <div className="flex items-center gap-4">
                     <MealIcon mealType={meal.mealType} />
                     <div>
-                      <h2 className="text-2xl font-black text-neutral-900">
+                      <h2 className="text-2xl font-black text-[#16302a]">
                         {formatMealType(meal.mealType)}
                       </h2>
-                      <p className="text-base font-semibold text-neutral-400">
+                      <p className="text-base font-semibold text-[#78928a]">
                         {meal.name} · {meal.items.length} item{meal.items.length === 1 ? "" : "s"}
                       </p>
                     </div>
                   </div>
-                  <div className="rounded-[1.2rem] bg-neutral-50 px-5 py-3 text-right">
-                    <p className="text-2xl font-black tabular-nums text-neutral-900">
+                  <div className="rounded-[1.2rem] bg-[#f7faf8] px-5 py-3 text-right">
+                    <p className="text-2xl font-black tabular-nums text-[#16302a]">
                       {mealTotals.calories} cal
                     </p>
                     <p className="text-sm font-bold text-primary-600">
@@ -212,10 +212,10 @@ function NutritionDetail({
 
                 <div className="grid gap-2">
                   {meal.items.map((item) => (
-                    <div key={item.id} className="grid gap-4 border-t border-neutral-100 py-5 md:grid-cols-[1fr_auto] md:items-center">
+                    <div key={item.id} className="grid gap-4 border-t border-primary-100/70 py-5 md:grid-cols-[1fr_auto] md:items-center">
                       <div>
-                        <p className="text-lg font-black text-neutral-900">{item.name}</p>
-                        <p className="text-base font-semibold text-neutral-400">
+                        <p className="text-lg font-black text-[#16302a]">{item.name}</p>
+                        <p className="text-base font-semibold text-[#91a7a0]">
                           {item.servings} serving{item.servings === 1 ? "" : "s"}
                         </p>
                       </div>
@@ -284,20 +284,20 @@ function TargetTile({
           <span className={`flex h-10 w-10 items-center justify-center rounded-[1rem] ${styles.chip}`}>
             <Icon className="h-5 w-5" />
           </span>
-          <p className="text-base font-black text-neutral-600">{label}</p>
+          <p className="text-base font-black text-[#516b63]">{label}</p>
         </div>
         <p className={`rounded-full px-3 py-1 text-sm font-black ${styles.pill}`}>
           {percentOf(current, target)}%
         </p>
       </div>
-      <p className="text-3xl font-black tabular-nums text-neutral-900">
+      <p className="text-3xl font-black tabular-nums text-[#16302a]">
         {current}
-        <span className="ml-1 text-sm font-bold text-neutral-400">{unit}</span>
+        <span className="ml-1 text-sm font-bold text-[#91a7a0]">{unit}</span>
       </p>
-      <p className="text-xs font-bold text-neutral-500">
+      <p className="text-xs font-bold text-[#78928a]">
         {remaining(current, target)} {unit} left of {target}
       </p>
-      <div className="h-2 overflow-hidden rounded-full bg-neutral-100">
+      <div className="h-2 overflow-hidden rounded-full bg-[#f2f7f5]">
         <div
           className={`h-full rounded-full ${styles.bar}`}
           style={{ width: `${Math.min(percentOf(current, target), 100)}%` }}
@@ -308,18 +308,19 @@ function TargetTile({
 }
 
 function MealIcon({ mealType }: { mealType: MealType }) {
-  const styles =
+  const config =
     mealType === "breakfast"
-      ? "bg-lemon-50 text-lemon-600"
+      ? { styles: "bg-lemon-50 text-lemon-600", Icon: Sun }
       : mealType === "lunch"
-        ? "bg-accent-100 text-accent-600"
+        ? { styles: "bg-accent-100 text-accent-600", Icon: Salad }
         : mealType === "dinner"
-          ? "bg-neutral-100 text-neutral-500"
-          : "bg-sky-100 text-sky-600";
+          ? { styles: "bg-primary-100 text-primary-700", Icon: Moon }
+          : { styles: "bg-sky-100 text-sky-600", Icon: Coffee };
+  const Icon = config.Icon;
 
   return (
-    <span className={`flex h-14 w-14 items-center justify-center rounded-[1.15rem] ${styles}`}>
-      <Sun className="h-6 w-6" />
+    <span className={`flex h-14 w-14 items-center justify-center rounded-[1.15rem] ${config.styles}`}>
+      <Icon className="h-6 w-6" />
     </span>
   );
 }
