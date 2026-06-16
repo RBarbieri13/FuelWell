@@ -12,6 +12,10 @@ const previewLinks = [
   { label: "Nutrition", href: "/app/nutrition" },
   { label: "Coach", href: "/app/coach" },
   { label: "Log meal", href: "/app/log" },
+  { label: "Recipes", href: "/app/recipes" },
+  { label: "Workouts", href: "/app/workouts" },
+  { label: "Groceries", href: "/app/grocery-list" },
+  { label: "Recovery", href: "/app/recovery" },
   { label: "Progress", href: "/app/progress" },
 ];
 
@@ -34,8 +38,8 @@ export default function PreviewHubPage() {
               signup, OAuth, or a local tunnel.
             </p>
             <p className="mt-2 inline-flex items-center gap-2 rounded-full border border-accent-300/20 bg-accent-300/10 px-3 py-1 text-xs font-black text-accent-200">
-              New in v1.4: agentic Coach — log meals, plan workouts, and pull up
-              charts directly in chat at /app/coach.
+              New in v1.5: Claude Design system pass — richer summary cards,
+              tighter iOS layouts, workout database, groceries, and progress.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
