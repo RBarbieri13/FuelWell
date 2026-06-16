@@ -11,6 +11,8 @@ import {
 const previewLinks = [
   { label: "Dashboard", href: "/app/dashboard" },
   { label: "Nutrition", href: "/app/nutrition" },
+  { label: "Fitness", href: "/app/fitness" },
+  { label: "Daily review", href: "/app/daily-review" },
   { label: "Coach", href: "/app/coach" },
   { label: "Log meal", href: "/app/log" },
   { label: "Recipes", href: "/app/recipes" },

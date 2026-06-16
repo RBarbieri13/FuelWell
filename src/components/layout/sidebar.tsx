@@ -15,6 +15,7 @@ import {
   Leaf,
   ShoppingBasket,
   Settings,
+  Activity,
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { Logo } from "@/components/ui/logo";
@@ -24,6 +25,7 @@ const navItems = [
   { href: "/app/log", label: "Log Meal", icon: UtensilsCrossed },
   { href: "/app/coach", label: "Coach", icon: MessageSquare },
   { href: "/app/workouts", label: "Workouts", icon: Dumbbell },
+  { href: "/app/fitness", label: "Fitness", icon: Activity },
   { href: "/app/recipes", label: "Recipes", icon: BookOpen },
   { href: "/app/grocery-list", label: "Groceries", icon: ShoppingBasket },
   { href: "/app/recovery", label: "Recovery", icon: HeartPulse },

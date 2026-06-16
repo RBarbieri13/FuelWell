@@ -1,0 +1,588 @@
+import Link from "next/link";
+import {
+  Activity,
+  ArrowRight,
+  Beef,
+  Bike,
+  Dumbbell,
+  Flame,
+  Footprints,
+  HeartPulse,
+  Moon,
+  Plus,
+  Salad,
+  ShieldCheck,
+  Sparkles,
+  Sun,
+  Target,
+  Timer,
+  UtensilsCrossed,
+  type LucideIcon,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import {
+  formatMealType,
+  percentOf,
+  remaining,
+  sumMealItems,
+  sumMeals,
+  type MacroTargets,
+  type MealRecord,
+  type MealType,
+} from "@/lib/fuelwell-data";
+
+type Tone = "primary" | "sky" | "lemon" | "accent";
+
+type ActivityRecord = {
+  id: string;
+  type: "walk" | "workout" | "mobility" | "recovery";
+  title: string;
+  subtitle: string;
+  time: string;
+  duration: string;
+  calories: number;
+  intensity: string;
+  source: "Logged" | "Estimated" | "Planned";
+  items: { label: string; value: string; tone: Tone }[];
+  icon: LucideIcon;
+};
+
+const activityLog: ActivityRecord[] = [
+  {
+    id: "morning-walk",
+    type: "walk",
+    title: "Morning walk",
+    subtitle: "Easy neighborhood loop",
+    time: "8:10 AM",
+    duration: "24 min",
+    calories: 118,
+    intensity: "Easy",
+    source: "Estimated",
+    icon: Footprints,
+    items: [
+      { label: "Steps", value: "2,850", tone: "primary" },
+      { label: "Pace", value: "Easy", tone: "sky" },
+      { label: "Zone", value: "1", tone: "lemon" },
+      { label: "Load", value: "Low", tone: "accent" },
+    ],
+  },
+  {
+    id: "zone-2-ride",
+    type: "workout",
+    title: "Zone 2 ride",
+    subtitle: "Conversational aerobic base",
+    time: "5:30 PM",
+    duration: "42 min",
+    calories: 310,
+    intensity: "Easy",
+    source: "Planned",
+    icon: Bike,
+    items: [
+      { label: "Time", value: "42", tone: "primary" },
+      { label: "Burn", value: "310", tone: "accent" },
+      { label: "Effort", value: "4/10", tone: "sky" },
+      { label: "Fuel", value: "Due", tone: "lemon" },
+    ],
+  },
+  {
+    id: "mobility-reset",
+    type: "mobility",
+    title: "Mobility reset",
+    subtitle: "Hips and upper back",
+    time: "Tonight",
+    duration: "18 min",
+    calories: 55,
+    intensity: "Light",
+    source: "Planned",
+    icon: HeartPulse,
+    items: [
+      { label: "Range", value: "Hips", tone: "primary" },
+      { label: "Cost", value: "Low", tone: "sky" },
+      { label: "Sets", value: "3", tone: "lemon" },
+      { label: "Ready", value: "Yes", tone: "accent" },
+    ],
+  },
+];
+
+const fitnessTargets = {
+  activeCalories: 500,
+  minutes: 90,
+  steps: 8500,
+  recovery: 100,
+};
+
+const fitnessTotals = activityLog.reduce(
+  (total, activity) => ({
+    calories: total.calories + activity.calories,
+    minutes: total.minutes + Number.parseInt(activity.duration, 10),
+  }),
+  { calories: 0, minutes: 0 }
+);
+
+const estimatedSteps = 6420;
+const recoveryReadiness = 72;
+
+const toneStyles = {
+  primary: {
+    chip: "bg-primary-100 text-primary-600",
+    pill: "bg-primary-100 text-primary-700",
+    bar: "bg-primary-500",
+    macro: "bg-primary-100 text-primary-700",
+  },
+  sky: {
+    chip: "bg-sky-100 text-sky-600",
+    pill: "bg-sky-100 text-sky-700",
+    bar: "bg-sky-500",
+    macro: "bg-sky-100 text-sky-700",
+  },
+  lemon: {
+    chip: "bg-lemon-50 text-lemon-600",
+    pill: "bg-lemon-100 text-lemon-700",
+    bar: "bg-lemon-500",
+    macro: "bg-lemon-100 text-lemon-700",
+  },
+  accent: {
+    chip: "bg-accent-100 text-accent-600",
+    pill: "bg-accent-100 text-accent-700",
+    bar: "bg-accent-400",
+    macro: "bg-accent-100 text-accent-700",
+  },
+} as const;
+
+export function FitnessDetailSurface() {
+  return (
+    <div className="fw-app-surface">
+      <header className="fw-page-header">
+        <div className="fw-page-inner py-7">
+          <h1 className="fw-heading text-3xl md:text-4xl">Fitness detail</h1>
+          <p className="fw-muted mt-1 text-base">
+            Today&apos;s movement · what&apos;s counting toward your activity
+          </p>
+        </div>
+      </header>
+
+      <div className="fw-page-inner space-y-6 pb-28 md:pb-8">
+        <DetailHero
+          icon={Activity}
+          label="Today's movement"
+          title="What makes up today's fitness picture"
+          copy="Every logged, planned, or estimated activity signal is shown here so the daily recommendation stays readable and honest."
+          href="/app/workouts"
+          action="Add workout"
+        />
+
+        <FitnessSummaryCards />
+
+        <section className="space-y-4">
+          {activityLog.map((activity) => (
+            <ActivityLogCard key={activity.id} activity={activity} />
+          ))}
+        </section>
+
+        <Card className="rounded-[1.5rem] border-lemon-200 bg-lemon-50/80 px-6 py-5 shadow-none">
+          <div className="flex gap-3">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-lemon-700">
+              <ShieldCheck className="h-5 w-5" />
+            </span>
+            <div>
+              <h2 className="font-heading text-lg font-black text-lemon-800">
+                Data honesty
+              </h2>
+              <p className="mt-1 text-sm font-semibold leading-6 text-lemon-800/78">
+                Workout plans and recovery are user-entered examples. Steps and active calories are deterministic estimates until a wearable connection is added.
+              </p>
+            </div>
+          </div>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+export function DailyReviewSurface({
+  meals,
+  targets,
+}: {
+  meals: MealRecord[];
+  targets: MacroTargets;
+}) {
+  const totals = sumMeals(meals);
+  const netCalories = Math.max(0, totals.calories - fitnessTotals.calories);
+
+  return (
+    <div className="fw-app-surface">
+      <header className="fw-page-header">
+        <div className="fw-page-inner py-7">
+          <h1 className="fw-heading text-3xl md:text-4xl">Daily detail</h1>
+          <p className="fw-muted mt-1 text-base">
+            Nutrition + fitness · the full health ledger for today
+          </p>
+        </div>
+      </header>
+
+      <div className="fw-page-inner space-y-6 pb-28 md:pb-8">
+        <DetailHero
+          icon={Sparkles}
+          label="Today's whole picture"
+          title="Review food and activity in one clean view"
+          copy="This combines the plate detail with the movement log so people can see what made up the day before asking the coach what to do next."
+          href="/app/coach"
+          action="Ask coach"
+        />
+
+        <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <TargetTile label="Food in" current={totals.calories} target={targets.calories} unit="kcal" tone="primary" icon={Flame} />
+          <TargetTile label="Active burn" current={fitnessTotals.calories} target={fitnessTargets.activeCalories} unit="kcal" tone="accent" icon={Dumbbell} />
+          <SimpleSummaryCard label="Net calories" value={netCalories.toLocaleString()} detail={`${remaining(netCalories, targets.calories)} kcal room after activity`} tone="sky" icon={Target} />
+          <SimpleSummaryCard label="Protein" value={`${totals.protein}g`} detail={`${remaining(totals.protein, targets.protein)}g left of ${targets.protein}`} tone="lemon" icon={Beef} />
+        </section>
+
+        <section className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+          <div className="space-y-4">
+            <SectionHeader
+              icon={Salad}
+              title="Nutrition log"
+              detail={`${meals.length} meal${meals.length === 1 ? "" : "s"} counted today`}
+            />
+            {meals.length === 0 ? (
+              <EmptyLedgerCard
+                title="No meals logged"
+                detail="Log a meal and this side becomes the exact macro ledger."
+                href="/app/log"
+                action="Add food"
+              />
+            ) : (
+              meals.map((meal) => <MealLogCard key={meal.id} meal={meal} compact />)
+            )}
+          </div>
+
+          <div className="space-y-4">
+            <SectionHeader
+              icon={Activity}
+              title="Fitness log"
+              detail={`${activityLog.length} activity signal${activityLog.length === 1 ? "" : "s"} counted today`}
+            />
+            {activityLog.map((activity) => (
+              <ActivityLogCard key={activity.id} activity={activity} compact />
+            ))}
+          </div>
+        </section>
+      </div>
+    </div>
+  );
+}
+
+function DetailHero({
+  icon: Icon,
+  label,
+  title,
+  copy,
+  href,
+  action,
+}: {
+  icon: LucideIcon;
+  label: string;
+  title: string;
+  copy: string;
+  href: string;
+  action: string;
+}) {
+  return (
+    <Card variant="elevated" className="rounded-[1.5rem] bg-white px-7 py-7 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
+      <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+        <div>
+          <p className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.14em] text-primary-600">
+            <Icon className="h-4 w-4" />
+            {label}
+          </p>
+          <h2 className="mt-3 text-2xl font-black tracking-normal text-[#16302a] md:text-3xl">
+            {title}
+          </h2>
+          <p className="mt-2 max-w-3xl text-base font-semibold leading-7 text-[#54635d]">
+            {copy}
+          </p>
+        </div>
+        <Link href={href}>
+          <Button size="lg" className="whitespace-nowrap rounded-full px-6">
+            <Plus className="h-4 w-4" />
+            {action}
+          </Button>
+        </Link>
+      </div>
+    </Card>
+  );
+}
+
+function FitnessSummaryCards() {
+  return (
+    <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <TargetTile label="Active calories" current={fitnessTotals.calories} target={fitnessTargets.activeCalories} unit="kcal" tone="primary" icon={Flame} />
+      <TargetTile label="Training minutes" current={fitnessTotals.minutes} target={fitnessTargets.minutes} unit="min" tone="sky" icon={Timer} />
+      <TargetTile label="Steps" current={estimatedSteps} target={fitnessTargets.steps} unit="steps" tone="lemon" icon={Footprints} />
+      <TargetTile label="Readiness" current={recoveryReadiness} target={fitnessTargets.recovery} unit="%" tone="accent" icon={HeartPulse} />
+    </section>
+  );
+}
+
+function TargetTile({
+  label,
+  current,
+  target,
+  unit,
+  tone,
+  icon: Icon,
+}: {
+  label: string;
+  current: number;
+  target: number;
+  unit: string;
+  tone: Tone;
+  icon: LucideIcon;
+}) {
+  const styles = toneStyles[tone];
+
+  return (
+    <Card className="space-y-3 rounded-[1.25rem] px-5 py-5 shadow-[0_8px_22px_rgba(20,90,75,0.06)]">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <span className={`flex h-[30px] w-[30px] items-center justify-center rounded-full ${styles.chip}`}>
+            <Icon className="h-[15px] w-[15px]" />
+          </span>
+          <p className="text-sm font-black text-[#54635d]">{label}</p>
+        </div>
+        <p className={`rounded-full px-2.5 py-1 text-xs font-black ${styles.pill}`}>
+          {percentOf(current, target)}%
+        </p>
+      </div>
+      <p className="text-[1.75rem] font-black leading-none tabular-nums text-[#16302a]">
+        {current.toLocaleString()}
+        <span className="ml-1 text-[15px] font-bold text-[#a2b5b0]">{unit}</span>
+      </p>
+      <p className="text-xs font-semibold text-[#7c968f]">
+        {remaining(current, target).toLocaleString()} {unit} left of {target.toLocaleString()}
+      </p>
+      <div className="h-[7px] overflow-hidden rounded-full bg-[#edf3f0]">
+        <div
+          className={`h-full rounded-full ${styles.bar}`}
+          style={{ width: `${Math.min(percentOf(current, target), 100)}%` }}
+        />
+      </div>
+    </Card>
+  );
+}
+
+function SimpleSummaryCard({
+  label,
+  value,
+  detail,
+  tone,
+  icon: Icon,
+}: {
+  label: string;
+  value: string;
+  detail: string;
+  tone: Tone;
+  icon: LucideIcon;
+}) {
+  const styles = toneStyles[tone];
+
+  return (
+    <Card className="space-y-3 rounded-[1.25rem] px-5 py-5 shadow-[0_8px_22px_rgba(20,90,75,0.06)]">
+      <div className="flex items-center gap-3">
+        <span className={`flex h-[30px] w-[30px] items-center justify-center rounded-full ${styles.chip}`}>
+          <Icon className="h-[15px] w-[15px]" />
+        </span>
+        <p className="text-sm font-black text-[#54635d]">{label}</p>
+      </div>
+      <p className="text-[1.75rem] font-black leading-none tabular-nums text-[#16302a]">
+        {value}
+      </p>
+      <p className="text-xs font-semibold leading-5 text-[#7c968f]">{detail}</p>
+    </Card>
+  );
+}
+
+function ActivityLogCard({
+  activity,
+  compact = false,
+}: {
+  activity: ActivityRecord;
+  compact?: boolean;
+}) {
+  const Icon = activity.icon;
+
+  return (
+    <Card className={`space-y-4 rounded-[1.5rem] px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)] ${compact ? "px-5 py-5" : ""}`}>
+      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <div className="flex items-center gap-4">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-100 text-primary-700">
+            <Icon className="h-[21px] w-[21px]" />
+          </span>
+          <div>
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 className="text-xl font-black text-[#16302a]">{activity.title}</h2>
+              <span className="rounded-full bg-[#f4f8f6] px-2.5 py-1 text-xs font-black text-[#7c968f]">
+                {activity.source}
+              </span>
+            </div>
+            <p className="text-sm font-semibold text-[#7c968f]">
+              {activity.subtitle} · {activity.time}
+            </p>
+          </div>
+        </div>
+        <div className="rounded-[0.9rem] bg-[#f4f8f6] px-4 py-3 text-right">
+          <p className="text-xl font-black tabular-nums text-[#16302a]">
+            {activity.duration}
+          </p>
+          <p className="text-xs font-bold text-primary-600">
+            {activity.calories} active cal
+          </p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-2 border-t border-primary-100/70 pt-4 sm:grid-cols-4">
+        {activity.items.map((item) => (
+          <SmallStat key={`${activity.id}-${item.label}`} {...item} />
+        ))}
+      </div>
+    </Card>
+  );
+}
+
+function MealLogCard({ meal, compact = false }: { meal: MealRecord; compact?: boolean }) {
+  const mealTotals = sumMealItems(meal.items);
+
+  return (
+    <Card className={`space-y-4 rounded-[1.5rem] px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)] ${compact ? "px-5 py-5" : ""}`}>
+      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <div className="flex items-center gap-4">
+          <MealIcon mealType={meal.mealType} />
+          <div>
+            <h2 className="text-xl font-black text-[#16302a]">
+              {formatMealType(meal.mealType)}
+            </h2>
+            <p className="text-sm font-semibold text-[#7c968f]">
+              {meal.name} · {meal.items.length} item{meal.items.length === 1 ? "" : "s"}
+            </p>
+          </div>
+        </div>
+        <div className="rounded-[0.9rem] bg-[#f4f8f6] px-4 py-3 text-right">
+          <p className="text-xl font-black tabular-nums text-[#16302a]">
+            {mealTotals.calories} cal
+          </p>
+          <p className="text-xs font-bold text-primary-600">
+            {mealTotals.protein}g protein
+          </p>
+        </div>
+      </div>
+
+      <div className="grid gap-2">
+        {meal.items.map((item) => (
+          <div key={item.id} className="grid gap-4 border-t border-primary-100/70 py-4 md:grid-cols-[1fr_auto] md:items-center">
+            <div>
+              <p className="text-base font-black text-[#16302a]">{item.name}</p>
+              <p className="text-sm font-semibold text-[#9db0aa]">
+                {item.servings} serving{item.servings === 1 ? "" : "s"}
+              </p>
+            </div>
+            <div className="grid grid-cols-4 gap-2 text-center">
+              <SmallStat label="Cal" value={`${item.calories}`} tone="primary" />
+              <SmallStat label="Pro" value={`${item.protein}`} tone="sky" />
+              <SmallStat label="Carb" value={`${item.carbs}`} tone="lemon" />
+              <SmallStat label="Fat" value={`${item.fat}`} tone="accent" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </Card>
+  );
+}
+
+function MealIcon({ mealType, muted = false }: { mealType: MealType; muted?: boolean }) {
+  const config =
+    muted
+      ? { styles: "bg-[#f4f8f6] text-[#a2b5b0]", Icon: Moon }
+      : mealType === "breakfast"
+        ? { styles: "bg-lemon-50 text-lemon-600", Icon: Sun }
+        : mealType === "lunch"
+          ? { styles: "bg-accent-100 text-accent-600", Icon: Salad }
+          : mealType === "dinner"
+            ? { styles: "bg-primary-100 text-primary-700", Icon: Moon }
+            : { styles: "bg-sky-100 text-sky-600", Icon: UtensilsCrossed };
+  const Icon = config.Icon;
+
+  return (
+    <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-[0.9rem] ${config.styles}`}>
+      <Icon className="h-[21px] w-[21px]" />
+    </span>
+  );
+}
+
+function SmallStat({
+  label,
+  value,
+  tone,
+}: {
+  label: string;
+  value: string;
+  tone: Tone;
+}) {
+  return (
+    <div className={`min-w-[50px] rounded-[11px] px-3 py-2 text-center ${toneStyles[tone].macro}`}>
+      <p className="text-sm font-black tabular-nums">{value}</p>
+      <p className="mt-0.5 text-[9px] font-semibold uppercase tracking-[0.06em] opacity-70">
+        {label}
+      </p>
+    </div>
+  );
+}
+
+function SectionHeader({
+  icon: Icon,
+  title,
+  detail,
+}: {
+  icon: LucideIcon;
+  title: string;
+  detail: string;
+}) {
+  return (
+    <div className="flex items-center gap-3">
+      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-100 text-primary-700">
+        <Icon className="h-5 w-5" />
+      </span>
+      <div>
+        <h2 className="font-heading text-2xl font-black text-[#16302a]">{title}</h2>
+        <p className="text-sm font-semibold text-[#7c968f]">{detail}</p>
+      </div>
+    </div>
+  );
+}
+
+function EmptyLedgerCard({
+  title,
+  detail,
+  href,
+  action,
+}: {
+  title: string;
+  detail: string;
+  href: string;
+  action: string;
+}) {
+  return (
+    <Card className="rounded-[1.5rem] border-dashed border-primary-200 bg-white/75 px-6 py-8 text-center">
+      <h2 className="text-xl font-black text-[#16302a]">{title}</h2>
+      <p className="mx-auto mt-2 max-w-md text-sm font-semibold leading-6 text-[#78928a]">
+        {detail}
+      </p>
+      <Link href={href} className="mt-5 inline-flex">
+        <Button size="lg">
+          {action}
+          <ArrowRight className="h-4 w-4" />
+        </Button>
+      </Link>
+    </Card>
+  );
+}

@@ -282,10 +282,10 @@ export function buildScoreContributors(
       key: "activity",
       label: "Activity",
       score: null,
-      href: "/app/activity",
+      href: "/app/fitness",
       status: "No wearable connected",
       detail: "Activity is waiting for a workout, step entry, or wearable connection.",
-      nextAction: "Open Activity to log a workout or connect health data.",
+      nextAction: "Open Fitness detail to review movement or choose a workout.",
     },
     {
       key: "recovery",
