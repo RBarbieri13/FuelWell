@@ -134,129 +134,155 @@ export default function MealPlanPage() {
   }
 
   return (
-    <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-neutral-900 tracking-tight">
-            Meal Plan
-          </h1>
-          <p className="text-sm text-neutral-500 mt-1">
-            Plan the next few days around protein, prep time, and grocery needs.
-          </p>
-        </div>
-        <div className="flex rounded-xl bg-neutral-100 p-1">
-          {(["day", "week"] as const).map((mode) => (
-            <button
-              key={mode}
-              type="button"
-              onClick={() => setView(mode)}
-              className={cn(
-                "rounded-lg px-4 py-2 text-sm font-medium capitalize transition-all",
-                view === mode ? "bg-white text-neutral-900 shadow-sm" : "text-neutral-500 hover:text-neutral-800"
-              )}
-            >
-              {mode}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <Card className="bg-gradient-to-br from-neutral-900 via-neutral-900 to-primary-900 text-white border-neutral-900">
-        <div className="grid gap-5 lg:grid-cols-[1.2fr_1fr] lg:items-center">
+    <div className="fw-app-surface">
+      <header className="fw-page-header">
+        <div className="fw-page-inner flex flex-col gap-4 py-7 md:flex-row md:items-center md:justify-between">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs font-medium text-primary-100">
-              <Sparkles className="w-3.5 h-3.5" />
-              Plan quality
-            </div>
-            <h2 className="mt-4 text-xl font-semibold tracking-tight">
-              {weekTotals.planned} of {days.length * 4} meals are planned.
-            </h2>
-            <p className="mt-2 text-sm leading-relaxed text-neutral-300">
-              Your next step is to fill the open dinner and lunch slots, then
-              send the week to groceries.
+            <h1 className="fw-heading text-3xl md:text-4xl">Meal plan</h1>
+            <p className="fw-muted mt-1 text-base">
+              Plan the next few days around protein, prep time, and grocery needs.
             </p>
           </div>
-          <div className="grid grid-cols-3 gap-2">
-            {[
-              ["Avg cals", Math.round(weekTotals.calories / days.length).toString()],
-              ["Avg protein", `${Math.round(weekTotals.protein / days.length)}g`],
-              ["Open slots", `${days.length * 4 - weekTotals.planned}`],
-            ].map(([label, value]) => (
-              <div key={label} className="rounded-2xl border border-white/10 bg-white/10 px-3 py-3">
-                <p className="text-[11px] font-medium text-neutral-300">{label}</p>
-                <p className="mt-1 text-lg font-bold tabular-nums">{value}</p>
-              </div>
+          <div className="flex rounded-full bg-white p-1 shadow-[0_18px_42px_rgba(22,48,42,0.10)]">
+            {(["day", "week"] as const).map((mode) => (
+              <button
+                key={mode}
+                type="button"
+                onClick={() => setView(mode)}
+                className={cn(
+                  "rounded-full px-6 py-3 text-sm font-black capitalize transition-all",
+                  view === mode ? "bg-primary-600 text-white shadow-[0_12px_24px_rgba(21,145,108,0.18)]" : "text-neutral-500 hover:text-neutral-800"
+                )}
+              >
+                {mode}
+              </button>
             ))}
           </div>
         </div>
-      </Card>
+      </header>
 
-      <div className="grid gap-4 lg:grid-cols-[18rem_1fr]">
-        <Card padding="sm" className="h-fit">
-          <h2 className="flex items-center gap-2 text-sm font-semibold text-neutral-900">
-            <CalendarDays className="w-4 h-4 text-primary-600" />
-            This week
-          </h2>
-          <div className="mt-3 space-y-2">
-            {days.map((day) => {
-              const totals = dayTotals(day);
-              const isSelected = day.id === selectedDay.id;
+      <div className="fw-page-inner space-y-6">
+        <section className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
+          <Card className="fw-dark-panel px-8 py-8">
+            <p className="inline-flex items-center gap-2 text-sm font-black uppercase tracking-[0.16em] text-primary-200">
+              <Sparkles className="h-4 w-4" />
+              Plan quality
+            </p>
+            <h2 className="mt-5 max-w-3xl text-4xl font-black leading-tight text-white md:text-5xl">
+              {weekTotals.planned} of {days.length * 4} meals are planned.
+            </h2>
+            <p className="mt-5 max-w-2xl text-lg font-semibold leading-8 text-white/74">
+              Your next step is to fill the open dinner and lunch slots, then send the week to groceries.
+            </p>
+            <div className="mt-7 grid gap-3 sm:grid-cols-3">
+              {[
+                ["Avg cals", Math.round(weekTotals.calories / days.length).toString()],
+                ["Avg protein", `${Math.round(weekTotals.protein / days.length)}g`],
+                ["Open slots", `${days.length * 4 - weekTotals.planned}`],
+              ].map(([label, value]) => (
+                <div key={label} className="rounded-[1.25rem] border border-white/12 bg-white/10 px-5 py-4 backdrop-blur">
+                  <p className="text-3xl font-black tabular-nums text-white">{value}</p>
+                  <p className="mt-1 text-xs font-black uppercase tracking-[0.12em] text-white/58">{label}</p>
+                </div>
+              ))}
+            </div>
+          </Card>
 
-              return (
-                <button
-                  key={day.id}
-                  type="button"
-                  onClick={() => setSelectedDayId(day.id)}
-                  className={cn(
-                    "w-full rounded-xl border px-3 py-3 text-left transition-all",
-                    isSelected
-                      ? "border-primary-200 bg-primary-50"
-                      : "border-neutral-100 bg-white hover:border-neutral-200 hover:bg-neutral-50"
-                  )}
-                >
-                  <div className="flex items-center justify-between gap-2">
-                    <div>
-                      <p className="text-sm font-semibold text-neutral-900">
-                        {day.label}, {day.date}
-                      </p>
-                      <p className="text-xs text-neutral-500 mt-0.5">{day.focus}</p>
+          <Card variant="elevated" className="space-y-4">
+            <div className="flex items-start gap-4">
+              <span className="fw-icon-chip">
+                <ShoppingBasket className="h-6 w-6" />
+              </span>
+              <div>
+                <h2 className="text-2xl font-black text-neutral-900">Grocery readiness</h2>
+                <p className="mt-1 text-sm font-semibold leading-6 text-neutral-500">
+                  Planned meals are grouped into the grocery list as soon as the open slots are filled.
+                </p>
+              </div>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="fw-soft-row p-4">
+                <p className="text-3xl font-black text-neutral-900">18</p>
+                <p className="text-xs font-black uppercase tracking-[0.12em] text-neutral-400">unique ingredients</p>
+              </div>
+              <div className="fw-soft-row p-4">
+                <p className="text-3xl font-black text-neutral-900">2</p>
+                <p className="text-xs font-black uppercase tracking-[0.12em] text-neutral-400">slots to fill</p>
+              </div>
+            </div>
+            <Button type="button" className="w-full">
+              Build grocery list
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </Card>
+        </section>
+
+        <div className="grid gap-6 xl:grid-cols-[20rem_1fr]">
+          <Card className="h-fit px-5 py-5">
+            <h2 className="flex items-center gap-2 text-lg font-black text-neutral-900">
+              <CalendarDays className="w-5 h-5 text-primary-600" />
+              This week
+            </h2>
+            <div className="mt-3 space-y-2">
+              {days.map((day) => {
+                const totals = dayTotals(day);
+                const isSelected = day.id === selectedDay.id;
+
+                return (
+                  <button
+                    key={day.id}
+                    type="button"
+                    onClick={() => setSelectedDayId(day.id)}
+                    className={cn(
+                      "w-full rounded-[1.2rem] border px-4 py-4 text-left transition-all",
+                      isSelected
+                        ? "border-primary-200 bg-primary-50 shadow-sm shadow-primary-900/5"
+                        : "border-primary-100 bg-white hover:border-primary-200 hover:bg-primary-50/50"
+                    )}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <div>
+                        <p className="text-base font-black text-neutral-900">
+                          {day.label}, {day.date}
+                        </p>
+                        <p className="text-xs font-semibold text-neutral-500 mt-0.5">{day.focus}</p>
+                      </div>
+                      <ChevronRight className={cn("w-4 h-4", isSelected ? "text-primary-600" : "text-neutral-300")} />
                     </div>
-                    <ChevronRight className={cn("w-4 h-4", isSelected ? "text-primary-600" : "text-neutral-300")} />
-                  </div>
-                  <div className="mt-3 flex items-center gap-2 text-xs text-neutral-500">
-                    <span className="font-medium tabular-nums text-neutral-700">
-                      {totals.protein}g protein
-                    </span>
-                    <span>{totals.planned}/4 meals</span>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </Card>
+                    <div className="mt-3 flex items-center gap-2 text-xs font-semibold text-neutral-500">
+                      <span className="font-black tabular-nums text-neutral-700">
+                        {totals.protein}g protein
+                      </span>
+                      <span>{totals.planned}/4 meals</span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </Card>
 
         <div className="space-y-4">
           {view === "day" ? (
-            <Card>
+            <Card variant="elevated">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-neutral-400">
+                  <p className="text-xs font-black uppercase tracking-[0.16em] text-primary-700">
                     {selectedDay.focus}
                   </p>
-                  <h2 className="mt-1 text-xl font-semibold text-neutral-900">
+                  <h2 className="mt-1 text-3xl font-black text-neutral-900">
                     {selectedDay.label}, {selectedDay.date}
                   </h2>
                 </div>
                 <div className="grid grid-cols-2 gap-2 sm:min-w-56">
-                  <div className="rounded-xl bg-neutral-50 px-3 py-2">
-                    <p className="text-[11px] text-neutral-400">Calories</p>
-                    <p className="text-sm font-semibold tabular-nums text-neutral-900">
+                  <div className="rounded-[1rem] bg-primary-50 px-4 py-3">
+                    <p className="text-[11px] font-black uppercase tracking-[0.12em] text-primary-700">Calories</p>
+                    <p className="text-xl font-black tabular-nums text-neutral-900">
                       {selectedTotals.calories}
                     </p>
                   </div>
-                  <div className="rounded-xl bg-neutral-50 px-3 py-2">
-                    <p className="text-[11px] text-neutral-400">Protein</p>
-                    <p className="text-sm font-semibold tabular-nums text-neutral-900">
+                  <div className="rounded-[1rem] bg-sky-50 px-4 py-3">
+                    <p className="text-[11px] font-black uppercase tracking-[0.12em] text-sky-700">Protein</p>
+                    <p className="text-xl font-black tabular-nums text-neutral-900">
                       {selectedTotals.protein}g
                     </p>
                   </div>
@@ -272,15 +298,15 @@ export default function MealPlanPage() {
                     <div
                       key={meal.slot}
                       className={cn(
-                        "rounded-2xl border p-4 transition-colors",
-                        isOpen ? "border-dashed border-accent-200 bg-accent-50/40" : "border-neutral-100 bg-white"
+                        "rounded-[1.35rem] border p-5 transition-colors",
+                        isOpen ? "border-dashed border-accent-200 bg-accent-50/50" : "border-primary-100 bg-white"
                       )}
                     >
                       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                         <div className="flex items-start gap-3">
                           <div
                             className={cn(
-                              "mt-0.5 rounded-xl p-2",
+                              "mt-0.5 rounded-[1rem] p-3",
                               meal.status === "logged"
                                 ? "bg-primary-50 text-primary-600"
                                 : isOpen
@@ -295,13 +321,13 @@ export default function MealPlanPage() {
                             )}
                           </div>
                           <div>
-                            <p className="text-xs font-semibold uppercase tracking-wider text-neutral-400">
+                            <p className="text-xs font-black uppercase tracking-[0.14em] text-neutral-400">
                               {meal.slot}
                             </p>
-                            <h3 className="mt-1 text-sm font-semibold text-neutral-900">
+                            <h3 className="mt-1 text-lg font-black text-neutral-900">
                               {addedTitle ?? meal.title}
                             </h3>
-                            <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-neutral-500">
+                            <div className="mt-2 flex flex-wrap items-center gap-2 text-xs font-bold text-neutral-500">
                               <span className="tabular-nums">{meal.calories} cal</span>
                               <span className="tabular-nums">{meal.protein}g protein</span>
                               <span className="inline-flex items-center gap-1">
@@ -328,8 +354,8 @@ export default function MealPlanPage() {
               </div>
             </Card>
           ) : (
-            <Card>
-              <h2 className="text-sm font-semibold text-neutral-900">Week at a glance</h2>
+            <Card variant="elevated">
+              <h2 className="text-2xl font-black text-neutral-900">Week at a glance</h2>
               <div className="mt-4 grid gap-3 md:grid-cols-2">
                 {days.map((day) => {
                   const totals = dayTotals(day);
@@ -342,29 +368,29 @@ export default function MealPlanPage() {
                         setSelectedDayId(day.id);
                         setView("day");
                       }}
-                      className="rounded-2xl border border-neutral-100 bg-neutral-50/70 p-4 text-left transition-colors hover:border-primary-200 hover:bg-primary-50/50"
+                      className="rounded-[1.35rem] border border-primary-100 bg-neutral-50/80 p-5 text-left transition-colors hover:border-primary-200 hover:bg-primary-50/60"
                     >
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-sm font-semibold text-neutral-900">
+                          <p className="text-lg font-black text-neutral-900">
                             {day.label}, {day.date}
                           </p>
-                          <p className="text-xs text-neutral-500">{day.focus}</p>
+                          <p className="text-xs font-semibold text-neutral-500">{day.focus}</p>
                         </div>
                         <Badge variant={totals.planned === 4 ? "success" : "warning"}>
                           {totals.planned}/4
                         </Badge>
                       </div>
                       <div className="mt-4 grid grid-cols-2 gap-2">
-                        <div className="rounded-xl bg-white px-3 py-2">
-                          <p className="text-[11px] text-neutral-400">Calories</p>
-                          <p className="text-sm font-semibold tabular-nums text-neutral-900">
+                        <div className="rounded-[1rem] bg-white px-4 py-3">
+                          <p className="text-[11px] font-black uppercase tracking-[0.12em] text-neutral-400">Calories</p>
+                          <p className="text-xl font-black tabular-nums text-neutral-900">
                             {totals.calories}
                           </p>
                         </div>
-                        <div className="rounded-xl bg-white px-3 py-2">
-                          <p className="text-[11px] text-neutral-400">Protein</p>
-                          <p className="text-sm font-semibold tabular-nums text-neutral-900">
+                        <div className="rounded-[1rem] bg-white px-4 py-3">
+                          <p className="text-[11px] font-black uppercase tracking-[0.12em] text-neutral-400">Protein</p>
+                          <p className="text-xl font-black tabular-nums text-neutral-900">
                             {totals.protein}g
                           </p>
                         </div>
@@ -377,18 +403,22 @@ export default function MealPlanPage() {
           )}
 
           <div className="grid gap-3 md:grid-cols-2">
-            <Card padding="sm" className="bg-primary-50/60 border-primary-100">
-              <Dumbbell className="w-5 h-5 text-primary-600" />
-              <h2 className="mt-3 text-sm font-semibold text-neutral-900">Next best move</h2>
-              <p className="mt-1 text-sm leading-relaxed text-neutral-600">
+            <Card className="bg-primary-50/80 border-primary-100">
+              <span className="flex h-12 w-12 items-center justify-center rounded-[1.15rem] bg-white text-primary-700">
+                <Dumbbell className="w-5 h-5" />
+              </span>
+              <h2 className="mt-4 text-xl font-black text-neutral-900">Next best move</h2>
+              <p className="mt-2 text-base font-semibold leading-7 text-neutral-600">
                 Fill Tuesday dinner with a lean protein recipe so the week stays
                 above 135g protein per day.
               </p>
             </Card>
-            <Card padding="sm">
-              <ShoppingBasket className="w-5 h-5 text-accent-600" />
-              <h2 className="mt-3 text-sm font-semibold text-neutral-900">Ready for groceries</h2>
-              <p className="mt-1 text-sm leading-relaxed text-neutral-600">
+            <Card>
+              <span className="flex h-12 w-12 items-center justify-center rounded-[1.15rem] bg-accent-100 text-accent-700">
+                <ShoppingBasket className="w-5 h-5" />
+              </span>
+              <h2 className="mt-4 text-xl font-black text-neutral-900">Ready for groceries</h2>
+              <p className="mt-2 text-base font-semibold leading-7 text-neutral-600">
                 Your planned meals need 18 unique ingredients. Review grouped
                 items before shopping.
               </p>
@@ -400,6 +430,7 @@ export default function MealPlanPage() {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }

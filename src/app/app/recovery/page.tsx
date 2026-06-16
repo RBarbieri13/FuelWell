@@ -48,124 +48,144 @@ function SourceBadge({ children }: { children: string }) {
 
 export default function RecoveryPage() {
   return (
-    <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-6">
-      <section className="space-y-3">
-        <h1 className="text-2xl font-bold text-neutral-900 tracking-tight">Recovery</h1>
-        <Card className="bg-gradient-to-br from-sky-50 via-white to-primary-50/80 border-sky-100">
-          <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
-            <div className="flex gap-4">
-              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-white text-primary-700 shadow-sm">
-                <span className="text-2xl font-bold tabular-nums">{readiness.score}</span>
-              </div>
+    <div className="fw-app-surface">
+      <header className="fw-page-header">
+        <div className="fw-page-inner flex flex-col gap-4 py-7 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h1 className="fw-heading text-3xl md:text-4xl">Recovery</h1>
+            <p className="fw-muted mt-1 text-base">Sleep, soreness, hydration, and readiness signals</p>
+          </div>
+          <Link
+            href="/app/workouts"
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-primary-600 px-5 py-3 text-sm font-black text-white shadow-[0_16px_34px_rgba(21,145,108,0.24)] transition hover:bg-primary-700"
+          >
+            {readiness.nextAction}
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+      </header>
+
+      <div className="fw-page-inner space-y-6">
+        <section className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+          <Card variant="elevated" className="fw-mint-panel px-8 py-8">
+            <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
               <div>
-                <div className="flex items-center gap-2">
-                  <ShieldCheck className="h-5 w-5 text-primary-600" />
-                  <h2 className="text-xl font-bold text-neutral-900">{readiness.label}</h2>
-                </div>
-                <p className="mt-2 max-w-2xl text-sm leading-relaxed text-neutral-600">{readiness.detail}</p>
-              </div>
-            </div>
-            <Link
-              href="/app/workouts"
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm shadow-primary-600/25 transition-colors hover:bg-primary-700"
-            >
-              {readiness.nextAction}
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-        </Card>
-      </section>
-
-      <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {recoverySignals.map((signal) => (
-          <Card key={signal.label} padding="sm" className="space-y-3">
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-neutral-100 text-neutral-500">
-                <signal.icon className="h-4 w-4" />
-              </div>
-              <SourceBadge>{signal.source}</SourceBadge>
-            </div>
-            <div>
-              <p className="text-2xl font-bold tabular-nums text-neutral-900">{signal.value}</p>
-              <p className="mt-1 text-sm font-medium text-neutral-700">{signal.label}</p>
-              <p className="mt-1 text-xs leading-relaxed text-neutral-500">{signal.status}</p>
-            </div>
-          </Card>
-        ))}
-      </section>
-
-      <section className="grid gap-4 lg:grid-cols-[1fr_0.9fr]">
-        <Card padding="sm">
-          <div className="px-2 pb-3">
-            <h2 className="text-xs font-semibold uppercase tracking-wider text-neutral-500">Recovery checklist</h2>
-          </div>
-          <div className="divide-y divide-neutral-100">
-            {checklist.map((item) => (
-              <div key={item.label} className="flex gap-3 px-2 py-4">
-                {item.done ? (
-                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-primary-600" />
-                ) : (
-                  <Circle className="mt-0.5 h-5 w-5 shrink-0 text-neutral-300" />
-                )}
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <p className="text-sm font-semibold text-neutral-900">{item.label}</p>
-                    <SourceBadge>{item.source}</SourceBadge>
-                  </div>
-                  <p className="mt-1 text-sm leading-relaxed text-neutral-500">{item.detail}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </Card>
-
-        <div className="space-y-4">
-          <Card className="space-y-3 border-lemon-200 bg-lemon-50/60">
-            <div className="flex gap-3">
-              <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-lemon-600" />
-              <div>
-                <h2 className="text-sm font-semibold text-neutral-900">What is estimated?</h2>
-                <p className="mt-1 text-sm leading-relaxed text-neutral-600">
-                  Readiness is calculated from your logged sleep, hydration, and soreness above. HRV, resting heart rate, and workout load aren&apos;t included yet — connect a wearable to add them.
+                <p className="inline-flex items-center gap-2 text-sm font-black uppercase tracking-[0.16em] text-primary-700">
+                  <ShieldCheck className="h-4 w-4" />
+                  Readiness estimate
                 </p>
+                <h2 className="mt-4 text-4xl font-black leading-tight text-neutral-900 md:text-5xl">
+                  {readiness.label}
+                </h2>
+                <p className="mt-4 max-w-3xl text-lg font-semibold leading-8 text-primary-900/70">
+                  {readiness.detail}
+                </p>
+              </div>
+              <div className="flex h-36 w-36 shrink-0 flex-col items-center justify-center rounded-[2rem] bg-white text-center shadow-[0_24px_58px_rgba(22,48,42,0.10)]">
+                <span className="text-6xl font-black tabular-nums text-primary-700">{readiness.score}</span>
+                <span className="text-xs font-black uppercase tracking-[0.16em] text-neutral-400">score</span>
               </div>
             </div>
           </Card>
 
           <Card className="space-y-4">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
-                <Info className="h-4 w-4" />
+              <span className="fw-icon-chip">
+                <Info className="h-6 w-6" />
+              </span>
+              <div>
+                <h2 className="text-2xl font-black text-neutral-900">Next actions</h2>
+                <p className="text-sm font-semibold text-neutral-500">Turn recovery data into tonight&apos;s plan.</p>
               </div>
-              <h2 className="text-sm font-semibold text-neutral-900">Next actions</h2>
             </div>
-            <div className="space-y-2">
+            <div className="grid gap-3">
               {nextActions.map((action) => (
                 <Link
                   key={action.label}
                   href={action.href}
-                  className="block rounded-xl border border-neutral-200/80 p-3 transition-colors hover:border-primary-200 hover:bg-primary-50/40"
+                  className="fw-soft-row group block p-4 transition hover:-translate-y-0.5 hover:border-primary-200 hover:bg-white"
                 >
                   <div className="flex items-center justify-between gap-3">
-                    <p className="text-sm font-semibold text-neutral-900">{action.label}</p>
-                    <ArrowRight className="h-4 w-4 shrink-0 text-neutral-300" />
+                    <p className="text-base font-black text-neutral-900">{action.label}</p>
+                    <ArrowRight className="h-4 w-4 shrink-0 text-neutral-300 transition group-hover:translate-x-0.5 group-hover:text-primary-600" />
                   </div>
-                  <p className="mt-1 text-xs leading-relaxed text-neutral-500">{action.detail}</p>
+                  <p className="mt-1 text-sm font-semibold leading-6 text-neutral-500">{action.detail}</p>
                 </Link>
               ))}
             </div>
           </Card>
+        </section>
 
-          <Card className="bg-primary-50/70 border-primary-100">
-            <div className="flex gap-3">
-              <UtensilsCrossed className="mt-0.5 h-4 w-4 shrink-0 text-primary-600" />
-              <p className="text-sm leading-relaxed text-neutral-700">
-                Clear next action: log protein plus fluids before bed so tomorrow&apos;s readiness estimate has one less guess.
-              </p>
+        <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          {recoverySignals.map((signal) => (
+            <Card key={signal.label} className="space-y-4 px-5 py-5">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex h-12 w-12 items-center justify-center rounded-[1.15rem] bg-primary-100 text-primary-700">
+                  <signal.icon className="h-5 w-5" />
+                </div>
+                <SourceBadge>{signal.source}</SourceBadge>
+              </div>
+              <div>
+                <p className="text-3xl font-black tabular-nums text-neutral-900">{signal.value}</p>
+                <p className="mt-1 text-base font-black text-neutral-800">{signal.label}</p>
+                <p className="mt-1 text-sm font-semibold leading-6 text-neutral-500">{signal.status}</p>
+              </div>
+            </Card>
+          ))}
+        </section>
+
+        <section className="grid gap-4 xl:grid-cols-[1.1fr_0.9fr]">
+          <Card className="px-6 py-6">
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="text-2xl font-black text-neutral-900">Recovery checklist</h2>
+              <span className="rounded-full bg-primary-50 px-3 py-1 text-xs font-black text-primary-700">3 of 4 ready</span>
+            </div>
+            <div className="divide-y divide-primary-100/70">
+              {checklist.map((item) => (
+                <div key={item.label} className="flex gap-4 py-5">
+                  <span className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${item.done ? "bg-primary-100 text-primary-700" : "bg-neutral-100 text-neutral-300"}`}>
+                    {item.done ? <CheckCircle2 className="h-5 w-5" /> : <Circle className="h-5 w-5" />}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="text-lg font-black text-neutral-900">{item.label}</p>
+                      <SourceBadge>{item.source}</SourceBadge>
+                    </div>
+                    <p className="mt-1 text-sm font-semibold leading-6 text-neutral-500">{item.detail}</p>
+                  </div>
+                </div>
+              ))}
             </div>
           </Card>
-        </div>
-      </section>
+
+          <div className="space-y-4">
+            <Card className="space-y-3 border-lemon-200 bg-lemon-50/80">
+              <div className="flex gap-3">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-lemon-700">
+                  <ShieldAlert className="h-4 w-4" />
+                </span>
+                <div>
+                  <h2 className="text-xl font-black text-lemon-800">What is estimated?</h2>
+                  <p className="mt-2 text-sm font-semibold leading-6 text-lemon-800/78">
+                    Readiness is calculated from your logged sleep, hydration, and soreness above. HRV, resting heart rate, and workout load are not included yet.
+                  </p>
+                </div>
+              </div>
+            </Card>
+
+            <Card className="bg-primary-50/80 border-primary-100">
+              <div className="flex gap-3">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-primary-700">
+                  <UtensilsCrossed className="h-4 w-4" />
+                </span>
+                <p className="text-base font-semibold leading-7 text-primary-900/78">
+                  Clear next action: log protein plus fluids before bed so tomorrow&apos;s readiness estimate has one less guess.
+                </p>
+              </div>
+            </Card>
+          </div>
+        </section>
+      </div>
     </div>
   );
 }
