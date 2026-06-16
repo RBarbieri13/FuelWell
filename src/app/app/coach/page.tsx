@@ -9,7 +9,7 @@
 
 import Link from "next/link";
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
-import { Send, Sparkles, User } from "lucide-react";
+import { ArrowRight, MessageCircle, Send, Sparkles, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils/cn";
 import { createClient } from "@/lib/supabase/client";
@@ -102,16 +102,16 @@ export default function CoachPage() {
   }
 
   return (
-    <div className="flex h-full flex-col bg-primary-50/35">
-      <div className="border-b border-primary-100/80 bg-white/74 px-4 py-4 backdrop-blur-xl md:px-8">
-        <div className="mx-auto flex max-w-3xl items-center justify-between gap-4">
+    <div className="fw-coach-page flex h-full flex-col">
+      <div className="fw-page-header px-4 py-4 md:px-8">
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary-600 text-white shadow-sm shadow-primary-700/20">
+            <div className="flex h-12 w-12 items-center justify-center rounded-[1.25rem] bg-primary-600 text-white shadow-[0_16px_34px_rgba(21,145,108,0.22)]">
               <Sparkles className="h-5 w-5" />
             </div>
             <div>
-              <h1 className="text-base font-black text-neutral-900">Coach</h1>
-              <p className="text-xs font-bold text-neutral-600">
+              <h1 className="fw-heading text-xl">Coach</h1>
+              <p className="text-xs font-bold text-[#78928a]">
                 {busy ? "Working..." : "Logs meals, plans workouts, answers — right here"}
               </p>
             </div>
@@ -120,11 +120,11 @@ export default function CoachPage() {
             <button
               type="button"
               onClick={newConversation}
-              className="whitespace-nowrap px-2 py-2 -my-2 text-xs font-bold text-neutral-600 transition hover:text-neutral-700"
+              className="whitespace-nowrap rounded-full bg-white/70 px-3 py-2 text-xs font-black text-[#78928a] shadow-sm transition hover:text-primary-700"
             >
               New chat
             </button>
-            <Link href="/app/dashboard" className="text-sm font-bold text-primary-700">
+            <Link href="/app/dashboard" className="hidden text-sm font-black text-primary-700 sm:inline">
               Dashboard
             </Link>
           </div>
@@ -132,13 +132,40 @@ export default function CoachPage() {
       </div>
 
       <main className="flex-1 overflow-y-auto px-4 py-6 md:px-8">
-        <div className="mx-auto max-w-3xl space-y-4">
+        <div className="mx-auto max-w-5xl space-y-5">
           {items.length === 0 && (
-            <div className="rounded-3xl border border-primary-100 bg-white/88 p-5 shadow-sm shadow-primary-900/5">
-              <p className="text-sm font-bold text-neutral-800">
-                Ask for anything — I log meals, plan workouts, pick restaurants, and pull up your
-                numbers right here in the chat.
-              </p>
+            <div className="grid gap-4 lg:grid-cols-[1fr_0.72fr]">
+              <section className="fw-dark-panel rounded-[2rem] border p-6 md:p-8">
+                <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-xs font-black uppercase tracking-[0.16em] text-primary-100">
+                  <MessageCircle className="h-4 w-4" />
+                  Agentic coach
+                </div>
+                <h2 className="mt-5 max-w-2xl text-4xl font-black leading-tight text-white md:text-5xl">
+                  Ask for the next useful move.
+                </h2>
+                <p className="mt-4 max-w-2xl text-base font-semibold leading-7 text-white/70">
+                  I can log meals, generate tables, plan workouts, compare
+                  choices, render recipes, update groceries, and explain your
+                  numbers directly in chat.
+                </p>
+              </section>
+              <section className="rounded-[2rem] border border-primary-100/80 bg-white/90 p-5 shadow-[0_22px_60px_rgba(22,48,42,0.10)]">
+                <p className="text-xs font-black uppercase tracking-[0.16em] text-primary-600">
+                  Try asking
+                </p>
+                <div className="mt-4 grid gap-2">
+                  {quickPrompts.map((prompt) => (
+                    <button
+                      key={prompt}
+                      onClick={() => void sendMessage(prompt)}
+                      className="group flex min-h-12 items-center justify-between gap-3 rounded-[1.2rem] border border-primary-100 bg-[#f7faf8] px-4 py-3 text-left text-sm font-black text-[#516b63] transition hover:border-primary-200 hover:bg-primary-50"
+                    >
+                      <span>{prompt}</span>
+                      <ArrowRight className="h-4 w-4 shrink-0 text-primary-500 transition group-hover:translate-x-0.5" />
+                    </button>
+                  ))}
+                </div>
+              </section>
             </div>
           )}
 
@@ -161,7 +188,11 @@ export default function CoachPage() {
                       <StreamingTextBubble text={item.text} streaming={!!item.streaming} />
                     )}
                     {item.artifacts.map((artifact) => (
-                      <div key={artifact.id} data-testid={`artifact-${artifact.type}`}>
+                      <div
+                        key={artifact.id}
+                        className="fw-artifact-scope"
+                        data-testid={`artifact-${artifact.type}`}
+                      >
                         <ArtifactRenderer artifact={artifact} onAction={handleCardAction} />
                       </div>
                     ))}
@@ -181,40 +212,25 @@ export default function CoachPage() {
           ))}
 
           {items.length === 0 && (
-            <div className="pt-2">
-              <p className="mb-3 text-xs font-black uppercase tracking-wider text-neutral-400">
-                Try asking
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {quickPrompts.map((prompt) => (
-                  <button
-                    key={prompt}
-                    onClick={() => void sendMessage(prompt)}
-                    className="min-h-11 rounded-full border border-primary-100 bg-white/88 px-4 py-2 text-sm font-bold text-neutral-600 transition hover:border-primary-300 hover:bg-primary-50/70 hover:text-primary-700 md:min-h-0"
-                  >
-                    {prompt}
-                  </button>
-                ))}
-              </div>
-            </div>
+            <RichTextPreview />
           )}
 
           <div ref={endRef} />
         </div>
       </main>
 
-      <div className="border-t border-primary-100/80 bg-white/86 px-4 py-3 backdrop-blur-xl md:px-8">
-        <form onSubmit={handleSubmit} className="mx-auto flex max-w-3xl items-center gap-2">
+      <div className="border-t border-primary-100/80 bg-white/88 px-4 py-3 backdrop-blur-xl md:px-8">
+        <form onSubmit={handleSubmit} className="mx-auto flex max-w-5xl items-center gap-2">
           <input
             type="text"
             value={input}
             onChange={(event) => setInput(event.target.value)}
             placeholder="Log food, plan a workout, ask anything..."
-            className="flex-1 rounded-2xl border border-primary-100 bg-primary-50/70 px-4 py-3 text-sm font-semibold text-neutral-900 placeholder:text-neutral-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="min-h-12 flex-1 rounded-[1.35rem] border border-primary-100 bg-primary-50/70 px-4 py-3 text-sm font-semibold text-[#16302a] placeholder:text-[#91a7a0] focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-500"
             disabled={busy}
             aria-label="Message Coach"
           />
-          <Button type="submit" disabled={!input.trim() || busy} aria-label="Send">
+          <Button type="submit" disabled={!input.trim() || busy} aria-label="Send" className="min-h-12 px-4">
             <Send className="h-4 w-4" />
           </Button>
         </form>
@@ -236,5 +252,27 @@ function UserAvatar() {
     <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-primary-700">
       <User className="h-4 w-4" />
     </div>
+  );
+}
+
+function RichTextPreview() {
+  return (
+    <section className="rounded-[2rem] border border-primary-100/80 bg-white/82 p-5 shadow-[0_18px_48px_rgba(22,48,42,0.07)]">
+      <p className="text-xs font-black uppercase tracking-[0.16em] text-primary-600">
+        Rich response support
+      </p>
+      <div className="mt-4 grid gap-3 md:grid-cols-3">
+        {[
+          "Tables for meal comparisons",
+          "Nested lists and headings",
+          "Formulas, images, and links",
+        ].map((item) => (
+          <div key={item} className="fw-soft-row p-4">
+            <Sparkles className="h-4 w-4 text-primary-600" />
+            <p className="mt-2 text-sm font-black text-[#16302a]">{item}</p>
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }
