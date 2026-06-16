@@ -164,24 +164,24 @@ export function DashboardClient({
           </div>
         </Card>
 
-        <Card className="space-y-6">
+        <Card className="space-y-7 px-7 py-8 md:px-9 md:py-9">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <h2 className="text-lg font-bold text-neutral-900">
+              <h2 className="text-2xl font-black text-neutral-900">
                 Today&apos;s plate
               </h2>
-              <p className="text-sm text-neutral-500">
+              <p className="mt-1 text-sm font-semibold text-neutral-500">
                 Nutrition is calculated from logged meals only.
               </p>
             </div>
-            <Link href="/app/nutrition" className="-m-3 p-3 text-sm font-bold text-primary-700">
+            <Link href="/app/nutrition" className="-m-3 p-3 text-sm font-black text-primary-700">
               Details
             </Link>
           </div>
 
-          <div className="flex justify-center">
+          <div className="flex justify-center rounded-[2rem] bg-gradient-to-b from-primary-50/70 to-white py-3 md:py-5">
             <MealMakeupHover meals={todaysMeals}>
-              <CalorieRing consumed={totals.calories} target={targets.calories} />
+              <CalorieRing consumed={totals.calories} target={targets.calories} emphasis="hero" />
             </MealMakeupHover>
           </div>
 
@@ -354,7 +354,7 @@ function MealMakeupHover({
   return (
     <div className="group relative flex justify-center" tabIndex={0}>
       {children}
-      <div className="pointer-events-none absolute left-1/2 top-[calc(100%-0.25rem)] z-20 w-[min(24rem,calc(100vw-3rem))] -translate-x-1/2 translate-y-3 rounded-[1.35rem] border border-primary-100 bg-white p-4 text-left opacity-0 shadow-[0_24px_70px_rgba(22,48,42,0.16)] transition duration-150 group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:translate-y-0 group-focus-within:opacity-100">
+      <div className="pointer-events-none absolute left-1/2 top-[calc(100%-0.25rem)] z-20 w-[min(24rem,calc(100vw-3rem))] -translate-x-1/2 translate-y-3 rounded-[1.35rem] border border-primary-100 bg-white p-4 text-left opacity-0 shadow-[0_24px_70px_rgba(22,48,42,0.16)] transition duration-150 group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:translate-y-0 group-focus-within:opacity-100 md:top-auto md:bottom-[calc(100%-0.25rem)] md:translate-y-0 md:group-hover:-translate-y-2 md:group-focus-within:-translate-y-2 xl:left-auto xl:right-[calc(100%-1rem)] xl:top-1/2 xl:bottom-auto xl:translate-x-0 xl:-translate-y-[55%] xl:group-hover:-translate-y-[55%] xl:group-focus-within:-translate-y-[55%]">
         <div className="mb-3 flex items-center gap-2">
           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-100 text-primary-700">
             <Info className="h-4 w-4" />
