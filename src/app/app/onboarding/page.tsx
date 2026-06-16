@@ -33,6 +33,8 @@ import { Logo } from "@/components/ui/logo";
 import { cn } from "@/lib/utils/cn";
 
 const STORAGE_KEY = "fuelwell:onboarding:v1";
+const PREVIEW_KIND_STORAGE_KEY = "fuelwell:preview-user-kind";
+const PREVIEW_COMPLETED_STORAGE_KEY = "fuelwell:new-user-onboarding:v1";
 
 interface PersistedProgress {
   step: number;
@@ -121,6 +123,7 @@ export default function OnboardingPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [resumed, setResumed] = useState(false);
+  const [isNewUserPreview, setIsNewUserPreview] = useState(false);
   const hydrated = useRef(false);
 
   const totalSteps = STEP_META.length;
@@ -131,12 +134,27 @@ export default function OnboardingPage() {
   // Resume in-progress onboarding from localStorage.
   useEffect(() => {
     try {
+      const params = new URLSearchParams(window.location.search);
+      const newUserPreview =
+        params.get("preview") === "new-user" ||
+        window.localStorage.getItem(PREVIEW_KIND_STORAGE_KEY) === "new-user";
+      // URL/localStorage-derived preview mode must be read after hydration.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setIsNewUserPreview(newUserPreview);
+
+      if (params.get("reset") === "1") {
+        window.localStorage.removeItem(STORAGE_KEY);
+        window.localStorage.setItem(PREVIEW_KIND_STORAGE_KEY, "new-user");
+        window.history.replaceState(null, "", "/app/onboarding?preview=new-user");
+        hydrated.current = true;
+        return;
+      }
+
       const raw = window.localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const saved = JSON.parse(raw) as PersistedProgress;
         // Post-hydration resume from localStorage: setState here is intentional
         // and avoids an SSR hydration mismatch a lazy initializer would cause.
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         if (saved.data) setData({ ...INITIAL_DATA, ...saved.data });
         if (typeof saved.step === "number") {
           setStep(Math.min(Math.max(saved.step, 0), totalSteps - 1));
@@ -243,6 +261,24 @@ export default function OnboardingPage() {
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
+      if (isNewUserPreview || isBrowserPreviewRuntime()) {
+        try {
+          window.localStorage.setItem(
+            PREVIEW_COMPLETED_STORAGE_KEY,
+            JSON.stringify({
+              completedAt: new Date().toISOString(),
+              data,
+              macros,
+            })
+          );
+          window.localStorage.setItem(PREVIEW_KIND_STORAGE_KEY, "new-user");
+        } catch {
+          // Local-only preview completion can still continue without storage.
+        }
+        clearProgress();
+        router.push("/app/dashboard?preview=new-user-complete");
+        return;
+      }
       setError("Not authenticated. Please log in again.");
       setSaving(false);
       return;
@@ -310,6 +346,14 @@ export default function OnboardingPage() {
             Skip for now
           </button>
         </header>
+
+        {isNewUserPreview && (
+          <div className="rounded-[1.5rem] border border-primary-100 bg-white/80 px-4 py-3 text-sm font-bold text-[#6f8981] shadow-sm">
+            New-user preview mode: complete the intake exactly like a first-time
+            user. Answers stay in this browser only and never write to
+            production accounts.
+          </div>
+        )}
 
         <section className="grid flex-1 gap-4 lg:grid-cols-[0.72fr_1fr] lg:gap-5">
           <aside className="fw-dark-panel order-2 flex flex-col justify-between rounded-[2rem] border p-6 lg:order-1 lg:p-8">
@@ -627,7 +671,7 @@ export default function OnboardingPage() {
                 </Button>
               ) : (
                 <Button onClick={handleComplete} loading={saving} size="lg">
-                  Complete setup
+                  {isNewUserPreview ? "Complete preview setup" : "Complete setup"}
                 </Button>
               )}
             </div>
@@ -878,4 +922,13 @@ function formatActivity(value: ActivityLevel) {
 
 function formatDiet(value: string) {
   return DIET_OPTIONS.find((option) => option.value === value)?.label ?? value;
+}
+
+function isBrowserPreviewRuntime() {
+  if (typeof window === "undefined") return false;
+  return (
+    window.location.hostname.includes("localhost") ||
+    window.location.hostname.includes("127.0.0.1") ||
+    window.location.hostname.includes("fuelwell-preview.vercel.app")
+  );
 }

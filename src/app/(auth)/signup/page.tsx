@@ -1,13 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { OAuthButtons } from "@/components/auth/oauth-buttons";
 import { AuthLink, AuthShell } from "@/components/auth/auth-shell";
-import { Brain, Leaf, Sparkles, Target } from "lucide-react";
+import { Brain, Leaf, ShieldCheck, Sparkles, Target } from "lucide-react";
+
+const ONBOARDING_STORAGE_KEY = "fuelwell:onboarding:v1";
+const PREVIEW_KIND_STORAGE_KEY = "fuelwell:preview-user-kind";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -15,13 +18,37 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [isNewUserPreview, setIsNewUserPreview] = useState(false);
 
   const passwordStrength = getPasswordStrength(password);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const previewMode = params.get("preview") === "new-user";
+    // URL-derived preview mode must be read after hydration.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsNewUserPreview(previewMode);
+    if (previewMode) {
+      setEmail("newuser@fuelwell.preview");
+      setPassword("PreviewPass123!");
+    }
+  }, []);
 
   async function handleEmailSignup(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError(null);
+
+    if (isNewUserPreview) {
+      try {
+        window.localStorage.removeItem(ONBOARDING_STORAGE_KEY);
+        window.localStorage.setItem(PREVIEW_KIND_STORAGE_KEY, "new-user");
+      } catch {
+        // Preview still works; intake just won't persist if storage is blocked.
+      }
+      router.push("/app/onboarding?preview=new-user&reset=1");
+      return;
+    }
 
     const supabase = createClient();
     const { error } = await supabase.auth.signUp({
@@ -61,9 +88,28 @@ export default function SignupPage() {
       }
     >
       <div className="space-y-6">
-            <OAuthButtons next="/app/onboarding" />
+            {isNewUserPreview ? (
+              <div className="rounded-[1.5rem] border border-primary-100 bg-primary-50/80 p-4">
+                <div className="flex gap-3">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[1rem] bg-white text-primary-700">
+                    <ShieldCheck className="h-5 w-5" />
+                  </span>
+                  <div>
+                    <p className="text-sm font-black text-[#16302a]">
+                      New-user preview account
+                    </p>
+                    <p className="mt-1 text-sm font-semibold leading-6 text-[#6f8981]">
+                      This path uses a fake local account for review. No auth
+                      email is sent and no production user record is created.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <OAuthButtons next="/app/onboarding" />
+            )}
 
-            <div className="relative">
+            <div className={isNewUserPreview ? "hidden" : "relative"}>
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-primary-100" />
               </div>
@@ -128,7 +174,7 @@ export default function SignupPage() {
 
               <Button type="submit" size="lg" className="w-full" loading={loading}>
                 <Sparkles className="h-4 w-4" />
-                Create account
+                {isNewUserPreview ? "Create preview account" : "Create account"}
               </Button>
             </form>
           </div>

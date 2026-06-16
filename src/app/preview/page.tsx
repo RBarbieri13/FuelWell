@@ -5,6 +5,7 @@ import {
   Monitor,
   Smartphone,
   TabletSmartphone,
+  UserPlus,
 } from "lucide-react";
 
 const previewLinks = [
@@ -33,9 +34,9 @@ export default function PreviewHubPage() {
               Web app and iOS simulator review deck
             </h1>
             <p className="mt-2 max-w-3xl text-sm font-medium leading-6 text-neutral-300 md:text-base">
-              One shared preview platform for Max and Robert. Both panels use
-              the same sample user, so the product can be reviewed without
-              signup, OAuth, or a local tunnel.
+              One shared preview platform for Max and Robert. Use the
+              established-user deck below, or open the new-user deck to test
+              signup and intake from a clean first-run state.
             </p>
             <p className="mt-2 inline-flex items-center gap-2 rounded-full border border-accent-300/20 bg-accent-300/10 px-3 py-1 text-xs font-black text-accent-200">
               New in v1.5: Claude Design system pass — richer summary cards,
@@ -55,6 +56,44 @@ export default function PreviewHubPage() {
             ))}
           </div>
         </header>
+
+        <section className="grid gap-3 md:grid-cols-2">
+          <article className="rounded-[1.5rem] border border-primary-300/20 bg-primary-300/10 p-4">
+            <div className="flex items-start gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-primary-300 text-neutral-950">
+                <Gauge className="h-5 w-5" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <h2 className="text-base font-black">1. Existing user preview</h2>
+                <p className="mt-1 text-sm font-semibold leading-6 text-neutral-300">
+                  Opens the current sample account with logged meals, coach
+                  history, workouts, groceries, progress, and settings.
+                </p>
+              </div>
+            </div>
+          </article>
+
+          <Link
+            href="/preview/new-user"
+            className="group rounded-[1.5rem] border border-white/10 bg-white/[0.06] p-4 transition hover:border-primary-300/40 hover:bg-white/[0.09]"
+          >
+            <div className="flex items-start gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white text-neutral-950 transition group-hover:bg-primary-100">
+                <UserPlus className="h-5 w-5" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center justify-between gap-3">
+                  <h2 className="text-base font-black">2. New user signup + intake</h2>
+                  <ArrowUpRight className="h-4 w-4 text-primary-200" />
+                </div>
+                <p className="mt-1 text-sm font-semibold leading-6 text-neutral-300">
+                  Starts at account creation, then walks through the full
+                  onboarding questionnaire and target preview.
+                </p>
+              </div>
+            </div>
+          </Link>
+        </section>
 
         <section className="grid flex-1 gap-5 xl:grid-cols-[minmax(0,1fr)_460px]">
           <article className="flex min-h-[680px] flex-col overflow-hidden rounded-[2rem] border border-white/10 bg-neutral-900 shadow-2xl shadow-black/30">
