@@ -4,9 +4,8 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
-  Bike,
   ChevronRight,
-  Dumbbell,
+  Eye,
   Flame,
   Info,
   Leaf,
@@ -15,269 +14,21 @@ import {
   SlidersHorizontal,
   Sparkles,
   Timer,
-  Waves,
-  type LucideIcon,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils/cn";
 import { useWorkoutLog } from "@/lib/use-workout-log";
+import {
+  workouts,
+  workoutHref,
+  type WorkoutCategory as Category,
+  type WorkoutLibraryItem as WorkoutRow,
+  type WorkoutType,
+} from "@/lib/workout-library";
 
-type Category = "upper" | "lower" | "full" | "core" | "mobility" | "cardio";
 type BodyPartFilter = "all" | Category;
-type WorkoutTypeFilter =
-  | "all"
-  | "Strength"
-  | "Cardio"
-  | "Mobility"
-  | "Recovery"
-  | "Conditioning";
-
-interface WorkoutRow {
-  id: string;
-  title: string;
-  duration: string;
-  intensity: string;
-  focus: string;
-  category: Category;
-  categoryLabel: string;
-  workoutType: Exclude<WorkoutTypeFilter, "all">;
-  equipment: string;
-  goal: string;
-  icon: LucideIcon;
-  detail: string;
-  href?: string;
-}
-
-const workouts: WorkoutRow[] = [
-  {
-    id: "low-impact-strength",
-    title: "Low-impact strength",
-    duration: "34 min",
-    intensity: "Moderate",
-    focus: "Full body technique",
-    category: "full",
-    categoryLabel: "Full body",
-    workoutType: "Strength",
-    equipment: "Dumbbells, bench",
-    goal: "Technique and low soreness cost",
-    icon: Dumbbell,
-    detail: "Keeps leg volume gentle while still keeping your training streak going.",
-    href: "/app/workouts/low-impact-strength",
-  },
-  {
-    id: "zone-2-ride",
-    title: "Zone 2 ride",
-    duration: "42 min",
-    intensity: "Easy",
-    focus: "Aerobic base",
-    category: "lower",
-    categoryLabel: "Lower body",
-    workoutType: "Cardio",
-    equipment: "Bike",
-    goal: "Aerobic base",
-    icon: Bike,
-    detail: "Nice if you want to move without adding soreness before tomorrow.",
-    href: "/app/workouts/zone-2-ride",
-  },
-  {
-    id: "mobility-reset",
-    title: "Mobility reset",
-    duration: "18 min",
-    intensity: "Light",
-    focus: "Hips and upper back",
-    category: "full",
-    categoryLabel: "Full body",
-    workoutType: "Mobility",
-    equipment: "Mat",
-    goal: "Restore range of motion",
-    icon: Waves,
-    detail: "A calm reset for the hips and upper back when energy is running low.",
-    href: "/app/workouts/mobility-reset",
-  },
-  {
-    id: "upper-push-base",
-    title: "Upper push base",
-    duration: "38 min",
-    intensity: "Moderate",
-    focus: "Chest, shoulders, triceps",
-    category: "upper",
-    categoryLabel: "Upper body",
-    workoutType: "Strength",
-    equipment: "Dumbbells, cable",
-    goal: "Pressing strength",
-    icon: Dumbbell,
-    detail: "A controlled push session with shoulder-friendly volume.",
-  },
-  {
-    id: "upper-pull-posture",
-    title: "Upper pull posture",
-    duration: "36 min",
-    intensity: "Moderate",
-    focus: "Back and rear delts",
-    category: "upper",
-    categoryLabel: "Upper body",
-    workoutType: "Strength",
-    equipment: "Cable, bands",
-    goal: "Rows and posture",
-    icon: Dumbbell,
-    detail: "Rows, pulldowns, and scapular control for desk-heavy days.",
-  },
-  {
-    id: "lower-hinge-strength",
-    title: "Lower hinge strength",
-    duration: "44 min",
-    intensity: "Hard",
-    focus: "Glutes and hamstrings",
-    category: "lower",
-    categoryLabel: "Lower body",
-    workoutType: "Strength",
-    equipment: "Barbell or dumbbells",
-    goal: "Posterior chain",
-    icon: Dumbbell,
-    detail: "Hinge-dominant strength without turning it into a conditioning test.",
-  },
-  {
-    id: "lower-knee-friendly",
-    title: "Knee-friendly lower",
-    duration: "32 min",
-    intensity: "Moderate",
-    focus: "Glutes, calves, stability",
-    category: "lower",
-    categoryLabel: "Lower body",
-    workoutType: "Strength",
-    equipment: "Mini band, dumbbells",
-    goal: "Leg work with less knee stress",
-    icon: Dumbbell,
-    detail: "A lower-body option when knees need a quieter training day.",
-  },
-  {
-    id: "core-anti-rotation",
-    title: "Core anti-rotation",
-    duration: "22 min",
-    intensity: "Light",
-    focus: "Obliques and trunk control",
-    category: "core",
-    categoryLabel: "Core",
-    workoutType: "Strength",
-    equipment: "Cable or band",
-    goal: "Bracing and rotation control",
-    icon: Dumbbell,
-    detail: "Pallof presses, carries, and dead bug variations.",
-  },
-  {
-    id: "core-finisher",
-    title: "Core finisher",
-    duration: "14 min",
-    intensity: "Moderate",
-    focus: "Abs and carries",
-    category: "core",
-    categoryLabel: "Core",
-    workoutType: "Conditioning",
-    equipment: "Kettlebell optional",
-    goal: "Short trunk finisher",
-    icon: Dumbbell,
-    detail: "A compact finisher when the main workout was short.",
-  },
-  {
-    id: "full-body-circuit",
-    title: "Full-body circuit",
-    duration: "40 min",
-    intensity: "Hard",
-    focus: "Push, pull, squat, carry",
-    category: "full",
-    categoryLabel: "Full body",
-    workoutType: "Conditioning",
-    equipment: "Dumbbells",
-    goal: "Sweat and strength blend",
-    icon: Dumbbell,
-    detail: "Circuit work for days when energy is high and soreness is low.",
-  },
-  {
-    id: "full-body-minimal",
-    title: "Minimal-equipment full body",
-    duration: "28 min",
-    intensity: "Moderate",
-    focus: "Bodyweight strength",
-    category: "full",
-    categoryLabel: "Full body",
-    workoutType: "Strength",
-    equipment: "Bodyweight",
-    goal: "Travel-friendly training",
-    icon: Dumbbell,
-    detail: "Push-ups, split squats, hinges, and planks with no gym dependency.",
-  },
-  {
-    id: "walk-run-intervals",
-    title: "Walk-run intervals",
-    duration: "30 min",
-    intensity: "Moderate",
-    focus: "Aerobic conditioning",
-    category: "cardio",
-    categoryLabel: "Cardio",
-    workoutType: "Cardio",
-    equipment: "Treadmill or outdoors",
-    goal: "Build running tolerance",
-    icon: Bike,
-    detail: "Gentle intervals that keep effort repeatable.",
-  },
-  {
-    id: "incline-walk",
-    title: "Incline walk",
-    duration: "35 min",
-    intensity: "Easy",
-    focus: "Low-impact cardio",
-    category: "cardio",
-    categoryLabel: "Cardio",
-    workoutType: "Cardio",
-    equipment: "Treadmill",
-    goal: "Steps and steady burn",
-    icon: Bike,
-    detail: "A low-impact cardio option that pairs well with strength days.",
-  },
-  {
-    id: "hips-ankles-reset",
-    title: "Hips and ankles reset",
-    duration: "16 min",
-    intensity: "Light",
-    focus: "Hips, ankles, calves",
-    category: "mobility",
-    categoryLabel: "Mobility",
-    workoutType: "Mobility",
-    equipment: "Mat",
-    goal: "Lower-body mobility",
-    icon: Waves,
-    detail: "Mobility prep for squats, rides, and long walks.",
-  },
-  {
-    id: "upper-back-reset",
-    title: "Upper back reset",
-    duration: "15 min",
-    intensity: "Light",
-    focus: "Thoracic spine and shoulders",
-    category: "mobility",
-    categoryLabel: "Mobility",
-    workoutType: "Mobility",
-    equipment: "Foam roller optional",
-    goal: "Undo desk posture",
-    icon: Waves,
-    detail: "A quick upper-back flow for breathing and overhead comfort.",
-  },
-  {
-    id: "recovery-walk",
-    title: "Recovery walk",
-    duration: "25 min",
-    intensity: "Easy",
-    focus: "Steps and downshift",
-    category: "cardio",
-    categoryLabel: "Cardio",
-    workoutType: "Recovery",
-    equipment: "None",
-    goal: "Move without fatigue",
-    icon: Bike,
-    detail: "A walk that counts as momentum without draining tomorrow.",
-  },
-];
+type WorkoutTypeFilter = "all" | WorkoutType;
 
 const bodyPartFilters: { id: BodyPartFilter; label: string }[] = [
   { id: "all", label: "All" },
@@ -373,58 +124,50 @@ function WorkoutFeatureCard({ workout }: { workout: WorkoutRow }) {
   const Icon = workout.icon;
   const tone = workoutTone(workout);
   const IntensityIcon = tone.intensityIcon;
-  const content = (
-    <div className="flex items-center gap-5 rounded-[22px] border border-[#e6efeb] bg-white px-6 py-5 shadow-[0_8px_22px_rgba(20,90,75,0.06)] transition hover:-translate-y-0.5 hover:shadow-[0_16px_34px_rgba(20,90,75,0.1)]">
-      <span
-        className={cn(
-          "inline-flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-2xl",
-          tone.icon
-        )}
-      >
-        <Icon className="h-6 w-6" />
-      </span>
-      <div className="min-w-0 flex-1">
-        <div className="mb-1.5 flex flex-wrap items-center gap-2.5">
-          <h3 className="font-heading text-lg font-black tracking-tight text-[#16302a]">
-            {workout.title}
-          </h3>
-          <span className={cn("rounded-full px-2.5 py-1 text-xs font-black", tone.badge)}>
-            {workout.categoryLabel}
-          </span>
-        </div>
-        <p className="mb-3 text-sm font-semibold leading-6 text-[#54635d]">{workout.detail}</p>
-        <div className="flex flex-wrap gap-2">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-[#f4f8f6] px-3 py-1.5 text-xs font-bold text-[#54635d]">
-            <Timer className="h-3.5 w-3.5 text-[#9db0aa]" />
-            {workout.duration}
-          </span>
-          <span
-            className={cn(
-              "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold",
-              tone.intensity
-            )}
-          >
-            <IntensityIcon className="h-3.5 w-3.5" />
-            {workout.intensity}
-          </span>
-          <span className="rounded-full bg-[#f4f8f6] px-3 py-1.5 text-xs font-bold text-[#54635d]">
-            {workout.focus}
-          </span>
-        </div>
-      </div>
-      <span className="hidden h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#f4f8f6] text-[#7c968f] sm:inline-flex">
-        <ChevronRight className="h-4 w-4" />
-      </span>
-    </div>
-  );
-
-  if (!workout.href) {
-    return content;
-  }
-
   return (
-    <Link href={workout.href} className="block">
-      {content}
+    <Link href={workoutHref(workout.id)} className="block">
+      <div className="flex items-center gap-5 rounded-[22px] border border-[#e6efeb] bg-white px-6 py-5 shadow-[0_8px_22px_rgba(20,90,75,0.06)] transition hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-[0_16px_34px_rgba(20,90,75,0.1)]">
+        <span
+          className={cn(
+            "inline-flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-2xl",
+            tone.icon
+          )}
+        >
+          <Icon className="h-6 w-6" />
+        </span>
+        <div className="min-w-0 flex-1">
+          <div className="mb-1.5 flex flex-wrap items-center gap-2.5">
+            <h3 className="font-heading text-lg font-black tracking-tight text-[#16302a]">
+              {workout.title}
+            </h3>
+            <span className={cn("rounded-full px-2.5 py-1 text-xs font-black", tone.badge)}>
+              {workout.categoryLabel}
+            </span>
+          </div>
+          <p className="mb-3 text-sm font-semibold leading-6 text-[#54635d]">{workout.detail}</p>
+          <div className="flex flex-wrap gap-2">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#f4f8f6] px-3 py-1.5 text-xs font-bold text-[#54635d]">
+              <Timer className="h-3.5 w-3.5 text-[#9db0aa]" />
+              {workout.duration}
+            </span>
+            <span
+              className={cn(
+                "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold",
+                tone.intensity
+              )}
+            >
+              <IntensityIcon className="h-3.5 w-3.5" />
+              {workout.intensity}
+            </span>
+            <span className="rounded-full bg-[#f4f8f6] px-3 py-1.5 text-xs font-bold text-[#54635d]">
+              {workout.focus}
+            </span>
+          </div>
+        </div>
+        <span className="hidden h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#f4f8f6] text-[#7c968f] sm:inline-flex">
+          <ChevronRight className="h-4 w-4" />
+        </span>
+      </div>
     </Link>
   );
 }
@@ -594,10 +337,10 @@ export function WorkoutsView({
                 <p className="mt-2 text-sm leading-relaxed text-white/72">{verdict.detail}</p>
               </div>
               <Link
-                href={`/app/workouts/${recommended.id}`}
+                href={workoutHref(recommended.id)}
                 className="inline-flex w-full items-center justify-center gap-2 rounded-[1.15rem] bg-gradient-to-r from-primary-500 to-[#159aa2] px-4 py-3 text-sm font-bold text-white shadow-[0_16px_34px_rgba(21,145,108,0.24)] transition-colors hover:from-primary-600 hover:to-[#138893] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
               >
-                Start this workout
+                Preview this workout
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
@@ -710,6 +453,7 @@ export function WorkoutsView({
                     <th className="whitespace-nowrap px-5 py-4">Intensity</th>
                     <th className="px-5 py-4">Equipment</th>
                     <th className="px-5 py-4">Goal</th>
+                    <th className="px-5 py-4 text-right">Preview</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-neutral-100">
@@ -731,14 +475,10 @@ export function WorkoutsView({
                     return (
                       <tr key={workout.id} className="transition hover:bg-primary-50/45">
                         <td className="px-5 py-4">
-                          {workout.href ? (
-                            <Link href={workout.href} className="group inline-flex items-center gap-2">
-                              {title}
-                              <ArrowRight className="h-3.5 w-3.5 text-neutral-300 transition group-hover:translate-x-0.5 group-hover:text-primary-600" />
-                            </Link>
-                          ) : (
-                            title
-                          )}
+                          <Link href={workoutHref(workout.id)} className="group inline-flex items-center gap-2">
+                            {title}
+                            <ArrowRight className="h-3.5 w-3.5 text-neutral-300 transition group-hover:translate-x-0.5 group-hover:text-primary-600" />
+                          </Link>
                         </td>
                         <td className="px-5 py-4">
                           <span className={cn("whitespace-nowrap rounded-full px-3 py-1 text-xs font-black", tone.badge)}>
@@ -754,6 +494,15 @@ export function WorkoutsView({
                         </td>
                         <td className="px-5 py-4 text-sm font-semibold text-[#7c968f]">{workout.equipment}</td>
                         <td className="px-5 py-4 text-sm font-semibold text-[#7c968f]">{workout.goal}</td>
+                        <td className="px-5 py-4 text-right">
+                          <Link
+                            href={workoutHref(workout.id)}
+                            aria-label={`Preview ${workout.title}`}
+                            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-primary-100 bg-primary-50 text-primary-700 transition hover:border-primary-200 hover:bg-primary-100"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Link>
+                        </td>
                       </tr>
                     );
                   })}
