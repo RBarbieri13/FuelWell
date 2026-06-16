@@ -69,10 +69,10 @@ export function generateStaticParams() {
 
 function Metric({ icon: Icon, label, value }: { icon: typeof Clock3; label: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-neutral-200/80 bg-white p-4">
-      <Icon className="h-4 w-4 text-neutral-400" />
-      <p className="mt-3 text-lg font-bold text-neutral-900">{value}</p>
-      <p className="mt-1 text-xs font-medium text-neutral-500">{label}</p>
+    <div className="rounded-[1.5rem] border border-primary-100/80 bg-white p-4 shadow-[0_14px_36px_rgba(22,48,42,0.06)]">
+      <Icon className="h-4 w-4 text-primary-600" />
+      <p className="mt-3 text-lg font-black text-[#16302a]">{value}</p>
+      <p className="mt-1 text-xs font-black uppercase tracking-[0.12em] text-[#91a7a0]">{label}</p>
     </div>
   );
 }
@@ -88,35 +88,36 @@ export default async function WorkoutDetailPage({ params }: { params: Promise<{ 
   const Icon = workout.icon;
 
   return (
-    <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-6">
+    <div className="fw-app-surface min-h-full">
+      <div className="fw-page-inner max-w-5xl space-y-6">
       <Link
         href="/app/workouts"
-        className="inline-flex items-center gap-2 text-sm font-medium text-neutral-500 transition-colors hover:text-primary-600"
+        className="inline-flex items-center gap-2 rounded-full bg-white/75 px-4 py-2 text-sm font-black text-[#78928a] shadow-sm transition-colors hover:text-primary-700"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to workouts
       </Link>
 
       <section className="space-y-4">
-        <Card className="bg-gradient-to-br from-primary-50/90 via-white to-accent-50/60 border-primary-100">
+        <Card variant="elevated" className="fw-dark-panel">
           <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
             <div className="flex gap-4">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary-600 text-white shadow-sm shadow-primary-600/25">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[1.25rem] bg-primary-400 text-primary-950 shadow-sm shadow-primary-950/25">
                 <Icon className="h-6 w-6" />
               </div>
               <div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <h1 className="text-2xl font-bold tracking-tight text-neutral-900">{workout.title}</h1>
-                  <span className="rounded-full bg-primary-100 px-2.5 py-1 text-xs font-semibold text-primary-700">
+                  <h1 className="text-3xl font-black tracking-tight text-white">{workout.title}</h1>
+                  <span className="rounded-full bg-white/10 px-2.5 py-1 text-xs font-black text-primary-100">
                     {workout.verdict}
                   </span>
                 </div>
-                <p className="mt-2 max-w-2xl text-sm leading-relaxed text-neutral-600">{workout.summary}</p>
+                <p className="mt-3 max-w-2xl text-sm font-semibold leading-6 text-white/68">{workout.summary}</p>
               </div>
             </div>
             <Link
               href="/app/log"
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm shadow-primary-600/25 transition-colors hover:bg-primary-700"
+              className="inline-flex items-center justify-center gap-2 rounded-[1.15rem] bg-gradient-to-r from-primary-500 to-[#159aa2] px-4 py-2.5 text-sm font-black text-white shadow-[0_16px_34px_rgba(21,145,108,0.24)] transition hover:from-primary-600 hover:to-[#138893]"
             >
               Log workout fuel
               <ArrowRight className="h-4 w-4" />
@@ -131,25 +132,25 @@ export default async function WorkoutDetailPage({ params }: { params: Promise<{ 
         </div>
       </section>
 
-      <section className="grid gap-4 lg:grid-cols-[1.25fr_0.85fr]">
-        <Card padding="sm">
+      <section className="grid items-start gap-4 lg:grid-cols-[1.25fr_0.85fr]">
+        <Card variant="elevated" padding="sm">
           <div className="px-2 pb-3">
-            <h2 className="text-xs font-semibold uppercase tracking-wider text-neutral-400">Workout plan</h2>
+            <h2 className="text-xs font-black uppercase tracking-[0.16em] text-primary-600">Workout plan</h2>
           </div>
-          <div className="divide-y divide-neutral-100">
+          <div className="divide-y divide-primary-100/70">
             {workout.blocks.map((block) => (
               <div key={block.name} className="flex gap-4 px-2 py-4">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[1rem] bg-primary-50 text-primary-600">
                   <CheckCircle2 className="h-4 w-4" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
-                    <p className="text-sm font-semibold text-neutral-900">{block.name}</p>
-                    <span className="rounded-full bg-neutral-100 px-2 py-0.5 text-[11px] font-semibold text-neutral-500">
+                    <p className="text-sm font-black text-[#16302a]">{block.name}</p>
+                    <span className="rounded-full bg-primary-50 px-2 py-0.5 text-[11px] font-black text-primary-700">
                       {block.time}
                     </span>
                   </div>
-                  <p className="mt-1 text-sm leading-relaxed text-neutral-500">{block.detail}</p>
+                  <p className="mt-1 text-sm font-semibold leading-relaxed text-[#78928a]">{block.detail}</p>
                 </div>
               </div>
             ))}
@@ -157,42 +158,43 @@ export default async function WorkoutDetailPage({ params }: { params: Promise<{ 
         </Card>
 
         <div className="space-y-4">
-          <Card className="space-y-3">
+          <Card variant="elevated" className="space-y-3">
             <div className="flex gap-3">
               <Info className="mt-0.5 h-4 w-4 shrink-0 text-lemon-600" />
               <div>
-                <h2 className="text-sm font-semibold text-neutral-900">Why this workout?</h2>
-                <p className="mt-1 text-sm leading-relaxed text-neutral-600">{workout.why}</p>
+                <h2 className="text-sm font-black text-[#16302a]">Why this workout?</h2>
+                <p className="mt-1 text-sm font-semibold leading-relaxed text-[#516b63]">{workout.why}</p>
               </div>
             </div>
           </Card>
 
-          <Card className="space-y-3 bg-primary-50/70 border-primary-100">
+          <Card className="space-y-3 border-primary-100 bg-primary-50/80">
             <div className="flex gap-3">
               <UtensilsCrossed className="mt-0.5 h-4 w-4 shrink-0 text-primary-600" />
               <div>
-                <h2 className="text-sm font-semibold text-neutral-900">Fuel guidance</h2>
-                <p className="mt-1 text-sm leading-relaxed text-neutral-700">{workout.fuel}</p>
+                <h2 className="text-sm font-black text-[#16302a]">Fuel guidance</h2>
+                <p className="mt-1 text-sm font-semibold leading-relaxed text-[#516b63]">{workout.fuel}</p>
               </div>
             </div>
           </Card>
 
-          <Card className="space-y-3 border-lemon-200 bg-lemon-50/60">
-            <h2 className="text-sm font-semibold text-neutral-900">Data honesty</h2>
-            <p className="text-sm leading-relaxed text-neutral-600">
+          <Card className="space-y-3 border-lemon-200 bg-lemon-50/70">
+            <h2 className="text-sm font-black text-[#16302a]">Data honesty</h2>
+            <p className="text-sm font-semibold leading-relaxed text-[#6f6431]">
               User-entered: soreness, sleep, meals, and planned training preference. Estimated: readiness, calorie burn, and the ranking of workout options. Missing: live wearable strain, exercise history, and equipment availability.
             </p>
           </Card>
 
           <Link
             href="/app/recovery"
-            className="flex items-center justify-between rounded-2xl border border-neutral-200/80 bg-white p-4 text-sm font-medium text-neutral-700 transition-colors hover:border-primary-200 hover:text-primary-700"
+            className="flex items-center justify-between rounded-[1.5rem] border border-primary-100/80 bg-white p-4 text-sm font-black text-[#516b63] shadow-sm transition-colors hover:border-primary-200 hover:text-primary-700"
           >
             Update recovery after this
             <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
       </section>
+      </div>
     </div>
   );
 }
