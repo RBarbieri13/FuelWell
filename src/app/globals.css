@@ -256,9 +256,9 @@ html {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 3rem;
-    height: 3rem;
-    border-radius: 1.25rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.8125rem;
     background: #d6f0e8;
     color: #15916c;
   }

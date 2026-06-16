@@ -119,24 +119,24 @@ export default function RecoveryPage() {
       </header>
 
       <div className="fw-page-inner space-y-6">
-        <section className="grid gap-6 xl:grid-cols-[1.08fr_0.92fr]">
-          <Card variant="elevated" className="fw-mint-panel overflow-hidden px-6 py-7 md:px-8 md:py-8">
+        <section className="grid items-start gap-5 lg:grid-cols-[1.08fr_0.92fr]">
+          <Card variant="elevated" className="fw-mint-panel overflow-hidden px-6 py-6">
             <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
               <div>
                 <p className="inline-flex items-center gap-2 text-sm font-black uppercase tracking-[0.16em] text-primary-700">
                   <ShieldCheck className="h-4 w-4" />
                   Readiness estimate
                 </p>
-                <h2 className="mt-4 text-3xl font-black leading-tight text-neutral-900 sm:text-4xl md:text-6xl">
+                <h2 className="mt-4 font-heading text-3xl font-black leading-tight tracking-tight text-neutral-900 md:text-4xl">
                   {readiness.label}
                 </h2>
-                <p className="mt-4 max-w-3xl text-base font-semibold leading-7 text-primary-900/70 md:text-lg md:leading-8">
+                <p className="mt-4 max-w-3xl text-base font-semibold leading-7 text-primary-900/70">
                   {readiness.detail}
                 </p>
               </div>
-              <div className="flex h-32 w-32 shrink-0 flex-col items-center justify-center rounded-[1.5rem] bg-white text-center shadow-[0_24px_58px_rgba(22,48,42,0.10)] md:h-40 md:w-40 md:rounded-[2rem]">
+              <div className="flex h-28 w-28 shrink-0 flex-col items-center justify-center rounded-[20px] bg-white text-center shadow-[0_8px_18px_rgba(20,90,75,0.08)] md:h-32 md:w-32">
                 <Gauge className="mb-1 h-6 w-6 text-primary-600" />
-                <span className="text-5xl font-black tabular-nums text-primary-700 md:text-6xl">{readiness.score}</span>
+                <span className="font-heading text-5xl font-black tabular-nums text-primary-700">{readiness.score}</span>
                 <span className="text-xs font-black uppercase tracking-[0.16em] text-neutral-400">score</span>
               </div>
             </div>

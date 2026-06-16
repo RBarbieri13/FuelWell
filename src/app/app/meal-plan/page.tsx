@@ -169,26 +169,26 @@ export default function MealPlanPage() {
       </header>
 
       <div className="fw-page-inner space-y-6">
-        <section className="grid items-start gap-6 xl:grid-cols-[1.05fr_0.95fr]">
-          <Card className="fw-dark-panel px-8 py-8">
+        <section className="grid items-start gap-5 lg:grid-cols-[1.05fr_0.95fr]">
+          <Card className="fw-dark-panel px-7 py-7">
             <p className="inline-flex items-center gap-2 text-sm font-black uppercase tracking-[0.16em] text-primary-200">
               <Sparkles className="h-4 w-4" />
               Plan quality
             </p>
-            <h2 className="mt-5 max-w-3xl text-4xl font-black leading-tight text-white md:text-5xl">
+            <h2 className="mt-5 max-w-3xl font-heading text-3xl font-black leading-tight tracking-tight text-white md:text-4xl">
               {weekTotals.planned} of {days.length * 4} meals are planned.
             </h2>
-            <p className="mt-5 max-w-2xl text-lg font-semibold leading-8 text-white/74">
+            <p className="mt-4 max-w-2xl text-base font-semibold leading-7 text-white/74">
               Your next step is to fill the open dinner and lunch slots, then send the week to groceries.
             </p>
-            <div className="mt-7 grid grid-cols-3 gap-2 sm:gap-3">
+            <div className="mt-6 grid grid-cols-3 gap-2 sm:gap-3">
               {[
                 ["Avg cals", Math.round(weekTotals.calories / days.length).toString()],
                 ["Avg protein", `${Math.round(weekTotals.protein / days.length)}g`],
                 ["Open slots", `${days.length * 4 - weekTotals.planned}`],
               ].map(([label, value]) => (
                 <div key={label} className="rounded-[1.15rem] border border-white/12 bg-white/10 px-3 py-3 backdrop-blur sm:rounded-[1.25rem] sm:px-5 sm:py-4">
-                  <p className="text-2xl font-black tabular-nums text-white sm:text-3xl">{value}</p>
+                  <p className="font-heading text-2xl font-black tabular-nums text-white">{value}</p>
                   <p className="mt-1 text-[10px] font-black uppercase tracking-[0.1em] text-white/58 sm:text-xs sm:tracking-[0.12em]">{label}</p>
                 </div>
               ))}
