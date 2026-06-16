@@ -1,15 +1,36 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import {
+  Activity,
+  ArrowLeft,
+  ArrowRight,
+  BadgeCheck,
+  CalendarDays,
+  Check,
+  ChefHat,
+  Dumbbell,
+  Flame,
+  HeartPulse,
+  Leaf,
+  Ruler,
+  Scale,
+  ShieldCheck,
+  Sparkles,
+  Target,
+  UserRound,
+  Utensils,
+  WheatOff,
+  X,
+  type LucideIcon,
+} from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
-import { calculateMacroTargets, calculateAge } from "@/lib/macros";
-import type { Gender, ActivityLevel, Goal } from "@/lib/macros";
+import { calculateAge, calculateMacroTargets, type ActivityLevel, type Gender, type Goal } from "@/lib/macros";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
+import { Logo } from "@/components/ui/logo";
 import { cn } from "@/lib/utils/cn";
-import { Sparkles, ArrowRight, ArrowLeft } from "lucide-react";
 
 const STORAGE_KEY = "fuelwell:onboarding:v1";
 
@@ -57,6 +78,42 @@ const ALLERGY_OPTIONS = [
   "Wheat",
 ];
 
+const STEP_META = [
+  { title: "Welcome", short: "Start", icon: Sparkles },
+  { title: "Profile name", short: "Name", icon: UserRound },
+  { title: "Birthday", short: "Age", icon: CalendarDays },
+  { title: "Biology", short: "Sex", icon: HeartPulse },
+  { title: "Body context", short: "Body", icon: Ruler },
+  { title: "Activity", short: "Move", icon: Activity },
+  { title: "Goal", short: "Goal", icon: Target },
+  { title: "Food style", short: "Diet", icon: Leaf },
+  { title: "Allergies", short: "Safety", icon: ShieldCheck },
+  { title: "Plan preview", short: "Plan", icon: BadgeCheck },
+] satisfies { title: string; short: string; icon: LucideIcon }[];
+
+const ACTIVITY_OPTIONS = [
+  { value: "sedentary", label: "Sedentary", desc: "Mostly seated days", icon: UserRound },
+  { value: "light", label: "Light", desc: "1-3 workouts weekly", icon: Leaf },
+  { value: "moderate", label: "Moderate", desc: "3-5 workouts weekly", icon: Activity },
+  { value: "active", label: "Active", desc: "Most days include training", icon: Dumbbell },
+  { value: "very_active", label: "Very active", desc: "Hard training or active work", icon: Flame },
+] satisfies { value: ActivityLevel; label: string; desc: string; icon: LucideIcon }[];
+
+const GOAL_OPTIONS = [
+  { value: "lose", label: "Lose weight", desc: "A steady calorie deficit", icon: Scale },
+  { value: "maintain", label: "Maintain", desc: "Hold the current lane", icon: Target },
+  { value: "gain", label: "Gain weight", desc: "A controlled surplus", icon: Activity },
+] satisfies { value: Goal; label: string; desc: string; icon: LucideIcon }[];
+
+const DIET_OPTIONS = [
+  { value: "none", label: "No preference", icon: Utensils },
+  { value: "vegetarian", label: "Vegetarian", icon: Leaf },
+  { value: "vegan", label: "Vegan", icon: Leaf },
+  { value: "pescatarian", label: "Pescatarian", icon: ChefHat },
+  { value: "keto", label: "Keto", icon: Flame },
+  { value: "paleo", label: "Paleo", icon: Dumbbell },
+];
+
 export default function OnboardingPage() {
   const router = useRouter();
   const [step, setStep] = useState(0);
@@ -66,7 +123,10 @@ export default function OnboardingPage() {
   const [resumed, setResumed] = useState(false);
   const hydrated = useRef(false);
 
-  const totalSteps = 10;
+  const totalSteps = STEP_META.length;
+  const progress = ((step + 1) / totalSteps) * 100;
+  const currentStep = STEP_META[step];
+  const CurrentStepIcon = currentStep.icon;
 
   // Resume in-progress onboarding from localStorage.
   useEffect(() => {
@@ -84,10 +144,10 @@ export default function OnboardingPage() {
         setResumed(true);
       }
     } catch {
-      // Corrupt/blocked storage — start fresh, nothing to surface.
+      // Corrupt/blocked storage - start fresh, nothing to surface.
     }
     hydrated.current = true;
-  }, []);
+  }, [totalSteps]);
 
   // Persist progress so it survives a refresh or leaving the page.
   useEffect(() => {
@@ -96,9 +156,11 @@ export default function OnboardingPage() {
       const payload: PersistedProgress = { step, data };
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
     } catch {
-      // Storage unavailable — progress simply won't persist this session.
+      // Storage unavailable - progress simply won't persist this session.
     }
   }, [step, data]);
+
+  const previewMacros = useMemo(() => getPreviewMacros(data), [data]);
 
   function clearProgress() {
     try {
@@ -127,17 +189,26 @@ export default function OnboardingPage() {
 
   function canProceed(): boolean {
     switch (step) {
-      case 0: return true; // welcome
-      case 1: return true; // name is optional
-      case 2: return !!data.dateOfBirth;
-      case 3: return !!data.gender;
-      case 4: return !!data.heightCm && !!data.weightKg && Number(data.heightCm) >= 50 && Number(data.weightKg) >= 20;
-      case 5: return !!data.activityLevel;
-      case 6: return !!data.goal;
-      case 7: return true; // diet preference has default
-      case 8: return true; // allergies optional
-      case 9: return !!getPreviewMacros();
-      default: return true;
+      case 0:
+      case 1:
+        return true;
+      case 2:
+        return !!data.dateOfBirth;
+      case 3:
+        return !!data.gender;
+      case 4:
+        return !!data.heightCm && !!data.weightKg && Number(data.heightCm) >= 50 && Number(data.weightKg) >= 20;
+      case 5:
+        return !!data.activityLevel;
+      case 6:
+        return !!data.goal;
+      case 7:
+      case 8:
+        return true;
+      case 9:
+        return !!previewMacros;
+      default:
+        return true;
     }
   }
 
@@ -210,348 +281,387 @@ export default function OnboardingPage() {
     router.refresh();
   }
 
-  function getPreviewMacros() {
-    if (!data.gender || !data.heightCm || !data.weightKg || !data.activityLevel || !data.goal || !data.dateOfBirth) return null;
-    const age = calculateAge(data.dateOfBirth);
-    return calculateMacroTargets({
-      gender: data.gender as Gender,
-      weightKg: Number(data.weightKg),
-      heightCm: Number(data.heightCm),
-      age,
-      activityLevel: data.activityLevel as ActivityLevel,
-      goal: data.goal as Goal,
-    });
-  }
+  const completionItems = [
+    { label: "Basics", done: !!data.dateOfBirth && !!data.gender },
+    { label: "Body metrics", done: !!data.heightCm && !!data.weightKg },
+    { label: "Activity", done: !!data.activityLevel },
+    { label: "Goal", done: !!data.goal },
+    { label: "Food rules", done: !!data.dietaryPreference },
+  ];
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-neutral-50">
-      <div className="w-full max-w-lg">
-        {/* Progress */}
-        <div className="mb-6">
-          <div className="flex items-center justify-between text-xs font-medium text-neutral-400 mb-2">
-            <span>Step {step + 1} of {totalSteps}</span>
-            <div className="flex items-center gap-3">
-              <span>{Math.round(((step + 1) / totalSteps) * 100)}%</span>
-              <button
-                type="button"
-                onClick={handleSkip}
-                className="text-neutral-400 hover:text-neutral-600 transition-colors underline-offset-2 hover:underline"
-              >
-                Skip for now
-              </button>
+    <main className="fw-app-surface min-h-full">
+      <div className="fw-page-inner flex min-h-full max-w-7xl flex-col gap-5">
+        <header className="flex items-center justify-between gap-4">
+          <div>
+            <div className="hidden md:block">
+              <Logo href="/app/dashboard" size="lg" />
             </div>
-          </div>
-          <div className="h-1.5 bg-neutral-200 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-primary-500 rounded-full transition-all duration-500 ease-out"
-              style={{ width: `${((step + 1) / totalSteps) * 100}%` }}
-            />
-          </div>
-          {resumed && (
-            <p className="mt-2 text-xs text-primary-600">
-              Picked up where you left off. Your progress is saved on this device.
+            <h1 className="fw-heading text-3xl md:hidden">Setup FuelWell</h1>
+            <p className="mt-1 text-sm font-semibold text-[#78928a]">
+              Daily decision setup
             </p>
-          )}
-        </div>
+          </div>
+          <button
+            type="button"
+            onClick={handleSkip}
+            className="rounded-full border border-primary-100 bg-white/80 px-4 py-2 text-sm font-bold text-[#6f8981] shadow-sm transition hover:border-primary-200 hover:text-[#16302a]"
+          >
+            Skip for now
+          </button>
+        </header>
 
-        <Card padding="lg" className="min-h-[420px] flex flex-col">
-          <div className="flex-1">
-            {/* Step 0: Welcome */}
-            {step === 0 && (
-              <div className="text-center py-8">
-                <div className="w-14 h-14 bg-primary-50 rounded-2xl flex items-center justify-center mx-auto mb-5">
-                  <Sparkles className="w-6 h-6 text-primary-600" />
-                </div>
-                <h2 className="text-2xl font-bold text-neutral-900 tracking-tight mb-3">
-                  Welcome to FuelWell!
-                </h2>
-                <p className="text-neutral-500 max-w-sm mx-auto leading-relaxed">
-                  Let&apos;s set up your personalized nutrition plan. This takes about 2 minutes — and you can always change it later.
+        <section className="grid flex-1 gap-4 lg:grid-cols-[0.72fr_1fr] lg:gap-5">
+          <aside className="fw-dark-panel order-2 flex flex-col justify-between rounded-[2rem] border p-6 lg:order-1 lg:p-8">
+            <div className="space-y-8">
+              <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-xs font-black uppercase tracking-[0.18em] text-primary-100">
+                <Sparkles className="h-4 w-4" />
+                Setup that becomes your daily plan
+              </div>
+
+              <div>
+                <h1 className="max-w-xl text-4xl font-black leading-[1.03] tracking-tight text-white md:text-5xl">
+                  Build the nutrition system around your real day.
+                </h1>
+                <p className="mt-4 max-w-lg text-base font-semibold leading-7 text-white/70">
+                  FuelWell uses these basics to size your targets, shape meal
+                  suggestions, and keep the coach honest.
                 </p>
               </div>
-            )}
 
-            {/* Step 1: Name */}
-            {step === 1 && (
-              <StepWrapper
-                title="What should we call you?"
-                subtitle="This is how your coach will address you."
-              >
-                <Input
-                  type="text"
-                  value={data.displayName}
-                  onChange={(e) => update("displayName", e.target.value)}
-                  placeholder="Your name"
-                  autoFocus
-                />
-              </StepWrapper>
-            )}
-
-            {/* Step 2: Date of Birth */}
-            {step === 2 && (
-              <StepWrapper
-                title="When were you born?"
-                subtitle="We use this to calculate your metabolic rate."
-              >
-                <Input
-                  type="date"
-                  value={data.dateOfBirth}
-                  onChange={(e) => update("dateOfBirth", e.target.value)}
-                  autoFocus
-                />
-              </StepWrapper>
-            )}
-
-            {/* Step 3: Gender */}
-            {step === 3 && (
-              <StepWrapper
-                title="What's your biological sex?"
-                subtitle="This affects how we calculate your calorie needs."
-              >
-                <div className="grid grid-cols-3 gap-3">
-                  {(["male", "female", "other"] as Gender[]).map((g) => (
-                    <OptionButton
-                      key={g}
-                      selected={data.gender === g}
-                      onClick={() => update("gender", g)}
-                    >
-                      {g}
-                    </OptionButton>
-                  ))}
-                </div>
-              </StepWrapper>
-            )}
-
-            {/* Step 4: Body Metrics */}
-            {step === 4 && (
-              <StepWrapper
-                title="Your measurements"
-                subtitle="Used to calculate your BMR and daily calorie needs."
-              >
-                <div className="space-y-4">
-                  <Input
-                    label="Height (cm)"
-                    type="number"
-                    value={data.heightCm}
-                    onChange={(e) => update("heightCm", e.target.value ? Number(e.target.value) : "")}
-                    placeholder="170"
-                  />
-                  <Input
-                    label="Weight (kg)"
-                    type="number"
-                    value={data.weightKg}
-                    onChange={(e) => update("weightKg", e.target.value ? Number(e.target.value) : "")}
-                    placeholder="70"
-                  />
-                </div>
-              </StepWrapper>
-            )}
-
-            {/* Step 5: Activity Level */}
-            {step === 5 && (
-              <StepWrapper
-                title="How active are you?"
-                subtitle="Your typical weekly activity level."
-              >
-                <div className="space-y-2">
-                  {[
-                    { value: "sedentary", label: "Sedentary", desc: "Little to no exercise" },
-                    { value: "light", label: "Lightly Active", desc: "1-3 days/week" },
-                    { value: "moderate", label: "Moderately Active", desc: "3-5 days/week" },
-                    { value: "active", label: "Active", desc: "6-7 days/week" },
-                    { value: "very_active", label: "Very Active", desc: "Intense daily exercise" },
-                  ].map((opt) => (
-                    <button
-                      key={opt.value}
-                      onClick={() => update("activityLevel", opt.value as ActivityLevel)}
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+                {completionItems.map((item) => (
+                  <div
+                    key={item.label}
+                    className="flex items-center gap-3 rounded-[1.25rem] border border-white/10 bg-white/[0.07] p-3"
+                  >
+                    <span
                       className={cn(
-                        "w-full p-3.5 rounded-xl border-2 text-left transition-all duration-150",
-                        data.activityLevel === opt.value
-                          ? "border-primary-500 bg-primary-50/50"
-                          : "border-neutral-200 hover:border-neutral-300"
+                        "flex h-9 w-9 items-center justify-center rounded-full",
+                        item.done ? "bg-primary-300 text-primary-900" : "bg-white/10 text-white/45"
                       )}
                     >
-                      <span className="font-medium text-neutral-900 text-sm">{opt.label}</span>
-                      <span className="text-neutral-400 text-xs ml-2">{opt.desc}</span>
-                    </button>
-                  ))}
-                </div>
-              </StepWrapper>
-            )}
+                      {item.done ? <Check className="h-5 w-5" /> : <span className="h-2.5 w-2.5 rounded-full bg-current" />}
+                    </span>
+                    <span className={cn("text-sm font-black", item.done ? "text-white" : "text-white/55")}>
+                      {item.label}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
 
-            {/* Step 6: Goal */}
-            {step === 6 && (
-              <StepWrapper
-                title="What's your primary goal?"
-                subtitle="We'll adjust your calorie target accordingly."
-              >
-                <div className="space-y-3">
-                  {[
-                    { value: "lose", label: "Lose Weight", desc: "500 cal/day deficit", emoji: "📉" },
-                    { value: "maintain", label: "Maintain Weight", desc: "Match your TDEE", emoji: "⚖️" },
-                    { value: "gain", label: "Gain Weight", desc: "300 cal/day surplus", emoji: "📈" },
-                  ].map((opt) => (
-                    <button
-                      key={opt.value}
-                      onClick={() => update("goal", opt.value as Goal)}
-                      className={cn(
-                        "w-full p-4 rounded-xl border-2 text-left transition-all duration-150 flex items-center gap-4",
-                        data.goal === opt.value
-                          ? "border-primary-500 bg-primary-50/50"
-                          : "border-neutral-200 hover:border-neutral-300"
+            <PlanPreview macros={previewMacros} data={data} />
+          </aside>
+
+          <section className="order-1 flex flex-col rounded-[2rem] border border-primary-100/80 bg-white/90 shadow-[0_26px_70px_rgba(22,48,42,0.12)] backdrop-blur lg:order-2">
+            <div className="border-b border-primary-100/70 p-4 md:p-7">
+              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="fw-icon-chip">
+                    <CurrentStepIcon className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-black uppercase tracking-[0.18em] text-primary-600">
+                      Step {step + 1} of {totalSteps}
+                    </p>
+                    <h2 className="fw-heading text-2xl md:text-3xl">{currentStep.title}</h2>
+                  </div>
+                </div>
+                <div className="rounded-full bg-primary-50 px-4 py-2 text-sm font-black text-primary-700">
+                  {Math.round(progress)}% ready
+                </div>
+              </div>
+
+              <div className="mt-4 h-3 overflow-hidden rounded-full bg-[#edf4f1] md:mt-5">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-primary-500 to-[#159aa2] transition-all duration-500 ease-out"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+
+              <div className="mt-4 hidden grid-cols-10 gap-2 md:grid">
+                {STEP_META.map((meta, index) => (
+                  <button
+                    key={meta.short}
+                    type="button"
+                    onClick={() => setStep(index)}
+                    className={cn(
+                      "rounded-full px-2.5 py-2 text-xs font-black transition",
+                      index === step
+                        ? "bg-primary-600 text-white shadow-[0_12px_26px_rgba(21,145,108,0.22)]"
+                        : index < step
+                          ? "bg-primary-50 text-primary-700"
+                          : "bg-[#f3f8f6] text-[#8da39c]"
+                    )}
+                  >
+                    {meta.short}
+                  </button>
+                ))}
+              </div>
+
+              {resumed && (
+                <p className="mt-4 rounded-2xl bg-primary-50 px-4 py-3 text-sm font-bold text-primary-700">
+                  Picked up where you left off. Your progress is saved on this device.
+                </p>
+              )}
+            </div>
+
+            <div className="flex-1 p-4 md:p-8">
+              {step === 0 && <WelcomeStep />}
+              {step === 1 && (
+                <StepWrapper
+                  title="What should your coach call you?"
+                  subtitle="This is optional, but it makes the app feel more personal."
+                >
+                  <Input
+                    type="text"
+                    value={data.displayName}
+                    onChange={(event) => update("displayName", event.target.value)}
+                    placeholder="Maya"
+                    autoFocus
+                    className="h-14 text-base"
+                  />
+                  <InsightRow icon={UserRound} title="Coach tone" body="Your name only personalizes in-app guidance. You can change it later in Profile." />
+                </StepWrapper>
+              )}
+              {step === 2 && (
+                <StepWrapper
+                  title="When were you born?"
+                  subtitle="Age helps estimate your resting burn without asking you to do math."
+                >
+                  <Input
+                    type="date"
+                    value={data.dateOfBirth}
+                    onChange={(event) => update("dateOfBirth", event.target.value)}
+                    autoFocus
+                    className="h-14 text-base"
+                  />
+                  <InsightRow icon={CalendarDays} title="Why it matters" body="This feeds the same metabolism estimate used for your dashboard targets." />
+                </StepWrapper>
+              )}
+              {step === 3 && (
+                <StepWrapper
+                  title="Which biology should targets use?"
+                  subtitle="FuelWell uses this only for calorie math and keeps the plan adjustable."
+                >
+                  <div className="grid gap-3 sm:grid-cols-3">
+                    {(["male", "female", "other"] as Gender[]).map((gender) => (
+                      <OptionTile
+                        key={gender}
+                        selected={data.gender === gender}
+                        onClick={() => update("gender", gender)}
+                        icon={gender === "male" ? Activity : gender === "female" ? HeartPulse : Sparkles}
+                        title={capitalize(gender)}
+                      />
+                    ))}
+                  </div>
+                </StepWrapper>
+              )}
+              {step === 4 && (
+                <StepWrapper
+                  title="Add body context"
+                  subtitle="Height and weight set the baseline. Targets stay editable."
+                >
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <Input
+                      label="Height (cm)"
+                      type="number"
+                      value={data.heightCm}
+                      onChange={(event) => update("heightCm", event.target.value ? Number(event.target.value) : "")}
+                      placeholder="170"
+                      className="h-14 text-base"
+                    />
+                    <Input
+                      label="Weight (kg)"
+                      type="number"
+                      value={data.weightKg}
+                      onChange={(event) => update("weightKg", event.target.value ? Number(event.target.value) : "")}
+                      placeholder="70"
+                      className="h-14 text-base"
+                    />
+                  </div>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <MiniMetric icon={Ruler} label="Height" value={data.heightCm ? `${data.heightCm} cm` : "Needed"} />
+                    <MiniMetric icon={Scale} label="Weight" value={data.weightKg ? `${data.weightKg} kg` : "Needed"} />
+                  </div>
+                </StepWrapper>
+              )}
+              {step === 5 && (
+                <StepWrapper
+                  title="How active is a normal week?"
+                  subtitle="Choose the closest pattern. The coach can refine from logged behavior later."
+                >
+                  <div className="grid gap-3">
+                    {ACTIVITY_OPTIONS.map((option) => (
+                      <OptionTile
+                        key={option.value}
+                        selected={data.activityLevel === option.value}
+                        onClick={() => update("activityLevel", option.value)}
+                        icon={option.icon}
+                        title={option.label}
+                        description={option.desc}
+                      />
+                    ))}
+                  </div>
+                </StepWrapper>
+              )}
+              {step === 6 && (
+                <StepWrapper
+                  title="What is the main direction?"
+                  subtitle="This changes the calorie target, not your ability to make flexible choices."
+                >
+                  <div className="grid gap-3 md:grid-cols-3">
+                    {GOAL_OPTIONS.map((option) => (
+                      <OptionTile
+                        key={option.value}
+                        selected={data.goal === option.value}
+                        onClick={() => update("goal", option.value)}
+                        icon={option.icon}
+                        title={option.label}
+                        description={option.desc}
+                      />
+                    ))}
+                  </div>
+                </StepWrapper>
+              )}
+              {step === 7 && (
+                <StepWrapper
+                  title="Any food style to respect?"
+                  subtitle="This tunes recipes and coach suggestions without hiding manual logging."
+                >
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {DIET_OPTIONS.map((option) => (
+                      <OptionTile
+                        key={option.value}
+                        selected={data.dietaryPreference === option.value}
+                        onClick={() => update("dietaryPreference", option.value)}
+                        icon={option.icon}
+                        title={option.label}
+                      />
+                    ))}
+                  </div>
+                </StepWrapper>
+              )}
+              {step === 8 && (
+                <StepWrapper
+                  title="Any allergies to flag?"
+                  subtitle="Select anything the coach should treat as a hard constraint."
+                >
+                  <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-4">
+                    {ALLERGY_OPTIONS.map((allergy) => (
+                      <OptionTile
+                        key={allergy}
+                        selected={data.allergies.includes(allergy)}
+                        onClick={() => toggleAllergy(allergy)}
+                        icon={WheatOff}
+                        title={allergy}
+                        selectedClassName="border-accent-300 bg-accent-50 text-accent-700"
+                      />
+                    ))}
+                  </div>
+                </StepWrapper>
+              )}
+              {step === 9 && (
+                <StepWrapper
+                  title="Review your starting plan"
+                  subtitle="This is the first estimate. The dashboard and coach can tune it as real logs come in."
+                >
+                  {previewMacros ? (
+                    <div className="space-y-5">
+                      <div className="fw-mint-panel rounded-[1.75rem] border p-5">
+                        <p className="text-sm font-black uppercase tracking-[0.16em] text-primary-700">
+                          Starting calorie target
+                        </p>
+                        <div className="mt-3 flex items-end gap-3">
+                          <p className="text-5xl font-black tabular-nums text-[#16302a]">
+                            {previewMacros.calories}
+                          </p>
+                          <p className="pb-2 text-base font-black text-[#78928a]">kcal/day</p>
+                        </div>
+                      </div>
+                      <div className="grid gap-3 md:grid-cols-3">
+                        <MacroTile color="protein" label="Protein" value={`${previewMacros.protein}g`} />
+                        <MacroTile color="carbs" label="Carbs" value={`${previewMacros.carbs}g`} />
+                        <MacroTile color="fat" label="Fat" value={`${previewMacros.fat}g`} />
+                      </div>
+                      <div className="grid gap-3 md:grid-cols-3">
+                        <SummaryPill label="Goal" value={data.goal ? `${data.goal} weight` : "Unset"} />
+                        <SummaryPill label="Activity" value={data.activityLevel ? formatActivity(data.activityLevel) : "Unset"} />
+                        <SummaryPill label="Diet" value={formatDiet(data.dietaryPreference)} />
+                      </div>
+                      {data.allergies.length > 0 && (
+                        <div className="fw-soft-row p-4 text-sm font-bold text-[#516b63]">
+                          Allergies flagged: {data.allergies.join(", ")}
+                        </div>
                       )}
-                    >
-                      <span className="text-2xl">{opt.emoji}</span>
-                      <div>
-                        <span className="font-medium text-neutral-900 block">{opt.label}</span>
-                        <span className="text-neutral-400 text-sm">{opt.desc}</span>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </StepWrapper>
-            )}
-
-            {/* Step 7: Dietary Preference */}
-            {step === 7 && (
-              <StepWrapper
-                title="Dietary preference?"
-                subtitle="We'll tailor recipe suggestions to your diet."
-              >
-                <div className="grid grid-cols-2 gap-2">
-                  {[
-                    { value: "none", label: "No Preference" },
-                    { value: "vegetarian", label: "Vegetarian" },
-                    { value: "vegan", label: "Vegan" },
-                    { value: "pescatarian", label: "Pescatarian" },
-                    { value: "keto", label: "Keto" },
-                    { value: "paleo", label: "Paleo" },
-                  ].map((opt) => (
-                    <OptionButton
-                      key={opt.value}
-                      selected={data.dietaryPreference === opt.value}
-                      onClick={() => update("dietaryPreference", opt.value)}
-                    >
-                      {opt.label}
-                    </OptionButton>
-                  ))}
-                </div>
-              </StepWrapper>
-            )}
-
-            {/* Step 8: Allergies */}
-            {step === 8 && (
-              <StepWrapper
-                title="Any food allergies?"
-                subtitle="Select all that apply, or skip if none."
-              >
-                <div className="grid grid-cols-2 gap-2">
-                  {ALLERGY_OPTIONS.map((allergy) => (
-                    <OptionButton
-                      key={allergy}
-                      selected={data.allergies.includes(allergy)}
-                      onClick={() => toggleAllergy(allergy)}
-                      selectedClass="border-red-400 bg-red-50/50 text-red-700"
-                    >
-                      {allergy}
-                    </OptionButton>
-                  ))}
-                </div>
-              </StepWrapper>
-            )}
-
-            {/* Step 9: Review */}
-            {step === 9 && (
-              <StepWrapper
-                title="Your personalized plan"
-                subtitle="Review your calculated targets. You can adjust these later."
-              >
-                {(() => {
-                  const macros = getPreviewMacros();
-                  if (!macros) {
-                    return (
-                      <p className="text-red-600 text-sm bg-red-50 px-4 py-3 rounded-xl">
-                        Missing required info. Go back and fill in all fields.
-                      </p>
-                    );
-                  }
-                  return (
-                    <div className="space-y-4">
-                      <div className="bg-primary-50 rounded-xl p-5 text-center">
-                        <p className="text-4xl font-bold text-primary-700 tabular-nums">
-                          {macros.calories}
-                        </p>
-                        <p className="text-sm text-primary-600 font-medium mt-1">
-                          daily calories
-                        </p>
-                      </div>
-                      <div className="grid grid-cols-3 gap-3">
-                        {[
-                          { value: macros.protein, label: "Protein", bg: "bg-primary-50", text: "text-primary-700", sub: "text-primary-500" },
-                          { value: macros.carbs, label: "Carbs", bg: "bg-lemon-50", text: "text-lemon-700", sub: "text-lemon-600" },
-                          { value: macros.fat, label: "Fat", bg: "bg-purple-50", text: "text-purple-700", sub: "text-purple-500" },
-                        ].map((m) => (
-                          <div key={m.label} className={`${m.bg} rounded-xl p-3 text-center`}>
-                            <p className={`text-xl font-bold ${m.text} tabular-nums`}>
-                              {m.value}g
-                            </p>
-                            <p className={`text-xs font-medium ${m.sub}`}>{m.label}</p>
-                          </div>
-                        ))}
-                      </div>
-                      <div className="text-sm text-neutral-500 space-y-1 bg-neutral-50 rounded-xl p-4">
-                        <p><strong className="text-neutral-700">Goal:</strong> {data.goal} weight</p>
-                        <p><strong className="text-neutral-700">Activity:</strong> {data.activityLevel?.replace("_", " ")}</p>
-                        <p><strong className="text-neutral-700">Diet:</strong> {data.dietaryPreference}</p>
-                        {data.allergies.length > 0 && (
-                          <p><strong className="text-neutral-700">Allergies:</strong> {data.allergies.join(", ")}</p>
-                        )}
-                      </div>
-                      <p className="text-xs text-neutral-400">
-                        Completing setup saves these targets to your FuelWell
-                        profile and opens your dashboard.
-                      </p>
                     </div>
-                  );
-                })()}
-                {error && (
-                  <p className="text-sm text-red-600 bg-red-50 px-4 py-3 rounded-xl mt-4" role="alert">
-                    {error}
-                  </p>
-                )}
-              </StepWrapper>
-            )}
-          </div>
+                  ) : (
+                    <p className="rounded-[1.25rem] bg-accent-50 px-4 py-3 text-sm font-bold text-accent-700">
+                      Missing required info. Go back and complete the highlighted steps.
+                    </p>
+                  )}
+                  {error && (
+                    <p className="mt-4 rounded-[1.25rem] bg-red-50 px-4 py-3 text-sm font-bold text-red-600" role="alert">
+                      {error}
+                    </p>
+                  )}
+                </StepWrapper>
+              )}
+            </div>
 
-          {/* Navigation */}
-          <div className="flex items-center justify-between mt-6 pt-4 border-t border-neutral-100">
-            {step > 0 ? (
-              <Button variant="ghost" onClick={back}>
-                <ArrowLeft className="w-4 h-4" />
-                Back
-              </Button>
-            ) : (
-              <div />
-            )}
+            <div className="flex items-center justify-between gap-3 border-t border-primary-100/70 p-4 md:p-7">
+              {step > 0 ? (
+                <Button variant="ghost" onClick={back}>
+                  <ArrowLeft className="h-4 w-4" />
+                  Back
+                </Button>
+              ) : (
+                <div />
+              )}
 
-            {step < totalSteps - 1 ? (
-              <Button onClick={next} disabled={!canProceed()}>
-                {step === 0 ? "Let's go" : "Next"}
-                <ArrowRight className="w-4 h-4" />
-              </Button>
-            ) : (
-              <Button onClick={handleComplete} loading={saving}>
-                Complete Setup
-              </Button>
-            )}
-          </div>
-        </Card>
+              {step < totalSteps - 1 ? (
+                <Button onClick={next} disabled={!canProceed()} size="lg">
+                  {step === 0 ? "Start setup" : "Next"}
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              ) : (
+                <Button onClick={handleComplete} loading={saving} size="lg">
+                  Complete setup
+                </Button>
+              )}
+            </div>
+          </section>
+        </section>
+      </div>
+    </main>
+  );
+}
+
+function WelcomeStep() {
+  return (
+    <div className="grid content-center gap-4 md:min-h-[24rem] md:gap-5">
+      <div className="fw-mint-panel rounded-[1.75rem] border p-5 md:p-8">
+        <div className="fw-icon-chip mb-4 md:mb-5">
+          <Sparkles className="h-6 w-6" />
+        </div>
+        <h2 className="fw-heading max-w-2xl text-[1.75rem] leading-tight md:text-4xl">
+          A few answers turn FuelWell into your daily decision system.
+        </h2>
+        <p className="mt-3 max-w-2xl text-sm font-semibold leading-6 text-[#6f8981] md:mt-4 md:text-base md:leading-7">
+          Setup takes about two minutes. You will leave with calorie and macro
+          targets, food preferences, and enough context for the coach to make
+          useful suggestions immediately.
+        </p>
+      </div>
+      <div className="hidden gap-3 md:grid md:grid-cols-3">
+        <MiniMetric icon={Target} label="Targets" value="Calories + macros" />
+        <MiniMetric icon={ChefHat} label="Food" value="Diet + allergies" />
+        <MiniMetric icon={Sparkles} label="Coach" value="Coach guidance" />
       </div>
     </div>
   );
 }
-
-// Shared sub-components for the onboarding steps
 
 function StepWrapper({
   title,
@@ -563,38 +673,209 @@ function StepWrapper({
   children: React.ReactNode;
 }) {
   return (
-    <div>
-      <h2 className="text-xl font-bold text-neutral-900 tracking-tight mb-1">
-        {title}
-      </h2>
-      <p className="text-sm text-neutral-500 mb-6">{subtitle}</p>
+    <div className="space-y-6">
+      <div>
+        <h3 className="fw-heading text-3xl md:text-4xl">{title}</h3>
+        <p className="mt-2 max-w-2xl text-base font-semibold leading-7 text-[#6f8981]">
+          {subtitle}
+        </p>
+      </div>
       {children}
     </div>
   );
 }
 
-function OptionButton({
+function OptionTile({
   selected,
   onClick,
-  children,
-  selectedClass,
+  icon: Icon,
+  title,
+  description,
+  selectedClassName,
 }: {
   selected: boolean;
   onClick: () => void;
-  children: React.ReactNode;
-  selectedClass?: string;
+  icon: LucideIcon;
+  title: string;
+  description?: string;
+  selectedClassName?: string;
 }) {
   return (
     <button
+      type="button"
       onClick={onClick}
+      aria-pressed={selected}
       className={cn(
-        "p-3.5 rounded-xl border-2 text-sm font-medium capitalize transition-all duration-150",
+        "group flex min-h-20 w-full items-center gap-4 rounded-[1.35rem] border p-4 text-left transition-all duration-150",
         selected
-          ? selectedClass || "border-primary-500 bg-primary-50/50 text-primary-700"
-          : "border-neutral-200 text-neutral-600 hover:border-neutral-300"
+          ? selectedClassName || "border-primary-300 bg-primary-50 text-primary-800 shadow-[0_14px_28px_rgba(30,174,132,0.14)]"
+          : "border-[#d8e7e1] bg-[#f7faf8] text-[#516b63] hover:border-primary-200 hover:bg-white"
       )}
     >
-      {children}
+      <span
+        className={cn(
+          "flex h-11 w-11 shrink-0 items-center justify-center rounded-[1rem] transition",
+          selected ? "bg-white text-primary-700" : "bg-white text-[#9aaea7] group-hover:text-primary-600"
+        )}
+      >
+        <Icon className="h-5 w-5" />
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block text-base font-black text-[#16302a]">{title}</span>
+        {description && (
+          <span className="mt-0.5 block text-sm font-semibold text-[#78928a]">
+            {description}
+          </span>
+        )}
+      </span>
+      {selected && (
+        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary-600 text-white">
+          <Check className="h-4 w-4" />
+        </span>
+      )}
     </button>
   );
+}
+
+function PlanPreview({
+  macros,
+  data,
+}: {
+  macros: ReturnType<typeof getPreviewMacros>;
+  data: OnboardingData;
+}) {
+  return (
+    <div className="mt-8 rounded-[1.75rem] border border-white/10 bg-white/[0.08] p-5">
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <p className="text-xs font-black uppercase tracking-[0.16em] text-primary-100">
+            Live preview
+          </p>
+          <h2 className="mt-1 text-xl font-black text-white">
+            {macros ? `${macros.calories} kcal plan` : "Plan unlocks soon"}
+          </h2>
+        </div>
+        <div className="flex h-12 w-12 items-center justify-center rounded-[1rem] bg-primary-400 text-primary-950">
+          {macros ? <BadgeCheck className="h-6 w-6" /> : <X className="h-6 w-6" />}
+        </div>
+      </div>
+
+      {macros ? (
+        <div className="mt-5 grid gap-2">
+          <PreviewRow label="Protein" value={`${macros.protein}g`} color="bg-sky-300" />
+          <PreviewRow label="Carbs" value={`${macros.carbs}g`} color="bg-lemon-200" />
+          <PreviewRow label="Fat" value={`${macros.fat}g`} color="bg-accent-300" />
+        </div>
+      ) : (
+        <p className="mt-4 text-sm font-semibold leading-6 text-white/62">
+          Complete age, body context, activity, and goal to see the starting
+          targets before saving.
+        </p>
+      )}
+
+      <div className="mt-5 flex flex-wrap gap-2">
+        <SummaryChip label={data.goal ? `${data.goal} goal` : "Goal pending"} />
+        <SummaryChip label={data.activityLevel ? formatActivity(data.activityLevel) : "Activity pending"} />
+        <SummaryChip label={formatDiet(data.dietaryPreference)} />
+      </div>
+    </div>
+  );
+}
+
+function PreviewRow({ label, value, color }: { label: string; value: string; color: string }) {
+  return (
+    <div className="flex items-center justify-between gap-3 rounded-2xl bg-white/10 px-3 py-2">
+      <div className="flex items-center gap-2">
+        <span className={cn("h-2.5 w-2.5 rounded-full", color)} />
+        <span className="text-sm font-bold text-white/75">{label}</span>
+      </div>
+      <span className="text-sm font-black tabular-nums text-white">{value}</span>
+    </div>
+  );
+}
+
+function SummaryChip({ label }: { label: string }) {
+  return (
+    <span className="rounded-full bg-white/10 px-3 py-1.5 text-xs font-black text-white/70">
+      {label}
+    </span>
+  );
+}
+
+function InsightRow({ icon: Icon, title, body }: { icon: LucideIcon; title: string; body: string }) {
+  return (
+    <div className="fw-soft-row flex gap-4 p-4">
+      <div className="fw-icon-chip h-11 w-11 rounded-[1rem]">
+        <Icon className="h-5 w-5" />
+      </div>
+      <div>
+        <p className="font-black text-[#16302a]">{title}</p>
+        <p className="mt-1 text-sm font-semibold leading-6 text-[#78928a]">{body}</p>
+      </div>
+    </div>
+  );
+}
+
+function MiniMetric({ icon: Icon, label, value }: { icon: LucideIcon; label: string; value: string }) {
+  return (
+    <div className="fw-soft-row flex items-center gap-3 p-4">
+      <div className="fw-icon-chip h-10 w-10 rounded-[0.95rem]">
+        <Icon className="h-5 w-5" />
+      </div>
+      <div className="min-w-0">
+        <p className="text-xs font-black uppercase tracking-[0.14em] text-[#91a7a0]">{label}</p>
+        <p className="text-base font-black leading-tight text-[#16302a]">{value}</p>
+      </div>
+    </div>
+  );
+}
+
+function MacroTile({ color, label, value }: { color: "protein" | "carbs" | "fat"; label: string; value: string }) {
+  const styles = {
+    protein: "bg-sky-50 text-sky-700 border-sky-100",
+    carbs: "bg-lemon-50 text-lemon-700 border-lemon-100",
+    fat: "bg-accent-50 text-accent-700 border-accent-100",
+  };
+  return (
+    <div className={cn("rounded-[1.35rem] border p-4", styles[color])}>
+      <p className="text-3xl font-black tabular-nums">{value}</p>
+      <p className="mt-1 text-sm font-black">{label}</p>
+    </div>
+  );
+}
+
+function SummaryPill({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="fw-soft-row p-4">
+      <p className="text-xs font-black uppercase tracking-[0.14em] text-[#91a7a0]">{label}</p>
+      <p className="mt-1 text-base font-black capitalize text-[#16302a]">{value}</p>
+    </div>
+  );
+}
+
+function getPreviewMacros(data: OnboardingData) {
+  if (!data.gender || !data.heightCm || !data.weightKg || !data.activityLevel || !data.goal || !data.dateOfBirth) {
+    return null;
+  }
+  const age = calculateAge(data.dateOfBirth);
+  return calculateMacroTargets({
+    gender: data.gender as Gender,
+    weightKg: Number(data.weightKg),
+    heightCm: Number(data.heightCm),
+    age,
+    activityLevel: data.activityLevel as ActivityLevel,
+    goal: data.goal as Goal,
+  });
+}
+
+function capitalize(value: string) {
+  return value.slice(0, 1).toUpperCase() + value.slice(1);
+}
+
+function formatActivity(value: ActivityLevel) {
+  return ACTIVITY_OPTIONS.find((option) => option.value === value)?.label ?? value.replace("_", " ");
+}
+
+function formatDiet(value: string) {
+  return DIET_OPTIONS.find((option) => option.value === value)?.label ?? value;
 }
