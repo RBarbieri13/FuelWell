@@ -299,10 +299,12 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
       <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <Store className="h-5 w-5 text-primary-700" />
-            <h2 className="text-lg font-black text-neutral-900">Restaurants nearby</h2>
+            <span className="flex h-10 w-10 items-center justify-center rounded-[1rem] bg-primary-100 text-primary-700">
+              <Store className="h-5 w-5" />
+            </span>
+            <h2 className="text-lg font-black text-[#16302a]">Restaurants nearby</h2>
           </div>
-          <p className="mt-1 max-w-2xl text-sm font-medium leading-6 text-neutral-500">
+          <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 text-[#78928a]">
             Browse nearby restaurants and fast food, search menu items, and preview how each order fits today&apos;s macro plan.
           </p>
         </div>
@@ -316,15 +318,15 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
 
       <div className="grid gap-4 2xl:grid-cols-[0.94fr_1.06fr]">
         <div className="space-y-4">
-          <form onSubmit={lookupZip} className="flex flex-col gap-2 rounded-2xl border border-neutral-100 bg-neutral-50 p-3 sm:flex-row">
+          <form onSubmit={lookupZip} className="flex flex-col gap-2 rounded-[1.35rem] border border-primary-100/80 bg-primary-50/55 p-3 sm:flex-row">
             <div className="relative flex-1">
-              <MapPin className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+              <MapPin className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-primary-600" />
               <input
                 value={zipQuery}
                 onChange={(event) => setZipQuery(event.target.value)}
                 placeholder="ZIP or city"
                 aria-label="Search restaurants by ZIP or city"
-                className="min-h-11 w-full rounded-2xl border border-neutral-200 bg-white pl-10 pr-4 text-sm font-bold text-neutral-900 placeholder:text-neutral-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="min-h-11 w-full rounded-[1.15rem] border border-primary-100 bg-white pl-10 pr-4 text-sm font-bold text-[#16302a] placeholder:text-[#91a7a0] focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary-500"
               />
             </div>
             <Button type="submit" variant="secondary" loading={locationStatus === "loading"} className="sm:min-w-28">
@@ -334,7 +336,7 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
           </form>
 
           <div
-            className="relative min-h-80 overflow-hidden rounded-2xl border border-neutral-200 bg-[#e8eee9]"
+            className="relative min-h-80 overflow-hidden rounded-[1.5rem] border border-primary-100 bg-[#e8eee9] shadow-[0_18px_48px_rgba(22,48,42,0.08)]"
             role="region"
             aria-label="Restaurant map with current location, nearby places, and FuelWell menu database picks"
             data-testid="restaurant-map"
@@ -465,19 +467,19 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
                 );
               })}
 
-            <div className="absolute bottom-3 left-3 right-3 z-20 rounded-2xl bg-white/90 p-3 shadow-lg shadow-neutral-500/10 backdrop-blur">
+            <div className="absolute bottom-3 left-3 right-3 z-20 rounded-[1.25rem] bg-white/92 p-3 shadow-lg shadow-neutral-500/10 backdrop-blur">
               <div className="flex items-center justify-between gap-3">
                 <div>
-                  <p className="text-xs font-black uppercase text-neutral-400">
+                  <p className="text-xs font-black uppercase tracking-[0.12em] text-[#91a7a0]">
                     {locationStatus === "ready" ? "Local map" : "Preview map"}
                   </p>
-                  <p className="text-sm font-bold text-neutral-800">
+                  <p className="text-sm font-black text-[#16302a]">
                     {matchedPlaces.length > 0
                       ? `${matchedPlaces.length} local places matched to menu nutrition`
                       : `${stats.restaurantCount} chains · ${stats.itemCount} menu items`}
                   </p>
                   {mapCenter && (
-                    <p className="mt-0.5 truncate text-xs font-medium text-neutral-500">
+                    <p className="mt-0.5 truncate text-xs font-semibold text-[#78928a]">
                       Centered on {mapCenter.label} · zoom {zoom}
                     </p>
                   )}
@@ -487,8 +489,8 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-neutral-100 bg-neutral-50 p-3" role="status" aria-live="polite" data-testid="restaurant-source-note">
-            <p className="text-xs font-bold leading-5 text-neutral-500">{sourceNote}</p>
+          <div className="rounded-[1.25rem] border border-primary-100 bg-primary-50/55 p-3" role="status" aria-live="polite" data-testid="restaurant-source-note">
+            <p className="text-xs font-bold leading-5 text-[#60776f]">{sourceNote}</p>
           </div>
 
           <div className="grid max-h-80 gap-2 overflow-y-auto pr-1">
@@ -635,15 +637,15 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
             </div>
           )}
 
-          <div className="flex flex-col gap-3 rounded-2xl border border-neutral-100 bg-neutral-50 p-3">
+          <div className="flex flex-col gap-3 rounded-[1.35rem] border border-primary-100/80 bg-primary-50/55 p-3">
             <div className="relative">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-primary-600" />
               <input
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="Search menu items or restaurants"
                 aria-label="Search restaurant menu items"
-                className="min-h-12 w-full rounded-2xl border border-neutral-200 bg-white pl-10 pr-4 text-base font-bold text-neutral-900 placeholder:text-neutral-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="min-h-12 w-full rounded-[1.15rem] border border-primary-100 bg-white pl-10 pr-4 text-base font-bold text-[#16302a] placeholder:text-[#91a7a0] focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary-500"
               />
             </div>
 
@@ -657,8 +659,8 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
                   className={cn(
                     "rounded-full border px-3 py-2 text-xs font-black transition",
                     preference === filter.value
-                      ? "border-neutral-900 bg-neutral-900 text-white"
-                      : "border-neutral-200 bg-white text-neutral-600 hover:border-primary-300 hover:text-primary-700"
+                      ? "border-primary-600 bg-primary-600 text-white shadow-sm"
+                      : "border-primary-100 bg-white text-[#60776f] hover:border-primary-300 hover:text-primary-700"
                   )}
                 >
                   {filter.label}
@@ -667,7 +669,7 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
             </div>
 
             <div className="flex items-center justify-between gap-3">
-              <p className="min-w-0 truncate text-sm font-bold text-neutral-600">
+              <p className="min-w-0 truncate text-sm font-black text-[#60776f]">
                 {selectedRestaurant ? selectedRestaurant.name : "Searching all restaurants"}
               </p>
               {selectedRestaurant && (
@@ -684,9 +686,9 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
 
           <div className="grid max-h-[34rem] gap-3 overflow-y-auto pr-1">
             {results.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-neutral-300 bg-neutral-50 p-5">
-                <p className="font-bold text-neutral-900">No menu matches yet.</p>
-                <p className="mt-1 text-sm font-medium text-neutral-500">
+              <div className="rounded-[1.35rem] border border-dashed border-primary-200 bg-primary-50/60 p-5">
+                <p className="font-black text-[#16302a]">No menu matches yet.</p>
+                <p className="mt-1 text-sm font-semibold text-[#78928a]">
                   Try a restaurant name, item name, or a quick filter like chicken.
                 </p>
               </div>
@@ -694,7 +696,7 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
               results.map((result) => (
                 <article
                   key={result.item.id}
-                  className="rounded-2xl border border-neutral-100 bg-white p-4 shadow-sm shadow-neutral-200/60"
+                  className="rounded-[1.35rem] border border-primary-100/80 bg-white p-4 shadow-[0_18px_48px_rgba(22,48,42,0.07)]"
                   data-testid={`restaurant-menu-result-${result.item.id}`}
                 >
                   <div className="flex items-start justify-between gap-3">
