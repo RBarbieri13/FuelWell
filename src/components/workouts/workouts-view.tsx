@@ -423,16 +423,16 @@ export function WorkoutsView({
         </Card>
       )}
 
-      <div className="grid gap-6 2xl:grid-cols-[0.95fr_1.05fr]">
+      <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
         {/* Path 1: Pick my own */}
-        <Card className="space-y-6 px-8 py-8">
+        <Card className="space-y-5 px-7 py-7">
           <div className="flex items-start gap-4">
-            <span className="fw-icon-chip">
+            <span className="fw-icon-chip shrink-0">
               <Timer className="h-6 w-6" />
             </span>
             <div>
               <h2 className="text-2xl font-black text-neutral-900">Pick my own</h2>
-              <p className="mt-4 text-lg font-semibold leading-7 text-neutral-500">
+              <p className="mt-3 text-base font-semibold leading-7 text-neutral-500">
                 Filter the workout database by body part, workout name, and workout type.
               </p>
             </div>
@@ -451,14 +451,14 @@ export function WorkoutsView({
         </Card>
 
         {/* Path 2: Coach recommends */}
-        <Card className="fw-dark-panel space-y-6 px-8 py-8">
+        <Card className="fw-dark-panel space-y-5 px-7 py-7">
           <div className="flex items-start gap-3">
             <div className="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-[1.15rem] bg-primary-500 text-white">
               <Sparkles className="h-7 w-7" />
             </div>
             <div>
               <h2 className="text-2xl font-black text-white">Coach recommends</h2>
-              <p className="mt-4 text-lg font-semibold leading-7 text-white/72">
+              <p className="mt-3 text-base font-semibold leading-7 text-white/72">
                 One tap and your coach suggests a good fit for today — built from your meals and readiness.
               </p>
             </div>
@@ -497,19 +497,19 @@ export function WorkoutsView({
 
       {/* Workout list (driven by Pick-my-own filter) */}
       <section className="space-y-4">
-        <Card className="space-y-5 px-6 py-6">
-          <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
-            <div>
+        <Card className="space-y-5 px-6 py-6 md:px-7 md:py-7">
+          <div className="space-y-5">
+            <div className="flex flex-wrap items-end justify-between gap-3">
               <h2 className="flex items-center gap-3 text-2xl font-black text-neutral-900">
                 <SlidersHorizontal className="h-5 w-5 text-primary-600" />
                 Workout database
               </h2>
-              <p className="mt-1 text-sm font-semibold text-neutral-500">
+              <p className="rounded-full bg-primary-50 px-3 py-1 text-sm font-black text-primary-700">
                 {visible.length} of {workouts.length} workouts shown
               </p>
             </div>
 
-            <form action="/app/workouts" className="grid gap-3 md:grid-cols-[1.2fr_0.9fr_0.9fr_auto] xl:min-w-[54rem]">
+            <form action="/app/workouts" className="grid gap-3 lg:grid-cols-[minmax(14rem,1.35fr)_minmax(10rem,0.8fr)_minmax(10rem,0.8fr)_auto]">
               <label className="block">
                 <span className="text-xs font-black uppercase tracking-[0.14em] text-neutral-400">
                   Workout
@@ -573,14 +573,14 @@ export function WorkoutsView({
 
           <div className="overflow-hidden rounded-[1.35rem] border border-primary-100">
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[58rem] border-collapse bg-white text-left">
+              <table className="w-full min-w-[64rem] border-collapse bg-white text-left">
                 <thead className="bg-primary-50/80 text-xs font-black uppercase tracking-[0.14em] text-primary-800">
                   <tr>
                     <th className="px-5 py-4">Workout</th>
-                    <th className="px-5 py-4">Body part</th>
-                    <th className="px-5 py-4">Type</th>
-                    <th className="px-5 py-4">Duration</th>
-                    <th className="px-5 py-4">Intensity</th>
+                    <th className="whitespace-nowrap px-5 py-4">Body part</th>
+                    <th className="whitespace-nowrap px-5 py-4">Type</th>
+                    <th className="whitespace-nowrap px-5 py-4">Duration</th>
+                    <th className="whitespace-nowrap px-5 py-4">Intensity</th>
                     <th className="px-5 py-4">Equipment</th>
                     <th className="px-5 py-4">Goal</th>
                   </tr>
@@ -613,14 +613,14 @@ export function WorkoutsView({
                           )}
                         </td>
                         <td className="px-5 py-4">
-                          <span className="rounded-full bg-primary-100 px-3 py-1 text-xs font-black text-primary-700">
+                          <span className="whitespace-nowrap rounded-full bg-primary-100 px-3 py-1 text-xs font-black text-primary-700">
                             {workout.categoryLabel}
                           </span>
                         </td>
-                        <td className="px-5 py-4 text-sm font-bold text-neutral-700">{workout.workoutType}</td>
-                        <td className="px-5 py-4 text-sm font-bold tabular-nums text-neutral-700">{workout.duration}</td>
+                        <td className="whitespace-nowrap px-5 py-4 text-sm font-bold text-neutral-700">{workout.workoutType}</td>
+                        <td className="whitespace-nowrap px-5 py-4 text-sm font-bold tabular-nums text-neutral-700">{workout.duration}</td>
                         <td className="px-5 py-4">
-                          <span className="rounded-full bg-lemon-50 px-3 py-1 text-xs font-black text-lemon-700">
+                          <span className="whitespace-nowrap rounded-full bg-lemon-50 px-3 py-1 text-xs font-black text-lemon-700">
                             {workout.intensity}
                           </span>
                         </td>
