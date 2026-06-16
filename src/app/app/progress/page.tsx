@@ -83,7 +83,7 @@ const snapshots: Record<ProgressState, ProgressSnapshot> = {
     caloriesAverage: 0,
     adherence: 0,
     macroStats: [
-      { key: "protein", label: "Protein", consumed: 0, target: 150, unit: "g", colorClass: "bg-macro-protein" },
+      { key: "protein", label: "Protein", consumed: 0, target: 150, unit: "g", colorClass: "bg-sky-500" },
       { key: "carbs", label: "Carbs", consumed: 0, target: 230, unit: "g", colorClass: "bg-macro-carbs" },
       { key: "fat", label: "Fat", consumed: 0, target: 70, unit: "g", colorClass: "bg-macro-fat" },
     ],
@@ -118,7 +118,7 @@ const snapshots: Record<ProgressState, ProgressSnapshot> = {
     caloriesAverage: 2015,
     adherence: 86,
     macroStats: [
-      { key: "protein", label: "Protein", consumed: 118, target: 150, unit: "g", colorClass: "bg-macro-protein" },
+      { key: "protein", label: "Protein", consumed: 118, target: 150, unit: "g", colorClass: "bg-sky-500" },
       { key: "carbs", label: "Carbs", consumed: 218, target: 230, unit: "g", colorClass: "bg-macro-carbs" },
       { key: "fat", label: "Fat", consumed: 68, target: 70, unit: "g", colorClass: "bg-macro-fat" },
     ],
@@ -153,7 +153,7 @@ const snapshots: Record<ProgressState, ProgressSnapshot> = {
     caloriesAverage: 2058,
     adherence: 92,
     macroStats: [
-      { key: "protein", label: "Protein", consumed: 144, target: 150, unit: "g", colorClass: "bg-macro-protein" },
+      { key: "protein", label: "Protein", consumed: 144, target: 150, unit: "g", colorClass: "bg-sky-500" },
       { key: "carbs", label: "Carbs", consumed: 224, target: 230, unit: "g", colorClass: "bg-macro-carbs" },
       { key: "fat", label: "Fat", consumed: 66, target: 70, unit: "g", colorClass: "bg-macro-fat" },
     ],
@@ -186,6 +186,12 @@ const windowOptions: { key: WindowKey; label: string; days: number }[] = [
 ];
 
 const ALL_MACROS: MacroKey[] = ["protein", "carbs", "fat"];
+
+const macroTextClass: Record<MacroKey, string> = {
+  protein: "text-sky-700",
+  carbs: "text-lemon-700",
+  fat: "text-accent-600",
+};
 
 function percent(value: number, target: number) {
   if (target === 0) {
@@ -295,7 +301,7 @@ export default function ProgressPage() {
             </p>
           </div>
 
-        <div className="flex gap-1 rounded-full border border-primary-100/80 bg-white/92 p-1 shadow-[0_14px_34px_rgba(22,48,42,0.09)] self-start md:self-auto">
+        <div className="flex gap-1 self-start rounded-full border border-primary-100/80 bg-white/92 p-1 shadow-[0_4px_12px_rgba(20,90,75,0.05)] md:self-auto">
           {stateOrder.map((state) => (
             <button
               key={state}
@@ -306,9 +312,9 @@ export default function ProgressPage() {
               }}
               aria-pressed={selectedState === state}
               className={cn(
-                "min-h-[44px] px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-150",
+                "rounded-full px-5 py-2 text-sm font-bold transition-all duration-150",
                 selectedState === state
-                  ? "bg-primary-500 text-white shadow-[0_10px_22px_rgba(21,145,108,0.2)]"
+                  ? "bg-primary-500 text-white shadow-[0_6px_14px_rgba(30,174,132,0.24)]"
                   : "text-[#78928a] hover:text-primary-800"
               )}
             >
@@ -322,10 +328,10 @@ export default function ProgressPage() {
         </div>
       </header>
 
-      <div className="fw-page-inner space-y-6">
+      <div className="fw-page-inner max-w-[1120px] space-y-6">
 
-      <Card className="fw-mint-panel">
-        <div className="grid gap-6 2xl:grid-cols-[1.4fr_0.8fr] 2xl:items-center">
+      <Card className="fw-mint-panel rounded-[24px] border-primary-200/80 px-6 py-6 shadow-none">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
           <div className="space-y-4">
             <div className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-black text-primary-700">
               <Sparkles className="w-4 h-4" />
@@ -333,10 +339,10 @@ export default function ProgressPage() {
             </div>
             <div>
               <p className="text-sm font-black text-primary-800/75">{snapshot.title}</p>
-              <h2 className="text-3xl md:text-4xl font-black text-[#16302a] tracking-normal mt-3">
+              <h2 className="mt-3 font-heading text-[28px] font-black tracking-tight text-[#16302a] md:text-3xl">
                 {snapshot.verdict}
               </h2>
-              <p className="max-w-2xl text-base md:text-lg font-semibold text-primary-900/70 mt-4 leading-relaxed">
+              <p className="mt-4 max-w-2xl text-base font-semibold leading-7 text-primary-900/70">
                 {snapshot.verdictDetail}
               </p>
             </div>
@@ -350,8 +356,8 @@ export default function ProgressPage() {
         </div>
       </Card>
 
-      <Card className="space-y-6 px-8 py-7">
-        <div className="flex flex-col gap-4 2xl:flex-row 2xl:items-start 2xl:justify-between">
+      <Card className="space-y-6 rounded-[24px] border-[#e6efeb] px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <SectionHeader
             icon={BarChart3}
             label="Macro split per day"
@@ -365,9 +371,9 @@ export default function ProgressPage() {
                 onClick={() => setWindowKey(option.key)}
                 aria-pressed={windowKey === option.key}
                 className={cn(
-                  "min-h-[44px] md:min-h-0 px-5 py-2 rounded-full text-sm font-bold transition-all duration-150",
+                  "rounded-full px-5 py-2 text-sm font-bold transition-all duration-150",
                   windowKey === option.key
-                    ? "bg-primary-600 text-white shadow-[0_10px_22px_rgba(21,145,108,0.18)]"
+                    ? "bg-white text-[#16302a] shadow-[0_3px_8px_rgba(20,90,75,0.08)]"
                     : "text-[#78928a] hover:text-primary-800"
                 )}
               >
@@ -402,8 +408,8 @@ export default function ProgressPage() {
         </div>
       </Card>
 
-      <div className="grid gap-6 2xl:grid-cols-[1fr_1fr]">
-        <Card className="space-y-6">
+      <div className="grid gap-5 lg:grid-cols-2">
+        <Card className="space-y-6 rounded-[24px] border-[#e6efeb] px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
           <SectionHeader
             icon={CheckCircle2}
             label="Where your macros lean"
@@ -416,7 +422,9 @@ export default function ProgressPage() {
               return (
                 <div key={macro.key}>
                   <div className="flex items-center justify-between gap-3 text-sm">
-                    <span className="font-black text-[#516b63]">{macro.label}</span>
+                    <span className={cn("font-black", macroTextClass[macro.key])}>
+                      {macro.label}
+                    </span>
                     <span className="font-semibold text-[#78928a] tabular-nums">
                       {macro.consumed}{macro.unit} / {macro.target}{macro.unit}
                     </span>
@@ -433,7 +441,7 @@ export default function ProgressPage() {
           </div>
         </Card>
 
-        <Card className="space-y-6">
+        <Card className="space-y-6 rounded-[24px] border-[#e6efeb] px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
           <SectionHeader
             icon={Utensils}
             label="Meal consistency"
@@ -444,7 +452,7 @@ export default function ProgressPage() {
               <div
                 key={meal.label}
                 className={cn(
-                  "rounded-[1.25rem] border p-5",
+                  "rounded-2xl border p-4",
                   meal.logged
                     ? "border-primary-200 bg-primary-50/70"
                     : "border-primary-100 bg-[#f7faf8]"
@@ -468,7 +476,7 @@ export default function ProgressPage() {
         </Card>
       </div>
 
-      <Card className="space-y-6">
+      <Card className="space-y-6 rounded-[24px] border-[#e6efeb] px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
         <SectionHeader
           icon={Scale}
           label="Weight and goal projection"
@@ -493,7 +501,7 @@ export default function ProgressPage() {
             </p>
           </label>
 
-          <div className="rounded-[1.25rem] bg-[#f7faf8] border border-primary-100 p-5 space-y-3">
+          <div className="space-y-3 rounded-[18px] border border-primary-100 bg-[#f7faf8] p-5">
             <div className="flex items-center justify-between text-sm">
               <span className="font-semibold text-[#78928a]">Start</span>
               <span className="font-black text-[#16302a] tabular-nums">{formatPounds(snapshot.startingWeight)}</span>
@@ -556,11 +564,11 @@ function SectionHeader({
   return (
     <div className="flex items-start justify-between gap-4">
       <div>
-        <h2 className="flex items-center gap-2 text-xl font-black text-neutral-900">
-              <Icon className="w-5 h-5 text-primary-600" />
+        <h2 className="flex items-center gap-2 font-heading text-lg font-black tracking-tight text-[#16302a]">
+          <Icon className="h-5 w-5 text-primary-600" />
           {label}
         </h2>
-        <p className="text-base font-semibold text-[#78928a] mt-1">{detail}</p>
+        <p className="mt-1 text-sm font-semibold text-[#78928a]">{detail}</p>
       </div>
     </div>
   );
@@ -576,12 +584,12 @@ function StatTile({
   icon: typeof CalendarCheck;
 }) {
   return (
-    <div className="rounded-[1.15rem] bg-white p-3 text-center shadow-sm shadow-primary-100/50 sm:rounded-[1.25rem] sm:p-5">
-      <div className="mx-auto mb-2 flex h-8 w-8 items-center justify-center rounded-[0.85rem] bg-primary-100 text-primary-600 sm:mb-3 sm:h-9 sm:w-9">
-        <Icon className="w-4 h-4" />
+    <div className="min-w-[92px] rounded-2xl bg-white px-4 py-4 text-center shadow-[0_6px_14px_rgba(20,90,75,0.06)]">
+      <div className="mx-auto mb-2 flex h-7 w-7 items-center justify-center rounded-[0.7rem] bg-primary-100 text-primary-600">
+        <Icon className="h-4 w-4" />
       </div>
-      <p className="text-2xl font-black text-[#16302a] tabular-nums sm:text-3xl">{value}</p>
-      <p className="mt-1 text-[11px] font-semibold leading-tight text-[#78928a] sm:text-xs">{label}</p>
+      <p className="font-heading text-2xl font-black leading-none text-[#16302a] tabular-nums">{value}</p>
+      <p className="mt-1.5 text-[11px] font-semibold leading-tight text-[#78928a]">{label}</p>
     </div>
   );
 }
