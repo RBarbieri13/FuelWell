@@ -95,6 +95,13 @@ const mealIdeas = [
   "Protein Overnight Oats",
 ];
 
+const slotTone: Record<MealSlot, { bg: string; text: string; label: string }> = {
+  Breakfast: { bg: "bg-lemon-100", text: "text-lemon-700", label: "Morning" },
+  Lunch: { bg: "bg-primary-100", text: "text-primary-700", label: "Midday" },
+  Dinner: { bg: "bg-accent-100", text: "text-accent-700", label: "Evening" },
+  Snack: { bg: "bg-sky-100", text: "text-sky-700", label: "Anytime" },
+};
+
 function dayTotals(day: PlanDay) {
   return day.meals.reduce(
     (totals, meal) => ({
@@ -143,7 +150,7 @@ export default function MealPlanPage() {
               Plan the next few days around protein, prep time, and grocery needs.
             </p>
           </div>
-          <div className="flex rounded-full bg-white p-1 shadow-[0_18px_42px_rgba(22,48,42,0.10)]">
+          <div className="flex rounded-full border border-primary-100/80 bg-white/92 p-1 shadow-[0_18px_42px_rgba(22,48,42,0.10)]">
             {(["day", "week"] as const).map((mode) => (
               <button
                 key={mode}
@@ -151,7 +158,7 @@ export default function MealPlanPage() {
                 onClick={() => setView(mode)}
                 className={cn(
                   "rounded-full px-6 py-3 text-sm font-black capitalize transition-all",
-                  view === mode ? "bg-primary-600 text-white shadow-[0_12px_24px_rgba(21,145,108,0.18)]" : "text-neutral-500 hover:text-neutral-800"
+                  view === mode ? "bg-primary-600 text-white shadow-[0_12px_24px_rgba(21,145,108,0.18)]" : "text-[#78928a] hover:text-primary-800"
                 )}
               >
                 {mode}
@@ -162,7 +169,7 @@ export default function MealPlanPage() {
       </header>
 
       <div className="fw-page-inner space-y-6">
-        <section className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
+        <section className="grid items-start gap-6 xl:grid-cols-[1.05fr_0.95fr]">
           <Card className="fw-dark-panel px-8 py-8">
             <p className="inline-flex items-center gap-2 text-sm font-black uppercase tracking-[0.16em] text-primary-200">
               <Sparkles className="h-4 w-4" />
@@ -174,40 +181,40 @@ export default function MealPlanPage() {
             <p className="mt-5 max-w-2xl text-lg font-semibold leading-8 text-white/74">
               Your next step is to fill the open dinner and lunch slots, then send the week to groceries.
             </p>
-            <div className="mt-7 grid gap-3 sm:grid-cols-3">
+            <div className="mt-7 grid grid-cols-3 gap-2 sm:gap-3">
               {[
                 ["Avg cals", Math.round(weekTotals.calories / days.length).toString()],
                 ["Avg protein", `${Math.round(weekTotals.protein / days.length)}g`],
                 ["Open slots", `${days.length * 4 - weekTotals.planned}`],
               ].map(([label, value]) => (
-                <div key={label} className="rounded-[1.25rem] border border-white/12 bg-white/10 px-5 py-4 backdrop-blur">
-                  <p className="text-3xl font-black tabular-nums text-white">{value}</p>
-                  <p className="mt-1 text-xs font-black uppercase tracking-[0.12em] text-white/58">{label}</p>
+                <div key={label} className="rounded-[1.15rem] border border-white/12 bg-white/10 px-3 py-3 backdrop-blur sm:rounded-[1.25rem] sm:px-5 sm:py-4">
+                  <p className="text-2xl font-black tabular-nums text-white sm:text-3xl">{value}</p>
+                  <p className="mt-1 text-[10px] font-black uppercase tracking-[0.1em] text-white/58 sm:text-xs sm:tracking-[0.12em]">{label}</p>
                 </div>
               ))}
             </div>
           </Card>
 
-          <Card variant="elevated" className="space-y-4">
+          <Card variant="elevated" className="h-fit space-y-4">
             <div className="flex items-start gap-4">
               <span className="fw-icon-chip">
                 <ShoppingBasket className="h-6 w-6" />
               </span>
               <div>
-                <h2 className="text-2xl font-black text-neutral-900">Grocery readiness</h2>
-                <p className="mt-1 text-sm font-semibold leading-6 text-neutral-500">
+                <h2 className="text-2xl font-black text-[#16302a]">Grocery readiness</h2>
+                <p className="mt-1 text-sm font-semibold leading-6 text-[#78928a]">
                   Planned meals are grouped into the grocery list as soon as the open slots are filled.
                 </p>
               </div>
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="fw-soft-row p-4">
-                <p className="text-3xl font-black text-neutral-900">18</p>
-                <p className="text-xs font-black uppercase tracking-[0.12em] text-neutral-400">unique ingredients</p>
+                <p className="text-3xl font-black text-[#16302a]">18</p>
+                <p className="text-xs font-black uppercase tracking-[0.12em] text-[#91a7a0]">unique ingredients</p>
               </div>
               <div className="fw-soft-row p-4">
-                <p className="text-3xl font-black text-neutral-900">2</p>
-                <p className="text-xs font-black uppercase tracking-[0.12em] text-neutral-400">slots to fill</p>
+                <p className="text-3xl font-black text-[#16302a]">2</p>
+                <p className="text-xs font-black uppercase tracking-[0.12em] text-[#91a7a0]">slots to fill</p>
               </div>
             </div>
             <Button type="button" className="w-full">
@@ -219,7 +226,7 @@ export default function MealPlanPage() {
 
         <div className="grid gap-6 xl:grid-cols-[20rem_1fr]">
           <Card className="h-fit px-5 py-5">
-            <h2 className="flex items-center gap-2 text-lg font-black text-neutral-900">
+            <h2 className="flex items-center gap-2 text-lg font-black text-[#16302a]">
               <CalendarDays className="w-5 h-5 text-primary-600" />
               This week
             </h2>
@@ -234,23 +241,23 @@ export default function MealPlanPage() {
                     type="button"
                     onClick={() => setSelectedDayId(day.id)}
                     className={cn(
-                      "w-full rounded-[1.2rem] border px-4 py-4 text-left transition-all",
+                      "w-full rounded-[1.25rem] border px-4 py-4 text-left transition-all",
                       isSelected
-                        ? "border-primary-200 bg-primary-50 shadow-sm shadow-primary-900/5"
-                        : "border-primary-100 bg-white hover:border-primary-200 hover:bg-primary-50/50"
+                        ? "border-primary-300 bg-primary-50 shadow-[0_16px_34px_rgba(21,145,108,0.12)]"
+                        : "border-primary-100 bg-[#f7faf8] hover:-translate-y-0.5 hover:border-primary-200 hover:bg-white hover:shadow-md hover:shadow-primary-900/10"
                     )}
                   >
                     <div className="flex items-center justify-between gap-2">
                       <div>
-                        <p className="text-base font-black text-neutral-900">
+                        <p className="text-base font-black text-[#16302a]">
                           {day.label}, {day.date}
                         </p>
-                        <p className="text-xs font-semibold text-neutral-500 mt-0.5">{day.focus}</p>
+                        <p className="text-xs font-semibold text-[#78928a] mt-0.5">{day.focus}</p>
                       </div>
-                      <ChevronRight className={cn("w-4 h-4", isSelected ? "text-primary-600" : "text-neutral-300")} />
+                      <ChevronRight className={cn("w-4 h-4", isSelected ? "text-primary-600" : "text-[#b8cac4]")} />
                     </div>
-                    <div className="mt-3 flex items-center gap-2 text-xs font-semibold text-neutral-500">
-                      <span className="font-black tabular-nums text-neutral-700">
+                    <div className="mt-3 flex items-center gap-2 text-xs font-semibold text-[#78928a]">
+                      <span className="font-black tabular-nums text-[#516b63]">
                         {totals.protein}g protein
                       </span>
                       <span>{totals.planned}/4 meals</span>
@@ -269,20 +276,20 @@ export default function MealPlanPage() {
                   <p className="text-xs font-black uppercase tracking-[0.16em] text-primary-700">
                     {selectedDay.focus}
                   </p>
-                  <h2 className="mt-1 text-3xl font-black text-neutral-900">
+                  <h2 className="mt-1 text-3xl font-black text-[#16302a]">
                     {selectedDay.label}, {selectedDay.date}
                   </h2>
                 </div>
                 <div className="grid grid-cols-2 gap-2 sm:min-w-56">
                   <div className="rounded-[1rem] bg-primary-50 px-4 py-3">
                     <p className="text-[11px] font-black uppercase tracking-[0.12em] text-primary-700">Calories</p>
-                    <p className="text-xl font-black tabular-nums text-neutral-900">
+                    <p className="text-xl font-black tabular-nums text-[#16302a]">
                       {selectedTotals.calories}
                     </p>
                   </div>
                   <div className="rounded-[1rem] bg-sky-50 px-4 py-3">
                     <p className="text-[11px] font-black uppercase tracking-[0.12em] text-sky-700">Protein</p>
-                    <p className="text-xl font-black tabular-nums text-neutral-900">
+                    <p className="text-xl font-black tabular-nums text-[#16302a]">
                       {selectedTotals.protein}g
                     </p>
                   </div>
@@ -293,13 +300,14 @@ export default function MealPlanPage() {
                 {selectedDay.meals.map((meal) => {
                   const addedTitle = addedMeals[`${selectedDay.id}-${meal.slot}`];
                   const isOpen = meal.status === "open" && !addedTitle;
+                  const tone = slotTone[meal.slot];
 
                   return (
                     <div
                       key={meal.slot}
                       className={cn(
-                        "rounded-[1.35rem] border p-5 transition-colors",
-                        isOpen ? "border-dashed border-accent-200 bg-accent-50/50" : "border-primary-100 bg-white"
+                        "rounded-[1.45rem] border p-5 transition-colors",
+                        isOpen ? "border-dashed border-accent-200 bg-accent-50/50" : "border-primary-100 bg-[#f7faf8]"
                       )}
                     >
                       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -311,7 +319,7 @@ export default function MealPlanPage() {
                                 ? "bg-primary-50 text-primary-600"
                                 : isOpen
                                   ? "bg-accent-100 text-accent-700"
-                                  : "bg-neutral-100 text-neutral-500"
+                                  : `${tone.bg} ${tone.text}`
                             )}
                           >
                             {meal.status === "logged" ? (
@@ -321,13 +329,13 @@ export default function MealPlanPage() {
                             )}
                           </div>
                           <div>
-                            <p className="text-xs font-black uppercase tracking-[0.14em] text-neutral-400">
-                              {meal.slot}
+                            <p className="text-xs font-black uppercase tracking-[0.14em] text-[#91a7a0]">
+                              {meal.slot} · {tone.label}
                             </p>
-                            <h3 className="mt-1 text-lg font-black text-neutral-900">
+                            <h3 className="mt-1 text-lg font-black text-[#16302a]">
                               {addedTitle ?? meal.title}
                             </h3>
-                            <div className="mt-2 flex flex-wrap items-center gap-2 text-xs font-bold text-neutral-500">
+                            <div className="mt-2 flex flex-wrap items-center gap-2 text-xs font-bold text-[#78928a]">
                               <span className="tabular-nums">{meal.calories} cal</span>
                               <span className="tabular-nums">{meal.protein}g protein</span>
                               <span className="inline-flex items-center gap-1">
@@ -355,7 +363,7 @@ export default function MealPlanPage() {
             </Card>
           ) : (
             <Card variant="elevated">
-              <h2 className="text-2xl font-black text-neutral-900">Week at a glance</h2>
+              <h2 className="text-2xl font-black text-[#16302a]">Week at a glance</h2>
               <div className="mt-4 grid gap-3 md:grid-cols-2">
                 {days.map((day) => {
                   const totals = dayTotals(day);
@@ -368,14 +376,14 @@ export default function MealPlanPage() {
                         setSelectedDayId(day.id);
                         setView("day");
                       }}
-                      className="rounded-[1.35rem] border border-primary-100 bg-neutral-50/80 p-5 text-left transition-colors hover:border-primary-200 hover:bg-primary-50/60"
+                      className="rounded-[1.35rem] border border-primary-100 bg-[#f7faf8] p-5 text-left transition hover:-translate-y-0.5 hover:border-primary-200 hover:bg-white hover:shadow-md hover:shadow-primary-900/10"
                     >
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-lg font-black text-neutral-900">
+                          <p className="text-lg font-black text-[#16302a]">
                             {day.label}, {day.date}
                           </p>
-                          <p className="text-xs font-semibold text-neutral-500">{day.focus}</p>
+                          <p className="text-xs font-semibold text-[#78928a]">{day.focus}</p>
                         </div>
                         <Badge variant={totals.planned === 4 ? "success" : "warning"}>
                           {totals.planned}/4
@@ -383,14 +391,14 @@ export default function MealPlanPage() {
                       </div>
                       <div className="mt-4 grid grid-cols-2 gap-2">
                         <div className="rounded-[1rem] bg-white px-4 py-3">
-                          <p className="text-[11px] font-black uppercase tracking-[0.12em] text-neutral-400">Calories</p>
-                          <p className="text-xl font-black tabular-nums text-neutral-900">
+                          <p className="text-[11px] font-black uppercase tracking-[0.12em] text-[#91a7a0]">Calories</p>
+                          <p className="text-xl font-black tabular-nums text-[#16302a]">
                             {totals.calories}
                           </p>
                         </div>
                         <div className="rounded-[1rem] bg-white px-4 py-3">
-                          <p className="text-[11px] font-black uppercase tracking-[0.12em] text-neutral-400">Protein</p>
-                          <p className="text-xl font-black tabular-nums text-neutral-900">
+                          <p className="text-[11px] font-black uppercase tracking-[0.12em] text-[#91a7a0]">Protein</p>
+                          <p className="text-xl font-black tabular-nums text-[#16302a]">
                             {totals.protein}g
                           </p>
                         </div>
@@ -407,8 +415,8 @@ export default function MealPlanPage() {
               <span className="flex h-12 w-12 items-center justify-center rounded-[1.15rem] bg-white text-primary-700">
                 <Dumbbell className="w-5 h-5" />
               </span>
-              <h2 className="mt-4 text-xl font-black text-neutral-900">Next best move</h2>
-              <p className="mt-2 text-base font-semibold leading-7 text-neutral-600">
+              <h2 className="mt-4 text-xl font-black text-[#16302a]">Next best move</h2>
+              <p className="mt-2 text-base font-semibold leading-7 text-[#516b63]">
                 Fill Tuesday dinner with a lean protein recipe so the week stays
                 above 135g protein per day.
               </p>
@@ -417,8 +425,8 @@ export default function MealPlanPage() {
               <span className="flex h-12 w-12 items-center justify-center rounded-[1.15rem] bg-accent-100 text-accent-700">
                 <ShoppingBasket className="w-5 h-5" />
               </span>
-              <h2 className="mt-4 text-xl font-black text-neutral-900">Ready for groceries</h2>
-              <p className="mt-2 text-base font-semibold leading-7 text-neutral-600">
+              <h2 className="mt-4 text-xl font-black text-[#16302a]">Ready for groceries</h2>
+              <p className="mt-2 text-base font-semibold leading-7 text-[#516b63]">
                 Your planned meals need 18 unique ingredients. Review grouped
                 items before shopping.
               </p>
