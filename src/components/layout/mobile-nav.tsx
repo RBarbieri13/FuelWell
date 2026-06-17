@@ -7,7 +7,7 @@ import {
   MessageSquare,
   PlusCircle,
   ShoppingBasket,
-  TrendingUp,
+  ClipboardList,
   Dumbbell,
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
@@ -18,7 +18,7 @@ const mobileNavItems = [
   { href: "/app/coach", label: "Coach", icon: MessageSquare, color: "text-sky-600" },
   { href: "/app/workouts", label: "Move", icon: Dumbbell, color: "text-sky-600" },
   { href: "/app/grocery-list", label: "Shop", icon: ShoppingBasket, color: "text-primary-600" },
-  { href: "/app/progress", label: "Progress", icon: TrendingUp, color: "text-lemon-600" },
+  { href: "/app/daily-review", label: "Review", icon: ClipboardList, color: "text-lemon-600" },
 ];
 
 export function MobileNav() {

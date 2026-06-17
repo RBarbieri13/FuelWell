@@ -6,6 +6,7 @@ import {
   ArrowRight,
   BookOpen,
   ChevronRight,
+  ClipboardList,
   Dumbbell,
   HeartPulse,
   Info,
@@ -309,7 +310,13 @@ export function DashboardClient({
         </Card>
       </section>
 
-      <section className="grid gap-3 sm:grid-cols-3">
+      <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <DeepLinkCard
+          href="/app/daily-review"
+          icon={<ClipboardList className="h-5 w-5" />}
+          title="Review the full day"
+          body="See nutrition, activity, and energy balance in one ledger."
+        />
         <DeepLinkCard
           href="/app/workouts"
           icon={<Dumbbell className="h-5 w-5" />}

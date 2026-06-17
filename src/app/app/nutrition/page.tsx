@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Beef, Coffee, Flame, Moon, Plus, Salad, Sun, UtensilsCrossed, Wheat } from "lucide-react";
+import { Activity, ArrowRight, Beef, Coffee, Flame, Moon, Plus, Salad, Sparkles, Sun, UtensilsCrossed, Wheat } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { headers } from "next/headers";
 import { Card } from "@/components/ui/card";
@@ -164,6 +164,30 @@ function NutritionDetail({
         <TargetTile label="Fat" current={totals.fat} target={targets.fat} unit="g" tone="accent" icon="fat" />
       </section>
 
+      <section className="grid gap-3 md:grid-cols-3">
+        <ReviewLinkCard
+          icon={Sparkles}
+          title="Full-day ledger"
+          detail="See nutrition beside fitness before asking the coach what to do next."
+          href="/app/daily-review"
+          action="Open daily detail"
+        />
+        <ReviewLinkCard
+          icon={Activity}
+          title="Fitness detail"
+          detail="Compare food room against planned and logged activity."
+          href="/app/fitness"
+          action="Open fitness"
+        />
+        <ReviewLinkCard
+          icon={UtensilsCrossed}
+          title="Add missing meal"
+          detail="Keep the score honest by filling in anything that is not counted yet."
+          href="/app/log"
+          action="Log food"
+        />
+      </section>
+
       {meals.length === 0 ? (
         <Card className="border-dashed border-primary-200 bg-white/75 text-center">
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[1.25rem] bg-primary-50 text-primary-700">
@@ -254,6 +278,37 @@ function NutritionDetail({
       )}
       </div>
     </div>
+  );
+}
+
+function ReviewLinkCard({
+  icon: Icon,
+  title,
+  detail,
+  href,
+  action,
+}: {
+  icon: typeof Salad;
+  title: string;
+  detail: string;
+  href: string;
+  action: string;
+}) {
+  return (
+    <Link
+      href={href}
+      className="group rounded-[1.25rem] border border-primary-100 bg-white px-5 py-5 shadow-[0_8px_22px_rgba(20,90,75,0.06)] transition hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-[0_14px_32px_rgba(20,90,75,0.09)]"
+    >
+      <span className="flex h-10 w-10 items-center justify-center rounded-[0.9rem] bg-primary-100 text-primary-700">
+        <Icon className="h-5 w-5" />
+      </span>
+      <h2 className="mt-4 font-heading text-lg font-black text-[#16302a]">{title}</h2>
+      <p className="mt-1 text-sm font-semibold leading-6 text-[#6e8981]">{detail}</p>
+      <span className="mt-4 inline-flex items-center gap-2 text-sm font-black text-primary-700">
+        {action}
+        <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+      </span>
+    </Link>
   );
 }
 

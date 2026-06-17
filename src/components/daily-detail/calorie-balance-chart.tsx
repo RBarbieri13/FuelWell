@@ -324,6 +324,9 @@ export function CalorieBalanceChart({
         </div>
 
         <div className="mt-6 overflow-x-auto pb-2">
+          <p className="mb-3 text-xs font-black uppercase tracking-[0.12em] text-[#91a7a0] md:hidden">
+            Swipe sideways to compare days
+          </p>
           <div
             className="grid min-w-[720px] items-end gap-3"
             style={{ gridTemplateColumns: `repeat(${filteredDays.length}, minmax(84px, 1fr))` }}
@@ -541,7 +544,7 @@ function BarDetailModal({
               {total.toLocaleString()}
             </p>
             <p className="pb-1 text-sm font-black uppercase tracking-[0.08em] text-[#9db0aa]">
-              calories
+              calories in this {isIntake ? "intake" : "output"} bar
             </p>
           </div>
           <div className="mt-4 flex h-5 overflow-hidden rounded-full bg-white">

@@ -8,6 +8,7 @@ import {
   Flame,
   Footprints,
   HeartPulse,
+  Info,
   Moon,
   Plus,
   Salad,
@@ -175,6 +176,31 @@ export function FitnessDetailSurface() {
 
         <FitnessSummaryCards />
 
+        <Card className="rounded-[1.5rem] border-primary-100 bg-white/85 px-6 py-5 shadow-[0_10px_26px_rgba(20,90,75,0.05)]">
+          <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-center">
+            <div className="flex gap-3">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-100 text-primary-700">
+                <Info className="h-5 w-5" />
+              </span>
+              <div>
+                <h2 className="font-heading text-lg font-black text-[#16302a]">
+                  Activity source check
+                </h2>
+                <p className="mt-1 text-sm font-semibold leading-6 text-[#6e8981]">
+                  Logged workouts count first. Planned movement stays visible so you can compare what happened with what the coach expected.
+                </p>
+              </div>
+            </div>
+            <Link
+              href="/app/daily-review"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-sm font-black text-primary-700 transition hover:bg-primary-100"
+            >
+              View full day
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </Card>
+
         <section className="space-y-4">
           {activityLog.map((activity) => (
             <ActivityLogCard key={activity.id} activity={activity} />
@@ -240,6 +266,30 @@ export function DailyReviewSurface({
         </section>
 
         <CalorieBalanceChart meals={meals} targets={targets} />
+
+        <section className="grid gap-3 md:grid-cols-3">
+          <SimpleSummaryCard
+            label="Logged meals"
+            value={`${meals.length}`}
+            detail="Food entries included in the nutrition side of this ledger."
+            tone="primary"
+            icon={Salad}
+          />
+          <SimpleSummaryCard
+            label="Activity entries"
+            value={`${activityLog.length}`}
+            detail="Movement signals included in the fitness side of this ledger."
+            tone="accent"
+            icon={Activity}
+          />
+          <SimpleSummaryCard
+            label="Next best review"
+            value={remaining(netCalories, targets.calories) > 0 ? "Dinner" : "Coach"}
+            detail="The next place to look based on calorie room and daily balance."
+            tone="sky"
+            icon={Sparkles}
+          />
+        </section>
 
         <section className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
           <div className="space-y-4">

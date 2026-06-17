@@ -4,6 +4,8 @@ import {
   Camera,
   MessageSquare,
   Barcode,
+  ClipboardList,
+  CalendarDays,
 } from "lucide-react";
 
 const actions = [
@@ -35,11 +37,25 @@ const actions = [
     iconBg: "bg-sky-50",
     iconColor: "text-sky-600",
   },
+  {
+    href: "/app/daily-review",
+    label: "Daily Review",
+    icon: ClipboardList,
+    iconBg: "bg-primary-50",
+    iconColor: "text-primary-600",
+  },
+  {
+    href: "/app/meal-plan",
+    label: "Meal Plan",
+    icon: CalendarDays,
+    iconBg: "bg-lemon-50",
+    iconColor: "text-lemon-700",
+  },
 ];
 
 export function QuickActions() {
   return (
-    <div className="grid grid-cols-2 gap-3">
+    <div className="grid grid-cols-2 gap-3 xl:grid-cols-3">
       {actions.map((action) => (
         <Link
           key={action.label}

@@ -39,6 +39,7 @@ export default function RecipesPage() {
   const quickCount = results.filter((recipe) => recipe.minutes <= 15).length;
   const highProteinCount = results.filter((recipe) => recipe.perServing.protein >= 30).length;
   const featured = results[0];
+  const hasRecipeFilters = query.trim().length > 0 || mealFilter !== "All" || diets.length > 0;
 
   return (
     <div className="mx-auto max-w-6xl space-y-6 p-4 pb-28 md:p-8">
@@ -143,6 +144,26 @@ export default function RecipesPage() {
                 </span>
               </div>
             </div>
+          )}
+        </div>
+        <div className="flex flex-col gap-2 rounded-[1.15rem] border border-primary-100 bg-primary-50/70 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm font-semibold text-primary-900/70">
+            {results.length} match{results.length === 1 ? "" : "es"} visible
+            {mealFilter !== "All" ? ` for ${mealFilter.toLowerCase()}` : ""}.
+            {highProteinCount > 0 ? ` ${highProteinCount} are 30g+ protein.` : " Try loosening filters for more protein options."}
+          </p>
+          {hasRecipeFilters && (
+            <button
+              type="button"
+              onClick={() => {
+                setQuery("");
+                setMealFilter("All");
+                diets.forEach((diet) => toggleDiet(diet));
+              }}
+              className="self-start rounded-full bg-white px-3 py-1.5 text-xs font-black text-primary-700 transition hover:bg-primary-100 sm:self-center"
+            >
+              Clear filters
+            </button>
           )}
         </div>
       </Card>
