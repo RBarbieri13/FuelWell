@@ -10,6 +10,7 @@ import {
   CheckCheck,
   CheckCircle2,
   Circle,
+  History,
   ListPlus,
   Plus,
   ShoppingBasket,
@@ -21,9 +22,31 @@ import {
   useGroceryList,
   setGroceryItems,
   type GroceryCategory,
+  type RichGroceryItem,
 } from "@/lib/use-grocery-list";
 
 const categories: GroceryCategory[] = ["Protein", "Produce", "Pantry", "Dairy", "Frozen", "Other"];
+const HISTORY_KEY = "fuelwell-grocery-history-v1";
+
+type GroceryHistoryEntry = {
+  id: string;
+  savedAt: string;
+  itemCount: number;
+  checkedCount: number;
+  items: RichGroceryItem[];
+};
+
+function loadGroceryHistory(): GroceryHistoryEntry[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = window.localStorage.getItem(HISTORY_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw) as GroceryHistoryEntry[];
+    return Array.isArray(parsed) ? parsed.slice(0, 4) : [];
+  } catch {
+    return [];
+  }
+}
 
 const categoryTone: Record<GroceryCategory, string> = {
   Protein: "bg-sky-100 text-sky-700 border-sky-100",
@@ -41,6 +64,7 @@ export default function GroceryListPage() {
   const [newItemName, setNewItemName] = useState("");
   const [newItemAmount, setNewItemAmount] = useState("");
   const [newItemCategory, setNewItemCategory] = useState<GroceryCategory>("Produce");
+  const [history, setHistory] = useState<GroceryHistoryEntry[]>(loadGroceryHistory);
   const [storeMode, setStoreMode] = useState({
     groupByAisle: true,
     hideChecked: false,
@@ -56,6 +80,15 @@ export default function GroceryListPage() {
   const visibleItems = storeMode.hideChecked
     ? filteredItems.filter((item) => !item.checked)
     : filteredItems;
+
+  function persistHistory(next: GroceryHistoryEntry[]) {
+    setHistory(next);
+    try {
+      window.localStorage.setItem(HISTORY_KEY, JSON.stringify(next));
+    } catch {
+      // Best-effort local archive.
+    }
+  }
 
   function toggleItem(itemId: string) {
     setGroceryItems(
@@ -90,6 +123,23 @@ export default function GroceryListPage() {
     setNewItemAmount("");
   }
 
+  function clearAndArchiveList() {
+    if (items.length === 0) return;
+    const entry: GroceryHistoryEntry = {
+      id: `list-${Date.now().toString(36)}`,
+      savedAt: new Date().toISOString(),
+      itemCount: items.length,
+      checkedCount,
+      items,
+    };
+    persistHistory([entry, ...history].slice(0, 4));
+    setGroceryItems([]);
+  }
+
+  function restoreList(entry: GroceryHistoryEntry) {
+    setGroceryItems(entry.items);
+  }
+
   return (
     <div className="fw-app-surface">
       <header className="fw-page-header">
@@ -109,6 +159,17 @@ export default function GroceryListPage() {
             >
               <CheckCheck className="w-5 h-5" />
               Mark all shopped
+            </Button>
+            <Button
+              type="button"
+              size="lg"
+              variant="secondary"
+              onClick={clearAndArchiveList}
+              disabled={items.length === 0}
+              className="rounded-full"
+            >
+              <History className="w-5 h-5" />
+              Clear list
             </Button>
             <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary-600 text-lg font-black text-white shadow-[0_16px_34px_rgba(21,145,108,0.24)]">
               M
@@ -324,6 +385,43 @@ export default function GroceryListPage() {
               Shop protein first, then produce. If time is short, skip pantry
               items that are already marked as backup sides.
             </p>
+          </Card>
+
+          <Card className="rounded-[22px] border-[#e6efeb] px-6 py-6 shadow-[0_8px_22px_rgba(20,90,75,0.06)]">
+            <h2 className="flex items-center gap-3 font-heading text-lg font-black tracking-tight text-[#16302a]">
+              <span className="fw-icon-chip h-10 w-10 rounded-full">
+                <History className="w-5 h-5" />
+              </span>
+              Past lists
+            </h2>
+            <div className="mt-4 space-y-3">
+              {history.length === 0 ? (
+                <p className="text-sm font-semibold leading-6 text-[#7c968f]">
+                  Cleared lists will appear here so you can review or restore what you bought before.
+                </p>
+              ) : (
+                history.map((entry) => (
+                  <button
+                    key={entry.id}
+                    type="button"
+                    onClick={() => restoreList(entry)}
+                    className="w-full rounded-[1rem] border border-primary-100 bg-[#f8fbf9] px-4 py-3 text-left transition hover:bg-primary-50"
+                  >
+                    <span className="block text-sm font-black text-[#16302a]">
+                      {entry.itemCount} items · {entry.checkedCount} shopped
+                    </span>
+                    <span className="mt-1 block text-xs font-semibold text-[#7c968f]">
+                      {new Date(entry.savedAt).toLocaleDateString([], {
+                        month: "short",
+                        day: "numeric",
+                        hour: "numeric",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                  </button>
+                ))
+              )}
+            </div>
           </Card>
 
           <Card className="rounded-[22px] border-[#e6efeb] px-6 py-6 shadow-[0_8px_22px_rgba(20,90,75,0.06)]">

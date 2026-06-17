@@ -72,7 +72,7 @@ export function AuthShell({
                   Preview mode
                 </p>
                 <p className="mt-1 text-lg font-black text-white">
-                  Setup takes about 2 minutes
+                  Setup takes a few minutes
                 </p>
               </div>
               <span className="flex h-12 w-12 items-center justify-center rounded-[1rem] bg-primary-400 text-primary-950">

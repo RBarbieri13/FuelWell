@@ -72,7 +72,7 @@ export default function SignupPage() {
   return (
     <AuthShell
       title="Create your account"
-      subtitle="Get a personalized nutrition plan in about 2 minutes."
+      subtitle="Get a personalized nutrition plan in a few minutes."
       panelTitle="Start with a plan that already knows the job."
       panelCopy="FuelWell sets targets, preferences, and coaching context before your first logged meal."
       features={[

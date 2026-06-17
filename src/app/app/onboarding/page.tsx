@@ -7,15 +7,22 @@ import {
   ArrowLeft,
   ArrowRight,
   BadgeCheck,
+  BarChart3,
   CalendarDays,
   Check,
   ChefHat,
+  Clock3,
   Dumbbell,
   Flame,
   HeartPulse,
   Leaf,
+  MapPin,
+  MessageCircle,
   Ruler,
+  Salad,
   Scale,
+  ShoppingBasket,
+  SlidersHorizontal,
   ShieldCheck,
   Sparkles,
   Target,
@@ -45,12 +52,23 @@ interface OnboardingData {
   displayName: string;
   dateOfBirth: string;
   gender: Gender | "";
-  heightCm: number | "";
-  weightKg: number | "";
+  heightIn: number | "";
+  weightLb: number | "";
   activityLevel: ActivityLevel | "";
   goal: Goal | "";
+  goalTimeline: string;
+  nutritionAggressiveness: string;
+  dietFlexibility: string;
   dietaryPreference: string;
+  foodsLove: string;
+  foodsAvoid: string;
+  groceryBudget: string;
+  cookingHabits: string;
   allergies: string[];
+  preferredWorkoutTypes: string[];
+  workoutLocation: string;
+  checkInPreference: string;
+  coachStyle: string;
   mealsPerDay: number;
   experienceLevel: string;
 }
@@ -59,12 +77,23 @@ const INITIAL_DATA: OnboardingData = {
   displayName: "",
   dateOfBirth: "",
   gender: "",
-  heightCm: "",
-  weightKg: "",
+  heightIn: "",
+  weightLb: "",
   activityLevel: "",
   goal: "",
+  goalTimeline: "steady",
+  nutritionAggressiveness: "mild",
+  dietFlexibility: "balanced",
   dietaryPreference: "none",
+  foodsLove: "",
+  foodsAvoid: "",
+  groceryBudget: "moderate",
+  cookingHabits: "mix",
   allergies: [],
+  preferredWorkoutTypes: [],
+  workoutLocation: "gym_home",
+  checkInPreference: "event_driven",
+  coachStyle: "direct_supportive",
   mealsPerDay: 3,
   experienceLevel: "beginner",
 };
@@ -88,8 +117,13 @@ const STEP_META = [
   { title: "Body context", short: "Body", icon: Ruler },
   { title: "Activity", short: "Move", icon: Activity },
   { title: "Goal", short: "Goal", icon: Target },
+  { title: "Goal pace", short: "Pace", icon: Clock3 },
+  { title: "Nutrition style", short: "Style", icon: SlidersHorizontal },
   { title: "Food style", short: "Diet", icon: Leaf },
+  { title: "Food habits", short: "Food", icon: ChefHat },
   { title: "Allergies", short: "Safety", icon: ShieldCheck },
+  { title: "Workouts", short: "Train", icon: Dumbbell },
+  { title: "Coach setup", short: "Coach", icon: MessageCircle },
   { title: "Plan preview", short: "Plan", icon: BadgeCheck },
 ] satisfies { title: string; short: string; icon: LucideIcon }[];
 
@@ -107,6 +141,24 @@ const GOAL_OPTIONS = [
   { value: "gain", label: "Gain weight", desc: "A controlled surplus", icon: Activity },
 ] satisfies { value: Goal; label: string; desc: string; icon: LucideIcon }[];
 
+const TIMELINE_OPTIONS = [
+  { value: "patient", label: "Patient", desc: "Slow and low-pressure", icon: Leaf },
+  { value: "steady", label: "Steady", desc: "Meaningful progress without over-correction", icon: Target },
+  { value: "urgent", label: "Urgent", desc: "A tighter plan for a near-term target", icon: Flame },
+];
+
+const AGGRESSION_OPTIONS = [
+  { value: "mild", label: "Mild", desc: "Small deficit and fewer hunger spikes", icon: Leaf },
+  { value: "moderate", label: "Moderate", desc: "Clear progress with flexible meals", icon: Target },
+  { value: "aggressive", label: "Aggressive", desc: "Faster cut with tighter boundaries", icon: Flame },
+];
+
+const FLEXIBILITY_OPTIONS = [
+  { value: "structured", label: "Structured", desc: "Give me tighter food lanes", icon: ShieldCheck },
+  { value: "balanced", label: "Balanced", desc: "Plan around real life", icon: SlidersHorizontal },
+  { value: "flexible", label: "Flexible", desc: "Keep options open when eating out", icon: Sparkles },
+];
+
 const DIET_OPTIONS = [
   { value: "none", label: "No preference", icon: Utensils },
   { value: "vegetarian", label: "Vegetarian", icon: Leaf },
@@ -114,6 +166,46 @@ const DIET_OPTIONS = [
   { value: "pescatarian", label: "Pescatarian", icon: ChefHat },
   { value: "keto", label: "Keto", icon: Flame },
   { value: "paleo", label: "Paleo", icon: Dumbbell },
+];
+
+const GROCERY_BUDGET_OPTIONS = [
+  { value: "budget", label: "Budget", desc: "Prioritize lower-cost staples", icon: ShoppingBasket },
+  { value: "moderate", label: "Moderate", desc: "Balance cost and variety", icon: Salad },
+  { value: "premium", label: "Premium", desc: "Quality and convenience matter most", icon: Sparkles },
+];
+
+const COOKING_OPTIONS = [
+  { value: "simple", label: "Simple prep", desc: "Minimal cooking, repeatable meals", icon: Utensils },
+  { value: "mix", label: "Mix of both", desc: "Cook some, eat out some", icon: ChefHat },
+  { value: "cook_often", label: "Cook often", desc: "Recipes and groceries should lead", icon: Salad },
+];
+
+const WORKOUT_TYPE_OPTIONS = [
+  { value: "strength", label: "Strength", icon: Dumbbell },
+  { value: "cardio", label: "Cardio", icon: Activity },
+  { value: "mobility", label: "Mobility", icon: HeartPulse },
+  { value: "sports", label: "Sports", icon: Flame },
+  { value: "classes", label: "Classes", icon: UserRound },
+  { value: "trainer", label: "Trainer plan", icon: ShieldCheck },
+];
+
+const WORKOUT_LOCATION_OPTIONS = [
+  { value: "gym", label: "Gym", desc: "Commercial gym equipment", icon: Dumbbell },
+  { value: "home", label: "Home", desc: "Home setup or bodyweight", icon: UserRound },
+  { value: "outdoors", label: "Outdoors", desc: "Walk, run, bike, sport", icon: MapPin },
+  { value: "gym_home", label: "Gym + home", desc: "Flexible training locations", icon: Activity },
+];
+
+const CHECK_IN_OPTIONS = [
+  { value: "event_driven", label: "Only when useful", desc: "Nudges after missed meals, overages, or workouts", icon: Sparkles },
+  { value: "daily", label: "Daily", desc: "One daily review prompt", icon: CalendarDays },
+  { value: "weekly", label: "Weekly", desc: "A weekly trend check-in", icon: Clock3 },
+];
+
+const COACH_STYLE_OPTIONS = [
+  { value: "direct_supportive", label: "Direct + supportive", desc: "Clear next moves, no judgment", icon: Target },
+  { value: "data_first", label: "Data first", desc: "Show the why behind recommendations", icon: BarChart3 },
+  { value: "encouraging", label: "Encouraging", desc: "More reassurance and habit language", icon: HeartPulse },
 ];
 
 export default function OnboardingPage() {
@@ -205,6 +297,15 @@ export default function OnboardingPage() {
     }));
   }
 
+  function toggleWorkoutType(workoutType: string) {
+    setData((prev) => ({
+      ...prev,
+      preferredWorkoutTypes: prev.preferredWorkoutTypes.includes(workoutType)
+        ? prev.preferredWorkoutTypes.filter((item) => item !== workoutType)
+        : [...prev.preferredWorkoutTypes, workoutType],
+    }));
+  }
+
   function canProceed(): boolean {
     switch (step) {
       case 0:
@@ -215,15 +316,24 @@ export default function OnboardingPage() {
       case 3:
         return !!data.gender;
       case 4:
-        return !!data.heightCm && !!data.weightKg && Number(data.heightCm) >= 50 && Number(data.weightKg) >= 20;
+        return !!data.heightIn && !!data.weightLb && Number(data.heightIn) >= 36 && Number(data.weightLb) >= 60;
       case 5:
         return !!data.activityLevel;
       case 6:
         return !!data.goal;
       case 7:
+        return !!data.goalTimeline;
       case 8:
-        return true;
+        return !!data.nutritionAggressiveness && !!data.dietFlexibility;
       case 9:
+      case 10:
+      case 11:
+        return true;
+      case 12:
+        return data.preferredWorkoutTypes.length > 0;
+      case 13:
+        return !!data.workoutLocation && !!data.checkInPreference && !!data.coachStyle;
+      case 14:
         return !!previewMacros;
       default:
         return true;
@@ -239,7 +349,7 @@ export default function OnboardingPage() {
   }
 
   async function handleComplete() {
-    if (!data.gender || !data.heightCm || !data.weightKg || !data.activityLevel || !data.goal || !data.dateOfBirth) {
+    if (!data.gender || !data.heightIn || !data.weightLb || !data.activityLevel || !data.goal || !data.dateOfBirth) {
       setError("Please complete all required fields.");
       return;
     }
@@ -248,14 +358,17 @@ export default function OnboardingPage() {
     setError(null);
 
     const age = calculateAge(data.dateOfBirth);
+    const heightCm = inchesToCm(Number(data.heightIn));
+    const weightKg = poundsToKg(Number(data.weightLb));
     const macros = calculateMacroTargets({
       gender: data.gender as Gender,
-      weightKg: Number(data.weightKg),
-      heightCm: Number(data.heightCm),
+      weightKg,
+      heightCm,
       age,
       activityLevel: data.activityLevel as ActivityLevel,
       goal: data.goal as Goal,
     });
+    const preferencesJson = buildOnboardingPreferences(data);
 
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -290,8 +403,8 @@ export default function OnboardingPage() {
         display_name: data.displayName || undefined,
         date_of_birth: data.dateOfBirth,
         gender: data.gender,
-        height_cm: Number(data.heightCm),
-        weight_kg: Number(data.weightKg),
+        height_cm: heightCm,
+        weight_kg: weightKg,
         activity_level: data.activityLevel,
         goal: data.goal,
         dietary_preference: data.dietaryPreference,
@@ -303,6 +416,7 @@ export default function OnboardingPage() {
         carbs_target: macros.carbs,
         fat_target: macros.fat,
         onboarding_complete: true,
+        preferences_jsonb: preferencesJson,
       })
       .eq("id", user.id);
 
@@ -319,10 +433,11 @@ export default function OnboardingPage() {
 
   const completionItems = [
     { label: "Basics", done: !!data.dateOfBirth && !!data.gender },
-    { label: "Body metrics", done: !!data.heightCm && !!data.weightKg },
+    { label: "Body metrics", done: !!data.heightIn && !!data.weightLb },
     { label: "Activity", done: !!data.activityLevel },
-    { label: "Goal", done: !!data.goal },
+    { label: "Goal pace", done: !!data.goal && !!data.goalTimeline },
     { label: "Food rules", done: !!data.dietaryPreference },
+    { label: "Training", done: data.preferredWorkoutTypes.length > 0 },
   ];
 
   return (
@@ -424,14 +539,14 @@ export default function OnboardingPage() {
                 />
               </div>
 
-              <div className="mt-4 hidden grid-cols-10 gap-2 md:grid">
+              <div className="mt-4 hidden flex-wrap gap-2 md:flex">
                 {STEP_META.map((meta, index) => (
                   <button
                     key={meta.short}
                     type="button"
                     onClick={() => setStep(index)}
                     className={cn(
-                      "rounded-full px-2.5 py-2 text-xs font-black transition",
+                      "rounded-full px-2.5 py-2 text-[11px] font-black transition",
                       index === step
                         ? "bg-primary-600 text-white shadow-[0_12px_26px_rgba(21,145,108,0.22)]"
                         : index < step
@@ -509,25 +624,25 @@ export default function OnboardingPage() {
                 >
                   <div className="grid gap-4 sm:grid-cols-2">
                     <Input
-                      label="Height (cm)"
+                      label="Height (in)"
                       type="number"
-                      value={data.heightCm}
-                      onChange={(event) => update("heightCm", event.target.value ? Number(event.target.value) : "")}
-                      placeholder="170"
+                      value={data.heightIn}
+                      onChange={(event) => update("heightIn", event.target.value ? Number(event.target.value) : "")}
+                      placeholder="70"
                       className="h-14 text-base"
                     />
                     <Input
-                      label="Weight (kg)"
+                      label="Weight (lb)"
                       type="number"
-                      value={data.weightKg}
-                      onChange={(event) => update("weightKg", event.target.value ? Number(event.target.value) : "")}
-                      placeholder="70"
+                      value={data.weightLb}
+                      onChange={(event) => update("weightLb", event.target.value ? Number(event.target.value) : "")}
+                      placeholder="180"
                       className="h-14 text-base"
                     />
                   </div>
                   <div className="grid gap-3 sm:grid-cols-2">
-                    <MiniMetric icon={Ruler} label="Height" value={data.heightCm ? `${data.heightCm} cm` : "Needed"} />
-                    <MiniMetric icon={Scale} label="Weight" value={data.weightKg ? `${data.weightKg} kg` : "Needed"} />
+                    <MiniMetric icon={Ruler} label="Height" value={data.heightIn ? `${data.heightIn} in` : "Needed"} />
+                    <MiniMetric icon={Scale} label="Weight" value={data.weightLb ? `${data.weightLb} lb` : "Needed"} />
                   </div>
                 </StepWrapper>
               )}
@@ -571,6 +686,68 @@ export default function OnboardingPage() {
               )}
               {step === 7 && (
                 <StepWrapper
+                  title="How quickly would you like to reach it?"
+                  subtitle="This sets the pace. The coach should always make clear that you can change it later."
+                >
+                  <div className="grid gap-3 md:grid-cols-3">
+                    {TIMELINE_OPTIONS.map((option) => (
+                      <OptionTile
+                        key={option.value}
+                        selected={data.goalTimeline === option.value}
+                        onClick={() => update("goalTimeline", option.value)}
+                        icon={option.icon}
+                        title={option.label}
+                        description={option.desc}
+                      />
+                    ))}
+                  </div>
+                </StepWrapper>
+              )}
+              {step === 8 && (
+                <StepWrapper
+                  title="How should nutrition feel?"
+                  subtitle="Pick both the deficit intensity and how much flexibility should be preserved."
+                >
+                  <div className="space-y-5">
+                    <div>
+                      <p className="mb-3 text-sm font-black uppercase tracking-[0.14em] text-[#91a7a0]">
+                        Nutrition aggressiveness
+                      </p>
+                      <div className="grid gap-3 md:grid-cols-3">
+                        {AGGRESSION_OPTIONS.map((option) => (
+                          <OptionTile
+                            key={option.value}
+                            selected={data.nutritionAggressiveness === option.value}
+                            onClick={() => update("nutritionAggressiveness", option.value)}
+                            icon={option.icon}
+                            title={option.label}
+                            description={option.desc}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <p className="mb-3 text-sm font-black uppercase tracking-[0.14em] text-[#91a7a0]">
+                        Diet flexibility
+                      </p>
+                      <div className="grid gap-3 md:grid-cols-3">
+                        {FLEXIBILITY_OPTIONS.map((option) => (
+                          <OptionTile
+                            key={option.value}
+                            selected={data.dietFlexibility === option.value}
+                            onClick={() => update("dietFlexibility", option.value)}
+                            icon={option.icon}
+                            title={option.label}
+                            description={option.desc}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </StepWrapper>
+              )}
+              {step === 9 && (
+                <StepWrapper
                   title="Any food style to respect?"
                   subtitle="This tunes recipes and coach suggestions without hiding manual logging."
                 >
@@ -587,7 +764,68 @@ export default function OnboardingPage() {
                   </div>
                 </StepWrapper>
               )}
-              {step === 8 && (
+              {step === 10 && (
+                <StepWrapper
+                  title="What foods and habits should FuelWell remember?"
+                  subtitle="These answers feed the coach and grocery/recipe suggestions without forcing strict meal plans."
+                >
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <Input
+                      label="Foods you love"
+                      type="text"
+                      value={data.foodsLove}
+                      onChange={(event) => update("foodsLove", event.target.value)}
+                      placeholder="Greek yogurt, steak, berries"
+                      className="h-14 text-base"
+                    />
+                    <Input
+                      label="Foods you avoid or dislike"
+                      type="text"
+                      value={data.foodsAvoid}
+                      onChange={(event) => update("foodsAvoid", event.target.value)}
+                      placeholder="Mushrooms, spicy food"
+                      className="h-14 text-base"
+                    />
+                  </div>
+                  <div className="grid gap-5 xl:grid-cols-2">
+                    <div>
+                      <p className="mb-3 text-sm font-black uppercase tracking-[0.14em] text-[#91a7a0]">
+                        Grocery budget habits
+                      </p>
+                      <div className="grid gap-3">
+                        {GROCERY_BUDGET_OPTIONS.map((option) => (
+                          <OptionTile
+                            key={option.value}
+                            selected={data.groceryBudget === option.value}
+                            onClick={() => update("groceryBudget", option.value)}
+                            icon={option.icon}
+                            title={option.label}
+                            description={option.desc}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <p className="mb-3 text-sm font-black uppercase tracking-[0.14em] text-[#91a7a0]">
+                        Cooking habits
+                      </p>
+                      <div className="grid gap-3">
+                        {COOKING_OPTIONS.map((option) => (
+                          <OptionTile
+                            key={option.value}
+                            selected={data.cookingHabits === option.value}
+                            onClick={() => update("cookingHabits", option.value)}
+                            icon={option.icon}
+                            title={option.label}
+                            description={option.desc}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </StepWrapper>
+              )}
+              {step === 11 && (
                 <StepWrapper
                   title="Any allergies to flag?"
                   subtitle="Select anything the coach should treat as a hard constraint."
@@ -606,7 +844,85 @@ export default function OnboardingPage() {
                   </div>
                 </StepWrapper>
               )}
-              {step === 9 && (
+              {step === 12 && (
+                <StepWrapper
+                  title="What types of workouts do you prefer?"
+                  subtitle="Choose all that apply. This helps the coach recommend movement you will actually do."
+                >
+                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                    {WORKOUT_TYPE_OPTIONS.map((option) => (
+                      <OptionTile
+                        key={option.value}
+                        selected={data.preferredWorkoutTypes.includes(option.value)}
+                        onClick={() => toggleWorkoutType(option.value)}
+                        icon={option.icon}
+                        title={option.label}
+                      />
+                    ))}
+                  </div>
+                </StepWrapper>
+              )}
+              {step === 13 && (
+                <StepWrapper
+                  title="Where and how should the coach check in?"
+                  subtitle="Workout location, check-in cadence, and coach style stay editable in Settings."
+                >
+                  <div className="space-y-5">
+                    <div>
+                      <p className="mb-3 text-sm font-black uppercase tracking-[0.14em] text-[#91a7a0]">
+                        Workout location
+                      </p>
+                      <div className="grid gap-3 md:grid-cols-2">
+                        {WORKOUT_LOCATION_OPTIONS.map((option) => (
+                          <OptionTile
+                            key={option.value}
+                            selected={data.workoutLocation === option.value}
+                            onClick={() => update("workoutLocation", option.value)}
+                            icon={option.icon}
+                            title={option.label}
+                            description={option.desc}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <p className="mb-3 text-sm font-black uppercase tracking-[0.14em] text-[#91a7a0]">
+                        Check-in preference
+                      </p>
+                      <div className="grid gap-3 md:grid-cols-3">
+                        {CHECK_IN_OPTIONS.map((option) => (
+                          <OptionTile
+                            key={option.value}
+                            selected={data.checkInPreference === option.value}
+                            onClick={() => update("checkInPreference", option.value)}
+                            icon={option.icon}
+                            title={option.label}
+                            description={option.desc}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <p className="mb-3 text-sm font-black uppercase tracking-[0.14em] text-[#91a7a0]">
+                        Coaching style
+                      </p>
+                      <div className="grid gap-3 md:grid-cols-3">
+                        {COACH_STYLE_OPTIONS.map((option) => (
+                          <OptionTile
+                            key={option.value}
+                            selected={data.coachStyle === option.value}
+                            onClick={() => update("coachStyle", option.value)}
+                            icon={option.icon}
+                            title={option.label}
+                            description={option.desc}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </StepWrapper>
+              )}
+              {step === 14 && (
                 <StepWrapper
                   title="Review your starting plan"
                   subtitle="This is the first estimate. The dashboard and coach can tune it as real logs come in."
@@ -632,6 +948,11 @@ export default function OnboardingPage() {
                       <div className="grid gap-3 md:grid-cols-3">
                         <SummaryPill label="Goal" value={data.goal ? `${data.goal} weight` : "Unset"} />
                         <SummaryPill label="Activity" value={data.activityLevel ? formatActivity(data.activityLevel) : "Unset"} />
+                        <SummaryPill label="Style" value={formatOption(AGGRESSION_OPTIONS, data.nutritionAggressiveness)} />
+                      </div>
+                      <div className="grid gap-3 md:grid-cols-3">
+                        <SummaryPill label="Timeline" value={formatOption(TIMELINE_OPTIONS, data.goalTimeline)} />
+                        <SummaryPill label="Flexibility" value={formatOption(FLEXIBILITY_OPTIONS, data.dietFlexibility)} />
                         <SummaryPill label="Diet" value={formatDiet(data.dietaryPreference)} />
                       </div>
                       {data.allergies.length > 0 && (
@@ -693,7 +1014,7 @@ function WelcomeStep() {
           A few answers turn FuelWell into your daily decision system.
         </h2>
         <p className="mt-3 max-w-2xl text-sm font-semibold leading-6 text-[#6f8981] md:mt-4 md:text-base md:leading-7">
-          Setup takes about two minutes. You will leave with calorie and macro
+          Setup takes a few minutes. You will leave with calorie and macro
           targets, food preferences, and enough context for the coach to make
           useful suggestions immediately.
         </p>
@@ -820,7 +1141,8 @@ function PlanPreview({
       <div className="mt-5 flex flex-wrap gap-2">
         <SummaryChip label={data.goal ? `${data.goal} goal` : "Goal pending"} />
         <SummaryChip label={data.activityLevel ? formatActivity(data.activityLevel) : "Activity pending"} />
-        <SummaryChip label={formatDiet(data.dietaryPreference)} />
+        <SummaryChip label={formatOption(AGGRESSION_OPTIONS, data.nutritionAggressiveness)} />
+        <SummaryChip label={formatOption(CHECK_IN_OPTIONS, data.checkInPreference)} />
       </div>
     </div>
   );
@@ -898,14 +1220,14 @@ function SummaryPill({ label, value }: { label: string; value: string }) {
 }
 
 function getPreviewMacros(data: OnboardingData) {
-  if (!data.gender || !data.heightCm || !data.weightKg || !data.activityLevel || !data.goal || !data.dateOfBirth) {
+  if (!data.gender || !data.heightIn || !data.weightLb || !data.activityLevel || !data.goal || !data.dateOfBirth) {
     return null;
   }
   const age = calculateAge(data.dateOfBirth);
   return calculateMacroTargets({
     gender: data.gender as Gender,
-    weightKg: Number(data.weightKg),
-    heightCm: Number(data.heightCm),
+    weightKg: poundsToKg(Number(data.weightLb)),
+    heightCm: inchesToCm(Number(data.heightIn)),
     age,
     activityLevel: data.activityLevel as ActivityLevel,
     goal: data.goal as Goal,
@@ -922,6 +1244,51 @@ function formatActivity(value: ActivityLevel) {
 
 function formatDiet(value: string) {
   return DIET_OPTIONS.find((option) => option.value === value)?.label ?? value;
+}
+
+function formatOption(options: Array<{ value: string; label: string }>, value: string) {
+  return options.find((option) => option.value === value)?.label ?? value.replace(/_/g, " ");
+}
+
+function parseCommaList(value: string) {
+  return value
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function inchesToCm(inches: number) {
+  return Math.round(inches * 2.54 * 10) / 10;
+}
+
+function poundsToKg(pounds: number) {
+  return Math.round(pounds * 0.45359237 * 10) / 10;
+}
+
+function buildOnboardingPreferences(data: OnboardingData) {
+  const diets = data.dietaryPreference === "none" ? [] : [data.dietaryPreference];
+  return {
+    units: "imperial",
+    diets,
+    allergies: data.allergies,
+    likes: parseCommaList(data.foodsLove),
+    dislikes: parseCommaList(data.foodsAvoid),
+    onboarding: {
+      heightIn: data.heightIn,
+      weightLb: data.weightLb,
+      goalTimeline: data.goalTimeline,
+      nutritionAggressiveness: data.nutritionAggressiveness,
+      dietFlexibility: data.dietFlexibility,
+      foodsLove: parseCommaList(data.foodsLove),
+      foodsAvoid: parseCommaList(data.foodsAvoid),
+      groceryBudget: data.groceryBudget,
+      cookingHabits: data.cookingHabits,
+      preferredWorkoutTypes: data.preferredWorkoutTypes,
+      workoutLocation: data.workoutLocation,
+      checkInPreference: data.checkInPreference,
+      coachStyle: data.coachStyle,
+    },
+  };
 }
 
 function isBrowserPreviewRuntime() {

@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { CalorieBalanceChart } from "@/components/daily-detail/calorie-balance-chart";
 import {
   formatMealType,
   percentOf,
@@ -237,6 +238,8 @@ export function DailyReviewSurface({
           <SimpleSummaryCard label="Net calories" value={netCalories.toLocaleString()} detail={`${remaining(netCalories, targets.calories)} kcal room after activity`} tone="sky" icon={Target} />
           <SimpleSummaryCard label="Protein" value={`${totals.protein}g`} detail={`${remaining(totals.protein, targets.protein)}g left of ${targets.protein}`} tone="lemon" icon={Beef} />
         </section>
+
+        <CalorieBalanceChart meals={meals} targets={targets} />
 
         <section className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
           <div className="space-y-4">

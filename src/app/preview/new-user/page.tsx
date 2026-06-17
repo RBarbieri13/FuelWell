@@ -41,7 +41,7 @@ export default function NewUserPreviewPage() {
         <section className="grid gap-3 md:grid-cols-3">
           {[
             ["1", "Create preview account", "A fake local account path avoids email, OAuth, and production writes."],
-            ["2", "Answer intake questions", "Name, birthday, body context, activity, goal, diet, and allergies."],
+            ["2", "Answer intake questions", "Body context, goal pace, nutrition style, food habits, workouts, check-ins, and coach tone."],
             ["3", "Review generated plan", "Calories and macros are calculated before entering the dashboard."],
           ].map(([number, title, body]) => (
             <article

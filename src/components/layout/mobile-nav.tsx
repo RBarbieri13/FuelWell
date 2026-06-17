@@ -6,6 +6,7 @@ import {
   LayoutDashboard,
   MessageSquare,
   PlusCircle,
+  ShoppingBasket,
   TrendingUp,
   Dumbbell,
 } from "lucide-react";
@@ -16,6 +17,7 @@ const mobileNavItems = [
   { href: "/app/log", label: "Log", icon: PlusCircle, highlight: true, color: "text-accent-600" },
   { href: "/app/coach", label: "Coach", icon: MessageSquare, color: "text-sky-600" },
   { href: "/app/workouts", label: "Move", icon: Dumbbell, color: "text-sky-600" },
+  { href: "/app/grocery-list", label: "Shop", icon: ShoppingBasket, color: "text-primary-600" },
   { href: "/app/progress", label: "Progress", icon: TrendingUp, color: "text-lemon-600" },
 ];
 
@@ -37,7 +39,7 @@ export function MobileNav() {
               href={item.href}
               aria-current={isActive ? "page" : undefined}
               className={cn(
-                "flex flex-col items-center gap-0.5 px-2.5 py-1.5 text-xs tracking-tight font-semibold transition-colors",
+                "flex min-w-0 flex-1 flex-col items-center gap-0.5 px-1 py-1.5 text-[11px] font-semibold tracking-tight transition-colors",
                 isActive || item.highlight ? item.color : "text-neutral-400 hover:text-primary-700"
               )}
             >

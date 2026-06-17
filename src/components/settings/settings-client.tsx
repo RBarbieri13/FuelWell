@@ -18,9 +18,16 @@ import {
   Salad,
   ShieldAlert,
   Bell,
+  CalendarDays,
+  ChefHat,
+  Clock3,
   Download,
   LogOut,
   Info,
+  MapPin,
+  MessageCircle,
+  Save,
+  SlidersHorizontal,
   Watch,
 } from "lucide-react";
 
@@ -29,6 +36,125 @@ interface SettingsClientProps {
   displayName: string;
   isPreview: boolean;
   appVersion: string;
+  initialIntakePreferences?: Record<string, unknown>;
+}
+
+type IntakePreferences = {
+  goalTimeline: string;
+  nutritionAggressiveness: string;
+  dietFlexibility: string;
+  groceryBudget: string;
+  cookingHabits: string;
+  workoutLocation: string;
+  checkInPreference: string;
+  coachStyle: string;
+};
+
+const DEFAULT_INTAKE: IntakePreferences = {
+  goalTimeline: "steady",
+  nutritionAggressiveness: "mild",
+  dietFlexibility: "balanced",
+  groceryBudget: "moderate",
+  cookingHabits: "mix",
+  workoutLocation: "gym_home",
+  checkInPreference: "event_driven",
+  coachStyle: "direct_supportive",
+};
+
+const INTAKE_GROUPS = [
+  {
+    key: "goalTimeline",
+    label: "Goal timeline",
+    icon: Clock3,
+    options: [
+      { value: "patient", label: "Patient" },
+      { value: "steady", label: "Steady" },
+      { value: "urgent", label: "Urgent" },
+    ],
+  },
+  {
+    key: "nutritionAggressiveness",
+    label: "Nutrition aggressiveness",
+    icon: SlidersHorizontal,
+    options: [
+      { value: "mild", label: "Mild" },
+      { value: "moderate", label: "Moderate" },
+      { value: "aggressive", label: "Aggressive" },
+    ],
+  },
+  {
+    key: "dietFlexibility",
+    label: "Diet flexibility",
+    icon: Salad,
+    options: [
+      { value: "structured", label: "Structured" },
+      { value: "balanced", label: "Balanced" },
+      { value: "flexible", label: "Flexible" },
+    ],
+  },
+  {
+    key: "groceryBudget",
+    label: "Grocery budget",
+    icon: ChefHat,
+    options: [
+      { value: "budget", label: "Budget" },
+      { value: "moderate", label: "Moderate" },
+      { value: "premium", label: "Premium" },
+    ],
+  },
+  {
+    key: "cookingHabits",
+    label: "Cooking habits",
+    icon: CalendarDays,
+    options: [
+      { value: "simple", label: "Simple prep" },
+      { value: "mix", label: "Mix" },
+      { value: "cook_often", label: "Cook often" },
+    ],
+  },
+  {
+    key: "workoutLocation",
+    label: "Workout location",
+    icon: MapPin,
+    options: [
+      { value: "gym", label: "Gym" },
+      { value: "home", label: "Home" },
+      { value: "outdoors", label: "Outdoors" },
+      { value: "gym_home", label: "Gym + home" },
+    ],
+  },
+  {
+    key: "checkInPreference",
+    label: "Check-ins",
+    icon: Bell,
+    options: [
+      { value: "event_driven", label: "Only when useful" },
+      { value: "daily", label: "Daily" },
+      { value: "weekly", label: "Weekly" },
+    ],
+  },
+  {
+    key: "coachStyle",
+    label: "Coach style",
+    icon: MessageCircle,
+    options: [
+      { value: "direct_supportive", label: "Direct + supportive" },
+      { value: "data_first", label: "Data first" },
+      { value: "encouraging", label: "Encouraging" },
+    ],
+  },
+] satisfies Array<{
+  key: keyof IntakePreferences;
+  label: string;
+  icon: typeof Clock3;
+  options: Array<{ value: string; label: string }>;
+}>;
+
+function normalizeIntakePreferences(raw?: Record<string, unknown>): IntakePreferences {
+  return {
+    ...DEFAULT_INTAKE,
+    ...(raw ?? {}),
+  } as IntakePreferences;
 }
 
 export function SettingsClient({
@@ -36,6 +162,7 @@ export function SettingsClient({
   displayName,
   isPreview,
   appVersion,
+  initialIntakePreferences,
 }: SettingsClientProps) {
   const router = useRouter();
   const { units, setUnits } = useUnits();
@@ -46,6 +173,11 @@ export function SettingsClient({
     disconnectIntegrationSummary,
   } = useGoalContextStore();
   const [signingOut, setSigningOut] = useState(false);
+  const [intakePrefs, setIntakePrefs] = useState<IntakePreferences>(() =>
+    normalizeIntakePreferences(initialIntakePreferences)
+  );
+  const [savingIntake, setSavingIntake] = useState(false);
+  const [savedIntake, setSavedIntake] = useState(false);
 
   // Known filters get their display label; free-form diets set via Coach
   // (e.g. "vegetarian") render as-is so they don't silently disappear.
@@ -59,6 +191,51 @@ export function SettingsClient({
     await supabase.auth.signOut();
     router.push("/login");
     router.refresh();
+  }
+
+  function updateIntakePreference(key: keyof IntakePreferences, value: string) {
+    setIntakePrefs((current) => ({ ...current, [key]: value }));
+    setSavedIntake(false);
+  }
+
+  async function saveIntakePreferences() {
+    setSavingIntake(true);
+    setSavedIntake(false);
+    try {
+      if (isPreview) {
+        window.localStorage.setItem("fuelwell:preview-intake-preferences", JSON.stringify(intakePrefs));
+        setSavedIntake(true);
+        return;
+      }
+
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data } = await supabase
+        .from("profiles")
+        .select("preferences_jsonb")
+        .eq("id", user.id)
+        .single();
+      const current = (data?.preferences_jsonb ?? {}) as Record<string, unknown>;
+      await supabase
+        .from("profiles")
+        .update({
+          preferences_jsonb: {
+            ...current,
+            onboarding: {
+              ...((current.onboarding ?? {}) as Record<string, unknown>),
+              ...intakePrefs,
+            },
+          },
+        })
+        .eq("id", user.id);
+      setSavedIntake(true);
+    } finally {
+      setSavingIntake(false);
+    }
   }
 
   return (
@@ -239,6 +416,35 @@ export function SettingsClient({
           </Section>
         </section>
 
+        <Section title="Intake preferences">
+          <Card className="space-y-5 px-6 py-6">
+            <div className="flex flex-col justify-between gap-3 md:flex-row md:items-start">
+              <div>
+                <h2 className="text-2xl font-black text-neutral-900">
+                  Edit your signup answers
+                </h2>
+                <p className="mt-1 max-w-2xl text-sm font-semibold leading-6 text-neutral-500">
+                  These preferences guide coaching, meal flexibility, grocery suggestions, and workout recommendations.
+                </p>
+              </div>
+              <Button onClick={saveIntakePreferences} loading={savingIntake} className="rounded-full">
+                <Save className="h-4 w-4" />
+                {savedIntake ? "Saved" : "Save changes"}
+              </Button>
+            </div>
+            <div className="grid gap-4 lg:grid-cols-2">
+              {INTAKE_GROUPS.map((group) => (
+                <IntakePreferenceGroup
+                  key={group.key}
+                  group={group}
+                  value={intakePrefs[group.key]}
+                  onChange={(value) => updateIntakePreference(group.key, value)}
+                />
+              ))}
+            </div>
+          </Card>
+        </Section>
+
         <section className="grid gap-4 xl:grid-cols-[1fr_1fr]">
           <Section title="Notifications">
             <ActionCard icon={Bell} title="Meal reminders & coach nudges" detail="Push and email notifications are not available yet.">
@@ -335,6 +541,47 @@ function PreferenceBlock({
         <span className="text-sm font-black text-neutral-900">{title}</span>
       </div>
       {children}
+    </div>
+  );
+}
+
+function IntakePreferenceGroup({
+  group,
+  value,
+  onChange,
+}: {
+  group: (typeof INTAKE_GROUPS)[number];
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  const Icon = group.icon;
+
+  return (
+    <div className="rounded-[1.35rem] border border-primary-100/80 bg-[#f8fbf9] p-4">
+      <div className="mb-3 flex items-center gap-2">
+        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-primary-700">
+          <Icon className="h-4 w-4" />
+        </span>
+        <p className="text-sm font-black text-neutral-900">{group.label}</p>
+      </div>
+      <div className="flex flex-wrap gap-2">
+        {group.options.map((option) => (
+          <button
+            key={option.value}
+            type="button"
+            onClick={() => onChange(option.value)}
+            aria-pressed={value === option.value}
+            className={cn(
+              "rounded-full px-3.5 py-2 text-xs font-black transition",
+              value === option.value
+                ? "bg-primary-600 text-white shadow-[0_10px_22px_rgba(21,145,108,0.18)]"
+                : "bg-white text-neutral-500 hover:bg-primary-50 hover:text-primary-700"
+            )}
+          >
+            {option.label}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }

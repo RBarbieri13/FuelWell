@@ -41,8 +41,8 @@ export default function PreviewHubPage() {
               signup and intake from a clean first-run state.
             </p>
             <p className="mt-2 inline-flex items-center gap-2 rounded-full border border-accent-300/20 bg-accent-300/10 px-3 py-1 text-xs font-black text-accent-200">
-              New in v1.5: Claude Design system pass — richer summary cards,
-              tighter iOS layouts, workout database, groceries, and progress.
+              New in v1.6: Daily nutrition + fitness detail, expanded intake,
+              workout previews, grocery history, and richer review cards.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
