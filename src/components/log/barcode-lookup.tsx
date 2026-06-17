@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Barcode, Search } from "lucide-react";
+import { Barcode, CheckCircle2, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import type { FoodItem } from "@/lib/food-database";
@@ -46,10 +46,12 @@ export function BarcodeLookup({ onSelect }: { onSelect: (food: FoodItem) => void
     <Card className="space-y-4">
       <div>
         <div className="flex items-center gap-2">
-          <Barcode className="h-5 w-5 text-primary-700" />
-          <h2 className="text-lg font-black text-neutral-900">Barcode lookup</h2>
+          <span className="flex h-10 w-10 items-center justify-center rounded-[1rem] bg-primary-100 text-primary-700">
+            <Barcode className="h-5 w-5" />
+          </span>
+          <h2 className="text-lg font-black text-[#16302a]">Barcode lookup</h2>
         </div>
-        <p className="mt-1 text-sm font-medium leading-6 text-neutral-500">
+        <p className="mt-2 text-sm font-semibold leading-6 text-[#78928a]">
           Use the camera keyboard scanner or paste a barcode. FuelWell only saves a match after you review the portion.
         </p>
       </div>
@@ -61,7 +63,7 @@ export function BarcodeLookup({ onSelect }: { onSelect: (food: FoodItem) => void
           onChange={(event) => setBarcode(event.target.value)}
           placeholder="Try 000000000104"
           aria-label="Barcode number"
-          className="min-h-12 flex-1 rounded-2xl border border-neutral-200 bg-white px-4 text-base font-bold text-neutral-900 placeholder:text-neutral-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary-500"
+          className="min-h-12 flex-1 rounded-[1.15rem] border border-primary-100 bg-primary-50/55 px-4 text-base font-bold text-[#16302a] placeholder:text-[#91a7a0] focus:border-transparent focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-500"
         />
         <Button onClick={lookup} loading={loading} disabled={barcode.trim().length < 8}>
           <Search className="h-4 w-4" />
@@ -76,22 +78,23 @@ export function BarcodeLookup({ onSelect }: { onSelect: (food: FoodItem) => void
       )}
 
       {result?.found === false && (
-        <div className="rounded-2xl border border-dashed border-neutral-300 bg-neutral-50 p-5">
-          <p className="font-bold text-neutral-900">No verified match.</p>
-          <p className="mt-1 text-sm font-medium text-neutral-500">{result.message}</p>
+        <div className="rounded-[1.35rem] border border-dashed border-primary-200 bg-primary-50/60 p-5">
+          <p className="font-black text-[#16302a]">No verified match.</p>
+          <p className="mt-1 text-sm font-semibold text-[#78928a]">{result.message}</p>
         </div>
       )}
 
       {result?.found === true && (
-        <div className="rounded-2xl border border-primary-100 bg-primary-50/70 p-4">
-          <p className="text-xs font-black uppercase tracking-wider text-primary-700">
+        <div className="rounded-[1.35rem] border border-primary-100 bg-primary-50/70 p-4 shadow-sm">
+          <p className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs font-black uppercase tracking-[0.14em] text-primary-700">
+            <CheckCircle2 className="h-3.5 w-3.5" />
             Verified barcode match
           </p>
-          <p className="mt-1 text-base font-black text-neutral-950">{result.food.name}</p>
-          <p className="mt-1 text-sm font-medium text-neutral-600">
+          <p className="mt-3 text-base font-black text-[#16302a]">{result.food.name}</p>
+          <p className="mt-1 text-sm font-semibold text-[#60776f]">
             {result.food.categoryLabel} · {result.food.per100.kcal} cal /100{result.food.servingUnit}
           </p>
-          <p className="mt-2 text-xs font-medium leading-5 text-neutral-500">
+          <p className="mt-2 text-xs font-semibold leading-5 text-[#78928a]">
             {result.sourceNote}
           </p>
           <Button className="mt-3" onClick={() => onSelect(result.food)}>

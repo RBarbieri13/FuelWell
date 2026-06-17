@@ -1,6 +1,6 @@
 "use client";
 
-import { Clock, Users, X } from "lucide-react";
+import { Clock, Flame, Users, Wheat, Droplet, Dumbbell, X } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { PreferenceToggle } from "@/components/food/preference-toggle";
 import type { Recipe } from "@/lib/recipes-data";
@@ -17,12 +17,12 @@ export function RecipeDetail({
   recipe: Recipe;
   onClose: () => void;
 }) {
-  const nutrition: { label: string; value: string }[] = [
-    { label: "Calories", value: `${recipe.perServing.calories}` },
-    { label: "Protein", value: `${recipe.perServing.protein}g` },
-    { label: "Carbs", value: `${recipe.perServing.carbs}g` },
-    { label: "Fat", value: `${recipe.perServing.fat}g` },
-    { label: "Fiber", value: `${recipe.perServing.fiber}g` },
+  const nutrition: { label: string; value: string; tone: string; icon: typeof Flame }[] = [
+    { label: "Calories", value: `${recipe.perServing.calories}`, tone: "bg-primary-50 text-primary-700 border-primary-100", icon: Flame },
+    { label: "Protein", value: `${recipe.perServing.protein}g`, tone: "bg-sky-50 text-sky-700 border-sky-100", icon: Dumbbell },
+    { label: "Carbs", value: `${recipe.perServing.carbs}g`, tone: "bg-lemon-50 text-lemon-700 border-lemon-100", icon: Wheat },
+    { label: "Fat", value: `${recipe.perServing.fat}g`, tone: "bg-accent-50 text-accent-700 border-accent-100", icon: Droplet },
+    { label: "Fiber", value: `${recipe.perServing.fiber}g`, tone: "bg-primary-50 text-primary-700 border-primary-100", icon: Wheat },
   ];
 
   return (
@@ -35,25 +35,25 @@ export function RecipeDetail({
       <DialogContent
         aria-label={recipe.title}
         showCloseButton={false}
-        className="top-auto bottom-0 block max-h-[92vh] w-full max-w-full -translate-x-1/2 translate-y-0 overflow-y-auto rounded-none rounded-t-3xl bg-white p-0 shadow-xl ring-0 sm:top-1/2 sm:bottom-auto sm:max-w-2xl sm:-translate-y-1/2 sm:rounded-3xl"
+        className="top-auto bottom-0 block max-h-[92vh] w-full max-w-full -translate-x-1/2 translate-y-0 overflow-y-auto rounded-none rounded-t-[2rem] bg-white p-0 shadow-[0_30px_90px_rgba(22,48,42,0.22)] ring-0 sm:top-1/2 sm:bottom-auto sm:max-w-2xl sm:-translate-y-1/2 sm:rounded-[2rem]"
       >
-        <div className="sticky top-0 flex items-start justify-between gap-3 border-b border-neutral-100 bg-white/95 px-5 py-4 backdrop-blur">
+        <div className="sticky top-0 z-10 flex items-start justify-between gap-3 border-b border-primary-100/80 bg-white/94 px-5 py-4 backdrop-blur">
           <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2 text-xs text-neutral-400">
-              <span className="rounded-full bg-neutral-100 px-2.5 py-1 font-medium text-neutral-600">
+            <div className="flex flex-wrap items-center gap-2 text-xs font-black text-[#78928a]">
+              <span className="rounded-full bg-primary-100 px-2.5 py-1 text-primary-800">
                 {recipe.meal}
               </span>
-              <span className="inline-flex items-center gap-1">
+              <span className="inline-flex items-center gap-1 rounded-full bg-[#f2f7f5] px-2.5 py-1">
                 <Clock className="h-3.5 w-3.5" />
                 {recipe.minutes} min
               </span>
-              <span className="inline-flex items-center gap-1">
+              <span className="inline-flex items-center gap-1 rounded-full bg-[#f2f7f5] px-2.5 py-1">
                 <Users className="h-3.5 w-3.5" />
                 {recipe.servings}{" "}
                 {recipe.servings === 1 ? "serving" : "servings"}
               </span>
             </div>
-            <h2 className="mt-2 text-lg font-bold leading-snug text-neutral-900">
+            <h2 className="mt-2 text-xl font-black leading-snug text-[#16302a]">
               {recipe.title}
             </h2>
           </div>
@@ -63,7 +63,7 @@ export function RecipeDetail({
               type="button"
               onClick={onClose}
               aria-label="Close recipe"
-              className="rounded-full p-2 text-neutral-400 transition hover:bg-neutral-100 hover:text-neutral-700"
+              className="rounded-full p-2 text-[#91a7a0] transition hover:bg-primary-50 hover:text-primary-800"
             >
               <X className="h-5 w-5" />
             </button>
@@ -72,38 +72,42 @@ export function RecipeDetail({
 
         <div className="space-y-6 px-5 py-5">
           <section>
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-neutral-400">
+            <h3 className="text-xs font-black uppercase tracking-[0.16em] text-[#91a7a0]">
               Per serving
             </h3>
             <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-5">
-              {nutrition.map((item) => (
+              {nutrition.map((item) => {
+                const Icon = item.icon;
+                return (
                 <div
                   key={item.label}
-                  className="rounded-xl border border-neutral-100 bg-neutral-50/80 px-3 py-2 text-center"
+                  className={`rounded-[1rem] border px-3 py-3 text-center ${item.tone}`}
                 >
-                  <p className="text-sm font-semibold tabular-nums text-neutral-900">
+                  <Icon className="mx-auto h-4 w-4" />
+                  <p className="mt-1 text-base font-black tabular-nums text-[#16302a]">
                     {item.value}
                   </p>
-                  <p className="mt-0.5 text-[11px] font-medium text-neutral-500">
+                  <p className="mt-0.5 text-[11px] font-black uppercase tracking-[0.08em]">
                     {item.label}
                   </p>
                 </div>
-              ))}
+                );
+              })}
             </div>
           </section>
 
           <section>
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-neutral-400">
+            <h3 className="text-xs font-black uppercase tracking-[0.16em] text-[#91a7a0]">
               Ingredients
             </h3>
-            <ul className="mt-2 divide-y divide-neutral-100">
+            <ul className="mt-2 space-y-2">
               {recipe.ingredients.map((ing, i) => (
                 <li
                   key={`${ing.item}-${i}`}
-                  className="flex items-baseline justify-between gap-4 py-2 text-sm"
+                  className="flex items-baseline justify-between gap-4 rounded-[1rem] bg-[#f7faf8] px-3 py-2.5 text-sm"
                 >
-                  <span className="text-neutral-800">{ing.item}</span>
-                  <span className="shrink-0 font-medium tabular-nums text-neutral-500">
+                  <span className="font-semibold text-[#516b63]">{ing.item}</span>
+                  <span className="shrink-0 font-black tabular-nums text-[#16302a]">
                     {ing.amount}
                   </span>
                 </li>
@@ -112,16 +116,16 @@ export function RecipeDetail({
           </section>
 
           <section>
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-neutral-400">
+            <h3 className="text-xs font-black uppercase tracking-[0.16em] text-[#91a7a0]">
               Steps
             </h3>
             <ol className="mt-2 space-y-3">
               {recipe.steps.map((step, i) => (
                 <li key={i} className="flex gap-3 text-sm leading-relaxed">
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary-50 text-xs font-semibold text-primary-700">
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary-600 text-xs font-black text-white">
                     {i + 1}
                   </span>
-                  <span className="text-neutral-700">{step}</span>
+                  <span className="font-semibold text-[#516b63]">{step}</span>
                 </li>
               ))}
             </ol>
@@ -132,7 +136,7 @@ export function RecipeDetail({
               {recipe.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="rounded-full bg-neutral-100 px-2.5 py-1 text-xs text-neutral-600"
+                  className="rounded-full bg-[#f2f7f5] px-2.5 py-1 text-xs font-bold text-[#60776f]"
                 >
                   {tag}
                 </span>

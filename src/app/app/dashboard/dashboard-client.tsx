@@ -8,6 +8,7 @@ import {
   ChevronRight,
   Dumbbell,
   HeartPulse,
+  Info,
   Salad,
   Bell,
   Search,
@@ -67,20 +68,20 @@ export function DashboardClient({
   return (
     <div className="fw-app-surface">
       <header className="fw-page-header">
-        <div className="fw-page-inner flex flex-col gap-4 py-7 md:flex-row md:items-center md:justify-between">
+        <div className="fw-page-inner flex flex-col gap-4 py-6 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="fw-heading text-3xl md:text-4xl">Good evening, {displayName}</h1>
-            <p className="fw-muted mt-1 text-base">Tuesday · time to wind down</p>
+            <h1 className="fw-heading text-2xl md:text-[1.7rem]">Good evening, {displayName}</h1>
+            <p className="fw-muted mt-1 text-sm">Tuesday · time to wind down</p>
           </div>
           <div className="flex items-center gap-3">
-            <button className="flex h-14 w-14 items-center justify-center rounded-full bg-white text-neutral-700 shadow-[0_14px_34px_rgba(22,48,42,0.10)]" aria-label="Search">
-              <Search className="h-6 w-6" />
+            <button className="flex h-[42px] w-[42px] items-center justify-center rounded-full border border-primary-100 bg-white text-neutral-700 shadow-[0_4px_12px_rgba(20,90,75,0.05)]" aria-label="Search">
+              <Search className="h-5 w-5" />
             </button>
-            <button className="relative flex h-14 w-14 items-center justify-center rounded-full bg-white text-neutral-700 shadow-[0_14px_34px_rgba(22,48,42,0.10)]" aria-label="Notifications">
-              <Bell className="h-6 w-6" />
-              <span className="absolute right-4 top-4 h-2 w-2 rounded-full bg-accent-500" />
+            <button className="relative flex h-[42px] w-[42px] items-center justify-center rounded-full border border-primary-100 bg-white text-neutral-700 shadow-[0_4px_12px_rgba(20,90,75,0.05)]" aria-label="Notifications">
+              <Bell className="h-5 w-5" />
+              <span className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full border-2 border-white bg-accent-500" />
             </button>
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary-600 text-lg font-black text-white shadow-[0_16px_34px_rgba(21,145,108,0.24)]">
+            <div className="flex h-[42px] w-[42px] items-center justify-center rounded-full bg-primary-600 text-base font-black text-white shadow-[0_8px_18px_rgba(30,174,132,0.3)]">
               {displayName.slice(0, 1).toUpperCase()}
             </div>
           </div>
@@ -106,20 +107,20 @@ export function DashboardClient({
         </Link>
       )}
 
-      <section className="grid gap-4 2xl:grid-cols-[1.15fr_0.85fr]">
+      <section className="grid gap-[18px] lg:grid-cols-[1.32fr_1fr]">
         <Card
           variant="elevated"
-          className="fw-dark-panel overflow-hidden p-0"
+          className="fw-dark-panel overflow-hidden rounded-[26px] p-0 shadow-[0_24px_50px_rgba(16,48,40,0.34)]"
         >
-          <div className="relative p-6 md:p-8">
+          <div className="relative p-6 md:p-[30px]">
             <div className="relative z-10">
-              <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
+              <div className="mb-5 flex flex-wrap items-start justify-between gap-4">
                 <div>
-                  <p className="inline-flex items-center gap-2 text-sm font-black uppercase text-primary-200">
+                  <p className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.12em] text-primary-200">
                     <Sparkles className="h-4 w-4" />
                     Today&apos;s decision
                   </p>
-                  <h2 className="mt-5 max-w-3xl text-4xl font-black leading-tight tracking-tight text-white md:text-6xl">
+                  <h2 className="mt-4 max-w-[24rem] text-[2.1rem] font-black leading-[1.08] tracking-normal text-white md:text-[2.45rem]">
                     {hasLoggedToday ? coachVerdict.title : `Hey, ${displayName}. Start with one real input.`}
                   </h2>
                 </div>
@@ -137,7 +138,7 @@ export function DashboardClient({
                 )}
               </div>
 
-              <p className="max-w-2xl text-lg font-semibold leading-8 text-white/76">
+              <p className="max-w-[26rem] text-sm font-semibold leading-6 text-white/75">
                 {hasLoggedToday
                   ? coachVerdict.body
                   : "No meals, workouts, or recovery inputs are logged yet. FuelWell will show the missing pieces instead of inventing green progress."}
@@ -145,14 +146,14 @@ export function DashboardClient({
 
               <div className="mt-6 flex flex-wrap items-center gap-3">
                 <Link href={coachVerdict.href}>
-                  <Button size="lg">
+                  <Button size="lg" className="rounded-full px-6 py-3 text-sm">
                     <Sparkles className="h-4 w-4" />
                     {coachVerdict.action}
                   </Button>
                 </Link>
                 <Link
                   href="/app/dashboard/score"
-                  className="inline-flex items-center gap-2 rounded-[1.15rem] border border-white/15 bg-white/10 px-5 py-3 text-sm font-bold text-white backdrop-blur transition hover:bg-white/15"
+                  className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-5 py-3 text-sm font-black text-white backdrop-blur transition hover:bg-white/15"
                 >
                   <span className="text-white/80">Health score</span>
                   <span className="tabular-nums text-primary-200">{healthScore ?? "--"}</span>
@@ -163,26 +164,28 @@ export function DashboardClient({
           </div>
         </Card>
 
-        <Card className="space-y-6">
+        <Card className="flex flex-col rounded-[26px] px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <h2 className="text-lg font-bold text-neutral-900">
+              <h2 className="text-base font-black text-neutral-900">
                 Today&apos;s plate
               </h2>
-              <p className="text-sm text-neutral-500">
-                Nutrition is calculated from logged meals only.
+              <p className="mt-1 max-w-[11rem] text-xs font-semibold leading-5 text-neutral-500">
+                Calculated from logged meals only.
               </p>
             </div>
-            <Link href="/app/nutrition" className="-m-3 p-3 text-sm font-bold text-primary-700">
+            <Link href="/app/nutrition" className="-m-3 p-3 text-sm font-black text-primary-700">
               Details
             </Link>
           </div>
 
-          <div className="flex justify-center">
-            <CalorieRing consumed={totals.calories} target={targets.calories} />
+          <div className="my-2 flex justify-center">
+            <MealMakeupHover meals={todaysMeals}>
+              <CalorieRing consumed={totals.calories} target={targets.calories} emphasis="compact" />
+            </MealMakeupHover>
           </div>
 
-          <div className="grid grid-cols-3 gap-2">
+          <div className="mt-auto grid grid-cols-3 gap-2">
             <MiniMetric label="Protein left" value={`${remaining(totals.protein, targets.protein)}g`} />
             <MiniMetric label="Calories left" value={`${remaining(totals.calories, targets.calories)}`} />
             <MiniMetric label="Meals" value={`${todaysMeals.length}`} />
@@ -190,26 +193,28 @@ export function DashboardClient({
         </Card>
       </section>
 
-      <section className="grid gap-4 2xl:grid-cols-[0.95fr_1.05fr]">
-        <Card className="space-y-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-neutral-900">Macro truth</h2>
-            <span className="rounded-full bg-primary-50 px-3 py-1 text-xs font-bold text-primary-700">
+      <section className="grid gap-[18px] lg:grid-cols-2">
+        <Card variant="elevated" className="space-y-5 rounded-[1.5rem] px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h2 className="text-base font-black text-neutral-900">Macro truth</h2>
+            </div>
+            <span className="shrink-0 rounded-full bg-primary-50 px-3.5 py-1.5 text-xs font-black text-primary-700">
               {percentOf(totals.calories, targets.calories)}% calories
             </span>
           </div>
-          <MacroBar label="Protein" current={totals.protein} target={targets.protein} color="#1eae84" />
+          <MacroBar label="Protein" current={totals.protein} target={targets.protein} color="#3e92c9" />
           <MacroBar label="Carbs" current={totals.carbs} target={targets.carbs} color="#c7a91e" />
           <MacroBar label="Fat" current={totals.fat} target={targets.fat} color="#f0795b" />
           <Link href="/app/nutrition">
-            <Button variant="secondary" className="w-full">
+            <Button variant="secondary" className="w-full rounded-[0.9rem]">
               Open meal breakdown
               <ArrowRight className="h-4 w-4" />
             </Button>
           </Link>
         </Card>
 
-        <Card className="space-y-4">
+        <Card className="space-y-4 rounded-[1.5rem] px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-bold text-neutral-900">Today&apos;s focus</h2>
           </div>
@@ -334,11 +339,79 @@ export function DashboardClient({
   );
 }
 
+function MealMakeupHover({
+  meals,
+  children,
+}: {
+  meals: MealRecord[];
+  children: React.ReactNode;
+}) {
+  const mealTypes = ["breakfast", "lunch", "dinner"] as const;
+
+  return (
+    <div className="group relative flex justify-center" tabIndex={0}>
+      {children}
+      <div className="pointer-events-none absolute left-1/2 top-[calc(100%+0.5rem)] z-20 w-[min(24rem,calc(100vw-3rem))] -translate-x-1/2 translate-y-3 rounded-[1.35rem] border border-primary-100 bg-white p-4 text-left opacity-0 shadow-[0_24px_70px_rgba(22,48,42,0.16)] transition duration-150 group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:translate-y-0 group-focus-within:opacity-100">
+        <div className="mb-3 flex items-center gap-2">
+          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-100 text-primary-700">
+            <Info className="h-4 w-4" />
+          </span>
+          <div>
+            <p className="text-sm font-black text-neutral-900">Meal makeup</p>
+            <p className="text-xs font-semibold text-neutral-400">Breakfast, lunch, and dinner counted today</p>
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          {mealTypes.map((mealType) => {
+            const meal = meals.find((entry) => entry.mealType === mealType);
+            const mealTotals = meal ? sumMealItems(meal.items) : null;
+
+            return (
+              <div key={mealType} className="rounded-[1rem] border border-neutral-100 bg-neutral-50/80 p-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="font-black text-neutral-900">{formatMealType(mealType)}</p>
+                    <p className="mt-0.5 text-xs font-semibold text-neutral-500">
+                      {meal ? meal.items.map((item) => item.name).join(", ") : "Not logged yet"}
+                    </p>
+                  </div>
+                  <div className="shrink-0 text-right">
+                    <p className="text-sm font-black tabular-nums text-neutral-900">
+                      {mealTotals ? `${mealTotals.calories} cal` : "--"}
+                    </p>
+                    <p className="text-xs font-bold text-primary-600">
+                      {mealTotals ? `${mealTotals.protein}g protein` : "open"}
+                    </p>
+                  </div>
+                </div>
+                {mealTotals && (
+                  <div className="mt-3 grid grid-cols-3 gap-1 text-center text-[11px] font-black">
+                    <span className="rounded-full bg-sky-100 px-2 py-1 text-sky-700">
+                      {mealTotals.protein}g pro
+                    </span>
+                    <span className="rounded-full bg-lemon-100 px-2 py-1 text-lemon-700">
+                      {mealTotals.carbs}g carb
+                    </span>
+                    <span className="rounded-full bg-accent-100 px-2 py-1 text-accent-700">
+                      {mealTotals.fat}g fat
+                    </span>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function EnergyStat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-[1.25rem] border border-white/14 bg-white/10 px-5 py-4 text-center backdrop-blur">
-      <p className="text-3xl font-black tabular-nums text-white">{value}</p>
-      <p className="mt-1 whitespace-nowrap text-xs font-bold uppercase tracking-[0.1em] text-white/60">
+    <div className="min-w-[9rem] flex-1 rounded-2xl border border-white/14 bg-white/10 px-4 py-3 text-left backdrop-blur">
+      <p className="text-[1.625rem] font-black leading-none tabular-nums text-white">{value}</p>
+      <p className="mt-1.5 whitespace-nowrap text-[11px] font-bold uppercase tracking-[0.08em] text-white/60">
         {label}
       </p>
     </div>
@@ -347,9 +420,9 @@ function EnergyStat({ label, value }: { label: string; value: string }) {
 
 function MiniMetric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-[1.2rem] bg-primary-50/80 p-3 text-center">
-      <p className="text-xl font-black tabular-nums text-neutral-900">{value}</p>
-      <p className="mt-0.5 whitespace-nowrap text-xs font-bold uppercase tracking-tight text-neutral-400">{label}</p>
+    <div className="rounded-[0.9rem] bg-primary-50/80 p-2.5 text-center">
+      <p className="text-base font-black tabular-nums text-neutral-900">{value}</p>
+      <p className="mt-0.5 whitespace-nowrap text-[10px] font-semibold text-neutral-500">{label}</p>
     </div>
   );
 }

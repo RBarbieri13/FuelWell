@@ -138,9 +138,10 @@ test("Workouts: two paths and working category filters", async ({ page }) => {
   await page.goto("/app/workouts");
   await expect(page.getByText("Pick my own")).toBeVisible();
   await expect(page.getByText("Coach recommends")).toBeVisible();
-  await page.getByRole("button", { name: "Upper", exact: true }).click();
-  // Filter is interactive (the path list still renders after filtering).
-  await expect(page.getByText("Pick my own")).toBeVisible();
+  await page.getByLabel("Body part").selectOption("upper");
+  await page.getByLabel("Workout type").selectOption("Strength");
+  await expect(page.getByText("Upper push base")).toBeVisible();
+  await expect(page.getByRole("link", { name: /Preview Upper push base/i })).toBeVisible();
 });
 
 test("Progress: stacked macro bars render and window toggles", async ({ page }) => {

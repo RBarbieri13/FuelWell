@@ -5,22 +5,22 @@ import type { MealGoalImpact } from "@/lib/goal-context";
 
 export function GoalImpactCard({ impact }: { impact: MealGoalImpact }) {
   return (
-    <div className="rounded-2xl border border-primary-100 bg-primary-50/70 p-4">
+    <div className="rounded-[1.35rem] border border-primary-100 bg-primary-50/70 p-4 shadow-sm">
       <div className="flex items-start gap-3">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-primary-700 shadow-sm">
-          <Target className="h-4 w-4" />
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[1rem] bg-white text-primary-700 shadow-sm">
+          <Target className="h-5 w-5" />
         </span>
         <div>
-          <p className="text-xs font-black uppercase tracking-wider text-primary-700">
+          <p className="text-xs font-black uppercase tracking-[0.14em] text-primary-700">
             Goal impact · {impact.confidence}
           </p>
-          <p className="mt-1 text-sm font-black leading-5 text-neutral-900">
+          <p className="mt-1 text-sm font-black leading-5 text-[#16302a]">
             {impact.headline}
           </p>
-          <p className="mt-1 text-sm font-medium leading-5 text-neutral-600">
+          <p className="mt-1 text-sm font-semibold leading-5 text-[#516b63]">
             {impact.nextAction}
           </p>
-          <p className="mt-2 text-xs font-medium leading-5 text-neutral-500">
+          <p className="mt-2 text-xs font-semibold leading-5 text-[#78928a]">
             {impact.sourceNote}
           </p>
         </div>

@@ -11,6 +11,7 @@ import type { MacroDay } from "./macro-stacked-bars";
  */
 
 const DAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const WEEK_REFERENCE_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 // Plausible daily macro center points (grams). Loosely consistent with the
 // app's default targets; intentionally varied, never "on target" framed.
@@ -41,6 +42,8 @@ export function buildSampleHistory(windowDays: number): MacroDay[] {
       label:
         windowDays > 14
           ? `${date.getMonth() + 1}/${date.getDate()}`
+          : windowDays === 7
+            ? WEEK_REFERENCE_LABELS[days.length]
           : DAY_LABELS[date.getDay()],
       protein: Math.round(BASE.protein + wobble(seed, 26)),
       carbs: Math.round(BASE.carbs + wobble(seed * 1.7, 42)),

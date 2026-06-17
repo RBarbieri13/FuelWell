@@ -15,6 +15,7 @@ import {
   Leaf,
   ShoppingBasket,
   Settings,
+  Activity,
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { Logo } from "@/components/ui/logo";
@@ -24,6 +25,7 @@ const navItems = [
   { href: "/app/log", label: "Log Meal", icon: UtensilsCrossed },
   { href: "/app/coach", label: "Coach", icon: MessageSquare },
   { href: "/app/workouts", label: "Workouts", icon: Dumbbell },
+  { href: "/app/fitness", label: "Fitness", icon: Activity },
   { href: "/app/recipes", label: "Recipes", icon: BookOpen },
   { href: "/app/grocery-list", label: "Groceries", icon: ShoppingBasket },
   { href: "/app/recovery", label: "Recovery", icon: HeartPulse },
@@ -36,22 +38,22 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden md:flex md:w-[20rem] md:flex-col md:border-r md:border-primary-100/80 md:bg-sidebar md:backdrop-blur-xl">
+    <aside className="hidden md:flex md:w-[21.5rem] md:flex-col md:border-r md:border-primary-100/80 md:bg-sidebar md:backdrop-blur-xl">
       <div className="px-7 py-8">
         <Link href="/app/dashboard" className="flex items-center gap-4">
-          <div className="flex h-14 w-14 items-center justify-center rounded-[1.25rem] bg-gradient-to-br from-primary-500 to-primary-700 text-white shadow-[0_18px_38px_rgba(21,145,108,0.25)]">
-            <Leaf className="h-7 w-7" />
+          <div className="flex h-16 w-16 items-center justify-center rounded-[1.35rem] bg-gradient-to-br from-primary-500 to-primary-700 text-white shadow-[0_18px_38px_rgba(21,145,108,0.25)]">
+            <Leaf className="h-8 w-8" />
           </div>
           <div>
-            <Logo href="" size="lg" />
-            <p className="mt-0.5 text-sm font-semibold text-neutral-400">
+            <Logo href="" size="lg" className="text-[1.7rem]" />
+            <p className="mt-1 text-base font-bold leading-tight text-neutral-400">
               Daily decision system
             </p>
           </div>
         </Link>
       </div>
 
-      <nav className="flex-1 px-4 py-2 space-y-1.5" role="navigation" aria-label="Main">
+      <nav className="flex-1 space-y-2 px-4 py-2" role="navigation" aria-label="Main">
         {navItems.map((item) => {
           const isActive = pathname.startsWith(item.href);
           return (
@@ -60,13 +62,13 @@ export function Sidebar() {
               href={item.href}
               aria-current={isActive ? "page" : undefined}
               className={cn(
-                "flex min-h-12 items-center gap-4 px-4 py-3 rounded-[1.15rem] text-[0.95rem] font-bold transition-all duration-150",
+                "flex min-h-14 items-center gap-4 rounded-[1.25rem] px-5 py-3.5 text-[1.08rem] font-black transition-all duration-150",
                 isActive
                   ? "bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-[0_16px_34px_rgba(21,145,108,0.24)]"
                   : "text-neutral-600 hover:bg-primary-50 hover:text-primary-800"
               )}
             >
-              <item.icon className={cn("w-5 h-5 shrink-0 stroke-[2.15]", isActive ? "text-white" : "text-neutral-400")} />
+              <item.icon className={cn("h-6 w-6 shrink-0 stroke-[2.25]", isActive ? "text-white" : "text-neutral-400")} />
               {item.label}
             </Link>
           );

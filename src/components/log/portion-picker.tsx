@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Check } from "lucide-react";
+import { Check, Scale } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils/cn";
 import { macrosForPortion, type FoodItem } from "@/lib/food-database";
@@ -38,16 +38,23 @@ export function PortionPicker({
 
   return (
     <div className="space-y-4">
-      <div className="rounded-2xl bg-neutral-50 p-4">
-        <p className="font-black text-neutral-900">{food.name}</p>
-        <p className="text-sm font-medium text-neutral-500">
+      <div className="rounded-[1.25rem] border border-primary-100/70 bg-primary-50/65 p-4">
+        <div className="flex items-start gap-3">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[1rem] bg-white text-primary-700 shadow-sm">
+            <Scale className="h-5 w-5" />
+          </span>
+          <div>
+            <p className="font-black text-[#16302a]">{food.name}</p>
+            <p className="text-sm font-semibold text-[#78928a]">
           {food.categoryLabel} &middot; per 100{unit}: {food.per100.kcal} cal,{" "}
           {food.per100.protein}g protein
-        </p>
+            </p>
+          </div>
+        </div>
       </div>
 
       <div>
-        <p className="mb-2 text-xs font-black uppercase tracking-wider text-neutral-400">
+        <p className="mb-2 text-xs font-black uppercase tracking-[0.16em] text-[#91a7a0]">
           One-tap portions
         </p>
         <div className="grid gap-2">
@@ -64,18 +71,18 @@ export function PortionPicker({
                     totals,
                   })
                 }
-                className="flex items-center justify-between rounded-2xl border border-neutral-200 bg-white p-4 text-left transition hover:border-primary-300 hover:bg-primary-50/50"
+                className="flex items-center justify-between rounded-[1.15rem] border border-primary-100 bg-white p-4 text-left transition hover:-translate-y-0.5 hover:border-primary-300 hover:bg-primary-50/50 hover:shadow-md hover:shadow-primary-900/10"
               >
                 <div>
-                  <p className="font-black text-neutral-900">
+                  <p className="font-black text-[#16302a]">
                     {serving.label}
                   </p>
-                  <p className="text-xs font-bold text-neutral-400">
+                  <p className="text-xs font-bold text-[#78928a]">
                     {totals.protein}g protein &middot; {totals.carbs}g carbs
                     &middot; {totals.fat}g fat
                   </p>
                 </div>
-                <p className="font-black tabular-nums text-neutral-900">
+                <p className="font-black tabular-nums text-[#16302a]">
                   {totals.calories} cal
                 </p>
               </button>
@@ -85,7 +92,7 @@ export function PortionPicker({
       </div>
 
       <div>
-        <p className="mb-2 text-xs font-black uppercase tracking-wider text-neutral-400">
+        <p className="mb-2 text-xs font-black uppercase tracking-[0.16em] text-[#91a7a0]">
           Custom amount ({unit})
         </p>
         <div className="flex items-center gap-2">
@@ -97,10 +104,10 @@ export function PortionPicker({
             onChange={(event) => setCustomAmount(event.target.value)}
             placeholder={`Amount in ${unit}`}
             className={cn(
-              "w-full rounded-2xl border bg-white px-4 py-3 text-base font-medium text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-500",
+              "w-full rounded-[1.15rem] border bg-white px-4 py-3 text-base font-semibold text-[#16302a] placeholder:text-[#91a7a0] focus:outline-none focus:ring-2 focus:ring-primary-500",
               customAmount.trim() !== "" && !customValid
                 ? "border-red-300"
-                : "border-neutral-200"
+                : "border-primary-100"
             )}
           />
           <Button

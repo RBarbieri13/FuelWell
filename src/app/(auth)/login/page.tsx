@@ -4,11 +4,11 @@ import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
-import { Logo } from "@/components/ui/logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { OAuthButtons } from "@/components/auth/oauth-buttons";
-import { Utensils, BarChart3, Brain } from "lucide-react";
+import { AuthLink, AuthShell } from "@/components/auth/auth-shell";
+import { BarChart3, Brain, Sparkles, Utensils } from "lucide-react";
 
 function LoginForm() {
   const router = useRouter();
@@ -46,64 +46,27 @@ function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left — Brand panel (desktop only) */}
-      <div className="hidden lg:flex lg:w-[45%] bg-primary-600 relative overflow-hidden">
-        <div className="absolute inset-0">
-          <div className="absolute top-20 -left-20 w-80 h-80 bg-primary-500/50 rounded-full blur-3xl" />
-          <div className="absolute bottom-20 right-0 w-60 h-60 bg-primary-400/30 rounded-full blur-3xl" />
-        </div>
-        <div className="relative z-10 flex flex-col justify-between p-12 text-white">
-          <Logo href="/" size="lg" className="[&_span]:text-white" />
-
-          <div className="space-y-8">
-            <h2 className="text-3xl font-bold leading-tight">
-              Your nutrition,
-              <br />
-              simplified.
-            </h2>
-            <div className="space-y-4">
-              {[
-                { icon: Utensils, text: "Log meals in under 15 seconds" },
-                { icon: BarChart3, text: "Track macros without the math" },
-                { icon: Brain, text: "AI coaching that adapts to you" },
-              ].map((item) => (
-                <div key={item.text} className="flex items-center gap-3 text-primary-100">
-                  <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
-                    <item.icon className="w-4 h-4" />
-                  </div>
-                  <span className="text-sm">{item.text}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <p className="text-sm text-primary-200">
-            &copy; {new Date().getFullYear()} FuelWell
-          </p>
-        </div>
-      </div>
-
-      {/* Right — Login form */}
-      <div className="flex-1 flex items-center justify-center px-4 sm:px-8 py-12 bg-neutral-50">
-        <div className="w-full max-w-sm">
-          <div className="lg:hidden mb-8">
-            <Logo size="lg" href="/" />
-          </div>
-
-          <div className="mb-8">
-            <h1 className="text-2xl font-bold text-neutral-900 tracking-tight">
-              Welcome back
-            </h1>
-            <p className="mt-1.5 text-sm text-neutral-500">
-              Sign in to continue your journey
-            </p>
-          </div>
-
-          <div className="space-y-6">
+    <AuthShell
+      title="Welcome back"
+      subtitle="Sign in to continue your daily decision system."
+      panelTitle="Your nutrition, simplified."
+      panelCopy="Return to your plate, coach, workouts, and progress without rebuilding the context every day."
+      features={[
+        { icon: Utensils, text: "Meal logging stays connected to your targets" },
+        { icon: BarChart3, text: "Macros, trends, and streaks stay in one place" },
+        { icon: Brain, text: "The coach remembers your latest context" },
+      ]}
+      footer={
+        <>
+          Don&apos;t have an account?{" "}
+          <AuthLink href="/signup">Sign up</AuthLink>
+        </>
+      }
+    >
+      <div className="space-y-6">
             {authError && (
               <p
-                className="text-sm text-red-600 bg-red-50 px-3.5 py-2.5 rounded-xl"
+                className="rounded-[1rem] bg-red-50 px-3.5 py-2.5 text-sm font-bold text-red-600"
                 role="alert"
               >
                 {authError}
@@ -114,10 +77,10 @@ function LoginForm() {
 
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-neutral-200" />
+                <div className="w-full border-t border-primary-100" />
               </div>
               <div className="relative flex justify-center">
-                <span className="px-3 bg-neutral-50 text-xs font-medium text-neutral-400 uppercase tracking-wider">
+                <span className="bg-white px-3 text-xs font-black uppercase tracking-[0.16em] text-[#91a7a0]">
                   or email
                 </span>
               </div>
@@ -147,7 +110,7 @@ function LoginForm() {
                 <div className="mt-1.5 text-right">
                   <Link
                     href="/forgot-password"
-                    className="text-xs text-neutral-400 hover:text-primary-600 transition-colors"
+                    className="text-xs font-bold text-[#78928a] transition-colors hover:text-primary-700"
                   >
                     Forgot password?
                   </Link>
@@ -155,23 +118,12 @@ function LoginForm() {
               </div>
 
               <Button type="submit" size="lg" className="w-full" loading={loading}>
+                <Sparkles className="h-4 w-4" />
                 Sign in
               </Button>
             </form>
           </div>
-
-          <p className="mt-8 text-center text-sm text-neutral-500">
-            Don&apos;t have an account?{" "}
-            <Link
-              href="/signup"
-              className="text-primary-600 font-medium hover:text-primary-700 transition-colors"
-            >
-              Sign up
-            </Link>
-          </p>
-        </div>
-      </div>
-    </div>
+    </AuthShell>
   );
 }
 
@@ -179,8 +131,8 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center bg-neutral-50">
-          <div className="animate-pulse text-neutral-400">Loading...</div>
+        <div className="fw-app-surface flex min-h-screen items-center justify-center">
+          <div className="animate-pulse font-bold text-[#78928a]">Loading...</div>
         </div>
       }
     >

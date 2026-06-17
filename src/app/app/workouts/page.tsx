@@ -9,6 +9,19 @@ const dailyVerdict = {
   recommendedId: "low-impact-strength",
 };
 
-export default function WorkoutsPage() {
-  return <WorkoutsView verdict={dailyVerdict} />;
+export default async function WorkoutsPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ q?: string; body?: string; type?: string }>;
+}) {
+  const params = (await searchParams) ?? {};
+
+  return (
+    <WorkoutsView
+      verdict={dailyVerdict}
+      initialQuery={params.q}
+      initialBodyPart={params.body}
+      initialWorkoutType={params.type}
+    />
+  );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Plus } from "lucide-react";
+import { Check, Plus, SquarePen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils/cn";
@@ -93,7 +93,7 @@ export function CustomMealForm({
       <Button
         type="button"
         variant="secondary"
-        className="w-full"
+        className="min-h-12 w-full rounded-[1.2rem]"
         onClick={() => setOpen(true)}
       >
         <Plus className="h-4 w-4" />
@@ -105,16 +105,24 @@ export function CustomMealForm({
   return (
     <Card className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-black text-neutral-900">
-          Add your own meal
-        </h2>
+        <div className="flex items-center gap-3">
+          <span className="flex h-10 w-10 items-center justify-center rounded-[1rem] bg-primary-100 text-primary-700">
+            <SquarePen className="h-5 w-5" />
+          </span>
+          <div>
+            <h2 className="text-lg font-black text-[#16302a]">
+              Add your own meal
+            </h2>
+            <p className="text-sm font-semibold text-[#78928a]">Manual macros for anything not in search.</p>
+          </div>
+        </div>
         <button
           type="button"
           onClick={() => {
             reset();
             setOpen(false);
           }}
-          className="text-sm font-bold text-neutral-500 hover:text-neutral-900"
+          className="rounded-full px-3 py-2 text-sm font-bold text-[#78928a] hover:bg-primary-50 hover:text-primary-800"
         >
           Cancel
         </button>
@@ -127,8 +135,8 @@ export function CustomMealForm({
           onChange={(event) => setName(event.target.value)}
           placeholder="Meal name (e.g. Homemade chili)"
           className={cn(
-            "w-full rounded-2xl border bg-white px-4 py-3 text-base font-medium text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-500",
-            touched && !nameValid ? "border-red-300" : "border-neutral-200"
+            "w-full rounded-[1.15rem] border bg-white px-4 py-3 text-base font-semibold text-[#16302a] placeholder:text-[#91a7a0] focus:outline-none focus:ring-2 focus:ring-primary-500",
+            touched && !nameValid ? "border-red-300" : "border-primary-100"
           )}
         />
         {touched && !nameValid && (
@@ -139,7 +147,7 @@ export function CustomMealForm({
           value={portionLabel}
           onChange={(event) => setPortionLabel(event.target.value)}
           placeholder="Portion label (e.g. 1 bowl) — optional"
-          className="w-full rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-base font-medium text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
+          className="w-full rounded-[1.15rem] border border-primary-100 bg-white px-4 py-3 text-base font-semibold text-[#16302a] placeholder:text-[#91a7a0] focus:outline-none focus:ring-2 focus:ring-primary-500"
         />
       </div>
 
@@ -148,7 +156,7 @@ export function CustomMealForm({
           const invalid = touched && parsed[field.key] === null;
           return (
             <div key={field.key}>
-              <label className="mb-1 block text-xs font-bold uppercase text-neutral-400">
+              <label className="mb-1 block text-xs font-black uppercase tracking-[0.12em] text-[#91a7a0]">
                 {field.label}
               </label>
               <input
@@ -164,8 +172,8 @@ export function CustomMealForm({
                 }
                 placeholder="0"
                 className={cn(
-                  "w-full rounded-2xl border bg-white px-4 py-3 text-base font-medium text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-500",
-                  invalid ? "border-red-300" : "border-neutral-200"
+                  "w-full rounded-[1.15rem] border bg-white px-4 py-3 text-base font-semibold text-[#16302a] placeholder:text-[#91a7a0] focus:outline-none focus:ring-2 focus:ring-primary-500",
+                  invalid ? "border-red-300" : "border-primary-100"
                 )}
               />
             </div>

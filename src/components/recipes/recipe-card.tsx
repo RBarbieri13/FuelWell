@@ -1,6 +1,6 @@
 "use client";
 
-import { Clock, Flame, Dumbbell } from "lucide-react";
+import { ArrowRight, ChefHat, Clock, Dumbbell, Flame, Wheat, Droplet } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { PreferenceToggle } from "@/components/food/preference-toggle";
 import type { Recipe } from "@/lib/recipes-data";
@@ -16,24 +16,52 @@ export function RecipeCard({
   recipe: Recipe;
   onOpen: (recipe: Recipe) => void;
 }) {
+  const macroTiles = [
+    {
+      label: "Cal",
+      value: recipe.perServing.calories,
+      className: "bg-primary-50 text-primary-700 border-primary-100",
+      icon: Flame,
+    },
+    {
+      label: "Pro",
+      value: `${recipe.perServing.protein}g`,
+      className: "bg-sky-50 text-sky-700 border-sky-100",
+      icon: Dumbbell,
+    },
+    {
+      label: "Carb",
+      value: `${recipe.perServing.carbs}g`,
+      className: "bg-lemon-50 text-lemon-700 border-lemon-100",
+      icon: Wheat,
+    },
+    {
+      label: "Fat",
+      value: `${recipe.perServing.fat}g`,
+      className: "bg-accent-50 text-accent-700 border-accent-100",
+      icon: Droplet,
+    },
+  ];
+
   return (
-    <Card className="flex flex-col gap-4">
+    <Card className="group flex min-h-full flex-col gap-4 p-5 transition hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-[0_22px_60px_rgba(22,48,42,0.12)]">
       <div className="flex items-start justify-between gap-3">
         <button
           type="button"
           onClick={() => onOpen(recipe)}
           className="min-w-0 flex-1 text-left"
         >
-          <div className="flex flex-wrap items-center gap-2 text-xs text-neutral-400">
-            <span className="rounded-full bg-neutral-100 px-2.5 py-1 font-medium text-neutral-600">
+          <div className="flex flex-wrap items-center gap-2 text-xs font-black text-[#78928a]">
+            <span className="inline-flex items-center gap-1 rounded-full bg-primary-100 px-2.5 py-1 text-primary-800">
+              <ChefHat className="h-3.5 w-3.5" />
               {recipe.meal}
             </span>
-            <span className="inline-flex items-center gap-1">
+            <span className="inline-flex items-center gap-1 rounded-full bg-[#f2f7f5] px-2.5 py-1">
               <Clock className="h-3.5 w-3.5" />
               {recipe.minutes} min
             </span>
           </div>
-          <h2 className="mt-3 text-base font-semibold leading-snug text-neutral-900">
+          <h2 className="mt-3 text-xl font-black leading-snug text-[#16302a]">
             {recipe.title}
           </h2>
         </button>
@@ -43,46 +71,48 @@ export function RecipeCard({
       <button
         type="button"
         onClick={() => onOpen(recipe)}
-        className="grid grid-cols-2 gap-2 text-left"
+        className="grid grid-cols-2 gap-2 text-left sm:grid-cols-4"
       >
-        <div className="rounded-xl border border-neutral-100 bg-neutral-50/80 px-3 py-2">
-          <div className="flex items-center gap-1 text-[11px] font-medium text-neutral-500">
-            <Flame className="h-3.5 w-3.5 text-primary-500" />
-            Calories
-          </div>
-          <p className="mt-1 text-sm font-semibold tabular-nums text-neutral-900">
-            {recipe.perServing.calories}
-            <span className="ml-1 text-xs font-normal text-neutral-400">
-              / serving
-            </span>
-          </p>
-        </div>
-        <div className="rounded-xl border border-neutral-100 bg-neutral-50/80 px-3 py-2">
-          <div className="flex items-center gap-1 text-[11px] font-medium text-neutral-500">
-            <Dumbbell className="h-3.5 w-3.5 text-sky-500" />
-            Protein
-          </div>
-          <p className="mt-1 text-sm font-semibold tabular-nums text-neutral-900">
-            {recipe.perServing.protein}g
-            <span className="ml-1 text-xs font-normal text-neutral-400">
-              / serving
-            </span>
-          </p>
-        </div>
+        {macroTiles.map((macro) => {
+          const Icon = macro.icon;
+          return (
+            <div
+              key={macro.label}
+              className={`rounded-[1rem] border px-3 py-3 ${macro.className}`}
+            >
+              <div className="flex items-center gap-1 text-[10px] font-black uppercase tracking-[0.1em]">
+                <Icon className="h-3.5 w-3.5" />
+                {macro.label}
+              </div>
+              <p className="mt-1 text-lg font-black tabular-nums text-[#16302a]">
+                {macro.value}
+              </p>
+            </div>
+          );
+        })}
       </button>
 
       {recipe.tags.length > 0 && (
         <div className="flex flex-wrap gap-1.5">
-          {recipe.tags.map((tag) => (
+          {recipe.tags.slice(0, 4).map((tag) => (
             <span
               key={tag}
-              className="rounded-full bg-neutral-100 px-2.5 py-1 text-xs text-neutral-600"
+              className="rounded-full bg-[#f2f7f5] px-2.5 py-1 text-xs font-bold text-[#60776f]"
             >
               {tag}
             </span>
           ))}
         </div>
       )}
+
+      <button
+        type="button"
+        onClick={() => onOpen(recipe)}
+        className="mt-auto inline-flex min-h-11 items-center justify-between rounded-[1.1rem] bg-[#f7faf8] px-4 py-3 text-sm font-black text-primary-800 transition group-hover:bg-primary-50"
+      >
+        Open recipe
+        <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+      </button>
     </Card>
   );
 }

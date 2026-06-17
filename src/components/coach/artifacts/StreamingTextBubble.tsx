@@ -13,7 +13,7 @@ export type StreamingTextBubbleProps = {
 
 export function StreamingTextBubble({ text, streaming }: StreamingTextBubbleProps) {
   return (
-    <div className="max-w-[95%] rounded-3xl rounded-bl-md border border-primary-100 bg-white/92 px-4 py-3 text-sm font-semibold leading-6 text-neutral-800 shadow-sm shadow-primary-900/5 md:max-w-[85%]">
+    <div className="max-w-[95%] rounded-[1.5rem] rounded-bl-md border border-primary-100/80 bg-white/94 px-4 py-3 text-sm font-semibold leading-6 text-[#516b63] shadow-[0_18px_48px_rgba(22,48,42,0.08)] md:max-w-[85%]">
       {text ? (
         <div className="min-w-0">
           <ReactMarkdown
@@ -43,25 +43,25 @@ export function StreamingTextBubble({ text, streaming }: StreamingTextBubbleProp
 
 const markdownComponents = {
   h1: ({ className, ...props }: React.ComponentProps<"h1">) => (
-    <h1 className={cn("mb-2 mt-1 text-xl font-black leading-tight text-neutral-950", className)} {...props} />
+    <h1 className={cn("mb-2 mt-1 text-xl font-black leading-tight text-[#16302a]", className)} {...props} />
   ),
   h2: ({ className, ...props }: React.ComponentProps<"h2">) => (
-    <h2 className={cn("mb-2 mt-3 text-lg font-black leading-tight text-neutral-950", className)} {...props} />
+    <h2 className={cn("mb-2 mt-3 text-lg font-black leading-tight text-[#16302a]", className)} {...props} />
   ),
   h3: ({ className, ...props }: React.ComponentProps<"h3">) => (
-    <h3 className={cn("mb-1.5 mt-3 text-base font-black leading-tight text-neutral-950", className)} {...props} />
+    <h3 className={cn("mb-1.5 mt-3 text-base font-black leading-tight text-[#16302a]", className)} {...props} />
   ),
   h4: ({ className, ...props }: React.ComponentProps<"h4">) => (
-    <h4 className={cn("mb-1.5 mt-2 text-sm font-black uppercase tracking-wide text-neutral-700", className)} {...props} />
+    <h4 className={cn("mb-1.5 mt-2 text-sm font-black uppercase tracking-wide text-[#516b63]", className)} {...props} />
   ),
   p: ({ className, ...props }: React.ComponentProps<"p">) => (
     <p className={cn("my-2 first:mt-0 last:mb-0 whitespace-pre-wrap break-words", className)} {...props} />
   ),
   strong: ({ className, ...props }: React.ComponentProps<"strong">) => (
-    <strong className={cn("font-black text-neutral-950", className)} {...props} />
+    <strong className={cn("font-black text-[#16302a]", className)} {...props} />
   ),
   em: ({ className, ...props }: React.ComponentProps<"em">) => (
-    <em className={cn("font-semibold text-neutral-700", className)} {...props} />
+    <em className={cn("font-semibold text-[#516b63]", className)} {...props} />
   ),
   a: ({ className, href, ...props }: React.ComponentProps<"a">) => (
     <a
@@ -83,7 +83,7 @@ const markdownComponents = {
   ),
   blockquote: ({ className, ...props }: React.ComponentProps<"blockquote">) => (
     <blockquote
-      className={cn("my-3 border-l-4 border-primary-300 bg-primary-50/70 py-2 pl-3 pr-2 text-neutral-700", className)}
+      className={cn("my-3 rounded-r-[1rem] border-l-4 border-primary-300 bg-primary-50/70 py-2 pl-3 pr-2 text-[#516b63]", className)}
       {...props}
     />
   ),
@@ -91,7 +91,7 @@ const markdownComponents = {
     <hr className={cn("my-4 border-primary-100", className)} {...props} />
   ),
   table: ({ className, ...props }: React.ComponentProps<"table">) => (
-    <div className="my-3 max-w-full overflow-x-auto rounded-2xl border border-primary-100">
+    <div className="my-3 max-w-full overflow-x-auto rounded-[1.25rem] border border-primary-100 shadow-sm">
       <table className={cn("w-full min-w-[32rem] border-collapse text-left text-xs", className)} {...props} />
     </div>
   ),
@@ -110,7 +110,7 @@ const markdownComponents = {
       <code
         className={cn(
           isBlock
-            ? "block overflow-x-auto whitespace-pre rounded-2xl bg-neutral-950 p-3 text-xs font-semibold leading-5 text-neutral-50"
+            ? "block overflow-x-auto whitespace-pre rounded-[1.25rem] bg-[#0b251f] p-3 text-xs font-semibold leading-5 text-neutral-50"
             : "rounded-md bg-primary-50 px-1.5 py-0.5 font-mono text-[0.85em] font-bold text-primary-800",
           className
         )}
@@ -121,14 +121,14 @@ const markdownComponents = {
     );
   },
   pre: ({ className, ...props }: React.ComponentProps<"pre">) => (
-    <pre className={cn("my-3 overflow-x-auto rounded-2xl bg-neutral-950 p-0", className)} {...props} />
+    <pre className={cn("my-3 overflow-x-auto rounded-[1.25rem] bg-[#0b251f] p-0", className)} {...props} />
   ),
   img: ({ className, alt, ...props }: React.ComponentProps<"img">) => (
     // Markdown media can point to arbitrary user-requested URLs; Next Image
     // needs configured hosts and fixed sizing, so keep this as a plain image.
     // eslint-disable-next-line @next/next/no-img-element
     <img
-      className={cn("my-3 max-h-72 w-full rounded-2xl border border-primary-100 object-cover", className)}
+      className={cn("my-3 max-h-72 w-full rounded-[1.25rem] border border-primary-100 object-cover shadow-sm", className)}
       alt={alt ?? ""}
       loading="lazy"
       referrerPolicy="no-referrer"

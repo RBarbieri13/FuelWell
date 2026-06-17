@@ -1,198 +1,348 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, ArrowRight, Bike, CheckCircle2, Clock3, Dumbbell, Flame, Info, ShieldCheck, UtensilsCrossed, Waves } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
+  Clock3,
+  Flame,
+  Info,
+  ListChecks,
+  MapPinned,
+  ShieldCheck,
+  Sparkles,
+  Target,
+  UtensilsCrossed,
+} from "lucide-react";
 import { Card } from "@/components/ui/card";
-
-const workouts = {
-  "low-impact-strength": {
-    title: "Low-impact strength",
-    icon: Dumbbell,
-    duration: "34 min",
-    intensity: "Moderate",
-    verdict: "Recommended today",
-    summary:
-      "A controlled full-body session that keeps lower-body volume modest while still giving you a useful training stimulus.",
-    why:
-      "FuelWell is using user-entered soreness and meals plus estimated activity. Because leg soreness is 6/10, this avoids jumps, sprints, and high-rep squats.",
-    fuel: "Eat 25-35g protein within two hours. Add 35-50g carbs before training if lunch was light.",
-    blocks: [
-      { name: "Warm-up", time: "6 min", detail: "Easy bike, hip circles, shoulder openers" },
-      { name: "Strength circuit", time: "20 min", detail: "Incline push-up, hinge drill, cable row, dead bug" },
-      { name: "Cool down", time: "8 min", detail: "Hamstring floss, couch stretch, nasal breathing" },
-    ],
-  },
-  "zone-2-ride": {
-    title: "Zone 2 ride",
-    icon: Bike,
-    duration: "42 min",
-    intensity: "Easy",
-    verdict: "Good alternative",
-    summary:
-      "A conversational aerobic ride that builds base fitness without asking sore legs for peak output.",
-    why:
-      "This is estimated from recovery inputs and planned activity. It stays below interval intensity because HRV and live heart-rate data are not connected.",
-    fuel: "Hydrate before starting. Add a carb snack if the ride begins more than three hours after lunch.",
-    blocks: [
-      { name: "Ramp", time: "8 min", detail: "Gradually settle into easy breathing" },
-      { name: "Steady ride", time: "28 min", detail: "Keep effort at 4-5/10, able to speak in sentences" },
-      { name: "Spin down", time: "6 min", detail: "Light cadence, no final push" },
-    ],
-  },
-  "mobility-reset": {
-    title: "Mobility reset",
-    icon: Waves,
-    duration: "18 min",
-    intensity: "Light",
-    verdict: "Recovery option",
-    summary:
-      "A short reset for hips, upper back, and breathing when the better choice is protecting tomorrow's training.",
-    why:
-      "FuelWell has user-entered soreness but no wearable readiness yet. This option intentionally creates the lowest recovery cost.",
-    fuel: "No special pre-fuel needed. Log dinner protein afterward so the recovery estimate improves.",
-    blocks: [
-      { name: "Downshift", time: "4 min", detail: "Box breathing and easy spinal rotations" },
-      { name: "Mobility flow", time: "10 min", detail: "90/90 switches, couch stretch, thoracic reach" },
-      { name: "Finish", time: "4 min", detail: "Long exhales, calves, light walk" },
-    ],
-  },
-};
-
-type WorkoutId = keyof typeof workouts;
-
-function isWorkoutId(id: string): id is WorkoutId {
-  return id in workouts;
-}
+import {
+  getAdjacentWorkouts,
+  getSimilarWorkouts,
+  getWorkoutById,
+  workoutHref,
+  workouts,
+  type WorkoutLibraryItem,
+} from "@/lib/workout-library";
+import { cn } from "@/lib/utils/cn";
 
 export function generateStaticParams() {
-  return Object.keys(workouts).map((id) => ({ id }));
+  return workouts.map((workout) => ({ id: workout.id }));
 }
 
-function Metric({ icon: Icon, label, value }: { icon: typeof Clock3; label: string; value: string }) {
+function Metric({
+  icon: Icon,
+  label,
+  value,
+}: {
+  icon: typeof Clock3;
+  label: string;
+  value: string;
+}) {
   return (
-    <div className="rounded-2xl border border-neutral-200/80 bg-white p-4">
-      <Icon className="h-4 w-4 text-neutral-400" />
-      <p className="mt-3 text-lg font-bold text-neutral-900">{value}</p>
-      <p className="mt-1 text-xs font-medium text-neutral-500">{label}</p>
+    <div className="rounded-[1.5rem] border border-primary-100/80 bg-white p-4 shadow-[0_14px_36px_rgba(22,48,42,0.06)]">
+      <Icon className="h-4 w-4 text-primary-600" />
+      <p className="mt-3 text-lg font-black text-[#16302a]">{value}</p>
+      <p className="mt-1 text-xs font-black uppercase tracking-[0.12em] text-[#91a7a0]">
+        {label}
+      </p>
     </div>
   );
 }
 
-export default async function WorkoutDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
+function WorkoutMiniLink({
+  workout,
+  label,
+  direction,
+}: {
+  workout: WorkoutLibraryItem;
+  label: string;
+  direction: "previous" | "next";
+}) {
+  const Icon = workout.icon;
+  const Arrow = direction === "previous" ? ChevronLeft : ChevronRight;
 
-  if (!isWorkoutId(id)) {
-    notFound();
-  }
+  return (
+    <Link
+      href={workoutHref(workout.id)}
+      className="group flex items-center gap-3 rounded-[1.35rem] border border-[#e6efeb] bg-white p-3 shadow-sm transition hover:border-primary-200 hover:bg-primary-50/60"
+    >
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[0.95rem] bg-primary-100 text-primary-700">
+        <Arrow className="h-4 w-4 transition group-hover:scale-110" />
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block text-[11px] font-black uppercase tracking-[0.12em] text-[#91a7a0]">
+          {label}
+        </span>
+        <span className="mt-0.5 flex items-center gap-2">
+          <Icon className="h-3.5 w-3.5 shrink-0 text-primary-600" />
+          <span className="truncate text-sm font-black text-[#16302a]">
+            {workout.title}
+          </span>
+        </span>
+      </span>
+    </Link>
+  );
+}
 
-  const workout = workouts[id];
+function SimilarWorkoutLink({ workout }: { workout: WorkoutLibraryItem }) {
   const Icon = workout.icon;
 
   return (
-    <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-6">
-      <Link
-        href="/app/workouts"
-        className="inline-flex items-center gap-2 text-sm font-medium text-neutral-500 transition-colors hover:text-primary-600"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        Back to workouts
-      </Link>
+    <Link
+      href={workoutHref(workout.id)}
+      className="group flex items-center gap-3 rounded-[1.25rem] border border-[#e6efeb] bg-[#f6faf8] p-3 transition hover:border-primary-200 hover:bg-white"
+    >
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[0.95rem] bg-white text-primary-700 shadow-sm">
+        <Icon className="h-4 w-4" />
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="flex flex-wrap items-center gap-2">
+          <span className="truncate text-sm font-black text-[#16302a]">{workout.title}</span>
+          <span className="rounded-full bg-primary-100 px-2 py-0.5 text-[11px] font-black text-primary-700">
+            {workout.duration}
+          </span>
+        </span>
+        <span className="mt-1 block truncate text-xs font-semibold text-[#7c968f]">
+          {workout.focus}
+        </span>
+      </span>
+      <ArrowRight className="h-4 w-4 shrink-0 text-[#9db0aa] transition group-hover:translate-x-0.5 group-hover:text-primary-700" />
+    </Link>
+  );
+}
 
-      <section className="space-y-4">
-        <Card className="bg-gradient-to-br from-primary-50/90 via-white to-accent-50/60 border-primary-100">
-          <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
-            <div className="flex gap-4">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary-600 text-white shadow-sm shadow-primary-600/25">
-                <Icon className="h-6 w-6" />
-              </div>
-              <div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <h1 className="text-2xl font-bold tracking-tight text-neutral-900">{workout.title}</h1>
-                  <span className="rounded-full bg-primary-100 px-2.5 py-1 text-xs font-semibold text-primary-700">
-                    {workout.verdict}
-                  </span>
+export default async function WorkoutDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const workout = getWorkoutById(id);
+
+  if (!workout) {
+    notFound();
+  }
+
+  const Icon = workout.icon;
+  const { previous, next } = getAdjacentWorkouts(workout.id);
+  const similarWorkouts = getSimilarWorkouts(workout.id, 3);
+
+  return (
+    <div className="fw-app-surface min-h-full">
+      <div className="fw-page-inner max-w-6xl space-y-6">
+        <Link
+          href="/app/workouts"
+          className="inline-flex items-center gap-2 rounded-full bg-white/75 px-4 py-2 text-sm font-black text-[#78928a] shadow-sm transition-colors hover:text-primary-700"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to workouts
+        </Link>
+
+        <section className="grid items-stretch gap-4 lg:grid-cols-[minmax(0,1fr)_22rem]">
+          <Card variant="elevated" className="fw-dark-panel overflow-hidden">
+            <div className="relative">
+              <div className="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full bg-primary-500/25 blur-3xl" />
+              <div className="relative flex flex-col gap-6">
+                <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
+                  <div className="flex gap-4">
+                    <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[1.35rem] bg-primary-400 text-primary-950 shadow-sm shadow-primary-950/25">
+                      <Icon className="h-7 w-7" />
+                    </div>
+                    <div>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-primary-100">
+                          Preview before logging
+                        </span>
+                        <span className="rounded-full bg-primary-400/20 px-3 py-1 text-xs font-black text-primary-100">
+                          {workout.verdict}
+                        </span>
+                      </div>
+                      <h1 className="mt-3 font-heading text-4xl font-black tracking-tight text-white md:text-5xl">
+                        {workout.title}
+                      </h1>
+                      <p className="mt-4 max-w-3xl text-base font-semibold leading-7 text-white/72">
+                        {workout.summary}
+                      </p>
+                    </div>
+                  </div>
+                  <Link
+                    href="/app/log"
+                    className="inline-flex items-center justify-center gap-2 rounded-[1.15rem] bg-gradient-to-r from-primary-500 to-[#159aa2] px-5 py-3 text-sm font-black text-white shadow-[0_16px_34px_rgba(21,145,108,0.24)] transition hover:from-primary-600 hover:to-[#138893]"
+                  >
+                    Log after preview
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
                 </div>
-                <p className="mt-2 max-w-2xl text-sm leading-relaxed text-neutral-600">{workout.summary}</p>
+
+                <div className="grid gap-3 sm:grid-cols-3">
+                  <div className="rounded-[1.35rem] border border-white/10 bg-white/10 p-4">
+                    <p className="text-2xl font-black text-white">{workout.duration}</p>
+                    <p className="mt-1 text-xs font-black uppercase tracking-[0.12em] text-white/50">
+                      Duration
+                    </p>
+                  </div>
+                  <div className="rounded-[1.35rem] border border-white/10 bg-white/10 p-4">
+                    <p className="text-2xl font-black text-white">{workout.intensity}</p>
+                    <p className="mt-1 text-xs font-black uppercase tracking-[0.12em] text-white/50">
+                      Intensity
+                    </p>
+                  </div>
+                  <div className="rounded-[1.35rem] border border-white/10 bg-white/10 p-4">
+                    <p className="text-2xl font-black text-white">{workout.estimatedBurn}</p>
+                    <p className="mt-1 text-xs font-black uppercase tracking-[0.12em] text-white/50">
+                      Estimated burn
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
-            <Link
-              href="/app/log"
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm shadow-primary-600/25 transition-colors hover:bg-primary-700"
-            >
-              Log workout fuel
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-        </Card>
+          </Card>
 
-        <div className="grid gap-3 sm:grid-cols-3">
+          <Card className="space-y-4">
+            <div className="flex items-center gap-3">
+              <span className="inline-flex h-10 w-10 items-center justify-center rounded-[1rem] bg-primary-100 text-primary-700">
+                <MapPinned className="h-5 w-5" />
+              </span>
+              <div>
+                <h2 className="font-heading text-lg font-black text-[#16302a]">
+                  Move around
+                </h2>
+                <p className="text-sm font-semibold text-[#7c968f]">
+                  Jump to the next workout or a close match.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid gap-3">
+              {previous && (
+                <WorkoutMiniLink workout={previous} label="Previous workout" direction="previous" />
+              )}
+              {next && <WorkoutMiniLink workout={next} label="Next workout" direction="next" />}
+            </div>
+          </Card>
+        </section>
+
+        <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <Metric icon={Clock3} label="Duration" value={workout.duration} />
           <Metric icon={Flame} label="Intensity" value={workout.intensity} />
-          <Metric icon={ShieldCheck} label="Decision" value={workout.verdict} />
-        </div>
-      </section>
+          <Metric icon={ShieldCheck} label="Recovery cost" value={workout.recoveryCost} />
+          <Metric icon={Target} label="Goal" value={workout.goal} />
+        </section>
 
-      <section className="grid gap-4 lg:grid-cols-[1.25fr_0.85fr]">
-        <Card padding="sm">
-          <div className="px-2 pb-3">
-            <h2 className="text-xs font-semibold uppercase tracking-wider text-neutral-400">Workout plan</h2>
-          </div>
-          <div className="divide-y divide-neutral-100">
-            {workout.blocks.map((block) => (
-              <div key={block.name} className="flex gap-4 px-2 py-4">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
-                  <CheckCircle2 className="h-4 w-4" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <p className="text-sm font-semibold text-neutral-900">{block.name}</p>
-                    <span className="rounded-full bg-neutral-100 px-2 py-0.5 text-[11px] font-semibold text-neutral-500">
-                      {block.time}
-                    </span>
+        <section className="grid items-start gap-5 lg:grid-cols-[minmax(0,1.2fr)_minmax(20rem,0.8fr)]">
+          <div className="space-y-5">
+            <Card variant="elevated" padding="sm">
+              <div className="px-2 pb-3">
+                <h2 className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-primary-600">
+                  <ListChecks className="h-4 w-4" />
+                  Workout plan
+                </h2>
+              </div>
+              <div className="divide-y divide-primary-100/70">
+                {workout.blocks.map((block) => (
+                  <div key={block.name} className="flex gap-4 px-2 py-4">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[1rem] bg-primary-50 text-primary-600">
+                      <CheckCircle2 className="h-4 w-4" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="text-sm font-black text-[#16302a]">{block.name}</p>
+                        <span className="rounded-full bg-primary-50 px-2 py-0.5 text-[11px] font-black text-primary-700">
+                          {block.time}
+                        </span>
+                      </div>
+                      <p className="mt-1 text-sm font-semibold leading-relaxed text-[#78928a]">
+                        {block.detail}
+                      </p>
+                    </div>
                   </div>
-                  <p className="mt-1 text-sm leading-relaxed text-neutral-500">{block.detail}</p>
+                ))}
+              </div>
+            </Card>
+
+            <Card className="border-lemon-200 bg-lemon-50/80">
+              <div className="flex gap-3">
+                <Info className="mt-0.5 h-5 w-5 shrink-0 text-lemon-600" />
+                <div>
+                  <h2 className="font-heading text-lg font-black text-lemon-700">
+                    How this preview is chosen
+                  </h2>
+                  <p className="mt-1 text-sm font-semibold leading-6 text-lemon-700/85">
+                    {workout.why}
+                  </p>
                 </div>
               </div>
-            ))}
+            </Card>
           </div>
-        </Card>
 
-        <div className="space-y-4">
-          <Card className="space-y-3">
-            <div className="flex gap-3">
-              <Info className="mt-0.5 h-4 w-4 shrink-0 text-lemon-600" />
-              <div>
-                <h2 className="text-sm font-semibold text-neutral-900">Why this workout?</h2>
-                <p className="mt-1 text-sm leading-relaxed text-neutral-600">{workout.why}</p>
+          <div className="space-y-5">
+            <Card variant="elevated" className="space-y-4">
+              <div className="flex items-center gap-3">
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-[1rem] bg-primary-100 text-primary-700">
+                  <Sparkles className="h-5 w-5" />
+                </span>
+                <div>
+                  <h2 className="font-heading text-lg font-black text-[#16302a]">
+                    Summary
+                  </h2>
+                  <p className="text-sm font-semibold text-[#7c968f]">
+                    What you should know before logging it.
+                  </p>
+                </div>
               </div>
-            </div>
-          </Card>
 
-          <Card className="space-y-3 bg-primary-50/70 border-primary-100">
-            <div className="flex gap-3">
-              <UtensilsCrossed className="mt-0.5 h-4 w-4 shrink-0 text-primary-600" />
-              <div>
-                <h2 className="text-sm font-semibold text-neutral-900">Fuel guidance</h2>
-                <p className="mt-1 text-sm leading-relaxed text-neutral-700">{workout.fuel}</p>
+              <div className="grid gap-2">
+                {workout.bestFor.map((item) => (
+                  <div
+                    key={item}
+                    className="flex items-center gap-2 rounded-[1rem] bg-primary-50 px-3 py-2 text-sm font-black text-primary-800"
+                  >
+                    <CheckCircle2 className="h-4 w-4 text-primary-600" />
+                    {item}
+                  </div>
+                ))}
               </div>
-            </div>
-          </Card>
 
-          <Card className="space-y-3 border-lemon-200 bg-lemon-50/60">
-            <h2 className="text-sm font-semibold text-neutral-900">Data honesty</h2>
-            <p className="text-sm leading-relaxed text-neutral-600">
-              User-entered: soreness, sleep, meals, and planned training preference. Estimated: readiness, calorie burn, and the ranking of workout options. Missing: live wearable strain, exercise history, and equipment availability.
-            </p>
-          </Card>
+              <div className="rounded-[1.25rem] border border-[#e6efeb] bg-[#f6faf8] p-4">
+                <p className="text-xs font-black uppercase tracking-[0.12em] text-[#91a7a0]">
+                  Equipment
+                </p>
+                <p className="mt-1 text-sm font-black text-[#16302a]">{workout.equipment}</p>
+              </div>
+            </Card>
 
-          <Link
-            href="/app/recovery"
-            className="flex items-center justify-between rounded-2xl border border-neutral-200/80 bg-white p-4 text-sm font-medium text-neutral-700 transition-colors hover:border-primary-200 hover:text-primary-700"
-          >
-            Update recovery after this
-            <ArrowRight className="h-4 w-4" />
-          </Link>
-        </div>
-      </section>
+            <Card className="space-y-3 border-primary-100 bg-primary-50/80">
+              <div className="flex gap-3">
+                <UtensilsCrossed className="mt-0.5 h-4 w-4 shrink-0 text-primary-600" />
+                <div>
+                  <h2 className="text-sm font-black text-[#16302a]">Fuel guidance</h2>
+                  <p className="mt-1 text-sm font-semibold leading-relaxed text-[#516b63]">
+                    {workout.fuel}
+                  </p>
+                </div>
+              </div>
+            </Card>
+
+            <Card variant="elevated" className="space-y-3">
+              <div className="flex items-center justify-between gap-3">
+                <h2 className="font-heading text-lg font-black text-[#16302a]">
+                  Close matches
+                </h2>
+                <span className="rounded-full bg-primary-100 px-3 py-1 text-xs font-black text-primary-700">
+                  {similarWorkouts.length} nearby
+                </span>
+              </div>
+              <div className={cn("grid gap-3", similarWorkouts.length === 0 && "hidden")}>
+                {similarWorkouts.map((similarWorkout) => (
+                  <SimilarWorkoutLink key={similarWorkout.id} workout={similarWorkout} />
+                ))}
+              </div>
+            </Card>
+          </div>
+        </section>
+      </div>
     </div>
   );
 }

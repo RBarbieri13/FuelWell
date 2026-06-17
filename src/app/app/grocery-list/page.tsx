@@ -1,18 +1,18 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { cn } from "@/lib/utils/cn";
 import {
   Check,
+  CheckCheck,
   CheckCircle2,
   Circle,
+  History,
   ListPlus,
   Plus,
-  SlidersHorizontal,
   ShoppingBasket,
   Sparkles,
   Trash2,
@@ -22,17 +22,39 @@ import {
   useGroceryList,
   setGroceryItems,
   type GroceryCategory,
+  type RichGroceryItem,
 } from "@/lib/use-grocery-list";
 
 const categories: GroceryCategory[] = ["Protein", "Produce", "Pantry", "Dairy", "Frozen", "Other"];
+const HISTORY_KEY = "fuelwell-grocery-history-v1";
+
+type GroceryHistoryEntry = {
+  id: string;
+  savedAt: string;
+  itemCount: number;
+  checkedCount: number;
+  items: RichGroceryItem[];
+};
+
+function loadGroceryHistory(): GroceryHistoryEntry[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = window.localStorage.getItem(HISTORY_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw) as GroceryHistoryEntry[];
+    return Array.isArray(parsed) ? parsed.slice(0, 4) : [];
+  } catch {
+    return [];
+  }
+}
 
 const categoryTone: Record<GroceryCategory, string> = {
-  Protein: "bg-primary-50 text-primary-700 border-primary-100",
-  Produce: "bg-primary-50 text-primary-700 border-primary-100",
+  Protein: "bg-sky-100 text-sky-700 border-sky-100",
+  Produce: "bg-primary-100 text-primary-700 border-primary-100",
   Pantry: "bg-lemon-50 text-lemon-700 border-lemon-100",
-  Dairy: "bg-sky-50 text-sky-700 border-sky-100",
-  Frozen: "bg-purple-50 text-purple-700 border-purple-100",
-  Other: "bg-neutral-50 text-neutral-600 border-neutral-200",
+  Dairy: "bg-sky-100 text-sky-700 border-sky-100",
+  Frozen: "bg-accent-100 text-accent-600 border-accent-100",
+  Other: "bg-neutral-50 text-[#54635d] border-neutral-200",
 };
 
 export default function GroceryListPage() {
@@ -42,6 +64,12 @@ export default function GroceryListPage() {
   const [newItemName, setNewItemName] = useState("");
   const [newItemAmount, setNewItemAmount] = useState("");
   const [newItemCategory, setNewItemCategory] = useState<GroceryCategory>("Produce");
+  const [history, setHistory] = useState<GroceryHistoryEntry[]>(loadGroceryHistory);
+  const [storeMode, setStoreMode] = useState({
+    groupByAisle: true,
+    hideChecked: false,
+    keepAwake: false,
+  });
 
   const checkedCount = items.filter((item) => item.checked).length;
   const remainingCount = items.length - checkedCount;
@@ -49,6 +77,18 @@ export default function GroceryListPage() {
     activeCategory === "All"
       ? items
       : items.filter((item) => item.category === activeCategory);
+  const visibleItems = storeMode.hideChecked
+    ? filteredItems.filter((item) => !item.checked)
+    : filteredItems;
+
+  function persistHistory(next: GroceryHistoryEntry[]) {
+    setHistory(next);
+    try {
+      window.localStorage.setItem(HISTORY_KEY, JSON.stringify(next));
+    } catch {
+      // Best-effort local archive.
+    }
+  }
 
   function toggleItem(itemId: string) {
     setGroceryItems(
@@ -83,6 +123,23 @@ export default function GroceryListPage() {
     setNewItemAmount("");
   }
 
+  function clearAndArchiveList() {
+    if (items.length === 0) return;
+    const entry: GroceryHistoryEntry = {
+      id: `list-${Date.now().toString(36)}`,
+      savedAt: new Date().toISOString(),
+      itemCount: items.length,
+      checkedCount,
+      items,
+    };
+    persistHistory([entry, ...history].slice(0, 4));
+    setGroceryItems([]);
+  }
+
+  function restoreList(entry: GroceryHistoryEntry) {
+    setGroceryItems(entry.items);
+  }
+
   return (
     <div className="fw-app-surface">
       <header className="fw-page-header">
@@ -100,8 +157,19 @@ export default function GroceryListPage() {
               onClick={() => setGroceryItems(items.map((item) => ({ ...item, checked: true })))}
               className="rounded-full"
             >
-              <CheckCircle2 className="w-5 h-5" />
+              <CheckCheck className="w-5 h-5" />
               Mark all shopped
+            </Button>
+            <Button
+              type="button"
+              size="lg"
+              variant="secondary"
+              onClick={clearAndArchiveList}
+              disabled={items.length === 0}
+              className="rounded-full"
+            >
+              <History className="w-5 h-5" />
+              Clear list
             </Button>
             <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary-600 text-lg font-black text-white shadow-[0_16px_34px_rgba(21,145,108,0.24)]">
               M
@@ -110,36 +178,36 @@ export default function GroceryListPage() {
         </div>
       </header>
 
-      <div className="fw-page-inner grid gap-6 2xl:grid-cols-[minmax(0,1fr)_29rem]">
+      <div className="fw-page-inner grid gap-5 lg:grid-cols-[minmax(0,1fr)_18rem] 2xl:grid-cols-[minmax(0,1fr)_20rem]">
         <div className="space-y-4">
-          <Card className="fw-mint-panel">
-            <div className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-center">
+          <Card className="fw-mint-panel rounded-[24px] border-primary-200/80 px-6 py-6 shadow-none">
+            <div className="grid gap-5 sm:grid-cols-[1fr_auto] sm:items-center">
               <div>
-                <div className="inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1 text-xs font-medium text-primary-700 border border-primary-100">
+                <div className="inline-flex items-center gap-2 rounded-full border border-primary-100 bg-white px-4 py-2 text-sm font-black text-primary-700">
                   <ShoppingBasket className="w-3.5 h-3.5" />
                   This week
                 </div>
-                <h2 className="mt-5 text-3xl font-black tracking-tight text-neutral-900">
+                <h2 className="mt-4 font-heading text-[22px] font-black tracking-tight text-[#16302a] md:text-2xl">
                   {remainingCount === 0
                     ? "All shopped for this week."
                     : `${remainingCount} items left for 4 planned days`}
                 </h2>
-                <p className="mt-3 max-w-xl text-lg font-semibold leading-relaxed text-primary-900/75">
+                <p className="mt-3 max-w-xl text-sm font-semibold leading-6 text-primary-900/75 md:text-[15px]">
                   {remainingCount === 0
                     ? "You're set — check back when new meals are planned."
                     : "Protein and produce are the priority. Pantry items can wait if you are doing a quick store run."}
                 </p>
               </div>
-              <div className="rounded-[1.5rem] bg-white px-8 py-6 text-center shadow-sm shadow-primary-900/5">
-                <p className="text-5xl font-black tabular-nums text-primary-600">
+              <div className="rounded-[20px] bg-white px-8 py-6 text-center shadow-[0_8px_18px_rgba(20,90,75,0.08)]">
+                <p className="font-heading text-[42px] font-black leading-none tabular-nums text-primary-600">
                   {checkedCount}/{items.length}
                 </p>
-                <p className="text-sm font-bold text-neutral-400">checked off</p>
+                <p className="mt-1 text-sm font-bold text-[#7c968f]">checked off</p>
               </div>
             </div>
           </Card>
 
-          <Card padding="sm" className="space-y-3">
+          <Card padding="sm" className="rounded-[18px] border-[#e6efeb] shadow-[0_8px_22px_rgba(20,90,75,0.05)]">
             <div className="flex flex-wrap gap-2">
               {(["All", ...categories] as const).map((category) => (
                 <button
@@ -147,10 +215,10 @@ export default function GroceryListPage() {
                   type="button"
                   onClick={() => setActiveCategory(category)}
                   className={cn(
-                    "rounded-full border px-5 py-3 text-sm font-bold transition-all",
+                    "rounded-full border px-5 py-2.5 text-sm font-bold transition-all",
                     activeCategory === category
-                      ? "border-primary-500 bg-primary-500 text-white shadow-[0_12px_24px_rgba(21,145,108,0.18)]"
-                      : "border-neutral-200 bg-neutral-50 text-neutral-600 hover:border-neutral-300 hover:text-neutral-800"
+                      ? "border-primary-500 bg-primary-500 text-white shadow-[0_10px_22px_rgba(30,174,132,0.22)]"
+                      : "border-[#e6efeb] bg-[#f4f8f6] text-[#54635d] hover:bg-white"
                   )}
                 >
                   {category}
@@ -161,7 +229,7 @@ export default function GroceryListPage() {
 
           <div className="space-y-4">
             {categories.map((category) => {
-              const categoryItems = filteredItems.filter(
+              const categoryItems = visibleItems.filter(
                 (item) => item.category === category
               );
               if (categoryItems.length === 0) return null;
@@ -169,52 +237,59 @@ export default function GroceryListPage() {
               const categoryChecked = categoryItems.filter((item) => item.checked).length;
 
               return (
-                <Card key={category} className="px-7 py-6">
+                <Card key={category} className="rounded-[22px] border-[#e6efeb] px-6 py-5 shadow-[0_8px_22px_rgba(20,90,75,0.06)]">
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex items-center gap-2">
-                      <span className={cn("rounded-full border px-2.5 py-1 text-xs font-semibold", categoryTone[category])}>
+                      <span className={cn("rounded-full border px-3 py-1 text-sm font-black", categoryTone[category])}>
                         {category}
                       </span>
-                      <span className="text-xs font-medium text-neutral-400">
+                      <span className="text-sm font-semibold text-[#9db0aa]">
                         {categoryChecked}/{categoryItems.length} done
                       </span>
                     </div>
-                    <Badge variant={categoryChecked === categoryItems.length ? "success" : "default"}>
+                    <span
+                      className={cn(
+                        "rounded-full px-3 py-1 text-xs font-bold",
+                        categoryChecked === categoryItems.length
+                          ? "bg-primary-100 text-primary-700"
+                          : "bg-[#f4f8f6] text-[#7c968f]"
+                      )}
+                    >
                       {categoryChecked === categoryItems.length ? "Complete" : "To shop"}
-                    </Badge>
+                    </span>
                   </div>
 
-                  <div className="mt-5 divide-y divide-neutral-100">
+                  <div className="mt-4 divide-y divide-neutral-100">
                     {categoryItems.map((item) => (
                       <div
                         key={item.id}
-                        className="flex items-center gap-3 py-3 first:pt-1 last:pb-1"
+                        className="flex items-center gap-4 py-3 first:pt-1 last:pb-1"
                       >
                         <button
                           type="button"
                           onClick={() => toggleItem(item.id)}
                           aria-label={item.checked ? `Uncheck ${item.name}` : `Check ${item.name}`}
                           className={cn(
-                            "rounded-full p-3 -m-3 transition-colors",
-                            item.checked ? "text-primary-600" : "text-neutral-300 hover:text-primary-500"
+                            "-m-2 rounded-full p-2 transition-colors",
+                            item.checked ? "text-primary-500" : "text-[#cfe0da] hover:text-primary-500"
                           )}
                         >
                           {item.checked ? (
-                            <CheckCircle2 className="w-5 h-5" />
+                            <CheckCircle2 className="h-7 w-7" />
                           ) : (
-                            <Circle className="w-5 h-5" />
+                            <Circle className="h-7 w-7" />
                           )}
                         </button>
                         <div className="min-w-0 flex-1">
                           <p
                             className={cn(
-                            "text-base font-black text-neutral-900",
-                              item.checked && "text-neutral-400 line-through"
+                            "font-heading text-base font-black tracking-tight text-[#16302a]",
+                              item.checked && "text-[#9db0aa] line-through"
                             )}
                           >
                             {item.name}
                           </p>
-                          <p className="text-sm font-semibold text-neutral-400 mt-0.5">
+                          <p className="mt-0.5 text-sm font-semibold text-[#9db0aa]">
                             {item.amount} · {item.source}
                           </p>
                         </div>
@@ -222,7 +297,7 @@ export default function GroceryListPage() {
                           type="button"
                           onClick={() => removeItem(item.id)}
                           aria-label={`Remove ${item.name}`}
-                          className="rounded-xl p-3.5 -m-1.5 md:p-2 md:m-0 text-neutral-300 transition-colors hover:bg-red-50 hover:text-red-500"
+                          className="-m-1.5 rounded-xl p-3.5 text-[#c9d6d1] transition-colors hover:bg-red-50 hover:text-red-500 md:m-0 md:p-2"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -232,7 +307,7 @@ export default function GroceryListPage() {
                 </Card>
               );
             })}
-            {filteredItems.length === 0 && (
+            {visibleItems.length === 0 && (
               <EmptyState
                 icon={ShoppingBasket}
                 title="Nothing to shop"
@@ -242,17 +317,17 @@ export default function GroceryListPage() {
           </div>
         </div>
 
-        <aside className="space-y-5">
-          <Card className="px-7 py-7">
-            <h2 className="flex items-center gap-4 text-2xl font-black text-neutral-900">
-              <span className="fw-icon-chip h-11 w-11 rounded-[1rem]">
+        <aside className="space-y-5 lg:sticky lg:top-28">
+          <Card className="rounded-[22px] border-[#e6efeb] px-6 py-6 shadow-[0_8px_22px_rgba(20,90,75,0.06)]">
+            <h2 className="flex items-center gap-3 font-heading text-lg font-black tracking-tight text-[#16302a]">
+              <span className="fw-icon-chip h-10 w-10 rounded-full">
                 <ListPlus className="w-5 h-5" />
               </span>
               Add custom item
             </h2>
-            <form onSubmit={addItem} className="mt-4 space-y-3">
+            <form onSubmit={addItem} className="mt-5 space-y-4">
               <div>
-                <label htmlFor="item-name" className="text-sm font-black text-neutral-500">
+                <label htmlFor="item-name" className="text-sm font-black text-[#7c968f]">
                   Item
                 </label>
                 <input
@@ -260,11 +335,11 @@ export default function GroceryListPage() {
                   value={newItemName}
                   onChange={(event) => setNewItemName(event.target.value)}
                   placeholder="e.g. sparkling water"
-                  className="mt-2 w-full rounded-[1rem] border border-neutral-200 bg-neutral-50 px-4 py-4 text-base font-semibold outline-none placeholder:text-neutral-400 focus:border-transparent focus:ring-2 focus:ring-primary-500"
+                  className="mt-2 w-full rounded-xl border border-[#e0ebe6] bg-[#f4f8f6] px-4 py-3 text-base font-semibold text-[#16302a] outline-none placeholder:text-[#7c7c7c] focus:border-transparent focus:ring-2 focus:ring-primary-500"
                 />
               </div>
               <div>
-                <label htmlFor="item-amount" className="text-sm font-black text-neutral-500">
+                <label htmlFor="item-amount" className="text-sm font-black text-[#7c968f]">
                   Amount
                 </label>
                 <input
@@ -272,18 +347,18 @@ export default function GroceryListPage() {
                   value={newItemAmount}
                   onChange={(event) => setNewItemAmount(event.target.value)}
                   placeholder="1 pack"
-                  className="mt-2 w-full rounded-[1rem] border border-neutral-200 bg-neutral-50 px-4 py-4 text-base font-semibold outline-none placeholder:text-neutral-400 focus:border-transparent focus:ring-2 focus:ring-primary-500"
+                  className="mt-2 w-full rounded-xl border border-[#e0ebe6] bg-[#f4f8f6] px-4 py-3 text-base font-semibold text-[#16302a] outline-none placeholder:text-[#7c7c7c] focus:border-transparent focus:ring-2 focus:ring-primary-500"
                 />
               </div>
               <div>
-                <label htmlFor="item-category" className="text-sm font-black text-neutral-500">
+                <label htmlFor="item-category" className="text-sm font-black text-[#7c968f]">
                   Category
                 </label>
                 <select
                   id="item-category"
                   value={newItemCategory}
                   onChange={(event) => setNewItemCategory(event.target.value as GroceryCategory)}
-                  className="mt-2 w-full rounded-[1rem] border border-neutral-200 bg-neutral-50 px-4 py-4 text-base font-semibold outline-none focus:border-transparent focus:ring-2 focus:ring-primary-500"
+                  className="mt-2 w-full rounded-xl border border-[#e0ebe6] bg-[#f4f8f6] px-4 py-3 text-base font-semibold text-[#16302a] outline-none focus:border-transparent focus:ring-2 focus:ring-primary-500"
                 >
                   {categories.map((category) => (
                     <option key={category} value={category}>
@@ -293,44 +368,100 @@ export default function GroceryListPage() {
                 </select>
               </div>
               <Button type="submit" size="lg" className="w-full">
-                <Plus className="w-4 h-4" />
+                <Plus className="h-4 w-4" />
                 Add item
               </Button>
             </form>
           </Card>
 
-          <Card className="fw-dark-panel px-7 py-7">
-            <span className="inline-flex h-12 w-12 items-center justify-center rounded-[1rem] bg-primary-500 text-white">
-              <Sparkles className="w-6 h-6" />
+          <Card className="fw-dark-panel rounded-[22px] px-6 py-6 shadow-[0_18px_38px_rgba(16,48,40,0.3)]">
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-[13px] bg-gradient-to-br from-primary-500 to-[#1592a0] text-white">
+              <Sparkles className="h-5 w-5" />
             </span>
-            <h2 className="mt-5 text-2xl font-black">Next best move</h2>
-            <p className="mt-3 text-lg font-semibold leading-relaxed text-white/75">
+            <h2 className="mt-5 font-heading text-lg font-black tracking-tight text-white">
+              Next best move
+            </h2>
+            <p className="mt-3 text-base font-semibold leading-7 text-white/75">
               Shop protein first, then produce. If time is short, skip pantry
               items that are already marked as backup sides.
             </p>
           </Card>
 
-          <Card className="px-7 py-7">
-            <h2 className="flex items-center gap-3 text-2xl font-black text-neutral-900">
-              <SlidersHorizontal className="h-5 w-5 text-primary-600" />
+          <Card className="rounded-[22px] border-[#e6efeb] px-6 py-6 shadow-[0_8px_22px_rgba(20,90,75,0.06)]">
+            <h2 className="flex items-center gap-3 font-heading text-lg font-black tracking-tight text-[#16302a]">
+              <span className="fw-icon-chip h-10 w-10 rounded-full">
+                <History className="w-5 h-5" />
+              </span>
+              Past lists
+            </h2>
+            <div className="mt-4 space-y-3">
+              {history.length === 0 ? (
+                <p className="text-sm font-semibold leading-6 text-[#7c968f]">
+                  Cleared lists will appear here so you can review or restore what you bought before.
+                </p>
+              ) : (
+                history.map((entry) => (
+                  <button
+                    key={entry.id}
+                    type="button"
+                    onClick={() => restoreList(entry)}
+                    className="w-full rounded-[1rem] border border-primary-100 bg-[#f8fbf9] px-4 py-3 text-left transition hover:bg-primary-50"
+                  >
+                    <span className="block text-sm font-black text-[#16302a]">
+                      {entry.itemCount} items · {entry.checkedCount} shopped
+                    </span>
+                    <span className="mt-1 block text-xs font-semibold text-[#7c968f]">
+                      {new Date(entry.savedAt).toLocaleDateString([], {
+                        month: "short",
+                        day: "numeric",
+                        hour: "numeric",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                  </button>
+                ))
+              )}
+            </div>
+          </Card>
+
+          <Card className="rounded-[22px] border-[#e6efeb] px-6 py-6 shadow-[0_8px_22px_rgba(20,90,75,0.06)]">
+            <h2 className="font-heading text-lg font-black tracking-tight text-[#16302a]">
               Store mode
             </h2>
-            <div className="mt-5 space-y-4">
-              {["Group by aisle", "Hide checked", "Keep screen awake"].map((label, index) => (
-                <div key={label} className="flex items-center justify-between">
-                  <span className="text-base font-bold text-neutral-700">{label}</span>
+            <div className="mt-5 space-y-3">
+              {[
+                ["groupByAisle", "Group by aisle"],
+                ["hideChecked", "Hide checked"],
+                ["keepAwake", "Keep screen awake"],
+              ].map(([key, label]) => {
+                const settingKey = key as keyof typeof storeMode;
+                const enabled = storeMode[settingKey];
+                return (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() =>
+                    setStoreMode((current) => ({
+                      ...current,
+                      [settingKey]: !current[settingKey],
+                    }))
+                  }
+                  className="flex w-full items-center justify-between py-1.5 text-left"
+                >
+                  <span className="text-base font-bold text-[#54635d]">{label}</span>
                   <span
                     className={cn(
-                      "inline-flex h-9 w-9 items-center justify-center rounded-full border-2",
-                      index === 0
+                      "inline-flex h-8 w-8 items-center justify-center rounded-full border-2",
+                      enabled
                         ? "border-primary-500 bg-primary-500 text-white"
-                        : "border-primary-100 text-neutral-300"
+                        : "border-[#d6e2dd] text-transparent"
                     )}
                   >
-                    {index === 0 && <Check className="w-4 h-4" />}
+                    {enabled && <Check className="h-4 w-4" />}
                   </span>
-                </div>
-              ))}
+                </button>
+              );
+              })}
             </div>
           </Card>
         </aside>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Search, SlidersHorizontal } from "lucide-react";
+import { BookOpen, ChefHat, Search, SlidersHorizontal, Sparkles, Timer } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { DietFilterChips } from "@/components/food/diet-filter-chips";
 import { RecipeCard } from "@/components/recipes/recipe-card";
@@ -15,68 +15,156 @@ import { usePreferences, rankByPreference } from "@/lib/use-preferences";
 
 export default function RecipesPage() {
   const [query, setQuery] = useState("");
+  const [mealFilter, setMealFilter] = useState<"All" | Recipe["meal"]>("All");
   const [openRecipe, setOpenRecipe] = useState<Recipe | null>(null);
   const { diets, allergies, likes, dislikes, toggleDiet } = usePreferences();
 
   const results = useMemo(() => {
     const searched = searchRecipes(query);
     const filtered = applyRecipeFilters(searched, diets, allergies);
-    return rankByPreference(filtered, (r) => r.id, { likes, dislikes });
-  }, [query, diets, allergies, likes, dislikes]);
+    const byMeal =
+      mealFilter === "All"
+        ? filtered
+        : filtered.filter((recipe) => recipe.meal === mealFilter);
+    return rankByPreference(byMeal, (r) => r.id, { likes, dislikes });
+  }, [query, mealFilter, diets, allergies, likes, dislikes]);
+
+  const mealFilters: Array<"All" | Recipe["meal"]> = [
+    "All",
+    "Breakfast",
+    "Lunch",
+    "Dinner",
+    "Snack",
+  ];
+  const quickCount = results.filter((recipe) => recipe.minutes <= 15).length;
+  const highProteinCount = results.filter((recipe) => recipe.perServing.protein >= 30).length;
+  const featured = results[0];
 
   return (
-    <div className="mx-auto max-w-5xl space-y-6 p-4 md:p-8">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-neutral-900">
-          Recipes
-        </h1>
-        <p className="mt-1 text-sm text-neutral-500">
-          Search the recipe library, filter to your diet, and open any recipe
-          for full ingredients and nutrition.
-        </p>
-      </div>
+    <div className="mx-auto max-w-6xl space-y-6 p-4 pb-28 md:p-8">
+      <Card variant="elevated" className="fw-dark-panel text-white">
+        <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_21rem] xl:items-end">
+          <div>
+            <p className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-xs font-black uppercase tracking-[0.16em] text-primary-100">
+              <BookOpen className="h-4 w-4" />
+              Recipe library
+            </p>
+            <h1 className="mt-4 text-3xl font-black leading-tight md:text-4xl">
+              Find food that fits today.
+            </h1>
+            <p className="mt-3 max-w-2xl text-sm font-semibold leading-6 text-white/70">
+              Search meals, filter to your diet, and open a recipe for full
+              ingredients, prep steps, and per-serving nutrition.
+            </p>
+          </div>
+          <div className="grid grid-cols-3 gap-2 text-center">
+            <div className="rounded-[1.15rem] border border-white/12 bg-white/10 px-4 py-3">
+              <p className="text-2xl font-black tabular-nums">{results.length}</p>
+              <p className="text-[11px] font-black uppercase tracking-[0.12em] text-white/55">
+                Matches
+              </p>
+            </div>
+            <div className="rounded-[1.15rem] border border-white/12 bg-white/10 px-4 py-3">
+              <p className="text-2xl font-black tabular-nums">{quickCount}</p>
+              <p className="text-[11px] font-black uppercase tracking-[0.12em] text-white/55">
+                Quick
+              </p>
+            </div>
+            <div className="rounded-[1.15rem] border border-white/12 bg-white/10 px-4 py-3">
+              <p className="text-2xl font-black tabular-nums">{highProteinCount}</p>
+              <p className="text-[11px] font-black uppercase tracking-[0.12em] text-white/55">
+                30g+
+              </p>
+            </div>
+          </div>
+        </div>
+      </Card>
 
-      <Card padding="sm" className="space-y-3">
-        <div className="relative">
-          <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
-          <input
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search title, ingredients, or tags"
-            aria-label="Search title, ingredients, or tags"
-            className="w-full rounded-xl border border-neutral-200 bg-white py-3 pl-10 pr-4 text-sm outline-none placeholder:text-neutral-400 focus:border-transparent focus:ring-2 focus:ring-primary-500"
-          />
+      <Card className="space-y-5 px-6 py-6 md:px-7">
+        <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start">
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-primary-600" />
+            <input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search title, ingredients, or tags"
+              aria-label="Search title, ingredients, or tags"
+              className="w-full rounded-[1.3rem] border border-primary-100 bg-primary-50/55 py-4 pl-12 pr-4 text-sm font-semibold text-[#16302a] outline-none placeholder:text-[#91a7a0] transition focus:border-transparent focus:bg-white focus:ring-2 focus:ring-primary-500"
+            />
+          </div>
+          <div className="flex gap-2 overflow-x-auto rounded-[1.35rem] bg-[#f2f7f5] p-1">
+            {mealFilters.map((meal) => (
+              <button
+                key={meal}
+                type="button"
+                onClick={() => setMealFilter(meal)}
+                aria-pressed={mealFilter === meal}
+                className={`shrink-0 rounded-full px-4 py-2 text-sm font-black transition ${
+                  mealFilter === meal
+                    ? "bg-primary-500 text-white shadow-[0_12px_24px_rgba(21,145,108,0.18)]"
+                    : "text-neutral-600 hover:bg-white"
+                }`}
+              >
+                {meal}
+              </button>
+            ))}
+          </div>
         </div>
 
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-neutral-500">
-            <SlidersHorizontal className="h-3.5 w-3.5" />
-            Diet filters
+        <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_18rem]">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-[#78928a]">
+              <SlidersHorizontal className="h-3.5 w-3.5" />
+              Diet filters
+            </div>
+            <DietFilterChips active={diets} onToggle={toggleDiet} />
+            {allergies.length > 0 && (
+              <p className="text-xs font-semibold text-[#78928a]">
+                Hiding recipes with: {allergies.join(", ")}.
+              </p>
+            )}
           </div>
-          <DietFilterChips active={diets} onToggle={toggleDiet} />
-          {allergies.length > 0 && (
-            <p className="text-xs text-neutral-500">
-              Hiding recipes with: {allergies.join(", ")}.
-            </p>
+
+          {featured && (
+            <div className="rounded-[1.35rem] border border-primary-100 bg-primary-50/70 p-4">
+              <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.14em] text-primary-700">
+                <Sparkles className="h-4 w-4" />
+                Best fit
+              </div>
+              <p className="mt-3 text-base font-black text-[#16302a]">{featured.title}</p>
+              <div className="mt-3 flex flex-wrap gap-2 text-xs font-black text-[#60776f]">
+                <span className="inline-flex items-center gap-1 rounded-full bg-white px-2.5 py-1">
+                  <ChefHat className="h-3.5 w-3.5 text-primary-600" />
+                  {featured.meal}
+                </span>
+                <span className="inline-flex items-center gap-1 rounded-full bg-white px-2.5 py-1">
+                  <Timer className="h-3.5 w-3.5 text-primary-600" />
+                  {featured.minutes} min
+                </span>
+              </div>
+            </div>
           )}
         </div>
       </Card>
 
       {results.length === 0 ? (
         <Card className="text-center">
-          <p className="text-sm font-medium text-neutral-700">
+          <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-[1rem] bg-primary-100 text-primary-700">
+            <Sparkles className="h-5 w-5" />
+          </div>
+          <p className="mt-3 text-sm font-black text-[#16302a]">
             No recipes match these filters yet.
           </p>
-          <p className="mt-1 text-sm text-neutral-500">
+          <p className="mt-1 text-sm font-semibold text-[#78928a]">
             Try a different search term or turn off a diet filter to see more.
           </p>
         </Card>
       ) : (
         <>
-          <p className="text-xs font-medium text-neutral-500">
+          <p className="text-xs font-black uppercase tracking-[0.16em] text-[#91a7a0]">
             {results.length} {results.length === 1 ? "recipe" : "recipes"}
           </p>
-          <div className="grid gap-3 md:grid-cols-2">
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {results.map((recipe) => (
               <RecipeCard
                 key={recipe.id}

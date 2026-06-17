@@ -8,6 +8,7 @@ interface MacroBarProps {
   target: number;
   unit?: string;
   color: string;
+  size?: "md" | "lg";
 }
 
 export function MacroBar({
@@ -16,8 +17,10 @@ export function MacroBar({
   target,
   unit = "g",
   color,
+  size = "md",
 }: MacroBarProps) {
   const progress = Math.min((current / target) * 100, 100);
+  const large = size === "lg";
 
   // Animate width on mount
   const [animatedWidth, setAnimatedWidth] = useState(0);
@@ -27,23 +30,25 @@ export function MacroBar({
   }, [progress]);
 
   return (
-    <div className="space-y-2">
+    <div className={large ? "space-y-3" : "space-y-2"}>
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
+        <div className={large ? "flex items-center gap-3" : "flex items-center gap-2"}>
           <div
-            className="w-2 h-2 rounded-full"
+            className={large ? "h-3 w-3 rounded-full" : "h-2 w-2 rounded-full"}
             style={{ backgroundColor: color }}
             aria-hidden="true"
           />
-          <span className="text-sm font-bold text-neutral-700">{label}</span>
+          <span className={large ? "text-lg font-black text-neutral-800" : "text-sm font-bold text-neutral-700"}>
+            {label}
+          </span>
         </div>
-        <span className="text-sm font-semibold text-neutral-500 tabular-nums">
-          <span className="text-neutral-800 font-black">{current}</span> / {target}
+        <span className={large ? "text-base font-bold text-neutral-500 tabular-nums md:text-lg" : "text-sm font-semibold text-neutral-500 tabular-nums"}>
+          <span className={large ? "text-2xl font-black text-neutral-900" : "font-black text-neutral-800"}>{current}</span> / {target}
           {unit}
         </span>
       </div>
       <div
-        className="h-2 bg-primary-100/70 rounded-full overflow-hidden"
+        className={large ? "h-4 overflow-hidden rounded-full bg-primary-100/70" : "h-2 overflow-hidden rounded-full bg-primary-100/70"}
         role="progressbar"
         aria-valuenow={current}
         aria-valuemin={0}

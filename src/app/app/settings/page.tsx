@@ -23,6 +23,7 @@ export default async function SettingsPage() {
         displayName={sample.user.displayName}
         isPreview
         appVersion={APP_VERSION}
+        initialIntakePreferences={undefined}
       />
     );
   }
@@ -30,10 +31,13 @@ export default async function SettingsPage() {
   const { data: profile } = user
     ? await supabase
         .from("profiles")
-        .select("display_name")
+        .select("display_name, preferences_jsonb")
         .eq("id", user.id)
         .single()
     : { data: null };
+  const preferences = (profile?.preferences_jsonb ?? {}) as {
+    onboarding?: Record<string, unknown>;
+  };
 
   return (
     <SettingsClient
@@ -41,6 +45,7 @@ export default async function SettingsPage() {
       displayName={profile?.display_name ?? ""}
       isPreview={false}
       appVersion={APP_VERSION}
+      initialIntakePreferences={preferences.onboarding}
     />
   );
 }

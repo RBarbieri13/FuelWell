@@ -1,5 +1,19 @@
 import Link from "next/link";
-import { Activity, ArrowRight, Bike, Clock3, Flame, Info, Moon, ShieldCheck, Sparkles, UtensilsCrossed } from "lucide-react";
+import {
+  Activity,
+  ArrowRight,
+  BarChart3,
+  Bike,
+  CalendarClock,
+  Clock3,
+  Flame,
+  Info,
+  Moon,
+  ShieldCheck,
+  Sparkles,
+  UtensilsCrossed,
+  type LucideIcon,
+} from "lucide-react";
 import { Card } from "@/components/ui/card";
 
 const activitySummary = {
@@ -12,32 +26,53 @@ const activitySummary = {
     "Meals and soreness are user-entered examples. Steps, active calories, and readiness are deterministic estimates for this early product slice.",
 };
 
+const modes = ["Now", "After workout", "Tonight"];
+
 const metrics = [
-  { label: "Steps", value: "6,420", detail: "Estimated from baseline activity", source: "Estimated", icon: Activity },
-  { label: "Active calories", value: "380", detail: "Projected from steps + planned ride", source: "Estimated", icon: Flame },
-  { label: "Sleep", value: "7h 10m", detail: "User-entered last night", source: "User-entered", icon: Moon },
-  { label: "Last meal", value: "2h ago", detail: "Greek yogurt, berries, granola", source: "User-entered", icon: UtensilsCrossed },
-];
+  { label: "Steps", value: "6,420", detail: "Estimated from baseline activity", source: "Estimated", icon: Activity, tone: "primary" },
+  { label: "Active calories", value: "380", detail: "Projected from steps + planned ride", source: "Estimated", icon: Flame, tone: "accent" },
+  { label: "Sleep", value: "7h 10m", detail: "User-entered last night", source: "User-entered", icon: Moon, tone: "sky" },
+  { label: "Last meal", value: "2h ago", detail: "Greek yogurt, berries, granola", source: "User-entered", icon: UtensilsCrossed, tone: "lemon" },
+] as const;
 
 const timeline = [
-  { time: "7:20 AM", title: "Breakfast logged", detail: "Protein-forward meal, 31g protein.", source: "User-entered" },
-  { time: "10:45 AM", title: "Walk detected", detail: "Estimated 1.8 mi easy effort.", source: "Estimated" },
-  { time: "12:30 PM", title: "Lunch gap", detail: "Carbs are light for an afternoon workout.", source: "Estimated" },
-  { time: "5:30 PM", title: "Planned workout", detail: "Zone 2 ride or strength primer.", source: "User-entered" },
+  { time: "7:20 AM", title: "Breakfast logged", detail: "Protein-forward meal, 31g protein.", source: "User-entered", status: "done" },
+  { time: "10:45 AM", title: "Walk detected", detail: "Estimated 1.8 mi easy effort.", source: "Estimated", status: "done" },
+  { time: "12:30 PM", title: "Lunch gap", detail: "Carbs are light for an afternoon workout.", source: "Estimated", status: "watch" },
+  { time: "5:30 PM", title: "Planned workout", detail: "Zone 2 ride or strength primer.", source: "User-entered", status: "next" },
 ];
 
 const decisions = [
-  "Keep intensity conversational unless you add 35-50g carbs before training.",
-  "Prioritize 25-35g protein within two hours after the session.",
-  "Add a recovery check-in tonight so tomorrow's recommendation can be less generic.",
+  { label: "Keep intensity conversational", detail: "Add 35-50g carbs first if you want to push harder.", icon: Clock3 },
+  { label: "Protect the protein window", detail: "Aim for 25-35g protein within two hours after training.", icon: UtensilsCrossed },
+  { label: "Close the recovery loop", detail: "Add soreness and hydration tonight so tomorrow is less generic.", icon: ShieldCheck },
+] as const;
+
+const movementLoad = [
+  { label: "Walking", value: 58, detail: "6.4k steps", color: "bg-primary-500" },
+  { label: "Planned ride", value: 42, detail: "Zone 2", color: "bg-sky-500" },
+  { label: "Strength strain", value: 18, detail: "Low", color: "bg-lemon-500" },
 ];
+
+const fuelWindows = [
+  { label: "Breakfast", time: "7:20 AM", macro: "31g protein", state: "complete", width: "w-[64%]" },
+  { label: "Lunch", time: "12:30 PM", macro: "Carbs light", state: "watch", width: "w-[38%]" },
+  { label: "Post-workout", time: "Tonight", macro: "Protein due", state: "next", width: "w-[74%]" },
+];
+
+const toneMap = {
+  primary: "bg-primary-100 text-primary-700",
+  accent: "bg-accent-100 text-accent-700",
+  sky: "bg-sky-100 text-sky-700",
+  lemon: "bg-lemon-100 text-lemon-700",
+};
 
 function SourceBadge({ children }: { children: string }) {
   const estimated = children === "Estimated";
 
   return (
     <span
-      className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold ${
+      className={`inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-black ${
         estimated ? "bg-lemon-50 text-lemon-700" : "bg-primary-50 text-primary-700"
       }`}
     >
@@ -48,116 +83,244 @@ function SourceBadge({ children }: { children: string }) {
 
 export default function ActivityPage() {
   return (
-    <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-6">
-      <section className="space-y-3">
-        <div>
-          <p className="text-sm font-medium text-neutral-500">{activitySummary.dateLabel}</p>
-          <h1 className="text-2xl font-bold text-neutral-900 tracking-tight">Activity</h1>
-        </div>
-
-        <Card className="bg-gradient-to-br from-primary-50/90 via-white to-accent-50/70 border-primary-100">
-          <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
-            <div className="space-y-3">
-              <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-primary-600 text-white shadow-sm shadow-primary-600/25">
-                <ShieldCheck className="h-5 w-5" />
-              </div>
-              <div>
-                <h2 className="text-xl font-bold text-neutral-900">{activitySummary.verdict}</h2>
-                <p className="mt-2 max-w-2xl text-sm leading-relaxed text-neutral-600">
-                  {activitySummary.verdictDetail}
-                </p>
-              </div>
+    <div className="fw-app-surface">
+      <header className="fw-page-header">
+        <div className="fw-page-inner flex flex-col gap-4 py-7 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h1 className="fw-heading text-3xl md:text-4xl">Activity</h1>
+            <p className="fw-muted mt-1 text-base">{activitySummary.dateLabel} · movement and fuel timing</p>
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="rounded-full bg-white p-1 shadow-[0_18px_44px_rgba(22,48,42,0.10)]">
+              {modes.map((mode, index) => (
+                <span
+                  key={mode}
+                  className={`inline-flex rounded-full px-4 py-2 text-sm font-black ${
+                    index === 0 ? "bg-primary-500 text-white" : "text-primary-900/60"
+                  }`}
+                >
+                  {mode}
+                </span>
+              ))}
             </div>
             <Link
               href="/app/log"
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm shadow-primary-600/25 transition-colors hover:bg-primary-700"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-primary-600 px-5 py-3 text-sm font-black text-white shadow-[0_16px_34px_rgba(21,145,108,0.24)] transition hover:bg-primary-700"
             >
               {activitySummary.nextAction}
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
-        </Card>
-      </section>
+        </div>
+      </header>
 
-      <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {metrics.map((metric) => (
-          <Card key={metric.label} padding="sm" className="space-y-3">
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-neutral-100 text-neutral-500">
-                <metric.icon className="h-4 w-4" />
-              </div>
-              <SourceBadge>{metric.source}</SourceBadge>
-            </div>
-            <div>
-              <p className="text-2xl font-bold tabular-nums text-neutral-900">{metric.value}</p>
-              <p className="mt-1 text-sm font-medium text-neutral-700">{metric.label}</p>
-              <p className="mt-1 text-xs leading-relaxed text-neutral-500">{metric.detail}</p>
-            </div>
-          </Card>
-        ))}
-      </section>
-
-      <section className="grid gap-4 lg:grid-cols-[1.35fr_0.85fr]">
-        <Card padding="sm">
-          <div className="px-2 pb-3">
-            <h2 className="text-xs font-semibold uppercase tracking-wider text-neutral-400">Daily activity log</h2>
-          </div>
-          <div className="divide-y divide-neutral-100">
-            {timeline.map((item) => (
-              <div key={`${item.time}-${item.title}`} className="flex gap-4 px-2 py-4">
-                <div className="w-20 shrink-0 text-xs font-medium tabular-nums text-neutral-400">{item.time}</div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <p className="text-sm font-semibold text-neutral-900">{item.title}</p>
-                    <SourceBadge>{item.source}</SourceBadge>
-                  </div>
-                  <p className="mt-1 text-sm leading-relaxed text-neutral-500">{item.detail}</p>
+      <div className="fw-page-inner space-y-6">
+        <section className="grid items-start gap-5 lg:grid-cols-[1.08fr_0.92fr]">
+          <Card className="fw-dark-panel overflow-hidden p-0">
+            <div className="relative p-6 md:p-7">
+              <div className="relative z-10">
+                <p className="inline-flex items-center gap-2 text-sm font-black uppercase tracking-[0.16em] text-primary-200">
+                  <ShieldCheck className="h-4 w-4" />
+                  Today&apos;s activity verdict
+                </p>
+                <h2 className="mt-5 max-w-3xl font-heading text-3xl font-black leading-tight tracking-tight text-white md:text-4xl">
+                  {activitySummary.verdict}
+                </h2>
+                <p className="mt-4 max-w-3xl text-base font-semibold leading-7 text-white/74">
+                  {activitySummary.verdictDetail}
+                </p>
+                <div className="mt-6 grid grid-cols-3 gap-2 md:gap-3">
+                  {metrics.slice(0, 3).map((metric) => (
+                    <div key={metric.label} className="rounded-[1.05rem] border border-white/12 bg-white/10 px-3 py-3 backdrop-blur md:rounded-[1.25rem] md:px-5 md:py-4">
+                      <p className="font-heading text-xl font-black tabular-nums text-white md:text-2xl">{metric.value}</p>
+                      <p className="mt-1 text-[10px] font-black uppercase tracking-[0.08em] text-white/58 md:text-xs md:tracking-[0.12em]">{metric.label}</p>
+                    </div>
+                  ))}
                 </div>
               </div>
-            ))}
-          </div>
-        </Card>
+            </div>
+          </Card>
 
-        <div className="space-y-4">
-          <Card className="space-y-4">
+          <Card variant="elevated" className="space-y-5">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent-50 text-accent-600">
-                <Sparkles className="h-4 w-4" />
-              </div>
+              <span className="fw-icon-chip">
+                <Sparkles className="h-6 w-6" />
+              </span>
               <div>
-                <h2 className="text-sm font-semibold text-neutral-900">Next decisions</h2>
-                <p className="text-xs text-neutral-500">What FuelWell can say before integrations.</p>
+                <h2 className="text-2xl font-black text-neutral-900">Next decisions</h2>
+                <p className="text-sm font-semibold text-neutral-500">What changes the plan from here.</p>
               </div>
             </div>
-            <div className="space-y-3">
+            <div className="grid gap-3">
               {decisions.map((decision) => (
-                <div key={decision} className="flex gap-3 rounded-xl bg-neutral-50 p-3">
-                  <Clock3 className="mt-0.5 h-4 w-4 shrink-0 text-primary-600" />
-                  <p className="text-sm leading-relaxed text-neutral-700">{decision}</p>
+                <DecisionRow key={decision.label} {...decision} />
+              ))}
+            </div>
+            <div className="rounded-[1.25rem] border border-primary-100 bg-primary-50/70 p-4">
+              <div className="mb-2 flex items-center justify-between text-xs font-black uppercase tracking-[0.12em] text-primary-800">
+                <span>Confidence</span>
+                <span>Medium</span>
+              </div>
+              <div className="h-2 overflow-hidden rounded-full bg-white">
+                <div className="h-full w-[68%] rounded-full bg-primary-500" />
+              </div>
+              <p className="mt-2 text-xs font-semibold leading-5 text-primary-900/65">
+                Add a wearable sync or recovery check-in to make this recommendation more precise.
+              </p>
+            </div>
+            <Link
+              href="/app/workouts"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-[1.15rem] bg-primary-50 px-4 py-3 text-sm font-black text-primary-800 transition hover:bg-primary-100"
+            >
+              Choose a workout for this verdict
+              <Bike className="h-4 w-4" />
+            </Link>
+          </Card>
+        </section>
+
+        <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          {metrics.map((metric) => (
+            <Card key={metric.label} className="space-y-4 px-5 py-5">
+              <div className="flex items-start justify-between gap-3">
+                <div className={`flex h-12 w-12 items-center justify-center rounded-[1.15rem] ${toneMap[metric.tone]}`}>
+                  <metric.icon className="h-5 w-5" />
+                </div>
+                <SourceBadge>{metric.source}</SourceBadge>
+              </div>
+              <div>
+                <p className="text-3xl font-black tabular-nums text-neutral-900">{metric.value}</p>
+                <p className="mt-1 text-base font-black text-neutral-800">{metric.label}</p>
+                <p className="mt-1 text-sm font-semibold leading-6 text-neutral-500">{metric.detail}</p>
+              </div>
+            </Card>
+          ))}
+        </section>
+
+        <section className="grid gap-4 xl:grid-cols-[0.95fr_1.05fr]">
+          <Card className="space-y-5 px-6 py-6">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <h2 className="flex items-center gap-2 text-2xl font-black text-neutral-900">
+                  <BarChart3 className="h-5 w-5 text-primary-600" />
+                  Movement load
+                </h2>
+                <p className="mt-1 text-sm font-semibold text-neutral-500">Aisle-style scan of where today&apos;s effort comes from.</p>
+              </div>
+              <span className="rounded-full bg-primary-50 px-3 py-1 text-xs font-black text-primary-700">Light day</span>
+            </div>
+            <div className="space-y-4">
+              {movementLoad.map((load) => (
+                <div key={load.label}>
+                  <div className="mb-2 flex items-center justify-between text-sm font-black">
+                    <span className="text-neutral-800">{load.label}</span>
+                    <span className="text-neutral-400">{load.detail}</span>
+                  </div>
+                  <div className="h-3 overflow-hidden rounded-full bg-primary-50">
+                    <div className={`${load.color} h-full rounded-full`} style={{ width: `${load.value}%` }} />
+                  </div>
                 </div>
               ))}
             </div>
           </Card>
 
-          <Card className="space-y-3 border-lemon-200 bg-lemon-50/60">
-            <div className="flex gap-3">
-              <Info className="mt-0.5 h-4 w-4 shrink-0 text-lemon-600" />
+          <Card className="space-y-5 px-6 py-6">
+            <div className="flex items-center justify-between gap-3">
               <div>
-                <h2 className="text-sm font-semibold text-neutral-900">Data honesty</h2>
-                <p className="mt-1 text-sm leading-relaxed text-neutral-600">{activitySummary.sourceNote}</p>
+                <h2 className="flex items-center gap-2 text-2xl font-black text-neutral-900">
+                  <CalendarClock className="h-5 w-5 text-primary-600" />
+                  Fuel timing
+                </h2>
+                <p className="mt-1 text-sm font-semibold text-neutral-500">Hover-light detail for when logged food supports movement.</p>
               </div>
+              <span className="rounded-full bg-lemon-50 px-3 py-1 text-xs font-black text-lemon-700">1 gap</span>
+            </div>
+            <div className="grid gap-3">
+              {fuelWindows.map((window) => (
+                <div key={window.label} className="rounded-[1.25rem] border border-primary-100/70 bg-neutral-50/75 p-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <p className="text-base font-black text-neutral-900">{window.label}</p>
+                      <p className="text-xs font-semibold text-neutral-500">{window.time} · {window.macro}</p>
+                    </div>
+                    <span
+                      className={`rounded-full px-2.5 py-1 text-[11px] font-black ${
+                        window.state === "complete"
+                          ? "bg-primary-100 text-primary-700"
+                          : window.state === "watch"
+                            ? "bg-lemon-100 text-lemon-700"
+                            : "bg-accent-100 text-accent-700"
+                      }`}
+                    >
+                      {window.state}
+                    </span>
+                  </div>
+                  <div className="mt-3 h-2 rounded-full bg-white">
+                    <div className={`${window.width} h-full rounded-full bg-primary-500`} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Card>
+        </section>
+
+        <section className="grid gap-4 xl:grid-cols-[1.35fr_0.85fr]">
+          <Card className="px-6 py-6">
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="text-2xl font-black text-neutral-900">Daily activity log</h2>
+              <span className="rounded-full bg-primary-50 px-3 py-1 text-xs font-black text-primary-700">4 signals</span>
+            </div>
+            <div className="divide-y divide-primary-100/70">
+              {timeline.map((item) => (
+                <div key={`${item.time}-${item.title}`} className="grid gap-3 py-5 md:grid-cols-[6rem_1fr_auto] md:items-center">
+                  <div className="text-sm font-black tabular-nums text-neutral-400">{item.time}</div>
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="text-lg font-black text-neutral-900">{item.title}</p>
+                      <SourceBadge>{item.source}</SourceBadge>
+                    </div>
+                    <p className="mt-1 text-sm font-semibold leading-6 text-neutral-500">{item.detail}</p>
+                  </div>
+                  <span className={`hidden h-3 w-3 rounded-full md:block ${item.status === "watch" ? "bg-lemon-500" : item.status === "next" ? "bg-accent-500" : "bg-primary-500"}`} />
+                </div>
+              ))}
             </div>
           </Card>
 
-          <Link
-            href="/app/workouts"
-            className="flex items-center justify-between rounded-2xl border border-neutral-200/80 bg-white p-4 text-sm font-medium text-neutral-700 transition-colors hover:border-primary-200 hover:text-primary-700"
-          >
-            Choose a workout for this verdict
-            <Bike className="h-4 w-4" />
-          </Link>
-        </div>
-      </section>
+          <Card className="space-y-3 border-lemon-200 bg-lemon-50/80">
+            <div className="flex gap-3">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-lemon-700">
+                <Info className="h-4 w-4" />
+              </span>
+              <div>
+                <h2 className="text-xl font-black text-lemon-800">Data honesty</h2>
+                <p className="mt-2 text-sm font-semibold leading-6 text-lemon-800/78">{activitySummary.sourceNote}</p>
+              </div>
+            </div>
+          </Card>
+        </section>
+      </div>
+    </div>
+  );
+}
+
+function DecisionRow({
+  label,
+  detail,
+  icon: Icon,
+}: {
+  label: string;
+  detail: string;
+  icon: LucideIcon;
+}) {
+  return (
+    <div className="fw-soft-row flex gap-3 p-4">
+      <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-100 text-primary-700">
+        <Icon className="h-4 w-4" />
+      </span>
+      <div>
+        <p className="text-sm font-black text-neutral-900">{label}</p>
+        <p className="mt-1 text-sm font-semibold leading-6 text-neutral-500">{detail}</p>
+      </div>
     </div>
   );
 }

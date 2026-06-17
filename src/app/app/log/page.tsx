@@ -5,6 +5,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import {
   Barcode,
   Camera,
+  CheckCircle2,
+  CircleDot,
   MapPinned,
   Search,
   Sparkles,
@@ -141,20 +143,23 @@ function LogContent() {
   ];
 
   return (
-    <div className="mx-auto max-w-6xl space-y-5 p-4 md:p-8">
-      <Card variant="elevated" className="bg-neutral-950 text-white">
+    <div className="mx-auto max-w-6xl space-y-5 p-4 pb-28 md:p-8">
+      <Card variant="elevated" className="fw-dark-panel overflow-hidden text-white">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="text-sm font-bold text-primary-200">Fast logging</p>
-            <h1 className="mt-1 text-3xl font-black tracking-tight">Log a meal</h1>
-            <p className="mt-2 max-w-2xl text-sm font-medium leading-6 text-neutral-300">
+            <p className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-xs font-black uppercase tracking-[0.16em] text-primary-100">
+              <Sparkles className="h-4 w-4" />
+              Fast logging
+            </p>
+            <h1 className="mt-4 text-3xl font-black leading-tight tracking-normal md:text-4xl">Log a meal</h1>
+            <p className="mt-3 max-w-2xl text-sm font-semibold leading-6 text-white/70">
               Search updates as you type. Adding food updates Today&apos;s Plate,
               dashboard macros, and coach context.
             </p>
           </div>
           <Button
             variant="secondary"
-            className="border-white/20 bg-white/10 text-white hover:bg-white/15"
+            className="border-white/15 bg-white/10 text-white shadow-none hover:bg-white/15"
             onClick={() => router.push("/app/nutrition")}
           >
             View today&apos;s plate
@@ -164,17 +169,17 @@ function LogContent() {
 
       <div className="grid gap-5 lg:grid-cols-[1fr_0.72fr]">
         <div className="space-y-5">
-          <div className="flex gap-1 rounded-2xl bg-white/70 p-1 shadow-sm shadow-neutral-200/70">
+          <div className="grid grid-cols-2 gap-2 rounded-[1.5rem] border border-primary-100/80 bg-white/86 p-2 shadow-[0_18px_48px_rgba(22,48,42,0.07)] sm:grid-cols-4">
             {modes.map((modeOption) => (
               <button
                 key={modeOption.key}
                 onClick={() => setMode(modeOption.key)}
                 aria-pressed={mode === modeOption.key}
                 className={cn(
-                  "flex flex-1 items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold transition-all duration-150",
+                  "flex min-h-12 items-center justify-center gap-2 rounded-[1.15rem] px-3 py-3 text-sm font-black transition-all duration-150",
                   mode === modeOption.key
-                    ? "bg-neutral-900 text-white shadow-lg shadow-neutral-300/60"
-                    : "text-neutral-500 hover:bg-white hover:text-neutral-900"
+                    ? "bg-primary-600 text-white shadow-[0_14px_32px_rgba(21,145,108,0.22)]"
+                    : "text-[#60776f] hover:bg-primary-50 hover:text-primary-800"
                 )}
               >
                 <modeOption.icon className="h-4 w-4" />
@@ -261,9 +266,12 @@ function LogContent() {
                 onAdd={handleAddPortion}
               />
             ) : (
-              <div className="rounded-2xl border border-dashed border-neutral-300 bg-neutral-50 p-5">
-                <p className="font-bold text-neutral-900">No food selected.</p>
-                <p className="mt-1 text-sm font-medium text-neutral-500">
+              <div className="rounded-[1.35rem] border border-dashed border-primary-200 bg-primary-50/70 p-5">
+                <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-[1rem] bg-white text-primary-700 shadow-sm">
+                  <CircleDot className="h-5 w-5" />
+                </div>
+                <p className="font-black text-[#16302a]">No food selected.</p>
+                <p className="mt-1 text-sm font-semibold text-[#78928a]">
                   Choose a result from Search. Its one-tap portions appear here.
                 </p>
               </div>
@@ -272,10 +280,10 @@ function LogContent() {
             {confirmation && (
               <div
                 role="status"
-                className="rounded-2xl bg-primary-50 px-4 py-3 text-sm font-bold text-primary-800"
+                className="flex items-start gap-2 rounded-[1.25rem] border border-primary-100 bg-primary-50 px-4 py-3 text-sm font-black text-primary-800"
               >
-                <Sparkles className="mr-2 inline h-4 w-4" />
-                {confirmation}
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" />
+                <span>{confirmation}</span>
               </div>
             )}
 
@@ -301,8 +309,8 @@ function RecentMeals({
   return (
     <Card className="space-y-3">
       <div>
-        <h2 className="text-lg font-black text-neutral-900">Recent meals</h2>
-        <p className="mt-1 text-sm font-medium text-neutral-500">
+        <h2 className="text-lg font-black text-[#16302a]">Recent meals</h2>
+        <p className="mt-1 text-sm font-semibold text-[#78928a]">
           One tap repeats a meal and updates today&apos;s goal math.
         </p>
       </div>
@@ -322,10 +330,10 @@ function RecentMeals({
               key={meal.id}
               type="button"
               onClick={() => onLog(meal.name, mealTotals)}
-              className="min-h-12 rounded-2xl border border-neutral-200 bg-white px-3 py-2 text-left transition hover:border-primary-300 hover:bg-primary-50/60"
+              className="min-h-16 rounded-[1.2rem] border border-primary-100/80 bg-[#f7faf8] px-4 py-3 text-left transition hover:-translate-y-0.5 hover:border-primary-200 hover:bg-white hover:shadow-md hover:shadow-primary-900/10"
             >
-              <p className="truncate text-sm font-black text-neutral-900">{meal.name}</p>
-              <p className="mt-0.5 text-xs font-medium text-neutral-500">
+              <p className="truncate text-sm font-black text-[#16302a]">{meal.name}</p>
+              <p className="mt-0.5 text-xs font-bold text-[#78928a]">
                 {mealTotals.calories} kcal · {mealTotals.protein}g protein
               </p>
             </button>
@@ -345,7 +353,7 @@ function MealTypeSelector({
 }) {
   return (
     <Card className="space-y-4">
-      <h2 className="text-lg font-black text-neutral-900">Logging for</h2>
+      <h2 className="text-lg font-black text-[#16302a]">Logging for</h2>
       <div className="grid grid-cols-2 gap-2">
         {MEAL_TYPES.map((type) => (
           <button
@@ -353,10 +361,10 @@ function MealTypeSelector({
             onClick={() => onSelect(type)}
             aria-pressed={mealType === type}
             className={cn(
-              "rounded-2xl border px-4 py-3 text-sm font-black transition",
+              "rounded-[1.15rem] border px-4 py-3 text-sm font-black transition",
               mealType === type
-                ? "border-primary-300 bg-primary-50 text-primary-800"
-                : "border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300"
+                ? "border-primary-300 bg-primary-50 text-primary-800 shadow-sm"
+                : "border-primary-100 bg-white text-[#60776f] hover:border-primary-200 hover:bg-primary-50/60"
             )}
           >
             {formatMealType(type)}

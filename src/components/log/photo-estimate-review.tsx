@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Camera, Search } from "lucide-react";
+import { Camera, Info, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import type { MacroTotals } from "@/lib/fuelwell-data";
@@ -89,10 +89,12 @@ export function PhotoEstimateReview({
     <Card className="space-y-4">
       <div>
         <div className="flex items-center gap-2">
-          <Camera className="h-5 w-5 text-primary-700" />
-          <h2 className="text-lg font-black text-neutral-900">Photo review draft</h2>
+          <span className="flex h-10 w-10 items-center justify-center rounded-[1rem] bg-accent-100 text-accent-700">
+            <Camera className="h-5 w-5" />
+          </span>
+          <h2 className="text-lg font-black text-[#16302a]">Photo review draft</h2>
         </div>
-        <p className="mt-1 text-sm font-medium leading-6 text-neutral-500">
+        <p className="mt-2 text-sm font-semibold leading-6 text-[#78928a]">
           Upload a meal photo and review candidates before saving. FuelWell never auto-logs a photo estimate.
         </p>
       </div>
@@ -102,7 +104,7 @@ export function PhotoEstimateReview({
         accept="image/jpeg,image/png,image/webp"
         aria-label="Meal photo"
         onChange={(event) => void handleFile(event.target.files?.[0])}
-        className="block w-full rounded-2xl border border-dashed border-neutral-300 bg-neutral-50 px-4 py-4 text-sm font-medium text-neutral-600 file:mr-3 file:rounded-full file:border-0 file:bg-neutral-900 file:px-4 file:py-2 file:text-xs file:font-black file:text-white"
+        className="block w-full rounded-[1.25rem] border border-dashed border-primary-200 bg-primary-50/55 px-4 py-4 text-sm font-semibold text-[#60776f] file:mr-3 file:rounded-full file:border-0 file:bg-primary-600 file:px-4 file:py-2 file:text-xs file:font-black file:text-white"
       />
 
       {imageDataUrl && (
@@ -110,7 +112,7 @@ export function PhotoEstimateReview({
         <img
           src={imageDataUrl}
           alt="Selected meal preview"
-          className="max-h-56 w-full rounded-2xl object-cover"
+          className="max-h-56 w-full rounded-[1.25rem] border border-primary-100 object-cover shadow-sm"
         />
       )}
 
@@ -120,7 +122,7 @@ export function PhotoEstimateReview({
         onChange={(event) => setDescription(event.target.value)}
         placeholder="Optional: describe visible foods, e.g. chicken, rice, broccoli"
         aria-label="Describe visible foods"
-        className="min-h-24 w-full rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-base font-medium text-neutral-900 placeholder:text-neutral-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary-500"
+        className="min-h-24 w-full rounded-[1.25rem] border border-primary-100 bg-white px-4 py-3 text-base font-semibold text-[#16302a] placeholder:text-[#91a7a0] focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary-500"
       />
 
       <Button
@@ -140,16 +142,17 @@ export function PhotoEstimateReview({
 
       {result && (
         <div className="space-y-3">
-          <div className="rounded-2xl bg-lemon-50 px-4 py-3">
+          <div className="flex items-start gap-2 rounded-[1.25rem] border border-lemon-200 bg-lemon-50 px-4 py-3">
+            <Info className="mt-0.5 h-4 w-4 shrink-0 text-lemon-700" />
             <p className="text-sm font-bold leading-5 text-lemon-700">
               {result.sourceNote} Review is required before anything is saved.
             </p>
           </div>
 
           {result.candidates.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-neutral-300 bg-neutral-50 p-5">
-              <p className="font-bold text-neutral-900">No useful draft yet.</p>
-              <p className="mt-1 text-sm font-medium text-neutral-500">
+            <div className="rounded-[1.35rem] border border-dashed border-primary-200 bg-primary-50/60 p-5">
+              <p className="font-black text-[#16302a]">No useful draft yet.</p>
+              <p className="mt-1 text-sm font-semibold text-[#78928a]">
                 Add a short description or use Search so macros stay truthful.
               </p>
             </div>
@@ -158,18 +161,18 @@ export function PhotoEstimateReview({
               {result.candidates.map((candidate) => (
                 <li
                   key={`${candidate.name}-${candidate.portionLabel}`}
-                  className="rounded-2xl border border-neutral-100 bg-neutral-50 p-3"
+                  className="rounded-[1.25rem] border border-primary-100/80 bg-[#f7faf8] p-3"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-black text-neutral-900">
+                      <p className="truncate text-sm font-black text-[#16302a]">
                         {candidate.name}
                       </p>
-                      <p className="mt-0.5 text-xs font-medium text-neutral-500">
+                      <p className="mt-0.5 text-xs font-bold text-[#60776f]">
                         {candidate.portionLabel} · {candidate.totals.calories} kcal ·{" "}
                         {candidate.totals.protein}g protein
                       </p>
-                      <p className="mt-1 text-xs font-medium leading-5 text-neutral-500">
+                      <p className="mt-1 text-xs font-semibold leading-5 text-[#78928a]">
                         {candidate.sourceNote}
                       </p>
                     </div>
