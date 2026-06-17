@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { headers } from "next/headers";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { NutritionEditPanel } from "@/components/daily-detail/nutrition-edit-panel";
 import {
   DEFAULT_TARGETS,
   formatMealType,
@@ -133,7 +134,8 @@ function NutritionDetail({
         </div>
       </header>
 
-      <div className="fw-page-inner space-y-6 pb-28 md:pb-8">
+      <div className="fw-page-inner pb-28 md:pb-8">
+      <div className="space-y-6 rounded-[2rem] bg-white/62 p-3 shadow-[0_24px_70px_rgba(20,90,75,0.08)] md:p-5">
       <Card variant="elevated" className="rounded-[1.5rem] bg-white px-7 py-7 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
         <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
           <div>
@@ -187,6 +189,8 @@ function NutritionDetail({
           action="Log food"
         />
       </section>
+
+      <NutritionEditPanel />
 
       {meals.length === 0 ? (
         <Card className="border-dashed border-primary-200 bg-white/75 text-center">
@@ -277,6 +281,7 @@ function NutritionDetail({
         </section>
       )}
       </div>
+      </div>
     </div>
   );
 }
@@ -358,7 +363,7 @@ function TargetTile({
           <span className={`flex h-[30px] w-[30px] items-center justify-center rounded-full ${styles.chip}`}>
             <Icon className="h-[15px] w-[15px]" />
           </span>
-          <p className="text-sm font-black text-[#54635d]">{label}</p>
+          <p className="text-base font-black leading-tight text-[#54635d] md:text-lg">{label}</p>
         </div>
         <p className={`rounded-full px-2.5 py-1 text-xs font-black ${styles.pill}`}>
           {percentOf(current, target)}%

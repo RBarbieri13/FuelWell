@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import {
+  Activity,
   ArrowRight,
   ChevronRight,
   Eye,
@@ -10,15 +11,26 @@ import {
   Info,
   Leaf,
   ListFilter,
+  Pencil,
+  Plus,
   Search,
+  Save,
   SlidersHorizontal,
   Sparkles,
   Timer,
+  Trash2,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils/cn";
 import { useWorkoutLog } from "@/lib/use-workout-log";
+import {
+  MANUAL_ACTIVITY_OPTIONS,
+  PROFILE_WEIGHT_LB,
+  buildManualWorkoutEntry,
+  estimateMinutesFromDistance,
+  estimateWorkoutCalories,
+} from "@/lib/workout-estimates";
 import {
   workouts,
   workoutHref,
@@ -184,6 +196,120 @@ function parseWorkoutType(value?: string): WorkoutTypeFilter {
     : "all";
 }
 
+function ManualActivityPlanner({
+  onAdd,
+}: {
+  onAdd: ReturnType<typeof useWorkoutLog>["addWorkout"];
+}) {
+  const [activityId, setActivityId] = useState(MANUAL_ACTIVITY_OPTIONS[0].id);
+  const [minutes, setMinutes] = useState(30);
+  const [distance, setDistance] = useState("");
+  const option =
+    MANUAL_ACTIVITY_OPTIONS.find((activity) => activity.id === activityId) ??
+    MANUAL_ACTIVITY_OPTIONS[0];
+  const distanceNumber = Number.parseFloat(distance);
+  const distanceMinutes = estimateMinutesFromDistance(option, Number.isFinite(distanceNumber) ? distanceNumber : 0);
+  const resolvedMinutes = distanceMinutes > 0 ? distanceMinutes : minutes;
+  const calories = estimateWorkoutCalories({ met: option.met, minutes: resolvedMinutes });
+
+  return (
+    <Card className="space-y-5 rounded-[24px] border-[#e6efeb] px-7 py-7 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
+      <div className="flex items-start gap-4">
+        <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[13px] bg-sky-100 text-sky-700">
+          <Activity className="h-5 w-5" />
+        </span>
+        <div>
+          <h2 className="font-heading text-[22px] font-black tracking-tight text-[#16302a]">
+            Add any activity
+          </h2>
+          <p className="mt-2 text-[15px] font-semibold leading-6 text-[#54635d]">
+            Walking, hiking, running, biking, swimming, rowing, intervals, and more.
+          </p>
+        </div>
+      </div>
+
+      <div className="grid gap-3">
+        <label>
+          <span className="text-xs font-black uppercase tracking-[0.14em] text-[#9db0aa]">
+            Activity type
+          </span>
+          <select
+            value={activityId}
+            onChange={(event) => setActivityId(event.target.value)}
+            className="mt-2 w-full rounded-2xl border border-[#dce8e3] bg-[#f4f8f6] px-4 py-3 text-sm font-bold text-[#16302a] outline-none focus:border-primary-300 focus:ring-2 focus:ring-primary-200"
+          >
+            {MANUAL_ACTIVITY_OPTIONS.map((activity) => (
+              <option key={activity.id} value={activity.id}>
+                {activity.label}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <div className="grid gap-3 sm:grid-cols-2">
+          <label>
+            <span className="text-xs font-black uppercase tracking-[0.14em] text-[#9db0aa]">
+              Minutes
+            </span>
+            <input
+              type="number"
+              min={1}
+              value={minutes}
+              onChange={(event) => setMinutes(Number(event.target.value))}
+              className="mt-2 w-full rounded-2xl border border-[#dce8e3] bg-[#f4f8f6] px-4 py-3 text-sm font-bold text-[#16302a] outline-none focus:border-primary-300 focus:ring-2 focus:ring-primary-200"
+            />
+          </label>
+          <label>
+            <span className="text-xs font-black uppercase tracking-[0.14em] text-[#9db0aa]">
+              Distance
+            </span>
+            <input
+              type="number"
+              min={0}
+              step="0.1"
+              value={distance}
+              onChange={(event) => setDistance(event.target.value)}
+              placeholder="Optional mi"
+              className="mt-2 w-full rounded-2xl border border-[#dce8e3] bg-[#f4f8f6] px-4 py-3 text-sm font-bold text-[#16302a] outline-none placeholder:text-[#9db0aa] focus:border-primary-300 focus:ring-2 focus:ring-primary-200"
+            />
+          </label>
+        </div>
+      </div>
+
+      <div className="rounded-[1.15rem] border border-primary-100 bg-primary-50/70 px-4 py-3">
+        <p className="text-xl font-black tabular-nums text-primary-800">
+          {calories} active cal
+        </p>
+        <p className="mt-1 text-xs font-semibold leading-5 text-primary-900/70">
+          Estimate uses {resolvedMinutes} min, {option.label.toLowerCase()} intensity, and profile weight {PROFILE_WEIGHT_LB} lb.
+        </p>
+      </div>
+
+      <Button
+        type="button"
+        onClick={() => {
+          if (resolvedMinutes <= 0) return;
+          onAdd(
+            buildManualWorkoutEntry({
+              option,
+              minutes: resolvedMinutes,
+              distanceMiles:
+                Number.isFinite(distanceNumber) && distanceNumber > 0 ? distanceNumber : undefined,
+              calories,
+            })
+          );
+          setMinutes(30);
+          setDistance("");
+        }}
+        className="w-full"
+      >
+        <Plus className="h-4 w-4" />
+        Add activity
+      </Button>
+    </Card>
+  );
+}
+
 export function WorkoutsView({
   verdict,
   initialBodyPart,
@@ -202,7 +328,15 @@ export function WorkoutsView({
   const [workoutQuery, setWorkoutQuery] = useState(initialQuery ?? "");
   const [showRecommendation, setShowRecommendation] = useState(false);
   // Shared store: workouts logged from Coach chat show up here too (D-gate).
-  const { workouts: loggedWorkouts } = useWorkoutLog();
+  const {
+    workouts: loggedWorkouts,
+    addWorkout,
+    removeWorkout,
+    updateWorkout,
+  } = useWorkoutLog();
+  const [editingWorkoutId, setEditingWorkoutId] = useState<string | null>(null);
+  const [editMinutes, setEditMinutes] = useState(0);
+  const [editCalories, setEditCalories] = useState(0);
 
   const visible = useMemo(() => {
     const query = workoutQuery.trim().toLowerCase();
@@ -250,29 +384,92 @@ export function WorkoutsView({
 
       {loggedWorkouts.length > 0 && (
         <Card className="space-y-3 rounded-[22px] border-[#e6efeb] px-6 py-5 shadow-[0_8px_22px_rgba(20,90,75,0.06)]" data-testid="logged-workouts">
-          <h2 className="font-heading text-lg font-black text-[#16302a]">Logged</h2>
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="font-heading text-lg font-black text-[#16302a]">Logged</h2>
+            <span className="rounded-full bg-primary-50 px-3 py-1 text-xs font-black text-primary-700">
+              Editable today
+            </span>
+          </div>
           <ul className="divide-y divide-neutral-100">
             {loggedWorkouts
               .slice(-5)
               .reverse()
               .map((w) => (
-                <li key={w.id} className="flex items-center justify-between gap-3 py-2.5">
+                <li key={w.id} className="grid gap-3 py-3 md:grid-cols-[1fr_auto] md:items-center">
                   <div className="min-w-0">
                     <p className="truncate text-sm font-semibold text-neutral-900">{w.name}</p>
                     <p className="text-xs text-neutral-500">
-                      {w.category} · {w.durationMin} min
+                      {w.category} · {w.durationMin} min · {w.calories ?? 0} active cal
                     </p>
                   </div>
-                  <span className="shrink-0 text-xs font-medium text-neutral-500">
-                    {new Date(w.loggedAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}
-                  </span>
+                  {editingWorkoutId === w.id ? (
+                    <div className="grid gap-2 sm:grid-cols-[5.5rem_6.5rem_auto]">
+                      <input
+                        type="number"
+                        min={1}
+                        value={editMinutes}
+                        onChange={(event) => setEditMinutes(Number(event.target.value))}
+                        className="rounded-full border border-primary-100 bg-white px-3 py-2 text-xs font-black text-[#16302a]"
+                        aria-label="Edit workout minutes"
+                      />
+                      <input
+                        type="number"
+                        min={0}
+                        value={editCalories}
+                        onChange={(event) => setEditCalories(Number(event.target.value))}
+                        className="rounded-full border border-primary-100 bg-white px-3 py-2 text-xs font-black text-[#16302a]"
+                        aria-label="Edit workout calories"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          updateWorkout(w.id, {
+                            durationMin: Math.max(1, editMinutes),
+                            calories: Math.max(0, editCalories),
+                            source: "manual_edit",
+                          });
+                          setEditingWorkoutId(null);
+                        }}
+                        className="inline-flex items-center justify-center gap-1.5 rounded-full bg-primary-600 px-3 py-2 text-xs font-black text-white"
+                      >
+                        <Save className="h-3.5 w-3.5" />
+                        Save
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex flex-wrap items-center gap-2 md:justify-end">
+                      <span className="shrink-0 text-xs font-medium text-neutral-500">
+                        {new Date(w.loggedAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditingWorkoutId(w.id);
+                          setEditMinutes(w.durationMin);
+                          setEditCalories(w.calories ?? 0);
+                        }}
+                        className="inline-flex items-center gap-1.5 rounded-full bg-primary-50 px-3 py-1.5 text-xs font-black text-primary-700 hover:bg-primary-100"
+                      >
+                        <Pencil className="h-3.5 w-3.5" />
+                        Edit
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => removeWorkout(w.id)}
+                        className="inline-flex items-center gap-1.5 rounded-full bg-accent-100 px-3 py-1.5 text-xs font-black text-accent-700 hover:bg-accent-200"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                        Delete
+                      </button>
+                    </div>
+                  )}
                 </li>
               ))}
           </ul>
         </Card>
       )}
 
-      <div className="grid gap-5 lg:grid-cols-2">
+      <div className="grid gap-5 xl:grid-cols-3">
         {/* Path 1: Pick my own */}
         <Card className="space-y-5 rounded-[24px] border-[#e6efeb] px-7 py-7 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
           <div className="flex items-start gap-4">
@@ -300,6 +497,8 @@ export function WorkoutsView({
             ))}
           </div>
         </Card>
+
+        <ManualActivityPlanner onAdd={addWorkout} />
 
         {/* Path 2: Coach recommends */}
         <Card className="fw-dark-panel relative overflow-hidden rounded-[24px] px-7 py-7 shadow-[0_20px_44px_rgba(16,48,40,0.3)]">

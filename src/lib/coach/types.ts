@@ -31,6 +31,10 @@ export type WorkoutEntry = {
   category: string;
   durationMin: number;
   loggedAt: string;
+  calories?: number;
+  distanceMiles?: number;
+  met?: number;
+  source?: "coach" | "database" | "manual_activity" | "manual_edit";
   exercises?: Array<{ name: string; sets?: number; reps?: number; weightKg?: number }>;
   notes?: string;
 };

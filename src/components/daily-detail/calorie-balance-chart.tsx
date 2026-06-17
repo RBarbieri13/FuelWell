@@ -19,7 +19,7 @@ import { sumMeals, type MacroTargets, type MealRecord } from "@/lib/fuelwell-dat
 
 type SegmentTone = "protein" | "carbs" | "fat" | "bmr" | "steps" | "training" | "mobility";
 type BarKind = "intake" | "output";
-type RangeOption = 3 | 7 | 14 | 30;
+type RangeOption = 1 | 3 | 7 | 14 | 30;
 
 type Segment = {
   label: string;
@@ -63,6 +63,7 @@ const TONE_DOTS: Record<SegmentTone, string> = {
 };
 
 const RANGE_OPTIONS: { label: string; value: RangeOption }[] = [
+  { label: "Today", value: 1 },
   { label: "3 days", value: 3 },
   { label: "7 days", value: 7 },
   { label: "14 days", value: 14 },
@@ -231,7 +232,9 @@ export function CalorieBalanceChart({
     ...filteredDays.flatMap((day) => [totalCalories(day.intake), totalCalories(day.output)])
   );
   const windowLabel =
-    clampedOffset === 0
+    range === 1 && clampedOffset === 0
+      ? "Today only"
+      : clampedOffset === 0
       ? `Latest ${range}`
       : `${range} days · ${clampedOffset} window${clampedOffset === 1 ? "" : "s"} back`;
 
@@ -293,7 +296,7 @@ export function CalorieBalanceChart({
             <div>
               <p className="text-sm font-black text-[#16302a]">{windowLabel}</p>
               <p className="text-xs font-semibold text-[#7c968f]">
-                Click any bar to open a granular day breakdown.
+                Hover any bar for an instant breakdown. Click to pin the detail open.
               </p>
             </div>
           </div>
@@ -341,6 +344,8 @@ export function CalorieBalanceChart({
             ))}
           </div>
         </div>
+
+        {range === 30 && <AggregateThirtyDayCharts days={filteredDays} />}
 
         <div className="mt-5 flex flex-wrap gap-3 border-t border-primary-100 pt-4 text-xs font-bold text-[#78928a]">
           <LegendItem tone="protein" label="Protein" />
@@ -444,11 +449,32 @@ function StackedBar({
     <button
       type="button"
       onClick={onClick}
-      className="group flex w-9 flex-col items-center gap-2 focus:outline-none"
+      className="group relative flex w-9 flex-col items-center gap-2 focus:outline-none"
       aria-label={`Open ${label.toLowerCase()} detail with ${total} calories`}
     >
       <span className="text-[10px] font-black tabular-nums text-[#54635d] opacity-0 transition group-hover:opacity-100 group-focus:opacity-100">
         {total}
+      </span>
+      <span className="absolute bottom-[calc(100%+0.65rem)] left-1/2 z-30 hidden w-72 -translate-x-1/2 rounded-[1.25rem] border border-primary-100 bg-white p-4 text-left shadow-[0_22px_58px_rgba(7,29,24,0.18)] group-hover:block group-focus:block">
+        <span className="text-sm font-black uppercase tracking-[0.12em] text-primary-600">
+          {label} breakdown
+        </span>
+        <span className="mt-2 block text-2xl font-black tabular-nums text-[#16302a]">
+          {total.toLocaleString()} cal
+        </span>
+        <span className="mt-3 grid gap-2">
+          {segments.map((segment) => (
+            <span key={`${label}-hover-${segment.label}`} className="flex items-center justify-between gap-3">
+              <span className="inline-flex items-center gap-2 text-base font-black text-[#54635d]">
+                <span className={cn("h-3 w-3 rounded-full", TONE_DOTS[segment.tone])} />
+                {segment.label}
+              </span>
+              <span className="text-base font-black tabular-nums text-[#16302a]">
+                {segment.calories.toLocaleString()}
+              </span>
+            </span>
+          ))}
+        </span>
       </span>
       <span
         className="flex w-8 flex-col justify-end overflow-hidden rounded-full bg-[#edf3f0] shadow-inner ring-1 ring-primary-900/5 transition group-hover:scale-[1.03] group-focus:ring-2 group-focus:ring-primary-400"
@@ -468,7 +494,74 @@ function StackedBar({
       <span className="text-[10px] font-black uppercase tracking-[0.08em] text-[#9db0aa]">
         {label}
       </span>
+      <span className="rounded-full bg-primary-50 px-1.5 py-0.5 text-[8px] font-black uppercase tracking-[0.08em] text-primary-700 opacity-80">
+        Hover
+      </span>
     </button>
+  );
+}
+
+function AggregateThirtyDayCharts({ days }: { days: BalanceDay[] }) {
+  const intake = aggregateSegments(days.flatMap((day) => day.intake));
+  const output = aggregateSegments(days.flatMap((day) => day.output));
+
+  return (
+    <div className="mt-6 grid gap-4 lg:grid-cols-2">
+      <AggregateChart title="30-day intake aggregate" detail="Protein, carbs, and fat across the full window." segments={intake} />
+      <AggregateChart title="30-day output aggregate" detail="Base burn and movement across the full window." segments={output} />
+    </div>
+  );
+}
+
+function aggregateSegments(segments: Segment[]): Segment[] {
+  const totals = new Map<string, Segment>();
+  segments.forEach((segment) => {
+    const current = totals.get(segment.label);
+    totals.set(segment.label, {
+      ...segment,
+      calories: (current?.calories ?? 0) + segment.calories,
+    });
+  });
+  return Array.from(totals.values());
+}
+
+function AggregateChart({
+  title,
+  detail,
+  segments,
+}: {
+  title: string;
+  detail: string;
+  segments: Segment[];
+}) {
+  const max = Math.max(1, ...segments.map((segment) => segment.calories));
+
+  return (
+    <div className="rounded-[1.5rem] border border-primary-100 bg-[#f8fbf9] p-5">
+      <h3 className="font-heading text-xl font-black text-[#16302a]">{title}</h3>
+      <p className="mt-1 text-sm font-semibold text-[#78928a]">{detail}</p>
+      <div className="mt-5 grid gap-4">
+        {segments.map((segment) => (
+          <div key={`${title}-${segment.label}`} className="grid gap-2">
+            <div className="flex items-center justify-between gap-3">
+              <span className="inline-flex items-center gap-2 text-sm font-black text-[#54635d]">
+                <span className={cn("h-3 w-3 rounded-full", TONE_DOTS[segment.tone])} />
+                {segment.label}
+              </span>
+              <span className="text-sm font-black tabular-nums text-[#16302a]">
+                {segment.calories.toLocaleString()} cal
+              </span>
+            </div>
+            <div className="h-4 overflow-hidden rounded-full bg-white">
+              <div
+                className={cn("h-full rounded-full", TONE_CLASSES[segment.tone])}
+                style={{ width: `${Math.max(8, (segment.calories / max) * 100)}%` }}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 

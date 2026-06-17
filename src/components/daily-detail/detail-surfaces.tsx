@@ -9,6 +9,7 @@ import {
   Footprints,
   HeartPulse,
   Info,
+  Pencil,
   Moon,
   Plus,
   Salad,
@@ -23,6 +24,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { CalorieBalanceChart } from "@/components/daily-detail/calorie-balance-chart";
+import { FitnessWorkoutManager } from "@/components/daily-detail/fitness-workout-manager";
 import {
   formatMealType,
   percentOf,
@@ -201,6 +203,8 @@ export function FitnessDetailSurface() {
           </div>
         </Card>
 
+        <FitnessWorkoutManager />
+
         <section className="space-y-4">
           {activityLog.map((activity) => (
             <ActivityLogCard key={activity.id} activity={activity} />
@@ -297,6 +301,8 @@ export function DailyReviewSurface({
               icon={Salad}
               title="Nutrition log"
               detail={`${meals.length} meal${meals.length === 1 ? "" : "s"} counted today`}
+              href="/app/log"
+              action="Edit day"
             />
             {meals.length === 0 ? (
               <EmptyLedgerCard
@@ -315,6 +321,8 @@ export function DailyReviewSurface({
               icon={Activity}
               title="Fitness log"
               detail={`${activityLog.length} activity signal${activityLog.length === 1 ? "" : "s"} counted today`}
+              href="/app/fitness"
+              action="Edit day"
             />
             {activityLog.map((activity) => (
               <ActivityLogCard key={activity.id} activity={activity} compact />
@@ -402,7 +410,7 @@ function TargetTile({
           <span className={`flex h-[30px] w-[30px] items-center justify-center rounded-full ${styles.chip}`}>
             <Icon className="h-[15px] w-[15px]" />
           </span>
-          <p className="text-sm font-black text-[#54635d]">{label}</p>
+          <p className="text-base font-black leading-tight text-[#54635d] md:text-lg">{label}</p>
         </div>
         <p className={`rounded-full px-2.5 py-1 text-xs font-black ${styles.pill}`}>
           {percentOf(current, target)}%
@@ -446,7 +454,7 @@ function SimpleSummaryCard({
         <span className={`flex h-[30px] w-[30px] items-center justify-center rounded-full ${styles.chip}`}>
           <Icon className="h-[15px] w-[15px]" />
         </span>
-        <p className="text-sm font-black text-[#54635d]">{label}</p>
+        <p className="text-base font-black leading-tight text-[#54635d] md:text-lg">{label}</p>
       </div>
       <p className="text-[1.75rem] font-black leading-none tabular-nums text-[#16302a]">
         {value}
@@ -494,6 +502,23 @@ function ActivityLogCard({
         </div>
       </div>
 
+      <div className="flex flex-wrap gap-2">
+        <Link
+          href="/app/fitness"
+          className="inline-flex items-center gap-2 rounded-full bg-primary-50 px-3.5 py-2 text-xs font-black text-primary-700 transition hover:bg-primary-100"
+        >
+          <Pencil className="h-3.5 w-3.5" />
+          Edit routine
+        </Link>
+        <Link
+          href="/app/workouts"
+          className="inline-flex items-center gap-2 rounded-full bg-[#f4f8f6] px-3.5 py-2 text-xs font-black text-[#54635d] transition hover:bg-primary-50 hover:text-primary-700"
+        >
+          Open workouts
+          <ArrowRight className="h-3.5 w-3.5" />
+        </Link>
+      </div>
+
       <div className="grid grid-cols-2 gap-2 border-t border-primary-100/70 pt-4 sm:grid-cols-4">
         {activity.items.map((item) => (
           <SmallStat key={`${activity.id}-${item.label}`} {...item} />
@@ -528,6 +553,23 @@ function MealLogCard({ meal, compact = false }: { meal: MealRecord; compact?: bo
             {mealTotals.protein}g protein
           </p>
         </div>
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        <Link
+          href="/app/log"
+          className="inline-flex items-center gap-2 rounded-full bg-primary-50 px-3.5 py-2 text-xs font-black text-primary-700 transition hover:bg-primary-100"
+        >
+          <Pencil className="h-3.5 w-3.5" />
+          Edit meal
+        </Link>
+        <Link
+          href="/app/log"
+          className="inline-flex items-center gap-2 rounded-full bg-[#f4f8f6] px-3.5 py-2 text-xs font-black text-[#54635d] transition hover:bg-primary-50 hover:text-primary-700"
+        >
+          Log another
+          <Plus className="h-3.5 w-3.5" />
+        </Link>
       </div>
 
       <div className="grid gap-2">
@@ -595,20 +637,35 @@ function SectionHeader({
   icon: Icon,
   title,
   detail,
+  href,
+  action,
 }: {
   icon: LucideIcon;
   title: string;
   detail: string;
+  href?: string;
+  action?: string;
 }) {
   return (
-    <div className="flex items-center gap-3">
-      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-100 text-primary-700">
-        <Icon className="h-5 w-5" />
-      </span>
-      <div>
-        <h2 className="font-heading text-2xl font-black text-[#16302a]">{title}</h2>
-        <p className="text-sm font-semibold text-[#7c968f]">{detail}</p>
+    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex items-center gap-3">
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-100 text-primary-700">
+          <Icon className="h-5 w-5" />
+        </span>
+        <div>
+          <h2 className="font-heading text-2xl font-black text-[#16302a]">{title}</h2>
+          <p className="text-sm font-semibold text-[#7c968f]">{detail}</p>
+        </div>
       </div>
+      {href && action && (
+        <Link
+          href={href}
+          className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-black text-primary-700 shadow-[0_8px_18px_rgba(20,90,75,0.07)] transition hover:bg-primary-50"
+        >
+          <Pencil className="h-4 w-4" />
+          {action}
+        </Link>
+      )}
     </div>
   );
 }

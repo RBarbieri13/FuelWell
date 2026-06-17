@@ -24,6 +24,18 @@ export default async function SettingsPage() {
         isPreview
         appVersion={APP_VERSION}
         initialIntakePreferences={undefined}
+        initialProfileInputs={{
+          dateOfBirth: "1988-05-01",
+          gender: "other",
+          heightIn: 71,
+          weightLb: Math.round((sample.user.weightKg ?? 82) * 2.20462),
+          activityLevel: "moderate",
+          goal: "lose",
+          dietaryPreference: sample.user.dietaryPreference,
+          allergies: sample.user.allergies.join(", "),
+          mealsPerDay: 3,
+          experienceLevel: "intermediate",
+        }}
       />
     );
   }
@@ -31,7 +43,7 @@ export default async function SettingsPage() {
   const { data: profile } = user
     ? await supabase
         .from("profiles")
-        .select("display_name, preferences_jsonb")
+        .select("display_name, preferences_jsonb, date_of_birth, gender, height_cm, weight_kg, activity_level, goal, dietary_preference, allergies, meals_per_day, experience_level")
         .eq("id", user.id)
         .single()
     : { data: null };
@@ -46,6 +58,18 @@ export default async function SettingsPage() {
       isPreview={false}
       appVersion={APP_VERSION}
       initialIntakePreferences={preferences.onboarding}
+      initialProfileInputs={{
+        dateOfBirth: profile?.date_of_birth ?? undefined,
+        gender: profile?.gender ?? undefined,
+        heightIn: profile?.height_cm ? Math.round(Number(profile.height_cm) / 2.54) : undefined,
+        weightLb: profile?.weight_kg ? Math.round(Number(profile.weight_kg) * 2.20462) : undefined,
+        activityLevel: profile?.activity_level ?? undefined,
+        goal: profile?.goal ?? undefined,
+        dietaryPreference: profile?.dietary_preference ?? undefined,
+        allergies: Array.isArray(profile?.allergies) ? profile.allergies.join(", ") : "",
+        mealsPerDay: profile?.meals_per_day ?? undefined,
+        experienceLevel: profile?.experience_level ?? undefined,
+      }}
     />
   );
 }

@@ -13,6 +13,13 @@ import { useUnits, type UnitSystem } from "./use-units";
 import { CoachActivity } from "./coach-activity";
 import { useGoalContextStore } from "@/lib/use-goal-context";
 import {
+  calculateAge,
+  calculateMacroTargets,
+  type ActivityLevel,
+  type Gender,
+  type Goal,
+} from "@/lib/macros";
+import {
   User,
   Mail,
   Ruler,
@@ -30,6 +37,7 @@ import {
   Save,
   SlidersHorizontal,
   Watch,
+  Dumbbell,
 } from "lucide-react";
 
 interface SettingsClientProps {
@@ -38,6 +46,7 @@ interface SettingsClientProps {
   isPreview: boolean;
   appVersion: string;
   initialIntakePreferences?: Record<string, unknown>;
+  initialProfileInputs?: Partial<ProfileInputs>;
 }
 
 type IntakePreferences = {
@@ -51,6 +60,19 @@ type IntakePreferences = {
   coachStyle: string;
 };
 
+type ProfileInputs = {
+  dateOfBirth: string;
+  gender: Gender;
+  heightIn: number;
+  weightLb: number;
+  activityLevel: ActivityLevel;
+  goal: Goal;
+  dietaryPreference: string;
+  allergies: string;
+  mealsPerDay: number;
+  experienceLevel: string;
+};
+
 const DEFAULT_INTAKE: IntakePreferences = {
   goalTimeline: "steady",
   nutritionAggressiveness: "mild",
@@ -60,6 +82,19 @@ const DEFAULT_INTAKE: IntakePreferences = {
   workoutLocation: "gym_home",
   checkInPreference: "event_driven",
   coachStyle: "direct_supportive",
+};
+
+const DEFAULT_PROFILE_INPUTS: ProfileInputs = {
+  dateOfBirth: "1988-05-01",
+  gender: "other",
+  heightIn: 71,
+  weightLb: 181,
+  activityLevel: "moderate",
+  goal: "lose",
+  dietaryPreference: "none",
+  allergies: "",
+  mealsPerDay: 3,
+  experienceLevel: "intermediate",
 };
 
 const INTAKE_GROUPS = [
@@ -158,12 +193,28 @@ function normalizeIntakePreferences(raw?: Record<string, unknown>): IntakePrefer
   } as IntakePreferences;
 }
 
+function normalizeProfileInputs(raw?: Partial<ProfileInputs>): ProfileInputs {
+  return {
+    ...DEFAULT_PROFILE_INPUTS,
+    ...(raw ?? {}),
+  };
+}
+
+function lbToKg(value: number) {
+  return Math.round((value / 2.20462) * 10) / 10;
+}
+
+function inchesToCm(value: number) {
+  return Math.round(value * 2.54);
+}
+
 export function SettingsClient({
   email,
   displayName,
   isPreview,
   appVersion,
   initialIntakePreferences,
+  initialProfileInputs,
 }: SettingsClientProps) {
   const router = useRouter();
   const { units, setUnits } = useUnits();
@@ -177,8 +228,13 @@ export function SettingsClient({
   const [intakePrefs, setIntakePrefs] = useState<IntakePreferences>(() =>
     normalizeIntakePreferences(initialIntakePreferences)
   );
+  const [profileInputs, setProfileInputs] = useState<ProfileInputs>(() =>
+    normalizeProfileInputs(initialProfileInputs)
+  );
   const [savingIntake, setSavingIntake] = useState(false);
   const [savedIntake, setSavedIntake] = useState(false);
+  const [savingProfile, setSavingProfile] = useState(false);
+  const [savedProfile, setSavedProfile] = useState(false);
 
   // Known filters get their display label; free-form diets set via Coach
   // (e.g. "vegetarian") render as-is so they don't silently disappear.
@@ -197,6 +253,67 @@ export function SettingsClient({
   function updateIntakePreference(key: keyof IntakePreferences, value: string) {
     setIntakePrefs((current) => ({ ...current, [key]: value }));
     setSavedIntake(false);
+  }
+
+  function updateProfileInput<K extends keyof ProfileInputs>(key: K, value: ProfileInputs[K]) {
+    setProfileInputs((current) => ({ ...current, [key]: value }));
+    setSavedProfile(false);
+  }
+
+  async function saveProfileInputs() {
+    setSavingProfile(true);
+    setSavedProfile(false);
+    try {
+      const weightKg = lbToKg(profileInputs.weightLb);
+      const heightCm = inchesToCm(profileInputs.heightIn);
+      const age = calculateAge(profileInputs.dateOfBirth);
+      const macroTargets = calculateMacroTargets({
+        gender: profileInputs.gender,
+        weightKg,
+        heightCm,
+        age,
+        activityLevel: profileInputs.activityLevel,
+        goal: profileInputs.goal,
+      });
+
+      if (isPreview) {
+        window.localStorage.setItem("fuelwell:preview-profile-inputs", JSON.stringify(profileInputs));
+        setSavedProfile(true);
+        return;
+      }
+
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return;
+
+      await supabase
+        .from("profiles")
+        .update({
+          date_of_birth: profileInputs.dateOfBirth,
+          gender: profileInputs.gender,
+          height_cm: heightCm,
+          weight_kg: weightKg,
+          activity_level: profileInputs.activityLevel,
+          goal: profileInputs.goal,
+          dietary_preference: profileInputs.dietaryPreference,
+          allergies: profileInputs.allergies
+            .split(",")
+            .map((item) => item.trim())
+            .filter(Boolean),
+          meals_per_day: profileInputs.mealsPerDay,
+          experience_level: profileInputs.experienceLevel,
+          calorie_target: macroTargets.calories,
+          protein_target: macroTargets.protein,
+          carbs_target: macroTargets.carbs,
+          fat_target: macroTargets.fat,
+        })
+        .eq("id", user.id);
+      setSavedProfile(true);
+    } finally {
+      setSavingProfile(false);
+    }
   }
 
   async function saveIntakePreferences() {
@@ -417,6 +534,127 @@ export function SettingsClient({
           </Section>
         </section>
 
+        <Section title="Body and goal inputs">
+          <Card className="space-y-5 px-6 py-6">
+            <div className="flex flex-col justify-between gap-3 md:flex-row md:items-start">
+              <div>
+                <h2 className="text-2xl font-black text-neutral-900">
+                  Edit your intake profile
+                </h2>
+                <p className="mt-1 max-w-2xl text-sm font-semibold leading-6 text-neutral-500">
+                  These answers drive calorie targets, macro targets, workout estimates, and coach recommendations.
+                </p>
+              </div>
+              <Button onClick={saveProfileInputs} loading={savingProfile} className="rounded-full">
+                <Save className="h-4 w-4" />
+                {savedProfile ? "Saved" : "Save profile"}
+              </Button>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+              <TextField
+                label="Date of birth"
+                type="date"
+                value={profileInputs.dateOfBirth}
+                onChange={(value) => updateProfileInput("dateOfBirth", value)}
+              />
+              <SelectField
+                label="Gender"
+                value={profileInputs.gender}
+                onChange={(value) => updateProfileInput("gender", value as Gender)}
+                options={[
+                  ["male", "Male"],
+                  ["female", "Female"],
+                  ["other", "Other"],
+                ]}
+              />
+              <NumberField
+                label="Height"
+                suffix="in"
+                value={profileInputs.heightIn}
+                onChange={(value) => updateProfileInput("heightIn", value)}
+              />
+              <NumberField
+                label="Weight"
+                suffix="lb"
+                value={profileInputs.weightLb}
+                onChange={(value) => updateProfileInput("weightLb", value)}
+              />
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+              <SelectField
+                label="Goal"
+                value={profileInputs.goal}
+                onChange={(value) => updateProfileInput("goal", value as Goal)}
+                options={[
+                  ["lose", "Lose fat"],
+                  ["maintain", "Maintain"],
+                  ["gain", "Gain muscle"],
+                ]}
+              />
+              <SelectField
+                label="Activity level"
+                value={profileInputs.activityLevel}
+                onChange={(value) => updateProfileInput("activityLevel", value as ActivityLevel)}
+                options={[
+                  ["sedentary", "Sedentary"],
+                  ["light", "Light"],
+                  ["moderate", "Moderate"],
+                  ["active", "Active"],
+                  ["very_active", "Very active"],
+                ]}
+              />
+              <SelectField
+                label="Diet"
+                value={profileInputs.dietaryPreference}
+                onChange={(value) => updateProfileInput("dietaryPreference", value)}
+                options={[
+                  ["none", "No preference"],
+                  ["vegetarian", "Vegetarian"],
+                  ["vegan", "Vegan"],
+                  ["pescatarian", "Pescatarian"],
+                  ["keto", "Keto"],
+                  ["paleo", "Paleo"],
+                ]}
+              />
+              <SelectField
+                label="Training level"
+                value={profileInputs.experienceLevel}
+                onChange={(value) => updateProfileInput("experienceLevel", value)}
+                options={[
+                  ["beginner", "Beginner"],
+                  ["intermediate", "Intermediate"],
+                  ["advanced", "Advanced"],
+                ]}
+              />
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-[0.65fr_1.35fr]">
+              <NumberField
+                label="Meals per day"
+                value={profileInputs.mealsPerDay}
+                onChange={(value) => updateProfileInput("mealsPerDay", value)}
+              />
+              <TextField
+                label="Allergies"
+                value={profileInputs.allergies}
+                onChange={(value) => updateProfileInput("allergies", value)}
+                placeholder="Separate allergies with commas"
+              />
+            </div>
+
+            <div className="rounded-[1.15rem] border border-primary-100 bg-primary-50/70 px-4 py-3">
+              <div className="flex items-start gap-3">
+                <Dumbbell className="mt-0.5 h-4 w-4 text-primary-700" />
+                <p className="text-sm font-semibold leading-6 text-primary-900/70">
+                  Workout calorie estimates use your saved weight. Nutrition targets update from your saved age, height, weight, activity level, and goal.
+                </p>
+              </div>
+            </div>
+          </Card>
+        </Section>
+
         <Section title="Intake preferences">
           <Card className="space-y-5 px-6 py-6">
             <div className="flex flex-col justify-between gap-3 md:flex-row md:items-start">
@@ -595,6 +833,96 @@ function IntakePreferenceGroup({
         ))}
       </div>
     </div>
+  );
+}
+
+function TextField({
+  label,
+  value,
+  onChange,
+  type = "text",
+  placeholder,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  type?: string;
+  placeholder?: string;
+}) {
+  return (
+    <label className="block">
+      <span className="text-xs font-black uppercase tracking-[0.14em] text-neutral-400">
+        {label}
+      </span>
+      <input
+        type={type}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        placeholder={placeholder}
+        className="mt-2 w-full rounded-2xl border border-[#dce8e3] bg-[#f4f8f6] px-4 py-3 text-sm font-bold text-neutral-900 outline-none placeholder:text-neutral-400 focus:border-primary-300 focus:ring-2 focus:ring-primary-200"
+      />
+    </label>
+  );
+}
+
+function NumberField({
+  label,
+  value,
+  onChange,
+  suffix,
+}: {
+  label: string;
+  value: number;
+  onChange: (value: number) => void;
+  suffix?: string;
+}) {
+  return (
+    <label className="block">
+      <span className="text-xs font-black uppercase tracking-[0.14em] text-neutral-400">
+        {label}
+      </span>
+      <div className="mt-2 flex items-center rounded-2xl border border-[#dce8e3] bg-[#f4f8f6] px-4 py-3 focus-within:border-primary-300 focus-within:ring-2 focus-within:ring-primary-200">
+        <input
+          type="number"
+          min={0}
+          value={value}
+          onChange={(event) => onChange(Number(event.target.value))}
+          className="min-w-0 flex-1 bg-transparent text-sm font-bold text-neutral-900 outline-none"
+        />
+        {suffix && <span className="text-xs font-black uppercase text-neutral-400">{suffix}</span>}
+      </div>
+    </label>
+  );
+}
+
+function SelectField({
+  label,
+  value,
+  onChange,
+  options,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  options: Array<[string, string]>;
+}) {
+  return (
+    <label className="block">
+      <span className="text-xs font-black uppercase tracking-[0.14em] text-neutral-400">
+        {label}
+      </span>
+      <select
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        className="mt-2 w-full rounded-2xl border border-[#dce8e3] bg-[#f4f8f6] px-4 py-3 text-sm font-bold text-neutral-900 outline-none focus:border-primary-300 focus:ring-2 focus:ring-primary-200"
+      >
+        {options.map(([optionValue, optionLabel]) => (
+          <option key={optionValue} value={optionValue}>
+            {optionLabel}
+          </option>
+        ))}
+      </select>
+    </label>
   );
 }
 

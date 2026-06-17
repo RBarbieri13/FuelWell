@@ -54,7 +54,21 @@ export function removeWorkout(workoutId: string) {
   persist(workouts.filter((w) => w.id !== workoutId));
 }
 
+export function updateWorkout(workoutId: string, patch: Partial<WorkoutEntry>) {
+  persist(
+    workouts.map((workout) =>
+      workout.id === workoutId
+        ? {
+            ...workout,
+            ...patch,
+            source: patch.source ?? "manual_edit",
+          }
+        : workout
+    )
+  );
+}
+
 export function useWorkoutLog() {
   const current = useSyncExternalStore(subscribe, () => workouts, () => EMPTY);
-  return { workouts: current, addWorkout, removeWorkout };
+  return { workouts: current, addWorkout, removeWorkout, updateWorkout };
 }
