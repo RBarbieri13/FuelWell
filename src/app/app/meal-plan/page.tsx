@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -131,6 +132,7 @@ export default function MealPlanPage() {
     },
     { calories: 0, protein: 0, planned: 0 }
   );
+  const weekPlannedPercent = Math.round((weekTotals.planned / (days.length * 4)) * 100);
 
   function fillOpenSlot(slot: MealSlot) {
     const nextIdea = mealIdeas[(Object.keys(addedMeals).length + slot.length) % mealIdeas.length];
@@ -217,10 +219,12 @@ export default function MealPlanPage() {
                 <p className="text-xs font-black uppercase tracking-[0.12em] text-[#91a7a0]">slots to fill</p>
               </div>
             </div>
-            <Button type="button" className="w-full">
-              Build grocery list
-              <ArrowRight className="h-4 w-4" />
-            </Button>
+            <Link href="/app/grocery-list" className="block">
+              <Button type="button" className="w-full">
+                Build grocery list
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
           </Card>
         </section>
 
@@ -293,6 +297,15 @@ export default function MealPlanPage() {
                       {selectedTotals.protein}g
                     </p>
                   </div>
+                </div>
+              </div>
+              <div className="mt-5 rounded-[1.15rem] border border-primary-100 bg-primary-50/70 p-4">
+                <div className="mb-2 flex items-center justify-between text-xs font-black uppercase tracking-[0.12em] text-primary-800">
+                  <span>Week planned</span>
+                  <span>{weekPlannedPercent}%</span>
+                </div>
+                <div className="h-2.5 overflow-hidden rounded-full bg-white">
+                  <div className="h-full rounded-full bg-primary-500" style={{ width: `${weekPlannedPercent}%` }} />
                 </div>
               </div>
 
@@ -430,10 +443,12 @@ export default function MealPlanPage() {
                 Your planned meals need 18 unique ingredients. Review grouped
                 items before shopping.
               </p>
-              <Button type="button" size="sm" className="mt-4">
-                Build grocery list
-                <ArrowRight className="w-4 h-4" />
-              </Button>
+              <Link href="/app/grocery-list" className="mt-4 inline-flex">
+                <Button type="button" size="sm">
+                  Build grocery list
+                  <ArrowRight className="w-4 h-4" />
+                </Button>
+              </Link>
             </Card>
           </div>
         </div>

@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
 import {
   ArrowRight,
   Bed,
@@ -86,6 +89,8 @@ function SourceBadge({ children }: { children: string }) {
 }
 
 export default function RecoveryPage() {
+  const [selectedWindow, setSelectedWindow] = useState(windows[0]);
+
   return (
     <div className="fw-app-surface">
       <header className="fw-page-header">
@@ -96,15 +101,18 @@ export default function RecoveryPage() {
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <div className="rounded-full bg-white p-1 shadow-[0_18px_44px_rgba(22,48,42,0.10)]">
-              {windows.map((window, index) => (
-                <span
+              {windows.map((window) => (
+                <button
                   key={window}
+                  type="button"
+                  onClick={() => setSelectedWindow(window)}
                   className={`inline-flex rounded-full px-4 py-2 text-sm font-black ${
-                    index === 0 ? "bg-primary-500 text-white" : "text-primary-900/60"
+                    selectedWindow === window ? "bg-primary-500 text-white" : "text-primary-900/60"
                   }`}
+                  aria-pressed={selectedWindow === window}
                 >
                   {window}
-                </span>
+                </button>
               ))}
             </div>
             <Link
@@ -274,7 +282,7 @@ export default function RecoveryPage() {
                 <div>
                   <h2 className="text-xl font-black text-lemon-800">What is estimated?</h2>
                   <p className="mt-2 text-sm font-semibold leading-6 text-lemon-800/78">
-                    Readiness is calculated from your logged sleep, hydration, and soreness above. HRV, resting heart rate, and workout load are not included yet.
+                  {selectedWindow} readiness is calculated from your logged sleep, hydration, and soreness above. HRV, resting heart rate, and workout load are not included yet.
                   </p>
                 </div>
               </div>

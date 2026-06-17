@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
+  ClipboardList,
   MessageSquare,
   UtensilsCrossed,
   BookOpen,
@@ -22,6 +23,7 @@ import { Logo } from "@/components/ui/logo";
 
 const navItems = [
   { href: "/app/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/app/daily-review", label: "Daily Review", icon: ClipboardList },
   { href: "/app/log", label: "Log Meal", icon: UtensilsCrossed },
   { href: "/app/coach", label: "Coach", icon: MessageSquare },
   { href: "/app/workouts", label: "Workouts", icon: Dumbbell },

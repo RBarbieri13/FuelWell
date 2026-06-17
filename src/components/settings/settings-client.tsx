@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Card } from "@/components/ui/card";
@@ -431,6 +432,17 @@ export function SettingsClient({
                 <Save className="h-4 w-4" />
                 {savedIntake ? "Saved" : "Save changes"}
               </Button>
+            </div>
+            <div className="flex flex-col gap-2 rounded-[1.15rem] border border-primary-100 bg-primary-50/70 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+              <p className="text-sm font-semibold leading-6 text-primary-900/70">
+                Need to change body context, goal, or allergies? Re-run the full intake instead of editing only preferences here.
+              </p>
+              <Link
+                href="/app/onboarding"
+                className="self-start rounded-full bg-white px-3 py-1.5 text-xs font-black text-primary-700 transition hover:bg-primary-100 sm:self-center"
+              >
+                Re-run intake
+              </Link>
             </div>
             <div className="grid gap-4 lg:grid-cols-2">
               {INTAKE_GROUPS.map((group) => (

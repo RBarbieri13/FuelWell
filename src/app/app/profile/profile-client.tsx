@@ -55,6 +55,8 @@ export function ProfileClient({
   const [editingName, setEditingName] = useState(false);
   const [nameValue, setNameValue] = useState(displayName);
   const [savingName, setSavingName] = useState(false);
+  const weightLb = weightKg ? Math.round(weightKg * 2.20462) : null;
+  const heightIn = heightCm ? Math.round(heightCm / 2.54) : null;
 
   async function handleSaveName() {
     if (isPreview) {
@@ -225,8 +227,20 @@ export function ProfileClient({
             <div className="divide-y divide-primary-100/70">
               <InfoRow icon={Target} label="Goal" value={formatGoal(goal)} />
               <InfoRow icon={Activity} label="Activity" value={formatActivity(activityLevel)} />
-              {weightKg && <InfoRow icon={Scale} label="Weight" value={`${weightKg} kg`} />}
-              {heightCm && <InfoRow icon={Ruler} label="Height" value={`${heightCm} cm`} />}
+              {weightKg && (
+                <InfoRow
+                  icon={Scale}
+                  label="Weight"
+                  value={weightLb ? `${weightLb} lb · ${weightKg} kg` : `${weightKg} kg`}
+                />
+              )}
+              {heightCm && (
+                <InfoRow
+                  icon={Ruler}
+                  label="Height"
+                  value={heightIn ? `${heightIn} in · ${heightCm} cm` : `${heightCm} cm`}
+                />
+              )}
             </div>
           </Card>
 

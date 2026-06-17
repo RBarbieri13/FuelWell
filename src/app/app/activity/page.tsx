@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
 import {
   Activity,
   ArrowRight,
@@ -82,6 +85,8 @@ function SourceBadge({ children }: { children: string }) {
 }
 
 export default function ActivityPage() {
+  const [selectedMode, setSelectedMode] = useState(modes[0]);
+
   return (
     <div className="fw-app-surface">
       <header className="fw-page-header">
@@ -92,15 +97,18 @@ export default function ActivityPage() {
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <div className="rounded-full bg-white p-1 shadow-[0_18px_44px_rgba(22,48,42,0.10)]">
-              {modes.map((mode, index) => (
-                <span
+              {modes.map((mode) => (
+                <button
                   key={mode}
+                  type="button"
+                  onClick={() => setSelectedMode(mode)}
                   className={`inline-flex rounded-full px-4 py-2 text-sm font-black ${
-                    index === 0 ? "bg-primary-500 text-white" : "text-primary-900/60"
+                    selectedMode === mode ? "bg-primary-500 text-white" : "text-primary-900/60"
                   }`}
+                  aria-pressed={selectedMode === mode}
                 >
                   {mode}
-                </span>
+                </button>
               ))}
             </div>
             <Link
@@ -158,7 +166,7 @@ export default function ActivityPage() {
             </div>
             <div className="rounded-[1.25rem] border border-primary-100 bg-primary-50/70 p-4">
               <div className="mb-2 flex items-center justify-between text-xs font-black uppercase tracking-[0.12em] text-primary-800">
-                <span>Confidence</span>
+                <span>{selectedMode} confidence</span>
                 <span>Medium</span>
               </div>
               <div className="h-2 overflow-hidden rounded-full bg-white">

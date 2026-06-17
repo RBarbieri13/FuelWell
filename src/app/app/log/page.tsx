@@ -40,6 +40,25 @@ type LogMode = "search" | "restaurant" | "photo" | "scan";
 
 const MEAL_TYPES: MealType[] = ["breakfast", "lunch", "dinner", "snack"];
 
+const MODE_HELP: Record<LogMode, { title: string; detail: string }> = {
+  search: {
+    title: "Best for known foods",
+    detail: "Search the database, then choose a reviewed portion before saving.",
+  },
+  restaurant: {
+    title: "Best for eating out",
+    detail: "Search nearby restaurants or chains and log a menu item against today's macro gap.",
+  },
+  photo: {
+    title: "Best for uncertain plates",
+    detail: "Create an estimate draft first. Nothing saves until you review it.",
+  },
+  scan: {
+    title: "Best for packaged foods",
+    detail: "Scan or type a barcode, then confirm the serving size.",
+  },
+};
+
 function LogContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -141,6 +160,7 @@ function LogContent() {
     { key: "photo", label: "Photo", icon: Camera },
     { key: "scan", label: "Scan", icon: Barcode },
   ];
+  const modeHelp = MODE_HELP[mode];
 
   return (
     <div className="mx-auto max-w-6xl space-y-5 p-4 pb-28 md:p-8">
@@ -187,6 +207,18 @@ function LogContent() {
               </button>
             ))}
           </div>
+
+          <Card className="flex flex-col gap-3 rounded-[1.35rem] border-primary-100 bg-primary-50/70 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-sm font-black text-primary-900">{modeHelp.title}</p>
+              <p className="mt-1 text-sm font-semibold leading-6 text-primary-900/65">
+                {modeHelp.detail}
+              </p>
+            </div>
+            <span className="inline-flex self-start rounded-full bg-white px-3 py-1 text-xs font-black text-primary-700 sm:self-center">
+              {mealTypeLabel}
+            </span>
+          </Card>
 
           <div className="lg:hidden">
             <MealTypeSelector mealType={mealType} onSelect={setMealType} />

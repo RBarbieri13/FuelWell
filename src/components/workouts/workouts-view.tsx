@@ -223,6 +223,8 @@ export function WorkoutsView({
     workouts.find((w) => w.id === verdict.recommendedId) ?? workouts[0];
   const RecommendedIcon = recommended.icon;
   const featuredWorkouts = workouts.slice(0, 3);
+  const hasActiveFilters =
+    bodyPart !== "all" || workoutType !== "all" || workoutQuery.trim().length > 0;
 
   function filterHref(nextBodyPart: BodyPartFilter) {
     const params = new URLSearchParams();
@@ -377,6 +379,26 @@ export function WorkoutsView({
               <p className="rounded-full bg-primary-100 px-3.5 py-1.5 text-sm font-black text-primary-700">
                 {visible.length} of {workouts.length} workouts shown
               </p>
+            </div>
+            <div className="flex flex-col gap-2 rounded-[1.15rem] border border-primary-100 bg-primary-50/70 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+              <p className="text-sm font-semibold text-primary-900/70">
+                {hasActiveFilters
+                  ? `Filtering by ${bodyPart === "all" ? "all body parts" : bodyPart}, ${workoutType === "all" ? "all types" : workoutType}${workoutQuery.trim() ? `, and "${workoutQuery.trim()}"` : ""}.`
+                  : "Use filters to narrow by body part, workout type, or search term before previewing."}
+              </p>
+              {hasActiveFilters && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setBodyPart("all");
+                    setWorkoutType("all");
+                    setWorkoutQuery("");
+                  }}
+                  className="self-start rounded-full bg-white px-3 py-1.5 text-xs font-black text-primary-700 transition hover:bg-primary-100 sm:self-center"
+                >
+                  Clear filters
+                </button>
+              )}
             </div>
 
             <form action="/app/workouts" className="grid gap-3 lg:grid-cols-[minmax(14rem,1.35fr)_minmax(10rem,0.8fr)_minmax(10rem,0.8fr)_auto]">
