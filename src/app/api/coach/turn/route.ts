@@ -14,9 +14,11 @@ import { getTool, toAnthropicTools } from "@/lib/coach/registry";
 import "@/lib/coach/tools";
 import type {
   ArtifactSpec,
+  CoachAttachment,
   CoachDaySnapshot,
   CoachMutation,
   CoachSseEvent,
+  CoachTurnMessage,
   CoachTurnRequest,
   ToolContext,
 } from "@/lib/coach/types";
@@ -49,10 +51,22 @@ const MAX_TOOL_ROUNDS = 5; // E5: per-turn tool-call circuit breaker
 function pickModel(req: CoachTurnRequest): string {
   if (process.env.COACH_MODEL) return process.env.COACH_MODEL;
   const last = req.messages[req.messages.length - 1]?.content ?? "";
+  const hasAttachments = req.messages.some((m) => (m.attachments?.length ?? 0) > 0);
+  if (hasAttachments) return SONNET;
   const planning = /\bplan\b|\bweek\b|meal plan|recover my day|strategy/i.test(last);
   if (last.length > 500 || req.messages.length > 16 || planning) return SONNET;
   return HAIKU;
 }
+
+const attachmentSchema = z.object({
+  id: z.string(),
+  name: z.string().max(160),
+  mediaType: z.string().max(120),
+  size: z.number().int().min(0).max(12 * 1024 * 1024),
+  kind: z.enum(["image", "pdf", "text"]),
+  data: z.string().max(16 * 1024 * 1024).optional(),
+  text: z.string().max(80_000).optional(),
+});
 
 const requestSchema = z.object({
   conversationId: z.string().optional(),
@@ -61,6 +75,7 @@ const requestSchema = z.object({
       z.object({
         role: z.enum(["user", "assistant"]),
         content: z.string().max(4000),
+        attachments: z.array(attachmentSchema).max(5).optional(),
       })
     )
     .min(1)
@@ -73,6 +88,90 @@ const requestSchema = z.object({
 
 function sse(event: CoachSseEvent): string {
   return `data: ${JSON.stringify(event)}\n\n`;
+}
+
+function attachmentContentBlocks(attachments: CoachAttachment[]): Anthropic.ContentBlockParam[] {
+  return attachments.flatMap((attachment): Anthropic.ContentBlockParam[] => {
+    if (attachment.kind === "image" && attachment.data) {
+      return [
+        {
+          type: "image",
+          source: {
+            type: "base64",
+            media_type: attachment.mediaType as "image/jpeg" | "image/png" | "image/gif" | "image/webp",
+            data: attachment.data,
+          },
+        },
+        {
+          type: "text",
+          text: `[Attached image: ${attachment.name}, ${attachment.mediaType}. Analyze what is visible. If it is food, estimate likely ingredients, portion uncertainty, calories, protein, carbs, and fat. If it is an exercise/workout image, identify movement pattern, likely muscles, risks, and how it fits the user's goal.]`,
+        },
+      ];
+    }
+
+    if (attachment.kind === "pdf" && attachment.data) {
+      return [
+        {
+          type: "document",
+          source: {
+            type: "base64",
+            media_type: "application/pdf",
+            data: attachment.data,
+          },
+          title: attachment.name,
+        } as Anthropic.ContentBlockParam,
+        {
+          type: "text",
+          text: `[Attached PDF/document: ${attachment.name}. Extract nutrition, exercise, schedule, email, or health-context details relevant to the user's request. Be explicit about uncertainty.]`,
+        },
+      ];
+    }
+
+    if (attachment.kind === "text" && attachment.text) {
+      const clipped = attachment.text.slice(0, 80_000);
+      return [
+        {
+          type: "text",
+          text: `[Attached text file: ${attachment.name}, ${attachment.mediaType}]\n\n${clipped}`,
+        },
+      ];
+    }
+
+    return [
+      {
+        type: "text",
+        text: `[Attachment metadata only: ${attachment.name}, ${attachment.mediaType}, ${attachment.size} bytes. The app could not include its contents.]`,
+      },
+    ];
+  });
+}
+
+function toAnthropicMessage(m: CoachTurnMessage): Anthropic.MessageParam {
+  if (m.role === "assistant") {
+    return {
+      role: "assistant",
+      content: m.content,
+    };
+  }
+
+  const attachments = m.attachments ?? [];
+  if (attachments.length === 0) {
+    return {
+      role: "user",
+      content: `User said: ${m.content}`,
+    };
+  }
+
+  return {
+    role: "user",
+    content: [
+      ...attachmentContentBlocks(attachments),
+      {
+        type: "text",
+        text: `User said: ${m.content || "Please interpret the attached file(s) for my nutrition, workout, recovery, or health decision."}`,
+      },
+    ],
+  };
 }
 
 export async function POST(request: Request) {
@@ -126,10 +225,7 @@ export async function POST(request: Request) {
   const anthropic = new Anthropic();
 
   // E1: prompt-injection defense — user content is data, wrapped explicitly.
-  const apiMessages: Anthropic.MessageParam[] = body.messages.map((m) => ({
-    role: m.role,
-    content: m.role === "user" ? `User said: ${m.content}` : m.content,
-  }));
+  const apiMessages: Anthropic.MessageParam[] = body.messages.map(toAnthropicMessage);
 
   let artifactCounter = 0;
   const encoder = new TextEncoder();

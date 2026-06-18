@@ -33,6 +33,7 @@ import {
 } from "@/lib/use-goal-context";
 import type {
   ArtifactSpec,
+  CoachAttachment,
   CoachDaySnapshot,
   CoachMutation,
   CoachSseEvent,
@@ -44,6 +45,7 @@ export type ChatItem = {
   id: string;
   role: "user" | "assistant";
   text: string;
+  attachments?: Array<Pick<CoachAttachment, "id" | "name" | "mediaType" | "size" | "kind">>;
   artifacts: ArtifactSpec[];
   confirm?: { toolName: string; input: unknown; prompt: string } | null;
   streaming?: boolean;
@@ -158,7 +160,11 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
   const [hydrated, setHydrated] = useState(false);
   const conversationIdRef = useRef<string | undefined>(initialConversationId);
   const busyRef = useRef(false);
-  const queuedTurnRef = useRef<{ userText: string; confirmedTool?: { name: string; input: unknown } } | null>(null);
+  const queuedTurnRef = useRef<{
+    userText: string;
+    attachments?: CoachAttachment[];
+    confirmedTool?: { name: string; input: unknown };
+  } | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -260,18 +266,31 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
   const runTurn = useCallback(
     async (
       userText: string,
+      attachments?: CoachAttachment[],
       confirmedTool?: { name: string; input: unknown }
     ): Promise<void> => {
       // Taps that land mid-stream queue instead of vanishing (e.g. hitting
       // "Start workout" the moment the plan card renders).
       if (busyRef.current) {
-        queuedTurnRef.current = { userText, confirmedTool };
+        queuedTurnRef.current = { userText, attachments, confirmedTool };
         return;
       }
       busyRef.current = true;
       setBusy(true);
 
-      const userItem: ChatItem = { id: nextItemId(), role: "user", text: userText, artifacts: [] };
+      const userItem: ChatItem = {
+        id: nextItemId(),
+        role: "user",
+        text: userText,
+        attachments: attachments?.map(({ id, name, mediaType, size, kind }) => ({
+          id,
+          name,
+          mediaType,
+          size,
+          kind,
+        })),
+        artifacts: [],
+      };
       const assistantItem: ChatItem = {
         id: nextItemId(),
         role: "assistant",
@@ -286,7 +305,7 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
           .filter((i) => i.text.trim().length > 0)
           .slice(-20)
           .map((i) => ({ role: i.role, content: i.text })),
-        { role: "user" as const, content: userText },
+        { role: "user" as const, content: userText, attachments },
       ];
 
       const patchAssistant = (patch: Partial<ChatItem> | ((cur: ChatItem) => Partial<ChatItem>)) => {
@@ -388,11 +407,14 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
     if (!busy && queuedTurnRef.current) {
       const next = queuedTurnRef.current;
       queuedTurnRef.current = null;
-      void runTurn(next.userText, next.confirmedTool);
+      void runTurn(next.userText, next.attachments, next.confirmedTool);
     }
   }, [busy, runTurn]);
 
-  const sendMessage = useCallback((text: string) => runTurn(text), [runTurn]);
+  const sendMessage = useCallback(
+    (text: string, attachments?: CoachAttachment[]) => runTurn(text, attachments),
+    [runTurn]
+  );
 
   const handleCardAction = useCallback(
     (action: CoachCardAction) => {
@@ -403,6 +425,7 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
           if (text) {
             void runTurn(
               text,
+              undefined,
               action.kind === "invoke_tool"
                 ? { name: action.name, input: action.input }
                 : undefined
@@ -411,7 +434,7 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
           break;
         }
         case "confirm_tool":
-          void runTurn("Yes — go ahead.", { name: action.name, input: action.input });
+          void runTurn("Yes — go ahead.", undefined, { name: action.name, input: action.input });
           break;
         case "cancel_confirm":
           void runTurn("No, cancel that.");

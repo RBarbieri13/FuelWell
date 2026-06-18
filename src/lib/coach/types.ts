@@ -154,8 +154,19 @@ export type CoachSseEvent =
 export type CoachTurnMessage = {
   role: "user" | "assistant";
   content: string;
+  attachments?: CoachAttachment[];
   /** Assistant turns may carry the artifacts they produced (for replay). */
   artifacts?: ArtifactSpec[];
+};
+
+export type CoachAttachment = {
+  id: string;
+  name: string;
+  mediaType: string;
+  size: number;
+  kind: "image" | "pdf" | "text";
+  data?: string;
+  text?: string;
 };
 
 export type CoachTurnRequest = {

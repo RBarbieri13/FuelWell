@@ -130,6 +130,10 @@ test("Coach: agentic chat surface renders", async ({ page }) => {
   // dashboard"); the smoke check just verifies the new surface renders.
   await page.goto("/app/coach");
   await expect(page.getByLabel("Message Coach")).toBeVisible();
+  await expect(page.getByLabel("Attach files or photos")).toBeAttached();
+  await expect(
+    page.getByPlaceholder("Upload a food photo, email, label, workout image, or ask anything...")
+  ).toBeVisible();
   await expect(page.getByRole("button", { name: "Send" })).toBeVisible();
   await expect(page.getByRole("button", { name: "New chat" })).toBeVisible();
 });
