@@ -133,7 +133,7 @@ function workoutTone(workout: WorkoutRow) {
   };
 }
 
-function WorkoutFeatureCard({ workout, expanded }: { workout: WorkoutRow; expanded: boolean }) {
+function WorkoutFeatureCard({ workout }: { workout: WorkoutRow }) {
   const Icon = workout.icon;
   const tone = workoutTone(workout);
   const IntensityIcon = tone.intensityIcon;
@@ -157,10 +157,8 @@ function WorkoutFeatureCard({ workout, expanded }: { workout: WorkoutRow; expand
               {workout.categoryLabel}
             </span>
           </div>
-          {expanded && (
-            <p className="mb-3 text-sm font-semibold leading-6 text-[#54635d]">{workout.detail}</p>
-          )}
-          <div className={cn("flex flex-wrap gap-2", !expanded && "mt-2")}>
+          <p className="mb-3 text-sm font-semibold leading-6 text-[#54635d]">{workout.detail}</p>
+          <div className="flex flex-wrap gap-2">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-[#f4f8f6] px-3 py-1.5 text-xs font-bold text-[#54635d]">
               <Timer className="h-3.5 w-3.5 text-[#9db0aa]" />
               {workout.duration}
@@ -177,11 +175,6 @@ function WorkoutFeatureCard({ workout, expanded }: { workout: WorkoutRow; expand
             <span className="rounded-full bg-[#f4f8f6] px-3 py-1.5 text-xs font-bold text-[#54635d]">
               {workout.focus}
             </span>
-            {!expanded && (
-              <span className="rounded-full bg-primary-50 px-3 py-1.5 text-xs font-bold text-primary-700">
-                Tap to preview
-              </span>
-            )}
           </div>
         </div>
         <span className="hidden h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#f4f8f6] text-[#7c968f] sm:inline-flex">
@@ -335,7 +328,6 @@ export function WorkoutsView({
   );
   const [workoutQuery, setWorkoutQuery] = useState(initialQuery ?? "");
   const [showRecommendation, setShowRecommendation] = useState(false);
-  const [showWorkoutDetails, setShowWorkoutDetails] = useState(false);
   // Shared store: workouts logged from Coach chat show up here too (D-gate).
   const {
     workouts: loggedWorkouts,
@@ -569,24 +561,14 @@ export function WorkoutsView({
           <h2 className="font-heading text-sm font-black uppercase tracking-[0.16em] text-[#9db0aa]">
             All workouts
           </h2>
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={() => setShowWorkoutDetails((current) => !current)}
-              className="rounded-full bg-white px-3 py-1.5 text-xs font-black text-primary-700 shadow-sm shadow-primary-900/5 transition hover:bg-primary-50"
-              aria-expanded={showWorkoutDetails}
-            >
-              {showWorkoutDetails ? "Collapse detail" : "Expand detail"}
-            </button>
-            <span className="text-sm font-semibold text-[#7c968f]">
-              {visible.length} options
-            </span>
-          </div>
+          <span className="text-sm font-semibold text-[#7c968f]">
+            {visible.length} options
+          </span>
         </div>
 
         <div className="space-y-4">
           {featuredWorkouts.map((workout) => (
-            <WorkoutFeatureCard key={workout.id} workout={workout} expanded={showWorkoutDetails} />
+            <WorkoutFeatureCard key={workout.id} workout={workout} />
           ))}
         </div>
 
@@ -765,8 +747,7 @@ export function WorkoutsView({
       </section>
 
       <Card className="rounded-[20px] border-lemon-200 bg-lemon-50/80 px-6 py-5 shadow-none">
-        <details>
-          <summary className="flex cursor-pointer list-none gap-3.5">
+        <div className="flex gap-3.5">
           <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-lemon-600">
             <Info className="h-5 w-5" />
           </span>
@@ -775,14 +756,10 @@ export function WorkoutsView({
               How the suggestion is made
             </h2>
             <p className="mt-1 text-sm font-semibold leading-6 text-lemon-700/85">
-              Tap to review the signals behind Coach.
-            </p>
-          </div>
-          </summary>
-          <p className="mt-4 pl-12 text-sm font-semibold leading-6 text-lemon-700/85">
               {verdict.source}
             </p>
-        </details>
+          </div>
+        </div>
       </Card>
       </div>
     </div>
