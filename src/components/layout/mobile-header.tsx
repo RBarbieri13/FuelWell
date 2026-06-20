@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ClipboardList } from "lucide-react";
 import { Logo } from "@/components/ui/logo";
+import { UserMenu } from "@/components/layout/user-menu";
 
 const pageTitles: Record<string, string> = {
   "/app/dashboard": "Today",
@@ -44,6 +45,7 @@ export function MobileHeader() {
               <ClipboardList className="h-4 w-4" />
             </Link>
           )}
+          <UserMenu variant="inline" />
         </div>
       </div>
     </header>

@@ -470,7 +470,7 @@ export function WorkoutsView({
         </Card>
       )}
 
-      <div className="grid gap-5 xl:grid-cols-3">
+      <div className="grid items-start gap-5 xl:grid-cols-3">
         {/* Path 1: Coach recommends */}
         <Card className="fw-dark-panel relative overflow-hidden rounded-[24px] border-primary-500/30 px-7 py-7 shadow-[0_22px_46px_rgba(16,48,40,0.34)] ring-2 ring-primary-300/25">
           <div className="pointer-events-none absolute -right-8 -top-10 h-40 w-40 rounded-full bg-primary-500/25 blur-2xl" />

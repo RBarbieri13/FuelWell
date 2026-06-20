@@ -26,24 +26,35 @@ const menuItems = [
   { label: "Delete Account", href: "/app/settings#delete-account", icon: Trash2, danger: true },
 ];
 
-export function UserMenu() {
+export function UserMenu({ variant = "floating" }: { variant?: "floating" | "inline" }) {
   const [open, setOpen] = useState(false);
+  const inline = variant === "inline";
 
   return (
-    <div className="pointer-events-none fixed bottom-[5.7rem] right-4 z-[70] md:bottom-4">
-      <div className="pointer-events-auto relative">
+    <div className={cn(inline ? "relative" : "pointer-events-none fixed bottom-4 right-4 z-[70] hidden md:block")}>
+      <div className={cn(!inline && "pointer-events-auto relative")}>
         <button
           type="button"
           onClick={() => setOpen((current) => !current)}
           aria-expanded={open}
-          aria-label="Open user settings menu"
-          className="flex h-11 w-11 items-center justify-center rounded-full border border-primary-100 bg-white/92 text-primary-700 shadow-[0_12px_28px_rgba(20,90,75,0.12)] backdrop-blur transition hover:bg-primary-50"
+          aria-label={inline ? "Open user settings menu" : "Open desktop user settings menu"}
+          className={cn(
+            "flex items-center justify-center rounded-full border border-primary-100 bg-white/92 text-primary-700 backdrop-blur transition hover:bg-primary-50",
+            inline
+              ? "h-8 w-8 shadow-sm shadow-primary-900/10"
+              : "h-11 w-11 shadow-[0_12px_28px_rgba(20,90,75,0.12)]"
+          )}
         >
-          <User className="h-5 w-5" />
+          <User className={cn(inline ? "h-4 w-4" : "h-5 w-5")} />
         </button>
 
         {open && (
-          <div className="absolute bottom-12 right-0 w-64 overflow-hidden rounded-[1.25rem] border border-primary-100 bg-white p-2 shadow-[0_24px_50px_rgba(16,48,40,0.18)]">
+          <div
+            className={cn(
+              "absolute right-0 w-64 overflow-hidden rounded-[1.25rem] border border-primary-100 bg-white p-2 shadow-[0_24px_50px_rgba(16,48,40,0.18)]",
+              inline ? "top-10" : "bottom-12"
+            )}
+          >
             <div className="px-3 py-2">
               <p className="text-xs font-black uppercase tracking-[0.14em] text-primary-700">
                 User Settings
