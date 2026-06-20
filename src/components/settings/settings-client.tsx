@@ -30,12 +30,16 @@ import {
   ChefHat,
   Clock3,
   Download,
+  CreditCard,
+  HelpCircle,
   LogOut,
   Info,
   MapPin,
   MessageCircle,
   Save,
+  Shield,
   SlidersHorizontal,
+  Trash2,
   Watch,
   Dumbbell,
 } from "lucide-react";
@@ -455,7 +459,7 @@ export function SettingsClient({
         </section>
 
         <section className="grid gap-4 xl:grid-cols-[0.9fr_1.1fr]">
-          <Section title="Account">
+          <Section id="account" title="Account">
             <Card className="divide-y divide-primary-100/70 px-6 py-3">
               <Row icon={User} label="Display name">
                 <span className="text-sm font-black text-neutral-900">
@@ -655,7 +659,7 @@ export function SettingsClient({
           </Card>
         </Section>
 
-        <Section title="Intake preferences">
+        <Section id="coach-preferences" title="Intake preferences">
           <Card className="space-y-5 px-6 py-6">
             <div className="flex flex-col justify-between gap-3 md:flex-row md:items-start">
               <div>
@@ -702,7 +706,7 @@ export function SettingsClient({
             </ActionCard>
           </Section>
 
-          <Section title="Data">
+          <Section id="data" title="Data">
             <Card className="space-y-4">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-start gap-3">
@@ -723,6 +727,36 @@ export function SettingsClient({
                 Request export
               </Button>
             </Card>
+          </Section>
+        </section>
+
+        <section className="grid gap-4 xl:grid-cols-2">
+          <Section id="privacy" title="Privacy">
+            <ActionCard icon={Shield} title="Privacy controls" detail="Review what Coach can remember, what files are attached, and what data is used for guidance.">
+              <Badge>Preview</Badge>
+            </ActionCard>
+          </Section>
+
+          <Section id="subscription" title="Subscription">
+            <ActionCard icon={CreditCard} title="Plan and billing" detail="Manage your FuelWell plan, invoices, and subscription status.">
+              <Badge>Coming soon</Badge>
+            </ActionCard>
+          </Section>
+
+          <Section id="support" title="Support">
+            <ActionCard icon={HelpCircle} title="Get help" detail="Contact support, report an issue, or request a coach-data review.">
+              <Button variant="secondary" size="sm" disabled>
+                Contact support
+              </Button>
+            </ActionCard>
+          </Section>
+
+          <Section id="delete-account" title="Delete account">
+            <ActionCard icon={Trash2} title="Delete account" detail="Permanently remove your account, logs, preferences, and coach history.">
+              <Button variant="danger" size="sm" disabled>
+                Delete
+              </Button>
+            </ActionCard>
           </Section>
         </section>
 
@@ -956,14 +990,16 @@ function ActionCard({
 }
 
 function Section({
+  id,
   title,
   children,
 }: {
+  id?: string;
   title: string;
   children: React.ReactNode;
 }) {
   return (
-    <div>
+    <div id={id}>
       <h2 className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-neutral-400">
         {title}
       </h2>

@@ -67,9 +67,9 @@ function estimateDailyBurn(profile: { weightKg?: number; heightCm?: number; acti
   const assumptions: string[] = [];
 
   const weightKg = profile.weightKg ?? 75;
-  if (profile.weightKg === undefined) assumptions.push("Weight not in profile; assumed 75 kg.");
+  if (profile.weightKg === undefined) assumptions.push("Weight not in profile; assumed 165 lb.");
   const heightCm = profile.heightCm ?? 175;
-  if (profile.heightCm === undefined) assumptions.push("Height not in profile; assumed 175 cm.");
+  if (profile.heightCm === undefined) assumptions.push("Height not in profile; assumed 69 in.");
 
   // Mifflin-St Jeor BMR. Profile has no age or sex: assume age 35 and use the
   // midpoint of the male (+5) and female (-161) constants (-78).
@@ -255,7 +255,7 @@ registerTools([
   defineTool({
     name: "log_weight",
     description:
-      "Log the user's body weight for today. Accepts kg or lb (converted and stored in kg). Use when the user states their current weight.",
+      "Log the user's body weight for today. Prefer lb for user-facing language; kg is accepted only for conversion/storage. Use when the user states their current weight.",
     schema: z.object({
       weight: z.number().min(20).max(700).describe("Body weight value in the given unit."),
       unit: z.enum(["kg", "lb"]).describe("Unit of the weight value: kg or lb."),
@@ -272,8 +272,8 @@ registerTools([
           id: ctx.newArtifactId(),
           type: "body_log_confirm",
           kind: "weight",
-          value: weightKg,
-          unit: "kg",
+          value: input.unit === "lb" ? input.weight : Math.round(weightKg * 2.20462 * 10) / 10,
+          unit: "lb",
           displayValue: `${input.weight} ${input.unit}`,
         },
       };

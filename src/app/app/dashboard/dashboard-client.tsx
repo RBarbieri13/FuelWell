@@ -198,12 +198,13 @@ export function DashboardClient({
         <Card variant="elevated" className="space-y-5 rounded-[1.5rem] px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h2 className="text-base font-black text-neutral-900">Macro truth</h2>
+              <h2 className="text-base font-black text-neutral-900">Macros</h2>
             </div>
             <span className="shrink-0 rounded-full bg-primary-50 px-3.5 py-1.5 text-xs font-black text-primary-700">
               {percentOf(totals.calories, targets.calories)}% calories
             </span>
           </div>
+          <MacroBar label="Calories" current={totals.calories} target={targets.calories} color="#1eae84" />
           <MacroBar label="Protein" current={totals.protein} target={targets.protein} color="#3e92c9" />
           <MacroBar label="Carbs" current={totals.carbs} target={targets.carbs} color="#c7a91e" />
           <MacroBar label="Fat" current={totals.fat} target={targets.fat} color="#f0795b" />

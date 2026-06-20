@@ -231,14 +231,14 @@ export function ProfileClient({
                 <InfoRow
                   icon={Scale}
                   label="Weight"
-                  value={weightLb ? `${weightLb} lb · ${weightKg} kg` : `${weightKg} kg`}
+                  value={weightLb ? `${weightLb} lb` : `${Math.round(weightKg * 2.20462)} lb`}
                 />
               )}
               {heightCm && (
                 <InfoRow
                   icon={Ruler}
                   label="Height"
-                  value={heightIn ? `${heightIn} in · ${heightCm} cm` : `${heightCm} cm`}
+                  value={heightIn ? `${heightIn} in` : `${Math.round(heightCm / 2.54)} in`}
                 />
               )}
             </div>

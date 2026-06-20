@@ -176,9 +176,9 @@ export default function CoachPage() {
     if (totals.calories === 0) {
       return [
         "What should I do right now?",
+        "Analyze a menu or food photo",
         "Log my breakfast",
         "Plan a 30 min workout",
-        "Show me my macros this week",
       ];
     }
     const proteinLeft = remaining(totals.protein, targets.protein);
@@ -186,6 +186,7 @@ export default function CoachPage() {
       "What should I do right now?",
       proteinLeft >= 40 ? `Suggest a meal with ${proteinLeft}g protein left` : "What can I eat tonight?",
       "Give me my daily recap",
+      "Analyze a menu or food photo",
       "Plan a workout for today",
     ];
   }, [totals, targets]);
@@ -379,19 +380,22 @@ export default function CoachPage() {
             </p>
           )}
           <div className="flex items-center gap-2">
-            <label className="flex min-h-12 w-12 cursor-pointer items-center justify-center rounded-[1.35rem] border border-primary-100 bg-primary-50/70 text-primary-700 transition hover:bg-primary-100">
+            <label
+              className="flex min-h-12 w-12 cursor-pointer items-center justify-center rounded-[1.35rem] border border-primary-100 bg-primary-50/70 text-primary-700 transition hover:bg-primary-100"
+              title="Attach screenshot, menu, photo, PDF, email, or text file"
+            >
               <Paperclip className="h-4 w-4" />
               <input
                 type="file"
                 multiple
-                accept="image/png,image/jpeg,image/webp,image/gif,application/pdf,text/plain,text/markdown,text/csv,text/html,application/json,message/rfc822,.eml,.md,.csv,.json,.txt,.html"
+                accept="image/png,image/jpeg,image/webp,image/gif,application/pdf,text/plain,text/markdown,text/csv,text/html,application/json,message/rfc822,.png,.jpg,.jpeg,.webp,.gif,.pdf,.eml,.md,.csv,.json,.txt,.html"
                 className="sr-only"
                 disabled={busy || attachments.length >= MAX_ATTACHMENTS}
                 onChange={(event) => {
                   void handleAttachmentChange(event.target.files);
                   event.currentTarget.value = "";
                 }}
-                aria-label="Attach files or photos"
+                aria-label="Attach screenshot, menu, photo, or file"
               />
             </label>
             <input

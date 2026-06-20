@@ -16,7 +16,7 @@ function formatExercise(e: NonNullable<WorkoutEntry["exercises"]>[number]): stri
   else if (e.sets !== undefined) parts.push(`${e.sets} sets`);
   else if (e.reps !== undefined) parts.push(`${e.reps} reps`);
   if (e.weightKg !== undefined && e.weightKg > 0) {
-    parts.push(`@ ${Math.round(e.weightKg * 10) / 10} kg`);
+    parts.push(`@ ${Math.round(e.weightKg * 2.20462)} lb`);
   }
   return parts.join(" ");
 }

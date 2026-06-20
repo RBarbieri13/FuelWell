@@ -104,7 +104,7 @@ function attachmentContentBlocks(attachments: CoachAttachment[]): Anthropic.Cont
         },
         {
           type: "text",
-          text: `[Attached image: ${attachment.name}, ${attachment.mediaType}. Analyze what is visible. If it is food, estimate likely ingredients, portion uncertainty, calories, protein, carbs, and fat. If it is an exercise/workout image, identify movement pattern, likely muscles, risks, and how it fits the user's goal.]`,
+          text: `[Attached image: ${attachment.name}, ${attachment.mediaType}. Analyze what is visible. If it is food, estimate likely ingredients, portion uncertainty, calories, protein, carbs, and fat. If it is a menu screenshot, compare likely choices and recommend what best fits the user's remaining targets. If it is an exercise/workout image, identify movement pattern, likely muscles, risks, and how it fits the user's goal.]`,
         },
       ];
     }

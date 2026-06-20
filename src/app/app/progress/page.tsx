@@ -28,12 +28,14 @@ import { buildSampleHistory } from "@/components/progress/sample-history";
 
 type ProgressState = "day0" | "day1" | "day3";
 
+type NutritionStatKey = "calories" | MacroKey;
+
 interface MacroStat {
-  key: MacroKey;
+  key: NutritionStatKey;
   label: string;
   consumed: number;
   target: number;
-  unit: "g";
+  unit: "g" | "kcal";
   colorClass: string;
 }
 
@@ -83,6 +85,7 @@ const snapshots: Record<ProgressState, ProgressSnapshot> = {
     caloriesAverage: 0,
     adherence: 0,
     macroStats: [
+      { key: "calories", label: "Calories", consumed: 0, target: 2140, unit: "kcal", colorClass: "bg-primary-500" },
       { key: "protein", label: "Protein", consumed: 0, target: 150, unit: "g", colorClass: "bg-sky-500" },
       { key: "carbs", label: "Carbs", consumed: 0, target: 230, unit: "g", colorClass: "bg-macro-carbs" },
       { key: "fat", label: "Fat", consumed: 0, target: 70, unit: "g", colorClass: "bg-macro-fat" },
@@ -118,6 +121,7 @@ const snapshots: Record<ProgressState, ProgressSnapshot> = {
     caloriesAverage: 2015,
     adherence: 86,
     macroStats: [
+      { key: "calories", label: "Calories", consumed: 2015, target: 2140, unit: "kcal", colorClass: "bg-primary-500" },
       { key: "protein", label: "Protein", consumed: 118, target: 150, unit: "g", colorClass: "bg-sky-500" },
       { key: "carbs", label: "Carbs", consumed: 218, target: 230, unit: "g", colorClass: "bg-macro-carbs" },
       { key: "fat", label: "Fat", consumed: 68, target: 70, unit: "g", colorClass: "bg-macro-fat" },
@@ -153,6 +157,7 @@ const snapshots: Record<ProgressState, ProgressSnapshot> = {
     caloriesAverage: 2058,
     adherence: 92,
     macroStats: [
+      { key: "calories", label: "Calories", consumed: 2058, target: 2140, unit: "kcal", colorClass: "bg-primary-500" },
       { key: "protein", label: "Protein", consumed: 144, target: 150, unit: "g", colorClass: "bg-sky-500" },
       { key: "carbs", label: "Carbs", consumed: 224, target: 230, unit: "g", colorClass: "bg-macro-carbs" },
       { key: "fat", label: "Fat", consumed: 66, target: 70, unit: "g", colorClass: "bg-macro-fat" },
@@ -187,7 +192,8 @@ const windowOptions: { key: WindowKey; label: string; days: number }[] = [
 
 const ALL_MACROS: MacroKey[] = ["protein", "carbs", "fat"];
 
-const macroTextClass: Record<MacroKey, string> = {
+const macroTextClass: Record<NutritionStatKey, string> = {
+  calories: "text-primary-700",
   protein: "text-sky-700",
   carbs: "text-lemon-700",
   fat: "text-accent-600",
@@ -221,7 +227,9 @@ function buildSeries(
 
   const logged = snapshot.macroStats.reduce(
     (acc, stat) => {
-      acc[stat.key] = stat.consumed;
+      if (stat.key !== "calories") {
+        acc[stat.key] = stat.consumed;
+      }
       return acc;
     },
     { protein: 0, carbs: 0, fat: 0 } as Record<MacroKey, number>
@@ -412,7 +420,7 @@ export default function ProgressPage() {
         <Card className="space-y-6 rounded-[24px] border-[#e6efeb] px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
           <SectionHeader
             icon={CheckCircle2}
-            label="Where your macros lean"
+            label="Where calories and macros lean"
             detail={snapshot.loggedDays === 0 ? "Targets shown until logging starts" : "Average intake next to your daily targets"}
           />
           <div className="space-y-5">
@@ -426,7 +434,7 @@ export default function ProgressPage() {
                       {macro.label}
                     </span>
                     <span className="font-semibold text-[#78928a] tabular-nums">
-                      {macro.consumed}{macro.unit} / {macro.target}{macro.unit}
+                      {macro.consumed.toLocaleString()}{macro.unit === "g" ? "g" : " kcal"} / {macro.target.toLocaleString()}{macro.unit === "g" ? "g" : " kcal"}
                     </span>
                   </div>
                   <div className="h-2.5 bg-[#f2f7f5] rounded-full overflow-hidden mt-2">

@@ -124,7 +124,7 @@ registerTools([
   tool({
     name: "log_workout",
     description:
-      "Log a completed workout for today. Use when the user says they finished a workout. Duration in minutes; exercise weights in kg.",
+      "Log a completed workout for today. Use when the user says they finished a workout. Duration in minutes; users usually speak in lb, but exercise weights must be converted to kg for storage.",
     schema: z.object({
       name: z.string().describe("Short workout name, e.g. 'Morning run' or 'Push day'"),
       duration_min: z.number().min(1).max(600).describe("Total workout duration in minutes (1-600)"),
@@ -137,7 +137,7 @@ registerTools([
             name: z.string().describe("Exercise name"),
             sets: z.number().int().min(1).max(50).optional().describe("Number of sets performed"),
             reps: z.number().int().min(1).max(200).optional().describe("Reps per set"),
-            weight_kg: z.number().min(0).max(500).optional().describe("Weight used in kg"),
+            weight_kg: z.number().min(0).max(500).optional().describe("Weight used, converted to kg for storage. If the user says lb, convert lb to kg before calling."),
           }),
         )
         .optional()
@@ -257,10 +257,10 @@ registerTools([
   tool({
     name: "log_set",
     description:
-      "Log one completed set in the active workout session. Weight in kg (use 0 for bodyweight). Requires start_workout_session to be active.",
+      "Log one completed set in the active workout session. Users usually speak in lb; convert to kg for storage (use 0 for bodyweight). Requires start_workout_session to be active.",
     schema: z.object({
       exercise: z.string().describe("Exercise name for this set"),
-      weight_kg: z.number().min(0).max(500).describe("Weight used in kg; 0 for bodyweight"),
+      weight_kg: z.number().min(0).max(500).describe("Weight used, converted to kg for storage; 0 for bodyweight."),
       reps: z.number().int().min(1).max(200).describe("Reps completed in this set"),
     }),
     run: (input, ctx) => {

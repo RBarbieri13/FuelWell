@@ -17,7 +17,7 @@ const mobileNavItems = [
   { href: "/app/log", label: "Log", icon: PlusCircle, highlight: true, color: "text-accent-600" },
   { href: "/app/coach", label: "Coach", icon: MessageSquare, color: "text-sky-600" },
   { href: "/app/workouts", label: "Move", icon: Dumbbell, color: "text-sky-600" },
-  { href: "/app/grocery-list", label: "Shop", icon: ShoppingBasket, color: "text-primary-600" },
+  { href: "/app/grocery-list", label: "Groceries", icon: ShoppingBasket, color: "text-primary-600" },
   { href: "/app/daily-review", label: "Review", icon: ClipboardList, color: "text-lemon-600" },
 ];
 

@@ -14,6 +14,10 @@ const VIEW_W = 280;
 const VIEW_H = 60;
 const PAD = 6;
 
+function kgToLb(value: number) {
+  return Math.round(value * 2.20462 * 10) / 10;
+}
+
 export function WeightTrendSpark({ artifact }: ArtifactCardProps<WeightTrendArtifact>) {
   const series = artifact.series ?? [];
 
@@ -43,15 +47,16 @@ export function WeightTrendSpark({ artifact }: ArtifactCardProps<WeightTrendArti
     .join(" ");
 
   const delta = artifact.delta ?? 0;
-  const latest = Math.round(series[series.length - 1].weightKg * 10) / 10;
-  const deltaLabel = `${delta > 0 ? "+" : ""}${Math.round(delta * 10) / 10} kg`;
+  const latest = kgToLb(series[series.length - 1].weightKg);
+  const deltaLb = kgToLb(delta);
+  const deltaLabel = `${deltaLb > 0 ? "+" : ""}${deltaLb} lb`;
 
   return (
     <div className="mt-3 rounded-2xl border border-neutral-200 bg-white p-4">
       <div className="flex items-center justify-between gap-3">
         <p className="text-sm font-black text-neutral-900">
           Weight
-          <span className="ml-2 font-bold text-neutral-500">{latest} kg</span>
+          <span className="ml-2 font-bold text-neutral-500">{latest} lb</span>
         </p>
         <span
           className={
@@ -68,7 +73,7 @@ export function WeightTrendSpark({ artifact }: ArtifactCardProps<WeightTrendArti
         viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
         className="mt-2 h-16 w-full"
         role="img"
-        aria-label={`Weight trend over ${series.length} weigh-ins, from ${Math.round(series[0].weightKg * 10) / 10} kg to ${latest} kg, change ${deltaLabel}`}
+        aria-label={`Weight trend over ${series.length} weigh-ins, from ${kgToLb(series[0].weightKg)} lb to ${latest} lb, change ${deltaLabel}`}
         preserveAspectRatio="none"
       >
         <polyline

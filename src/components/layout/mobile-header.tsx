@@ -13,7 +13,7 @@ const pageTitles: Record<string, string> = {
   "/app/workouts": "Move",
   "/app/fitness": "Fitness",
   "/app/nutrition": "Nutrition",
-  "/app/grocery-list": "Shop",
+  "/app/grocery-list": "Groceries",
   "/app/recovery": "Recovery",
   "/app/progress": "Progress",
   "/app/profile": "Profile",

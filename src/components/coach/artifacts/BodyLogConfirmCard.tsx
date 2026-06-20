@@ -11,6 +11,10 @@ type BodyLogConfirmArtifact = ArtifactSpec & {
   displayValue?: string;
 };
 
+function kgToLb(value: number) {
+  return Math.round(value * 2.20462 * 10) / 10;
+}
+
 export function BodyLogConfirmCard({ artifact }: ArtifactCardProps<BodyLogConfirmArtifact>) {
   const { kind, value } = artifact;
 
@@ -19,10 +23,10 @@ export function BodyLogConfirmCard({ artifact }: ArtifactCardProps<BodyLogConfir
   switch (kind) {
     case "weight":
       icon = <Scale className="h-4 w-4" />;
-      line = `Weight logged: ${Math.round(value * 10) / 10} ${artifact.unit ?? "kg"}`;
-      if (artifact.displayValue && !artifact.displayValue.endsWith("kg")) {
-        line += ` (${artifact.displayValue})`;
-      }
+      line =
+        artifact.unit === "lb"
+          ? `Weight logged: ${Math.round(value * 10) / 10} lb`
+          : `Weight logged: ${kgToLb(value)} lb`;
       break;
     case "mood":
       icon = <Smile className="h-4 w-4" />;

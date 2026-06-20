@@ -27,6 +27,7 @@ import { useWorkoutLog } from "@/lib/use-workout-log";
 import {
   MANUAL_ACTIVITY_OPTIONS,
   PROFILE_WEIGHT_LB,
+  PROFILE_AGE,
   buildManualWorkoutEntry,
   estimateMinutesFromDistance,
   estimateWorkoutCalories,
@@ -132,7 +133,7 @@ function workoutTone(workout: WorkoutRow) {
   };
 }
 
-function WorkoutFeatureCard({ workout }: { workout: WorkoutRow }) {
+function WorkoutFeatureCard({ workout, expanded }: { workout: WorkoutRow; expanded: boolean }) {
   const Icon = workout.icon;
   const tone = workoutTone(workout);
   const IntensityIcon = tone.intensityIcon;
@@ -156,8 +157,10 @@ function WorkoutFeatureCard({ workout }: { workout: WorkoutRow }) {
               {workout.categoryLabel}
             </span>
           </div>
-          <p className="mb-3 text-sm font-semibold leading-6 text-[#54635d]">{workout.detail}</p>
-          <div className="flex flex-wrap gap-2">
+          {expanded && (
+            <p className="mb-3 text-sm font-semibold leading-6 text-[#54635d]">{workout.detail}</p>
+          )}
+          <div className={cn("flex flex-wrap gap-2", !expanded && "mt-2")}>
             <span className="inline-flex items-center gap-1.5 rounded-full bg-[#f4f8f6] px-3 py-1.5 text-xs font-bold text-[#54635d]">
               <Timer className="h-3.5 w-3.5 text-[#9db0aa]" />
               {workout.duration}
@@ -174,6 +177,11 @@ function WorkoutFeatureCard({ workout }: { workout: WorkoutRow }) {
             <span className="rounded-full bg-[#f4f8f6] px-3 py-1.5 text-xs font-bold text-[#54635d]">
               {workout.focus}
             </span>
+            {!expanded && (
+              <span className="rounded-full bg-primary-50 px-3 py-1.5 text-xs font-bold text-primary-700">
+                Tap to preview
+              </span>
+            )}
           </div>
         </div>
         <span className="hidden h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#f4f8f6] text-[#7c968f] sm:inline-flex">
@@ -223,7 +231,7 @@ function ManualActivityPlanner({
             Add any activity
           </h2>
           <p className="mt-2 text-[15px] font-semibold leading-6 text-[#54635d]">
-            Walking, hiking, running, biking, swimming, rowing, intervals, and more.
+            Walking, hiking, running, biking, swimming, rowing, sports, lifting, intervals, and more.
           </p>
         </div>
       </div>
@@ -281,7 +289,7 @@ function ManualActivityPlanner({
           {calories} active cal
         </p>
         <p className="mt-1 text-xs font-semibold leading-5 text-primary-900/70">
-          Estimate uses {resolvedMinutes} min, {option.label.toLowerCase()} intensity, and profile weight {PROFILE_WEIGHT_LB} lb.
+          Estimate uses {resolvedMinutes} min, {option.label.toLowerCase()} intensity, preview age {PROFILE_AGE}, and profile weight {PROFILE_WEIGHT_LB} lb.
         </p>
       </div>
 
@@ -327,6 +335,7 @@ export function WorkoutsView({
   );
   const [workoutQuery, setWorkoutQuery] = useState(initialQuery ?? "");
   const [showRecommendation, setShowRecommendation] = useState(false);
+  const [showWorkoutDetails, setShowWorkoutDetails] = useState(false);
   // Shared store: workouts logged from Coach chat show up here too (D-gate).
   const {
     workouts: loggedWorkouts,
@@ -470,38 +479,8 @@ export function WorkoutsView({
       )}
 
       <div className="grid gap-5 xl:grid-cols-3">
-        {/* Path 1: Pick my own */}
-        <Card className="space-y-5 rounded-[24px] border-[#e6efeb] px-7 py-7 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
-          <div className="flex items-start gap-4">
-            <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[13px] bg-primary-100 text-primary-600">
-              <ListFilter className="h-5 w-5" />
-            </span>
-            <div>
-              <h2 className="font-heading text-[22px] font-black tracking-tight text-[#16302a]">
-                Pick my own
-              </h2>
-              <p className="mt-2 text-[15px] font-semibold leading-6 text-[#54635d]">
-                Browse the list and filter by what you want to work today.
-              </p>
-            </div>
-          </div>
-          <div className="flex flex-wrap gap-2.5">
-            {bodyPartFilters.slice(0, 4).map((f) => (
-              <FilterButton
-                key={f.id}
-                active={bodyPart === f.id}
-                href={filterHref(f.id)}
-              >
-                {f.label}
-              </FilterButton>
-            ))}
-          </div>
-        </Card>
-
-        <ManualActivityPlanner onAdd={addWorkout} />
-
-        {/* Path 2: Coach recommends */}
-        <Card className="fw-dark-panel relative overflow-hidden rounded-[24px] px-7 py-7 shadow-[0_20px_44px_rgba(16,48,40,0.3)]">
+        {/* Path 1: Coach recommends */}
+        <Card className="fw-dark-panel relative overflow-hidden rounded-[24px] border-primary-500/30 px-7 py-7 shadow-[0_22px_46px_rgba(16,48,40,0.34)] ring-2 ring-primary-300/25">
           <div className="pointer-events-none absolute -right-8 -top-10 h-40 w-40 rounded-full bg-primary-500/25 blur-2xl" />
           <div className="relative space-y-5">
           <div className="flex items-start gap-3">
@@ -509,9 +488,14 @@ export function WorkoutsView({
               <Sparkles className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="font-heading text-[22px] font-black tracking-tight text-white">
-                Coach recommends
-              </h2>
+              <div className="flex flex-wrap items-center gap-2">
+                <h2 className="font-heading text-[22px] font-black tracking-tight text-white">
+                  Coach recommends
+                </h2>
+                <span className="rounded-full bg-white/12 px-2.5 py-1 text-[11px] font-black uppercase tracking-[0.12em] text-primary-100">
+                  Start here
+                </span>
+              </div>
               <p className="mt-2 text-[15px] font-semibold leading-6 text-white/72">
                 One tap and your coach suggests a good fit for today — built from your meals and readiness.
               </p>
@@ -548,6 +532,36 @@ export function WorkoutsView({
           )}
           </div>
         </Card>
+
+        {/* Path 2: Pick my own */}
+        <Card className="space-y-5 rounded-[24px] border-[#e6efeb] px-7 py-7 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
+          <div className="flex items-start gap-4">
+            <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[13px] bg-primary-100 text-primary-600">
+              <ListFilter className="h-5 w-5" />
+            </span>
+            <div>
+              <h2 className="font-heading text-[22px] font-black tracking-tight text-[#16302a]">
+                Pick my own
+              </h2>
+              <p className="mt-2 text-[15px] font-semibold leading-6 text-[#54635d]">
+                Browse the list and filter by what you want to work today.
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-2.5">
+            {bodyPartFilters.slice(0, 4).map((f) => (
+              <FilterButton
+                key={f.id}
+                active={bodyPart === f.id}
+                href={filterHref(f.id)}
+              >
+                {f.label}
+              </FilterButton>
+            ))}
+          </div>
+        </Card>
+
+        <ManualActivityPlanner onAdd={addWorkout} />
       </div>
 
       <section className="space-y-4">
@@ -555,14 +569,24 @@ export function WorkoutsView({
           <h2 className="font-heading text-sm font-black uppercase tracking-[0.16em] text-[#9db0aa]">
             All workouts
           </h2>
-          <span className="text-sm font-semibold text-[#7c968f]">
-            {visible.length} options
-          </span>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setShowWorkoutDetails((current) => !current)}
+              className="rounded-full bg-white px-3 py-1.5 text-xs font-black text-primary-700 shadow-sm shadow-primary-900/5 transition hover:bg-primary-50"
+              aria-expanded={showWorkoutDetails}
+            >
+              {showWorkoutDetails ? "Collapse detail" : "Expand detail"}
+            </button>
+            <span className="text-sm font-semibold text-[#7c968f]">
+              {visible.length} options
+            </span>
+          </div>
         </div>
 
         <div className="space-y-4">
           {featuredWorkouts.map((workout) => (
-            <WorkoutFeatureCard key={workout.id} workout={workout} />
+            <WorkoutFeatureCard key={workout.id} workout={workout} expanded={showWorkoutDetails} />
           ))}
         </div>
 
@@ -741,7 +765,8 @@ export function WorkoutsView({
       </section>
 
       <Card className="rounded-[20px] border-lemon-200 bg-lemon-50/80 px-6 py-5 shadow-none">
-        <div className="flex gap-3.5">
+        <details>
+          <summary className="flex cursor-pointer list-none gap-3.5">
           <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-lemon-600">
             <Info className="h-5 w-5" />
           </span>
@@ -750,10 +775,14 @@ export function WorkoutsView({
               How the suggestion is made
             </h2>
             <p className="mt-1 text-sm font-semibold leading-6 text-lemon-700/85">
-              {verdict.source}
+              Tap to review the signals behind Coach.
             </p>
           </div>
-        </div>
+          </summary>
+          <p className="mt-4 pl-12 text-sm font-semibold leading-6 text-lemon-700/85">
+              {verdict.source}
+            </p>
+        </details>
       </Card>
       </div>
     </div>

@@ -59,7 +59,7 @@ export function WorkoutSessionCard({ artifact, onAction }: ArtifactCardProps<Wor
                       : "shrink-0 font-medium text-neutral-500"
                   }
                 >
-                  {s.weightKg > 0 ? `${Math.round(s.weightKg * 10) / 10} kg x ` : ""}
+                  {s.weightKg > 0 ? `${Math.round(s.weightKg * 2.20462)} lb x ` : ""}
                   {s.reps} reps
                 </span>
               </li>
@@ -69,7 +69,7 @@ export function WorkoutSessionCard({ artifact, onAction }: ArtifactCardProps<Wor
       )}
 
       <p className="mt-3 text-xs font-medium text-neutral-400">
-        Log sets by typing e.g. &ldquo;bench 60kg x 8&rdquo;
+        Log sets by typing e.g. &ldquo;bench 135 lb x 8&rdquo;
       </p>
 
       <button
