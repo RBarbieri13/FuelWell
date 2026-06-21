@@ -60,9 +60,18 @@ func appInfoPlistUsageStringsStayAppReviewReady() throws {
     #expect(project.contains("GENERATE_INFOPLIST_FILE: NO"))
     #expect(project.contains("INFOPLIST_FILE: FuelWellApp/Resources/Info.plist"))
     #expect(project.contains("ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon"))
-    #expect(infoPlist["NSCameraUsageDescription"] as? String == "FuelWell uses the camera to log meal photos for nutrition tracking.")
-    #expect(infoPlist["NSHealthShareUsageDescription"] as? String == "FuelWell reads workouts, sleep, steps, energy, and body measurements to personalize coaching.")
-    #expect(infoPlist["NSHealthUpdateUsageDescription"] as? String == "FuelWell does not write Health data in this phase.")
+    #expect(
+        infoPlist["NSCameraUsageDescription"] as? String ==
+            "FuelWell uses the camera to log meal photos for nutrition tracking."
+    )
+    #expect(
+        infoPlist["NSHealthShareUsageDescription"] as? String ==
+            "FuelWell reads workouts, sleep, steps, energy, and body measurements to personalize coaching."
+    )
+    #expect(
+        infoPlist["NSHealthUpdateUsageDescription"] as? String ==
+            "FuelWell does not write Health data in this phase."
+    )
     #expect(infoPlist["CFBundleIconName"] as? String == "AppIcon")
     #expect(!project.contains("INFOPLIST_KEY_NSPhotoLibraryUsageDescription"))
     #expect(infoPlist["NSPhotoLibraryUsageDescription"] == nil)
