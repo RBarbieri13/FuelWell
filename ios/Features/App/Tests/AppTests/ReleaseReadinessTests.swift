@@ -50,23 +50,22 @@ func privacyManifestDeclaresRequiredReasonAPIs() throws {
 }
 
 @Test
-func generatedInfoPlistUsageStringsStayAppReviewReady() throws {
+func appInfoPlistUsageStringsStayAppReviewReady() throws {
     let project = try String(
         contentsOf: iosRoot().appendingPathComponent("project.yml"),
         encoding: .utf8
     )
+    let infoPlist = try appInfoPlist()
 
-    #expect(project.contains(
-        "INFOPLIST_KEY_NSCameraUsageDescription: FuelWell uses the camera to log meal photos for nutrition tracking."
-    ))
-    let healthShareUsageDescription =
-        "INFOPLIST_KEY_NSHealthShareUsageDescription: FuelWell reads workouts, sleep, steps, energy, " +
-        "and body measurements to personalize coaching."
-    #expect(project.contains(healthShareUsageDescription))
-    #expect(project.contains(
-        "INFOPLIST_KEY_NSHealthUpdateUsageDescription: FuelWell does not write Health data in this phase."
-    ))
+    #expect(project.contains("GENERATE_INFOPLIST_FILE: NO"))
+    #expect(project.contains("INFOPLIST_FILE: FuelWellApp/Resources/Info.plist"))
+    #expect(project.contains("ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon"))
+    #expect(infoPlist["NSCameraUsageDescription"] as? String == "FuelWell uses the camera to log meal photos for nutrition tracking.")
+    #expect(infoPlist["NSHealthShareUsageDescription"] as? String == "FuelWell reads workouts, sleep, steps, energy, and body measurements to personalize coaching.")
+    #expect(infoPlist["NSHealthUpdateUsageDescription"] as? String == "FuelWell does not write Health data in this phase.")
+    #expect(infoPlist["CFBundleIconName"] as? String == "AppIcon")
     #expect(!project.contains("INFOPLIST_KEY_NSPhotoLibraryUsageDescription"))
+    #expect(infoPlist["NSPhotoLibraryUsageDescription"] == nil)
 }
 
 @Test
@@ -212,6 +211,15 @@ private func privacyManifest() throws -> [String: Any] {
     let data = try Data(
         contentsOf: iosRoot()
             .appendingPathComponent("FuelWellApp/Resources/PrivacyInfo.xcprivacy")
+    )
+    let plist = try PropertyListSerialization.propertyList(from: data, options: [], format: nil)
+    return try #require(plist as? [String: Any])
+}
+
+private func appInfoPlist() throws -> [String: Any] {
+    let data = try Data(
+        contentsOf: iosRoot()
+            .appendingPathComponent("FuelWellApp/Resources/Info.plist")
     )
     let plist = try PropertyListSerialization.propertyList(from: data, options: [], format: nil)
     return try #require(plist as? [String: Any])
