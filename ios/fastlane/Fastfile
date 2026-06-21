@@ -23,19 +23,43 @@ platform :ios do
 
   desc "Build and upload a TestFlight candidate"
   lane :beta do
+    sh("cd #{repo_root}/ios && xcodegen generate --spec project.yml")
     ensure_testflight_ready!
+    build_number = testflight_build_number
     match(
       type: "appstore",
       readonly: true,
       api_key: lane_context[SharedValues::APP_STORE_CONNECT_API_KEY]
     )
     increment_build_number(
-      build_number: testflight_build_number
+      build_number: build_number
+    )
+    update_code_signing_settings(
+      use_automatic_signing: false,
+      path: "FuelWellApp.xcodeproj",
+      targets: ["FuelWellApp"],
+      team_id: ENV.fetch("FUELWELL_APPLE_TEAM_ID"),
+      bundle_identifier: ENV.fetch("FUELWELL_APP_IDENTIFIER"),
+      profile_name: "match AppStore #{ENV.fetch("FUELWELL_APP_IDENTIFIER")}",
+      code_sign_identity: "Apple Distribution"
     )
     build_app(
       scheme: "FuelWellApp",
       export_method: "app-store",
-      output_directory: "fastlane/build"
+      output_directory: "fastlane/build",
+      export_team_id: ENV.fetch("FUELWELL_APPLE_TEAM_ID"),
+      export_options: {
+        provisioningProfiles: {
+          ENV.fetch("FUELWELL_APP_IDENTIFIER") => "match AppStore #{ENV.fetch("FUELWELL_APP_IDENTIFIER")}"
+        }
+      },
+      xcargs: [
+        "CURRENT_PROJECT_VERSION=#{build_number}",
+        "MARKETING_VERSION=#{ENV.fetch("FUELWELL_MARKETING_VERSION", "1.0")}",
+        "INFOPLIST_KEY_CFBundleVersion=#{build_number}",
+        "-skipMacroValidation",
+        "-skipPackagePluginValidation"
+      ].join(" ")
     )
     upload_to_testflight(
       skip_waiting_for_build_processing: false,
