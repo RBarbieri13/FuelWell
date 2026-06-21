@@ -4,6 +4,7 @@ import {
   Waves,
   type LucideIcon,
 } from "lucide-react";
+import { rankedSearch } from "@/lib/search-utils";
 
 export type WorkoutCategory =
   | "upper"
@@ -49,7 +50,7 @@ export interface WorkoutLibraryItem {
   blocks: WorkoutBlock[];
 }
 
-export const workouts: WorkoutLibraryItem[] = [
+const CURATED_WORKOUTS: WorkoutLibraryItem[] = [
   {
     id: "low-impact-strength",
     title: "Low-impact strength",
@@ -500,6 +501,295 @@ export const workouts: WorkoutLibraryItem[] = [
   },
 ];
 
+type GeneratedWorkoutTemplate = {
+  id: string;
+  title: string;
+  category: WorkoutCategory;
+  categoryLabel: string;
+  workoutType: WorkoutType;
+  equipment: string;
+  icon: LucideIcon;
+  focus: string;
+  goal: string;
+  intensity: string;
+  minutes: number;
+  burn: string;
+  recoveryCost: string;
+  bestFor: string[];
+  blocks: WorkoutBlock[];
+};
+
+const workoutTemplates: GeneratedWorkoutTemplate[] = [
+  {
+    id: "upper-push",
+    title: "Upper push",
+    category: "upper",
+    categoryLabel: "Upper body",
+    workoutType: "Strength",
+    equipment: "Dumbbells or machines",
+    icon: Dumbbell,
+    focus: "Chest, shoulders, triceps",
+    goal: "Pressing strength",
+    intensity: "Moderate",
+    minutes: 36,
+    burn: "170-260 cal",
+    recoveryCost: "Moderate",
+    bestFor: ["Chest", "Shoulders", "Pressing"],
+    blocks: [
+      { name: "Warm-up", time: "6 min", detail: "Band pull-aparts, wall slides, light presses" },
+      { name: "Main work", time: "24 min", detail: "Press, incline press, lateral raise, triceps pressdown" },
+      { name: "Regression", time: "as needed", detail: "Use machines or reduce range if shoulders feel pinchy" },
+    ],
+  },
+  {
+    id: "upper-pull",
+    title: "Upper pull",
+    category: "upper",
+    categoryLabel: "Upper body",
+    workoutType: "Strength",
+    equipment: "Cable, bands, or dumbbells",
+    icon: Dumbbell,
+    focus: "Back, rear delts, biceps",
+    goal: "Rows and posture",
+    intensity: "Moderate",
+    minutes: 34,
+    burn: "160-245 cal",
+    recoveryCost: "Moderate",
+    bestFor: ["Back", "Posture", "Pulling"],
+    blocks: [
+      { name: "Prime", time: "5 min", detail: "Scap rows, dead hangs, thoracic reaches" },
+      { name: "Main work", time: "23 min", detail: "Pulldown, row, face pull, curl" },
+      { name: "Progression", time: "as ready", detail: "Add load only if reps stay smooth" },
+    ],
+  },
+  {
+    id: "lower-squat",
+    title: "Lower squat",
+    category: "lower",
+    categoryLabel: "Lower body",
+    workoutType: "Strength",
+    equipment: "Dumbbells, rack, or leg press",
+    icon: Dumbbell,
+    focus: "Quads, glutes, calves",
+    goal: "Squat pattern",
+    intensity: "Hard",
+    minutes: 42,
+    burn: "260-390 cal",
+    recoveryCost: "High",
+    bestFor: ["Leg strength", "Quads", "Glutes"],
+    blocks: [
+      { name: "Prep", time: "8 min", detail: "Ankle rocks, goblet squat holds, glute bridge" },
+      { name: "Main work", time: "27 min", detail: "Squat or press, split squat, calf raise, carry" },
+      { name: "Limitation note", time: "as needed", detail: "Swap deep knee flexion for box squats when knees are irritated" },
+    ],
+  },
+  {
+    id: "lower-hinge",
+    title: "Lower hinge",
+    category: "lower",
+    categoryLabel: "Lower body",
+    workoutType: "Strength",
+    equipment: "Barbell, dumbbells, or bands",
+    icon: Dumbbell,
+    focus: "Hamstrings, glutes, back line",
+    goal: "Posterior chain",
+    intensity: "Hard",
+    minutes: 40,
+    burn: "240-360 cal",
+    recoveryCost: "High",
+    bestFor: ["Glutes", "Hamstrings", "Strength"],
+    blocks: [
+      { name: "Pattern", time: "7 min", detail: "Hip hinge drill, RDL ramp sets" },
+      { name: "Main work", time: "26 min", detail: "RDL, hip thrust, hamstring curl, suitcase carry" },
+      { name: "Regression", time: "as needed", detail: "Use a kickstand hinge or cable pull-through if back feels loaded" },
+    ],
+  },
+  {
+    id: "core-stability",
+    title: "Core stability",
+    category: "core",
+    categoryLabel: "Core",
+    workoutType: "Strength",
+    equipment: "Mat, cable, or band",
+    icon: Dumbbell,
+    focus: "Bracing, anti-rotation, carries",
+    goal: "Trunk control",
+    intensity: "Light",
+    minutes: 22,
+    burn: "70-130 cal",
+    recoveryCost: "Low",
+    bestFor: ["Core", "Back-friendly", "Short session"],
+    blocks: [
+      { name: "Brace", time: "4 min", detail: "Breathing, dead bug, plank setup" },
+      { name: "Main work", time: "14 min", detail: "Pallof press, side plank, carry, bird dog" },
+      { name: "Progression", time: "as ready", detail: "Increase lever length before adding load" },
+    ],
+  },
+  {
+    id: "zone-2",
+    title: "Zone 2",
+    category: "cardio",
+    categoryLabel: "Cardio",
+    workoutType: "Cardio",
+    equipment: "Bike, treadmill, rower, or outdoors",
+    icon: Bike,
+    focus: "Aerobic base",
+    goal: "Easy steady conditioning",
+    intensity: "Easy",
+    minutes: 35,
+    burn: "180-330 cal",
+    recoveryCost: "Low",
+    bestFor: ["Aerobic base", "Low impact", "Recovery-friendly"],
+    blocks: [
+      { name: "Ramp", time: "7 min", detail: "Ease into conversational effort" },
+      { name: "Steady work", time: "24 min", detail: "Keep effort at 4-5/10; nasal breathing if possible" },
+      { name: "Progression", time: "weekly", detail: "Add 5 minutes before increasing intensity" },
+    ],
+  },
+  {
+    id: "intervals",
+    title: "Intervals",
+    category: "cardio",
+    categoryLabel: "Cardio",
+    workoutType: "Conditioning",
+    equipment: "Treadmill, bike, rower, or track",
+    icon: Bike,
+    focus: "Repeatable harder efforts",
+    goal: "Conditioning",
+    intensity: "Hard",
+    minutes: 28,
+    burn: "220-420 cal",
+    recoveryCost: "High",
+    bestFor: ["Conditioning", "Speed", "Time-efficient"],
+    blocks: [
+      { name: "Warm-up", time: "8 min", detail: "Easy effort plus two short pickups" },
+      { name: "Work", time: "15 min", detail: "Hard/easy repeats while keeping form controlled" },
+      { name: "Contraindication", time: "check first", detail: "Skip when sleep, soreness, or injury risk is poor" },
+    ],
+  },
+  {
+    id: "mobility-flow",
+    title: "Mobility flow",
+    category: "mobility",
+    categoryLabel: "Mobility",
+    workoutType: "Mobility",
+    equipment: "Mat",
+    icon: Waves,
+    focus: "Range of motion and breathing",
+    goal: "Move better",
+    intensity: "Light",
+    minutes: 18,
+    burn: "35-80 cal",
+    recoveryCost: "Very low",
+    bestFor: ["Stiffness", "Recovery", "Warm-up"],
+    blocks: [
+      { name: "Downshift", time: "3 min", detail: "Slow breathing and spinal rocks" },
+      { name: "Flow", time: "12 min", detail: "Hip, ankle, shoulder, and thoracic mobility" },
+      { name: "Progression", time: "as ready", detail: "Own the range before adding load or speed" },
+    ],
+  },
+  {
+    id: "recovery",
+    title: "Recovery",
+    category: "cardio",
+    categoryLabel: "Cardio",
+    workoutType: "Recovery",
+    equipment: "None",
+    icon: Bike,
+    focus: "Easy movement and digestion",
+    goal: "Recover without fatigue",
+    intensity: "Easy",
+    minutes: 24,
+    burn: "70-160 cal",
+    recoveryCost: "Very low",
+    bestFor: ["Recovery", "Steps", "Stress downshift"],
+    blocks: [
+      { name: "Walk", time: "18 min", detail: "Easy pace, relaxed shoulders, no performance target" },
+      { name: "Breathe", time: "4 min", detail: "Long exhales and gentle mobility" },
+      { name: "Limitation note", time: "as needed", detail: "Keep it pain-free and shorten it when fatigue is high" },
+    ],
+  },
+  {
+    id: "full-body",
+    title: "Full-body",
+    category: "full",
+    categoryLabel: "Full body",
+    workoutType: "Strength",
+    equipment: "Dumbbells, machines, or bodyweight",
+    icon: Dumbbell,
+    focus: "Push, pull, hinge, squat, carry",
+    goal: "Balanced strength",
+    intensity: "Moderate",
+    minutes: 38,
+    burn: "210-330 cal",
+    recoveryCost: "Moderate",
+    bestFor: ["Balanced training", "Busy week", "General strength"],
+    blocks: [
+      { name: "Prepare", time: "6 min", detail: "Squat-to-stand, rows, hinges, easy carry" },
+      { name: "Main work", time: "25 min", detail: "One push, one pull, one lower, one core movement" },
+      { name: "Regression", time: "as needed", detail: "Use bodyweight and longer rests on low-energy days" },
+    ],
+  },
+];
+
+const variants = [
+  { id: "base", label: "base", minutes: 0, intensity: "", focus: "" },
+  { id: "beginner", label: "beginner", minutes: -8, intensity: "Easy", focus: "skill and confidence" },
+  { id: "advanced", label: "advanced", minutes: 8, intensity: "Hard", focus: "progressive overload" },
+  { id: "low-impact", label: "low-impact", minutes: -2, intensity: "Easy", focus: "joint-friendly work" },
+  { id: "travel", label: "travel", minutes: -6, intensity: "Moderate", focus: "minimal equipment" },
+  { id: "time-crunch", label: "time-crunch", minutes: -12, intensity: "Moderate", focus: "short session" },
+  { id: "posture", label: "posture", minutes: -4, intensity: "Light", focus: "position and control" },
+  { id: "metabolic", label: "metabolic", minutes: 4, intensity: "Hard", focus: "higher work density" },
+  { id: "deload", label: "deload", minutes: -10, intensity: "Light", focus: "reduced recovery cost" },
+];
+
+function generatedWorkouts(): WorkoutLibraryItem[] {
+  return workoutTemplates.flatMap((template) =>
+    variants.map((variant) => {
+      const title =
+        variant.id === "base"
+          ? `${template.title} builder`
+          : variant.id === "posture"
+            ? `${template.title} posture tune-up`
+            : `${template.title} ${variant.label}`;
+
+      return {
+      id: `generated-${template.id}-${variant.id}`,
+      title,
+      duration: `${Math.max(12, template.minutes + variant.minutes)} min`,
+      intensity: variant.intensity || template.intensity,
+      focus: variant.focus || template.focus,
+      category: template.category,
+      categoryLabel: template.categoryLabel,
+      workoutType: template.workoutType,
+      equipment:
+        variant.id === "travel" || variant.id === "time-crunch"
+          ? "Bodyweight or minimal equipment"
+          : template.equipment,
+      goal: template.goal,
+      icon: template.icon,
+      detail: `${template.focus} with ${variant.focus || template.goal.toLowerCase()} emphasis.`,
+      summary: `${template.title} session for ${variant.label} training days, including progressions, regressions, target muscles, and recovery-cost guidance.`,
+      verdict: variant.id === "base" ? "Database option" : `${variant.label} option`,
+      why: `Use this when the user's goal is ${template.goal.toLowerCase()} and today's context supports ${variant.focus || template.focus.toLowerCase()}.`,
+      fuel:
+        template.intensity === "Hard" || variant.intensity === "Hard"
+          ? "Prefer a protein-forward meal plus carbs before or after this session."
+          : "No special fuel needed beyond hydration and normal protein targets.",
+      estimatedBurn: template.burn,
+      recoveryCost: variant.id === "deload" ? "Low" : template.recoveryCost,
+      bestFor: Array.from(new Set([...template.bestFor, variant.label])),
+      blocks: template.blocks,
+    };
+    }),
+  );
+}
+
+export const workouts: WorkoutLibraryItem[] = [...CURATED_WORKOUTS, ...generatedWorkouts()];
+
+export const WORKOUT_COUNT = workouts.length;
+
 export function workoutHref(id: string) {
   return `/app/workouts/${id}`;
 }
@@ -537,4 +827,24 @@ export function getSimilarWorkouts(id: string, limit = 3) {
   );
 
   return [...sameCategory, ...sameType].slice(0, limit);
+}
+
+export function searchWorkouts(query: string, limit = workouts.length): WorkoutLibraryItem[] {
+  return rankedSearch(
+    workouts,
+    query,
+    (workout) => [
+      workout.title,
+      workout.focus,
+      workout.goal,
+      workout.category,
+      workout.categoryLabel,
+      workout.workoutType,
+      workout.equipment,
+      workout.intensity,
+      ...workout.bestFor,
+      ...workout.blocks.map((block) => `${block.name} ${block.detail}`),
+    ],
+    limit,
+  );
 }

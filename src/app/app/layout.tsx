@@ -3,8 +3,23 @@ import { MobileNav } from "@/components/layout/mobile-nav";
 import { MobileHeader } from "@/components/layout/mobile-header";
 import { UserMenu } from "@/components/layout/user-menu";
 import { PreferencesSync } from "@/lib/preferences-sync";
+import { ensureCoachKnowledgeForUser } from "@/lib/coach/persistence";
+import { createClient } from "@/lib/supabase/server";
 
-export default function AppLayout({ children }: { children: React.ReactNode }) {
+async function bootstrapCoachKnowledge() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (user) {
+    await ensureCoachKnowledgeForUser(supabase, user.id);
+  }
+}
+
+export default async function AppLayout({ children }: { children: React.ReactNode }) {
+  await bootstrapCoachKnowledge();
+
   return (
     <div className="flex h-dvh overflow-hidden bg-background">
       <PreferencesSync />

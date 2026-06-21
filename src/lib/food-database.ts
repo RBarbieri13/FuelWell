@@ -18,6 +18,8 @@
  * safe. Keep entries generic ("Cheddar cheese") over branded.
  */
 
+import { rankedSearch } from "@/lib/search-utils";
+
 export type FoodTuple = readonly [
   name: string,
   kcal: number,
@@ -356,6 +358,12 @@ const DB: Record<string, FoodCategoryDef> = {
       ["Seaweed salad", 130, 1, 12, 8, 1],
       ["Olives, green", 145, 1, 4, 15, 3.5],
       ["Olives, kalamata", 230, 1, 6, 22, 3],
+      ["Fennel bulb", 31, 1, 7, 0, 3],
+      ["Jicama", 38, 1, 9, 0, 5],
+      ["Parsnips, roasted", 102, 1, 24, 0, 5],
+      ["Turnips, cooked", 22, 1, 5, 0, 2],
+      ["Watercress", 11, 2, 1, 0, 1],
+      ["Radicchio", 23, 1, 5, 0, 1],
     ],
   },
   grains: {
@@ -752,21 +760,13 @@ export function macrosForPortion(food: FoodItem, amount: number) {
  * match > substring > tag match. Caller debounces.
  */
 export function searchFoods(query: string, limit = 12): FoodItem[] {
-  const q = query.trim().toLowerCase();
-  if (q.length < 2) return [];
-  const scored: { item: FoodItem; score: number }[] = [];
-  for (const item of FOOD_DATABASE) {
-    const name = item.name.toLowerCase();
-    let score = -1;
-    if (name.startsWith(q)) score = 100;
-    else if (name.split(/[\s,]+/).some((w) => w.startsWith(q))) score = 80;
-    else if (name.includes(q)) score = 50;
-    else if (item.tags.some((t) => t.includes(q))) score = 25;
-    else if (item.categoryLabel.toLowerCase().includes(q)) score = 10;
-    if (score >= 0) scored.push({ item, score: score - name.length * 0.1 });
-  }
-  scored.sort((a, b) => b.score - a.score);
-  return scored.slice(0, limit).map((s) => s.item);
+  if (query.trim().length < 2) return [];
+  return rankedSearch(
+    FOOD_DATABASE,
+    query,
+    (item) => [item.name, item.categoryLabel, item.category, ...item.tags],
+    limit,
+  );
 }
 
 /** Filter helpers for the preference/diet chips (meeting decision). */

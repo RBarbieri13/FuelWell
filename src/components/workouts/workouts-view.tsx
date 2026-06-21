@@ -33,6 +33,7 @@ import {
   estimateWorkoutCalories,
 } from "@/lib/workout-estimates";
 import {
+  searchWorkouts,
   workouts,
   workoutHref,
   type WorkoutCategory as Category,
@@ -340,17 +341,11 @@ export function WorkoutsView({
   const [editCalories, setEditCalories] = useState(0);
 
   const visible = useMemo(() => {
-    const query = workoutQuery.trim().toLowerCase();
-    return workouts.filter((workout) => {
+    const base = workoutQuery.trim() ? searchWorkouts(workoutQuery) : workouts;
+    return base.filter((workout) => {
       const matchesBodyPart = bodyPart === "all" || workout.category === bodyPart;
       const matchesType = workoutType === "all" || workout.workoutType === workoutType;
-      const matchesQuery =
-        query.length === 0 ||
-        workout.title.toLowerCase().includes(query) ||
-        workout.focus.toLowerCase().includes(query) ||
-        workout.goal.toLowerCase().includes(query);
-
-      return matchesBodyPart && matchesType && matchesQuery;
+      return matchesBodyPart && matchesType;
     });
   }, [bodyPart, workoutQuery, workoutType]);
 

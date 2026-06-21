@@ -1,5 +1,10 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { ArtifactSpec, CoachMutation } from "./types";
+import {
+  buildCoachKnowledgeFromProfile,
+  type CoachKnowledgeBase,
+  type CoachProfileKnowledgeInput,
+} from "@/lib/coach/knowledge";
 import type { DailyGoalContext, GoalPlan, IntegrationDailySummary } from "@/lib/goal-context";
 
 /**
@@ -96,6 +101,64 @@ export async function loadRecentMessages(
         artifacts: (r.artifacts_jsonb as ArtifactSpec[]) ?? [],
       })),
   };
+}
+
+export async function loadCoachKnowledge(
+  supabase: SupabaseClient,
+  userId: string,
+): Promise<CoachKnowledgeBase | null> {
+  const { data, error } = await supabase
+    .from("coach_knowledge_bases")
+    .select("knowledge_jsonb")
+    .eq("user_id", userId)
+    .maybeSingle();
+  if (error) {
+    console.error("coach_knowledge_bases select failed", error.message);
+    return null;
+  }
+  return (data?.knowledge_jsonb as CoachKnowledgeBase | null) ?? null;
+}
+
+export async function persistCoachKnowledge(
+  supabase: SupabaseClient,
+  knowledge: CoachKnowledgeBase,
+): Promise<void> {
+  const { error } = await supabase.from("coach_knowledge_bases").upsert(
+    {
+      user_id: knowledge.userId,
+      knowledge_jsonb: knowledge,
+      updated_at: knowledge.updatedAt,
+    },
+    { onConflict: "user_id" },
+  );
+  if (error) console.error("coach_knowledge_bases upsert failed", error.message);
+}
+
+export async function ensureCoachKnowledgeForUser(
+  supabase: SupabaseClient,
+  userId: string,
+): Promise<void> {
+  const existing = await loadCoachKnowledge(supabase, userId);
+  if (existing) return;
+
+  const { data: profile, error } = await supabase
+    .from("profiles")
+    .select(
+      "display_name, goal, activity_level, dietary_preference, weight_kg, height_cm, allergies, meals_per_day, experience_level, preferences_jsonb"
+    )
+    .eq("id", userId)
+    .maybeSingle();
+
+  if (error) {
+    console.error("profiles coach knowledge bootstrap select failed", error.message);
+    return;
+  }
+
+  if (!profile) return;
+  await persistCoachKnowledge(
+    supabase,
+    buildCoachKnowledgeFromProfile(userId, profile as CoachProfileKnowledgeInput),
+  );
 }
 
 /**

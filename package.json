@@ -9,7 +9,9 @@
     "lint": "eslint",
     "test": "playwright test",
     "test:unit": "vitest run",
-    "test:smoke": "playwright test --project=chromium"
+    "test:smoke": "playwright test --project=chromium",
+    "verify:coach": "node scripts/verify-coach-engine.mjs",
+    "verify:coach:smoke": "node scripts/verify-coach-engine.mjs --smoke"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "0.104.1",

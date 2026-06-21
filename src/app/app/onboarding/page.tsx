@@ -38,6 +38,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Logo } from "@/components/ui/logo";
 import { cn } from "@/lib/utils/cn";
+import type { CoachKnowledgeBase } from "@/lib/coach/knowledge";
 
 const STORAGE_KEY = "fuelwell:onboarding:v1";
 const PREVIEW_KIND_STORAGE_KEY = "fuelwell:preview-user-kind";
@@ -424,6 +425,21 @@ export default function OnboardingPage() {
       setError(updateError.message);
       setSaving(false);
       return;
+    }
+
+    const { error: knowledgeError } = await supabase
+      .from("coach_knowledge_bases")
+      .upsert(
+        {
+          user_id: user.id,
+          knowledge_jsonb: buildInitialOnboardingCoachKnowledge(user.id, data, heightCm, weightKg, macros),
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "user_id" }
+      );
+
+    if (knowledgeError) {
+      console.error("coach knowledge bootstrap failed", knowledgeError.message);
     }
 
     clearProgress();
@@ -1288,6 +1304,64 @@ function buildOnboardingPreferences(data: OnboardingData) {
       checkInPreference: data.checkInPreference,
       coachStyle: data.coachStyle,
     },
+  };
+}
+
+function buildInitialOnboardingCoachKnowledge(
+  userId: string,
+  data: OnboardingData,
+  heightCm: number,
+  weightKg: number,
+  macros: { calories: number; protein: number; carbs: number; fat: number }
+): CoachKnowledgeBase {
+  const likes = parseCommaList(data.foodsLove);
+  const dislikes = parseCommaList(data.foodsAvoid);
+  const workoutTypes = data.preferredWorkoutTypes.map((type) =>
+    formatOption(WORKOUT_TYPE_OPTIONS, type)
+  );
+
+  return {
+    userId,
+    updatedAt: new Date().toISOString(),
+    profileFacts: [
+      data.displayName ? `User name is ${data.displayName}.` : "",
+      data.goal ? `Primary goal is ${data.goal}.` : "",
+      data.activityLevel ? `Activity level is ${data.activityLevel}.` : "",
+      data.dietaryPreference ? `Dietary preference is ${data.dietaryPreference}.` : "",
+      `Recorded weight is ${weightKg} kg.`,
+      `Recorded height is ${heightCm} cm.`,
+      "Preferred units are imperial.",
+    ].filter(Boolean),
+    nutritionFacts: [
+      `Initial macro targets are ${macros.calories} kcal, ${macros.protein}g protein, ${macros.carbs}g carbs, ${macros.fat}g fat.`,
+      `Preferred meal rhythm is ${data.mealsPerDay} meals per day.`,
+      data.nutritionAggressiveness
+        ? `Nutrition adjustment style is ${data.nutritionAggressiveness}.`
+        : "",
+      data.dietFlexibility ? `Diet flexibility preference is ${data.dietFlexibility}.` : "",
+      data.groceryBudget ? `Grocery budget preference is ${data.groceryBudget}.` : "",
+      data.cookingHabits ? `Cooking habit preference is ${data.cookingHabits}.` : "",
+    ].filter(Boolean),
+    workoutFacts: [
+      data.experienceLevel ? `Training experience level is ${data.experienceLevel}.` : "",
+      data.workoutLocation ? `Workout location preference is ${data.workoutLocation}.` : "",
+      workoutTypes.length ? `Preferred workout types: ${workoutTypes.join(", ")}.` : "",
+    ].filter(Boolean),
+    preferenceFacts: [
+      data.allergies.length ? `Allergies: ${data.allergies.join(", ")}.` : "No allergies recorded.",
+      likes.length ? `Likes: ${likes.join(", ")}.` : "",
+      dislikes.length ? `Dislikes: ${dislikes.join(", ")}.` : "",
+      data.coachStyle ? `Coach style preference is ${data.coachStyle}.` : "",
+      data.checkInPreference ? `Check-in preference is ${data.checkInPreference}.` : "",
+    ].filter(Boolean),
+    bodyFacts: [
+      `Onboarding weight is ${weightKg} kg.`,
+      `Onboarding height is ${heightCm} cm.`,
+    ],
+    progressFacts: ["Onboarding intake has been completed."],
+    inferredPatterns: [
+      "Initial coach knowledge comes from onboarding and should be refined from logged meals, workouts, body logs, and user corrections.",
+    ],
   };
 }
 

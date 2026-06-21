@@ -24,3 +24,29 @@ This version has breaking changes — APIs, conventions, and file structure may 
   than baseline as blockers.
 - Prefer existing FuelWell component shapes, Tailwind theme tokens, and local
   color roles over new one-off visual values.
+
+# Coach engine Definition of Done
+
+- Coach must be a personalized health, nutrition, fitness, and
+  body-composition engine, not generic chat. It must retrieve user-specific
+  profile, history, goals, meals, workouts, preferences, app activity, and
+  coach memory before answering.
+- Per-user coach knowledge must be isolated by authenticated `user_id`; preview
+  data may use the sample preview user only and must not be presented as
+  production persistence.
+- Coach actions that change app state must flow through explicit tool/action
+  paths, be audit logged, and require confirmation for destructive or
+  high-impact edits.
+- Health boundaries are mandatory: no diagnosis, no emergency guidance, no
+  invented medical facts, and recommend professional care for medical concerns.
+- Seed data gates: ingredient count >= 500, recipe count >= 150, workout count
+  >= 100. Ingredient, recipe, and workout search must support fast useful
+  autocomplete plus closest-match behavior for partials, case differences,
+  aliases, and minor typos where feasible.
+- Before claiming completion, run a verifier that checks seed counts, search
+  behavior, user isolation, materially different coach context for different
+  profiles, safe coach actions for meals/groceries/workouts/plans, lint, tests,
+  typecheck/build, and that no mock-only route is claimed as finished product.
+- Do not production deploy, open PRs, schedule jobs, use paid API calls beyond
+  normal dev testing, send external messages, or change live user data without
+  explicit user confirmation.

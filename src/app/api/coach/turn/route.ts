@@ -5,6 +5,12 @@ import { isPreviewHost, SAMPLE_USER } from "@/lib/preview-session";
 import { createClient } from "@/lib/supabase/server";
 import { buildSystemPrompt } from "@/lib/coach/system-prompt";
 import {
+  buildCoachKnowledgeBase,
+  formatKnowledgeForPrompt,
+  mergeCoachKnowledge,
+  retrieveCoachKnowledge,
+} from "@/lib/coach/knowledge";
+import {
   costUsdCents,
   evaluateBudget,
   memoryAddCents,
@@ -30,7 +36,9 @@ import {
   getSupabaseDayCents,
   insertSupabaseAudit,
   insertSupabaseUsage,
+  loadCoachKnowledge,
   mergeProfilePreferences,
+  persistCoachKnowledge,
   persistCoachMutations,
   saveMessages,
 } from "@/lib/coach/persistence";
@@ -47,6 +55,7 @@ export const maxDuration = 120;
 const HAIKU = "claude-haiku-4-5";
 const SONNET = "claude-sonnet-4-6";
 const MAX_TOOL_ROUNDS = 5; // E5: per-turn tool-call circuit breaker
+const MEAL_SLOTS = ["breakfast", "lunch", "dinner", "snack"] as const;
 
 function pickModel(req: CoachTurnRequest): string {
   if (process.env.COACH_MODEL) return process.env.COACH_MODEL;
@@ -56,6 +65,44 @@ function pickModel(req: CoachTurnRequest): string {
   const planning = /\bplan\b|\bweek\b|meal plan|recover my day|strategy/i.test(last);
   if (last.length > 500 || req.messages.length > 16 || planning) return SONNET;
   return HAIKU;
+}
+
+function parseDirectMealLog(text: string):
+  | {
+      name: string;
+      kcal: number;
+      protein: number;
+      carbs: number;
+      fat: number;
+      meal_slot: (typeof MEAL_SLOTS)[number];
+    }
+  | null {
+  const normalized = text.trim();
+  if (!/\b(i ate|i had|log|add)\b/i.test(normalized)) return null;
+  const calorieMatch = normalized.match(/\b(\d{2,4})\s*(?:kcal|cal(?:orie)?s?)\b/i);
+  if (!calorieMatch) return null;
+  const slot = MEAL_SLOTS.find((candidate) => new RegExp(`\\b${candidate}\\b`, "i").test(normalized));
+  if (!slot) return null;
+
+  const kcal = Number(calorieMatch[1]);
+  if (!Number.isFinite(kcal) || kcal <= 0) return null;
+
+  const name = normalized
+    .replace(/\b(i ate|i had|please log|log|add)\b/i, "")
+    .replace(/\b(for|at|to)\s+(breakfast|lunch|dinner|snack)\b/gi, "")
+    .replace(/\b\d{2,4}\s*(?:kcal|cal(?:orie)?s?)\b/gi, "")
+    .replace(/\b(a|an|the)\b/gi, " ")
+    .replace(/[,.;:]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  if (name.length < 2 || name.length > 80) return null;
+
+  const protein = Math.max(1, Math.round((kcal * 0.25) / 4));
+  const carbs = Math.max(0, Math.round((kcal * 0.45) / 4));
+  const fat = Math.max(0, Math.round((kcal * 0.3) / 9));
+
+  return { name, kcal, protein, carbs, fat, meal_slot: slot };
 }
 
 const attachmentSchema = z.object({
@@ -221,6 +268,21 @@ export async function POST(request: Request) {
     : null;
 
   const snapshot = body.snapshot as CoachDaySnapshot;
+  const lastUserText = body.messages
+    .slice()
+    .reverse()
+    .find((message) => message.role === "user")?.content ?? "";
+  const existingKnowledge = user ? await loadCoachKnowledge(supabase, userId) : null;
+  let coachKnowledge = mergeCoachKnowledge(
+    existingKnowledge,
+    buildCoachKnowledgeBase(userId, snapshot),
+  );
+  if (user) {
+    await persistCoachKnowledge(supabase, coachKnowledge);
+  }
+  const retrievedKnowledge = formatKnowledgeForPrompt(
+    retrieveCoachKnowledge(coachKnowledge, lastUserText),
+  );
   const model = pickModel(body);
   const anthropic = new Anthropic();
 
@@ -264,8 +326,58 @@ export async function POST(request: Request) {
         newArtifactId: () => `art-${Date.now().toString(36)}-${++artifactCounter}`,
       };
 
-      try {
-        // Pre-confirmed destructive tool from a prior confirm_required event:
+	      try {
+	        const directMealLog = body.confirmedTool ? null : parseDirectMealLog(lastUserText);
+	        if (directMealLog) {
+	          const def = getTool("log_custom_meal");
+	          if (!def) throw new Error("Meal logging tool is unavailable.");
+	          const input = def.schema.parse(directMealLog);
+	          const result = await def.run(input, toolCtx);
+	          result.mutations?.forEach(toolCtx.applyMutation);
+	          turnMutations.push(...(result.mutations ?? []));
+	          collectPrefPatch(result.mutations);
+	          assistantText = `Logged ${directMealLog.name} as an additional ${directMealLog.meal_slot}.`;
+	          emit({ type: "text_delta", text: assistantText });
+	          if (result.artifact) {
+	            turnArtifacts.push(result.artifact);
+	            emit({ type: "artifact", artifact: result.artifact, toolName: def.name });
+	          }
+	          if (result.mutations?.length) emit({ type: "mutation", mutations: result.mutations });
+	          turnToolCalls.push({ name: def.name, input });
+	          await audit(def.name, input, "direct-meal-log");
+
+	          if (user) {
+	            await persistCoachMutations(supabase, userId, turnMutations, snapshot.goalContext);
+	            coachKnowledge = mergeCoachKnowledge(
+	              coachKnowledge,
+	              buildCoachKnowledgeBase(userId, snapshot),
+	            );
+	            await persistCoachKnowledge(supabase, coachKnowledge);
+	            if (conversationId) {
+	              await saveMessages(supabase, conversationId, [
+	                { role: "user" as const, content: lastUserText },
+	                {
+	                  role: "assistant" as const,
+	                  content: assistantText,
+	                  toolCalls: turnToolCalls,
+	                  artifacts: turnArtifacts,
+	                  model: "deterministic-meal-log",
+	                  tokensIn: 0,
+	                  tokensOut: 0,
+	                },
+	              ]);
+	            }
+	          }
+
+	          emit({
+	            type: "turn_done",
+	            usage: { inputTokens: 0, outputTokens: 0, costUsdCents: 0, model: "deterministic-meal-log" },
+	            conversationId: conversationId ?? undefined,
+	          });
+	          return;
+	        }
+
+	        // Pre-confirmed destructive tool from a prior confirm_required event:
         // execute it directly, then let the model narrate the result.
         if (body.confirmedTool) {
           const def = getTool(body.confirmedTool.name);
@@ -307,7 +419,7 @@ export async function POST(request: Request) {
           const msgStream = anthropic.messages.stream({
             model,
             max_tokens: 1500,
-            system: buildSystemPrompt(snapshot),
+            system: buildSystemPrompt(snapshot, retrievedKnowledge),
             tools: toAnthropicTools(),
             messages: apiMessages,
           });
@@ -412,6 +524,11 @@ export async function POST(request: Request) {
             await mergeProfilePreferences(supabase, userId, turnPrefPatch);
           }
           await persistCoachMutations(supabase, userId, turnMutations, snapshot.goalContext);
+          coachKnowledge = mergeCoachKnowledge(
+            coachKnowledge,
+            buildCoachKnowledgeBase(userId, snapshot),
+          );
+          await persistCoachKnowledge(supabase, coachKnowledge);
           await insertSupabaseUsage(supabase, {
             userId,
             day,

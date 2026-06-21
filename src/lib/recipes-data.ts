@@ -6,6 +6,7 @@
  */
 
 import type { DietFilter } from "@/lib/use-preferences";
+import { rankedSearch } from "@/lib/search-utils";
 
 export type RecipeIngredient = { item: string; amount: string };
 
@@ -32,7 +33,7 @@ export type Recipe = {
   steps: string[];
 };
 
-export const RECIPES: Recipe[] = [
+const CURATED_RECIPES: Recipe[] = [
   {
     id: "greek-yogurt-power-bowl",
     title: "Greek yogurt power bowl",
@@ -312,6 +313,274 @@ export const RECIPES: Recipe[] = [
   },
 ];
 
+type RecipeTemplate = {
+  id: string;
+  title: string;
+  meal: Recipe["meal"];
+  minutes: number;
+  tags: string[];
+  diets: DietFilter[];
+  allergens?: string[];
+  baseCalories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  fiber: number;
+  ingredients: RecipeIngredient[];
+  steps: string[];
+};
+
+const proteins = [
+  { id: "chicken", label: "Chicken", ingredient: "Grilled chicken breast", allergens: [] },
+  { id: "turkey", label: "Turkey", ingredient: "Lean ground turkey", allergens: [] },
+  { id: "salmon", label: "Salmon", ingredient: "Baked salmon", allergens: ["fish"] },
+  { id: "shrimp", label: "Shrimp", ingredient: "Sauteed shrimp", allergens: ["shellfish"] },
+  { id: "tofu", label: "Tofu", ingredient: "Extra-firm tofu", allergens: ["soy"], vegan: true },
+  { id: "tempeh", label: "Tempeh", ingredient: "Sliced tempeh", allergens: ["soy"], vegan: true },
+  { id: "lentil", label: "Lentil", ingredient: "Cooked lentils", allergens: [], vegan: true },
+  { id: "black-bean", label: "Black bean", ingredient: "Seasoned black beans", allergens: [], vegan: true },
+  { id: "chickpea", label: "Chickpea", ingredient: "Roasted chickpeas", allergens: [], vegan: true },
+  { id: "seitan", label: "Seitan", ingredient: "Seitan strips", allergens: ["gluten"], vegan: true },
+  { id: "egg", label: "Egg", ingredient: "Eggs and egg whites", allergens: ["egg"] },
+  { id: "yogurt", label: "Greek yogurt", ingredient: "Plain Greek yogurt", allergens: ["dairy"] },
+  { id: "tuna", label: "Tuna", ingredient: "Tuna steak or canned tuna", allergens: ["fish"] },
+  { id: "lean-beef", label: "Lean beef", ingredient: "Lean ground beef", allergens: [] },
+  { id: "cottage-cheese", label: "Cottage cheese", ingredient: "Low-fat cottage cheese", allergens: ["dairy"] },
+];
+
+const templates: RecipeTemplate[] = [
+  {
+    id: "power-bowl",
+    title: "power bowl",
+    meal: "Lunch",
+    minutes: 22,
+    tags: ["bowl", "meal prep", "balanced"],
+    diets: ["high-protein"],
+    baseCalories: 480,
+    protein: 38,
+    carbs: 46,
+    fat: 16,
+    fiber: 8,
+    ingredients: [
+      { item: "Cooked quinoa or rice", amount: "3/4 cup" },
+      { item: "Roasted vegetables", amount: "1 cup" },
+      { item: "Lemon herb sauce", amount: "2 tbsp" },
+    ],
+    steps: ["Cook the grain base.", "Add protein and vegetables.", "Finish with sauce and herbs."],
+  },
+  {
+    id: "sheet-pan",
+    title: "sheet-pan dinner",
+    meal: "Dinner",
+    minutes: 32,
+    tags: ["sheet pan", "dinner", "batch"],
+    diets: ["high-protein", "low-fat"],
+    baseCalories: 520,
+    protein: 42,
+    carbs: 48,
+    fat: 18,
+    fiber: 7,
+    ingredients: [
+      { item: "Sweet potato or baby potatoes", amount: "250 g" },
+      { item: "Green vegetable", amount: "2 cups" },
+      { item: "Olive oil and seasoning", amount: "1 tbsp" },
+    ],
+    steps: ["Heat oven to 425 F.", "Roast protein, vegetables, and starch on one pan.", "Portion with extra herbs or lemon."],
+  },
+  {
+    id: "salad",
+    title: "crunch salad",
+    meal: "Lunch",
+    minutes: 14,
+    tags: ["salad", "quick", "high fiber"],
+    diets: ["high-protein", "low-carb"],
+    baseCalories: 390,
+    protein: 34,
+    carbs: 24,
+    fat: 17,
+    fiber: 9,
+    ingredients: [
+      { item: "Leafy greens", amount: "3 cups" },
+      { item: "Cucumber and tomato", amount: "1 cup" },
+      { item: "Light vinaigrette", amount: "2 tbsp" },
+    ],
+    steps: ["Chop vegetables.", "Add protein and dressing.", "Toss just before serving."],
+  },
+  {
+    id: "wrap",
+    title: "high-protein wrap",
+    meal: "Lunch",
+    minutes: 10,
+    tags: ["portable", "quick", "wrap"],
+    diets: ["high-protein"],
+    allergens: ["gluten"],
+    baseCalories: 430,
+    protein: 32,
+    carbs: 40,
+    fat: 14,
+    fiber: 6,
+    ingredients: [
+      { item: "Whole-grain tortilla", amount: "1 large" },
+      { item: "Greens and sliced vegetables", amount: "1 cup" },
+      { item: "Mustard or yogurt sauce", amount: "1 tbsp" },
+    ],
+    steps: ["Warm the tortilla.", "Layer protein, vegetables, and sauce.", "Roll tightly and slice."],
+  },
+  {
+    id: "breakfast-skillet",
+    title: "breakfast skillet",
+    meal: "Breakfast",
+    minutes: 18,
+    tags: ["breakfast", "savory", "recovery"],
+    diets: ["high-protein"],
+    baseCalories: 410,
+    protein: 31,
+    carbs: 34,
+    fat: 16,
+    fiber: 6,
+    ingredients: [
+      { item: "Diced potatoes or beans", amount: "1/2 cup" },
+      { item: "Spinach and peppers", amount: "1 cup" },
+      { item: "Salsa", amount: "2 tbsp" },
+    ],
+    steps: ["Brown the starch base.", "Add vegetables and protein.", "Serve with salsa."],
+  },
+  {
+    id: "protein-snack",
+    title: "protein snack plate",
+    meal: "Snack",
+    minutes: 6,
+    tags: ["snack", "quick", "no cook"],
+    diets: ["high-protein", "low-fat"],
+    baseCalories: 280,
+    protein: 24,
+    carbs: 22,
+    fat: 9,
+    fiber: 4,
+    ingredients: [
+      { item: "Fruit or crisp vegetables", amount: "1 cup" },
+      { item: "Whole-grain crackers or rice cakes", amount: "1 serving" },
+      { item: "Seasoning or dip", amount: "to taste" },
+    ],
+    steps: ["Plate protein and produce.", "Add the crunchy side.", "Season and serve."],
+  },
+  {
+    id: "soup",
+    title: "steady soup",
+    meal: "Dinner",
+    minutes: 35,
+    tags: ["soup", "batch", "high fiber"],
+    diets: ["high-protein", "low-fat"],
+    baseCalories: 360,
+    protein: 28,
+    carbs: 42,
+    fat: 8,
+    fiber: 10,
+    ingredients: [
+      { item: "Low-sodium broth", amount: "3 cups" },
+      { item: "Carrots, celery, and onion", amount: "2 cups" },
+      { item: "Beans, rice, or noodles", amount: "1/2 cup" },
+    ],
+    steps: ["Simmer vegetables in broth.", "Add protein and carb base.", "Season and portion for leftovers."],
+  },
+  {
+    id: "stir-fry",
+    title: "stir-fry",
+    meal: "Dinner",
+    minutes: 20,
+    tags: ["quick", "stir fry", "vegetables"],
+    diets: ["high-protein"],
+    baseCalories: 470,
+    protein: 36,
+    carbs: 45,
+    fat: 15,
+    fiber: 7,
+    ingredients: [
+      { item: "Mixed stir-fry vegetables", amount: "2 cups" },
+      { item: "Cooked rice or noodles", amount: "3/4 cup" },
+      { item: "Ginger-garlic sauce", amount: "2 tbsp" },
+    ],
+    steps: ["Sear protein in a hot pan.", "Add vegetables and sauce.", "Serve over the carb base."],
+  },
+  {
+    id: "pasta",
+    title: "macro pasta",
+    meal: "Dinner",
+    minutes: 24,
+    tags: ["pasta", "comfort", "post-workout"],
+    diets: ["high-protein"],
+    allergens: ["gluten"],
+    baseCalories: 560,
+    protein: 39,
+    carbs: 65,
+    fat: 16,
+    fiber: 6,
+    ingredients: [
+      { item: "Pasta or chickpea pasta", amount: "75 g dry" },
+      { item: "Tomato sauce", amount: "1/2 cup" },
+      { item: "Greens", amount: "1 cup" },
+    ],
+    steps: ["Boil pasta.", "Warm protein with sauce and greens.", "Combine and portion."],
+  },
+  {
+    id: "smoothie",
+    title: "smoothie",
+    meal: "Snack",
+    minutes: 5,
+    tags: ["smoothie", "quick", "post-workout"],
+    diets: ["high-protein", "low-fat"],
+    baseCalories: 330,
+    protein: 30,
+    carbs: 38,
+    fat: 6,
+    fiber: 6,
+    ingredients: [
+      { item: "Fruit", amount: "1 cup" },
+      { item: "Milk or fortified plant milk", amount: "1 cup" },
+      { item: "Ice and cinnamon", amount: "to taste" },
+    ],
+    steps: ["Add ingredients to a blender.", "Blend until smooth.", "Adjust thickness with ice or milk."],
+  },
+];
+
+function generatedRecipes(): Recipe[] {
+  const out: Recipe[] = [];
+  for (const protein of proteins) {
+    for (const template of templates) {
+      const veganDiets = protein.vegan
+        ? Array.from(new Set([...template.diets, "vegan" as DietFilter]))
+        : template.diets.filter((diet) => diet !== "vegan");
+      out.push({
+        id: `${protein.id}-${template.id}`,
+        title: `${protein.label} ${template.title}`,
+        meal: template.meal,
+        minutes: template.minutes + (protein.id === "lentil" ? 4 : 0),
+        servings: template.meal === "Snack" || template.meal === "Breakfast" ? 1 : 2,
+        tags: Array.from(new Set([...template.tags, protein.label.toLowerCase(), "seeded"])),
+        diets: veganDiets,
+        allergens: Array.from(new Set([...(template.allergens ?? []), ...protein.allergens])),
+        perServing: {
+          calories: template.baseCalories + (protein.id === "salmon" ? 70 : protein.id === "tofu" ? -60 : 0),
+          protein: template.protein + (protein.id === "yogurt" ? -4 : protein.id === "lentil" ? -8 : 2),
+          carbs: template.carbs + (protein.id === "lentil" ? 8 : 0),
+          fat: template.fat + (protein.id === "salmon" ? 7 : protein.id === "tofu" ? 2 : 0),
+          fiber: template.fiber + (protein.vegan ? 3 : 0),
+        },
+        ingredients: [
+          { item: protein.ingredient, amount: template.meal === "Snack" ? "120 g" : "160 g" },
+          ...template.ingredients,
+        ],
+        steps: template.steps,
+      });
+    }
+  }
+  return out;
+}
+
+export const RECIPES: Recipe[] = [...CURATED_RECIPES, ...generatedRecipes()];
+
+export const RECIPE_COUNT = RECIPES.length;
+
 const norm = (s: string) => s.toLowerCase().trim();
 
 /**
@@ -319,14 +588,17 @@ const norm = (s: string) => s.toLowerCase().trim();
  * Empty query returns all recipes in their natural order.
  */
 export function searchRecipes(query: string): Recipe[] {
-  const q = norm(query);
-  if (!q) return RECIPES;
-  return RECIPES.filter((recipe) => {
-    if (norm(recipe.title).includes(q)) return true;
-    if (recipe.tags.some((t) => norm(t).includes(q))) return true;
-    if (recipe.ingredients.some((ing) => norm(ing.item).includes(q))) return true;
-    return false;
-  });
+  return rankedSearch(
+    RECIPES,
+    query,
+    (recipe) => [
+      recipe.title,
+      recipe.meal,
+      ...recipe.tags,
+      ...recipe.diets,
+      ...recipe.ingredients.map((ingredient) => ingredient.item),
+    ],
+  );
 }
 
 /**
