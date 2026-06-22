@@ -25,7 +25,7 @@ struct ProgressDetailView: View {
                         self.store.send(.habitToggled($0))
                     }
                 )
-            case .macroAdherence:
+            case .calories, .macroAdherence:
                 MacroAdherenceTrendSection()
             case .nutrition, .activity, .recovery:
                 EmptyView()

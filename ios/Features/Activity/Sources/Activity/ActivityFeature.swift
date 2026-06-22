@@ -196,7 +196,11 @@ public struct WorkoutPlan: Equatable, Sendable {
 }
 
 public enum ActivityTool: String, CaseIterable, Equatable, Identifiable, Sendable {
+    case coachRecommended
     case workoutLog
+    case manualActivity
+    case exerciseLibrary
+    case workoutPreview
     case activityTracker
     case workoutPlans
 
@@ -204,8 +208,16 @@ public enum ActivityTool: String, CaseIterable, Equatable, Identifiable, Sendabl
 
     public var title: String {
         switch self {
+        case .coachRecommended:
+            "Coach Pick"
         case .workoutLog:
             "Workout Log"
+        case .manualActivity:
+            "Manual Activity"
+        case .exerciseLibrary:
+            "Exercise Library"
+        case .workoutPreview:
+            "Workout Preview"
         case .activityTracker:
             "Activity Tracker"
         case .workoutPlans:
@@ -215,8 +227,16 @@ public enum ActivityTool: String, CaseIterable, Equatable, Identifiable, Sendabl
 
     public var accessibilityID: String {
         switch self {
+        case .coachRecommended:
+            "coach-pick"
         case .workoutLog:
             "workout-log"
+        case .manualActivity:
+            "manual-activity"
+        case .exerciseLibrary:
+            "exercise-library"
+        case .workoutPreview:
+            "workout-preview"
         case .activityTracker:
             "activity-tracker"
         case .workoutPlans:
@@ -226,8 +246,16 @@ public enum ActivityTool: String, CaseIterable, Equatable, Identifiable, Sendabl
 
     public var icon: String {
         switch self {
+        case .coachRecommended:
+            "sparkles"
         case .workoutLog:
             "list.bullet.clipboard"
+        case .manualActivity:
+            "plus.circle.fill"
+        case .exerciseLibrary:
+            "tablecells.fill"
+        case .workoutPreview:
+            "eye.fill"
         case .activityTracker:
             "waveform.path.ecg"
         case .workoutPlans:
@@ -237,8 +265,16 @@ public enum ActivityTool: String, CaseIterable, Equatable, Identifiable, Sendabl
 
     public var rowDetail: String {
         switch self {
+        case .coachRecommended:
+            "Start with the best fit for today"
         case .workoutLog:
             "Record trainer or solo sessions"
+        case .manualActivity:
+            "Walking, running, biking, swimming"
+        case .exerciseLibrary:
+            "Filter by body part, type, and goal"
+        case .workoutPreview:
+            "Open a workout before logging it"
         case .activityTracker:
             "Steps, active minutes, energy"
         case .workoutPlans:

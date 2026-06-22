@@ -61,6 +61,100 @@ public struct ComponentGalleryV2: View {
                     FuelWellSheetGrabber()
                         .fuelWellCard(padding: self.theme.spacing.sm)
                 }
+
+                self.section(title: "Action launcher") {
+                    FuelWellActionLauncherGrid(
+                        title: "Add context",
+                        detail: "A compact launcher for photos, files, menus, workouts, and coach prompts.",
+                        items: [
+                            .init(
+                                id: "food-photo",
+                                title: "Food photo",
+                                detail: "Estimate a plate",
+                                systemImage: "camera.fill",
+                                tone: .nutrition
+                            ),
+                            .init(
+                                id: "menu",
+                                title: "Menu",
+                                detail: "Choose a meal",
+                                systemImage: "menucard.fill",
+                                tone: .nutrition
+                            ),
+                            .init(
+                                id: "workout",
+                                title: "Workout",
+                                detail: "Explain activity",
+                                systemImage: "figure.run",
+                                tone: .activity
+                            ),
+                            .init(
+                                id: "file",
+                                title: "File",
+                                detail: "Summarize context",
+                                systemImage: "doc.fill",
+                                tone: .insight
+                            )
+                        ],
+                        onSelect: { _ in }
+                    )
+                }
+
+                self.section(title: "Metric cards") {
+                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: self.theme.spacing.sm) {
+                        FuelWellMetricGoalCard(
+                            title: "Calories",
+                            value: "850",
+                            unit: "kcal",
+                            detail: "1,400 kcal left of 2,250",
+                            progress: 0.38,
+                            systemImage: "flame.fill",
+                            tone: .nutrition
+                        )
+                        FuelWellMetricGoalCard(
+                            title: "Training",
+                            value: "84",
+                            unit: "min",
+                            detail: "6 min left of 90",
+                            progress: 0.93,
+                            systemImage: "timer",
+                            tone: .activity
+                        )
+                    }
+                }
+
+                self.section(title: "Ring + explainer") {
+                    FuelWellScoreRingCard(
+                        title: "Today's plate",
+                        value: "1400",
+                        subtitle: "850 / 2250 kcal logged",
+                        detail: "You have room to make a clean next choice.",
+                        systemImage: "fork.knife.circle.fill",
+                        progress: 0.38,
+                        tone: .nutrition
+                    )
+
+                    FuelWellMetricExplainerCard(
+                        eyebrow: "How it works",
+                        title: "What counted today",
+                        detail: "Use this shape for Bevel-style explainability without crowding the dashboard.",
+                        points: [
+                            .init(
+                                id: "logged",
+                                title: "Logged signals first",
+                                detail: "User-entered meals and activities stay primary.",
+                                systemImage: "checkmark.circle.fill"
+                            ),
+                            .init(
+                                id: "estimated",
+                                title: "Estimates are labeled",
+                                detail: "AI and wearable context should explain confidence.",
+                                systemImage: "sparkles",
+                                tone: .caution
+                            )
+                        ]
+                    )
+                }
             }
             .padding(self.theme.spacing.md)
             .padding(.bottom, self.theme.spacing.fourXL)

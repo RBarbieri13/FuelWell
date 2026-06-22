@@ -19,7 +19,11 @@ public struct DailyLogView: View {
                     self.store.send(.addMealTapped)
                 }
 
+                NutritionScoreReviewCard(snapshot: self.store.macroSnapshot)
+
                 MacroProgressGrid(snapshot: self.store.macroSnapshot)
+
+                NutritionScoreExplainerCard()
 
                 NutritionDestinationGrid { destination in
                     self.store.send(.destinationTapped(destination))
@@ -131,42 +135,110 @@ private struct MacroProgressGrid: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: self.theme.spacing.md) {
-            Text("Today's plate")
+            Text("Macros")
                 .font(.custom(self.theme.font.display, size: self.theme.text.title.size))
                 .fontWeight(.bold)
                 .foregroundStyle(self.theme.color.text.primary.color)
 
             LazyVGrid(columns: [.init(.flexible()), .init(.flexible())], spacing: self.theme.spacing.sm) {
-                MacroProgressTile(
+                FuelWellMetricGoalCard(
                     title: "Calories",
-                    consumed: self.snapshot.intake.calories,
-                    target: self.snapshot.target.calories,
+                    value: "\(self.snapshot.intake.calories)",
                     unit: "",
-                    color: self.theme.color.macro.calories.color
+                    detail: "\(self.remaining(self.snapshot.intake.calories, self.snapshot.target.calories)) left of \(self.snapshot.target.calories)",
+                    progress: self.progress(self.snapshot.intake.calories, self.snapshot.target.calories),
+                    systemImage: "flame.fill",
+                    tone: .nutrition
                 )
-                MacroProgressTile(
+                FuelWellMetricGoalCard(
                     title: "Protein",
-                    consumed: self.snapshot.intake.macros.protein,
-                    target: self.snapshot.target.macros.protein,
+                    value: "\(self.snapshot.intake.macros.protein)",
                     unit: "g",
-                    color: self.theme.color.macro.protein.color
+                    detail: "\(self.remaining(self.snapshot.intake.macros.protein, self.snapshot.target.macros.protein))g left of \(self.snapshot.target.macros.protein)g",
+                    progress: self.progress(self.snapshot.intake.macros.protein, self.snapshot.target.macros.protein),
+                    systemImage: "takeoutbag.and.cup.and.straw.fill",
+                    tone: .insight
                 )
-                MacroProgressTile(
+                FuelWellMetricGoalCard(
                     title: "Carbs",
-                    consumed: self.snapshot.intake.macros.carbs,
-                    target: self.snapshot.target.macros.carbs,
+                    value: "\(self.snapshot.intake.macros.carbs)",
                     unit: "g",
-                    color: self.theme.color.macro.carbs.color
+                    detail: "\(self.remaining(self.snapshot.intake.macros.carbs, self.snapshot.target.macros.carbs))g left of \(self.snapshot.target.macros.carbs)g",
+                    progress: self.progress(self.snapshot.intake.macros.carbs, self.snapshot.target.macros.carbs),
+                    systemImage: "leaf.fill",
+                    tone: .caution
                 )
-                MacroProgressTile(
+                FuelWellMetricGoalCard(
                     title: "Fat",
-                    consumed: self.snapshot.intake.macros.fat,
-                    target: self.snapshot.target.macros.fat,
+                    value: "\(self.snapshot.intake.macros.fat)",
                     unit: "g",
-                    color: self.theme.color.macro.fat.color
+                    detail: "\(self.remaining(self.snapshot.intake.macros.fat, self.snapshot.target.macros.fat))g left of \(self.snapshot.target.macros.fat)g",
+                    progress: self.progress(self.snapshot.intake.macros.fat, self.snapshot.target.macros.fat),
+                    systemImage: "drop.fill",
+                    tone: .primary
                 )
             }
         }
+    }
+
+    private func progress(_ consumed: Int, _ target: Int) -> Double {
+        guard target > 0 else { return 0 }
+        return min(Double(consumed) / Double(target), 1)
+    }
+
+    private func remaining(_ consumed: Int, _ target: Int) -> Int {
+        max(0, target - consumed)
+    }
+}
+
+private struct NutritionScoreReviewCard: View {
+    let snapshot: MacroDaySnapshot
+
+    var body: some View {
+        FuelWellScoreRingCard(
+            title: "Today's plate",
+            value: "\(self.remainingCalories)",
+            subtitle: "\(self.snapshot.intake.calories) / \(self.snapshot.target.calories) kcal logged",
+            detail: self.snapshot.verdict.headline,
+            systemImage: "fork.knife.circle.fill",
+            progress: self.progress,
+            tone: .nutrition
+        )
+    }
+
+    private var remainingCalories: Int {
+        max(0, self.snapshot.target.calories - self.snapshot.intake.calories)
+    }
+
+    private var progress: Double {
+        guard self.snapshot.target.calories > 0 else { return 0 }
+        return min(Double(self.snapshot.intake.calories) / Double(self.snapshot.target.calories), 1)
+    }
+}
+
+private struct NutritionScoreExplainerCard: View {
+    var body: some View {
+        FuelWellMetricExplainerCard(
+            eyebrow: "Today's plate",
+            title: "What makes up today's score",
+            detail: "Logged meals count first. Estimated or coach-read meals should stay labeled so the recommendation remains honest.",
+            points: [
+                .init(
+                    id: "breakfast",
+                    title: "Breakfast and lunch drive the baseline",
+                    detail: "Calories, protein, carbs, and fat are carried into the next meal recommendation.",
+                    systemImage: "sun.max.fill",
+                    tone: .nutrition
+                ),
+                .init(
+                    id: "confidence",
+                    title: "AI estimates need confidence",
+                    detail: "Photo or menu reads should show uncertainty until the user confirms the meal.",
+                    systemImage: "sparkles",
+                    tone: .insight
+                )
+            ]
+        )
     }
 }
 

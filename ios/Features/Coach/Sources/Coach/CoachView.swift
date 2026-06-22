@@ -5,6 +5,7 @@ import SwiftUI
 public struct CoachView: View {
     @Bindable public var store: StoreOf<CoachFeature>
     @Environment(\.theme) private var theme
+    @State private var isContextLauncherPresented = false
 
     public init(store: StoreOf<CoachFeature>) {
         self.store = store
@@ -96,10 +97,45 @@ public struct CoachView: View {
                 .padding(.bottom, self.theme.spacing.xl)
             }
 
-            CoachComposerView(store: self.store)
+            CoachComposerView(
+                store: self.store,
+                onAddContext: {
+                    self.isContextLauncherPresented = true
+                }
+            )
         }
         .background(self.theme.color.bg.base.color)
         .navigationTitle("Coach")
+        .sheet(isPresented: self.$isContextLauncherPresented) {
+            NavigationStack {
+                ScrollView {
+                    FuelWellActionLauncherGrid(
+                        title: "Add context to Coach",
+                        detail: "Send a photo, file, menu, workout, or short note so the coach can reason from what you provide.",
+                        items: CoachContextAction.allCases.map(\.launcherItem),
+                        onSelect: { item in
+                            guard let action = CoachContextAction(rawValue: item.id) else { return }
+                            self.store.send(.composerChanged(action.prompt))
+                            self.isContextLauncherPresented = false
+                        }
+                    )
+                    .padding(self.theme.spacing.md)
+                }
+                .background(self.theme.color.bg.base.color)
+                .navigationTitle("Add context")
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button("Close", systemImage: "xmark") {
+                            self.isContextLauncherPresented = false
+                        }
+                        .labelStyle(.iconOnly)
+                        .tint(self.theme.color.text.body.color)
+                    }
+                }
+            }
+            .presentationDetents([.medium, .large])
+            .presentationDragIndicator(.visible)
+        }
         .onAppear {
             self.store.send(.onAppear)
         }
@@ -218,12 +254,25 @@ private struct CoachMessageBubble: View {
 
 private struct CoachComposerView: View {
     @Bindable var store: StoreOf<CoachFeature>
+    let onAddContext: () -> Void
     @Environment(\.theme) private var theme
 
     var body: some View {
         HStack(spacing: self.theme.spacing.sm) {
+            Button(action: self.onAddContext) {
+                Image(systemName: "plus")
+                    .font(.system(size: 17, weight: .bold))
+                    .frame(width: 42, height: 42)
+                    .foregroundStyle(self.theme.color.primary.accent.color)
+                    .background(self.theme.color.primary.accent.color.opacity(0.12))
+                    .clipShape(Circle())
+            }
+            .disabled(self.store.isStreaming)
+            .accessibilityIdentifier("coach.add-context")
+            .accessibilityLabel("Add photo, file, menu, or workout context")
+
             TextField(
-                "Ask FuelWell",
+                "Ask FuelWell or attach context",
                 text: Binding(
                     get: { self.store.composerText },
                     set: { self.store.send(.composerChanged($0)) }
@@ -262,6 +311,87 @@ private struct CoachComposerView: View {
         }
         .padding(self.theme.spacing.md)
         .background(.ultraThinMaterial)
+    }
+}
+
+private enum CoachContextAction: String, CaseIterable, Identifiable {
+    case foodPhoto = "food-photo"
+    case menu = "menu"
+    case file = "file"
+    case screenshot = "screenshot"
+    case workout = "workout"
+    case exercise = "exercise"
+
+    var id: String { self.rawValue }
+
+    var launcherItem: FuelWellActionLauncherItem {
+        switch self {
+        case .foodPhoto:
+            .init(
+                id: self.rawValue,
+                title: "Food photo",
+                detail: "Estimate nutrition",
+                systemImage: "camera.fill",
+                tone: .nutrition
+            )
+        case .menu:
+            .init(
+                id: self.rawValue,
+                title: "Menu",
+                detail: "Choose a meal",
+                systemImage: "menucard.fill",
+                tone: .nutrition
+            )
+        case .file:
+            .init(
+                id: self.rawValue,
+                title: "File",
+                detail: "Summarize context",
+                systemImage: "doc.fill",
+                tone: .insight
+            )
+        case .screenshot:
+            .init(
+                id: self.rawValue,
+                title: "Screenshot",
+                detail: "Explain what you see",
+                systemImage: "photo.on.rectangle.angled",
+                tone: .insight
+            )
+        case .workout:
+            .init(
+                id: self.rawValue,
+                title: "Workout",
+                detail: "Review a session",
+                systemImage: "figure.strengthtraining.traditional",
+                tone: .activity
+            )
+        case .exercise:
+            .init(
+                id: self.rawValue,
+                title: "Exercise",
+                detail: "Estimate burn",
+                systemImage: "figure.run",
+                tone: .activity
+            )
+        }
+    }
+
+    var prompt: String {
+        switch self {
+        case .foodPhoto:
+            "I want to send a food photo. Please identify the meal, estimate calories and macros, call out uncertainty, and tell me what choice should come next."
+        case .menu:
+            "I want to send a restaurant menu. Please help me pick the best meal for my current calories, protein, and goals."
+        case .file:
+            "I want to attach a file. Please summarize the health or nutrition signals, ask for missing context, and turn it into a simple next action."
+        case .screenshot:
+            "I want to send a screenshot. Please read the visible details, explain what matters, and recommend the next FuelWell action."
+        case .workout:
+            "I want to send a workout. Please summarize the muscles trained, intensity, likely recovery cost, and how it changes today's nutrition."
+        case .exercise:
+            "I want to log an exercise. Please estimate calorie burn from activity type, duration or distance, body weight, and effort."
+        }
     }
 }
 

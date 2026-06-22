@@ -15,7 +15,17 @@ struct MenuSheetView: View {
     @Environment(\.theme) private var theme
 
     private let toolTopics: [MenuToolTopic] = [.snapshot, .meals, .training]
-    private let settingsTopics: [MenuSettingsTopic] = [.permissions, .help]
+    private let settingsTopics: [MenuSettingsTopic] = [
+        .profileGoals,
+        .privacy,
+        .subscription,
+        .accountDetails,
+        .loginLogout,
+        .support,
+        .deleteAccount,
+        .permissions,
+        .help
+    ]
 
     var body: some View {
         NavigationStack {
@@ -623,6 +633,13 @@ private enum MenuToolTopic: CaseIterable, Equatable, Identifiable {
 }
 
 private enum MenuSettingsTopic: CaseIterable, Equatable, Identifiable {
+    case profileGoals
+    case privacy
+    case subscription
+    case accountDetails
+    case loginLogout
+    case support
+    case deleteAccount
     case permissions
     case help
 
@@ -630,6 +647,20 @@ private enum MenuSettingsTopic: CaseIterable, Equatable, Identifiable {
 
     var title: String {
         switch self {
+        case .profileGoals:
+            "Profile & Goals"
+        case .privacy:
+            "Privacy"
+        case .subscription:
+            "Subscription"
+        case .accountDetails:
+            "Account Details"
+        case .loginLogout:
+            "Login / Logout"
+        case .support:
+            "Support"
+        case .deleteAccount:
+            "Delete Account"
         case .permissions:
             "Permissions"
         case .help:
@@ -639,6 +670,20 @@ private enum MenuSettingsTopic: CaseIterable, Equatable, Identifiable {
 
     var accessibilityID: String {
         switch self {
+        case .profileGoals:
+            "profile-goals"
+        case .privacy:
+            "privacy"
+        case .subscription:
+            "subscription"
+        case .accountDetails:
+            "account-details"
+        case .loginLogout:
+            "login-logout"
+        case .support:
+            "support"
+        case .deleteAccount:
+            "delete-account"
         case .permissions:
             "permissions"
         case .help:
@@ -648,6 +693,20 @@ private enum MenuSettingsTopic: CaseIterable, Equatable, Identifiable {
 
     var icon: String {
         switch self {
+        case .profileGoals:
+            "slider.horizontal.3"
+        case .privacy:
+            "hand.raised.fill"
+        case .subscription:
+            "creditcard.fill"
+        case .accountDetails:
+            "person.text.rectangle"
+        case .loginLogout:
+            "rectangle.portrait.and.arrow.right"
+        case .support:
+            "lifepreserver"
+        case .deleteAccount:
+            "trash.fill"
         case .permissions:
             "lock.shield"
         case .help:
@@ -657,6 +716,20 @@ private enum MenuSettingsTopic: CaseIterable, Equatable, Identifiable {
 
     var row: PhaseRowItem {
         switch self {
+        case .profileGoals:
+            .init(title: self.title, detail: "Weight, height, units, goals, intake answers", icon: self.icon)
+        case .privacy:
+            .init(title: self.title, detail: "Data controls, AI context, photo handling", icon: self.icon)
+        case .subscription:
+            .init(title: self.title, detail: "Plan, billing status, founder access", icon: self.icon)
+        case .accountDetails:
+            .init(title: self.title, detail: "Name, email, preferences, connected accounts", icon: self.icon)
+        case .loginLogout:
+            .init(title: self.title, detail: "Session controls and sign-out", icon: self.icon)
+        case .support:
+            .init(title: self.title, detail: "Get help or send feedback", icon: self.icon)
+        case .deleteAccount:
+            .init(title: self.title, detail: "Export, confirm, and remove account", icon: self.icon)
         case .permissions:
             .init(title: self.title, detail: "HealthKit, notifications, camera", icon: self.icon)
         case .help:
@@ -666,6 +739,20 @@ private enum MenuSettingsTopic: CaseIterable, Equatable, Identifiable {
 
     var headline: String {
         switch self {
+        case .profileGoals:
+            "Keep the plan matched to the person"
+        case .privacy:
+            "Choose what Coach can use"
+        case .subscription:
+            "Understand access before payment turns on"
+        case .accountDetails:
+            "Edit the profile behind the recommendations"
+        case .loginLogout:
+            "Control the current session"
+        case .support:
+            "Get help without losing your place"
+        case .deleteAccount:
+            "Make account removal clear and deliberate"
         case .permissions:
             "Control what FuelWell can read"
         case .help:
@@ -675,6 +762,20 @@ private enum MenuSettingsTopic: CaseIterable, Equatable, Identifiable {
 
     var detail: String {
         switch self {
+        case .profileGoals:
+            "Update pounds, inches, goals, activity level, dietary preferences, and the intake answers that drive targets."
+        case .privacy:
+            "Privacy explains what stays local, what can be synced, and how AI/photo context is handled."
+        case .subscription:
+            "Subscription keeps founder access, paid tiers, and billing state visible in one place."
+        case .accountDetails:
+            "Account details covers identity fields, email, and connected services."
+        case .loginLogout:
+            "Users should always know which account is active and how to leave it."
+        case .support:
+            "Support collects help articles, bug reports, and founder feedback routes."
+        case .deleteAccount:
+            "Deletion stays protected behind export, confirmation, and a clear warning state."
         case .permissions:
             "FuelWell asks for HealthKit, notifications, and camera access only where they affect the product."
         case .help:
@@ -684,6 +785,20 @@ private enum MenuSettingsTopic: CaseIterable, Equatable, Identifiable {
 
     var primarySectionTitle: String {
         switch self {
+        case .profileGoals:
+            "Editable intake"
+        case .privacy:
+            "Data controls"
+        case .subscription:
+            "Plan controls"
+        case .accountDetails:
+            "Profile controls"
+        case .loginLogout:
+            "Session controls"
+        case .support:
+            "Help controls"
+        case .deleteAccount:
+            "Deletion flow"
         case .permissions:
             "Permission map"
         case .help:
@@ -693,6 +808,48 @@ private enum MenuSettingsTopic: CaseIterable, Equatable, Identifiable {
 
     var primaryItems: [PhaseRowItem] {
         switch self {
+        case .profileGoals:
+            [
+                .init(title: "Units", detail: "Height in inches and weight in pounds", icon: "ruler"),
+                .init(title: "Goals", detail: "Fat loss, muscle gain, recomposition, performance", icon: "target"),
+                .init(title: "Lifestyle", detail: "Activity level, workouts, sleep, meal-prep style", icon: "slider.horizontal.3")
+            ]
+        case .privacy:
+            [
+                .init(title: "AI context", detail: "Choose whether files/photos can inform Coach", icon: "sparkles"),
+                .init(title: "Photos", detail: "Meal and body photos get explicit handling", icon: "photo"),
+                .init(title: "Exports", detail: "User can request a copy before deletion", icon: "square.and.arrow.up")
+            ]
+        case .subscription:
+            [
+                .init(title: "Current plan", detail: "Founder access until paid tiers are enabled", icon: "checkmark.seal.fill"),
+                .init(title: "Billing", detail: "Payment status and renewal live here", icon: "creditcard.fill"),
+                .init(title: "Upgrade path", detail: "Premium features explain value before purchase", icon: "arrow.up.circle.fill")
+            ]
+        case .accountDetails:
+            [
+                .init(title: "Identity", detail: "Name, email, and profile photo", icon: "person.crop.circle"),
+                .init(title: "Connections", detail: "HealthKit and account sync state", icon: "link"),
+                .init(title: "Preferences", detail: "Notification timing and coaching tone", icon: "gearshape")
+            ]
+        case .loginLogout:
+            [
+                .init(title: "Signed in", detail: "Show current account and provider", icon: "person.badge.key.fill"),
+                .init(title: "Switch account", detail: "Return to login without deleting data", icon: "arrow.triangle.2.circlepath"),
+                .init(title: "Log out", detail: "End this device session", icon: "rectangle.portrait.and.arrow.right")
+            ]
+        case .support:
+            [
+                .init(title: "Contact support", detail: "Send a question with screen context", icon: "paperplane.fill"),
+                .init(title: "Report issue", detail: "Attach screenshots and logs when available", icon: "exclamationmark.bubble.fill"),
+                .init(title: "FAQ", detail: "Short answers for tracking, coach, and billing", icon: "questionmark.circle")
+            ]
+        case .deleteAccount:
+            [
+                .init(title: "Export first", detail: "Offer data export before removal", icon: "square.and.arrow.up"),
+                .init(title: "Confirm", detail: "Require deliberate confirmation", icon: "checkmark.seal"),
+                .init(title: "Remove", detail: "Delete account and synced data when supported", icon: "trash.fill")
+            ]
         case .permissions:
             [
                 .init(title: "HealthKit", detail: "Steps, energy, workouts, body mass, sleep", icon: "heart"),
@@ -714,6 +871,41 @@ private enum MenuSettingsTopic: CaseIterable, Equatable, Identifiable {
 
     var nextItems: [PhaseRowItem] {
         switch self {
+        case .profileGoals:
+            [
+                .init(title: "Recalculate", detail: "Targets update after pounds, inches, or goals change", icon: "function"),
+                .init(title: "Coach context", detail: "Coach should explain what changed", icon: "bubble.left.fill")
+            ]
+        case .privacy:
+            [
+                .init(title: "Default", detail: "Ask before using new sensitive context", icon: "hand.raised"),
+                .init(title: "Transparency", detail: "Show when AI estimates are used", icon: "eye.fill")
+            ]
+        case .subscription:
+            [
+                .init(title: "Clarity", detail: "No paywall surprises inside core daily loop", icon: "checkmark.circle.fill"),
+                .init(title: "Receipts", detail: "Billing support stays near plan state", icon: "doc.text.fill")
+            ]
+        case .accountDetails:
+            [
+                .init(title: "Review", detail: "Use a small profile emblem to reach this menu", icon: "person.crop.circle"),
+                .init(title: "Sync", detail: "Show what is local versus account-backed", icon: "icloud")
+            ]
+        case .loginLogout:
+            [
+                .init(title: "Safety", detail: "Signing out never deletes logged data by itself", icon: "shield.lefthalf.filled"),
+                .init(title: "Recovery", detail: "Account recovery lives with support", icon: "key.fill")
+            ]
+        case .support:
+            [
+                .init(title: "Context", detail: "Support notes can include screen and route", icon: "doc.badge.plus"),
+                .init(title: "Response", detail: "Keep submitted feedback visible after send", icon: "tray.full")
+            ]
+        case .deleteAccount:
+            [
+                .init(title: "Guardrail", detail: "Deletion should require confirmation and active auth", icon: "lock.shield"),
+                .init(title: "Afterward", detail: "Return to onboarding after completion", icon: "arrow.uturn.backward")
+            ]
         case .permissions:
             [
                 .init(title: "System controls", detail: "iOS Settings remains the source of truth", icon: "gearshape"),
