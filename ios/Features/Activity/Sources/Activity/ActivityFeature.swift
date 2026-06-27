@@ -47,6 +47,7 @@ public struct ActivityFeature: Sendable {
         case onAppear
         case healthSnapshotResponse(Result<HealthSnapshot, HealthKitClientError>)
         case quickWorkoutLogged
+        case workoutLogged(title: String, detail: String)
         case workoutPlanAdvanced
     }
 
@@ -94,6 +95,15 @@ public struct ActivityFeature: Sendable {
                 state.workoutLog.insert(.quickSession(number: state.workoutLog.count + 1), at: 0)
                 state.headline = "Training is logged"
                 state.detail = "Workout captured. Dinner guidance can account for the session."
+                return .none
+
+            case let .workoutLogged(title, detail):
+                state.workoutLog.insert(
+                    .logged(title: title, detail: detail, number: state.workoutLog.count + 1),
+                    at: 0
+                )
+                state.headline = "Training is logged"
+                state.detail = "\(title) captured. Coach can account for the session before the next meal."
                 return .none
 
             case .workoutPlanAdvanced:
@@ -163,6 +173,15 @@ public struct WorkoutSession: Equatable, Identifiable, Sendable {
             title: "Workout \(number)",
             detail: "Quick log · 30 min · moderate effort",
             loggedAt: Date(timeIntervalSince1970: 1_773_446_400 + Double(number * 3_600))
+        )
+    }
+
+    static func logged(title: String, detail: String, number: Int) -> Self {
+        .init(
+            id: UUID(uuid: (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, UInt8(min(number, 255)))),
+            title: title,
+            detail: detail,
+            loggedAt: Date(timeIntervalSince1970: 1_773_500_000 + Double(number * 3_600))
         )
     }
 }

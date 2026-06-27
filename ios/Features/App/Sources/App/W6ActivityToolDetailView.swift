@@ -20,11 +20,17 @@ struct ActivityToolDetailView: View {
                     onLog: { self.store.send(.quickWorkoutLogged) }
                 )
             case .manualActivity:
-                ManualActivityCatalogSection()
+                ManualActivityLoggerSection(healthState: self.store.healthState) { title, detail in
+                    self.store.send(.workoutLogged(title: title, detail: detail))
+                }
             case .exerciseLibrary:
-                ExerciseLibraryPreviewSection()
+                WorkoutDatabaseSection { template in
+                    self.store.send(.workoutLogged(title: template.title, detail: template.logDetail))
+                }
             case .workoutPreview:
-                WorkoutPreviewSection()
+                WorkoutTemplateDetailView(template: .featured) { template in
+                    self.store.send(.workoutLogged(title: template.title, detail: template.logDetail))
+                }
             case .activityTracker:
                 ActivityTrackerStateSection(state: self.store.healthState)
             case .workoutPlans:
@@ -76,71 +82,6 @@ private struct CoachWorkoutPickSection: View {
             }
             .buttonStyle(.borderedProminent)
             .tint(self.theme.color.primary.accent.color)
-        }
-    }
-}
-
-private struct ManualActivityCatalogSection: View {
-    private let activities: [PhaseRowItem] = [
-        .init(title: "Walking", detail: "Minutes, distance, pace, or step count", icon: "figure.walk"),
-        .init(title: "Hiking", detail: "Distance, elevation, pack weight, effort", icon: "figure.hiking"),
-        .init(title: "Running", detail: "Duration, distance, pace, intervals", icon: "figure.run"),
-        .init(title: "Interval training", detail: "Work/rest pattern, effort, total minutes", icon: "timer"),
-        .init(title: "Swimming", detail: "Stroke, distance, pool length, effort", icon: "figure.pool.swim"),
-        .init(title: "Biking", detail: "Road, indoor, mountain, or casual ride", icon: "bicycle"),
-        .init(title: "Rowing", detail: "Meters, minutes, split, perceived effort", icon: "figure.rower"),
-        .init(title: "Sport", detail: "Basketball, tennis, soccer, pickleball, and more", icon: "sportscourt")
-    ]
-
-    var body: some View {
-        DashboardSection(title: "Manual activity types", items: self.activities)
-    }
-}
-
-private struct ExerciseLibraryPreviewSection: View {
-    private let rows: [PhaseRowItem] = [
-        .init(title: "Low-impact strength", detail: "Full body · Strength · 34 min · moderate", icon: "dumbbell.fill"),
-        .init(title: "Zone 2 ride", detail: "Lower body · Cardio · 42 min · easy", icon: "bicycle"),
-        .init(title: "Mobility reset", detail: "Full body · Mobility · 18 min · light", icon: "waveform.path.ecg"),
-        .init(title: "Hips and ankles reset", detail: "Mobility · Hips, ankles, calves · 16 min", icon: "figure.flexibility")
-    ]
-
-    var body: some View {
-        DashboardSection(title: "Database preview", items: self.rows)
-    }
-}
-
-private struct WorkoutPreviewSection: View {
-    @Environment(\.theme) private var theme
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: self.theme.spacing.md) {
-            FuelWellScoreRingCard(
-                title: "Workout summary",
-                value: "34",
-                subtitle: "moderate effort · dumbbells, bench",
-                detail: "Low-impact strength",
-                systemImage: "eye.fill",
-                progress: 0.68,
-                tone: .activity
-            )
-
-            DashboardSection(
-                title: "What you will do",
-                items: [
-                    .init(title: "Warm-up", detail: "5 min movement prep and joint range", icon: "sun.max.fill"),
-                    .init(title: "Main work", detail: "Goblet squat, row, press, hinge, carry", icon: "dumbbell.fill"),
-                    .init(title: "Coach note", detail: "Technique focus, low soreness cost", icon: "bubble.left.fill")
-                ]
-            )
-
-            DashboardSection(
-                title: "Nearby workouts",
-                items: [
-                    .init(title: "Previous", detail: "Mobility reset · 18 min · light", icon: "chevron.left.circle.fill"),
-                    .init(title: "Next", detail: "Zone 2 ride · 42 min · easy", icon: "chevron.right.circle.fill")
-                ]
-            )
         }
     }
 }

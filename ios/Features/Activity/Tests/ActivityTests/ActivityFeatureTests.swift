@@ -106,6 +106,27 @@ func quickWorkoutLogAddsSessionAndUpdatesHeadline() async {
 
 @MainActor
 @Test
+func namedWorkoutLogAddsSelectedSessionAndUpdatesHeadline() async {
+    let store = TestStore(initialState: ActivityFeature.State(workoutLog: [])) {
+        ActivityFeature()
+    }
+
+    await store.send(.workoutLogged(title: "Zone 2 ride", detail: "42 min · easy · 310 kcal")) {
+        $0.workoutLog = [
+            WorkoutSession(
+                id: UUID(uuid: (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1)),
+                title: "Zone 2 ride",
+                detail: "42 min · easy · 310 kcal",
+                loggedAt: Date(timeIntervalSince1970: 1_773_503_600)
+            )
+        ]
+        $0.headline = "Training is logged"
+        $0.detail = "Zone 2 ride captured. Coach can account for the session before the next meal."
+    }
+}
+
+@MainActor
+@Test
 func advancingWorkoutPlanRotatesUpcomingSessions() async {
     let store = TestStore(initialState: ActivityFeature.State(
         plan: WorkoutPlan(

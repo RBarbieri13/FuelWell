@@ -17,6 +17,17 @@ public struct CoachView: View {
                 VStack(alignment: .leading, spacing: self.theme.spacing.lg) {
                     CoachHeroView()
 
+                    FuelWellActionLauncherGrid(
+                        title: "Review context",
+                        detail: "Start from a menu, photo, file, or workout so Coach can turn it into " +
+                            "the next useful decision.",
+                        items: CoachContextAction.featuredReviewActions.map(\.launcherItem),
+                        onSelect: { item in
+                            guard let action = CoachContextAction(rawValue: item.id) else { return }
+                            self.store.send(.composerChanged(action.prompt))
+                        }
+                    )
+
                     if let banner = self.store.banner {
                         CoachBannerView(banner: banner)
                     }
@@ -111,7 +122,8 @@ public struct CoachView: View {
                 ScrollView {
                     FuelWellActionLauncherGrid(
                         title: "Add context to Coach",
-                        detail: "Send a photo, file, menu, workout, or short note so the coach can reason from what you provide.",
+                        detail: "Send a photo, file, menu, workout, or short note so the coach can " +
+                            "reason from what you provide.",
                         items: CoachContextAction.allCases.map(\.launcherItem),
                         onSelect: { item in
                             guard let action = CoachContextAction(rawValue: item.id) else { return }
@@ -308,6 +320,7 @@ private struct CoachComposerView: View {
                     self.store.isStreaming
             )
             .accessibilityIdentifier("coach.send")
+            .accessibilityLabel(self.store.isStreaming ? "Coach is responding" : "Send Coach message")
         }
         .padding(self.theme.spacing.md)
         .background(.ultraThinMaterial)
@@ -324,6 +337,8 @@ private enum CoachContextAction: String, CaseIterable, Identifiable {
 
     var id: String { self.rawValue }
 
+    static let featuredReviewActions: [CoachContextAction] = [.menu, .foodPhoto, .file, .workout]
+
     var launcherItem: FuelWellActionLauncherItem {
         switch self {
         case .foodPhoto:
@@ -337,8 +352,8 @@ private enum CoachContextAction: String, CaseIterable, Identifiable {
         case .menu:
             .init(
                 id: self.rawValue,
-                title: "Menu",
-                detail: "Choose a meal",
+                title: "Menu review",
+                detail: "Pick the best order",
                 systemImage: "menucard.fill",
                 tone: .nutrition
             )
@@ -380,17 +395,23 @@ private enum CoachContextAction: String, CaseIterable, Identifiable {
     var prompt: String {
         switch self {
         case .foodPhoto:
-            "I want to send a food photo. Please identify the meal, estimate calories and macros, call out uncertainty, and tell me what choice should come next."
+            "I want to send a food photo. Please identify the meal, estimate calories and macros, " +
+                "call out uncertainty, and tell me what choice should come next."
         case .menu:
-            "I want to send a restaurant menu. Please help me pick the best meal for my current calories, protein, and goals."
+            "I want to send a restaurant menu. Please help me pick the best meal for my current " +
+                "calories, protein, and goals."
         case .file:
-            "I want to attach a file. Please summarize the health or nutrition signals, ask for missing context, and turn it into a simple next action."
+            "I want to attach a file. Please summarize the health or nutrition signals, " +
+                "ask for missing context, and turn it into a simple next action."
         case .screenshot:
-            "I want to send a screenshot. Please read the visible details, explain what matters, and recommend the next FuelWell action."
+            "I want to send a screenshot. Please read the visible details, explain what matters, " +
+                "and recommend the next FuelWell action."
         case .workout:
-            "I want to send a workout. Please summarize the muscles trained, intensity, likely recovery cost, and how it changes today's nutrition."
+            "I want to send a workout. Please summarize the muscles trained, intensity, " +
+                "likely recovery cost, and how it changes today's nutrition."
         case .exercise:
-            "I want to log an exercise. Please estimate calorie burn from activity type, duration or distance, body weight, and effort."
+            "I want to log an exercise. Please estimate calorie burn from activity type, " +
+                "duration or distance, body weight, and effort."
         }
     }
 }
