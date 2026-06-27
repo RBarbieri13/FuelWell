@@ -432,8 +432,8 @@ public struct FuelWellMetricExplainerCard: View {
     }
 }
 
-private extension Theme {
-    func fuelWellToneColor(_ tone: FuelWellIntentTone) -> Color {
+extension Theme {
+    fileprivate func fuelWellToneColor(_ tone: FuelWellIntentTone) -> Color {
         switch tone {
         case .primary:
             self.color.primary.accent.color

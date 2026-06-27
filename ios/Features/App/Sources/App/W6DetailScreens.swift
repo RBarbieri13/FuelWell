@@ -164,7 +164,8 @@ extension ActivityTool {
         case .workoutLog:
             "Capture the lift, duration, and effort so nutrition guidance can stay grounded."
         case .manualActivity:
-            "Walking, hiking, running, intervals, swimming, biking, rowing, sports, and mobility can be logged from one place."
+            "Walking, hiking, running, intervals, swimming, biking, rowing, " +
+                "sports, and mobility can be logged from one place."
         case .exerciseLibrary:
             "Filter by body part, workout type, equipment, duration, intensity, and goal."
         case .workoutPreview:
@@ -204,12 +205,20 @@ extension ActivityTool {
         case .exerciseLibrary:
             [
                 .init(title: "Visible database", detail: "16 workout templates with filters", icon: "tablecells.fill"),
-                .init(title: "Filters", detail: "Body part, type, duration, intensity", icon: "line.3.horizontal.decrease.circle")
+                .init(
+                    title: "Filters",
+                    detail: "Body part, type, duration, intensity",
+                    icon: "line.3.horizontal.decrease.circle"
+                )
             ]
         case .workoutPreview:
             [
                 .init(title: "Low-impact strength", detail: "34 min · full body · moderate", icon: "dumbbell.fill"),
-                .init(title: "Nearby sessions", detail: "Mobility reset and Zone 2 ride", icon: "arrow.left.arrow.right")
+                .init(
+                    title: "Nearby sessions",
+                    detail: "Mobility reset and Zone 2 ride",
+                    icon: "arrow.left.arrow.right"
+                )
             ]
         case .activityTracker:
             [
@@ -229,7 +238,11 @@ extension ActivityTool {
         case .coachRecommended:
             [
                 .init(title: "Accept", detail: "Log the coach pick as today's activity", icon: "checkmark.circle.fill"),
-                .init(title: "Swap", detail: "Open nearby workouts if the pick feels wrong", icon: "arrow.triangle.2.circlepath")
+                .init(
+                    title: "Swap",
+                    detail: "Open nearby workouts if the pick feels wrong",
+                    icon: "arrow.triangle.2.circlepath"
+                )
             ]
         case .workoutLog:
             [
@@ -260,12 +273,24 @@ extension ActivityTool {
         case .exerciseLibrary:
             [
                 .init(title: "Preview first", detail: "Every row opens before it can be logged", icon: "eye.fill"),
-                .init(title: "Database depth", detail: "Strength, cardio, mobility, sports, recovery", icon: "square.grid.3x3.fill")
+                .init(
+                    title: "Database depth",
+                    detail: "Strength, cardio, mobility, sports, recovery",
+                    icon: "square.grid.3x3.fill"
+                )
             ]
         case .workoutPreview:
             [
-                .init(title: "Next workout", detail: "Move forward or backward through similar sessions", icon: "chevron.right.circle.fill"),
-                .init(title: "Log controls", detail: "Confirm, edit, or replace before it affects the day", icon: "square.and.pencil")
+                .init(
+                    title: "Next workout",
+                    detail: "Move forward or backward through similar sessions",
+                    icon: "chevron.right.circle.fill"
+                ),
+                .init(
+                    title: "Log controls",
+                    detail: "Confirm, edit, or replace before it affects the day",
+                    icon: "square.and.pencil"
+                )
             ]
         case .activityTracker:
             [
@@ -355,7 +380,11 @@ extension ProgressTopic {
             [
                 .init(title: "Today", detail: "850 of 2,250 kcal logged", icon: "flame.fill"),
                 .init(title: "Room left", detail: "1,400 kcal remains before dinner", icon: "target"),
-                .init(title: "Context", detail: "Workout burn and steps explain the calorie range", icon: "waveform.path.ecg")
+                .init(
+                    title: "Context",
+                    detail: "Workout burn and steps explain the calorie range",
+                    icon: "waveform.path.ecg"
+                )
             ]
         case .macroAdherence:
             [

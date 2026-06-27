@@ -1,3 +1,4 @@
+// swiftlint:disable file_length
 import ComposableArchitecture
 import Core
 import DesignSystem
@@ -145,7 +146,11 @@ private struct MacroProgressGrid: View {
                     title: "Calories",
                     value: "\(self.snapshot.intake.calories)",
                     unit: "",
-                    detail: "\(self.remaining(self.snapshot.intake.calories, self.snapshot.target.calories)) left of \(self.snapshot.target.calories)",
+                    detail: self.goalDetail(
+                        remaining: self.remaining(self.snapshot.intake.calories, self.snapshot.target.calories),
+                        target: self.snapshot.target.calories,
+                        unit: ""
+                    ),
                     progress: self.progress(self.snapshot.intake.calories, self.snapshot.target.calories),
                     systemImage: "flame.fill",
                     tone: .nutrition
@@ -154,7 +159,14 @@ private struct MacroProgressGrid: View {
                     title: "Protein",
                     value: "\(self.snapshot.intake.macros.protein)",
                     unit: "g",
-                    detail: "\(self.remaining(self.snapshot.intake.macros.protein, self.snapshot.target.macros.protein))g left of \(self.snapshot.target.macros.protein)g",
+                    detail: self.goalDetail(
+                        remaining: self.remaining(
+                            self.snapshot.intake.macros.protein,
+                            self.snapshot.target.macros.protein
+                        ),
+                        target: self.snapshot.target.macros.protein,
+                        unit: "g"
+                    ),
                     progress: self.progress(self.snapshot.intake.macros.protein, self.snapshot.target.macros.protein),
                     systemImage: "takeoutbag.and.cup.and.straw.fill",
                     tone: .insight
@@ -163,7 +175,11 @@ private struct MacroProgressGrid: View {
                     title: "Carbs",
                     value: "\(self.snapshot.intake.macros.carbs)",
                     unit: "g",
-                    detail: "\(self.remaining(self.snapshot.intake.macros.carbs, self.snapshot.target.macros.carbs))g left of \(self.snapshot.target.macros.carbs)g",
+                    detail: self.goalDetail(
+                        remaining: self.remaining(self.snapshot.intake.macros.carbs, self.snapshot.target.macros.carbs),
+                        target: self.snapshot.target.macros.carbs,
+                        unit: "g"
+                    ),
                     progress: self.progress(self.snapshot.intake.macros.carbs, self.snapshot.target.macros.carbs),
                     systemImage: "leaf.fill",
                     tone: .caution
@@ -172,7 +188,11 @@ private struct MacroProgressGrid: View {
                     title: "Fat",
                     value: "\(self.snapshot.intake.macros.fat)",
                     unit: "g",
-                    detail: "\(self.remaining(self.snapshot.intake.macros.fat, self.snapshot.target.macros.fat))g left of \(self.snapshot.target.macros.fat)g",
+                    detail: self.goalDetail(
+                        remaining: self.remaining(self.snapshot.intake.macros.fat, self.snapshot.target.macros.fat),
+                        target: self.snapshot.target.macros.fat,
+                        unit: "g"
+                    ),
                     progress: self.progress(self.snapshot.intake.macros.fat, self.snapshot.target.macros.fat),
                     systemImage: "drop.fill",
                     tone: .primary
@@ -188,6 +208,11 @@ private struct MacroProgressGrid: View {
 
     private func remaining(_ consumed: Int, _ target: Int) -> Int {
         max(0, target - consumed)
+    }
+
+    private func goalDetail(remaining: Int, target: Int, unit: String) -> String {
+        let suffix = unit.isEmpty ? "" : unit
+        return "\(remaining)\(suffix) left of \(target)\(suffix)"
     }
 }
 
@@ -221,7 +246,8 @@ private struct NutritionScoreExplainerCard: View {
         FuelWellMetricExplainerCard(
             eyebrow: "Today's plate",
             title: "What makes up today's score",
-            detail: "Logged meals count first. Estimated or coach-read meals should stay labeled so the recommendation remains honest.",
+            detail: "Logged meals count first. Estimated or coach-read meals should stay labeled " +
+                "so the recommendation remains honest.",
             points: [
                 .init(
                     id: "breakfast",

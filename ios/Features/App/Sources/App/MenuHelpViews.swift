@@ -632,6 +632,7 @@ private enum MenuToolTopic: CaseIterable, Equatable, Identifiable {
     }
 }
 
+// swiftlint:disable:next type_body_length
 private enum MenuSettingsTopic: CaseIterable, Equatable, Identifiable {
     case profileGoals
     case privacy
@@ -763,7 +764,8 @@ private enum MenuSettingsTopic: CaseIterable, Equatable, Identifiable {
     var detail: String {
         switch self {
         case .profileGoals:
-            "Update pounds, inches, goals, activity level, dietary preferences, and the intake answers that drive targets."
+            "Update pounds, inches, goals, activity level, dietary preferences, " +
+                "and the intake answers that drive targets."
         case .privacy:
             "Privacy explains what stays local, what can be synced, and how AI/photo context is handled."
         case .subscription:
@@ -812,7 +814,11 @@ private enum MenuSettingsTopic: CaseIterable, Equatable, Identifiable {
             [
                 .init(title: "Units", detail: "Height in inches and weight in pounds", icon: "ruler"),
                 .init(title: "Goals", detail: "Fat loss, muscle gain, recomposition, performance", icon: "target"),
-                .init(title: "Lifestyle", detail: "Activity level, workouts, sleep, meal-prep style", icon: "slider.horizontal.3")
+                .init(
+                    title: "Lifestyle",
+                    detail: "Activity level, workouts, sleep, meal-prep style",
+                    icon: "slider.horizontal.3"
+                )
             ]
         case .privacy:
             [
@@ -822,9 +828,17 @@ private enum MenuSettingsTopic: CaseIterable, Equatable, Identifiable {
             ]
         case .subscription:
             [
-                .init(title: "Current plan", detail: "Founder access until paid tiers are enabled", icon: "checkmark.seal.fill"),
+                .init(
+                    title: "Current plan",
+                    detail: "Founder access until paid tiers are enabled",
+                    icon: "checkmark.seal.fill"
+                ),
                 .init(title: "Billing", detail: "Payment status and renewal live here", icon: "creditcard.fill"),
-                .init(title: "Upgrade path", detail: "Premium features explain value before purchase", icon: "arrow.up.circle.fill")
+                .init(
+                    title: "Upgrade path",
+                    detail: "Premium features explain value before purchase",
+                    icon: "arrow.up.circle.fill"
+                )
             ]
         case .accountDetails:
             [
@@ -834,15 +848,35 @@ private enum MenuSettingsTopic: CaseIterable, Equatable, Identifiable {
             ]
         case .loginLogout:
             [
-                .init(title: "Signed in", detail: "Show current account and provider", icon: "person.badge.key.fill"),
-                .init(title: "Switch account", detail: "Return to login without deleting data", icon: "arrow.triangle.2.circlepath"),
+                .init(
+                    title: "Signed in",
+                    detail: "Show current account and provider",
+                    icon: "person.badge.key.fill"
+                ),
+                .init(
+                    title: "Switch account",
+                    detail: "Return to login without deleting data",
+                    icon: "arrow.triangle.2.circlepath"
+                ),
                 .init(title: "Log out", detail: "End this device session", icon: "rectangle.portrait.and.arrow.right")
             ]
         case .support:
             [
-                .init(title: "Contact support", detail: "Send a question with screen context", icon: "paperplane.fill"),
-                .init(title: "Report issue", detail: "Attach screenshots and logs when available", icon: "exclamationmark.bubble.fill"),
-                .init(title: "FAQ", detail: "Short answers for tracking, coach, and billing", icon: "questionmark.circle")
+                .init(
+                    title: "Contact support",
+                    detail: "Send a question with screen context",
+                    icon: "paperplane.fill"
+                ),
+                .init(
+                    title: "Report issue",
+                    detail: "Attach screenshots and logs when available",
+                    icon: "exclamationmark.bubble.fill"
+                ),
+                .init(
+                    title: "FAQ",
+                    detail: "Short answers for tracking, coach, and billing",
+                    icon: "questionmark.circle"
+                )
             ]
         case .deleteAccount:
             [
@@ -873,7 +907,11 @@ private enum MenuSettingsTopic: CaseIterable, Equatable, Identifiable {
         switch self {
         case .profileGoals:
             [
-                .init(title: "Recalculate", detail: "Targets update after pounds, inches, or goals change", icon: "function"),
+                .init(
+                    title: "Recalculate",
+                    detail: "Targets update after pounds, inches, or goals change",
+                    icon: "function"
+                ),
                 .init(title: "Coach context", detail: "Coach should explain what changed", icon: "bubble.left.fill")
             ]
         case .privacy:
@@ -883,17 +921,29 @@ private enum MenuSettingsTopic: CaseIterable, Equatable, Identifiable {
             ]
         case .subscription:
             [
-                .init(title: "Clarity", detail: "No paywall surprises inside core daily loop", icon: "checkmark.circle.fill"),
+                .init(
+                    title: "Clarity",
+                    detail: "No paywall surprises inside core daily loop",
+                    icon: "checkmark.circle.fill"
+                ),
                 .init(title: "Receipts", detail: "Billing support stays near plan state", icon: "doc.text.fill")
             ]
         case .accountDetails:
             [
-                .init(title: "Review", detail: "Use a small profile emblem to reach this menu", icon: "person.crop.circle"),
+                .init(
+                    title: "Review",
+                    detail: "Use a small profile emblem to reach this menu",
+                    icon: "person.crop.circle"
+                ),
                 .init(title: "Sync", detail: "Show what is local versus account-backed", icon: "icloud")
             ]
         case .loginLogout:
             [
-                .init(title: "Safety", detail: "Signing out never deletes logged data by itself", icon: "shield.lefthalf.filled"),
+                .init(
+                    title: "Safety",
+                    detail: "Signing out never deletes logged data by itself",
+                    icon: "shield.lefthalf.filled"
+                ),
                 .init(title: "Recovery", detail: "Account recovery lives with support", icon: "key.fill")
             ]
         case .support:
@@ -903,7 +953,11 @@ private enum MenuSettingsTopic: CaseIterable, Equatable, Identifiable {
             ]
         case .deleteAccount:
             [
-                .init(title: "Guardrail", detail: "Deletion should require confirmation and active auth", icon: "lock.shield"),
+                .init(
+                    title: "Guardrail",
+                    detail: "Deletion should require confirmation and active auth",
+                    icon: "lock.shield"
+                ),
                 .init(title: "Afterward", detail: "Return to onboarding after completion", icon: "arrow.uturn.backward")
             ]
         case .permissions:
