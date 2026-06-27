@@ -63,13 +63,57 @@ private struct TrainingToolsSection: View {
                     NavigationLink {
                         ActivityToolDetailView(tool: tool, store: self.store)
                     } label: {
-                        PhaseNavigationRow(item: tool.row)
+                        if tool == .coachRecommended {
+                            CoachRecommendedToolRow(item: tool.row)
+                        } else {
+                            PhaseNavigationRow(item: tool.row)
+                        }
                     }
                     .buttonStyle(.plain)
                     .accessibilityIdentifier("activity.tool.\(tool.accessibilityID)")
                 }
             }
         }
+    }
+}
+
+private struct CoachRecommendedToolRow: View {
+    let item: PhaseRowItem
+    @Environment(\.theme) private var theme
+
+    var body: some View {
+        HStack(spacing: self.theme.spacing.md) {
+            Image(systemName: self.item.icon)
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundStyle(self.theme.color.text.onDark.color)
+                .frame(width: 42, height: 42)
+                .background(self.theme.color.primary.accent.color)
+                .clipShape(RoundedRectangle(cornerRadius: self.theme.radius.sm))
+
+            VStack(alignment: .leading, spacing: self.theme.spacing.xs) {
+                Text(self.item.title)
+                    .font(.custom(self.theme.font.body, size: self.theme.text.bodyLG.size))
+                    .fontWeight(.bold)
+                    .foregroundStyle(self.theme.color.text.onDark.color)
+                Text(self.item.detail)
+                    .font(.custom(self.theme.font.body, size: self.theme.text.body.size))
+                    .fontWeight(.semibold)
+                    .foregroundStyle(self.theme.color.text.onDarkMuted.color)
+            }
+
+            Spacer()
+
+            Image(systemName: "chevron.right")
+                .font(.system(size: 14, weight: .bold))
+                .foregroundStyle(self.theme.color.text.onDarkMuted.color)
+        }
+        .padding(self.theme.spacing.md)
+        .background(self.theme.color.bg.elevated.color)
+        .clipShape(RoundedRectangle(cornerRadius: self.theme.radius.md))
+        .overlay(
+            RoundedRectangle(cornerRadius: self.theme.radius.md)
+                .stroke(self.theme.color.primary.accent.color.opacity(0.28), lineWidth: 1)
+        )
     }
 }
 

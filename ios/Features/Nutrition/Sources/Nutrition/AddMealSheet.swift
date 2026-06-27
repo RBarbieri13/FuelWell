@@ -185,6 +185,7 @@ private struct RecentMealsStrip: View {
 private struct MacroEntryFields: View {
     @Bindable var store: StoreOf<DailyLogFeature>
     @Environment(\.theme) private var theme
+    @FocusState private var focusedField: MealEntryField?
 
     var body: some View {
         VStack(alignment: .leading, spacing: self.theme.spacing.md) {
@@ -193,7 +194,9 @@ private struct MacroEntryFields: View {
                 text: Binding(
                     get: { self.store.addMealDraft.name },
                     set: { self.store.send(.addMealNameChanged($0)) }
-                )
+                ),
+                field: .name,
+                focusedField: self.$focusedField
             )
 
             HStack(spacing: self.theme.spacing.sm) {
@@ -203,7 +206,9 @@ private struct MacroEntryFields: View {
                         get: { self.store.addMealDraft.calories },
                         set: { self.store.send(.addMealCaloriesChanged($0)) }
                     ),
-                    keyboardType: .numberPad
+                    keyboardType: .numberPad,
+                    field: .calories,
+                    focusedField: self.$focusedField
                 )
 
                 MealTextField(
@@ -213,7 +218,9 @@ private struct MacroEntryFields: View {
                         set: { self.store.send(.addMealProteinChanged($0)) }
                     ),
                     suffix: "g",
-                    keyboardType: .numberPad
+                    keyboardType: .numberPad,
+                    field: .protein,
+                    focusedField: self.$focusedField
                 )
             }
 
@@ -225,7 +232,9 @@ private struct MacroEntryFields: View {
                         set: { self.store.send(.addMealCarbsChanged($0)) }
                     ),
                     suffix: "g",
-                    keyboardType: .numberPad
+                    keyboardType: .numberPad,
+                    field: .carbs,
+                    focusedField: self.$focusedField
                 )
 
                 MealTextField(
@@ -235,11 +244,21 @@ private struct MacroEntryFields: View {
                         set: { self.store.send(.addMealFatChanged($0)) }
                     ),
                     suffix: "g",
-                    keyboardType: .numberPad
+                    keyboardType: .numberPad,
+                    field: .fat,
+                    focusedField: self.$focusedField
                 )
             }
         }
     }
+}
+
+private enum MealEntryField: Hashable {
+    case name
+    case calories
+    case protein
+    case carbs
+    case fat
 }
 
 private struct PhotoLoggingCard: View {
@@ -420,6 +439,8 @@ private struct MealTextField: View {
     @Binding var text: String
     var suffix: String?
     var keyboardType: UIKeyboardType = .default
+    let field: MealEntryField
+    var focusedField: FocusState<MealEntryField?>.Binding
 
     @Environment(\.theme) private var theme
 
@@ -435,6 +456,8 @@ private struct MealTextField: View {
                     .font(.custom(self.theme.font.body, size: self.theme.text.body.size))
                     .fontWeight(.semibold)
                     .keyboardType(self.keyboardType)
+                    .focused(self.focusedField, equals: self.field)
+                    .accessibilityIdentifier(self.title)
 
                 if let suffix {
                     Text(suffix)
@@ -445,12 +468,18 @@ private struct MealTextField: View {
             }
             .padding(.horizontal, self.theme.spacing.md)
             .padding(.vertical, self.theme.spacing.sm)
+            .frame(maxWidth: .infinity, alignment: .leading)
             .background(self.theme.color.bg.surface.color)
             .overlay {
                 RoundedRectangle(cornerRadius: self.theme.radius.sm)
                     .stroke(self.theme.color.bg.border.color)
             }
             .clipShape(RoundedRectangle(cornerRadius: self.theme.radius.sm))
+            .contentShape(Rectangle())
+            .onTapGesture {
+                self.focusedField.wrappedValue = self.field
+            }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }

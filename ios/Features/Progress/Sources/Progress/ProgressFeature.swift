@@ -20,7 +20,7 @@ public struct ProgressFeature: Sendable {
         public init(
             snapshot: MacroDaySnapshot = .preview,
             healthScoreTopics: [ProgressTopic] = [.nutrition, .activity, .recovery],
-            trackingTopics: [ProgressTopic] = [.macroAdherence, .bodyPhotos, .habits],
+            trackingTopics: [ProgressTopic] = [.calories, .macroAdherence, .bodyPhotos, .habits],
             bodyPhotoCheckIns: [BodyPhotoCheckIn] = BodyPhotoCheckIn.preview,
             habits: [ProgressHabit] = ProgressHabit.preview
         ) {
@@ -156,6 +156,7 @@ public enum ProgressTopic: String, CaseIterable, Equatable, Identifiable, Sendab
     case nutrition
     case activity
     case recovery
+    case calories
     case macroAdherence
     case bodyPhotos
     case habits
@@ -170,6 +171,8 @@ public enum ProgressTopic: String, CaseIterable, Equatable, Identifiable, Sendab
             "Activity Score"
         case .recovery:
             "Recovery Score"
+        case .calories:
+            "Calories"
         case .macroAdherence:
             "Macro Adherence"
         case .bodyPhotos:
@@ -187,6 +190,8 @@ public enum ProgressTopic: String, CaseIterable, Equatable, Identifiable, Sendab
             "activity"
         case .recovery:
             "recovery"
+        case .calories:
+            "calories"
         case .macroAdherence:
             "macro-adherence"
         case .bodyPhotos:
@@ -204,6 +209,8 @@ public enum ProgressTopic: String, CaseIterable, Equatable, Identifiable, Sendab
             "figure.run"
         case .recovery:
             "heart"
+        case .calories:
+            "flame.fill"
         case .macroAdherence:
             "chart.bar.fill"
         case .bodyPhotos:
@@ -221,6 +228,8 @@ public enum ProgressTopic: String, CaseIterable, Equatable, Identifiable, Sendab
             "\(score.activity) · active minutes are stable"
         case .recovery:
             "Unlocks with wearable data"
+        case .calories:
+            "850 / 2,250 kcal today"
         case .macroAdherence:
             "82% this week"
         case .bodyPhotos:
@@ -238,6 +247,8 @@ public enum ProgressTopic: String, CaseIterable, Equatable, Identifiable, Sendab
             "Movement is supporting the plan"
         case .recovery:
             "Recovery unlocks with wearable data"
+        case .calories:
+            "Calories are inside the decision, not hidden behind macros"
         case .macroAdherence:
             "82% this week"
         case .bodyPhotos:
@@ -255,6 +266,8 @@ public enum ProgressTopic: String, CaseIterable, Equatable, Identifiable, Sendab
             "Steps, active energy, and workouts help explain appetite and the next meal."
         case .recovery:
             "A 14-day wearable baseline is required before recovery affects the score."
+        case .calories:
+            "FuelWell watches calorie room alongside protein so the next meal stays practical."
         case .macroAdherence:
             "Macro adherence is a trend, not a grade. It stays cause-first and non-judgmental."
         case .bodyPhotos:

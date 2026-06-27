@@ -12,7 +12,7 @@ func initializesFromMacroSnapshot() {
     #expect(state.score.value == 89)
     #expect(state.headline == "Progress is steady")
     #expect(state.healthScoreTopics == [.nutrition, .activity, .recovery])
-    #expect(state.trackingTopics == [.macroAdherence, .bodyPhotos, .habits])
+    #expect(state.trackingTopics == [.calories, .macroAdherence, .bodyPhotos, .habits])
 }
 
 @MainActor

@@ -140,8 +140,16 @@ enum DashboardDetailTopic: CaseIterable, Equatable, Identifiable {
 extension ActivityTool {
     var headline: String {
         switch self {
+        case .coachRecommended:
+            "Let the coach choose the lowest-friction session"
         case .workoutLog:
             "Record the session without turning FuelWell into a workout app"
+        case .manualActivity:
+            "Log any activity that converts into useful energy context"
+        case .exerciseLibrary:
+            "Browse the workout database before committing"
+        case .workoutPreview:
+            "Inspect a workout before you log it"
         case .activityTracker:
             "Use movement to explain the day"
         case .workoutPlans:
@@ -151,8 +159,17 @@ extension ActivityTool {
 
     var detail: String {
         switch self {
+        case .coachRecommended:
+            "Coach Pick weighs soreness, meals, time, and energy so the default option feels obvious."
         case .workoutLog:
             "Capture the lift, duration, and effort so nutrition guidance can stay grounded."
+        case .manualActivity:
+            "Walking, hiking, running, intervals, swimming, biking, rowing, " +
+                "sports, and mobility can be logged from one place."
+        case .exerciseLibrary:
+            "Filter by body part, workout type, equipment, duration, intensity, and goal."
+        case .workoutPreview:
+            "See summary, muscles, equipment, steps, nearby workouts, and calorie impact before logging."
         case .activityTracker:
             "Steps, active energy, and minutes shape the Health Score and tonight's next action."
         case .workoutPlans:
@@ -166,6 +183,11 @@ extension ActivityTool {
 
     var todayItems: [PhaseRowItem] {
         switch self {
+        case .coachRecommended:
+            [
+                .init(title: "Today's pick", detail: "Zone 2 ride · 42 min · easy aerobic base", icon: "sparkles"),
+                .init(title: "Why", detail: "Low soreness cost and useful calorie output", icon: "checkmark.seal.fill")
+            ]
         case .workoutLog:
             [
                 .init(
@@ -174,6 +196,29 @@ extension ActivityTool {
                     icon: "checkmark.circle.fill"
                 ),
                 .init(title: "Open slot", detail: "Lower body is still planned for tomorrow", icon: "calendar")
+            ]
+        case .manualActivity:
+            [
+                .init(title: "Walking", detail: "Minutes, distance, pace, or steps", icon: "figure.walk"),
+                .init(title: "Cardio", detail: "Run, bike, swim, row, hike, intervals", icon: "figure.run")
+            ]
+        case .exerciseLibrary:
+            [
+                .init(title: "Visible database", detail: "16 workout templates with filters", icon: "tablecells.fill"),
+                .init(
+                    title: "Filters",
+                    detail: "Body part, type, duration, intensity",
+                    icon: "line.3.horizontal.decrease.circle"
+                )
+            ]
+        case .workoutPreview:
+            [
+                .init(title: "Low-impact strength", detail: "34 min · full body · moderate", icon: "dumbbell.fill"),
+                .init(
+                    title: "Nearby sessions",
+                    detail: "Mobility reset and Zone 2 ride",
+                    icon: "arrow.left.arrow.right"
+                )
             ]
         case .activityTracker:
             [
@@ -190,6 +235,15 @@ extension ActivityTool {
 
     var nextItems: [PhaseRowItem] {
         switch self {
+        case .coachRecommended:
+            [
+                .init(title: "Accept", detail: "Log the coach pick as today's activity", icon: "checkmark.circle.fill"),
+                .init(
+                    title: "Swap",
+                    detail: "Open nearby workouts if the pick feels wrong",
+                    icon: "arrow.triangle.2.circlepath"
+                )
+            ]
         case .workoutLog:
             [
                 .init(
@@ -201,6 +255,41 @@ extension ActivityTool {
                     title: "Coach context",
                     detail: "Training load feeds the next meal decision",
                     icon: "bubble.left.and.bubble.right.fill"
+                )
+            ]
+        case .manualActivity:
+            [
+                .init(
+                    title: "Inputs",
+                    detail: "Minutes, distance, effort, user weight, age, and metabolism tier",
+                    icon: "slider.horizontal.3"
+                ),
+                .init(
+                    title: "Estimate",
+                    detail: "Calories are labeled until HealthKit or user confirmation verifies them",
+                    icon: "flame.fill"
+                )
+            ]
+        case .exerciseLibrary:
+            [
+                .init(title: "Preview first", detail: "Every row opens before it can be logged", icon: "eye.fill"),
+                .init(
+                    title: "Database depth",
+                    detail: "Strength, cardio, mobility, sports, recovery",
+                    icon: "square.grid.3x3.fill"
+                )
+            ]
+        case .workoutPreview:
+            [
+                .init(
+                    title: "Next workout",
+                    detail: "Move forward or backward through similar sessions",
+                    icon: "chevron.right.circle.fill"
+                ),
+                .init(
+                    title: "Log controls",
+                    detail: "Confirm, edit, or replace before it affects the day",
+                    icon: "square.and.pencil"
                 )
             ]
         case .activityTracker:
@@ -246,6 +335,8 @@ extension ProgressTopic {
             "Activity"
         case .recovery:
             "Recovery"
+        case .calories:
+            "Calories"
         case .macroAdherence:
             "Macro adherence"
         case .bodyPhotos:
@@ -259,7 +350,7 @@ extension ProgressTopic {
         switch self {
         case .nutrition, .activity, .recovery:
             "Health score detail"
-        case .macroAdherence, .bodyPhotos, .habits:
+        case .calories, .macroAdherence, .bodyPhotos, .habits:
             "Tracking"
         }
     }
@@ -283,7 +374,17 @@ extension ProgressTopic {
         case .recovery:
             [
                 .init(title: "Sleep", detail: "Connect Apple Health to unlock trend", icon: "bed.double.fill"),
-                .init(title: "Body mass", detail: "Last known: 82.4 kg", icon: "scalemass.fill")
+                .init(title: "Body weight", detail: "Last known: 182 lb", icon: "scalemass.fill")
+            ]
+        case .calories:
+            [
+                .init(title: "Today", detail: "850 of 2,250 kcal logged", icon: "flame.fill"),
+                .init(title: "Room left", detail: "1,400 kcal remains before dinner", icon: "target"),
+                .init(
+                    title: "Context",
+                    detail: "Workout burn and steps explain the calorie range",
+                    icon: "waveform.path.ecg"
+                )
             ]
         case .macroAdherence:
             [

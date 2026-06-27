@@ -51,6 +51,20 @@ struct DashboardView: View {
                 DashboardShortcutSection(store: self.store)
 
                 NavigationLink {
+                    DailyReviewView(store: self.store)
+                } label: {
+                    PhaseNavigationRow(
+                        item: PhaseRowItem(
+                            title: "Daily Review",
+                            detail: "Today filter, nutrition ledger, fitness ledger, and energy balance",
+                            icon: "calendar.badge.clock"
+                        )
+                    )
+                }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier("dashboard.daily-review")
+
+                NavigationLink {
                     ProactiveNudgeDetailView()
                 } label: {
                     ProactiveNudgeCard()

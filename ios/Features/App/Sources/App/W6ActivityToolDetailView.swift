@@ -12,11 +12,25 @@ struct ActivityToolDetailView: View {
         PhaseScroll(title: self.tool.title) {
             PhaseHero(icon: self.tool.icon, title: self.tool.headline, detail: self.tool.detail)
             switch self.tool {
+            case .coachRecommended:
+                CoachWorkoutPickSection(onLog: { self.store.send(.quickWorkoutLogged) })
             case .workoutLog:
                 WorkoutLogActionSection(
                     sessions: self.store.workoutLog,
                     onLog: { self.store.send(.quickWorkoutLogged) }
                 )
+            case .manualActivity:
+                ManualActivityLoggerSection(healthState: self.store.healthState) { title, detail in
+                    self.store.send(.workoutLogged(title: title, detail: detail))
+                }
+            case .exerciseLibrary:
+                WorkoutDatabaseSection { template in
+                    self.store.send(.workoutLogged(title: template.title, detail: template.logDetail))
+                }
+            case .workoutPreview:
+                WorkoutTemplateDetailView(template: .featured) { template in
+                    self.store.send(.workoutLogged(title: template.title, detail: template.logDetail))
+                }
             case .activityTracker:
                 ActivityTrackerStateSection(state: self.store.healthState)
             case .workoutPlans:
@@ -27,6 +41,47 @@ struct ActivityToolDetailView: View {
             }
             DashboardSection(title: "Today", items: self.tool.todayItems)
             DashboardSection(title: "Next", items: self.tool.nextItems)
+        }
+    }
+}
+
+private struct CoachWorkoutPickSection: View {
+    let onLog: () -> Void
+    @Environment(\.theme) private var theme
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: self.theme.spacing.md) {
+            FuelWellMetricExplainerCard(
+                eyebrow: "Coach recommends",
+                title: "Zone 2 ride",
+                detail: "A low-soreness aerobic session that creates calorie room without making tomorrow harder.",
+                points: [
+                    .init(
+                        id: "time",
+                        title: "42 minutes",
+                        detail: "Enough output to matter, still easy to recover from.",
+                        systemImage: "timer",
+                        tone: .activity
+                    ),
+                    .init(
+                        id: "fuel",
+                        title: "310 active calories",
+                        detail: "Estimated from easy cycling effort and current body-weight profile.",
+                        systemImage: "flame.fill",
+                        tone: .nutrition
+                    )
+                ]
+            )
+
+            Button(action: self.onLog) {
+                Label("Log coach pick", systemImage: "checkmark.circle.fill")
+                    .font(.custom(self.theme.font.body, size: self.theme.text.body.size))
+                    .fontWeight(.bold)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, self.theme.spacing.sm)
+            }
+            .buttonStyle(.borderedProminent)
+            .tint(self.theme.color.primary.accent.color)
         }
     }
 }

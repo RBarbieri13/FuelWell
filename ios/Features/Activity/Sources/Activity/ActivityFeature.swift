@@ -47,6 +47,7 @@ public struct ActivityFeature: Sendable {
         case onAppear
         case healthSnapshotResponse(Result<HealthSnapshot, HealthKitClientError>)
         case quickWorkoutLogged
+        case workoutLogged(title: String, detail: String)
         case workoutPlanAdvanced
     }
 
@@ -94,6 +95,15 @@ public struct ActivityFeature: Sendable {
                 state.workoutLog.insert(.quickSession(number: state.workoutLog.count + 1), at: 0)
                 state.headline = "Training is logged"
                 state.detail = "Workout captured. Dinner guidance can account for the session."
+                return .none
+
+            case let .workoutLogged(title, detail):
+                state.workoutLog.insert(
+                    .logged(title: title, detail: detail, number: state.workoutLog.count + 1),
+                    at: 0
+                )
+                state.headline = "Training is logged"
+                state.detail = "\(title) captured. Coach can account for the session before the next meal."
                 return .none
 
             case .workoutPlanAdvanced:
@@ -165,6 +175,15 @@ public struct WorkoutSession: Equatable, Identifiable, Sendable {
             loggedAt: Date(timeIntervalSince1970: 1_773_446_400 + Double(number * 3_600))
         )
     }
+
+    static func logged(title: String, detail: String, number: Int) -> Self {
+        .init(
+            id: UUID(uuid: (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, UInt8(min(number, 255)))),
+            title: title,
+            detail: detail,
+            loggedAt: Date(timeIntervalSince1970: 1_773_500_000 + Double(number * 3_600))
+        )
+    }
 }
 
 public struct WorkoutPlan: Equatable, Sendable {
@@ -196,7 +215,11 @@ public struct WorkoutPlan: Equatable, Sendable {
 }
 
 public enum ActivityTool: String, CaseIterable, Equatable, Identifiable, Sendable {
+    case coachRecommended
     case workoutLog
+    case manualActivity
+    case exerciseLibrary
+    case workoutPreview
     case activityTracker
     case workoutPlans
 
@@ -204,8 +227,16 @@ public enum ActivityTool: String, CaseIterable, Equatable, Identifiable, Sendabl
 
     public var title: String {
         switch self {
+        case .coachRecommended:
+            "Coach Pick"
         case .workoutLog:
             "Workout Log"
+        case .manualActivity:
+            "Manual Activity"
+        case .exerciseLibrary:
+            "Exercise Library"
+        case .workoutPreview:
+            "Workout Preview"
         case .activityTracker:
             "Activity Tracker"
         case .workoutPlans:
@@ -215,8 +246,16 @@ public enum ActivityTool: String, CaseIterable, Equatable, Identifiable, Sendabl
 
     public var accessibilityID: String {
         switch self {
+        case .coachRecommended:
+            "coach-pick"
         case .workoutLog:
             "workout-log"
+        case .manualActivity:
+            "manual-activity"
+        case .exerciseLibrary:
+            "exercise-library"
+        case .workoutPreview:
+            "workout-preview"
         case .activityTracker:
             "activity-tracker"
         case .workoutPlans:
@@ -226,8 +265,16 @@ public enum ActivityTool: String, CaseIterable, Equatable, Identifiable, Sendabl
 
     public var icon: String {
         switch self {
+        case .coachRecommended:
+            "sparkles"
         case .workoutLog:
             "list.bullet.clipboard"
+        case .manualActivity:
+            "plus.circle.fill"
+        case .exerciseLibrary:
+            "tablecells.fill"
+        case .workoutPreview:
+            "eye.fill"
         case .activityTracker:
             "waveform.path.ecg"
         case .workoutPlans:
@@ -237,8 +284,16 @@ public enum ActivityTool: String, CaseIterable, Equatable, Identifiable, Sendabl
 
     public var rowDetail: String {
         switch self {
+        case .coachRecommended:
+            "Start with the best fit for today"
         case .workoutLog:
             "Record trainer or solo sessions"
+        case .manualActivity:
+            "Walking, running, biking, swimming"
+        case .exerciseLibrary:
+            "Filter by body part, type, and goal"
+        case .workoutPreview:
+            "Open a workout before logging it"
         case .activityTracker:
             "Steps, active minutes, energy"
         case .workoutPlans:
