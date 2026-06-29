@@ -214,7 +214,7 @@ className="flex items-center justify-center gap-2.5 text-sm font-semibold text-f
 
             <div className="block inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-orange-500 to-pink-500 px-5 py-2 text-sm font-bold text-white shadow-lg shadow-orange-500/30 animate-pulse-glow">
               <span className="h-2 w-2 rounded-full bg-white animate-pulse" />
-              Launching June 30, 2026 — lock in your spot now
+              Launching Fall 2026 — lock in your spot now
             </div>
 
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-[-0.035em] text-foreground leading-[1.05]">
