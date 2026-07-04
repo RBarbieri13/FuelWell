@@ -599,3 +599,68 @@ allergic to judgmental or spreadsheet-like UX.
 - Context: phone set to en-GB conventions
 - Patience: medium; "05/06" ambiguity and unit mix-ups grate
 - A11y: none
+
+---
+
+## Phase 6 fresh-eyes roster (F01–F10) — biased toward backlog-dominant types
+(touch-target/mobile users dominated B1; form-integrity B2; keyboard/low-vision B3;
+precision-numbers B4; slow-network B5; design-precision B6)
+
+### F01 — Delivery courier, 27, logs on a phone between drops
+- Skill: phone-native; Goal: log a snack + check macros in under 30 seconds
+- Context: 390px phone, one thumb, standing on a sidewalk
+- Patience: near zero; mis-taps on small controls end the attempt
+- A11y: thick winter gloves half-off — needs big targets
+
+### F02 — Retired accountant, 66, essential tremor
+- Skill: low-medium; Goal: log all three meals without mis-tapping
+- Context: iPhone, Large Text on, kitchen table
+- Patience: medium; A11y: motor precision + 150% zoom
+
+### F03 — Blind QA engineer, 34, VoiceOver power user
+- Skill: expert AT; Goal: complete signup form and log a meal by screen reader
+- Context: desktop + keyboard only, no mouse
+- Patience: professional; unlabeled/aria-less states are logged as defects
+- A11y: full screen-reader dependence, keyboard-only
+
+### F04 — Type-1 diabetic dietitian, 38, insulin dosing from carb counts
+- Skill: expert nutrition; Goal: verify every carb/kcal number is unambiguous and consistent
+- Context: phone at restaurant, desktop at clinic
+- Patience: medium; one wrong or unitless number = unusable
+- A11y: none
+
+### F05 — Rural nurse, 49, satellite internet
+- Skill: medium; Goal: evening logging ritual despite 2-4s latencies
+- Context: old laptop, slow network
+- Patience: medium; blank screens read as "it crashed"
+- A11y: mild presbyopia
+
+### F06 — Freelance product designer, 31, evaluating for a teardown thread
+- Skill: expert visual; Goal: find spacing/type/radius inconsistencies in 15 minutes
+- Context: desktop, zoomed inspection, screenshots
+- Patience: high, merciless
+- A11y: tests reduced-motion habitually (vestibular migraine)
+
+### F07 — College soccer player, 20, bulking, races the UI
+- Skill: phone virtuoso; Goal: log 5 meals fast, double-taps everything
+- Context: 390px phone, gym wifi
+- Patience: sub-second; stale/latent states cause double submissions
+- A11y: none
+
+### F08 — HR benefits manager, 52, evaluating for wellness program
+- Skill: medium; Goal: walk signup → onboarding → dashboard judging polish and clarity
+- Context: work laptop, projector for committee demo
+- Patience: medium; forms without guidance embarrass her in demos
+- A11y: reading glasses, 125% zoom
+
+### F09 — Data engineer, 29, keyboard-only by preference
+- Skill: expert; Goal: full core loop (log, dashboard, coach, settings) without touching the mouse
+- Context: desktop, dark room
+- Patience: low; invisible focus = instant loss
+- A11y: keyboard-only workflow
+
+### F10 — Postpartum pediatric resident, 33, 4 free minutes at 2am
+- Skill: high; Goal: honest quick log + gentle daily review on phone
+- Context: 390px phone, night, one hand, interrupted
+- Patience: absolute minimum; harsh errors or lost state = churn
+- A11y: fatigue, cognitive load
