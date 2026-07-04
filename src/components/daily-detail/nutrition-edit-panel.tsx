@@ -143,7 +143,7 @@ export function NutritionEditPanel() {
                     <div>
                       <p className="text-sm font-black text-[#16302a]">{item.name}</p>
                       <p className="text-xs font-semibold text-[#9db0aa]">
-                        {item.calories} cal · {item.protein}g protein · {item.carbs}g carbs · {item.fat}g fat
+                        {item.calories} kcal · {item.protein}g protein · {item.carbs}g carbs · {item.fat}g fat
                       </p>
                     </div>
                     {isEditing ? (

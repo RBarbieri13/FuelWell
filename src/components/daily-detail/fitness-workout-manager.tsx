@@ -141,7 +141,7 @@ export function FitnessWorkoutManager() {
 
         <div className="flex flex-col justify-end gap-2">
           <p className="rounded-[1rem] bg-primary-50 px-4 py-2 text-center text-sm font-black text-primary-800">
-            {calories} cal
+            {calories} kcal
           </p>
           <Button type="button" onClick={addManualActivity} className="rounded-2xl">
             <Plus className="h-4 w-4" />
@@ -161,7 +161,7 @@ export function FitnessWorkoutManager() {
               <div>
                 <p className="text-base font-black text-[#16302a]">{workout.name}</p>
                 <p className="text-sm font-semibold text-[#7c968f]">
-                  {workout.category} · {workout.durationMin} min · {workout.calories ?? 0} active cal
+                  {workout.category} · {workout.durationMin} min · {workout.calories ?? 0} active kcal
                 </p>
               </div>
               {editingId === workout.id ? (

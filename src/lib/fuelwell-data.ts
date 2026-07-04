@@ -341,7 +341,7 @@ export function buildCoachVerdict(totals: MacroTotals, targets: MacroTargets, me
 
   return {
     title: "You have room to make a clean next choice.",
-    body: `${remaining(totals.calories, targets.calories)} calories and ${remaining(totals.protein, targets.protein)}g protein remain. Plan the next meal around that gap.`,
+    body: `${remaining(totals.calories, targets.calories).toLocaleString()} calories and ${remaining(totals.protein, targets.protein)}g protein remain. Plan the next meal around that gap.`,
     href: "/app/recipes",
     action: "Find meals that fit",
   };

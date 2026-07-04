@@ -500,7 +500,7 @@ function StackedBar({
           {label} breakdown
         </span>
         <span className="mt-2 block text-2xl font-black tabular-nums text-[#16302a]">
-          {total.toLocaleString()} cal
+          {total.toLocaleString()} kcal
         </span>
         <span className="mt-3 grid gap-2">
           {segments.map((segment) => (
@@ -589,7 +589,7 @@ function AggregateChart({
                 {segment.label}
               </span>
               <span className="text-sm font-black tabular-nums text-[#16302a]">
-                {segment.calories.toLocaleString()} cal
+                {segment.calories.toLocaleString()} kcal
               </span>
             </div>
             <div className="h-4 overflow-hidden rounded-full bg-white">
@@ -707,7 +707,7 @@ function BarDetailModal({
                 </div>
               </div>
               <p className="text-lg font-black tabular-nums text-[#16302a]">
-                {segment.calories.toLocaleString()} cal
+                {segment.calories.toLocaleString()} kcal
               </p>
             </div>
           ))}

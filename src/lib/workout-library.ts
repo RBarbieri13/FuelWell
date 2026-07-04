@@ -87,7 +87,7 @@ const CURATED_WORKOUTS: WorkoutLibraryItem[] = [
     why:
       "FuelWell is using user-entered soreness and meals plus estimated activity. Because leg soreness is elevated, this avoids jumps, sprints, and high-rep squats.",
     fuel: "Eat 25-35g protein within two hours. Add 35-50g carbs before training if lunch was light.",
-    estimatedBurn: "210-270 cal",
+    estimatedBurn: "210-270 kcal",
     recoveryCost: "Low-moderate",
     bestFor: ["Training streak", "Technique", "Low soreness cost"],
     blocks: [
@@ -115,7 +115,7 @@ const CURATED_WORKOUTS: WorkoutLibraryItem[] = [
     why:
       "This stays below interval intensity because FuelWell does not yet have live heart-rate or HRV data connected.",
     fuel: "Hydrate before starting. Add a carb snack if the ride begins more than three hours after lunch.",
-    estimatedBurn: "260-360 cal",
+    estimatedBurn: "260-360 kcal",
     recoveryCost: "Low",
     bestFor: ["Aerobic base", "Low impact", "Steady sweat"],
     blocks: [
@@ -143,7 +143,7 @@ const CURATED_WORKOUTS: WorkoutLibraryItem[] = [
     why:
       "FuelWell has user-entered soreness but no wearable readiness yet. This option intentionally creates the lowest recovery cost.",
     fuel: "No special pre-fuel needed. Log dinner protein afterward so the recovery estimate improves.",
-    estimatedBurn: "45-80 cal",
+    estimatedBurn: "45-80 kcal",
     recoveryCost: "Very low",
     bestFor: ["Downshifting", "Stiff hips", "Desk posture"],
     blocks: [
@@ -171,7 +171,7 @@ const CURATED_WORKOUTS: WorkoutLibraryItem[] = [
     why:
       "This is a good fit when lower body is sore but you still want a real strength session.",
     fuel: "Pair with a protein-forward meal. Add a carb serving if the last meal was more than three hours ago.",
-    estimatedBurn: "190-260 cal",
+    estimatedBurn: "190-260 kcal",
     recoveryCost: "Moderate",
     bestFor: ["Upper body", "Pressing", "Gym day"],
     blocks: [
@@ -199,7 +199,7 @@ const CURATED_WORKOUTS: WorkoutLibraryItem[] = [
     why:
       "This avoids leg fatigue while still giving the day a clear strength target.",
     fuel: "Protein matters most here. A light carb snack helps if you are training late afternoon.",
-    estimatedBurn: "180-245 cal",
+    estimatedBurn: "180-245 kcal",
     recoveryCost: "Moderate",
     bestFor: ["Back strength", "Desk posture", "Upper body"],
     blocks: [
@@ -227,7 +227,7 @@ const CURATED_WORKOUTS: WorkoutLibraryItem[] = [
     why:
       "This is intentionally higher recovery cost, so it belongs on a day with good sleep and lower soreness.",
     fuel: "Have carbs in the prior meal and plan 30g+ protein after. This is not a fasted-session pick.",
-    estimatedBurn: "280-380 cal",
+    estimatedBurn: "280-380 kcal",
     recoveryCost: "High",
     bestFor: ["Glutes", "Hamstrings", "Heavy lifting"],
     blocks: [
@@ -255,7 +255,7 @@ const CURATED_WORKOUTS: WorkoutLibraryItem[] = [
     why:
       "This gives lower-body work without asking for deep squats or jump volume.",
     fuel: "A normal meal is enough. Add electrolytes if you are pairing it with a longer walk.",
-    estimatedBurn: "170-240 cal",
+    estimatedBurn: "170-240 kcal",
     recoveryCost: "Low-moderate",
     bestFor: ["Glutes", "Stability", "Knee-sensitive days"],
     blocks: [
@@ -283,7 +283,7 @@ const CURATED_WORKOUTS: WorkoutLibraryItem[] = [
     why:
       "Short core work can fit between heavier sessions without creating much soreness.",
     fuel: "No special pre-fuel needed unless this follows a long cardio session.",
-    estimatedBurn: "70-120 cal",
+    estimatedBurn: "70-120 kcal",
     recoveryCost: "Low",
     bestFor: ["Core", "Bracing", "Short session"],
     blocks: [
@@ -311,7 +311,7 @@ const CURATED_WORKOUTS: WorkoutLibraryItem[] = [
     why:
       "Use it when today's workout felt too short but you do not want another full lift.",
     fuel: "No special fuel needed. Keep water nearby if pairing with conditioning.",
-    estimatedBurn: "80-135 cal",
+    estimatedBurn: "80-135 kcal",
     recoveryCost: "Low-moderate",
     bestFor: ["Finisher", "Carries", "Time crunch"],
     blocks: [
@@ -339,7 +339,7 @@ const CURATED_WORKOUTS: WorkoutLibraryItem[] = [
     why:
       "This is better when soreness is low and you want an efficient training effect.",
     fuel: "Eat carbs before this if the last meal was light. Prioritize protein and fluids afterward.",
-    estimatedBurn: "300-430 cal",
+    estimatedBurn: "300-430 kcal",
     recoveryCost: "High",
     bestFor: ["Conditioning", "Full body", "Sweat"],
     blocks: [
@@ -367,7 +367,7 @@ const CURATED_WORKOUTS: WorkoutLibraryItem[] = [
     why:
       "It keeps the movement pattern complete without depending on a gym or equipment availability.",
     fuel: "Normal meal timing is fine. Add protein afterward if this replaces a planned lift.",
-    estimatedBurn: "150-220 cal",
+    estimatedBurn: "150-220 kcal",
     recoveryCost: "Moderate",
     bestFor: ["Travel", "Home workout", "No equipment"],
     blocks: [
@@ -395,7 +395,7 @@ const CURATED_WORKOUTS: WorkoutLibraryItem[] = [
     why:
       "Intervals help you run more total minutes while keeping effort and impact manageable.",
     fuel: "Have a small carb source if training before a meal. Hydrate well if outdoors.",
-    estimatedBurn: "220-340 cal",
+    estimatedBurn: "220-340 kcal",
     recoveryCost: "Moderate",
     bestFor: ["Running base", "Intervals", "Cardio"],
     blocks: [
@@ -423,7 +423,7 @@ const CURATED_WORKOUTS: WorkoutLibraryItem[] = [
     why:
       "It adds movement without asking for running impact or heavy lifting recovery.",
     fuel: "Hydration is enough for most days. Bring water if the room is warm.",
-    estimatedBurn: "190-310 cal",
+    estimatedBurn: "190-310 kcal",
     recoveryCost: "Low",
     bestFor: ["Steps", "Low impact", "Easy cardio"],
     blocks: [
@@ -451,7 +451,7 @@ const CURATED_WORKOUTS: WorkoutLibraryItem[] = [
     why:
       "This sits close to the mobility reset but focuses the work below the waist.",
     fuel: "No pre-fuel needed. Use it before dinner or before a lower-body session.",
-    estimatedBurn: "35-65 cal",
+    estimatedBurn: "35-65 kcal",
     recoveryCost: "Very low",
     bestFor: ["Hips", "Ankles", "Squat prep"],
     blocks: [
@@ -479,7 +479,7 @@ const CURATED_WORKOUTS: WorkoutLibraryItem[] = [
     why:
       "This is the closest option when the goal is moving better rather than training harder.",
     fuel: "No special fuel needed. Treat it like movement hygiene.",
-    estimatedBurn: "30-55 cal",
+    estimatedBurn: "30-55 kcal",
     recoveryCost: "Very low",
     bestFor: ["Upper back", "Shoulders", "Desk posture"],
     blocks: [
@@ -507,7 +507,7 @@ const CURATED_WORKOUTS: WorkoutLibraryItem[] = [
     why:
       "This is the lowest-friction option when readiness is uncertain or you are protecting tomorrow.",
     fuel: "No pre-fuel needed. Consider it a walk after a meal when possible.",
-    estimatedBurn: "90-160 cal",
+    estimatedBurn: "90-160 kcal",
     recoveryCost: "Very low",
     bestFor: ["Recovery", "Steps", "After meals"],
     blocks: [
@@ -549,7 +549,7 @@ const workoutTemplates: GeneratedWorkoutTemplate[] = [
     goal: "Pressing strength",
     intensity: "Moderate",
     minutes: 36,
-    burn: "170-260 cal",
+    burn: "170-260 kcal",
     recoveryCost: "Moderate",
     bestFor: ["Chest", "Shoulders", "Pressing"],
     blocks: [
@@ -570,7 +570,7 @@ const workoutTemplates: GeneratedWorkoutTemplate[] = [
     goal: "Rows and posture",
     intensity: "Moderate",
     minutes: 34,
-    burn: "160-245 cal",
+    burn: "160-245 kcal",
     recoveryCost: "Moderate",
     bestFor: ["Back", "Posture", "Pulling"],
     blocks: [
@@ -591,7 +591,7 @@ const workoutTemplates: GeneratedWorkoutTemplate[] = [
     goal: "Squat pattern",
     intensity: "Hard",
     minutes: 42,
-    burn: "260-390 cal",
+    burn: "260-390 kcal",
     recoveryCost: "High",
     bestFor: ["Leg strength", "Quads", "Glutes"],
     blocks: [
@@ -612,7 +612,7 @@ const workoutTemplates: GeneratedWorkoutTemplate[] = [
     goal: "Posterior chain",
     intensity: "Hard",
     minutes: 40,
-    burn: "240-360 cal",
+    burn: "240-360 kcal",
     recoveryCost: "High",
     bestFor: ["Glutes", "Hamstrings", "Strength"],
     blocks: [
@@ -633,7 +633,7 @@ const workoutTemplates: GeneratedWorkoutTemplate[] = [
     goal: "Trunk control",
     intensity: "Light",
     minutes: 22,
-    burn: "70-130 cal",
+    burn: "70-130 kcal",
     recoveryCost: "Low",
     bestFor: ["Core", "Back-friendly", "Short session"],
     blocks: [
@@ -654,7 +654,7 @@ const workoutTemplates: GeneratedWorkoutTemplate[] = [
     goal: "Easy steady conditioning",
     intensity: "Easy",
     minutes: 35,
-    burn: "180-330 cal",
+    burn: "180-330 kcal",
     recoveryCost: "Low",
     bestFor: ["Aerobic base", "Low impact", "Recovery-friendly"],
     blocks: [
@@ -675,7 +675,7 @@ const workoutTemplates: GeneratedWorkoutTemplate[] = [
     goal: "Conditioning",
     intensity: "Hard",
     minutes: 28,
-    burn: "220-420 cal",
+    burn: "220-420 kcal",
     recoveryCost: "High",
     bestFor: ["Conditioning", "Speed", "Time-efficient"],
     blocks: [
@@ -696,7 +696,7 @@ const workoutTemplates: GeneratedWorkoutTemplate[] = [
     goal: "Move better",
     intensity: "Light",
     minutes: 18,
-    burn: "35-80 cal",
+    burn: "35-80 kcal",
     recoveryCost: "Very low",
     bestFor: ["Stiffness", "Recovery", "Warm-up"],
     blocks: [
@@ -717,7 +717,7 @@ const workoutTemplates: GeneratedWorkoutTemplate[] = [
     goal: "Recover without fatigue",
     intensity: "Easy",
     minutes: 24,
-    burn: "70-160 cal",
+    burn: "70-160 kcal",
     recoveryCost: "Very low",
     bestFor: ["Recovery", "Steps", "Stress downshift"],
     blocks: [
@@ -738,7 +738,7 @@ const workoutTemplates: GeneratedWorkoutTemplate[] = [
     goal: "Balanced strength",
     intensity: "Moderate",
     minutes: 38,
-    burn: "210-330 cal",
+    burn: "210-330 kcal",
     recoveryCost: "Moderate",
     bestFor: ["Balanced training", "Busy week", "General strength"],
     blocks: [

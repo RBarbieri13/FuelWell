@@ -52,7 +52,7 @@ export function CalorieRing({ consumed, target, emphasis = "normal" }: CalorieRi
   const percent = Math.round(progress * 100);
 
   return (
-    <div className="relative flex items-center justify-center" role="img" aria-label={`${consumed} of ${target} calories consumed, ${remaining} remaining`}>
+    <div className="relative flex items-center justify-center" role="img" aria-label={`${consumed.toLocaleString()} of ${target.toLocaleString()} calories consumed, ${remaining.toLocaleString()} remaining`}>
       <svg
         viewBox={`0 0 ${viewBox} ${viewBox}`}
         className={`-rotate-90 ${
@@ -86,7 +86,7 @@ export function CalorieRing({ consumed, target, emphasis = "normal" }: CalorieRi
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <span className={`${compact ? "text-[2.1rem]" : hero ? "text-7xl" : "text-6xl"} font-black leading-none text-neutral-900 tabular-nums`}>
-          {displayRemaining}
+          {displayRemaining.toLocaleString()}
         </span>
         <span className={`${compact ? "mt-1.5 text-[10.5px]" : hero ? "mt-3 text-base" : "mt-2 text-sm"} font-black uppercase tracking-[0.14em] text-neutral-500`}>
           {isOver ? "over" : "remaining"}
@@ -96,7 +96,7 @@ export function CalorieRing({ consumed, target, emphasis = "normal" }: CalorieRi
         </span>
         <div className={`${compact ? "mt-1.5 bg-transparent px-0 py-0 shadow-none" : hero ? "mt-4 px-5 py-2.5" : "mt-3 px-4 py-2"} rounded-full bg-primary-50 shadow-sm shadow-primary-900/5`}>
           <span className={`${compact ? "text-xs text-[#7c968f]" : hero ? "text-base" : "text-sm"} font-black text-primary-700 tabular-nums`}>
-            {consumed} / {target} kcal
+            {consumed.toLocaleString()} / {target.toLocaleString()} kcal
           </span>
         </div>
       </div>

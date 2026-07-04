@@ -349,7 +349,7 @@ export default function MealPlanPage() {
                               {addedTitle ?? meal.title}
                             </h3>
                             <div className="mt-2 flex flex-wrap items-center gap-2 text-xs font-bold text-[#78928a]">
-                              <span className="tabular-nums">{meal.calories} cal</span>
+                              <span className="tabular-nums">{meal.calories} kcal</span>
                               <span className="tabular-nums">{meal.protein}g protein</span>
                               <span className="inline-flex items-center gap-1">
                                 <Clock className="w-3 h-3" />

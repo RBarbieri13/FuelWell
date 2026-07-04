@@ -297,7 +297,7 @@ function ManualActivityPlanner({
 
       <div className="rounded-[1.15rem] border border-primary-100 bg-primary-50/70 px-4 py-3">
         <p className="text-xl font-black tabular-nums text-primary-800">
-          {calories} active cal
+          {calories} active kcal
         </p>
         <p className="mt-1 text-xs font-semibold leading-5 text-primary-900/70">
           Estimate uses {resolvedMinutes} min, {option.label.toLowerCase()} intensity, preview age {PROFILE_AGE}, and profile weight {PROFILE_WEIGHT_LB} lb.
@@ -471,7 +471,7 @@ export function WorkoutsView({
                   <div className="min-w-0">
                     <p className="truncate text-sm font-semibold text-neutral-900">{w.name}</p>
                     <p className="text-xs text-neutral-500">
-                      {w.category} · {w.durationMin} min · {w.calories ?? 0} active cal
+                      {w.category} · {w.durationMin} min · {w.calories ?? 0} active kcal
                     </p>
                   </div>
                   {editingWorkoutId === w.id ? (

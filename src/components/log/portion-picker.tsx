@@ -50,7 +50,7 @@ export function PortionPicker({
           <div>
             <p className="font-black text-[#16302a]">{food.name}</p>
             <p className="text-sm font-semibold text-[#78928a]">
-          {food.categoryLabel} &middot; per 100{unit}: {food.per100.kcal} cal,{" "}
+          {food.categoryLabel} &middot; per 100{unit}: {food.per100.kcal} kcal,{" "}
           {food.per100.protein}g protein
             </p>
           </div>
@@ -87,7 +87,7 @@ export function PortionPicker({
                   </p>
                 </div>
                 <p className="font-black tabular-nums text-[#16302a]">
-                  {totals.calories} cal
+                  {totals.calories} kcal
                 </p>
               </button>
             );

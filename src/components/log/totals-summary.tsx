@@ -58,16 +58,16 @@ export function TotalsSummary({
                 </div>
                 <div className="text-right">
                   <p className="text-xl font-black tabular-nums text-[#16302a]">
-                    {current}
+                    {current.toLocaleString()}
                     {macro.unit}
                     <span className="mx-1 text-[#91a7a0]">/</span>
                     <span className="text-base text-[#60776f]">
-                      {target}
+                      {target.toLocaleString()}
                       {macro.unit}
                     </span>
                   </p>
                   <p className="text-xs font-black tabular-nums text-[#91a7a0]">
-                    {left}
+                    {left.toLocaleString()}
                     {macro.unit} left
                   </p>
                 </div>

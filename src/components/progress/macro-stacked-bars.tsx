@@ -105,13 +105,13 @@ export function MacroStackedBars({
             <div
               key={day.date}
               className="flex-1 min-w-0 flex flex-col items-center justify-end h-full gap-1"
-              title={`${day.label}: ${Math.round(dayKcal)} cal${
+              title={`${day.label}: ${Math.round(dayKcal).toLocaleString()} kcal${
                 day.source === "sample" ? " (sample)" : ""
               }`}
             >
               {showCalories ? (
                 <span className="text-[10px] font-black text-primary-700 tabular-nums">
-                  {Math.round(totalKcal)}
+                  {Math.round(totalKcal).toLocaleString()}
                 </span>
               ) : null}
               <div

@@ -143,7 +143,7 @@ export function DashboardClient({
                   <div className="flex gap-3">
                     <EnergyStat
                       label="Calories left"
-                      value={`${remaining(totals.calories, targets.calories)}`}
+                      value={remaining(totals.calories, targets.calories).toLocaleString()}
                     />
                     <EnergyStat
                       label="Protein left"
@@ -202,7 +202,7 @@ export function DashboardClient({
 
           <div className="mt-auto grid grid-cols-3 gap-2">
             <MiniMetric label="Protein left" value={`${remaining(totals.protein, targets.protein)}g`} />
-            <MiniMetric label="Calories left" value={`${remaining(totals.calories, targets.calories)}`} />
+            <MiniMetric label="Calories left" value={remaining(totals.calories, targets.calories).toLocaleString()} />
             <MiniMetric label="Meals" value={`${todaysMeals.length}`} />
           </div>
         </Card>
@@ -311,7 +311,7 @@ export function DashboardClient({
                     </div>
                     <div className="text-right">
                       <p className="font-black tabular-nums text-neutral-900">
-                        {mealTotals.calories} cal
+                        {mealTotals.calories} kcal
                       </p>
                       <p className="text-xs font-bold text-neutral-400">
                         {mealTotals.protein}g protein
@@ -400,7 +400,7 @@ function MealMakeupHover({
                   </div>
                   <div className="shrink-0 text-right">
                     <p className="text-sm font-black tabular-nums text-neutral-900">
-                      {mealTotals ? `${mealTotals.calories} cal` : "--"}
+                      {mealTotals ? `${mealTotals.calories} kcal` : "--"}
                     </p>
                     <p className="text-xs font-bold text-primary-600">
                       {mealTotals ? `${mealTotals.protein}g protein` : "open"}

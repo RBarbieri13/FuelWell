@@ -92,7 +92,7 @@ export function BarcodeLookup({ onSelect }: { onSelect: (food: FoodItem) => void
           </p>
           <p className="mt-3 text-base font-black text-[#16302a]">{result.food.name}</p>
           <p className="mt-1 text-sm font-semibold text-[#60776f]">
-            {result.food.categoryLabel} · {result.food.per100.kcal} cal /100{result.food.servingUnit}
+            {result.food.categoryLabel} · {result.food.per100.kcal} kcal /100{result.food.servingUnit}
           </p>
           <p className="mt-2 text-xs font-semibold leading-5 text-[#78928a]">
             {result.sourceNote}

@@ -151,7 +151,7 @@ function LoggedItem({
         <div className="min-w-0">
           <p className="truncate font-black text-[#16302a]">{item.name}</p>
           <p className="text-xs font-bold text-[#78928a]">
-            {item.calories} cal &middot; {item.protein}p &middot; {item.carbs}c
+            {item.calories} kcal &middot; {item.protein}p &middot; {item.carbs}c
             &middot; {item.fat}f
           </p>
         </div>

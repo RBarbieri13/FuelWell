@@ -395,7 +395,7 @@ export function NutritionDetailSurface({
                     <div>
                       <h2 className="text-xl font-black text-[#54635d]">Dinner</h2>
                       <p className="text-sm font-semibold text-[#9db0aa]">
-                        Not logged yet · {remaining(totals.calories, targets.calories)} kcal of room left
+                        Not logged yet · {remaining(totals.calories, targets.calories).toLocaleString()} kcal of room left
                       </p>
                     </div>
                   </div>
@@ -478,7 +478,7 @@ export function DailyReviewSurface({
             <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               <TargetTile label="Food in" current={totals.calories} target={targets.calories} unit="kcal" tone="primary" icon={Flame} />
               <TargetTile label="Active burn" current={fitnessTotals.calories} target={fitnessTargets.activeCalories} unit="kcal" tone="accent" icon={Dumbbell} />
-              <SimpleSummaryCard label="Net calories" value={netCalories.toLocaleString()} detail={`${remaining(netCalories, targets.calories)} kcal room after activity`} tone="sky" icon={Target} />
+              <SimpleSummaryCard label="Net calories" value={netCalories.toLocaleString()} detail={`${remaining(netCalories, targets.calories).toLocaleString()} kcal room after activity`} tone="sky" icon={Target} />
               <SimpleSummaryCard label="Protein" value={`${totals.protein}g`} detail={`${remaining(totals.protein, targets.protein)}g left of ${targets.protein}`} tone="lemon" icon={Beef} />
             </section>
           </div>
@@ -738,7 +738,9 @@ function TargetTile({
         <span className="ml-1 text-[15px] font-bold text-[#a2b5b0]">{unit}</span>
       </p>
       <p className="text-xs font-semibold text-[#7c968f]">
-        {remaining(current, target).toLocaleString()} {unit} left of {target.toLocaleString()}
+        {remaining(current, target).toLocaleString()}
+        {unit === "g" ? "g" : ` ${unit}`} left of {target.toLocaleString()}
+        {unit === "g" ? "g" : ""}
       </p>
       <div className="h-[7px] overflow-hidden rounded-full bg-[#edf3f0]">
         <div
@@ -845,7 +847,7 @@ function ActivityLogCard({
             {activity.duration}
           </p>
           <p className="text-xs font-bold text-primary-600">
-            {activity.calories} active cal
+            {activity.calories} active kcal
           </p>
         </div>
       </div>
@@ -905,7 +907,7 @@ function MealLogCard({
         </div>
         <div className="rounded-[0.9rem] bg-[#f4f8f6] px-4 py-3 text-right">
           <p className="text-xl font-black tabular-nums text-[#16302a]">
-            {mealTotals.calories} cal
+            {mealTotals.calories} kcal
           </p>
           <p className="text-xs font-bold text-primary-600">
             {mealTotals.protein}g protein

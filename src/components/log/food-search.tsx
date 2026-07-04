@@ -154,7 +154,7 @@ export function FoodSearch({
               >
                 <p className="font-black text-[#16302a]">{food.name}</p>
                 <p className="mt-0.5 text-xs font-semibold text-[#78928a]">
-                  {food.categoryLabel} &middot; {food.per100.kcal} cal /100
+                  {food.categoryLabel} &middot; {food.per100.kcal} kcal /100
                   {food.servingUnit} &middot; {food.per100.protein}g protein
                 </p>
               </button>
