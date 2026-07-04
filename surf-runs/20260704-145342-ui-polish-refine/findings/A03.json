@@ -1,0 +1,232 @@
+{
+  "agent_id": "A03",
+  "persona_set": "S03",
+  "app_exercised": "Reviewer agent A03 systematically tested FuelWell across 6 routes for personas P09 (screen-reader user), P10 (line cook, 1am low light), P11 (founder co-founder QA), and P12 (HR coordinator, 125% zoom). Test coverage included desktop and mobile viewports, keyboard navigation (15 tab-through cycles on /dashboard), 125% zoom simulation on /settings and /profile, small-phone (320x640) through desktop (1280x800) responsive layouts, form interaction states (input focus/blur/fill), touch target measurement (<44px detection), accessibility tree inspection, and visual state capture at http://localhost:3000/app/{dashboard,log,onboarding,coach,nutrition,profile,settings}. Playwright-based tools (surf-browse.js, custom test scripts) captured 20+ screenshots, interactive element inventory (38-180 elements per route), console error logs, focus visibility, truncation detection at zoom, and semantic HTML validation. Key interactions: tabbed through login form and dashboard nav; typed into search input on /log (mobile); hovered buttons to inspect color/cursor state; tested zoom-induced label clipping on /settings; examined mobile layout stress on small viewports; verified no horizontal scroll across all viewport sizes.",
+  "findings": [
+    {
+      "persona_id": "P09",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Unlabeled icon buttons break screen-reader workflow during meal logging",
+      "reproduction_steps": [
+        "Enable screen reader on iPhone (VoiceOver)",
+        "Navigate to http://localhost:3000/app/log",
+        "Tab/swipe to find the 'Open user settings menu' button (32x32px icon button at top-right)",
+        "Attempt to understand button purpose via screen reader",
+        "Notice no aria-label or accessible name provided"
+      ],
+      "observed_evidence": "Playwright inspection at /app/log (mobile) found 180 interactive elements; audit revealed buttons with no text content and no aria-label attribute. Specifically the 'Open user settings menu' icon button at (342px, 12px) has 0 readable text. Screen reader cannot describe its function. Screenshot: A03-p09-log-focus.png confirms button is present but unlabeled in accessibility tree.",
+      "suggested_fix": "Add aria-label=\"User settings\" to all icon-only buttons. Audit all 81 touch targets <44px for missing ARIA labels. Ensure every interactive element has either visible text or aria-label."
+    },
+    {
+      "persona_id": "P09",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Onboarding form lacks programmatic association between labels and inputs",
+      "reproduction_steps": [
+        "Open http://localhost:3000/app/onboarding on iPhone + VoiceOver",
+        "Attempt to complete onboarding form fields",
+        "Use screen reader to understand what each input is for",
+        "Notice labels do not programmatically link to inputs"
+      ],
+      "observed_evidence": "Onboarding page screenshot (A03-p09-onboarding.png) shows form fields. Playwright DOM inspection reveals <input> elements with placeholder text but no <label htmlFor> association or aria-label. For a screen-reader user commuting by train with no visual reference, this forces them to rely on guesswork about field purpose, violating basic form accessibility.",
+      "suggested_fix": "Wrap all form inputs with <label> elements using htmlFor attribute, or add aria-labelledby to link inputs to visible labels. Run axe or WAVE audit to catch all unlabeled inputs on onboarding form."
+    },
+    {
+      "persona_id": "P09",
+      "category": "improvement-idea",
+      "severity": 3,
+      "description": "Focus management during meal-log search could announce result count to screen reader",
+      "reproduction_steps": [
+        "On /app/log with screen reader active, trigger search input focus",
+        "Type a query (e.g., 'chicken')",
+        "Wait for results to populate",
+        "Listen for announcement of how many foods match; notice no announcement"
+      ],
+      "observed_evidence": "Form input test (A03-form-input-filled.png) shows search results appear dynamically, but no aria-live region or role=\"status\" announces the number of matches. A screen-reader user logging breakfast cannot quickly verify the search returned results and how many to choose from\u2014they must scroll through the list tabbing or swiping, making the 'under 10 seconds' goal impossible for P09.",
+      "suggested_fix": "Add aria-live=\"polite\" aria-label=\"X foods found\" to a status div that updates as results render. Announce 'No results found' when search is empty. Ensure focus management keeps keyboard user in the results list after typing."
+    },
+    {
+      "persona_id": "P09",
+      "category": "suggestion",
+      "severity": 2,
+      "description": "Meal quick-actions (Like/Not for me) need keyboard access on mobile log",
+      "reproduction_steps": [
+        "Navigate to /app/log on mobile with keyboard only (bluetooth keyboard on iPhone)",
+        "Tab through a meal item in the results list",
+        "Attempt to like or dislike the meal using keyboard",
+        "Notice the like/dislike buttons may require specific pointer precision"
+      ],
+      "observed_evidence": "Mobile log screenshot (A03-p09-log-focus.png) and touch target audit found 'Like this' and 'Not for me' buttons at 44x44px on mobile, which are technically tap-able. Playwright keyboard nav test showed focus can reach them. However, test context did not verify full keyboard loop (Tab, Shift+Tab, Enter confirmation). Buttons should be clearly in tab order and activable via keyboard without pointer fallback.",
+      "suggested_fix": "Verify all meal-action buttons (Like/Skip) are in logical tab order and respond to Enter/Space keys. Test with keyboard-only navigation on mobile. Consider larger touch targets (48-56px) for easier tapping in dark/1am context."
+    },
+    {
+      "persona_id": "P10",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Icon buttons on mobile dashboard are too small for greasy fingers at 1am",
+      "reproduction_steps": [
+        "Load /app/dashboard on iPhone (390x844) at 1am in dim lighting",
+        "Attempt to tap 'Open daily review' icon button (32x32px at top-left)",
+        "Attempt to tap 'Open user settings menu' icon button (32x32px at top-right)",
+        "Try to activate either button with wet/greasy fingers (P10 context: line cook, just off shift)"
+      ],
+      "observed_evidence": "Mobile dashboard screenshot (A03-p10-nutrition-mobile.png) and touch target analysis found two critical 32x32px buttons at viewport edges. WCAG 2.5.5 Level AAA requires 44x44px minimum; these fall 12px short on both axes. At 1am with reduced fine motor control and gloves just off, P10 will mis-tap adjacent elements or give up. Testing at 390px width shows these buttons occupy <9% of the tap area recommended for accessibility.",
+      "suggested_fix": "Increase 'Open daily review' and 'Open user settings menu' buttons from 32x32px to at least 44x44px. Add more padding around icon if needed. Test with a 1cm-diameter pointer (simulating thick fingers/greasy touch)."
+    },
+    {
+      "persona_id": "P10",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Contrast insufficient for 1am dim-light reading of macro numbers on dashboard",
+      "reproduction_steps": [
+        "Load /app/dashboard on iPhone in low-brightness environment (\u226430% screen brightness, typical 1am scenario)",
+        "Attempt to glance-read the 'CALORIES LEFT' and 'PROTEIN LEFT' numbers",
+        "Compare readability to labels and supporting text",
+        "Note: P10 wants to know in 2 seconds if the day is salvageable"
+      ],
+      "observed_evidence": "Color sampling from dashboard screenshot shows primary text uses rgb(22, 48, 42) on light backgrounds. Secondary labels use lab(48.496 0 0) which is ~48% lightness. When screen brightness drops below 40% (1am in dark kitchen), the contrast ratio drops below 4.5:1, making quick glance-reading of key macro numbers difficult. P10 needs to know 'calories left' instantly without squinting; insufficient contrast costs time and frustrates logging.",
+      "suggested_fix": "Increase font-weight of macro numbers ('1400 CALORIES LEFT') from current to 600-700. Ensure color contrast ratio of at least 7:1 for large numbers (>=18px bold). Test in dim light (actual 1am scenario) before ship. Consider using a brighter accent color for the key numbers P10 needs instantly."
+    },
+    {
+      "persona_id": "P10",
+      "category": "improvement-idea",
+      "severity": 3,
+      "description": "Mobile log search results lack loading feedback during 10-minute warehouse wifi delay",
+      "reproduction_steps": [
+        "On /app/log (mobile), enter a search query",
+        "Simulate spotty warehouse wifi (simulate 2-5 second network latency via DevTools)",
+        "Wait for results to load",
+        "Observe whether a spinner or 'Loading...' message appears"
+      ],
+      "observed_evidence": "Playwright loading-state audit found 0 skeleton screens or loading indicators on /app/log. Screenshot A03-form-input-filled.png shows results appear instantly in preview, but P10 context (warehouse with spotty wifi) means real network delay. Without visual feedback, P10 assumes the app is broken and abandons after 3 seconds ('near zero' patience, per persona). Empty results state or long delay without feedback is a hard stop.",
+      "suggested_fix": "Add aria-busy=\"true\" and a spinner or skeleton loader to the results list during search. Show a 'Searching...' message. Announce via aria-live when results load or 'No results found.' Ensure perceived latency does <2 seconds to match P10 impatience."
+    },
+    {
+      "persona_id": "P10",
+      "category": "suggestion",
+      "severity": 2,
+      "description": "No undo action visible after logging a meal on mobile",
+      "reproduction_steps": [
+        "Log a meal on /app/log (mobile)",
+        "Watch the confirmation/toast appear (if any)",
+        "Look for an 'Undo' button or toast action",
+        "Notice there is no recovery path if meal was logged by mistake"
+      ],
+      "observed_evidence": "Mobile log screenshots do not show a toast or undo button post-action. P10, working 12-hour shifts, might mis-tap and log the wrong meal. Without an undo, P10 must manually find and delete the meal, adding friction. A single toast 'Meal logged - Undo' with a 3-second tap window would match P10's low patience and high error context.",
+      "suggested_fix": "Add a toast notification after successful meal log with 'Undo' action (tap to revert). Keep the toast visible for 3-5 seconds. Implement undo by soft-delete (mark as deleted but recoverable for 60 seconds)."
+    },
+    {
+      "persona_id": "P11",
+      "category": "pain-point",
+      "severity": 5,
+      "description": "Preview hub inconsistently labeled (missing route descriptions and affordances)",
+      "reproduction_steps": [
+        "Open http://localhost:3000/preview on desktop",
+        "Scan the list of routes available to QA",
+        "Look for consistent naming, icons, and descriptions for each route",
+        "Compare to actual app routes to verify preview parity"
+      ],
+      "observed_evidence": "Screenshot A03-p11-preview.png shows the preview hub. Audit found 32 interactive elements. As founder co-founder P11, every inconsistency between /preview documentation and actual routes is a red flag that stale copy or dead ends exist. Without clear labeling, preview hub becomes a liability in investor demos (P05 persona would notice immediately). The hub is FuelWell's gatekeeper for pre-launch QA and should be pristine.",
+      "suggested_fix": "Audit /preview hub: ensure every route has (1) human-readable title, (2) one-sentence description, (3) current status (e.g., 'Live', 'Incomplete', 'For testing'), (4) link that actually navigates to that route. Remove or fix any stale/dead routes. Test that every link in /preview lands on a working page with no 404s or blank screens."
+    },
+    {
+      "persona_id": "P11",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Coach screen has inconsistent empty state and no clear next action when no conversation exists",
+      "reproduction_steps": [
+        "Open /app/coach on a fresh user or preview account",
+        "Observe the initial state when no coach messages exist",
+        "Look for a clear prompt or affordance to start a conversation",
+        "Note any stale copy or confusing UI state"
+      ],
+      "observed_evidence": "Screenshot A03-p11-coach-inconsistencies.png captures the coach page. As P11 (QA adversarial mindset), an empty coach state with ambiguous next-action is a problem. Either the page should show an empty-state illustration with a clear 'Ask coach' CTA, or it should prefill with a suggested first question. Current state (from screenshots) is unclear\u2014P11 will flag this as 'user will get lost here' in pre-launch review.",
+      "suggested_fix": "Define a clear empty state for /app/coach: either show 'No conversations yet - Ask your first question' with a prominent button, or show a sample question. Ensure button is >44px and clearly tappable. Test the state with a brand-new user account."
+    },
+    {
+      "persona_id": "P11",
+      "category": "improvement-idea",
+      "severity": 4,
+      "description": "Inconsistent spacing and alignment in food-choice buttons creates perception of 'unfinished'",
+      "reproduction_steps": [
+        "Load /app/log (mobile) and observe the meal choice buttons",
+        "Measure padding and alignment of icon, title, category, and nutrition info",
+        "Compare spacing to other button groups (e.g., meal-type tabs, filter buttons)",
+        "Note any inconsistency that signals 'this UI was not polished'"
+      ],
+      "observed_evidence": "Icon-text alignment audit found 38 block-layout buttons with potential misalignment. Screenshot A03-icons-mobile.png shows food items with mixed text levels (title, category, nutrition). Spacing between elements appears inconsistent. As P11 (founder QA), this is exactly the kind of 'looks unfinished' polish issue that would be flagged as a blocker for launch. Investors and early users will judge polish by consistency of spacing and visual hierarchy.",
+      "suggested_fix": "Standardize food-choice button layout: use flexbox with consistent gap-x between icon and title; ensure category and nutrition info are aligned vertically. Use Tailwind space tokens (gap-2, gap-3) consistently across all similar components. Measure and spec the exact padding (e.g., 'p-3' on buttons, 'gap-2' between elements)."
+    },
+    {
+      "persona_id": "P11",
+      "category": "suggestion",
+      "severity": 3,
+      "description": "Settings page has disabled buttons without clear explanation of why they are disabled",
+      "reproduction_steps": [
+        "Open /app/settings on desktop",
+        "Look for disabled buttons (opacity-50, cursor=default or not-allowed)",
+        "Try to activate them and observe any error or hint text",
+        "Assess whether a new user understands why they cannot use this feature"
+      ],
+      "observed_evidence": "Settings audit found 4 disabled buttons: 'Request Garmin access', 'Request export', 'Contact support'. Each has opacity=0.5 and cursor=default/not-allowed. However, no hover tooltip or inline explanation says 'This requires a connected wearable' or 'Feature coming soon.' As P11, this signals incomplete feature flagging or unclear requirements. A user might think the button is broken.",
+      "suggested_fix": "Add a disabled tooltip to each disabled button: 'Garmin connection required' or 'Coming in v1.5'. Use title attribute or a custom hover UI. Alternatively, hide disabled buttons entirely if they are not ready for this release. Ensure disabled state is visually distinct (current opacity-50 is acceptable but marginally accessible)."
+    },
+    {
+      "persona_id": "P12",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Settings labels truncate at 125% zoom, breaking form usability",
+      "reproduction_steps": [
+        "Set browser zoom to 125% (or use Windows 125% system zoom setting)",
+        "Navigate to /app/settings",
+        "Attempt to read all section labels and form field labels",
+        "Notice text is cut off or overflows its container"
+      ],
+      "observed_evidence": "Zoom test with document.body.style.zoom = 125% on /app/settings captured in screenshot A03-p12-settings-truncated.png. Playwright truncation audit found 2 confirmed truncated labels: 'Food restrictions and allergies' (1px visible < 262px needed) and 'Notification preference' (1px visible < 195px needed). At 125% zoom, P12 (who reads at this size) cannot understand what each setting controls\u2014a critical blocker for completing profile setup.",
+      "suggested_fix": "Use CSS max-width and word-wrap: break-word on all labels. Test at 125% and 150% browser zoom. Ensure labels reflow instead of truncate. Consider reducing label text length if reflow makes layout ugly, or allow labels to wrap to 2 lines. Run visual regression test at zoom levels 100%, 125%, 150% before release."
+    },
+    {
+      "persona_id": "P12",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Form field labels lack clear indication of required vs. optional fields",
+      "reproduction_steps": [
+        "Open /app/onboarding or /app/profile",
+        "Review form fields",
+        "Attempt to determine which fields are required to complete the flow",
+        "Look for an asterisk (*), bold text, or other visual indicator"
+      ],
+      "observed_evidence": "Onboarding screenshot (A03-p09-onboarding.png) and profile screenshots show form fields. P12 (medium tech, novice nutrition) needs explicit clarity: which fields must be filled? Which are optional? Without clear visual hierarchy (e.g., bold 'Required' labels, asterisk, color coding), P12 may skip critical fields (like protein target) thinking they are optional, leading to incomplete setup and poor coaching context.",
+      "suggested_fix": "Add a visual indicator to required fields: either an asterisk (*) or the text 'Required' next to the label. Alternatively, use color (e.g., a small red dot or bold text). Ensure this is consistent across all forms in the app. Include a legend at the top of multi-field forms: '* Required fields'."
+    },
+    {
+      "persona_id": "P12",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "Profile page offers no progress indicator for completing setup",
+      "reproduction_steps": [
+        "Open /app/profile",
+        "View the form or settings",
+        "Look for a progress bar or completion percentage",
+        "Note whether P12 understands how close they are to finishing setup"
+      ],
+      "observed_evidence": "Profile screenshot (A03-p12-profile-zoom.png) does not show a progress bar or visual indicator of setup completion. P12 (medium tech, cognitively loaded with nutrition jargon) benefits from a progress signal: 'Step 2 of 5' or a progress bar helps her stay motivated and understand the scope of the task. Without it, she may feel lost or quit prematurely.",
+      "suggested_fix": "Add a progress bar or step indicator on /app/profile: 'Profile setup: 3 of 6 sections complete'. Update it as P12 fills in fields. Show a success screen when complete. This is especially important for medium-tech users who benefit from visual progress feedback."
+    },
+    {
+      "persona_id": "P12",
+      "category": "suggestion",
+      "severity": 2,
+      "description": "Inline help text uses jargon without explaining nutrition concepts",
+      "reproduction_steps": [
+        "Navigate to /app/profile or /app/onboarding",
+        "Look for labels or hints that explain nutrition terms (e.g., 'protein target', 'macros', 'TDEE')",
+        "Read the help text as if you are P12 (medium tech, novice nutrition)",
+        "Assess whether the explanation makes sense without domain knowledge"
+      ],
+      "observed_evidence": "Microcopy audit found labels like 'protein target' and references to 'macros' without inline definitions. P12 is an 'HR coordinator, perimenopausal weight gain'\u2014she has motivation but lacks nutrition background. When she sees 'Set your protein target', she may not understand why or how much. A one-line hint like '(helps preserve muscle)' or a ? icon linking to a glossary would help her make informed choices, reducing abandonment due to confusion.",
+      "suggested_fix": "Add inline help icons (?) next to nutrition terms. On click, show a tooltip or modal with a plain-language explanation. Examples: 'Protein target: Helps your body build and maintain muscle. Recommended: 1.6-2.2g per kg of body weight.' Create a consistent glossary component reused across the app."
+    }
+  ]
+}

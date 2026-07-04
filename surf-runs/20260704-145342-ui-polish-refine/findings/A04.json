@@ -1,0 +1,308 @@
+{
+  "agent_id": "A04",
+  "persona_set": "S04",
+  "app_exercised": "Exercised FuelWell across 6+ app routes on mobile (390x844) and desktop viewports: visited /app/dashboard, /app/coach, /app/log, /app/daily-review, /app/progress, /app/onboarding, and /app/settings. Tested interactive elements including food search, button clicks, keyboard navigation (Tab), form inputs, touch target sizing, focus visibility, color/contrast, animations with prefers-reduced-motion enabled, and number format consistency. Captured screenshots of dashboard (mobile/desktop), coach chat, log form, progress trends, daily review, and form elements to examine visual polish, spacing, typography, component state consistency, and accessibility affordances.",
+  "findings": [
+    {
+      "persona_id": "P13",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Food selection buttons are 40x40px, below the 44px WCAG minimum touch target. P13 has limited fine motor precision in thumbs and will struggle to reliably tap these controls in a gym locker room environment.",
+      "reproduction_steps": [
+        "Navigate to http://localhost:3000/app/log on mobile (390x844)",
+        "Observe the list of food options (e.g., Chicken breast, grilled)",
+        "Look for small circular buttons labeled 'Choose [food]' on each item",
+        "Measure button dimensions\u2014they are 40x40px"
+      ],
+      "observed_evidence": "Playwright element inspection revealed 61 interactive elements smaller than 44x44px on the log form. Specifically, the 'Choose [food]' icon buttons are 40x40px. Screenshot saved to A04-log-mobile-full.png shows the log form with undersized buttons.",
+      "suggested_fix": "Increase all touch target buttons to minimum 44x44px (prefer 48x48px). Update the 'Choose' buttons, user settings menu buttons (currently 32x32px), and other small circular action buttons throughout the app."
+    },
+    {
+      "persona_id": "P13",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Top-left user settings menu button is only 32x32px, below WCAG minimum. This is a primary navigation control that P13 will tap frequently.",
+      "reproduction_steps": [
+        "Navigate to /app/dashboard on mobile",
+        "Look for the user profile button in the top-right or top-left corner",
+        "Attempt to tap it; note the button is 32x32px"
+      ],
+      "observed_evidence": "Element inspection shows button[32x32] 'Open user settings menu' in the header. This undersized control is an accessibility issue for anyone with limited hand dexterity. Screenshot A04-dashboard-mobile.png shows the header area.",
+      "suggested_fix": "Increase to 44x44px or larger. Relocate or provide an alternative, larger tap target for account/settings access."
+    },
+    {
+      "persona_id": "P13",
+      "category": "improvement-idea",
+      "severity": 3,
+      "description": "Activity framing in the dashboard uses generic 'steps' language. P13 is a wheelchair rugby player with a non-standard energy profile; the app should offer activity-type customization beyond generic step counting.",
+      "reproduction_steps": [
+        "Navigate to /app/dashboard",
+        "Observe the 'No wearable connected' text under Activity",
+        "Look for any settings or options to log custom activity types"
+      ],
+      "observed_evidence": "Activity section on dashboard shows placeholder 'No wearable connected' with no visible option to manually log sport-specific activities like wheelchair rugby. The onboarding flow may offer customization, but the default presentation assumes step-based tracking.",
+      "suggested_fix": "Add a UI affordance to manually enter custom activity types (e.g., wheelchair rugby, swimming, cycling) with estimated energy burn. This aligns with the app's stated goal to personalize for adaptive athletes."
+    },
+    {
+      "persona_id": "P13",
+      "category": "suggestion",
+      "severity": 2,
+      "description": "The macro ring (protein, carbs, fat breakdown) uses only color to distinguish macros without text labels or icons. P13 has normal vision but may benefit from redundant coding (icons + color) for faster glanceability in the gym.",
+      "reproduction_steps": [
+        "Navigate to /app/dashboard",
+        "Look at the macro breakdown on 'Today's plate'",
+        "Attempt to identify protein vs carb vs fat segments by color alone"
+      ],
+      "observed_evidence": "SVG analysis revealed macro ring uses colors rgb(17, 117, 88), rgb(21, 145, 108), and rgb(199, 79, 51). No visible text labels or icons annotate the segments in the screenshot A04-dashboard-mobile.png.",
+      "suggested_fix": "Add subtle text labels or icons (protein icon, carb icon, fat icon) within or adjacent to each macro ring segment for multi-modal clarity."
+    },
+    {
+      "persona_id": "P13",
+      "category": "suggestion",
+      "severity": 2,
+      "description": "Inconsistent button padding reduces visual hierarchy clarity. Some buttons have padding: 0px (circular icons) while others have visible padding (text buttons), creating uneven visual rhythm.",
+      "reproduction_steps": [
+        "Open dashboard and log form side-by-side",
+        "Compare button padding/spacing across different button types",
+        "Note padding is 0px on some circular icon buttons but visible on text buttons"
+      ],
+      "observed_evidence": "Computed style inspection showed buttons with padding: 0px and others with visible padding. Tailwind theme tokens should enforce consistent spacing ratios. This affects visual consistency across the app.",
+      "suggested_fix": "Audit all button components and apply consistent padding classes from the Tailwind/FuelWell design system (e.g., p-2, p-3, p-4). Ensure spacing ladder is applied uniformly for predictability."
+    },
+    {
+      "persona_id": "P14",
+      "category": "pain-point",
+      "severity": 5,
+      "description": "Coach interface requires multiple steps to get an answer in a 90-second window. P14 (busy attorney) needs to ask a quick question and get an answer without navigation friction or waiting.",
+      "reproduction_steps": [
+        "Navigate to /app/coach on mobile",
+        "Observe the 'TRY ASKING' section with 5 preset question buttons",
+        "Click 'Suggest a meal with 102g protein left'",
+        "Wait for coach to respond and observe latency and UI readiness for the answer"
+      ],
+      "observed_evidence": "Coach page loads with 5 quick-action buttons (316x48px, good size), but the message input field is not autofocused. After clicking a preset, the UX flow requires waiting for coach response, scrolling to see full answer, and then deciding on action. Screenshot A04-coach-initial.png shows the initial state without immediate action path.",
+      "suggested_fix": "Autofocus the message input when page loads OR pre-fill with a quick-answer button tap that immediately sends the request. Add perceived-performance indicator (spinner/skeleton) while coach processes. Reduce time-to-first-response."
+    },
+    {
+      "persona_id": "P14",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Coach doesn't surface allergen checks in responses. P14 has a shellfish allergy and needs to verify safety before ordering at a client dinner, but the coach response may not highlight allergen status.",
+      "reproduction_steps": [
+        "Go to /app/coach",
+        "Ask 'What should I order at a seafood restaurant?' without explicitly mentioning shellfish allergy",
+        "Check whether the response includes allergen confirmation or warning badge"
+      ],
+      "observed_evidence": "Preview coach context shows the coach can handle allergies (onboarding includes allergy fields), but there is no visible allergen-confirmation step or warning badge in quick response cards. Settings shows 'Food restrictions' field, but integration is unclear.",
+      "suggested_fix": "Display a prominent allergen confirmation badge or check mark in coach responses when an allergy is relevant. Example: '\u2713 Shellfish-free' as part of the meal suggestion. Place it above the meal name, not buried in description."
+    },
+    {
+      "persona_id": "P14",
+      "category": "suggestion",
+      "severity": 3,
+      "description": "No summary or 'TL;DR' option in coach responses. For a time-starved user, the coach might provide detailed explanations when a one-liner would suffice.",
+      "reproduction_steps": [
+        "Navigate to /app/coach",
+        "Look for a 'Brief answer' vs 'Detailed' toggle or summary line",
+        "Check if coach responses include an executive summary"
+      ],
+      "observed_evidence": "Coach response examples in the app show detailed multi-line responses with nested lists, formulas, and explanations. No visible 'summarize this' or 'brief mode' toggle exists. For a 90-second decision window, brevity is critical.",
+      "suggested_fix": "Add a chat setting or response-format option: 'Give me the answer in one line' or 'Skip the explanation.' Alternatively, lead each response with a bold, scannable TL;DR line."
+    },
+    {
+      "persona_id": "P15",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Form validation feedback is missing or delayed. P15 (QA contractor testing edge cases) enters very long food names and emoji but gets no validation error, character limit, or feedback.",
+      "reproduction_steps": [
+        "Navigate to /app/log and search field",
+        "Type a very long food name with emoji: 'Very Long Food Name That Should Wrap But I Want To Test If It Breaks The Layout \ud83d\ude00\ud83c\udf89'",
+        "Observe whether validation feedback appears (error message, red border, character count)"
+      ],
+      "observed_evidence": "Playwright test accepted long input with emoji silently. No validation error appeared, no character count shown, no limit enforced. Screenshot A04-log-long-input.png shows the form after long input without any feedback.",
+      "suggested_fix": "Add client-side validation with visible feedback: show character limits, red error states, or character-count hint text. Example: 'Search up to 50 characters' below the input or inline validation on blur."
+    },
+    {
+      "persona_id": "P15",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "Keyboard navigation order on forms may not follow visual reading order. P15 expects Tab to move focus in left-to-right, top-to-bottom sequence for quick testing.",
+      "reproduction_steps": [
+        "Navigate to /app/settings on desktop",
+        "Press Tab repeatedly and track focus order",
+        "Compare to visual page layout (top-to-bottom, left-to-right)"
+      ],
+      "observed_evidence": "Settings page has many form controls. Element inspection showed many nav items with 0x0 dimensions, suggesting overflow/hidden elements that may confuse tab order. Comprehensive tab-order audit was not completed, but presence of zero-dimension links suggests potential issues.",
+      "suggested_fix": "Audit tab order on all pages with forms. Use browser DevTools to trace Tab key path. Ensure tabindex is not used or is sequential. Test with keyboard-only navigation to verify no critical controls are skipped."
+    },
+    {
+      "persona_id": "P15",
+      "category": "suggestion",
+      "severity": 2,
+      "description": "Focus ring visibility is adequate (2px solid outline) but could be enhanced in high-glare environments where P15 might test the app outdoors.",
+      "reproduction_steps": [
+        "Navigate to /app/dashboard",
+        "Press Tab to focus an element",
+        "Observe the focus outline color (oklab color model)",
+        "Test visibility in bright sunlight or high-brightness environment"
+      ],
+      "observed_evidence": "Focus ring computed style: outline: oklab(0.669282 -0.127436 0.029258 / 0.5) solid 2px. While visible in normal lighting, the oklab color space may not provide maximum contrast in high-brightness conditions. Screenshot A04-dashboard-focus.png shows the focused element.",
+      "suggested_fix": "Consider using RGB values for higher certainty of contrast (e.g., rgb(0, 102, 204) or rgb(255, 102, 0)) or add a subtle background highlight behind focused elements. Verify 3:1 contrast ratio against the background."
+    },
+    {
+      "persona_id": "P15",
+      "category": "suggestion",
+      "severity": 1,
+      "description": "Component state documentation is unclear. When P15 tests edge cases (zero items, 99999 calorie entries), the UI should have clear empty/loading/error states, but state consistency across components is not documented.",
+      "reproduction_steps": [
+        "Test empty state: log zero meals for a day",
+        "Test large number: enter 99999 calories for a meal",
+        "Test missing data: remove a profile picture",
+        "Check whether empty/error/loading states are consistent across the app"
+      ],
+      "observed_evidence": "Screenshots show normal states (data-loaded) but empty/error/loading states were not explicitly tested. The app may have inconsistent messaging, missing spinners, or unclear error states when data is missing or invalid.",
+      "suggested_fix": "Create a living style guide documenting component states: empty, loading, error, success, disabled. Apply consistently across log, search, coach, and all data-driven surfaces."
+    },
+    {
+      "persona_id": "P16",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Number formatting is inconsistent ('850kcal' vs '400 kcal'). P16 (nurse with tired eyes, dim break room) needs glanceable, unambiguous numbers to spot energy patterns without squinting.",
+      "reproduction_steps": [
+        "Navigate to /app/daily-review on mobile",
+        "Scan the 'Today's whole picture' section",
+        "Look for calorie and protein values and note spacing inconsistency"
+      ],
+      "observed_evidence": "Regex search of daily-review HTML found: ['850kcal', '400 kcal', '483kcal'] showing inconsistent spacing. Some show 'NNNN kcal' (no space) and others 'NNNN kcal' (with space). This inconsistency reduces scanning speed and creates cognitive load.",
+      "suggested_fix": "Standardize number formatting app-wide. Choose one pattern (recommend 'NNNN kcal' with space for readability) and apply via a reusable number formatter utility. Update all templates and coach responses to match."
+    },
+    {
+      "persona_id": "P16",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Progress chart labels and axes are too small for tired eyes in low-light conditions. P16 with presbyopia and poor lighting needs larger, high-contrast axis text.",
+      "reproduction_steps": [
+        "Navigate to /app/progress on mobile",
+        "Look at the calorie bar chart (Mon/Tue/Wed labels)",
+        "Try to read values and day labels in a dim room without glasses"
+      ],
+      "observed_evidence": "Progress chart text color is rgb(22, 48, 42) (dark teal) on white, which has good contrast, but font size appears small (~12px or less). In low-light conditions, small text is harder to read even with good contrast. Screenshot A04-progress-mobile.png shows small axis labels.",
+      "suggested_fix": "Increase font size of chart labels, axis text, and legend to at least 14-16px. Measure contrast ratio (should be 4.5:1). Consider adding a 'increase text size' option in settings that scales chart text."
+    },
+    {
+      "persona_id": "P16",
+      "category": "improvement-idea",
+      "severity": 4,
+      "description": "Daily review page shows data but doesn't explain energy crash patterns. P16's goal is to 'spot why energy crashes mid-shift,' but the layout is passive; no flags, narratives, or coaching cues highlight patterns.",
+      "reproduction_steps": [
+        "Navigate to /app/daily-review",
+        "Look for annotations, red flags, or narrative explanations of energy dips",
+        "Check for coach insights like 'Your energy dropped after lunch\u2014consider a snack'"
+      ],
+      "observed_evidence": "Daily review shows static metrics: 'Food in' (38%), 'Active burn' (97%), 'Net calories' (367), 'Protein' (73g). These are presented as numbers without narrative context. No red flags, color coding, or coaching prompt explains why P16's energy might crash. Screenshot shows static layout.",
+      "suggested_fix": "Add a narrative summary section or smart flags. Examples: 'Energy dip detected: Lunch was 300 kcal below plan. A 2pm snack (200 kcal) may restore afternoon focus.' Include a quick 'Ask coach' button to explain the pattern."
+    },
+    {
+      "persona_id": "P16",
+      "category": "pain-point",
+      "severity": 2,
+      "description": "Onboarding field labels lack descriptive help text. P16 (low-medium tech, tired, cognitively loaded during shift) may not understand jargon like 'steady cut' or 'active level' without explanation.",
+      "reproduction_steps": [
+        "Navigate to /app/onboarding",
+        "Look at form fields in step 1",
+        "Check for labels, help text, tooltips, or explanations"
+      ],
+      "observed_evidence": "Element inspection found 0 labels in the onboarding page. Form appears to use buttons/radio groups instead of traditional inputs. Without descriptive text (e.g., 'Steady cut = lose 0.5 lbs/week'), users may feel confused. Screenshot A04-onboarding-step1.png shows minimal guidance.",
+      "suggested_fix": "Add descriptive help text beneath or next to form fields. Example: 'Steady cut: Lose ~0.5 lbs per week (sustainable, gradual approach)' instead of just 'Steady cut.' Keep help text concise but specific."
+    },
+    {
+      "persona_id": "P16",
+      "category": "suggestion",
+      "severity": 2,
+      "description": "Navigation items are hidden off-screen (0x0 dimensions) on mobile, suggesting responsive design issues or improper overflow handling. This creates confusion about what sections are available.",
+      "reproduction_steps": [
+        "Open app on mobile",
+        "Inspect sidebar or main nav",
+        "Check element dimensions for nav links (Dashboard, Log, Coach, etc.)",
+        "Verify all nav items have visible dimensions and labels"
+      ],
+      "observed_evidence": "Element inspection on mobile showed links like 'Dashboard' [0x0], 'Daily Review' [0x0], suggesting items are hidden via CSS display:none or positioned off-screen. This hides controls without an accessible collapse/expand alternative.",
+      "suggested_fix": "Ensure all interactive elements have visible dimensions on target viewports. If mobile requires a collapsed menu, add a visible hamburger icon and verify the expanded menu is keyboard-accessible and doesn't trap focus."
+    },
+    {
+      "persona_id": "P16",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "Dark mode compliance is untested. If P16 uses dark mode during night shifts, the app must respect prefers-color-scheme and apply consistent dark styling without flashes or unreadable text.",
+      "reproduction_steps": [
+        "Enable system dark mode on mobile",
+        "Open /app/dashboard, /app/daily-review, and /app/coach",
+        "Check for white flashes, text contrast issues, or unreadable components"
+      ],
+      "observed_evidence": "Dark mode was not tested in this session. Reduced-motion test confirmed system preferences are respected, suggesting dark mode should also be honored. However, visual verification of dark-mode styling is missing.",
+      "suggested_fix": "Audit dark mode CSS. Verify all backgrounds, text, and components have dark-mode equivalents. Test with prefers-color-scheme: dark media query enabled. Ensure no white flashes, ghosts, or unreadable text appear."
+    },
+    {
+      "persona_id": "P16",
+      "category": "suggestion",
+      "severity": 1,
+      "description": "Spacing rhythm is inconsistent. Some sections have generous padding while others feel cramped. P16 scanning quickly needs predictable, spacious layout to parse information at a glance.",
+      "reproduction_steps": [
+        "Navigate to /app/dashboard and /app/daily-review",
+        "Compare padding/margins around major sections (Today's picture, Energy ledger, etc.)",
+        "Look for consistent vertical rhythm"
+      ],
+      "observed_evidence": "Visual inspection of screenshots shows some sections (macro ring card) have generous padding while others (text labels) appear tighter. Tailwind spacing classes should be enforced consistently (e.g., always use gap-4 between sections, p-4 for card padding).",
+      "suggested_fix": "Define a spacing scale (4px, 8px, 12px, 16px, 24px) and apply consistently via Tailwind spacing utilities. Update all components to use named spacing classes, not custom pixel values."
+    },
+    {
+      "persona_id": "P14",
+      "category": "improvement-idea",
+      "severity": 4,
+      "description": "Allergy indicator not visible in coach UI when allergies are set in profile",
+      "reproduction_steps": [
+        "1. Navigate to http://localhost:3000/app/settings on mobile (375x812 viewport)",
+        "2. Verify shellfish allergy field exists and is populated",
+        "3. Navigate to http://localhost:3000/app/coach",
+        "4. Examine the chat interface for any allergy or dietary restriction badge",
+        "5. Observe Message Coach input field (246x48) and surrounding UI"
+      ],
+      "observed_evidence": "Coach page HTML structure shows no allergy/dietary restriction badge or visual indicator anywhere on the page. Settings page confirms the allergy field exists and can be set. The input field shows generic placeholder text 'Message Coach' with no context about shellfish allergy. Page status 200, no console errors. For P14 in a 90-second taxi ride with an urgent allergy-aware question, lack of allergy visibility means either: (a) trusting the coach silently knows the allergy from profile data, or (b) having to mention it again in the question, wasting critical seconds.",
+      "suggested_fix": "Display user allergies and dietary restrictions as a visible badge above the chat input or in the coach page header. Use a warning color (amber/red) and clear text: '\u26a0\ufe0f Shellfish allergy active' or a red pill showing the allergen name. This provides instant confirmation that the coach has been informed and prevents accidental suggestions of unsafe foods.",
+      "supplemental": true
+    },
+    {
+      "persona_id": "P14",
+      "category": "improvement-idea",
+      "severity": 3,
+      "description": "Quick-ask buttons are generic and don't match P14's urgent restaurant/allergy use case",
+      "reproduction_steps": [
+        "1. Navigate to http://localhost:3000/app/coach on mobile viewport",
+        "2. Examine all 5 quick-action buttons below 'New chat' button",
+        "3. Read the text of each button: 'What should I do right now?', 'Suggest a meal with 102g protein left', 'Give me my daily recap', 'Analyze a menu or food photo', 'Plan a workout for today'",
+        "4. Determine if any button matches P14's goal (allergy-safe restaurant ordering)",
+        "5. Confirm user must type question into input field instead of clicking a button"
+      ],
+      "observed_evidence": "Coach page displays 5 quick-action buttons (each 316x48 px): (1) What should I do right now? (2) Suggest a meal with 102g protein left (3) Give me my daily recap (4) Analyze a menu or food photo (5) Plan a workout for today. None of these buttons address P14's stated goal of asking what to order at a client dinner with a shellfish allergy. For a busy attorney with 90 seconds of patience, having to type instead of tap costs 15-30 seconds. Quick-ask buttons are a friction-reduction feature, but they are not personalized to P14's profile constraints (allergy, time-sensitivity, restaurant context).",
+      "suggested_fix": "Make the quick-ask buttons context-aware based on user profile allergies, time of day, and app activity patterns. Example: Replace button 2 with 'What can I order with my allergies?' if the user has allergies set, or 'Safe restaurant dishes for shellfish allergy' if detecting dinner-time + restaurant queries. Use time-of-day + profile restrictions + recent activity to suggest the most relevant quick question.",
+      "supplemental": true
+    },
+    {
+      "persona_id": "P14",
+      "category": "pain-point",
+      "severity": 2,
+      "description": "Send button disabled state may lack visual distinction on mobile when input is empty",
+      "reproduction_steps": [
+        "1. Open http://localhost:3000/app/coach on iPhone or mobile browser (375x812 viewport)",
+        "2. Locate Message Coach input field (246x48 px) and Send button (48x48 px) to its right",
+        "3. Without typing anything, observe the Send button's color, opacity, and appearance",
+        "4. Tap the input field to focus it and trigger mobile keyboard",
+        "5. Type a single character into the input field",
+        "6. Verify that the Send button's visual appearance changes (opacity, color, or cursor style) to indicate it is now enabled"
+      ],
+      "observed_evidence": "Coach page renders with an input field 'Message Coach' (246x48 px) and an adjacent Send button (48x48 px) marked as DISABLED in the page structure. The button size meets iOS accessibility minimum (44px) but the visual disabled state is not confirmed in static HTML output. For P14 scanning the UI in 2 seconds on a mobile device, a disabled button that is not clearly visually distinct (grayed out, reduced opacity, or otherwise obviously inactive) may be tapped anyway, or the user may not realize they need to type before sending. This adds frustration in a low-patience scenario.",
+      "suggested_fix": "Ensure the Send button has a visually distinct disabled state: (1) Reduce opacity from 100% to 50-60% when disabled, (2) Change button color from primary blue to neutral gray when disabled, or (3) Add a clear tooltip on hover that says 'Type a message to send'. Test on a real iOS device at normal speed to confirm the disabled button is obviously inactive before any text is entered, and becomes obviously active after one character is typed.",
+      "supplemental": true
+    }
+  ]
+}

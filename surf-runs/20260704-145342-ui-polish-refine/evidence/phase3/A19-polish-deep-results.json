@@ -1,0 +1,288 @@
+[
+  {
+    "button_states": {
+      "buttons": [
+        {
+          "text": "",
+          "disabled": false,
+          "color": "rgb(17, 117, 88)",
+          "bgColor": "rgb(255, 255, 255)",
+          "padding": "0px",
+          "border": "1px solid rgb(174, 226, 211)",
+          "borderRadius": "3.35544e+07px",
+          "fontSize": "16px",
+          "hasTransition": true
+        },
+        {
+          "text": "",
+          "disabled": false,
+          "color": "rgb(17, 117, 88)",
+          "bgColor": "oklab(0.999994 0.0000455678 0.0000200868 / 0.92)",
+          "padding": "0px",
+          "border": "1px solid rgb(214, 240, 232)",
+          "borderRadius": "3.35544e+07px",
+          "fontSize": "16px",
+          "hasTransition": true
+        },
+        {
+          "text": "",
+          "disabled": false,
+          "color": "rgb(17, 117, 88)",
+          "bgColor": "oklab(0.999994 0.0000455678 0.0000200868 / 0.92)",
+          "padding": "0px",
+          "border": "1px solid rgb(214, 240, 232)",
+          "borderRadius": "3.35544e+07px",
+          "fontSize": "16px",
+          "hasTransition": true
+        },
+        {
+          "text": "",
+          "disabled": false,
+          "color": "lab(27.036 0 0)",
+          "bgColor": "rgb(255, 255, 255)",
+          "padding": "0px",
+          "border": "1px solid rgb(214, 240, 232)",
+          "borderRadius": "3.35544e+07px",
+          "fontSize": "16px",
+          "hasTransition": true
+        },
+        {
+          "text": "",
+          "disabled": false,
+          "color": "lab(27.036 0 0)",
+          "bgColor": "rgb(255, 255, 255)",
+          "padding": "0px",
+          "border": "1px solid rgb(214, 240, 232)",
+          "borderRadius": "3.35544e+07px",
+          "fontSize": "16px",
+          "hasTransition": true
+        }
+      ],
+      "hoverTest": {
+        "label": "",
+        "normalBg": "rgb(255, 255, 255)",
+        "normalColor": "rgb(17, 117, 88)",
+        "hasPseudoClass": true
+      },
+      "focusTest": {
+        "label": "",
+        "outline": "oklab(0.669282 -0.127436 0.029258 / 0.5) none 0px",
+        "outlineWidth": "0px",
+        "outlineStyle": "none",
+        "boxShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0",
+        "ringSupport": "check CSS"
+      }
+    }
+  },
+  {
+    "form_quality": {
+      "inputCount": 2,
+      "inputs": [
+        {
+          "type": "email",
+          "name": "",
+          "label": "Email",
+          "placeholder": "you@example.com",
+          "required": true,
+          "hasValidation": [
+            "email"
+          ]
+        },
+        {
+          "type": "password",
+          "name": "",
+          "label": "Password",
+          "placeholder": "Min 8 characters",
+          "required": true,
+          "hasValidation": null
+        }
+      ]
+    }
+  },
+  {
+    "microcopy": {
+      "labels": [
+        "Collapse menu",
+        "Main",
+        "Resize menu",
+        "Open desktop user settings menu",
+        "FuelWell home",
+        "Open daily review",
+        "Open user settings menu",
+        "View today's plate",
+        "Search",
+        "Restaurants",
+        "Photo",
+        "Scan",
+        "Breakfast",
+        "Lunch",
+        "Dinner",
+        "Snack",
+        "Search 1,000+ foods by name",
+        "High protein",
+        "Low carb",
+        "Low fat"
+      ],
+      "hasAllCaps": [
+        "FAST",
+        "LOGGING",
+        "BREAKFAST"
+      ],
+      "hasMixedCase": 165,
+      "pluralPatterns": [
+        "Meal",
+        "Workouts",
+        "meal",
+        "meals",
+        "meal"
+      ],
+      "actionVerbs": [
+        "Log",
+        "Log",
+        "Log",
+        "Add",
+        "Remove"
+      ]
+    }
+  },
+  {
+    "empty_error_states": {
+      "hasEmptyStateImage": false,
+      "hasEmptyStateText": false,
+      "hasSkeleton": false,
+      "hasSpinner": false,
+      "emptyStateText": "not found"
+    }
+  },
+  {
+    "color_contrast": [
+      {
+        "element": "a",
+        "text": "FuelWellDaily decision system",
+        "color": "rgb(22, 48, 42)",
+        "bgColor": "rgba(0, 0, 0, 0)",
+        "hasOutlineOrBorder": false
+      },
+      {
+        "element": "p",
+        "text": "Daily decision system",
+        "color": "lab(48.496 0 0)",
+        "bgColor": "rgba(0, 0, 0, 0)",
+        "hasOutlineOrBorder": false
+      },
+      {
+        "element": "button",
+        "text": "",
+        "color": "rgb(17, 117, 88)",
+        "bgColor": "rgb(255, 255, 255)",
+        "hasOutlineOrBorder": true
+      },
+      {
+        "element": "a",
+        "text": "Dashboard",
+        "color": "rgb(255, 255, 255)",
+        "bgColor": "rgba(0, 0, 0, 0)",
+        "hasOutlineOrBorder": false
+      },
+      {
+        "element": "a",
+        "text": "Daily Review",
+        "color": "lab(34.924 0 0)",
+        "bgColor": "rgba(0, 0, 0, 0)",
+        "hasOutlineOrBorder": false
+      },
+      {
+        "element": "a",
+        "text": "Log Meal",
+        "color": "lab(34.924 0 0)",
+        "bgColor": "rgba(0, 0, 0, 0)",
+        "hasOutlineOrBorder": false
+      },
+      {
+        "element": "a",
+        "text": "Coach",
+        "color": "lab(34.924 0 0)",
+        "bgColor": "rgba(0, 0, 0, 0)",
+        "hasOutlineOrBorder": false
+      },
+      {
+        "element": "a",
+        "text": "Workouts",
+        "color": "lab(34.924 0 0)",
+        "bgColor": "rgba(0, 0, 0, 0)",
+        "hasOutlineOrBorder": false
+      },
+      {
+        "element": "a",
+        "text": "Fitness",
+        "color": "lab(34.924 0 0)",
+        "bgColor": "rgba(0, 0, 0, 0)",
+        "hasOutlineOrBorder": false
+      },
+      {
+        "element": "a",
+        "text": "Recipes",
+        "color": "lab(34.924 0 0)",
+        "bgColor": "rgba(0, 0, 0, 0)",
+        "hasOutlineOrBorder": false
+      }
+    ]
+  },
+  {
+    "responsive_overflow": {
+      "hasEllipsis": true,
+      "hScroll": false,
+      "overflowEls": [
+        {
+          "tag": "a",
+          "text": "FuelWellDaily decision system",
+          "width": 0,
+          "overflow": "visible",
+          "whiteSpace": "normal",
+          "textOverflow": "clip"
+        },
+        {
+          "tag": "p",
+          "text": "Daily decision system",
+          "width": 0,
+          "overflow": "visible",
+          "whiteSpace": "normal",
+          "textOverflow": "clip"
+        },
+        {
+          "tag": "button",
+          "text": "",
+          "width": 0,
+          "overflow": "visible",
+          "whiteSpace": "normal",
+          "textOverflow": "clip"
+        },
+        {
+          "tag": "a",
+          "text": "Dashboard",
+          "width": 0,
+          "overflow": "visible",
+          "whiteSpace": "normal",
+          "textOverflow": "clip"
+        },
+        {
+          "tag": "a",
+          "text": "Daily Review",
+          "width": 0,
+          "overflow": "visible",
+          "whiteSpace": "normal",
+          "textOverflow": "clip"
+        }
+      ]
+    },
+    "screenshot": "/Users/robert.barbieri/Developer/FuelWell/surf-runs/20260704-145342-ui-polish-refine/evidence/phase3/A19-mobile-overflow.png"
+  },
+  {
+    "reduced_motion": {
+      "animationRules": 0,
+      "reducedMotionRules": 0,
+      "hasAnimationClasses": true,
+      "animatingElements": 0
+    }
+  }
+]

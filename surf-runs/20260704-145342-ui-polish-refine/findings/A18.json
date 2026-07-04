@@ -1,0 +1,312 @@
+{
+  "agent_id": "A18",
+  "persona_set": "S18",
+  "app_exercised": "Exercised FuelWell app across 10+ routes on desktop (1440x900) and mobile (390x844) viewports: /app/log (meal logging interface, both desktop and mobile), /app/dashboard (macro summary and daily decision), /app/recipes (recipe grid with cards and filters), /app/coach (agentic coach interface), /app/meal-plan (weekly planning and day/week views), /app/settings (preferences, account, integrations), /app/workouts (workout browser and activity logging). Performed keyboard navigation (Tab through 5 elements to check focus rings), touch target measurement (44px minimum audit), mobile one-handed ergonomics testing (left-thumb reach analysis), loading-state verification (skeleton detection), and prefers-reduced-motion testing. Captured full-page screenshots at each step to document visual polish issues.",
+  "findings": [
+    {
+      "persona_id": "P69",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Missing focus ring visible on keyboard navigation through dashboard",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/app/dashboard",
+        "Press Tab 3 times to navigate through sidebar",
+        "Observe the focused element (e.g., 'Dashboard' link)"
+      ],
+      "observed_evidence": "Focused element (a.Dashboard) shows outlineWidth='0px' and boxShadow with only drop-shadow (not ring). Browser confirms focus is on element but no visible outline or ring border. Verified via DevTools: outline: oklab(...) solid 0px; boxShadow: drop-shadow only, no ring. Screenshot A18-dashboard-desktop.png confirms no visible focus indicator on any nav element.",
+      "suggested_fix": "Add Tailwind focus:ring-2 focus:ring-offset-0 focus:ring-[theme(colors.teal.500)] to all focusable elements (button, a, input, [role=button]). Or use CSS outline: 2px solid var(--color-focus, teal) on :focus-visible. Test with keyboard navigation across all routes."
+    },
+    {
+      "persona_id": "P69",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "32 touch targets below 44px minimum dimension on /app/log",
+      "reproduction_steps": [
+        "Open http://localhost:3000/app/log at 1440x900 viewport",
+        "Inspect all interactive elements: buttons, links, inputs",
+        "Measure width and height of each; count those < 44px in either dimension"
+      ],
+      "observed_evidence": "Script measurement of 80 elements on /app/log desktop reports 32 targets with minSize < 44px. Examples: collapse menu button [39x40], logo link [227x85] width OK but some nav items may be 32px or smaller. WCAG 2.1 Level AAA requires 44x44px minimum touch targets. While desktop mice are precise, these sizes fail accessibility standard and hint at mobile layout risks.",
+      "suggested_fix": "Set min-h-12 min-w-12 (48px) on all button, a, [role=button] elements. Use padding instead of oversizing to avoid layout impact. Test mobile viewports especially; 44x44px is strict but achievable. Use Tailwind: button { @apply min-h-12 min-w-12 ... }"
+    },
+    {
+      "persona_id": "P69",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Potential layout shift when meal plan data loads asynchronously",
+      "reproduction_steps": [
+        "Visit /app/meal-plan",
+        "Observe page immediately as it loads",
+        "Watch for sudden size/position changes when macro data or meal cards appear"
+      ],
+      "observed_evidence": "Meal plan page shows 'This week' section with Mon/Tue/Wed cards and 'Grocery readiness' summary. No skeleton/placeholder elements detected (0 skeleton indicators in DOM). If macros, meal items, or grocery list load after initial render, users will see layout jump (CLS - Cumulative Layout Shift). P69 (beta tester) notices janky layouts immediately.",
+      "suggested_fix": "Add skeleton loaders for: (1) Macro stat cards (1641 AVG CALS, 134g AVG PROTEIN), (2) Meal date cards (Mon/Tue/Wed with placeholder meal names), (3) Grocery readiness box. Use Tailwind animate-pulse with bg-slate-200/50. Skeleton should match final layout exactly so content swap is invisible."
+    },
+    {
+      "persona_id": "P69",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "Recipe cards may not render or lazy-load indicators missing on /app/recipes",
+      "reproduction_steps": [
+        "Visit /app/recipes on desktop",
+        "Scroll down to see recipe grid cards",
+        "Check Network tab for image loading; inspect DOM for recipe card elements"
+      ],
+      "observed_evidence": "DOM query for recipe cards returns 0 results. Page shows 'BEST FIT' section text and '612 RECIPES' count, but no card grid visible in DOM. If cards are lazily loaded below fold, users see no visual loading state (0 skeleton elements, 0 animations). Cards may render eventually but no feedback given. A test-minded user like P69 will assume broken layout.",
+      "suggested_fix": "If recipes are rendered server-side, ensure cards appear in initial HTML. If lazy-loaded: (1) Add Intersection Observer, (2) Show skeleton cards as placeholder, (3) Fade in real cards. Use grid with 3 cols (desktop): 3 skeleton cards visible immediately, real images load silently. If images are missing, add fallback placeholder (icon + recipe name)."
+    },
+    {
+      "persona_id": "P70",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Recipe nutrition labels lack per-serving clarity and data source attribution",
+      "reproduction_steps": [
+        "View any recipe card on /app/recipes",
+        "Look at nutrition display: CAL, PRO, CARB, FAT badges",
+        "Search for data source, database version, or confidence indicator"
+      ],
+      "observed_evidence": "Recipe card shows: [CAL 360] [PRO 30g] [CARB 38g] [FAT 9g] with no labels, no 'per serving', no '(USDA 2023)', no 'Last updated', no contributor attribution. A chef (P70) auditing these numbers for client meal plans cannot verify credibility. No link to ingredient breakdown or source. The appearance of precision (exact numbers) without provenance is worse than estimated ranges with sources.",
+      "suggested_fix": "Add micro-copy line below nutrition badges: '360 cal per serving (USDA branded, updated Jul 1)'. Add small info icon linking to popover: 'Nutrition from USDA FoodData Central 2023 (Revision 2). Adjusted for portion size per recipe contributor estimate. Confidence: based on [X] data points.' Include 'View ingredients' link to see source of each macro."
+    },
+    {
+      "persona_id": "P70",
+      "category": "improvement-idea",
+      "severity": 3,
+      "description": "Coach responses lack source tagging and confidence indicators for food recommendations",
+      "reproduction_steps": [
+        "Visit /app/coach",
+        "Read the capability description: 'I can log meals, generate tables, plan workouts...'",
+        "Look for example response format or source tagging within coach answers"
+      ],
+      "observed_evidence": "Coach page shows 'AGENTIC COACH' intro and lists capabilities. No example response visible. Unclear how coach will tag food recommendations (USDA vs. branded vs. recipe estimate), whether responses cite ingredient sources, or how allergy conflicts are flagged. For a chef evaluating whether to trust recommendations, lack of transparency is a red flag.",
+      "suggested_fix": "When coach suggests a meal (e.g., 'Grilled salmon with asparagus: 250 cal, 35g protein'), format response as: 'Grilled salmon (USDA, 4oz = 160cal, 28g PRO) + asparagus (USDA, 1cup = 27cal, 3g PRO). Verified: avoids shellfish allergy. Database: USDA FoodData 2023.' Hyperlink source names. Add confidence badge: '95% match for 102g protein target' or 'Estimated \u00b110%'."
+    },
+    {
+      "persona_id": "P70",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Meal plan macro totals missing calculation transparency (rounding, database, variance)",
+      "reproduction_steps": [
+        "Visit /app/meal-plan",
+        "Observe weekly macro summary: '1641 AVG CALS', '134g AVG PROTEIN'",
+        "Hover or click for details on calculation method"
+      ],
+      "observed_evidence": "Meal plan shows 'AVG CALS 1641', 'AVG PROTEIN 134g' with no explanation. No micro-copy indicating: (1) USDA version, (2) rounding rule (to nearest 1g? 5g? 10g?), (3) variance or confidence interval, (4) whether estimates include recipe adjustments. A chef planning menus for others needs to know if 134g is \u00b12g or \u00b120g accurate.",
+      "suggested_fix": "Add small (i) icon next to macro totals. Popover text: 'Macros averaged from 16 planned meals using USDA FoodData Central 2023. Values rounded to nearest 1g protein, 10 cal. Recipe estimates: \u00b15% variance. Portions assume standard serving size; adjust if using custom portions.' Include link to 'Data accuracy & methods' help article."
+    },
+    {
+      "persona_id": "P71",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Transition animations present but reduced-motion compliance unverified",
+      "reproduction_steps": [
+        "Visit /app/dashboard",
+        "Check DevTools: enable prefers-reduced-motion: reduce in rendering tab",
+        "Reload page and observe if any animations play (fade, slide, bounce)"
+      ],
+      "observed_evidence": "DOM scan detected 72 transition classes on dashboard (class*=transition). Transitions are declared in markup. With prefers-reduced-motion media query enabled, no verification that animations actually skip. If even one animation (page fade-in, card slide, button ripple) plays with prefers-reduced-motion ON, it will trigger P71's vestibular sensitivity.",
+      "suggested_fix": "Audit all Tailwind transition utilities. Wrap in CSS: @media (prefers-reduced-motion: no-preference) { .transition { transition: ...duration-300... } } Verify no animations use duration > 100ms when prefers-reduced-motion is active. Test: macOS 'Reduce motion' enabled, or use DevTools rendering emulation. Zero animations should play when preference is set."
+    },
+    {
+      "persona_id": "P71",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Settings page expandable sections may animate unexpectedly, startling anxious users",
+      "reproduction_steps": [
+        "Visit /app/settings",
+        "Locate 'Dietary preferences' and 'Allergies' sections",
+        "Click to expand each section; observe if expansion is instant or animated"
+      ],
+      "observed_evidence": "Settings page screenshot shows 'Dietary preferences: No dietary filters selected' and 'Allergies: No allergies recorded' as separate card sections. If these are clickable collapsibles, expansion animation (0 to full height over 300ms) could startle P71. DOM reports 0 toggle controls found, but UI shows implicit toggles (sections are clearly interactive).",
+      "suggested_fix": "Ensure all expandable sections on Settings: (1) Expand instantly (max 200ms opacity fade, no height animation), (2) Use clear down-arrow icon that rotates 0->180deg (no animation if prefers-reduced-motion), (3) Show 'Loading...' text if section data loads async, no blank flash. Test expanded/collapsed states for focus order and keyboard navigation."
+    },
+    {
+      "persona_id": "P71",
+      "category": "improvement-idea",
+      "severity": 3,
+      "description": "Missing save confirmation feedback after changing settings preferences",
+      "reproduction_steps": [
+        "Visit /app/settings",
+        "Click on 'Units' section and select 'Metric' (if not selected)",
+        "Look for visual confirmation (toast, checkmark, highlight) that change was saved"
+      ],
+      "observed_evidence": "Settings page shows buttons like 'Imperial / Metric' but no save button and no confirmation message visible. Likely autosave on click, but P71 (anxiety-prone) cannot see success confirmation. If user clicks 'Metric' and page silently saves, they'll worry: 'Did it work? Is my preference lost?' This creates cognitive stress.",
+      "suggested_fix": "On any setting change, show brief transient confirmation: green badge 'Saved: Units set to Metric' (appears at bottom-right, fades after 3s). Or show 1-second subtle highlight on changed field (background color 0->100% saturation->0, no animation). Use warm green (not bright alert red). Keep feedback below 1s visibility to avoid annoyance while ensuring it registered."
+    },
+    {
+      "persona_id": "P72",
+      "category": "pain-point",
+      "severity": 5,
+      "description": "Mobile meal log interaction flow requires multiple taps before reaching food search",
+      "reproduction_steps": [
+        "Open /app/log on iPhone (390x844 mobile viewport)",
+        "Goal: Log breakfast by searching for 'chicken'",
+        "Count taps from page load to first food search result"
+      ],
+      "observed_evidence": "Mobile view: (1) Meal selector showing Breakfast/Lunch/Dinner (Breakfast pre-selected - 0 taps needed), (2) Search input 'Search 1,000+ foods by name' visible and tappable (1 tap to focus), (3) User types 'chicken' (keyboard entry ~3 sec), (4) Results appear. Total time to see results: ~4-5 seconds. P72's goal is <10 seconds for full log; the interaction itself uses half the budget before selecting a food, portion, and saving. Compare to: landing directly on search with keyboard auto-open (saves 2+ seconds).",
+      "suggested_fix": "On mobile /app/log load: (1) Default to search-focused view (autofocus input, softKeyboard open immediately), (2) Move meal selector (Breakfast/Lunch) into slide-tab below search (swipe to change), (3) OR move selector to modal popup (Breakfast selected by default, tap if changing). Target: search input receives focus in <1 tap. Consider voice-to-log feature ('Hey Siri, log chicken breast 150g') to reach <10-second goal."
+    },
+    {
+      "persona_id": "P72",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Mobile recipe filter buttons unreachable from left thumb (9 out of 20 visible buttons)",
+      "reproduction_steps": [
+        "Open /app/recipes on mobile (390x844)",
+        "Hold phone in left hand, left thumb only (P72's one-handed use case)",
+        "Try to tap: 'Lunch', 'Dinner', 'Snack', 'Low fat' tabs without switching grip"
+      ],
+      "observed_evidence": "Mobile button layout verified: Meal-type tabs positioned left-to-right: 'All' [45-95px], 'Breakfast' [103-197px], 'Lunch' [205-276px], 'Dinner' [284-359px], 'Snack' [367-438px]. Viewport width = 390px. Left thumb comfortable reach = ~50% of width (195px). Result: 'Lunch' (left=205, right=276) at edge of reach, 'Dinner' and 'Snack' completely out of reach (left thumb can't access right=359+). User must re-grip phone with both hands, losing one-handed efficiency P72 depends on.",
+      "suggested_fix": "Refactor meal-type tabs: (1) Use horizontal scrollable pill buttons (wrap in overflow-x-auto), keep each pill 80px, let user swipe to 'Dinner'/'Snack', OR (2) Stack vertically with Breakfast/Lunch/Dinner in left-aligned column (all reachable), OR (3) Use center-aligned tab bar with active pill highlighted (center is reachable from left thumb). Test with left thumb only; all tappable buttons must fit within left 60% of 390px."
+    },
+    {
+      "persona_id": "P72",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "No visible loading indicators on /app/recipes mobile; recipes may appear blank during fetch",
+      "reproduction_steps": [
+        "Open /app/recipes on mobile with throttled network (DevTools: 'Slow 3G')",
+        "Observe first 2-3 seconds of load",
+        "Check if page shows skeleton cards, spinning loader, or blank space"
+      ],
+      "observed_evidence": "Mobile recipes page: 0 loading-state indicators (0 skeleton elements detected), 0 recipe cards visible in DOM initially. If recipe grid requires 2-3 second data fetch on slow network, user sees blank/empty page. P72 (time-poor, impatient) will assume app is broken and swipe back without waiting.",
+      "suggested_fix": "Show skeleton recipe cards immediately on page load: 4 shimmer card placeholders in 1x4 grid (mobile), each with: (1) 300x200px gray box (recipe image placeholder), (2) 100px gray bar (recipe title), (3) 3 small gray boxes (nutrition badges). Use Tailwind animate-pulse. Fade out as real recipes arrive. Perceived load time should feel <500ms even on slow network. Include 'Loading recipes...' subtitle during load."
+    },
+    {
+      "persona_id": "P72",
+      "category": "improvement-idea",
+      "severity": 3,
+      "description": "Meal plan 'Day' / 'Week' view toggle not prominent on mobile layout",
+      "reproduction_steps": [
+        "Visit /app/meal-plan on mobile (390x844)",
+        "Look for 'Day' and 'Week' buttons/toggle",
+        "Check if they're visible at top/bottom or if user must scroll/search"
+      ],
+      "observed_evidence": "Desktop meal plan has prominent 'Day' and 'Week' buttons in top-right corner (clear affordance). On mobile screenshot from testing, these buttons are likely pushed off-screen or not visible in the initial viewport. If not immediately visible, P72 might assume only week view exists and miss quick-glance daily meal option.",
+      "suggested_fix": "Add sticky header with 'Day / Week' toggle on mobile. Use format: pill-style buttons at top (green 'Day' if active, gray 'Week' if inactive). Or place toggle in bottom tab bar as an alternative to swipe. Make active choice obvious (solid background, white text vs. outline). Label clearly: 'View: This week' with tap-to-toggle."
+    },
+    {
+      "persona_id": "P72",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Mobile meal log missing macro summary display for quick 'am I on track' feedback",
+      "reproduction_steps": [
+        "Open /app/log on mobile",
+        "After viewing breakfast/lunch options, look for running total of today's macros",
+        "Compare visible totals against daily target without navigating to Dashboard"
+      ],
+      "observed_evidence": "Mobile /app/log shows meal selector and food search input. After food selection, no 'Today's totals' card is visible (unlike desktop which displays 'Calories: 850 / 2250', 'Protein left: 102g'). User must navigate to /app/dashboard to check if they're on track. This breaks the 'log and glance' goal P72 has (log 3 meals + check dashboard in one sitting, <15 min).",
+      "suggested_fix": "Add sticky footer on mobile /app/log showing: 'Today: 850 / 2250 cal | 102g protein left' (update in real-time as user logs food). Use bottom spacing (mb-16) to avoid covering input. Or use slide-up summary panel (swipe-up from bottom). Ensure log input remains accessible. This keeps user in flow without context-switch to Dashboard."
+    },
+    {
+      "persona_id": "P72",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Mobile /app/recipes layout has oversized filter buttons that push meaningful content down",
+      "reproduction_steps": [
+        "Open /app/recipes on mobile (390x844)",
+        "Look at recipe card section; measure button heights and how much space they use"
+      ],
+      "observed_evidence": "Filter buttons visible: 'High protein' [107x44], 'Low carb' [88x44], 'Low fat' [77x44], 'Vegan' [69x44] at 44px height each. Two rows of these buttons = 88px of height. Plus meal-type tabs above = ~40px. On 844px viewport, 128px of filters above first recipe card. Combined with header and search, recipe content starts very low. First actual recipe card is far down the scroll.",
+      "suggested_fix": "Collapse filters: (1) Use pill-button wrap with smaller size (36px height, more items fit per row), (2) Make diet filters collapsible ('Diet filters' header with chevron, collapsed by default), (3) Or use dropdown/modal for filters ('Show filters' button), (4) Prioritize meal-type tabs as top row only. Goal: first recipe card visible in viewport without scrolling."
+    },
+    {
+      "persona_id": "P70",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Nutrition macro labels on recipe cards use abbreviated, concatenated format without clear delimiters or unit context (e.g., 'Cal360Pro30gCarb38gFat9g'), creating ambiguity and readability friction for a chef verifying nutrition claims. Text may truncate or misalign on mobile (375\u2013414px viewports).",
+      "reproduction_steps": [
+        "Navigate to http://localhost:3000/app/recipes on mobile viewport (375px width)",
+        "Observe recipe cards listing (Greek yogurt power bowl, Chicken quinoa bowl, Salmon rice plate, etc.)",
+        "Read the nutrition data row displayed on each card",
+        "Note the label format and spacing: observe 'Cal360Pro30gCarb38gFat9g' or similar concatenated output",
+        "Scroll horizontally to check for text overflow or truncation on the macro values",
+        "Open a recipe detail page and compare macro display format against list view"
+      ],
+      "observed_evidence": "Recipe cards display nutrition as compressed, label-concatenated strings: 'Cal360Pro30gCarb38gFat9g'. Button element identified as [316x154px] containing all macros in a single text node. No whitespace or delimiters between labels (Pro, Carb, Fat) and values (30g, 38g, 9g). Units (g, kcal) are implicit or only partially shown. Abbreviations (Pro, Carb) are not paired with full labels. On a typical mobile viewport, this compact format consumes ~130\u2013160px of the card width, leaving no room for secondary actions or clear visual parsing.",
+      "suggested_fix": "Redesign macro display with proper whitespace and full labels: use either single-line format ('Protein 30g | Carbs 38g | Fat 9g | Calories 360') with clear delimiters, or two-line layout ('Calories 360 | Protein 30g' on line 1, 'Carbs 38g | Fat 9g' on line 2). Ensure minimum 16px font size and 1.4x line-height for readability on mobile. Add a legend or tooltip on the recipe list explaining macro abbreviations for first-time users. Test with nutrition experts (chefs, dietitians) to verify clarity and trustworthiness.",
+      "supplemental": true
+    },
+    {
+      "persona_id": "P70",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Recipe search input field is undersized (54px tall, 308px wide) and lacks clear affordances (no visible clear button, no search state indicator). Long placeholder text ('Search title, ingredients, or tags') truncates on mobile, and field is not visually distinguished from adjacent filter buttons, increasing mis-taps in a kitchen context where P70 may be multitasking with one hand.",
+      "reproduction_steps": [
+        "Navigate to http://localhost:3000/app/recipes on mobile (375\u2013414px viewport)",
+        "Locate the search input field at the top of the recipe filters section",
+        "Tap the search input to focus it and observe any visual feedback",
+        "Type a recipe name (e.g., 'salmon') and note if a clear button appears",
+        "Check if the search field has a distinct visual state (border, background color) when focused vs. unfocused",
+        "Attempt to tap the search field with the side of the thumb (simulating wet/greasy fingers in a kitchen environment)",
+        "Observe if any loading state or search results appear in real-time"
+      ],
+      "observed_evidence": "Search input element identified as input[308x54] with placeholder text 'Search title, ingredients, or tags'. Field height of 54px meets WCAG minimum (44px) but is not generous for reliable mobile tapping, especially in kitchen context. Placeholder text is descriptive but long (~45 chars), will truncate to ~30 chars visible on 375px mobile. No visible clear button or loading spinner observed. Filter buttons (All, Breakfast, Lunch, Dinner, Snack, High protein, Low carb, Low fat, Vegan) are positioned directly below or adjacent to the search field, making it unclear which area is the interactive search zone vs. static filters. User may accidentally tap a filter chip instead of focusing the search input.",
+      "suggested_fix": "Increase mobile input field height to 48\u201356px with 12px vertical padding. Add a visible, tappable 'clear' (\u00d7) button inside the right side of the input field that appears after user starts typing (remove on clear). Shorten the placeholder text for mobile to 'Search recipes...' or 'Search...', allowing it to display fully without truncation. Add a clear focus state: 2px border in brand color (or high-contrast outline), slight background color shift, and a subtle shadow. Ensure filter buttons are positioned below the search field (not adjacent) to avoid tap confusion. Implement real-time search results with a 300\u2013500ms debounce to avoid excessive re-renders. Display a small loading spinner or 'Searching...' text while API call is in flight. Test on actual mobile devices (iPhone SE, Galaxy A12) with wet fingers and one-hand operation to validate tappability.",
+      "supplemental": true
+    },
+    {
+      "persona_id": "P70",
+      "category": "improvement-idea",
+      "severity": 3,
+      "description": "Nutrition macro labels use non-standard abbreviations ('Pro', 'Carb') without full labels or consistent unit display. Expert food user (P70) expects precise terminology and explicit units (grams, kcal). Concatenated display ('Cal360Pro30gFat9g') lacks semantic clarity and undermines data credibility for a chef verifying nutrition claims \u2014 his core reason for using the app.",
+      "reproduction_steps": [
+        "Open http://localhost:3000/app/recipes on any viewport (desktop or mobile)",
+        "Examine the nutrition data format on the first 5 recipe cards",
+        "Document the exact label text, abbreviations, and unit indicators used",
+        "Open a recipe detail page (if available) to see if full labels are used in detail view",
+        "Check if there is any legend, tooltip, or help text explaining macro abbreviations",
+        "Search for any other pages (dashboard, daily-review, log) to see how macros are labeled there",
+        "Note any inconsistencies in label terminology or unit display across pages"
+      ],
+      "observed_evidence": "Recipe list displays macros as concatenated abbreviations: 'Cal360Pro30gCarb38gFat9g'. Abbreviations used: Cal (Calories), Pro (Protein), Carb (Carbohydrates), Fat (Fat). Units shown: 'g' (grams) for macros, but no unit suffix for calories (kcal, Cal, calories implied). Abbreviated format is industry-standard for experienced nutritionists and fitness trackers, but P70 (expert chef, novice app user) may not instantly recognize 'Pro' = Protein without context. No legend, tooltip, or inline explanation visible. Inconsistency: if units are shown as '30g', calories should be labeled as '360 kcal' or '360 cal', not just '360'. No full-label variants (Protein, Carbohydrates) observed on the list view.",
+      "suggested_fix": "Replace abbreviated labels with full terms on recipe cards: 'Calories 360 | Protein 30g | Carbs 38g | Fat 9g'. Use consistent format across all pages (dashboard, log, recipes, meal-plan). If space is constrained on mobile, stack macros over two lines: line 1 'Calories 360 | Protein 30g', line 2 'Carbs 38g | Fat 9g'. Ensure all units are explicit: 'kcal' or 'Cal' for calories, 'g' for grams. Add a small help icon (?) next to the macro section on the recipe list, linking to a tooltip that explains macro terms for new users. Consider a 'Nutrition Details' expandable section on each recipe card that shows full ingredient list with macro breakdown, targeting expert users like P70 who want to verify claims.",
+      "supplemental": true
+    },
+    {
+      "persona_id": "P71",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Inconsistent button heights across meal logging interface creates visual unpredictability",
+      "reproduction_steps": [
+        "Navigate to http://localhost:3000/app/log on mobile viewport (375x812px)",
+        "Observe the primary action buttons in the main meal logging area",
+        "Note the vertical stack of buttons: 'Search' (48px height), 'Restaurants' (48px), 'Breakfast' (46px), 'Lunch' (46px), 'View today's plate' (42px)",
+        "Compare the visual alignment and sizing consistency between these stacked actions"
+      ],
+      "observed_evidence": "Button heights on the /app/log route vary between 42px, 46px, and 48px in the primary action zone. Measured via Playwright: Search button (159x48px), Restaurants (159x48px), Breakfast (143x46px), Lunch (143x46px), View today's plate (293x42px). Across the entire page, button height variations include: 48px (4 buttons), 46px (4 buttons), 42px (1 button), plus 44px (81 buttons), 40px (36 buttons), and 28px (4 buttons) in other areas. This 6px vertical variation in adjacent action buttons creates a jagged, unpolished appearance.",
+      "suggested_fix": "Standardize button heights to a single value (e.g., 48px or 44px) in the primary action area. Ensure all buttons that appear in the same visual row or vertically-adjacent stack use identical heights for visual cohesion. Use a single Tailwind class or CSS variable for primary action button dimensions.",
+      "supplemental": true
+    },
+    {
+      "persona_id": "P71",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "Section expand/collapse buttons on Daily Review lack consistent aria-label accessibility, reducing interaction predictability",
+      "reproduction_steps": [
+        "Navigate to http://localhost:3000/app/daily-review on mobile viewport",
+        "Locate the collapsible sections (e.g., 'Intake and output', 'What needs attention')",
+        "Try to interact with expand/collapse buttons using keyboard (Tab key)",
+        "Observe the accessibility label announced by assistive technology"
+      ],
+      "observed_evidence": "Daily Review page contains 9 expandable sections with corresponding expand/collapse buttons. Accessibility audit shows only 2 of 9 buttons have aria-label attributes (22% coverage). Sample buttons: 'Open desktop user settings menu', 'Open user settings menu', 'Collapse section' (third button unlabeled for content). Buttons visible at DOM level but without consistent semantic labeling for what content they control. This creates cognitive friction for P71 who values predictable, calm interaction\u2014unclear button purpose may trigger anxiety about unexpected state changes.",
+      "suggested_fix": "Add aria-label to all expand/collapse buttons with clear, consistent messaging: e.g., 'Expand Intake and output section', 'Collapse Intake and output section'. Use aria-expanded='true|false' consistently. Consider adding a visual label (e.g., '\u2193 Intake and output') in addition to the icon to make interaction intent obvious.",
+      "supplemental": true
+    },
+    {
+      "persona_id": "P71",
+      "category": "suggestion",
+      "severity": 2,
+      "description": "Search input and action button heights do not align, creating minor visual inconsistency in the log meal flow",
+      "reproduction_steps": [
+        "Navigate to http://localhost:3000/app/log on mobile viewport",
+        "Locate the search input field at the top of the page",
+        "Observe the 'Search' button positioned adjacent or below it",
+        "Compare their vertical heights and visual alignment"
+      ],
+      "observed_evidence": "Log page search input element measured at 293x58px (58px height) with 1px solid border and 2px box-shadow focus ring. Adjacent 'Search' button measured at 159x48px (48px height). The 10px height difference means the button does not align baseline or cap-height with the input field, creating a visually misaligned form group. This small inconsistency is typical of UI polish gaps and reinforces the 'unpolished' feel for design-conscious users like P71.",
+      "suggested_fix": "Ensure input fields and their adjacent/associated buttons share consistent height. Either increase button height from 48px to 56-58px (to match input), or reduce input height to 44-48px to match buttons. Use a consistent vertical rhythm token (e.g., 44px or 48px) for all interactive elements in the same row or form group.",
+      "supplemental": true
+    }
+  ]
+}

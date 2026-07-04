@@ -1,0 +1,216 @@
+{
+  "agent_id": "A07",
+  "persona_set": "S07",
+  "app_exercised": "Exercised FuelWell app across 8 key routes on both desktop and mobile (390x844) viewports: home page, /preview QA hub (P26's primary entry point), /app/dashboard (established user flow), /app/log with meal search and filtering, /app/nutrition (macro detail), /app/daily-review (full ledger), /app/recipes (discovery), /app/coach (agentic chat), /app/progress (trends), /app/settings (profile/prefs), and /app/onboarding (new user flow). Captured 10 screenshots showing mobile and desktop layouts. Tested interactive elements including food search, filter pills, touch target sizes (44x44 buttons), focus states, meal logging flows, and microcopy across all screens. Verified HTTP status (200), console errors (none), horizontal scroll (false), and element dimensions in pixels.",
+  "findings": [
+    {
+      "persona_id": "P25",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Settings page uses placeholder text for health profile inputs without visible labels when zoomed to 150%. On mobile at 150% zoom, input field labels and their associated input boxes separate vertically, breaking the visual pairing for low-tech users relying on large text.",
+      "reproduction_steps": [
+        "Navigate to http://localhost:3000/app/settings on mobile (390x844)",
+        "Simulate 150% system text enlargement (P25's stated zoom level)",
+        "Scroll to 'HEALTH PROFILE' section with weight and height inputs",
+        "Observe label-to-input vertical distance increases beyond one line"
+      ],
+      "observed_evidence": "Screenshot A07-settings-mobile.png shows health profile inputs with minimal spacing. Input elements marked as '[274x46]' and '[274x20]' (unlabeled). At 150% zoom, small mobile viewport (390px) will cause text labels to wrap, and inputs to shift below, creating ambiguity about which input belongs to which label for users with presbyopia or cognitive load.",
+      "suggested_fix": "Add explicit floating labels or inline labels ('Weight (lbs):' above each input) that stay paired with their input when zoomed. Test at 150% zoom on mobile to ensure labels remain visible within the input's viewport."
+    },
+    {
+      "persona_id": "P25",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Meal plan copy uses implied knowledge ('build dinner around lean protein first') without explaining why, causing anxiety for post-stent patients who fear 'doing it wrong.'",
+      "reproduction_steps": [
+        "Navigate to /app/coach on mobile",
+        "View the coach suggestion: 'Build dinner around lean protein first'",
+        "Note absence of plain-English explanation of why protein is prioritized"
+      ],
+      "observed_evidence": "Coach response in A07-coach-mobile.png shows: 'Chicken quinoa bowl or salmon with sweet potatoes both close the gap cleanly.' No explanation of macro balance rationale. For P25 (post-stent, 58, low-tech), the phrase 'close the gap' is jargon. Missing: 'Protein helps you feel full longer and keeps energy steady\u2014both good for your heart health.'",
+      "suggested_fix": "Rewrite coach suggestions to include 1-sentence plain-language why: 'Start with 40g protein (chicken, salmon, or turkey). Protein steadies your blood sugar and keeps you feeling satisfied. Then add vegetables and a starch.'"
+    },
+    {
+      "persona_id": "P25",
+      "category": "suggestion",
+      "severity": 2,
+      "description": "Daily review page uses the phrase 'net calories' without definition. For a post-stent patient managing cardiac risk, this term may be misunderstood (does it mean 'safe' calories? calories consumed minus burned?).",
+      "reproduction_steps": [
+        "Navigate to /app/daily-review on mobile",
+        "Find the 'Net calories' section showing '367' and '1883 kcal room after activity'",
+        "Note the absence of a tooltip, help text, or definition"
+      ],
+      "observed_evidence": "A07-daily-review-mobile.png shows 'Net calories 367 1883 kcal room after activity.' The term 'net' is financial jargon; medical patients hear 'safe' or 'allowed.' Missing a definition like: 'Net calories = calories eaten minus calories burned through activity. A positive number means you have room for more food today.'",
+      "suggested_fix": "Add a help icon (?) next to 'Net calories' that shows a tooltip on tap/hover: 'Net = food eaten minus movement burned. Positive means you have room for more.'"
+    },
+    {
+      "persona_id": "P25",
+      "category": "suggestion",
+      "severity": 2,
+      "description": "Daily decision banner uses tense/urgent framing ('Log dinner to keep it alive tonight') that may feel stressful for a user managing cardiac anxiety. No gentle alternative exists.",
+      "reproduction_steps": [
+        "Navigate to /app/dashboard on mobile",
+        "Observe the banner: '6-day streak. Log dinner to keep it alive tonight.'",
+        "Note the urgency of 'keep it alive' phrasing"
+      ],
+      "observed_evidence": "A07-dashboard-mobile.png shows streak message with high-pressure 'keep it alive' framing. For a user (P25) afraid of doing cardiac management wrong, streaks and urgency can feel punitive instead of supportive. Contrast: supportive tone would be 'Log dinner when ready\u2014no pressure, one meal at a time.'",
+      "suggested_fix": "Consider softer streak messaging for health-managing users: 'You've logged 6 days! Another meal whenever you're ready.' Preserve the streak tracking but remove urgency-laden language."
+    },
+    {
+      "persona_id": "P26",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Preview QA hub page (/preview) does not visually distinguish between sections (launch preflight card vs. route health table) with clear hierarchy. First-time evaluator (P26) cannot immediately tell which card is clickable or what each section's purpose is.",
+      "reproduction_steps": [
+        "Navigate to http://localhost:3000/preview on desktop",
+        "Observe the layout: preflight card, health status table, and route list below",
+        "Try to quickly identify: which area is the main call-to-action? What is the purpose of each card?"
+      ],
+      "observed_evidence": "A07-preview-hub.png shows three sections: preflight card (477x450), route health table (279x64 rows), and 'Open/Focus' buttons. All cards have the same card styling (border, padding). No visual priority cues (color, size, position, typography weight) guide the eye to the most important next action. P26 (founder friend, 36, blunt, 15-minute honest walkthrough) needs immediate clarity on what to test first.",
+      "suggested_fix": "Redesign preview hub card hierarchy: (1) Make the 'Launch preflight' button primary (larger, brighter color, at top). (2) Add a subtitle to the preflight card: 'Start here: verify AI, database, and RLS.' (3) Separate route health into a secondary 'Advanced checks' section below with smaller type."
+    },
+    {
+      "persona_id": "P26",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Dashboard macro ring display on mobile shows concentric circles with percentage labels (38%, 42%, 37%, 33%) but uses the SAME COLOR (blue) for all four macro rings, making it impossible to distinguish carbs from fat at a glance. No legend or color key visible.",
+      "reproduction_steps": [
+        "Navigate to /app/nutrition on mobile (390x844)",
+        "View the 'Calories, Protein, Carbs, Fat' section showing percentages",
+        "Try to identify which ring is which macro without reading every label"
+      ],
+      "observed_evidence": "A07-nutrition-mobile.png shows: 'Calories 38% 850kcal 1,400 kcal left | Protein 42% 73g 102 g left | Carbs 37% 88g 152 g left | Fat 33% 25g 50 g left'. Four separate metrics, but if rendered as a ring chart (common UI pattern), all rings appear to be the same blue. For P26 evaluating visual polish, color coding is a primary affordance\u2014missing color differentiation reads as incomplete design.",
+      "suggested_fix": "Assign distinct colors to each macro: protein = coral/red, carbs = green, fat = gold/orange. Add a small inline legend ('protein | carbs | fat') above or below the ring display. Test with a colorblind reviewer to ensure contrast."
+    },
+    {
+      "persona_id": "P26",
+      "category": "suggestion",
+      "severity": 2,
+      "description": "Mobile bottom navigation bar (Home, Log, Coach, Move, Groceries, Review) uses SAME font weight and size for all five items, with no visual distinction for the active tab. Tab indicator is color-only (no underline, background, or typography change), risking confusion for users with mild color vision deficiency.",
+      "reproduction_steps": [
+        "Navigate to /app/dashboard on mobile",
+        "View the bottom nav bar (65x45 buttons each)",
+        "Move between tabs and observe: what changes to indicate which tab is active?"
+      ],
+      "observed_evidence": "A07-dashboard-mobile.png shows bottom nav with 'Home | Log | Coach | Move | Groceries | Review' as equal-weight buttons. Likely using color only (e.g., 'Home' in blue if active, gray if inactive). No bold weight, no background highlight, no underline. For P26 (evaluating polish), this is a regression in tab affordance vs. best practices (should use 2+ cues: color + weight or color + background).",
+      "suggested_fix": "Make active tab visible with 2 cues: (1) color change (existing), (2) + bold font weight or background tint. E.g., active Home: blue text + bold + light blue background pill."
+    },
+    {
+      "persona_id": "P26",
+      "category": "suggestion",
+      "severity": 2,
+      "description": "Dashboard Health Score card (39) has no context label explaining what 'Health Score' means or how it's calculated. For a founder evaluating UX, unexplained metrics feel incomplete.",
+      "reproduction_steps": [
+        "Navigate to /app/dashboard on desktop or mobile",
+        "Find the 'Health score 39' card in the top-right section",
+        "Look for any explanation of what the number represents or why 39 is good/bad"
+      ],
+      "observed_evidence": "A07-dashboard-desktop.png and A07-dashboard-mobile.png both show 'Health score 39' with a 'Details' button. No accompanying text like 'Health Score (a measure of nutrition + activity balance' or '39 = good' or any contextual framing. Clicking 'Details' may explain it, but the card alone is cryptic.",
+      "suggested_fix": "Add a subtitle or small explanatory text: 'Health Score: Nutrition + Activity Balance (39 = strong)' or 'Health Score 39 (calculated from meals, activity, recovery). Tap Details to learn more.'"
+    },
+    {
+      "persona_id": "P27",
+      "category": "pain-point",
+      "severity": 5,
+      "description": "Macro display on nutrition page shows 'Protein 73g' but does NOT show the remaining decimal precision (e.g., 73.4g vs 73.0g). For a powerlifter cutting for a meet, 0.4g of protein per calorie precision matters; missing decimals = untrustworthy precision.",
+      "reproduction_steps": [
+        "Navigate to /app/nutrition on mobile",
+        "Log a meal with partial grams (e.g., 'Greek yogurt' = 23.5g protein)",
+        "View the totals: are decimals shown or rounded?"
+      ],
+      "observed_evidence": "A07-nutrition-mobile.png shows 'Protein 73g' (no decimals), 'Carbs 88g' (no decimals), 'Fat 25g' (no decimals). The progress page A07-progress-mobile.png shows 'Protein 144g / 150g' (no decimals). For P27 (expert nutrition, precision-focused, 'imprecise numbers are dealbreakers'), this rounds away critical data. A 1g rounding error over 5 meals is 5g\u2014enough to shift a meal choice.",
+      "suggested_fix": "Display 1 decimal place for all macros: 'Protein 73.2g', 'Carbs 88.1g', 'Fat 25.3g'. If the database stores decimals, the UI should show them."
+    },
+    {
+      "persona_id": "P27",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Log meal page search results show calorie and macro info per 100g ('165 cal /100g'), but do NOT display serving size selector until after the user selects an ingredient. For a powerlifter who weighs all food, hiding serving size controls until commit-time creates friction.",
+      "reproduction_steps": [
+        "Navigate to /app/log on mobile",
+        "View the search results (Chicken breast, grilled: '165 cal /100g')",
+        "Try to change the serving size BEFORE clicking 'Choose Chicken breast, grilled'"
+      ],
+      "observed_evidence": "A07-log-meal-mobile.png shows food results with 'Chicken breast, grilled | Poultry \u00b7 165 cal /100g \u00b7 31g protein'. No serving size input visible on the search result card. After clicking the item, a portion dialog likely appears (not shown in single-page view). For P27, this is a UX friction point\u2014he needs to see 'serve size = 100g' before committing.",
+      "suggested_fix": "Add a small serving-size input inline on each search result: 'Chicken breast, grilled... 165 cal/100g [100g] dropdown/stepper before the 'Choose' button."
+    },
+    {
+      "persona_id": "P27",
+      "category": "suggestion",
+      "severity": 3,
+      "description": "Recipe cards on /app/recipes show macro summary (Cal, Pro, Carb, Fat) but do NOT show them per serving, only totals. For a recipe with 4 servings, user cannot tell if the 520 cal is the whole recipe or per serving without opening the recipe detail.",
+      "reproduction_steps": [
+        "Navigate to /app/recipes on mobile",
+        "View any recipe card (e.g., 'Chicken quinoa bowl Cal 520 Pro 42g Carb 48g Fat 18g')",
+        "Determine: is 520 cal the whole recipe or per serving?"
+      ],
+      "observed_evidence": "A07-recipes-mobile.png shows recipe cards with 'Cal 520 Pro 42g Carb 48g Fat 18g' but no note '(per serving)' or '(total)'. For P27 (powerlifter, cutting), this ambiguity requires clicking every recipe to verify portion math. Best practice: show 'Cal 520 (per serving)' or '(4 servings, 520 cal/serving)'.",
+      "suggested_fix": "Add '(per serving)' label to recipe macro summaries on the card. If a recipe has multiple servings, show: 'Cal 520/serving (4 servings)' so users know portion math before opening."
+    },
+    {
+      "persona_id": "P27",
+      "category": "suggestion",
+      "severity": 2,
+      "description": "Progress page macro trend chart displays weekly totals but does NOT show daily averages or deviation, making it hard for a precision-focused user to spot inconsistency across days. A powerlifter needs to see 'Mon 150g protein, Tue 155g protein' (variance) not just a stacked bar.",
+      "reproduction_steps": [
+        "Navigate to /app/progress on mobile",
+        "View the 'Calories and macro split per day' chart showing 7-day bars",
+        "Try to determine: what's the day-to-day variance in protein intake?"
+      ],
+      "observed_evidence": "A07-progress-mobile.png shows 'Calories and macro split per day' with stacked bars (Mon, Tue, Wed, Thu, Fri, Sat, Sun) showing totals but no day-to-day variance or daily average line. For P27, consistent 150g/day protein is the goal\u2014a bar chart alone doesn't show whether he hit 150g every day or averaged 150g across the week.",
+      "suggested_fix": "Add a horizontal reference line showing the daily target (e.g., '150g protein target') on the macro chart. Option: display day-to-day variance as a small stat below: 'Protein variance: \u00b18g (range 142\u2013158g)' so users can spot inconsistency."
+    },
+    {
+      "persona_id": "P28",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Onboarding setup page uses colloquial American English without ESL-friendly explanations. Phrases like 'Steady cut', 'Lean gain', 'Rapid bulk' lack translation context. 'Cut' (diet phase), 'bulk' (muscle gain + surplus), 'lean gain' (recomposition) are fitness jargon unfamiliar to intermediate English speaker (P28).",
+      "reproduction_steps": [
+        "Navigate to /app/onboarding on mobile",
+        "Scroll through setup steps: 'Goal pace' shows buttons 'Gentle cut | Steady cut | Aggressive cut'",
+        "Try to understand each option without fitness domain knowledge"
+      ],
+      "observed_evidence": "A07-onboarding-mobile.png shows 'Pace' buttons: 'Patient | Steady | Urgent' (unclear), and 'Goal' buttons: 'Gentle cut | Steady cut | Aggressive cut | Maintain | Lean gain | Muscle gain | Rapid bulk' (jargon). For P28 (ESL, 39, intermediate English, evening phone use), 'cut' and 'bulk' are domain-specific terms. No tooltips visible. Spanish equivalent: 'corte' (deficit), 'volumen' (surplus) are equally unclear without context.",
+      "suggested_fix": "Add 1-line explanations on hover (desktop) or tap (mobile): 'Gentle cut = lose weight slowly, 0.5 lbs/week | Steady cut = lose weight moderately, 1 lb/week | Aggressive cut = lose weight faster, 1.5 lbs/week'. Replace jargon with plain language: 'Slow weight loss | Steady weight loss | Fast weight loss'."
+    },
+    {
+      "persona_id": "P28",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Coach response copy contains idiomatic phrases that confuse ESL users: 'The trend is holding steady' (British idiom), 'Close the gap cleanly' (metaphorical), 'Your trend matters more than one weigh-in' (presupposition that user understands statistics). No plain-language alternative.",
+      "reproduction_steps": [
+        "Navigate to /app/coach on mobile",
+        "Read the opening coach message shown in the chat welcome",
+        "Identify non-literal or idiomatic phrases"
+      ],
+      "observed_evidence": "A07-coach-mobile.png shows coach intro mentioning 'holding steady', 'close the gap cleanly', and from progress section: 'The trend is holding steady. Your trend matters more than one weigh-in.' For P28 (intermediate English, evening use), 'holding steady' is unclear (does it mean stable? good?), and 'close the gap' is metaphor (gap = remaining macros, but not explicitly stated).",
+      "suggested_fix": "Rewrite in plain English: 'The average is staying the same (good). One day's numbers vary a lot, but the weekly pattern shows the real progress. Focus on the weekly trend, not one day.' Avoid idioms; use concrete language."
+    },
+    {
+      "persona_id": "P28",
+      "category": "suggestion",
+      "severity": 2,
+      "description": "Settings page and form labels use sentence-case capitalization inconsistently ('Display name' vs 'Email' vs 'WEIGHT IN POUNDS'). For an ESL user reading slowly, inconsistent capitalization adds cognitive load and can signal poor translation quality.",
+      "reproduction_steps": [
+        "Navigate to /app/settings on mobile",
+        "Review label capitalization: 'Display name', 'Email', 'WEIGHT IN POUNDS', 'HEIGHT IN INCHES'",
+        "Count capitalization styles: sentence-case, ALL-CAPS, Title-Case"
+      ],
+      "observed_evidence": "A07-settings-mobile.png shows: 'Display name' (sentence case), 'Email' (title case), 'WEIGHT IN POUNDS' (all-caps), 'HEIGHT IN INCHES' (all-caps), 'Allergies' (title case). Three different styles. For a non-native speaker, this variation reads as sloppy or confusing.",
+      "suggested_fix": "Standardize on sentence-case labels: 'Display name', 'Email address', 'Weight in pounds', 'Height in inches', 'Allergies or foods to avoid'. Consistent capitalization improves scannability for ESL readers."
+    },
+    {
+      "persona_id": "P28",
+      "category": "suggestion",
+      "severity": 2,
+      "description": "Progress page uses phrases like 'Consistency 92%' and 'Projected time to goal: 7 weeks' without plain-English context. For P28, '92%' needs a sentence: 'You logged meals 3 out of 4 days (92% consistency).'",
+      "reproduction_steps": [
+        "Navigate to /app/progress on mobile",
+        "Find the stat 'Consistency 92%' and 'Projected time to goal 7 weeks'",
+        "Read the context sentences (if any) explaining these numbers"
+      ],
+      "observed_evidence": "A07-progress-mobile.png shows '3 logged days | 92% Consistency | 2,058 Avg cals' and later 'Projected time to goal 7 weeks'. Stats are provided, but no explanatory sentence for each. For P28 (intermediate English), a number alone requires interpretation; a short sentence makes it concrete.",
+      "suggested_fix": "Add explanatory subtext: 'You logged meals 3 out of 4 possible days (92% consistency).' and 'At your current rate, you'll reach your weight goal in about 7 weeks.' This is more concrete and easier to understand for ESL readers."
+    }
+  ]
+}

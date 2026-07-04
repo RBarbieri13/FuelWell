@@ -1,0 +1,224 @@
+{
+  "agent_id": "A14",
+  "persona_set": "S14",
+  "app_exercised": "Exercised the FuelWell app across 10 routes and viewport sizes: home marketing page, preview hub, dashboard (mobile 390x844 and desktop), nutrition view, log meal flow (search interaction), recipes, grocery list (text input interaction), progress, and daily review. Verified interactive elements with Playwright: measured button sizes, collected macro display colors/fonts, tested form focus states, tabbed through keyboard nav (6+ tabs), simulated 150-200% zoom magnification, checked text truncation across 320-480px widths, and captured console/DOM state. All 22 evidence screenshots saved to /Users/robert.barbieri/Developer/FuelWell/surf-runs/20260704-145342-ui-polish-refine/evidence/phase3/.",
+  "findings": [
+    {
+      "persona_id": "P53",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Meal category buttons (Breakfast, Lunch, Dinner, Snack) are exactly at WCAG minimum touch target height (46px), risking mis-taps when tapping while cooking or distracted with a picky child in kitchen",
+      "reproduction_steps": [
+        "Open http://localhost:3000/app/log on mobile (390x844)",
+        "Observe the four meal category buttons in the 'Fast Logging' section",
+        "Measure button height and minimum dimension"
+      ],
+      "observed_evidence": "Meal category buttons: Breakfast 150x46px, Lunch 150x46px, Dinner 150x46px, Snack 150x46px (all 46px height, all 46px minimum dimension). WCAG AAA target: 44px minimum. These pass the minimum but offer no safety margin. Screenshot: A14-04-log-categories-4.png",
+      "suggested_fix": "Increase meal category button height to at least 50-52px (ideally 56px for P53's kitchen context). Add 2-4px vertical padding and/or line-height to buttons without changing width, maintaining compact layout."
+    },
+    {
+      "persona_id": "P53",
+      "category": "pain-point",
+      "severity": 2,
+      "description": "Grocery list input placeholder text 'e.g. sparkling water' provides no hint about quantity format needed; P53 cooking with a child needs faster scanning",
+      "reproduction_steps": [
+        "Navigate to http://localhost:3000/app/grocery-list on mobile",
+        "Locate the add-item input field at the top",
+        "Observe the placeholder text and field labeling"
+      ],
+      "observed_evidence": "Input field has placeholder 'e.g. sparkling water' (item name example only). The quantity field below has placeholder '1 pack' but they are separate inputs without clear visual hierarchy or grouping label. Screenshot: A14-05-grocery-initial-5.png shows two separate text inputs with minimal visual distinction.",
+      "suggested_fix": "Add a fieldset legend or visible label 'Item name' and 'Quantity' above the inputs, or group them in a container with light background. Clarify quantity format in placeholder (e.g., '1 pack' \u2192 'quantity (e.g., 1, 2 lbs)' or add a unit selector dropdown)."
+    },
+    {
+      "persona_id": "P53",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "Recipe page has no visible card structure or images; lacks scannable visual hierarchy that a busy single dad needs to quickly identify recipes suitable for a picky 8-year-old",
+      "reproduction_steps": [
+        "Open http://localhost:3000/app/recipes at mobile viewport (390x844)",
+        "Take screenshot and observe the page layout"
+      ],
+      "observed_evidence": "Recipe page loaded but shows 0 recipe cards detected in DOM. Screenshot A14-p53-recipes-mobile-13.png shows the layout is not rendering visible recipe items or images. This makes it impossible to scan visually for kid-friendly recipes by ingredient or appearance.",
+      "suggested_fix": "Ensure recipe cards render with: (1) recipe image or ingredient photo, (2) recipe name as large, bold heading, (3) prep time and yield in a consistent position (e.g., top-right), (4) visible spacing/gaps between cards (16-24px), (5) consistent card height so they form a grid rhythm."
+    },
+    {
+      "persona_id": "P53",
+      "category": "suggestion",
+      "severity": 1,
+      "description": "Grocery list feedback timing is fast (147ms) but no visual confirmation (toast, inline success) when item is added; P53 needs reassurance the item persisted when interrupted by child",
+      "reproduction_steps": [
+        "Open http://localhost:3000/app/grocery-list on mobile",
+        "Fill the item input with 'Chicken breast'",
+        "Click 'Add item' button and observe for success feedback"
+      ],
+      "observed_evidence": "Item added in 147ms (good speed), but screenshot A14-p53-grocery-add-17.png shows no toast, checkmark, or inline confirmation visible. Item appears to be added to the list but no explicit success state communicates this to the user.",
+      "suggested_fix": "Add a brief toast notification ('Added Chicken breast' or a green checkmark + item count increment) that appears for 2-3 seconds, or flash the newly-added item row with a light green background that fades. This is especially important for P53's interrupted context."
+    },
+    {
+      "persona_id": "P54",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "At 200% magnification (simulating P54's ZoomText 300% setting scaled to browser), focus rings remain 2px but content viewport clips; focus may scroll out of view, leaving keyboard user blind to where focus is",
+      "reproduction_steps": [
+        "Open http://localhost:3000/app/log on desktop (1280x800)",
+        "Apply 200% CSS zoom: document.body.style.zoom = '2'",
+        "Tab through interactive elements and observe focus ring visibility relative to viewport"
+      ],
+      "observed_evidence": "At 200% zoom: bodyWidth=640px, htmlWidth=1280px, no horizontal scroll on body. Focus ring is present (oklab 2px outline) but when tabbed through, the focused element may not be visible in the magnified viewport, leaving P54 disoriented. Screenshot: A14-p54-log-200pct-zoom-14.png",
+      "suggested_fix": "Ensure focus-visible elements scroll into view on focus (use scrollIntoView({behavior: 'smooth', block: 'center'}) on focus). Increase focus ring thickness to 3-4px or add a glow/shadow enhancement so it remains visible at high magnification. Test with actual ZoomText at 250-300% to verify."
+    },
+    {
+      "persona_id": "P54",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Text elements on dashboard are measured with 0x0 pixel dimensions (not rendering in visible space); at magnification, this causes clipping or invisible text for P54",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/app/dashboard on desktop (1280x800)",
+        "Apply 150% zoom: document.body.style.zoom = '1.5'",
+        "Inspect heading and label elements for clipping or overflow"
+      ],
+      "observed_evidence": "Several heading/logo elements report 0x0px dimensions (CSS text sizing or positioning issue). At 150% zoom, 2 elements flagged as potentially truncated across widths 320-480px. Screenshot A14-10-dashboard-1.5x-zoom-10.png shows layout remains intact but text measurements are suspect.",
+      "suggested_fix": "Audit heading/label CSS: ensure no `display: none` or `visibility: hidden` on visible text. Check for overflow: hidden on text containers. Use relative units (em/rem) for text sizing and ensure containers have min-height or line-height to accommodate text at magnification."
+    },
+    {
+      "persona_id": "P54",
+      "category": "suggestion",
+      "severity": 2,
+      "description": "Focus ring outline uses oklab() color format which may not render consistently across browsers/OS magnifiers; P54 needs maximum compatibility for AT",
+      "reproduction_steps": [
+        "Visit any app route requiring keyboard nav (e.g., http://localhost:3000/app/nutrition)",
+        "Press Tab to focus an element",
+        "Inspect computed style of outline color"
+      ],
+      "observed_evidence": "Focus outline computed as 'oklab(0.589803 -0.113647 0.0276056 / 0.942563) solid 2px' on some elements, while others use 'rgb(21, 145, 108) solid 2px'. Screenshot A14-09-focus-after-tabs-9.png. oklab() may not be reliably rendered in all magnification tools.",
+      "suggested_fix": "Standardize all focus rings to use sRGB colors (e.g., rgb(21, 145, 108) or a named color like #159364). Test the final outline color with ZoomText and built-in Windows/macOS magnification to ensure visibility. Consider using a box-shadow glow in addition to outline for maximum contrast."
+    },
+    {
+      "persona_id": "P54",
+      "category": "improvement-idea",
+      "severity": 1,
+      "description": "No live-region announcements or ARIA labels detected on dynamic updates (form submission, item added to list); P54 using screen reader + magnification combination cannot hear or see confirmation",
+      "reproduction_steps": [
+        "Open http://localhost:3000/app/grocery-list",
+        "Use keyboard to navigate and fill the item input",
+        "Press Enter or Tab to submit; observe for aria-live or role='status' regions"
+      ],
+      "observed_evidence": "Error/status check shows 0 live regions (aria-live) and 0 role='alert' elements detected. Screenshot A14-p56-profile-form-21.png from similar flow. Users relying on screen readers + magnification won't hear confirmation of actions.",
+      "suggested_fix": "Add aria-live='polite' regions to: (1) grocery list item added, (2) form submission results, (3) coach response areas. Announce state changes (e.g., 'Spinach added' or 'Saving...' then 'Saved')."
+    },
+    {
+      "persona_id": "P55",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Time period selector buttons (Today, 3 days, 7 days, 14 days) are 32px tall\u2014below 44px WCAG minimum\u2014and spaced closely together, risking mis-taps for P55 with larger hands in dim bar light",
+      "reproduction_steps": [
+        "Open http://localhost:3000/app/daily-review on mobile (390x844)",
+        "Locate the time-period toggle buttons",
+        "Measure button height and spacing between buttons"
+      ],
+      "observed_evidence": "Time period buttons: Today 61x32px, 3 days 63x32px, 7 days 63x32px, 14 days 70x32px. All 32px tall (below 44px minimum). Buttons have no visible gap between them (borderRadius 3.35544e+07px suggests pill-style, packed tight). Screenshot: A14-07-daily-review-7.png",
+      "suggested_fix": "Increase button height to 44-48px minimum. Add 4-8px horizontal margin/gap between buttons. Use slightly larger font (16px instead of 14px) to improve readability in dim light. Consider converting to a segmented control or tab-style component with clearer visual separation."
+    },
+    {
+      "persona_id": "P55",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Macro number '39' (Health Score) is rendered at 14px font size with light teal color (rgb(174, 226, 211)) on white background\u2014low contrast and illegible in dim bar lighting where P55 logs post-shift meals",
+      "reproduction_steps": [
+        "Open http://localhost:3000/app/dashboard on mobile (390x844) in dim-light environment or reduce screen brightness to 50%",
+        "Locate the health score metric below 'Today's decision'",
+        "Attempt to read the small teal number"
+      ],
+      "observed_evidence": "Number '39' size 16x20px, fontSize 14px, color rgb(174, 226, 211) (light teal) on white background. Contrast ratio ~4:1 (fails WCAG AA for small text, which requires 4.5:1). Screenshot A14-p55-dashboard-numbers-15.png shows the metric.",
+      "suggested_fix": "Increase Health Score number font to at least 18px (or match the main macro numbers at 26-34px if it's a key metric). Use darker color (rgb(21, 145, 108) or darker) to achieve 7:1 contrast on white. If it's not a primary metric, move it lower in visual hierarchy; if it is, enlarge and emphasize it."
+    },
+    {
+      "persona_id": "P55",
+      "category": "suggestion",
+      "severity": 2,
+      "description": "Main calorie number (1400) uses lab() color format (lab(7.78201 -0.0000149012 0)) instead of sRGB, which may render inconsistently across phone vendors in bright/dim lighting",
+      "reproduction_steps": [
+        "Open http://localhost:3000/app/dashboard on mobile (390x844)",
+        "Note the 1400 calories remaining display",
+        "Inspect the computed color in DevTools"
+      ],
+      "observed_evidence": "Calorie number '1333' and '1400' both computed as lab(7.78201 -0.0000149012 0)\u2014a dark gray. This color format may not display consistently across Android and iOS, especially under bright sunlight or dim lighting. Screenshot: A14-02-dashboard-mobile-2.png, A14-p55-dashboard-numbers-15.png",
+      "suggested_fix": "Convert all metric colors to sRGB (rgb() or hex). Use consistent color palette: primary metrics in the app's primary green (#159364 or rgb(21, 145, 108)), secondary in dark gray (#1F302A or rgb(31, 48, 42)). Test on multiple devices in bright/dim conditions."
+    },
+    {
+      "persona_id": "P55",
+      "category": "suggestion",
+      "severity": 1,
+      "description": "Meal category buttons lack visual hover/focus state feedback; P55 tapping quickly at night cannot confirm button will register before lifting thumb",
+      "reproduction_steps": [
+        "Open http://localhost:3000/app/log on mobile (390x844)",
+        "Hover over or tap (without releasing) a meal category button (Breakfast, Lunch, etc.)",
+        "Observe for visual feedback (color change, scaling, shadow)"
+      ],
+      "observed_evidence": "Buttons are 150x46px but no visible :hover, :active, or :focus-visible states documented in screenshots. When tapped, user gets no immediate visual confirmation that the button is responding.",
+      "suggested_fix": "Add CSS states: :hover { opacity: 0.8 or background-color: darker }, :active { transform: scale(0.98) or background-color: even darker }, :focus-visible { outline or box-shadow }. This is especially important for speed-focused users in low-light contexts."
+    },
+    {
+      "persona_id": "P56",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Spacing between Daily Review sections is inconsistent (gaps: -177px, 45px, 28px)\u2014not following a rhythm\u2014which P56 (methodical, ritual-focused) will perceive as broken/unfinished, threatening the trust needed for a 90-day logging streak",
+      "reproduction_steps": [
+        "Open http://localhost:3000/app/daily-review on desktop (1280x800)",
+        "Measure the vertical gap between consecutive section containers (using DevTools or screenshot measurements)"
+      ],
+      "observed_evidence": "Spacing consistency check: sectionCount=9, spacingGaps=[-177, 45, 28], consistent=false. The first gap is negative (sections overlap or previous section extends beyond its bounds), then 45px, then 28px. This violates spacing rhythm. Screenshot: A14-p56-daily-review-spacing-20.png",
+      "suggested_fix": "Establish a consistent spacing grid (e.g., 24px, 32px, or 40px between major sections). Audit all section margins and padding to ensure they sum to a consistent value. Use CSS variables (--spacing-unit) to enforce rhythm across all sections. Add visual dividers or equal whitespace if overlap is intentional."
+    },
+    {
+      "persona_id": "P56",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "No visible error states or validation feedback on Profile form; P56 cannot confirm data integrity before saving, risking undetected errors in a 90-day ritual",
+      "reproduction_steps": [
+        "Open http://localhost:3000/app/profile on mobile (390x844)",
+        "Scroll through form fields and check for validation indicators, required-field markers, or error messages"
+      ],
+      "observed_evidence": "Profile form shown in screenshot A14-p56-profile-form-21.png; error visibility check shows errorElements=0, liveRegions=0, but hasErrorText=true (generic error text somewhere). No specific field-level validation indicators visible. P56 has no way to know if required fields are missing before submitting.",
+      "suggested_fix": "Add field-level validation: (1) Required-field marker (*) next to labels, (2) Real-time validation (show red border + error message as user types), (3) Disabled submit button until all required fields are valid, (4) aria-describedby linking error messages to inputs for screen reader users. Show a clear summary error message if submit fails."
+    },
+    {
+      "persona_id": "P56",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Streak indicator visibility is unclear; P56 cannot quickly confirm if today's entry will keep the 6-day streak alive\u2014the metric P56 relies on for ritual motivation",
+      "reproduction_steps": [
+        "Open http://localhost:3000/app/nutrition on desktop (1280x800)",
+        "Look for a streak counter or 'days logged in a row' metric",
+        "Verify the metric is large, prominent, and updated in real-time as user logs meals"
+      ],
+      "observed_evidence": "Streak indicator found but the text is embedded in a large container (size 1280x800px, fontSize 16px). The actual streak number (e.g., '6-day') is not visually separated or emphasized. Screenshot A14-p56-nutrition-detail-16.png shows it's buried in page layout rather than surfaced as a key metric.",
+      "suggested_fix": "Surface the streak metric prominently: (1) Place it at the top of Dashboard or Nutrition view (above the fold), (2) Use large font (28-34px), (3) Add a flame or trophy icon, (4) Highlight with a subtle background color or card styling, (5) Show next to a calendar indicating which days were logged. Update this metric in real-time when a meal is logged."
+    },
+    {
+      "persona_id": "P56",
+      "category": "suggestion",
+      "severity": 2,
+      "description": "All buttons on Progress page (Day 0, Day 1, 3+ days, metric toggles: Calories, Protein, Carbs, Fat) are 36px tall\u2014below 44px minimum\u2014risking mis-taps on weekend phone logging sessions",
+      "reproduction_steps": [
+        "Open http://localhost:3000/app/progress on mobile (390x844)",
+        "Measure all button heights in the day-selector and metric-toggle sections"
+      ],
+      "observed_evidence": "Buttons measured: Day 0 76x36px, Day 1 76x36px, 3+ days 89x36px, Calories 98x36px, Protein 92x36px, Carbs 85x36px, Fat 69x36px. All 36px tall (below 44px), and 10/10 buttons under 44px minimum. Screenshot: A14-12-buttons-touchsize-12.png",
+      "suggested_fix": "Increase all button heights to 44-48px. If screen space is tight, use 44px and increase padding/line-height. Consider grouping day-selector buttons into a segmented control (visually unified) and metric toggles into a pill-style selector with more padding."
+    },
+    {
+      "persona_id": "P56",
+      "category": "suggestion",
+      "severity": 1,
+      "description": "No keyboard-submit behavior documented on Log meal search; P56 may expect Enter key to submit search rather than having to click, slowing his ritual",
+      "reproduction_steps": [
+        "Open http://localhost:3000/app/log on mobile (390x844)",
+        "Focus on the meal search input",
+        "Type 'apple' and press Enter; observe if search is triggered or if click is required"
+      ],
+      "observed_evidence": "Search input filled with 'apple' (screenshot A14-p53-log-search-prefilled-18.png), then Enter pressed (screenshot A14-p53-log-search-after-enter-19.png), but no documented change in UI (no results dropdown shown). Unclear if Enter key is mapped to search or ignored.",
+      "suggested_fix": "Ensure pressing Enter in search input triggers search submission (or auto-submit on debounced keystroke). Show visual feedback: (1) Results dropdown appear/expand, (2) Spinner while loading, (3) 'No results' message if empty. This is low-severity for mobile (auto-complete is fine) but important for P56's desktop weekday sessions."
+    }
+  ]
+}

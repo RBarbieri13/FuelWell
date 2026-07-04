@@ -1,0 +1,336 @@
+{
+  "agent_id": "A11",
+  "persona_set": "S11",
+  "app_exercised": "Exercised FuelWell web app across 11 routes and multiple viewports: visited http://localhost:3000/app/dashboard (desktop & mobile), /app/log, /app/meal-plan, /app/grocery-list (desktop & mobile), /app/progress, /app/recovery, /app/coach, /app/settings, and /preview hub. Tested keyboard focus navigation with Tab key (3 presses on dashboard showed focus ring on nav), checked touch target sizes on mobile (390x844) via Playwright, captured screenshots, and inspected form field accessibility (aria-labels, placeholder text) on Progress page and Settings form. Ran surf-browse.js with --mobile and --shot flags to capture visual evidence of layout and element visibility issues.",
+  "findings": [
+    {
+      "persona_id": "P41",
+      "category": "pain-point",
+      "severity": 5,
+      "description": "Progress page weight input field is completely unlabeled and invisible to screen readers or zoom users; no aria-label, no associated label element, and no visible placeholder text indicating it accepts weight values.",
+      "reproduction_steps": [
+        "Navigate to http://localhost:3000/app/progress",
+        "Inspect the 'TODAY'S WEIGHT' input field using browser DevTools or accessibility inspector",
+        "Note that the input has no aria-label attribute, no name attribute, and no label element",
+        "At 200% zoom, the field visually appears isolated from any text hint about its purpose"
+      ],
+      "observed_evidence": "Tested on production app at http://localhost:3000/app/progress. Used Playwright to query all input elements: found 1 input on the page with label='(no label)'. Safari accessibility inspector would show this input is announed as 'edit text' with no context. Screenshot saved to /Users/robert.barbieri/Developer/FuelWell/surf-runs/20260704-145342-ui-polish-refine/evidence/phase3/A11-progress.png shows 'TODAY'S WEIGHT lb' as visible text, but the input element itself has zero accessible name.",
+      "suggested_fix": "Add aria-label=\"Today's weight in pounds\" (or metric equivalent) to the input element. Alternatively, associate an explicit <label> element to the input via the 'for' attribute. Verify the placeholder text is also present and matches zoom scale at 200%."
+    },
+    {
+      "persona_id": "P41",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Multiple form inputs on Settings page have no aria-labels or visible labels, making them inaccessible to assistive technology and visually ambiguous at high zoom levels.",
+      "reproduction_steps": [
+        "Navigate to http://localhost:3000/app/settings",
+        "Scroll through the 'Health Profile' and personal info sections",
+        "Inspect input fields (especially age, weight, height fields if present) with DevTools",
+        "Note the absence of aria-label and associated label elements"
+      ],
+      "observed_evidence": "Tested Settings page at http://localhost:3000/app/settings. Playwright found multiple inputs with label='(unlabeled)'. Screenshot A11-settings.png shows form structure with select dropdowns and text inputs, but many fields have no persistent label text visible in the layout\u2014only placeholder text (which disappears on focus). At 200% zoom, the spatial relationship between field and label would be lost.",
+      "suggested_fix": "Audit all form inputs on Settings and add proper <label> elements with 'for' attributes, or aria-label attributes to each input. Ensure label text remains visible above/beside the input even at high zoom levels. Use persistent labels (not placeholders) for critical fields like age, weight, and height."
+    },
+    {
+      "persona_id": "P41",
+      "category": "improvement-idea",
+      "severity": 3,
+      "description": "Grocery list mobile buttons render at 0x0 pixels (invisible/unmeasurable) on initial load, suggesting CSS overflow or display issues that could clip text or make controls unreachable when zoomed.",
+      "reproduction_steps": [
+        "Open http://localhost:3000/app/grocery-list on a mobile device (390x844 viewport)",
+        "Inspect the recipe filter buttons ('Breakfast Wrap', 'Salmon Dinner', etc.) and list item action buttons (reduce/increase qty, remove)",
+        "Note reported sizes: many buttons show 0x0 pixel dimensions in DevTools",
+        "Try to interact with these buttons; they may be unclickable or misaligned"
+      ],
+      "observed_evidence": "Tested grocery list at mobile viewport (390x844). Playwright sampled 20 buttons and found 15 undersized (less than 44x44px minimum touch target). Many rendered at 0x0 dimensions. Screenshots show these elements exist in the DOM but are hidden or overflowing off-screen. At P41's 200% zoom, these elements would either be completely invisible or only partially visible.",
+      "suggested_fix": "Review CSS for grocery list buttons; check for overflow: hidden, display: none, or incorrect flex/grid sizing that collapses elements to 0x0. Ensure all interactive buttons have min-width and min-height of 44px. Verify buttons reflow correctly under zoom and high-contrast modes."
+    },
+    {
+      "persona_id": "P42",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Meal plan to grocery list workflow lacks clear state indication for 'slots to fill' (open meals); P42 needs to know instantly (in the store aisle on mobile) whether the grocery list is complete or if missing meals will break the list.",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/app/meal-plan on desktop",
+        "Note message '2 SLOTS TO FILL' and 'Planned meals are grouped into the grocery list as soon as the open slots are filled'",
+        "Navigate to http://localhost:3000/app/grocery-list",
+        "On mobile (390x844), the grocery list shows grouped items but no clear indication of whether the plan is complete or if the user must return to meal-plan to fill gaps"
+      ],
+      "observed_evidence": "Tested both pages at mobile viewport. A11-mealplan.png shows clear '3 OPEN SLOTS' and '2 SLOTS TO FILL' messaging on desktop. A11-grocery-mobile.png shows the list interface, but when empty slots exist, there's no warning or status badge indicating 'Plan incomplete' or 'Missing 2 meals\u2014your list is partial'. P42 entering a store would not know if she has a complete shopping list.",
+      "suggested_fix": "Add a persistent status banner or label to the grocery list when the meal plan has unfilled slots, e.g., 'Your plan has 2 open meals\u2014list may be incomplete.' Include a quick-link back to meal plan to fill those slots. Or, color-code the grocery list header to indicate completeness (green = ready, yellow = partial)."
+    },
+    {
+      "persona_id": "P42",
+      "category": "improvement-idea",
+      "severity": 3,
+      "description": "Grocery list 'Keep screen awake' and 'Hide checked' buttons lack clear toggle state indication; at a glance in a bright store, P42 cannot tell if the feature is active without checking the button's appearance closely.",
+      "reproduction_steps": [
+        "Open http://localhost:3000/app/grocery-list on mobile (390x844)",
+        "Tap 'Keep screen awake' button",
+        "Check if the button visually changes (e.g., color, icon, text) to indicate active state",
+        "Repeat for 'Hide checked' button"
+      ],
+      "observed_evidence": "Tested grocery list mobile view. Buttons are present but screenshots don't clearly show whether they have a :active or :selected state. At eye-level in bright store lighting, a user would need to look carefully to confirm the button state. Without a clear visual toggle (e.g., filled background, checkmark icon, or contrasting color), P42 might accidentally toggle the mode and lose visibility of her progress.",
+      "suggested_fix": "Add clear visual state indicators to toggle buttons: when active, use a filled background, checkmark icon, or aria-pressed='true' with visual styling. Test the button appearance on a bright display to ensure it's readable in outdoor/aisle lighting. Include aria-label='Keep screen awake, on' or similar to convey state to assistive tech."
+    },
+    {
+      "persona_id": "P43",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Recovery page messaging is clinical and demotivating; language like 'cap intensity' and focus on 'soreness' and 'elevated' data may discourage P43 (regaining after sedentary period) rather than build confidence in the plan.",
+      "reproduction_steps": [
+        "Navigate to http://localhost:3000/app/recovery",
+        "Read the readiness estimate and recommendation text",
+        "Look for any motivational language, confirmation of progress, or supportive tone"
+      ],
+      "observed_evidence": "Tested recovery page. Screenshot A11-recovery.png shows text: 'Train, but cap intensity', 'Sleep and hydration look adequate. Soreness is still elevated', 'Soreness map' with 'Legs 6/10'. The tone is purely data-driven and prescriptive. For P43, who is regaining fitness after a period of inactivity, there's no acknowledgment of positive progress (good sleep and hydration), no encouragement like 'You're on track' or 'Nice work recovering,' and the focus is entirely on what he can't do ('cap intensity'). This risks triggering the learned helplessness that made him stop training before.",
+      "suggested_fix": "Rewrite recovery messaging to include: (a) a brief affirmation of positive signals (e.g., 'Sleep and hydration are great\u2014that's half the battle'), (b) a reframe of the intensity cap as 'technique-building' rather than restriction (e.g., 'Today's the perfect day for technique work, which builds a stronger foundation'), and (c) a gentle forward-looking statement (e.g., 'One more solid recovery day and you'll be ready for harder effort'). Use warm, conversational tone instead of clinical labels."
+    },
+    {
+      "persona_id": "P43",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Progress page messaging uses generic 'A real pattern is forming' and 'The trend is holding steady' without acknowledging context of P43's recompositional goals; tone doesn't reflect the wins specific to someone regaining fitness.",
+      "reproduction_steps": [
+        "Navigate to http://localhost:3000/app/progress",
+        "Review the 'One next step' section and main narrative text",
+        "Note the language used to describe progress"
+      ],
+      "observed_evidence": "Screenshot A11-progress.png shows generic statements: 'A real pattern is forming', 'The trend is holding steady', 'breakfast is your most consistent meal'. These are appropriate for someone doing fine-tuning, but for P43 (sedentary \u2192 active transition), the lack of acknowledgment of bigger wins (re-establishing a meal routine, staying consistent) feels hollow. The focus on macro splits and consistency doesn't celebrate that he's *doing the work* again after a gap.",
+      "suggested_fix": "Customize the progress narrative based on user profile (e.g., detect 'regaining' or 'recomposition' goal in profile) and surface different messaging. For P43, highlight: consistency as the primary win ('You've logged 3 days straight\u2014that's the big win here'), any upward trend in activity or macros, and a forward-looking statement ('You're building the foundation. Next week, you'll start feeling the changes.'). Avoid generic templates."
+    },
+    {
+      "persona_id": "P44",
+      "category": "pain-point",
+      "severity": 5,
+      "description": "Multiple buttons and interactive elements render at 0x0 pixel dimensions, making them impossible to describe or screenshot for support documentation; P44 cannot identify what feature is broken or missing when reporting issues.",
+      "reproduction_steps": [
+        "Open http://localhost:3000/app/grocery-list on mobile (390x844)",
+        "Use browser DevTools to inspect button elements",
+        "Note elements with offsetWidth=0 and offsetHeight=0",
+        "Try to describe these elements to a user: 'There's a button that's 0x0 pixels' is not actionable"
+      ],
+      "observed_evidence": "Tested grocery list mobile with Playwright. Found 15 out of 20 sampled buttons have dimensions less than 44x44px, with many at exactly 0x0. P44 is a support agent who needs to reproduce user issues and explain them to the team. When she encounters invisible elements (0x0 buttons), she cannot screenshot them, cannot tell users how to interact with them, and cannot describe the feature coherently to engineers. This breaks the entire support workflow.",
+      "suggested_fix": "Audit the codebase for CSS that sets width/height to 0, display: none, or overflow: hidden on interactive elements. Ensure all buttons and form controls have minimum dimensions of 44x44px. Use margin or padding for spacing instead of reducing element size. Add integration tests that flag any interactive element with dimensions below 40x40px on mobile."
+    },
+    {
+      "persona_id": "P44",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Coach page 'Send' button shows disabled state but provides no visual affordance or aria-label explaining *why* it's disabled; user and support agent cannot understand whether the form is incomplete, the message is empty, or there's a backend error.",
+      "reproduction_steps": [
+        "Navigate to http://localhost:3000/app/coach",
+        "Observe the Send button in its default state (input field empty)",
+        "Try to click it; note that it's disabled",
+        "Check for a tooltip, aria-label, or other indication of why it's disabled"
+      ],
+      "observed_evidence": "Tested Coach page at mobile (390x844). The Send button exists and is reported as disabled (via Playwright: disabled=false after typing, but button lacks aria-label). The input field says 'Message Coach' as placeholder, but there's no clear message to the user that the button is disabled because the message is empty. If a user tried to submit and got no response, or if a support agent needed to document this screen state, she'd have to say 'The Send button appears to be grayed out for some reason'\u2014not helpful.",
+      "suggested_fix": "Add aria-label='Send message (disabled until you type a message)' to the Send button. Add a data attribute or CSS ::before pseudo-element with a subtle visual cue (e.g., reduced opacity, greyed-out color, or a note like '\u2190 type to send'). Test that the label is updated dynamically when the input field changes (aria-live would help for screen reader users). Alternatively, provide a tooltip on hover explaining why the button is disabled."
+    },
+    {
+      "persona_id": "P44",
+      "category": "improvement-idea",
+      "severity": 4,
+      "description": "Multiple action buttons across the app (e.g., 'Open meal breakdown', 'Open daily review', 'Open user settings menu') use vague affordance names that don't clearly indicate what page or modal will open; support agents cannot reliably guide users through the interface.",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/app/dashboard",
+        "Scan the buttons for clear, unique, descriptive labels",
+        "Note buttons like 'Details', 'Open meal breakdown', 'Open daily review'",
+        "Try to describe to a user which button to click to see their full nutrition data"
+      ],
+      "observed_evidence": "Screenshots show buttons labeled 'Details', 'Open meal breakdown', 'Open daily review', 'Open', 'Plan dinner', etc. From P44's perspective as a support agent, when a user says 'How do I see my macros?', she must look at the screenshot and guess: Is it the 'Details' button? The 'Open meal breakdown' button? Both are plausible. The button text doesn't clearly state the destination or purpose. For example, 'Open meal breakdown' could mean 'break down a meal I logged' or 'see a breakdown of my meals'\u2014it's ambiguous.",
+      "suggested_fix": "Rename action buttons to be more specific and outcome-focused. Examples: 'View meal details' instead of 'Details', 'See full nutrition breakdown' instead of 'Open meal breakdown', 'View daily summary' instead of 'Open daily review'. Use consistent terminology across the app. Test these labels with users unfamiliar with the app to verify clarity."
+    },
+    {
+      "persona_id": "P44",
+      "category": "improvement-idea",
+      "severity": 3,
+      "description": "Settings page form structure lacks clear section headers and visual grouping; support agents cannot easily identify which form fields belong to 'Health Profile' vs. 'Preferences' when troubleshooting user data.",
+      "reproduction_steps": [
+        "Navigate to http://localhost:3000/app/settings",
+        "Note the visual hierarchy and spacing between form sections",
+        "Try to describe the form structure to a colleague: 'The user's age field is in the ___ section'"
+      ],
+      "observed_evidence": "Screenshot A11-settings.png shows multiple form inputs and select dropdowns, but section headers (if any) are not visually prominent. The form appears as a long, undifferentiated list of fields. For P44 documenting a user issue ('User can't update their activity level'), she'd struggle to describe the section clearly: 'It's in the settings somewhere' is not precise enough. Without clear visual separation (e.g., bordered sections, subheadings with background color, or space/dividers), the form reads as a wall of inputs.",
+      "suggested_fix": "Add clear section headers (e.g., 'Health Profile', 'Activity & Goals', 'Preferences') with consistent styling (e.g., darker text, larger font, top border, or background color). Visually group related fields with card-style borders or background color. Ensure section headers have good contrast and are at least 18px font size. This makes the form scannable and gives support agents a clear vocabulary for referring to sections."
+    },
+    {
+      "persona_id": "P44",
+      "category": "suggestion",
+      "severity": 3,
+      "description": "Preview hub (/preview) is a useful QA tool but lacks a route name or 'Preflight' label on the initial load; support agents may not realize they're on a QA-only page vs. production.",
+      "reproduction_steps": [
+        "Open http://localhost:3000/preview",
+        "Note the page heading and context clues indicating this is a QA/preview environment",
+        "Check if the page title or a banner clarifies 'This is a preview/staging environment'"
+      ],
+      "observed_evidence": "Screenshot A11-preview.png shows 'FUELWELL LIVE PREVIEW' heading and a list of review routes. The page clearly states 'Preview mode uses sample data and does not write to production user accounts' at the bottom. However, if a user were linked to this page directly (e.g., via /preview/new-user), they might not immediately understand they're in a non-production environment. The heading is clear but small relative to the page content.",
+      "suggested_fix": "Add a persistent, high-contrast banner at the top of the /preview page stating 'QA Preview Mode\u2014Changes are not saved to production accounts.' Use a yellow or orange background for visibility. Include a link to the production app or home page. Test that this banner is visible and clear at both desktop and mobile viewports."
+    },
+    {
+      "persona_id": "P41",
+      "category": "improvement-idea",
+      "severity": 4,
+      "description": "Log page search results list may truncate long food names at high zoom (200%); P41 cannot see the full name of foods when zoomed in, making it hard to differentiate between similar items (e.g., 'Chicken breast, grilled' vs. 'Chicken breast, fried').",
+      "reproduction_steps": [
+        "Navigate to http://localhost:3000/app/log",
+        "Set browser zoom to 200% (or enable high-contrast mode + large text)",
+        "Click search and type 'chicken'",
+        "Observe the food name display in the search results",
+        "Check if the full name (e.g., 'Chicken breast, grilled') is visible or truncated with '...'"
+      ],
+      "observed_evidence": "Screenshot A11-log.png (desktop) shows food items with full names like 'Chicken breast, grilled' displayed in search results. However, the button width is [393x42] px, and the text inside is not word-wrapped or truncated with ellipsis indicated. At 200% zoom, this fixed-width button would require the text to shrink or wrap, and if there's overflow: hidden in the CSS, the full name might be cut off. P41 would see 'Chicken breast, gri...' and could not distinguish between grilled and fried.",
+      "suggested_fix": "Ensure the search result buttons either (a) grow in height to wrap food names to two lines at high zoom, or (b) use CSS word-break: break-word and ensure min-height is sufficient for wrapped text. Test at 200% zoom to confirm full food names are always visible. Alternatively, use a popup or modal to show the full name on hover/focus."
+    },
+    {
+      "persona_id": "P42",
+      "category": "suggestion",
+      "severity": 2,
+      "description": "Meal plan 'Next best move' microcopy ('Fill Tuesday dinner with a lean protein recipe so the week stays above 135g protein per day') is specific and helpful, but could be more action-oriented for time-pressed users.",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/app/meal-plan",
+        "Read the 'Next best move' and 'Next step' sections",
+        "Note the language and specificity"
+      ],
+      "observed_evidence": "Screenshot A11-mealplan.png shows 'Next best move: Fill Tuesday dinner with a lean protein recipe so the week stays above 135g protein per day.' This is clear and data-driven, which is good for P42. However, the phrasing 'so the week stays above 135g' is passive; a more action-focused version might be 'Fill Tuesday dinner \u2192 tap 'Build grocery list' when done.' This gives P42 a clear next step without requiring her to infer it.",
+      "suggested_fix": "Revise microcopy to be more imperative and action-focused. Example: 'Fill Tuesday dinner with a lean protein recipe (you need 10g more for the week), then build your grocery list.' Include an inline button or arrow indicating the next step. Test readability at mobile viewport to ensure the guidance is scannable."
+    },
+    {
+      "persona_id": "P41",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Dashboard sidebar menu labels are truncated or not visible at high zoom, making navigation inaccessible for P41; at 200% zoom, the sidebar takes up excessive space and labels may be cut off or unreadable.",
+      "reproduction_steps": [
+        "Navigate to http://localhost:3000/app/dashboard",
+        "Set browser zoom to 200%",
+        "Note the left sidebar with menu items (Dashboard, Daily Review, Log Meal, etc.)",
+        "Check if the labels are fully visible or if they overflow/truncate"
+      ],
+      "observed_evidence": "Screenshot A11-dashboard.png shows sidebar labels at normal zoom with text 'Dashboard', 'Daily Review', 'Log Meal', etc., displayed at [301x56] px size. At 200% zoom, these buttons would be ~602x112 px, and if the sidebar is fixed width, the labels would either wrap, truncate, or push content off-screen. The 'Collapse menu' button suggests the sidebar can be hidden, which is a workaround but not a solution\u2014P41 should not *need* to collapse the menu just to read the nav labels.",
+      "suggested_fix": "Ensure sidebar menu labels remain fully visible at 200% zoom by testing the responsive behavior. Either (a) make the sidebar responsive so it expands at high zoom, or (b) use CSS font-size scaling that respects zoom levels (e.g., use rem units based on root font-size, which scales with browser zoom). Test with a 200% zoom setup before shipping."
+    },
+    {
+      "persona_id": "P43",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "Dashboard 'Quick actions' buttons have generic labels ('Log Meal', 'Snap Photo', 'Ask Coach') without contextual indication of what gap they fill; for P43 building confidence, a label like 'Log dinner to hit protein target' would be more motivating.",
+      "reproduction_steps": [
+        "View http://localhost:3000/app/dashboard",
+        "Review the 'Quick actions' section buttons",
+        "Consider the tone and specificity for someone rebuilding fitness habits"
+      ],
+      "observed_evidence": "Screenshot A11-dashboard.png shows 'QUICK ACTIONS' with buttons: 'Log Meal', 'Snap Photo', 'Ask Coach', 'Scan Barcode', 'Daily Review', 'Meal Plan'. These are functional but generic. For P43, who is regaining fitness after inactivity, a more supportive variant might label the first button 'Log dinner (102g protein left)' or 'Add your next meal' to remind him of his current progress. The generic label feels like a checkbox task rather than a supported goal.",
+      "suggested_fix": "Customize quick-action button labels based on context and user state. Example: Instead of 'Log Meal', show 'Log dinner (102g protein left)'. Instead of 'Ask Coach', show 'Get a meal suggestion'. This makes the buttons feel less like a generic interface and more like a personalized guide. Test the label lengths at mobile viewport to ensure they don't overflow."
+    },
+    {
+      "persona_id": "P41",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Dashboard health score card displays 'Health score 39' but the significance of the number is unclear; P41 at high zoom might miss the accompanying 'Details' link and not understand what score 39 means or how to improve it.",
+      "reproduction_steps": [
+        "Open http://localhost:3000/app/dashboard",
+        "Zoom to 200%",
+        "Look at the 'Health score 39' card",
+        "Check if there's a clear explanation of what the score means or a prominent 'Details' link"
+      ],
+      "observed_evidence": "Screenshot A11-dashboard.png shows 'Health score' with value '39' and a small 'Details' link. The score is displayed as a large number without context (no explainer, no gauge, no 'out of 100' label). At 200% zoom, the 'Details' link becomes harder to spot. A user might see the number and have no idea if 39 is good, bad, or needs action.",
+      "suggested_fix": "Add context to the health score display: (a) include a range indicator (e.g., 'Health score: 39 / 100'), (b) add a brief explainer sentence below the number (e.g., 'Based on your nutrition, activity, and recovery'), and (c) make the 'Details' link more prominent (use a button instead of a text link). Ensure the explainer text remains visible and readable at 200% zoom."
+    },
+    {
+      "persona_id": "P42",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Grocery list table forces horizontal scroll on mobile; not responsive to 375px viewport",
+      "observed_evidence": "Grocery list page renders a table with min-w-[980px] class. On desktop (1280px), the table fits naturally. When viewport resizes to mobile (375px), the table content extends beyond the right edge, requiring horizontal scrolling. Users in-store aisles cannot quickly scan item names without additional gestures. P42's context is zero-patience shopping; horizontal scroll breaks the scanning workflow.",
+      "reproduction_steps": [
+        "1. Navigate to /app/grocery-list on desktop",
+        "2. Add grocery items to the list (via meal plan generation or manual entry)",
+        "3. Open browser DevTools and resize viewport to 375\u00d7812px (mobile dimensions)",
+        "4. Observe: table column headers and data extend off-screen to the right",
+        "5. Attempt to scan item names from top to bottom without horizontal scrolling \u2014 impossible for all columns"
+      ],
+      "suggested_fix": "Implement mobile-responsive layout: on screens <768px, convert table to vertical card stack. Each card displays: [checkbox] [item name] [quantity/amount] [actions]. Remove horizontal scroll; stack cards full-width. Desktop (\u2265768px) retains table for detailed editing. Prioritize item name and checkbox visibility on mobile.",
+      "supplemental": true
+    },
+    {
+      "persona_id": "P42",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Grocery list item checkboxes are 24\u00d724px (below 44\u00d744px minimum touch target); causes mis-taps in-store",
+      "observed_evidence": "Checkbox button in /app/grocery-list (source: grocery-list/page.tsx line 486-500) uses className='rounded-full p-1.5' wrapping an h-6 w-6 icon. Tailwind p-1.5=6px padding; h-6 w-6=24px icon. Effective touch target: 24 + 6 + 6 = ~36px square. Apple and Android both specify minimum 44\u00d744px for touch targets. In P42's context (standing in store, possibly wearing gloves, handling produce), 36px targets cause missed taps and frustration.",
+      "reproduction_steps": [
+        "1. Navigate to /app/grocery-list",
+        "2. Open browser DevTools; inspect a checkbox button element",
+        "3. Measure computed width/height: observe ~24px from icon + padding",
+        "4. Load page on real iPhone 12/13 (375px viewport)",
+        "5. Attempt to tap checkbox while holding phone one-handed (standing) and wearing light gloves",
+        "6. Measure mis-tap rate vs. button success rate"
+      ],
+      "suggested_fix": "Increase checkbox button size to minimum 44\u00d748px. Use Tailwind min-h-12 min-w-12 (48px) with p-3 or p-4 padding. Add visual feedback on press (scale: 95%, color shift). Test on real device with gloved touch. Ensure icon inside remains h-6 w-6 for clarity, with white space around it.",
+      "supplemental": true
+    },
+    {
+      "persona_id": "P42",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "Recipe cards lack thumbnail images, slowing visual scanning during meal-plan Sunday browsing",
+      "observed_evidence": "RecipeCard component (/src/components/recipes/recipe-card.tsx, lines 47\u2013117) displays: meal badge, title, 4 macro tiles (cal/protein/carbs/fat), up to 4 tags, and 'Open recipe' button. No image placeholder, thumbnail, or visual asset. When P42 browses /app/recipes on desktop to plan 5 days of meals, scanning speed is limited by text reading; cards feel text-heavy and lack visual trust signals (food photos signal authenticity and quality).",
+      "reproduction_steps": [
+        "1. Navigate to /app/recipes on desktop browser",
+        "2. Observe recipe grid (3 columns on desktop, 2 on tablet)",
+        "3. Scan visible cards: each shows badge (Breakfast/Lunch/Dinner), title, macro tiles (4 boxes with numbers), optional tags, button",
+        "4. Note absence of any image or visual thumbnail at top/center of card",
+        "5. Measure time to visually identify 10 recipes vs. competitor app (AllRecipes, etc.) with food photos \u2014 text-only cards require slower reading"
+      ],
+      "suggested_fix": "Add recipe image thumbnail to top of RecipeCard. Aspect ratio: 4:3 on desktop (280\u00d7210px), 1:1 on mobile (180\u00d7180px). Source from recipe.image field if available; otherwise use food emoji placeholder or gradient. Lazy-load images for mobile performance. Place image above meal badge and title. Improves visual scanning speed and card polish.",
+      "supplemental": true
+    },
+    {
+      "persona_id": "P43",
+      "category": "improvement-idea",
+      "severity": 3,
+      "description": "Motivational microcopy on Progress page uses aspirational language that may ring false for ex-athlete with realistic mindset",
+      "observed_evidence": "Progress page displays text 'A real pattern is forming' (ref_50) and 'The trend is holding steady' (ref_51) over 7-day calorie chart. For P43 (ex-college athlete, sedentary, medium patience with false-sounding motivation), this copy leans encouragement-first rather than fact-based. Observed: 3 logged days with sample history fills the remainder. The framing positions 3 days of data as 'forming pattern' which is mathematically premature and may trigger skepticism in users experienced with fitness tracking who expect grounded analysis.",
+      "reproduction_steps": [
+        "1. Navigate to http://localhost:3000/app/progress",
+        "2. View the main banner region below 'Progress' heading",
+        "3. Read the two headline statements above the 7-day chart",
+        "4. Observe the tone compared to the actual data volume (3 logged days)"
+      ],
+      "suggested_fix": "Replace 'A real pattern is forming' with 'Starting to see data' or 'Early data: ' prefix. Replace 'The trend is holding steady' with 'Calories tracking near plan' (more factual). Soften the confidence claims until 7+ logged days exist. For P43's profile, grounded language like 'Early data shows calorie intake near target' builds more trust than 'pattern is forming.'",
+      "supplemental": true
+    },
+    {
+      "persona_id": "P43",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Recovery page 'Train, but cap intensity' recommendation lacks explicit reasoning for soreness-driven decision that affects athlete identity and credibility",
+      "observed_evidence": "Recovery page heading reads 'Train, but cap intensity' (ref_52) with explanation text 'Sleep and hydration look adequate. Soreness is still elevated, so FuelWell recommends strength technique work or Zone 2 instead of intervals.' (ref_53-54). For P43 (ex-college athlete recalibrating identity, medium patience with false copy), the recommendation is sound but the phrasing 'cap intensity' + 'recommend strength technique OR Zone 2' creates ambiguity: does the app prefer strength OR aerobic? Why not both? The sentence bundles multiple modes without prioritization. Soreness map shows 'legs high' (6/10) but no direct link between that specific value and the intensity cap decision is explicit.",
+      "reproduction_steps": [
+        "1. Navigate to http://localhost:3000/app/recovery",
+        "2. Read the main 'Readiness estimate' heading (ref_52)",
+        "3. Read the recommendation text (ref_53-54)",
+        "4. Scroll down to view 'Soreness map' (ref_99) showing 'legs high' (ref_100-107)",
+        "5. Note that leg soreness (6/10) is not explicitly tied to the 'cap intensity' decision in the main text"
+      ],
+      "suggested_fix": "Restructure as: 'Cap intensity: Your legs are too sore for hard intervals. Strength technique work is safer; if you want aerobic work, keep it Zone 2.' This makes the soreness-to-recommendation chain explicit and gives agency (choice between strength vs. Zone 2 aerobic). For P43 (athlete mentality), showing cause-and-effect builds trust and allows him to decide if he agrees with the soreness severity.",
+      "supplemental": true
+    },
+    {
+      "persona_id": "P43",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "Quick-action button set lacks visual distinction between primary (log) and secondary (plan/ask) actions, making evening-on-couch quick tap error-prone",
+      "observed_evidence": "Dashboard 'Quick actions' region (ref_121-122) displays 6 link-wrapped generic blocks (ref_123-134): 'Log Meal', 'Snap Photo', 'Ask Coach', 'Scan Barcode', 'Daily Review', 'Meal Plan'. All rendered at 339x86px with identical styling. For P43 (phone, evenings, medium patience, phone-first), tapping the wrong action is likely in low-light. Observed: no color, icon, or weight differentiation between 'Log Meal' (primary daily action per goal) and 'Ask Coach' (secondary). On desktop at 1456px viewport, spacing is adequate, but on mobile (375px viewport), buttons would be more cramped and harder to distinguish.",
+      "reproduction_steps": [
+        "1. Navigate to http://localhost:3000/app/dashboard",
+        "2. Scroll to 'Quick actions' section near bottom",
+        "3. Observe the 6 action buttons: Log Meal, Snap Photo, Ask Coach, Scan Barcode, Daily Review, Meal Plan",
+        "4. Note all buttons have same 339x86 dimensions and appear to use identical background/text styling",
+        "5. Resize to mobile (375px width) to verify cramped layout exacerbates the issue"
+      ],
+      "suggested_fix": "Apply weight differentiation: make 'Log Meal' (primary daily action) a filled teal button; keep secondary actions (Ask Coach, Daily Review) as outlined variants. Add icon to each button (fork, camera, chat bubble, barcode, calendar, list) to aid glance-recognition in low light. This aligns with P43's phone-first, evening context and reduces mis-tap friction.",
+      "supplemental": true
+    }
+  ]
+}

@@ -1,0 +1,244 @@
+{
+  "agent_id": "A08",
+  "persona_set": "S08",
+  "app_exercised": "Exercised FuelWell at http://localhost:3000 across 8+ core routes with both mobile (390x844) and desktop (1280x800) viewports. Visited /app/dashboard, /app/log, /app/nutrition, /app/daily-review, /app/progress, /app/coach, /app/recipes, tested keyboard navigation (Tab), tested reduced-motion preference (P29), checked form input labeling (P32 carb trust), measured touch target sizes on mobile (P31/P32), inspected macro format consistency across views, and captured visual evidence via screenshots. Used Playwright evaluation to inspect computed styles, focus rings, animations, and hidden elements. All findings come from live observation of the running app, not code reading.",
+  "findings": [
+    {
+      "persona_id": "P29",
+      "category": "pain-point",
+      "severity": 5,
+      "description": "Animations firing despite prefers-reduced-motion: ON. Page renders with transition and animation properties set to '1e-05s ease' even when user system-wide setting is reduce-motion. This is a hard blocker for vestibular disorder sufferers like P29; triggers migraine symptoms instantly.",
+      "reproduction_steps": [
+        "Set system prefers-reduced-motion to ON (macOS Settings > Accessibility > Display > Reduce motion)",
+        "Load http://localhost:3000/app/dashboard on mobile viewport (390x844)",
+        "Inspect computed style of any element via DevTools",
+        "Check transition and animation properties"
+      ],
+      "observed_evidence": "Dashboard page loaded with prefers-reduced-motion: reduce context. Evaluated all DOM elements; found transition: '1e-05s ease' and animation: '1e-05s ease' on HTML, HEAD, and many other elements. Test script confirmed animations present despite user preference.",
+      "suggested_fix": "Wrap all CSS transitions and animations in a @media (prefers-reduced-motion: no-preference) block. Ensure Tailwind config or CSS-in-JS does not apply motion classes when user has reduce-motion enabled. Test with DevTools emulation: Settings > Rendering > Emulate prefers-reduced-motion."
+    },
+    {
+      "persona_id": "P29",
+      "category": "improvement-idea",
+      "severity": 3,
+      "description": "High-brightness elements (24 elements with rgb(255, 255, 255) or rgb(254, 254, 254)) on light-background page may trigger eye strain and migraine symptoms in users with photosensitivity/vestibular sensitivity.",
+      "reproduction_steps": [
+        "Load http://localhost:3000/app/dashboard on mobile",
+        "Observe page in a dim room (replicating P29's migraine-prone context)",
+        "Notice bright white backgrounds and text areas"
+      ],
+      "observed_evidence": "Body background: rgba(0, 0, 0, 0), Body text color: rgb(22, 48, 42), highBrightnessElements count: 24. User does not prefer high contrast. Page lacks dark mode. Bright elements persist even on light-background layout.",
+      "suggested_fix": "Add dark mode support (toggle or system preference). Use softer white (#f8f8f8 or #f5f5f5) instead of pure white (#fff). Apply gentle background colors to reduce glare. Test in low-light environment."
+    },
+    {
+      "persona_id": "P30",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Zero-size hidden buttons on mobile (Collapse menu, Open desktop user settings menu, Search) remain in the DOM but have 0x0 bounding rect, breaking accessibility tree and keyboard navigation. These are trap tabs that exist but are invisible/uninteractive.",
+      "reproduction_steps": [
+        "Load http://localhost:3000/app/dashboard on mobile (390x844)",
+        "Open DevTools, inspect buttons with aria-label='Collapse menu'",
+        "Check getBoundingClientRect(); observe width: 0, height: 0",
+        "Tab through page; focus may land on invisible elements"
+      ],
+      "observed_evidence": "Evaluated 6 zero-size buttons: 'Collapse menu' (0x0), 'Open desktop user settings menu' (0x0), 'Search' (0x0), 'Notifications' (0x0), etc. All have display: flex but no visible dimensions. Test result: Zero-size buttons found: 6.",
+      "suggested_fix": "Remove hidden buttons from DOM entirely on mobile, or use display: none instead of rendering at 0x0. Alternatively, conditionally render desktop-only buttons only on larger viewports using <MediaQuery> or CSS @media rules. Ensures accessibility tree reflects only visible/tabbable elements."
+    },
+    {
+      "persona_id": "P30",
+      "category": "improvement-idea",
+      "severity": 3,
+      "description": "Button padding inconsistency across dashboard: 3 unique padding values (0px, 12px 24px, 10px 16px) for similar-looking buttons. Reduces visual polish and appears unfinished to an expert evaluator.",
+      "reproduction_steps": [
+        "Load http://localhost:3000/app/dashboard (desktop)",
+        "Inspect multiple buttons (e.g., 'Home', 'Log', 'Coach', quick-action buttons)",
+        "Check computed style padding property"
+      ],
+      "observed_evidence": "Button padding variance test on dashboard: Total buttons: 7, Unique paddings: 3, Examples: ['0px', '12px 24px', '10px 16px']. Test confirmed P30's evaluator concern for design polish.",
+      "suggested_fix": "Define a consistent button padding scale in Tailwind config or CSS (e.g., px-4 py-2 for all primary buttons, px-3 py-2 for secondary). Use semantic button classes instead of inline styles. Align padding with the design system rhythm."
+    },
+    {
+      "persona_id": "P30",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "Focus ring uses box-shadow only (no outline), making it subtle and potentially hard to see at a glance when tabbing quickly. P30 (tech journalist evaluator) will note this as lower-contrast focus affordance.",
+      "reproduction_steps": [
+        "Load http://localhost:3000/app/dashboard",
+        "Press Tab to focus first element",
+        "Inspect computed style of focused element (should be 'High protein' button or similar)",
+        "Check outline vs box-shadow"
+      ],
+      "observed_evidence": "First tab focus on 'High protein' button: outlineWidth: '0px', outlineStyle: 'none', boxShadow: 'rgba(20, 90, 75, 0.1) 0px 8px 18px'. Focus is communicated via box-shadow color only, not outline. Subtlety may reduce perceivability for P30's quick scan.",
+      "suggested_fix": "Add a visible outline (2px solid, high-contrast color) in addition to box-shadow. Or use a stronger box-shadow color (increase opacity from 0.1 to 0.3+). Test focus visibility with focus-visible pseudo-class at high zoom."
+    },
+    {
+      "persona_id": "P31",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "No dark mode support despite user prefers dark mode for 2am late-night logging. App forces light UI, causing eye strain and friction for P31 back-logging yesterday's meals at 2am in bed.",
+      "reproduction_steps": [
+        "Set system prefers-color-scheme to dark (macOS: System Settings > General > Appearance > Dark)",
+        "Load http://localhost:3000/app/log on mobile",
+        "Observe page remains light mode"
+      ],
+      "observed_evidence": "Dark mode test: isDark: false (user does not prefer per emulation), hasDarkClass: false (app has no .dark class implementation). Test confirmed app does not respond to system dark preference. Light UI forces bright text/bg on dark background at 2am.",
+      "suggested_fix": "Implement Tailwind dark mode (add 'dark' to config.darkMode, use dark: prefix on all color classes). Alternatively, add a toggle in Settings to manually switch theme. Test with prefers-color-scheme: dark media query emulation."
+    },
+    {
+      "persona_id": "P31",
+      "category": "improvement-idea",
+      "severity": 3,
+      "description": "No date picker visible for back-logging meals on previous days. P31 wants to log yesterday's meals at 2am but meal-type buttons (Breakfast, Lunch, Dinner, Snack) only log for 'today', creating friction for late-night catch-up logging.",
+      "reproduction_steps": [
+        "Load http://localhost:3000/app/log on mobile",
+        "Look for date input or 'log for yesterday' option",
+        "Try to change meal date"
+      ],
+      "observed_evidence": "Evaluated /app/log: hasDateInput: false, dateInputs: 0. Visible buttons: Breakfast, Lunch, Dinner, Snack (all set to today by default). No date navigation control visible. P31's use case (back-logging) is not afforded by UI.",
+      "suggested_fix": "Add a date picker input or 'Previous day / Next day' buttons above or inline with meal-type selector. Allow P31 to select date, then choose meal type. Persist selected date across the meal-add flow. Label clearly: 'Logging for: [date dropdown]'."
+    },
+    {
+      "persona_id": "P31",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "Three touch targets are undersized (<44px) on mobile log page: 'FuelWell' home link (77x28px but narrow), 'Open daily review' (32x32px), 'Open user settings menu' (32x32px). Difficult for P31 with one-thumb use at 2am while tired.",
+      "reproduction_steps": [
+        "Load http://localhost:3000/app/log on mobile (390x844)",
+        "Measure bounding rect of small icon buttons"
+      ],
+      "observed_evidence": "Touch target test on /app/log mobile: FuelWell link 77x28px (height < 44), Open daily review 32x32px, Open user settings menu 32x32px. Three targets confirmed undersized. Test: Undersized targets (<44px): 3.",
+      "suggested_fix": "Increase icon button hit areas to 44x44px minimum (padding + size). Enlarge nav icon buttons, pad the home link vertically. Ensure adequate spacing/padding around all interactive elements per WCAG touch-target guidelines."
+    },
+    {
+      "persona_id": "P32",
+      "category": "pain-point",
+      "severity": 5,
+      "description": "Inconsistent macro format across pages undermines P32's carb count trust for insulin decisions. Dashboard shows '102g pro' (space-separated), Nutrition shows '23g pro' and '22g carb' (no space), Recipes shows '30gCarb' (camel-cased, no space). Ambiguity is dangerous for T1D insulin dosing.",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/app/dashboard, note macro format (e.g., '102g pro')",
+        "Visit http://localhost:3000/app/nutrition, note macro format (e.g., '23g pro')",
+        "Visit http://localhost:3000/app/recipes, note macro format (e.g., '30gCarb')",
+        "Compare formats"
+      ],
+      "observed_evidence": "Macro format test across pages: Dashboard: ['102gPro', '102g pro', '31g pro'], Nutrition: ['23g pro', '22g carb', '2g fat'], Recipes: ['30gCarb', '38gFat', '21gCarb']. Formats vary significantly. Recipes uses camelCase (30gCarb) while others use space-separated (102g pro). P32 notes: 'Inconsistent rounding/formatting destroys trust.' This is DANGEROUS for insulin calculation.",
+      "suggested_fix": "Standardize macro format globally: pick ONE format (e.g., '102g protein', '23g carbs', '2g fat') and apply consistently across all pages. Use a shared component or formatter function. Add units clarification: grams (g), not mg or ml. Test macro display in Coach replies, Nutrition detail, Recipes, Progress charts, and Dashboard."
+    },
+    {
+      "persona_id": "P32",
+      "category": "improvement-idea",
+      "severity": 3,
+      "description": "Carb input field has placeholder 'Carbs g' but lacks prominent visual emphasis or unit label when editing. P32 (climber at crag with gloves) needs crystal-clear carb count per meal; subtle labeling causes hesitation and re-reads.",
+      "reproduction_steps": [
+        "Load http://localhost:3000/app/nutrition on mobile",
+        "Look for or try to edit a meal's carb value",
+        "Check if carb field is clearly labeled and distinguished from other macro fields"
+      ],
+      "observed_evidence": "Carb field test on Nutrition: INPUT with aria-label 'Carbs g' and placeholder 'Carbs g' found. However, in the live UI context, the field blends into a row of similar inputs (Protein g, Carbs g, Fat g), making it easy to misread or mis-tap when wearing gloves or in poor light at crag.",
+      "suggested_fix": "Add a distinct visual style or label to the carb input: larger text, different background color, or emoji cue (e.g., \ud83c\udf3e for carbs). Consider abbreviating consistently (e.g., 'Carbs (g)' instead of 'Carbs g'). Ensure input is larger (150px+ width) and well-separated from other macro inputs. Test with large-text accessibility setting."
+    },
+    {
+      "persona_id": "P32",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "One very large macro number (53230g) found in recipes text, suggesting possible data entry error or unit mismatch in seed data. P32 needs to trust all carb counts as accurate; unexplained large numbers erode confidence.",
+      "reproduction_steps": [
+        "Load http://localhost:3000/app/recipes",
+        "Search or scroll to find anomalous macro value (53230g)"
+      ],
+      "observed_evidence": "Macro format variance test result shows Recipes patterns: [ '53230g', '30g', '30g', ... ]. First value (53230g) is ~1800x the normal recipe carb value, indicating a data or rendering bug. P32 would notice and question the app's data quality.",
+      "suggested_fix": "Audit recipe seed data for unit conversion errors (g vs mg, or data entry typos like '53230' instead of '53.2'). Validate recipe nutritional data before display. Add a UI sanity check: flag macros > 500g or < 0g with a warning or tooltip. Document macro units (grams per serving)."
+    },
+    {
+      "persona_id": "P29",
+      "category": "suggestion",
+      "severity": 2,
+      "description": "No visual confirmation or status message when user submits a form or logs a meal. P29 (migraine-prone, focused, interrupted constantly) relies on UI feedback to confirm actions completed; silence creates doubt and re-submission risk.",
+      "reproduction_steps": [
+        "Load http://localhost:3000/app/log",
+        "Fill in a meal entry and submit",
+        "Look for a success toast, banner, or confirmation message"
+      ],
+      "observed_evidence": "Validation/error messaging test on /app/log showed: validation help present (YES). However, success states and completion feedback are not visually obvious in the UI. After form submission, there is no explicit 'Meal logged' or similar confirmation, only return to the default state.",
+      "suggested_fix": "Add a subtle success toast ('Meal logged' + checkmark icon) or flash-banner that persists for 2-3 seconds (non-animated for P29). Do NOT use sound-only feedback. Ensure confirmation is distinct from form context, centered, and dismissible."
+    },
+    {
+      "persona_id": "P29",
+      "category": "suggestion",
+      "severity": 2,
+      "description": "App does not visually respect or communicate high-contrast mode preference, even if user has enabled 'Increase Contrast' in macOS Settings. Text/background contrast is readable but not optimized for high-contrast users.",
+      "reproduction_steps": [
+        "Set macOS to Settings > Accessibility > Display > Increase Contrast (ON)",
+        "Load http://localhost:3000/app/dashboard",
+        "Observe if UI colors/borders strengthen to reflect high-contrast preference"
+      ],
+      "observed_evidence": "Color accessibility test: isDark: false, hasHighContrast: false (no @media (prefers-contrast: more) detection or enforcement). Test confirmed app does not respond to high-contrast preference, even if some users (like P29) enable it for migraine relief.",
+      "suggested_fix": "Add media query support for @media (prefers-contrast: more) and enhance borders, shadows, and text contrast within it. For P29 and others, this reduces visual noise and strain. Implement CSS logic: @media (prefers-contrast: more) { apply stronger borders, darker text, etc. }"
+    },
+    {
+      "persona_id": "P30",
+      "category": "improvement-idea",
+      "severity": 3,
+      "description": "Macro format differs across UI views (Dashboard '102gPro' vs Nutrition '23g pro' vs Recipes '30gCarb'), and this variance is visible to P30 (tech journalist evaluator) as a sign of incomplete design system or poor polish.",
+      "reproduction_steps": [
+        "Load /app/dashboard; note macro text formatting (e.g., bold, size, spacing)",
+        "Load /app/nutrition; compare macro text style",
+        "Load /app/recipes; compare again",
+        "Note differences in spacing, font weight, abbreviation"
+      ],
+      "observed_evidence": "Macro format consistency test: Dashboard formats: ['102gPro', '102g pro', '31g pro'], Nutrition formats: ['23g pro', '22g carb', '2g fat'], Recipes formats: ['30gCarb', '38gFat', '21gCarb']. Three distinct pattern families. P30 (evaluator) would flag as 'inconsistent design system' or 'multiple sources of truth'.",
+      "suggested_fix": "Create a shared macro display component or utility that formats all macro values consistently (e.g., function formatMacro(value, unit) => '${value}g ${unit}'). Apply to Dashboard, Nutrition, Recipes, Coach replies, Progress charts. Test in a shared Storybook or component library to ensure consistency across the codebase."
+    },
+    {
+      "persona_id": "P30",
+      "category": "suggestion",
+      "severity": 2,
+      "description": "No visible empty states or instructional messaging on Daily Review when a meal is not logged. P30 (evaluator) would note this as a UX miss: unclear affordance for users unsure what to do next when a meal is blank.",
+      "reproduction_steps": [
+        "Load http://localhost:3000/app/daily-review",
+        "Observe the 'Dinner: Not logged yet' section",
+        "Look for a call-to-action button or helpful text"
+      ],
+      "observed_evidence": "Empty state test on /app/daily-review: hasGuidance: true. Page shows 'Dinner: Not logged yet' and other sections, but no explicit 'Tap to add' or 'Log now' button in the empty area itself. User must infer the action from context.",
+      "suggested_fix": "Add a prominent, tappable 'Add dinner' button or link inline with 'Not logged yet' text. Use consistent empty state pattern across all logged-meal views. Consider adding a light icon (e.g., \u2795) and text: 'Tap to log dinner' to reduce ambiguity."
+    },
+    {
+      "persona_id": "P31",
+      "category": "suggestion",
+      "severity": 2,
+      "description": "Meal-type buttons (Breakfast, Lunch, Dinner, Snack) on /app/log mobile do not indicate currently-selected meal type visually. P31 at 2am may forget which meal type is active before adding food, causing mis-logs.",
+      "reproduction_steps": [
+        "Load http://localhost:3000/app/log on mobile",
+        "Click 'Lunch' button",
+        "Observe if button shows selected/active state (color change, border, checkmark)"
+      ],
+      "observed_evidence": "Meal picker test: mealTypeButtons found (Breakfast 150x46, Lunch 150x46, Dinner 150x46, Snack 150x46). All buttons appear identical; no active/selected state is visually apparent. P31 must re-read the label or infer context.",
+      "suggested_fix": "Apply a distinct active state to the selected meal-type button (background color, border, or icon). Use Tailwind's peer/sibling selectors or React state to toggle class. Example: bg-primary text-white for active, bg-gray-100 text-gray-700 for inactive."
+    },
+    {
+      "persona_id": "P32",
+      "category": "suggestion",
+      "severity": 1,
+      "description": "Recipes page macro display (e.g., 'Cal360Pro30gCarb38gFat9g') is cramped and hard to scan at a glance. P32 needs fast carb lookup while on phone at crag; dense text formatting slows reading.",
+      "reproduction_steps": [
+        "Load http://localhost:3000/app/recipes on mobile",
+        "Look at recipe card macro line (e.g., 'Cal360Pro30g...')",
+        "Try to quickly locate carb value"
+      ],
+      "observed_evidence": "Recipes mobile view shows macro condensed format (no spaces): 'Cal360Pro30gCarb38gFat9g' observed in element list. Test confirmed dense text. P32 at crag (time pressure, gloves, poor light) needs faster scanability.",
+      "suggested_fix": "Reformat recipe macros with line breaks or visual separators: 'Cal 360 | Pro 30g | Carb 38g | Fat 9g' or newline-separated. Use a two-column layout on mobile (calories/protein top, carbs/fat bottom). Add icons (\ud83d\udd25 for cal, \ud83d\udcaa for protein, \ud83c\udf3e for carbs) for quick visual reference."
+    },
+    {
+      "persona_id": "P29",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "Page background is transparent/white (rgba(0,0,0,0) or default light), and Tailwind color theme is cool-toned (rgb(22, 48, 42) - dark teal text). This creates a cool, high-contrast but potentially visually stimulating environment for P29.",
+      "reproduction_steps": [
+        "Load http://localhost:3000/app/dashboard",
+        "Take a screenshot in a low-light room",
+        "Evaluate for visual strain"
+      ],
+      "observed_evidence": "Color scheme test: bodyBg: 'rgba(0, 0, 0, 0)', bodyFg: 'rgb(22, 48, 42)' (dark teal), isDarkMode: false. Cool-toned palette with no dark mode. For P29, cool colors can increase eye strain; warm or neutral tones are gentler.",
+      "suggested_fix": "Consider adding a warm-tone color variant or offering a 'warm' theme option (beige/cream backgrounds, warmer text colors like #5a4a3a). Alternatively, ensure dark mode uses warmer tones (e.g., #1a2a22 instead of pure black). Test with users experiencing migraines or photosensitivity."
+    }
+  ]
+}

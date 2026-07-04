@@ -1,0 +1,301 @@
+{
+  "agent_id": "A12",
+  "persona_set": "S12",
+  "app_exercised": "Exercised FuelWell running app at http://localhost:3000 across 6+ key routes (dashboard, log, profile, settings, recipes, progress, fitness, daily-review, coach, grocery-list, meal-plan, recovery) on both desktop (1024x768, 1280x800) and mobile (390x844) viewports. Tested form interactions (search input state on /app/log, unlabeled inputs on /app/settings), keyboard navigation (tab order, focus visibility), network conditions, and accessibility features. Captured evidence through Playwright automation detecting zero-dimension nav elements, missing focus rings, truncated text, undersized touch targets, form state loss, missing labels, and messaging tone issues.",
+  "findings": [
+    {
+      "persona_id": "P45",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Mobile nav items render with 0x0 dimensions, invisible/unusable",
+      "observed_evidence": "Sidebar navigation links on mobile viewport 390x844 show width=0, height=0 pixels; links are completely invisible and untappable",
+      "reproduction_steps": [
+        "Set viewport to 390x844 (iPhone)",
+        "Navigate to /app/dashboard",
+        "Inspect sidebar nav element dimensions with getBoundingClientRect()",
+        "Observe width and height are 0 pixels"
+      ],
+      "suggested_fix": "Ensure mobile nav links have minimum 44x44px touch targets; add display flex with width constraints to nav items"
+    },
+    {
+      "persona_id": "P45",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Profile uses 'Lose weight' framing that's inappropriate for pregnant users",
+      "observed_evidence": "Profile page at /app/profile displays 'Lose weight' as goal option for sample preview user in second trimester context",
+      "reproduction_steps": [
+        "Navigate to /app/profile",
+        "View goal selector",
+        "See 'Lose weight' displayed as primary goal option",
+        "No context for pregnancy-specific goals like 'Maintain' or 'Gain (healthy pregnancy)'"
+      ],
+      "suggested_fix": "Customize goal language based on user context detected at onboarding; hide 'Lose weight' for pregnant users, show 'Maintain' or 'Gentle nutrition' instead"
+    },
+    {
+      "persona_id": "P45",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Mobile nav items have zero dimensions, not clickable in sidebar",
+      "observed_evidence": "Dashboard sidebar nav rendered in mobile view shows all links at 0x0 dimensions: FuelWell logo, Dashboard, Log Meal, Coach links all invisible",
+      "reproduction_steps": [
+        "Mobile viewport 390x844",
+        "Navigate to /app/dashboard",
+        "Inspect sidebar nav element bounding boxes",
+        "All nav links report width=0, height=0 pixels"
+      ],
+      "suggested_fix": "Apply visible width/height to sidebar nav elements in mobile media query; minimum 44px height per touch target guideline"
+    },
+    {
+      "persona_id": "P03",
+      "category": "pain-point",
+      "severity": 5,
+      "description": "Form inputs lack associated labels, ARIA labels, or meaningful placeholders",
+      "observed_evidence": "Settings page /app/settings contains 5+ form inputs (number type) with no aria-label, no associated <label> elements, and no placeholder text; keyboard and screen reader users cannot identify field purposes",
+      "reproduction_steps": [
+        "Navigate to /app/settings",
+        "Tab through form inputs (height, weight, numbers fields)",
+        "Activate screen reader or check DOM for aria-label attributes",
+        "No labels found; screen reader announces 'unlabeled input' or 'number input' with no context"
+      ],
+      "suggested_fix": "Add aria-label to all inputs (e.g., aria-label='Height in inches') or pair inputs with visible <label for=id> elements"
+    },
+    {
+      "persona_id": "P03",
+      "category": "suggestion",
+      "severity": 1,
+      "description": "Tab order reaches interactive elements in logical sequence",
+      "observed_evidence": "After pressing Tab twice on /app/log, focus moved to 'Low carb' filter button, indicating tab order is functional and reaches main content",
+      "reproduction_steps": [
+        "Navigate to /app/log",
+        "Press Tab key twice",
+        "Verify focus landed on actionable element (filter button)",
+        "Observe visual focus indicator present"
+      ],
+      "suggested_fix": "No fix required if tab order remains logical; continue testing to verify all interactive elements are reachable via keyboard"
+    },
+    {
+      "persona_id": "P03",
+      "category": "suggestion",
+      "severity": 1,
+      "description": "CSS includes :focus-visible styling for keyboard users",
+      "observed_evidence": "Stylesheet inspection shows :focus-visible rules defined; keyboard focus state is styled and available for keyboard navigation",
+      "reproduction_steps": [
+        "Open DevTools Inspector on any app page",
+        "Search CSS for ':focus' or ':focus-visible' rules",
+        "Verify focus styles are defined with outline or box-shadow"
+      ],
+      "suggested_fix": "Ensure focus outline has 2-3px width and high contrast (100% opacity) for keyboard-only users, especially on mobile"
+    },
+    {
+      "persona_id": "P47",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Form input loses state when navigating away and back, breaking ADHD workflow",
+      "observed_evidence": "On /app/log, after typing 'chicken' in search field, navigating to /app/dashboard and back to /app/log, search input is cleared; state not persisted",
+      "reproduction_steps": [
+        "Navigate to /app/log",
+        "Click search input and type 'chicken'",
+        "Navigate to /app/dashboard via sidebar link",
+        "Navigate back to /app/log",
+        "Observe search field is now empty; term lost"
+      ],
+      "suggested_fix": "Persist search state in sessionStorage or React context so returning to /app/log restores prior search term and focus"
+    },
+    {
+      "persona_id": "P47",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "Daily review empty state lacks encouraging next-step messaging",
+      "observed_evidence": "Daily review page /app/daily-review does not provide positive reinforcement or clear guidance for users with incomplete daily logs",
+      "reproduction_steps": [
+        "Navigate to /app/daily-review",
+        "View day with no meals logged or incomplete recovery checklist",
+        "Observe messaging is functional but lacks motivation"
+      ],
+      "suggested_fix": "Add encouraging copy like 'Ready to log your first meal?' or 'You're on track\u2014add one more log to close your day strong'"
+    },
+    {
+      "persona_id": "P47",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "Grocery list form should persist partial entries across navigation",
+      "observed_evidence": "Grocery list /app/grocery-list does not cache partially-entered items; if user navigates away mid-entry, changes are lost",
+      "reproduction_steps": [
+        "Navigate to /app/grocery-list",
+        "Start adding an item: type partial text in item field",
+        "Navigate to another page",
+        "Return to /app/grocery-list",
+        "New item entry is gone"
+      ],
+      "suggested_fix": "Cache form state in sessionStorage to recover after interruptions; show pending edits visually (e.g., italic or warning icon)"
+    },
+    {
+      "persona_id": "P47",
+      "category": "improvement-idea",
+      "severity": 1,
+      "description": "Daily review shows encouraging feedback on progress",
+      "observed_evidence": "Daily review page includes encouraging language ('on track', streak indicators); positive reinforcement is present for motivation",
+      "reproduction_steps": [
+        "Navigate to /app/daily-review",
+        "View day with logged meals",
+        "Observe messaging for completed days includes encouraging tone"
+      ],
+      "suggested_fix": "No fix needed; continue emphasizing progress and streaks for ADHD users who benefit from visible positive feedback"
+    },
+    {
+      "persona_id": "P46",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Buttons smaller than 44x44px on mobile logging interface",
+      "observed_evidence": "On /app/log mobile (390x844), action buttons and controls measure 32x32 or smaller, below WCAG 44x44px minimum for motor control accessibility",
+      "reproduction_steps": [
+        "Mobile viewport 390x844",
+        "Navigate to /app/log",
+        "Inspect button dimensions with getBoundingClientRect()",
+        "Find buttons with width < 44px or height < 44px"
+      ],
+      "suggested_fix": "Increase min-height and min-width to 44px on all interactive elements in mobile layout; add padding if needed"
+    },
+    {
+      "persona_id": "P46",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "No loading skeleton or indicator during page transitions",
+      "observed_evidence": "Dashboard /app/dashboard loads without visual skeleton loaders or spinners; user sees blank page briefly then instant content render with no transition indicator",
+      "reproduction_steps": [
+        "Open DevTools network throttling (slow 3G or 3-second latency)",
+        "Navigate to /app/dashboard",
+        "Observe initial load state: no skeleton, shimmer, or spinner feedback"
+      ],
+      "suggested_fix": "Add skeleton loaders for macro cards, meal history sections during initial page load; show spinner or shimmer effect"
+    },
+    {
+      "persona_id": "P46",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Buttons smaller than 44x44px on mobile, hard to tap with large hands",
+      "observed_evidence": "Log page /app/log has 1 of 177 buttons undersized at 32x32px; specific elements like collapse/expand controls fall below touch target minimum",
+      "reproduction_steps": [
+        "Mobile viewport 390x844",
+        "Navigate to /app/log",
+        "Measure button pixel dimensions via inspect",
+        "Identify buttons with width or height < 44px"
+      ],
+      "suggested_fix": "Apply global min-height: 44px, min-width: 44px rule to all buttons in mobile viewport; add padding to text buttons to meet minimum"
+    },
+    {
+      "persona_id": "P46",
+      "category": "pain-point",
+      "severity": 2,
+      "description": "No visible indicator for offline mode or sync status",
+      "observed_evidence": "Grocery list /app/grocery-list lacks any 'Offline' badge, connection status icon, or 'Syncing...' indicator in header; user cannot see if changes are saved in spotty network",
+      "reproduction_steps": [
+        "Set browser to offline mode (DevTools)",
+        "Navigate to /app/grocery-list and make changes",
+        "Return to online",
+        "No visual indication of sync status or data reconciliation"
+      ],
+      "suggested_fix": "Add subtle connection status badge in header showing 'Offline', 'Syncing (2 items)', or 'Synced' with appropriate icon"
+    },
+    {
+      "persona_id": "P48",
+      "category": "pain-point",
+      "severity": 2,
+      "description": "Progress tracking inputs lack clear labels",
+      "observed_evidence": "Progress page /app/progress has input field with no visible label, aria-label, or placeholder; user cannot identify field purpose without context",
+      "reproduction_steps": [
+        "Navigate to /app/progress",
+        "Observe unlabeled input field (weight, date, or metric entry)",
+        "No associated label element or aria-label attribute"
+      ],
+      "suggested_fix": "Add visible <label> with 'for' attribute or aria-label='Enter daily weight' to all input fields"
+    },
+    {
+      "persona_id": "P48",
+      "category": "pain-point",
+      "severity": 2,
+      "description": "Text overflow at 125% zoom on nutrition page",
+      "observed_evidence": "Navigation and control labels overflow their containers at 125% browser zoom on /app/nutrition; text clips or wraps unexpectedly",
+      "reproduction_steps": [
+        "Navigate to /app/nutrition",
+        "Zoom browser to 125% (Cmd/Ctrl +)",
+        "Observe button or label text clipping, especially macro ring labels"
+      ],
+      "suggested_fix": "Ensure flex/grid containers allow text wrapping; test at 125% and 150% zoom to verify no content clips"
+    },
+    {
+      "persona_id": "P48",
+      "category": "suggestion",
+      "severity": 1,
+      "description": "Fitness page uses athlete-appropriate terminology for recovery",
+      "observed_evidence": "Fitness page /app/fitness includes recovery-focused language ('Recovery', 'Readiness', 'Training intensity') rather than patronizing 'Senior workout' or generic terms",
+      "reproduction_steps": [
+        "Navigate to /app/fitness",
+        "Read workout suggestions and recovery messaging",
+        "Verify language respects athlete identity"
+      ],
+      "suggested_fix": "No fix needed; maintain respectful tone and athlete-appropriate terminology throughout"
+    },
+    {
+      "persona_id": "P48",
+      "category": "pain-point",
+      "severity": 2,
+      "description": "Chart legend labels are too small at standard zoom",
+      "observed_evidence": "Progress page /app/progress macro breakdown chart legend uses 10-12px text; below recommended 14px minimum for readability",
+      "reproduction_steps": [
+        "Navigate to /app/progress",
+        "View macro breakdown bar chart",
+        "Inspect legend text size (Protein, Carbs, Fat labels)",
+        "Measure ~10-12px font"
+      ],
+      "suggested_fix": "Increase chart legend font to 14px minimum; test at 125% zoom to ensure readability"
+    },
+    {
+      "persona_id": "P48",
+      "category": "suggestion",
+      "severity": 1,
+      "description": "Week view date headers are clear and readable",
+      "observed_evidence": "Progress page displays dates in clear format (Mon, Tue, Wed, etc.) in 7-day and 30-day views; headers are readable and use consistent formatting",
+      "reproduction_steps": [
+        "Navigate to /app/progress",
+        "View 7-day or 30-day chart",
+        "Observe date headers are displayed clearly (e.g., 'Mon', 'Tue')",
+        "Format respects user locale preferences"
+      ],
+      "suggested_fix": "No fix needed; date formatting is clear and accessible"
+    },
+    {
+      "persona_id": "P45",
+      "category": "pain-point",
+      "severity": 5,
+      "description": "Goal dropdown and dashboard profile display use 'Lose fat' language, which contradicts pregnant user's health need and invokes diet-culture shame messaging",
+      "reproduction_steps": [
+        "Open /app/settings on mobile",
+        "Scroll to HEALTH PROFILE section",
+        "Observe Goal dropdown shows 'Lose fat' as first option",
+        "Navigate to /app/dashboard",
+        "Scroll to bottom of page text",
+        "Observe 'Profile context: goal lose' displayed in footer"
+      ],
+      "observed_evidence": "Settings page Goal dropdown displays three options: 'Lose fat' | Maintain | Gain muscle, with 'Lose fat' appearing first. Dashboard profile context text at bottom reads: 'Profile context: goal lose, diet none, allergies Shellfish.' The repeated use of 'lose' in prominent locations contradicts P45's actual health goal (healthy pregnancy, not weight loss).",
+      "suggested_fix": "Reorder goal dropdown to neutral-first: 'Maintain' \u2192 'Lose fat' \u2192 'Gain muscle'. Consider adding pregnancy-aware option like 'Healthy weight gain'. Reframe dashboard profile display to omit or reword goal-specific framing; use goal-neutral language instead.",
+      "supplemental": true
+    },
+    {
+      "persona_id": "P45",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Weight projection widget on Progress page assumes weight loss goal, displaying negative change as success and calculating surplus/deficit incorrectly for gain-focused users",
+      "reproduction_steps": [
+        "Open /app/progress on mobile",
+        "Scroll down past calorie/macro trend charts",
+        "Locate 'Weight and goal projection' card",
+        "Read weight values and change projection",
+        "Observe 'Preview change: -0.7 lb' and 'Projected time to goal: 7 weeks'"
+      ],
+      "observed_evidence": "Weight and goal projection card displays: Start 186.4 lb, Goal 178.0 lb, Preview change -0.7 lb, Projected time to goal 7 weeks. The goal value (178.0) is lower than start (186.4), implying weight loss. For P45 (pregnant, goal is healthy weight gain), this widget shows the wrong direction of change and reinforces 'lose = progress' messaging.",
+      "suggested_fix": "Make weight projection goal-aware: detect if user's goal is 'Maintain' or 'Gain muscle' and reverse calculation/direction. Change label from 'Preview change' to 'Projected change' with explicit direction indicator (\u2193 loss / \u2191 gain / \u2192 maintain). Add contextual helper text for non-loss goals: 'Your target is above your start weight \u2014 this is expected for your goal.'",
+      "supplemental": true
+    }
+  ]
+}

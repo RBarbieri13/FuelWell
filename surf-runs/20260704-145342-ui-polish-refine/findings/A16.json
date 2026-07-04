@@ -1,0 +1,260 @@
+{
+  "agent_id": "A16",
+  "persona_set": "S16",
+  "app_exercised": "I exercised FuelWell across 8 routes: /preview (P61), /app/dashboard desktop (P61, P62), /app/nutrition (P64), /app/progress desktop and mobile (P62, P64), /app/log desktop and mobile (P62), /app/recipes desktop (P63). On desktop, I inspected keyboard navigation (Tab focus ring visibility), spacing consistency (35+ token variations), button/touch target sizes (39x40px anomalies), form states (input labels, placeholders, disabled states), color consistency (60+ color combinations), and font-size scale (11 variants detected). On mobile (390x844), I captured full-page layouts and checked for small targets and glance-readability. I took screenshots of all routes and visually inspected them for polish issues: color-coding in macro rings and progress charts (relevant to P64 protanopia), recipe card presentation (P63), mobile readability for fatigue (P62), and brand consistency (P61).",
+  "findings": [
+    {
+      "persona_id": "P61",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Collapse menu button (39x40px) falls below 44x44px touch target minimum, inconsistent with rest of nav which meets standard",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/app/dashboard on desktop",
+        "Inspect the 'Collapse menu' button in the top-left corner",
+        "Measure its pixel dimensions using browser DevTools"
+      ],
+      "observed_evidence": "Button element measures 39x40px, below WCAG AA standard of 44x44px minimum. See A16-p61-dashboard.png screenshot. All other sidebar nav links measure 301x56px (adequate).",
+      "suggested_fix": "Increase collapse button padding from current value to minimum 44x44px, or add invisible hit-target padding to meet standard."
+    },
+    {
+      "persona_id": "P61",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "Preview page uses dark background (dark gray/charcoal) with light text, creating visual inconsistency with light-theme marketing and app interfaces",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/preview",
+        "Compare background color to dashboard and marketing site",
+        "Note that all app routes use light mint/teal background while preview is dark"
+      ],
+      "observed_evidence": "Preview page background is dark (appears #1F2937 or similar), while marketing homepage and all app routes use light teal/mint (#E0F2F1 or similar). See A16-preview.png shows dark background; A16-p61-dashboard.png shows light background. Brand consistency evaluation would flag this contrast.",
+      "suggested_fix": "Apply the same light mint/teal background from app to /preview, or add a theme toggle to let reviewers see dark-mode parity."
+    },
+    {
+      "persona_id": "P61",
+      "category": "suggestion",
+      "severity": 2,
+      "description": "Route health section on /preview shows green circles for 200 status codes, but no error state example or explanation of what 200 means",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/preview",
+        "Scroll to 'Route health' section with route list and green circles",
+        "Note absence of legend or error-state demonstration"
+      ],
+      "observed_evidence": "14 routes all show green \u2713 200 status. Reviewer evaluating launch readiness cannot confirm error/warning states are handled because no broken routes are shown. See A16-preview.png 'Route health' section.",
+      "suggested_fix": "Add a legend explaining the status indicator colors, or include 1 intentionally broken route to show error state visually."
+    },
+    {
+      "persona_id": "P62",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Log page on mobile has 81 small touch targets (<44px), making fast one-thumb logging error-prone during high-stress shifts",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/app/log on mobile (390x844 viewport)",
+        "Open browser DevTools, inspect all buttons and interactive elements",
+        "Count elements with width <44px or height <44px"
+      ],
+      "observed_evidence": "180 total interactive elements on /app/log mobile, 81 below 44px standard. Buttons for 'Like this'/'Not for me' (44x44px nominal but tightly stacked), filter pills (69-101px but tightly spaced), and category tabs measure inadequate for one-thumb operation. See A16-p62-log-mobile.png shows densely packed pill buttons and tight spacing.",
+      "suggested_fix": "Increase minimum target size to 48-56px for mobile, increase spacing between like/dislike buttons from current 4px to 12-16px, or add a 'quick-add' mode that reduces visual density."
+    },
+    {
+      "persona_id": "P62",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Progress page mobile shows trend text + stats (3, 92%, 2058) but font sizes vary (body text ~14px, numbers ~32px), making sustained glance-read difficult when fatigued",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/app/progress on mobile",
+        "Read the descriptive text 'The trend is holding steady. Calories are tracking...'",
+        "Note inconsistent text sizes and line-height spacing"
+      ],
+      "observed_evidence": "Progress card on mobile has mix of 14px body text, 20px subheading, and 32px stat numbers. See A16-p62-progress-mobile.png: after-shift fatigue makes parsing the narrative 'Calories are tracking near plan' harder when visual hierarchy jumps. Stats themselves are clear (3 logged days, 92% consistency) but surrounding prose is visually noisy.",
+      "suggested_fix": "Reduce narrative complexity in trend summaries, use monospace font for numbers, or separate numbers into dedicated stat cards with no prose wrapper."
+    },
+    {
+      "persona_id": "P62",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "Dashboard mobile shows 'Today's Decision' card clearly but lacks quick-access status for reversed-day logging context (e.g., no indicator that current time is during night shift window)",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/app/dashboard on mobile at night",
+        "Look for any indication that logging 'breakfast' at 6pm is expected behavior",
+        "Check if time-of-day is contextually labeled"
+      ],
+      "observed_evidence": "Dashboard shows 'Saturday \u00b7 keep the momentum' and time-generic messaging. No visual marker for 'reversed-meal-window' context. For a 911 dispatcher logging at 6pm as 'breakfast', the app doesn't acknowledge this is normal. See A16-p62-dashboard-mobile.png: header shows date and generic momentum text, no shift-aware timestamp.",
+      "suggested_fix": "Add optional 'Logging for:' context above meal type selector (e.g., 'Night shift: it's 6pm \u2014 logging breakfast'), or let user set shift hours in profile to adjust language."
+    },
+    {
+      "persona_id": "P62",
+      "category": "suggestion",
+      "severity": 1,
+      "description": "Loading state not visible on mobile progress page when data re-fetches, causing uncertainty about whether page is stale",
+      "reproduction_steps": [
+        "Visit /app/progress on mobile",
+        "Trigger a page reload or data refresh (if button exists)",
+        "Observe whether skeleton/spinner appears or page silently updates"
+      ],
+      "observed_evidence": "No skeleton screens or spinners detected on progress page (confirmed by deep-polish.js: 'Skeleton/placeholder elements: 0'). Mobile users on slow network cannot tell if new trend data is loading. See A16-p62-progress-mobile.png: static card with no loading affordance.",
+      "suggested_fix": "Add pulse skeleton or subtle spinner on stat cards (3 logged days, 92% consistency, 2058 avg cals) while data re-fetches."
+    },
+    {
+      "persona_id": "P63",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Recipe cards display NO RECIPE IMAGES, only text nutrition labels (Cal, Pro, Carb, Fat); critical for food-blog presentation and recipe evaluation",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/app/recipes",
+        "Open recipe cards or recipe detail view",
+        "Look for recipe dish photos"
+      ],
+      "observed_evidence": "Recipe cards show meal type (Breakfast), time (7 min), title (Greek yogurt power bowl), and macro boxes (Cal 360, Pro 30g, Carb 38g, Fat 9g) but NO DISH IMAGE. See A16-recipes.png: three recipe cards visible in lower section, all text only. A recipe blogger evaluating FuelWell for a roundup would immediately mark this as 'not production-ready for visual audience' since recipes without photos have near-zero engagement in food content.",
+      "suggested_fix": "Add recipe dish image display to recipe cards and detail view. If seed data lacks images, show placeholder (e.g., 'Photo coming' or a generic food icon). Without images, recipes cannot be featured in blog roundups."
+    },
+    {
+      "persona_id": "P63",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "Recipe card nutritional layout uses small icon labels (calorie droplet, protein muscle, carb grain, fat oil) without text, losing clarity when icons are small or unfamiliar to users",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/app/recipes",
+        "Examine recipe card nutrition section",
+        "Note icon-only labels without text equivalents"
+      ],
+      "observed_evidence": "Each macro is shown as icon + number: droplet icon + 360, muscle icon + 30g, grain icon + 38g, oil icon + 9g. Icons are ~20px and user-dependent. See A16-recipes.png lower section: recipe cards show small icons. For a blogger writing a recipe roundup, this requires UI explanation to readers ('the muscle icon is protein') when simple 'Pro 30g' text would clarify instantly.",
+      "suggested_fix": "Add text labels alongside or below icons: 'Cal 360 / Pro 30g / Carb 38g / Fat 9g' or expand icon size to 28-32px with visible label."
+    },
+    {
+      "persona_id": "P63",
+      "category": "suggestion",
+      "severity": 2,
+      "description": "Recipe card missing 'servings' count, making per-serving nutrition math ambiguous for bloggers and users comparing recipes",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/app/recipes",
+        "Click or open any recipe card",
+        "Look for serving size indicator (e.g., 'Serves 2' or 'Per 1 serving')"
+      ],
+      "observed_evidence": "Recipe cards show only macro totals (Cal 360, Pro 30g) without indication whether this is per serving, whole recipe, or per 100g. See A16-recipes.png: 'Greek yogurt power bowl' shows '360' with no unit context. For a blogger writing about recipe nutrition, serving ambiguity is a dealbreaker (is 360 cal one serving or the whole bowl?). A recipe detail view might clarify, but card-level presentation is incomplete.",
+      "suggested_fix": "Add serving indicator to card: 'Per serving: Cal 360' or 'Serves: 2 (180 cal/serving)'. If seed recipes don't specify servings, default to 'Per recipe' and ask users to confirm."
+    },
+    {
+      "persona_id": "P64",
+      "category": "pain-point",
+      "severity": 5,
+      "description": "Macro ring colors on nutrition page rely on red (fat), yellow (carbs), blue (protein), green (calories) with NO TEXT LABELS on rings themselves, rendering rings illegible for protanopia colorblindness",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/app/nutrition",
+        "Examine the four macro rings (Calories, Protein, Carbs, Fat)",
+        "Simulate protanopia vision mode in browser DevTools (emulate red-green colorblindness) or note which rings are distinguishable by color alone"
+      ],
+      "observed_evidence": "Nutrition page shows 4 circular progress rings: green ring (38% Calories), blue ring (42% Protein), yellow ring (37% Carbs), red ring (33% Fat). See A16-p64-nutrition.png: rings are arranged left-to-right with icon + number below. For P64 (protanopia), red and yellow rings are indistinguishable (red appears dark, yellow appears olive/gray). The number labels ARE visible (850, 73g, 88g, 25g) but icon + color alone without text would be unusable. A PE teacher showing macros on projector to students would lose half the class.",
+      "suggested_fix": "Add text label ON each ring: 'PROTEIN 42%' in dark text overlaid on ring, or add visible status text next to ring: 'Protein 42% (73g / 102g remaining)'. Test with Coblis protanopia simulator (Color Blindness Simulator) to verify."
+    },
+    {
+      "persona_id": "P64",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Progress page stacked macro chart uses red, yellow, blue coloring with diagonal stripe patterns (mitigation), but labels in legend are icon-color-coded ONLY (green checkmark, blue box, yellow box, orange box) with no text \u2014 unreadable for protanopia",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/app/progress",
+        "Scroll to 'Calories and macro split per day' chart with stacked bars",
+        "Examine the legend below the chart (4 colored checkboxes/boxes with icons, NO TEXT)"
+      ],
+      "observed_evidence": "Progress chart shows legend: \u2713 (green box) 'Calories', \u2610 (blue box) 'Protein', \u2610 (yellow box) 'Carbs', \u2610 (orange box) 'Fat'. Chart bars use red/yellow/blue stacking. See A16-p64-progress.png: legend shows 4 colored boxes with checkmarks, but NO text labels next to them. Protanopia users (and projector viewers) see red/orange/yellow as a blur. Diagonal stripe pattern on bars helps slightly, but legend icons alone are useless. P64 cannot tell which color is Carbs vs Fat.",
+      "suggested_fix": "Add TEXT LABELS in legend: 'Calories', 'Protein', 'Carbs', 'Fat' next to each colored box. On chart bars, add pattern fills (diagonal, dotted, cross-hatch) that are distinct even when color is removed. Test with Coblis protanopia filter."
+    },
+    {
+      "persona_id": "P64",
+      "category": "improvement-idea",
+      "severity": 3,
+      "description": "Nutrition page shows 4 macro rings with numerical progress bars underneath (green/blue/yellow/red) but bars are thin and not visually prominent compared to rings, creating parsing ambiguity",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/app/nutrition",
+        "Look at each macro ring and its corresponding progress bar",
+        "Note bar thickness and color saturation vs ring visibility"
+      ],
+      "observed_evidence": "Each macro (Calories, Protein, Carbs, Fat) has a ring (~60px diameter) AND a thin progress bar beneath. Bars are ~4-6px tall, muted colors (lighter green, light blue, pale yellow, light red). For a PE teacher projecting to a classroom, the bars are nearly invisible. See A16-p64-nutrition.png: rings are prominent; bars below are thin and de-emphasized. Protanopia viewing would further reduce clarity.",
+      "suggested_fix": "Make progress bars more visually prominent: increase height to 8-12px, increase saturation/contrast of colors, or use pattern fills (hatching) to supplement color. Alternatively, remove bars and rely on ring progress + number labels only."
+    },
+    {
+      "persona_id": "P64",
+      "category": "suggestion",
+      "severity": 2,
+      "description": "Progress chart uses diagonal stripe fill pattern on stacked bars, but pattern density/angle varies across colors, making protanopia distinction difficult and pattern hard to distinguish at small scale",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/app/progress",
+        "Zoom in on one stacked bar in the chart (e.g., Monday's 1773 kcal bar)",
+        "Examine stripe pattern density and angle for red/yellow/blue sections"
+      ],
+      "observed_evidence": "Stacked bars show red section (Calories) with diagonal stripes at ~45 angle, yellow section with finer/denser stripes, blue section with wider stripes. At normal zoom, patterns are visible but subtle. For protanopia or grayscale printing, pattern distinction is weak. See A16-p64-progress.png: bars show pattern fill but density varies, making some sections blend together. P64 projecting to a gym or classroom would struggle to point out 'see how carbs are high on Friday'.",
+      "suggested_fix": "Use more distinct patterns: solid + diagonal at 45\u00b0, dotted, cross-hatch, or wavy lines. Test each macro color with Coblis protanopia filter and ensure patterns are distinct even at 50% zoom."
+    },
+    {
+      "persona_id": "P64",
+      "category": "suggestion",
+      "severity": 1,
+      "description": "Macro ring layout (Calories, Protein, Carbs, Fat in 2x2 grid) lacks visual grouping or spacing to differentiate 'intake' (left side) from 'remaining' (right side) in displayed labels",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/app/nutrition",
+        "Examine the 4 macro rings and their labels",
+        "Note whether labels distinguish 'current intake' vs 'remaining target'"
+      ],
+      "observed_evidence": "Each ring shows: icon + current number (e.g., '850 kcal') and below: 'X left of Y' text. See A16-p64-nutrition.png: layout is consistent (Calories, Protein, Carbs, Fat in a row), but no visual grouping clarifies the structure. For a PE teacher explaining macros to adaptive athletes, the layout is functional but not scannable. Spacing between rings is uniform; no hierarchy.",
+      "suggested_fix": "Add subtle background cards or increase spacing around each macro block to create visual grouping. Optional: add section header 'Daily Intake' above rings and 'Remaining' below numbers to clarify reading order."
+    },
+    {
+      "persona_id": "P61",
+      "category": "improvement-idea",
+      "severity": 3,
+      "description": "Home page screenshot in preview deck is centered inside dark container, making it hard to assess full-width design responsiveness and edge behavior for brand consistency check",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/preview",
+        "Scroll to Web app preview section",
+        "Note that desktop screenshot shows constrained-width view within dark frame, not edge-to-edge"
+      ],
+      "observed_evidence": "A16-preview.png shows desktop preview in a white card within dark background. P61 evaluating brand consistency cannot see whether design extends to screen edges, how nav behaves at 1920px width, or whether there's responsive clipping. See A16-preview.png: web preview is cardboard-framed, preventing full viewport assessment.",
+      "suggested_fix": "Add option to view preview at full-browser width (no dark frame), or show separate edge-case screenshots (mobile 375px, tablet 768px, wide desktop 1920px) in preview deck."
+    },
+    {
+      "persona_id": "P63",
+      "category": "pain-point",
+      "severity": 5,
+      "description": "Recipe cards completely lack imagery - no food photos or recipe visuals displayed in grid or detail views",
+      "reproduction_steps": [
+        "Navigate to http://localhost:3000/app/recipes",
+        "Observe the recipe grid displayed (md:grid-cols-2, xl:grid-cols-3)",
+        "Click through to any recipe detail modal via 'Open recipe' button",
+        "Note absence of food imagery in both card and modal views"
+      ],
+      "observed_evidence": "Recipe cards in grid show only text-based information: title, meal badge, time, and macro nutrition tiles (Cal/Pro/Carb/Fat). Recipe detail modal shows header with meal/time/servings, nutrition grid, ingredients list, and numbered steps - but no food image at the top. RecipeCard component (recipe-card.tsx, 118 lines) has no Image component or img tag. RecipeDetail component (recipe-detail.tsx, 150 lines) similarly lacks image rendering. The Recipe data type (recipes-data.ts) has no `image`, `imageUrl`, or `photoUrl` field.",
+      "suggested_fix": "Add optional `imageUrl: string` field to Recipe type. Update RecipeCard to display recipe image above title. Update RecipeDetail modal to display hero image above nutrition grid. Provide fallback placeholder image for recipes without photos. For P63's use case (recipe blog roundups), food imagery is essential - missing images will cause her to exclude the app from her review.",
+      "supplemental": true
+    },
+    {
+      "persona_id": "P63",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Best Fit recommendation panel is orphaned and non-interactive - presents a recipe recommendation with no way to view its details",
+      "reproduction_steps": [
+        "Navigate to http://localhost:3000/app/recipes",
+        "Locate the 'Best fit' recommendation panel on the right side of the filters section (above recipe grid)",
+        "Attempt to click on the recipe title or meal/time badges in the Best Fit panel",
+        "Observe that clicking anywhere in the panel does nothing"
+      ],
+      "observed_evidence": "On recipes page (page.tsx lines 129-147), the Best Fit panel renders recipe.title, recipe.meal, and recipe.minutes in a highlighted panel with Sparkles icon. The panel uses className='rounded-[1.35rem] border border-primary-100 bg-primary-50/70 p-4' styling suggesting it's a highlighted recommendation. However, there is no onClick handler, no button wrapper, no cursor:pointer styling, and no visual affordance (like an arrow icon) suggesting the element is clickable. The actual recipe cards below (lines 189-195) use RecipeCard component with clear 'Open recipe' button. This creates visual inconsistency - users expect Best Fit to be clickable like the cards below.",
+      "suggested_fix": "Make the Best Fit panel clickable by wrapping in a button or adding onClick handler that calls setOpenRecipe(featured). Add visual affordances (hover:shadow, cursor-pointer, chevron icon) to signal interactivity. Alternatively, remove the Best Fit panel if it's just informational, since users can find the top-ranked recipe easily by looking at the grid's first card.",
+      "supplemental": true
+    },
+    {
+      "persona_id": "P63",
+      "category": "suggestion",
+      "severity": 3,
+      "description": "Multiple overlapping click targets on recipe cards create interaction ambiguity for desktop users evaluating UI",
+      "reproduction_steps": [
+        "Navigate to http://localhost:3000/app/recipes",
+        "Examine a recipe card to identify clickable areas",
+        "Note at least three distinct buttons: title/meal/time button, nutrition macro button, and 'Open recipe' button",
+        "Hover over each area and observe no visual distinction between the button areas"
+      ],
+      "observed_evidence": "RecipeCard component (recipe-card.tsx lines 46-116) has three nested button elements: (1) button wrapping meal badge + title (lines 49-67), (2) button wrapping macro nutrition grid (lines 71-93), (3) button for 'Open recipe' call-to-action (lines 108-115). All three onClick handlers call onOpen(recipe). From user perspective: the title area is clickable, the nutrition area is clickable, the CTA button is clickable. No visual hover states distinguish these areas, creating unclear mental model - particularly problematic for P63 taking screenshots and documenting 'how to open a recipe' for her blog readers.",
+      "suggested_fix": "Consolidate click targets: wrap the entire card body in a single clickable button, reserve the 'Open recipe' CTA button as the primary affordance. Alternatively, add distinct hover states (subtle background color change, cursor change) to clarify which areas are clickable. Add aria-label to the card-level button to explain the action ('View Greek yogurt power bowl recipe').",
+      "supplemental": true
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+[
+  {
+    "persona_id": "P80",
+    "category": "improvement-idea",
+    "severity": 2,
+    "description": "Inconsistent number formatting: some use commas (1,400) some don't (1400)",
+    "reproduction_steps": [
+      "Visit /app/nutrition",
+      "Look at macro and calorie numbers"
+    ],
+    "observed_evidence": "Found mix of comma-formatted (2) and non-comma (37) numbers. For metric user, formatting inconsistency looks unpolished.",
+    "suggested_fix": "Choose one format and apply consistently: either \"1,400\" or \"1400\" throughout app. Use locale-aware formatting."
+  },
+  {
+    "persona_id": "P79",
+    "category": "pain-point",
+    "severity": 2,
+    "description": "Mobile (390px): Text-background color contrast may be insufficient",
+    "reproduction_steps": [
+      "Set viewport to 390x844",
+      "Visit /app/dashboard",
+      "Use browser DevTools to check computed colors"
+    ],
+    "observed_evidence": "Found 5 elements with potential contrast issues. WCAG AA requires ≥4.5:1 for text, ≥3:1 for UI components.",
+    "suggested_fix": "Use contrast checker (WebAIM, Axe DevTools) to verify all text ≥4.5:1 contrast ratio."
+  },
+  {
+    "persona_id": "P77",
+    "category": "pain-point",
+    "severity": 2,
+    "description": "Projector (1024px): Text-background color contrast may be insufficient",
+    "reproduction_steps": [
+      "Set viewport to 1024x768",
+      "Visit /app/dashboard",
+      "Use browser DevTools to check computed colors"
+    ],
+    "observed_evidence": "Found 5 elements with potential contrast issues. WCAG AA requires ≥4.5:1 for text, ≥3:1 for UI components.",
+    "suggested_fix": "Use contrast checker (WebAIM, Axe DevTools) to verify all text ≥4.5:1 contrast ratio."
+  },
+  {
+    "persona_id": "P15",
+    "category": "pain-point",
+    "severity": 1,
+    "description": "Search input overflows with very long text, becomes hard to edit",
+    "reproduction_steps": [
+      "Visit /app/log",
+      "Type 100+ characters in food search",
+      "Try to edit beginning of text"
+    ],
+    "observed_evidence": "Input accepts very long text but overflows (scrollWidth 934px > box 308px). User cannot see what they typed initially.",
+    "suggested_fix": "Either truncate input at reasonable length (60 chars) or ensure horizontal scroll with clear affordance."
+  }
+]

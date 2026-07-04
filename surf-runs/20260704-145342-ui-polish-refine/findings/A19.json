@@ -1,0 +1,249 @@
+{
+  "agent_id": "A19",
+  "persona_set": "S19",
+  "app_exercised": "Exercised FuelWell across 9 routes on desktop (1440x900) and 3 routes on mobile (390x844 iPhone): visited /, /preview, /app/dashboard, /app/log, /app/coach, /app/settings on desktop with full-page screenshots and interactive element audits; tested keyboard navigation (Tab sequences) on 3 key routes; ran form validation tests on /signup; conducted detailed mobile interaction tests on /app/log including touch-target sizing (<44px audit: 100/199 elements undersized), button state analysis, form submission behavior, loading states, color contrast, focus rings, microcopy audit, empty/error state presence, and reduced-motion compliance. Saved 9 route screenshots plus targeted evidence images for each persona's specific concerns. All tests were observational\u2014no code modifications, pure DOM inspection and rendered output analysis.",
+  "findings": [
+    {
+      "persona_id": "P73",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Dashboard lacks clear \"what changed since I left\" orientation cues. Returning users need to quickly understand current state and what happened during absence.",
+      "reproduction_steps": [
+        "Visit /app/dashboard as returning user (after 6+ months absence)",
+        "Observe page content without reading coach notes",
+        "Look for: date range indicator, summary of recent activity, unread alerts"
+      ],
+      "observed_evidence": "Dashboard shows 'Good afternoon, Alex Preview' and current stats (1400 calories left, Health score 39) but no temporal markers indicating when data was last updated or what the prior state was. No 'since you left' summary or activity feed. Screenshot: A19-P73-dashboard-orientation.png",
+      "suggested_fix": "Add a 'Welcome back' card on dashboard showing: last login date, days away, summary of one key metric change (e.g., 'Your weight tracked daily for 14 days'), and a single CTA like 'View activity summary'. Place above fold, visually distinct from ongoing metrics."
+    },
+    {
+      "persona_id": "P73",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "Visual hierarchy on dashboard is flat. Six H2 sections without clear priority or scannable structure makes it hard for a returning user to know where to focus first.",
+      "reproduction_steps": [
+        "Load /app/dashboard",
+        "Scan page outline: count H1/H2/H3 structure",
+        "Note section size and spacing between cards"
+      ],
+      "observed_evidence": "6 H2 sections at equal visual weight (H1: 'Good afternoon, Alex'; H2x6 with no H3 nesting). All sections have similar padding. First-time returning user has no guide to which section is most actionable. Screenshot: A19-desktop-Dashboard.png",
+      "suggested_fix": "Establish clear visual hierarchy: make the primary metric (today's progress) H2 with larger type, secondary sections (coach, recommendations) H3, tertiary (recipes, plans) H4 or cards. Use size and spacing to guide reading order."
+    },
+    {
+      "persona_id": "P73",
+      "category": "pain-point",
+      "severity": 2,
+      "description": "Date/time references on dashboard are ambiguous for a returning user. 'Calories left' could refer to today, this week, or cumulative\u2014unclear.",
+      "reproduction_steps": [
+        "Visit /app/dashboard",
+        "Read all text containing numbers and time references",
+        "Identify ambiguous phrases like 'calories left', 'health score', '1400 remaining'"
+      ],
+      "observed_evidence": "Page shows '1400 remaining' and '850 / 2250 kcal' without explicit 'today' label. No date selector visible. For someone returning after 6 months, could mean today, yesterday, or a cumulative total. Screenshot: A19-desktop-Dashboard.png",
+      "suggested_fix": "Explicitly label all time-scoped metrics: 'Today's Calories Remaining: 1400' instead of just '1400 remaining'. Add small date indicator near top (e.g., 'July 4, 2025') and a date/range picker if other periods are selectable."
+    },
+    {
+      "persona_id": "P73",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Dashboard missing onboarding summary for returning users. No 'here's what's new' or 'you have X unread coach messages' indicator.",
+      "reproduction_steps": [
+        "Load /app/dashboard as user absent for 6+ months",
+        "Check for new feature highlights, unread count, or change summary",
+        "Look for: badge counts, notification icon, onboarding reminder"
+      ],
+      "observed_evidence": "Dashboard shows no badges, no 'new' indicators, no unread count on coach or notifications. Menu has no dot/badge. For returning user, zero guidance on what's new or pressing. Compare to apps like Slack/Twitter that show 'X new messages' or 'See what's new'. Screenshot: A19-desktop-Dashboard.png",
+      "suggested_fix": "Add small notification badge on coach icon if unread messages exist. Include brief 'What's new' section on dashboard (e.g., 'New recipe library', 'Coach is smarter now', 'Check your progress'). Make it dismissible so it doesn't spam on every visit."
+    },
+    {
+      "persona_id": "P74",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "No visual feedback on form submission or successful meal log. A deaf user cannot hear confirmation tone and sees no on-screen success message or state change.",
+      "reproduction_steps": [
+        "Navigate to /app/log",
+        "Fill form with valid meal data",
+        "Click Log Meal button and observe immediately after",
+        "Check for: toast/snackbar, success color change, button state change, page reload"
+      ],
+      "observed_evidence": "After form submit, no toast container, no success color indicator, no loading spinner, no button disabled state, and no page state change observed. Log request appears to complete silently. Screenshot: A19-P74-visual-feedback.png. Form regions exist but no visible feedback zone.",
+      "suggested_fix": "Add a success toast that appears for 3-5 seconds after log: 'Meal logged successfully \u2022 View meal', with green background, checkmark icon, and brief fade-out animation. During submit, disable button and show spinner. Ensure message is visible above fold."
+    },
+    {
+      "persona_id": "P74",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Form validation errors have no visual indicator. Empty form submit produces no error messages or visual cues (e.g., red borders, error text below fields).",
+      "reproduction_steps": [
+        "Go to /signup or /app/log",
+        "Leave required fields blank",
+        "Click submit button",
+        "Observe: error message text, red highlighting, aria-invalid state"
+      ],
+      "observed_evidence": "Empty form submission on /signup produces 0 error messages in DOM. No red borders on inputs, no aria-invalid attributes, no [role=alert] elements. Button click completes silently without validation feedback. Screenshot: A19-desktop-Log_Meal.png.",
+      "suggested_fix": "On form validation failure: (1) Set aria-invalid='true' on each failed input. (2) Show inline error text below each field in red (#ef4444): 'Email required', 'Password must be 8+ characters'. (3) Add red border or outline to failed inputs. (4) Announce errors via [role=alert]. (5) Keep focus on first failed field."
+    },
+    {
+      "persona_id": "P74",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "Coach interaction lacks visual distinction between input state (typing), processing state, and response received. No loading indicator or visual transition.",
+      "reproduction_steps": [
+        "Navigate to /app/coach",
+        "Type a question in the coach input",
+        "Submit and watch for visual feedback",
+        "Observe button state, spinner presence, message arrival"
+      ],
+      "observed_evidence": "Coach section exists but no visible loading spinner, no message-in-progress state, no typing indicator. Button may not show disabled state during processing. No skeleton loading or placeholder for incoming response. Screenshot: A19-P74-visual-feedback.png.",
+      "suggested_fix": "Show visual timeline: (1) Typing = input active with border highlight. (2) Submitted = button disabled, shows 'Sending...' text or spinner icon. (3) Processing = animated dots or skeleton placeholder above existing messages. (4) Response = slide-in message with brief fade. All states must be non-audio."
+    },
+    {
+      "persona_id": "P74",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "No visual loading states on async operations. Pages or forms that wait for data show no spinner, skeleton, or progress indicator.",
+      "reproduction_steps": [
+        "Throttle network to Slow 3G in DevTools",
+        "Visit /app/log or /app/coach",
+        "Observe: any visible loading indicator (spinner, skeleton, progress bar)?",
+        "Wait for content to appear and note if UI appears frozen or responsive"
+      ],
+      "observed_evidence": "No spinner, skeleton loader, or placeholder detected on /app/log during network delay. First Paint at 248ms. Page appears blank until content loads, then pops in with no transition. For deaf user, no audio cue to confirm 'something is happening'. Creates anxiety\u2014is it broken or loading? Screenshot: A19-P76-speed-perf.png",
+      "suggested_fix": "Add visible loading indicator on any async operation: (1) Page load = skeleton boxes matching card layout. (2) Coach response = animated dots 'Coach is thinking...'. (3) Form submit = spinner button state. (4) Data refresh = brief spinner top-right. All must be visual (no audio)."
+    },
+    {
+      "persona_id": "P75",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Medical disclaimer is absent. App shows precise numbers (calories, macros, health score) without any 'not medical advice' or 'consult healthcare provider' language. Physician will not recommend without legal clarity.",
+      "reproduction_steps": [
+        "Visit /app/dashboard, /app/log, /app/coach",
+        "Search page text for: 'not medical', 'not diagnosis', 'consult', 'healthcare', 'professional'",
+        "Check footer and settings for disclaimers"
+      ],
+      "observed_evidence": "Searched dashboard, log, coach pages. No disclaimer found. Showed nutrition numbers (850/2250 kcal, health score 39) without any legal or educational qualifier. Settings page has no terms/disclaimers section visible. P75 (skeptical physician) would immediately flag this as a liability and trust killer.",
+      "suggested_fix": "Add footer disclaimer on all app pages: 'FuelWell is for informational purposes only and is not medical advice. Always consult a healthcare provider before making significant dietary changes.' For coach responses that touch on health/medical topics, prepend small callout: '(Note: this is personalized guidance, not a medical diagnosis.)'"
+    },
+    {
+      "persona_id": "P75",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Numbers lack units or are inconsistently displayed. Calories shown as '1400' without 'kcal' label in some places; macros shown as '39' (protein grams?) without context. Physician eyebrow raises at ambiguity.",
+      "reproduction_steps": [
+        "Visit /app/dashboard",
+        "Find all numeric displays: '1400', '39', '850', '2250'",
+        "Check if each has explicit unit suffix (kcal, g, %, etc.)"
+      ],
+      "observed_evidence": "Numbers found: '1400 remaining' (assumed kcal but not stated), '39' health score (unit unclear\u2014points? percentage?), '850 / 2250 kcal' (units shown here). Inconsistency: some numbers have units, others don't. For a physician evaluating credibility, this is sloppy. Screenshot: A19-P75-credibility.png.",
+      "suggested_fix": "Standardize numeric display: (1) All calories = 'X kcal' or 'X cal'. (2) Macros = 'X g protein', 'X g carbs', 'X g fat'. (3) Health score = 'Score: 39/100' (clarify scale). (4) All percentages = 'X% of daily target'. Audit all pages (/log, /nutrition, /progress, /coach) for consistency."
+    },
+    {
+      "persona_id": "P75",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "Coach section has no visible attribution or source transparency. A physician wants to know: is this AI? Is it based on specific guidelines (e.g., USDA RDA, medical literature)?",
+      "reproduction_steps": [
+        "Visit /app/coach",
+        "Look for: model name, data source attribution, 'powered by', guideline reference",
+        "Check if coach answers cite any evidence"
+      ],
+      "observed_evidence": "Coach section exists but no 'AI-powered by [X]' label, no 'based on [nutrition standard]' phrase, no 'learn more' link to methodology. For a physician considering recommendation, transparency about the AI model and training data is table stakes. Screenshot: A19-P75-credibility.png.",
+      "suggested_fix": "Add small info box near coach input: 'AI Coach \u2022 Personalized based on your profile, not medical advice. Sources: [link to methods]'. In settings, add 'About Coach' page with model name, guidelines (e.g., DRI, USDA), and a caveat that it's not a substitute for professional medical nutrition therapy."
+    },
+    {
+      "persona_id": "P75",
+      "category": "pain-point",
+      "severity": 2,
+      "description": "Rounding and precision inconsistency across displays. Macros shown as '850/2250' (no decimals) but might display as '850.3/2250.7' in detail views, undermining credibility.",
+      "reproduction_steps": [
+        "View dashboard macro summary",
+        "Navigate to /app/nutrition for detailed breakdown",
+        "Compare rounding: does dashboard show 850 while detail shows 850.3?"
+      ],
+      "observed_evidence": "Dashboard showed '850 / 2250 kcal' (no decimals). Log page macro labels all showed whole numbers. No detailed view tested to confirm inconsistency, but rounding strategy is not evident in any UI. Physician would want to know: are these rounded for display or is precision lost? Screenshot: A19-P75-credibility.png.",
+      "suggested_fix": "Document rounding policy: 'Calories rounded to nearest 10. Macros rounded to nearest 1g. Percentages to 1 decimal.' Display policy in settings tooltip. Audit all numeric fields (/log, /nutrition, /progress) to ensure consistent rounding. If precision matters, show both 'rounded display' and 'exact' in a detail view."
+    },
+    {
+      "persona_id": "P76",
+      "category": "pain-point",
+      "severity": 5,
+      "description": "100 interactive elements smaller than 44x44px on /app/log (mobile). Gen-Z user tapping at speed will mis-hit small targets, causing frustration and app abandonment.",
+      "reproduction_steps": [
+        "Visit /app/log on mobile (390x844)",
+        "Identify all buttons, inputs, links < 44px width or height",
+        "Count: 100 small targets found vs. 99 adequate targets"
+      ],
+      "observed_evidence": "Comprehensive audit found 199 interactive elements on /app/log. Of these: 100 are < 44px (either width or height), 99 are >= 44px. Small targets include: unlabeled icons, close buttons, small menu toggles, increment/decrement spinners. At 390px width, even a 35px button forces precision tapping. P76 'taps before screens finish loading'\u2014small targets guarantee errors. Screenshot: A19-mobile-Log_Meal.png, A19-detailed-results.json.",
+      "suggested_fix": "Audit and resize all interactive elements to minimum 44x44px on mobile: (1) Increment/decrement buttons in quantity fields = 44x44 each, with 8px padding. (2) Small icon buttons (close, remove) = 44x44 circle or square. (3) Checkboxes/radio buttons = 44x44 hit area (visual can be smaller). (4) Menu toggles = 44x44. Test on 390px width to ensure no overlap. Use spacer divs if needed."
+    },
+    {
+      "persona_id": "P76",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Focus ring is barely visible (outline=0px, shadow=none) on most buttons. Fast keyboard users will lose track of focus and become disoriented.",
+      "reproduction_steps": [
+        "Load /app/dashboard",
+        "Press Tab and observe focus ring on first button",
+        "Check computed styles: outline-width, box-shadow",
+        "Compare to design tokens (expect 2-4px visible ring)"
+      ],
+      "observed_evidence": "Button focus test showed: outline=0px, boxShadow=rgba(0,0,0,0) (fully transparent). Buttons have no visible focus indicator. On desktop, this is harder to spot; on mobile with keyboard (bluetooth), focus is invisible. Gen-Z power user will hit Tab repeatedly and lose cursor position. Screenshots: A19-desktop-Dashboard.png, A19-polish-deep-results.json.",
+      "suggested_fix": "Add visible focus-visible ring to all interactive elements: outline: 2px solid #117558 with 2px offset. Or use box-shadow: 0 0 0 3px rgba(17, 117, 88, 0.5). Test that ring is visible on light and dark backgrounds. Apply to button:focus-visible, a:focus-visible, input:focus-visible globally."
+    },
+    {
+      "persona_id": "P76",
+      "category": "improvement-idea",
+      "severity": 3,
+      "description": "Form submission has no double-submit protection. Gen-Z user mashing submit button multiple times will create duplicate logs or race conditions.",
+      "reproduction_steps": [
+        "Navigate to /app/log or /signup",
+        "Fill form with valid data",
+        "Click submit button twice rapidly (within 200ms)",
+        "Observe: does button disable? Does second request fire? Are duplicates created?"
+      ],
+      "observed_evidence": "Submit buttons on /signup and /app/log showed no visible disabled state or loading indicator after first click. Inspect revealed no onclick handlers disabling the button. Risk: user taps twice, two POST requests fire, two meals logged. P76's 'taps before screens finish loading' pattern makes this likely. Screenshot: A19-detailed-results.json (form_quality section).",
+      "suggested_fix": "Add double-submit guard: (1) On click, set button.disabled = true and show spinner. (2) Show 'Submitting...' text. (3) Only re-enable after response (success or error). (4) Optionally: debounce the submit handler (200ms grace period). Test with network throttle to simulate slow responses."
+    },
+    {
+      "persona_id": "P76",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Signup form has no inline validation feedback. User enters invalid email and doesn't know until submit; no real-time error message.",
+      "reproduction_steps": [
+        "Visit /signup",
+        "Enter invalid email (e.g., 'notanemail')",
+        "Tab away or continue typing",
+        "Observe: does error appear immediately or only on submit?"
+      ],
+      "observed_evidence": "Form has email input with type='email' (browser HTML5 validation), but no custom error message or visual feedback until submit. No 'aria-invalid' set, no error text below field, no red border. User expects instant feedback (TikTok speed). Clicking submit on empty form also produces 0 error messages. Screenshot: A19-desktop-Log_Meal.png.",
+      "suggested_fix": "Implement real-time validation: (1) On blur or after 3 characters, validate email pattern. (2) If invalid, show inline error below field in red: 'Invalid email format'. (3) Set aria-invalid='true'. (4) On valid, clear error. (5) Disable submit until all fields pass validation. Provide user instant feedback, not delayed submit-time feedback."
+    },
+    {
+      "persona_id": "P76",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "No loading skeleton on data-heavy pages. Log page loads full UI after network delay, causing layout shift. Gen-Z expects instant visual feedback that content is coming.",
+      "reproduction_steps": [
+        "Throttle network to Slow 3G in DevTools",
+        "Visit /app/log",
+        "Observe page load: is there a skeleton (gray placeholder) or blank space?",
+        "Measure time before interactive elements appear"
+      ],
+      "observed_evidence": "No skeleton loaders, spinners, or placeholder content detected on /app/log, /app/dashboard, or /app/coach. When network is slow, pages appear blank, then content pops in. First Paint: 248ms observed. For P76 'taps before screens finish loading', this feels slow. No perceived-performance improvement. Screenshot: A19-P76-speed-perf.png.",
+      "suggested_fix": "Add skeleton loaders on key sections: (1) Dashboard cards = gray placeholder boxes during load. (2) Log food list = 3-5 skeleton lines. (3) Coach message = animated skeleton box. Show skeleton immediately, replace with real content on arrival. Keeps user confident something is happening."
+    },
+    {
+      "persona_id": "P76",
+      "category": "pain-point",
+      "severity": 2,
+      "description": "No visual microcopy urgency or CTA clarity. Buttons say 'Log' but don't communicate outcome ('Log meal & see macros') or speed benefit.",
+      "reproduction_steps": [
+        "View /app/dashboard, /app/log, /app/coach",
+        "Read all button labels: 'Log', 'Add', 'Remove', 'Save'",
+        "Assess: does label clarify action outcome or speed?"
+      ],
+      "observed_evidence": "Button labels found: 'Log', 'Log' (again), 'Add', 'Remove'. Generic action verbs. No benefit statement ('Log fast', 'Add & save', 'Quick add'). For gen-Z used to 'Snap now', 'Share instantly', FuelWell's formal tone feels slow even if it isn't. Screenshot: A19-polish-deep-results.json (microcopy section).",
+      "suggested_fix": "Rewrite CTAs to emphasize speed and outcome: 'Log meal (2 sec)', 'Quick add', 'Save & view macros', 'Send to coach'. Test with P76: perception of speed matters as much as actual speed. Tone should be confident, terse, benefit-forward."
+    }
+  ]
+}

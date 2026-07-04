@@ -1,0 +1,246 @@
+{
+  "agent_id": "A10",
+  "persona_set": "S10",
+  "app_exercised": "Exercised FuelWell web app at http://localhost:3000 across 8+ routes on both desktop (1280x800) and mobile (390x844 iPhone) viewports. Visited: /preview (QA hub), /app/dashboard (main home), /app/onboarding (signup flow), /app/log (meal search and logging), /app/coach (AI chat), /app/workouts (library browse), /app/nutrition (macro detail), /app/settings (account). Interacted by: typing food names in search to test autocomplete, tabbing through focus states (5+ elements per route), clicking filter buttons, inspecting form fields, checking for loading indicators, testing disabled button states, and capturing full-page screenshots of key screens. Measured touch target sizes, button dimensions, spacing, focus ring visibility, label clarity, and error/empty state presentation. Audited for design token consistency, form validation UX, microcopy tone, and network feedback on slow connections.",
+  "findings": [
+    {
+      "persona_id": "P37",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Navigation and button dimensions inconsistent with design tokens across routes",
+      "reproduction_steps": [
+        "Open /app/dashboard on desktop (1280x800)",
+        "Inspect left-side navigation links (Dashboard, Log Meal, Coach, etc)",
+        "Use DevTools to measure width of each link",
+        "Compare against each other and expected token size"
+      ],
+      "observed_evidence": "Desktop dashboard screenshot shows nav links with varying widths: some 227px (logo area), others 301px (nav items). Expected consistency on grid token (e.g., w-64 or w-full). Search field on /app/log measures 308x58px while nearby buttons measure inconsistently (39x28px to 393x42px).",
+      "suggested_fix": "Create explicit design token for nav-item-width (e.g., w-full or min-w-64); audit all button dimensions and standardize to token values (e.g., button-small: 40x40, button-md: 48x48). Ensure Bevel parity by documenting sizing tokens."
+    },
+    {
+      "persona_id": "P37",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Focus ring styling inconsistent: outline vs box-shadow fallback across interactive elements",
+      "reproduction_steps": [
+        "Open /app/log on desktop",
+        "Press Tab 5 times to cycle through interactive elements",
+        "Inspect each focused element in DevTools",
+        "Note outline vs box-shadow values"
+      ],
+      "observed_evidence": "/app/log: Tab 1 shows outline:2px, Tab 2 shows outline:2px, Tab 3 shows outline:2px (consistent here). But /app/onboarding shows some buttons with outline, others with no visible focus indicator. /app/nutrition form fields have box-shadow focus but no outline. Inconsistency breaks keyboard-navigation predictability.",
+      "suggested_fix": "Add global CSS: :focus-visible { outline: 2px solid $color-primary; outline-offset: 2px; } and remove all ad-hoc box-shadow focus styles. Test tabbing through all routes to ensure consistent appearance."
+    },
+    {
+      "persona_id": "P37",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Button border-radius tokens not standardized; multiple radius values detected across app",
+      "reproduction_steps": [
+        "Open /app/dashboard, /app/log, /app/nutrition",
+        "Inspect 5-10 buttons on each page in DevTools",
+        "Extract border-radius computed value",
+        "Compare values across pages"
+      ],
+      "observed_evidence": "Dashboard buttons show borderRadius=12px; Log page filter buttons show 12px; Settings buttons appear to have 8px. Some small chip buttons appear to have no radius (0px). Search input on /app/log: borderRadius=12px. Expected single token like $radius-md or $radius-lg per component type.",
+      "suggested_fix": "Define 2-3 border-radius tokens (e.g., $radius-sm: 6px, $radius-md: 12px, $radius-lg: 16px) and apply consistently by component. Audit button taxonomy and apply appropriate token."
+    },
+    {
+      "persona_id": "P37",
+      "category": "suggestion",
+      "severity": 2,
+      "description": "Vertical spacing between sections uses 4+ margin values instead of consistent rhythm",
+      "reproduction_steps": [
+        "Open /app/nutrition on desktop",
+        "Inspect 10 div/section elements vertically",
+        "Extract margin-bottom and padding-bottom in DevTools",
+        "List unique values"
+      ],
+      "observed_evidence": "/app/nutrition sections detected with marginBottom: 0px, 16px, 24px, 32px, auto in non-rhythmic pattern. Expected 8px base grid (8, 16, 24, 32px). No sections use explicit space tokens.",
+      "suggested_fix": "Define spacing token scale (space-2: 8px, space-3: 12px, space-4: 16px, space-6: 24px, space-8: 32px) and apply consistently via class (gap-4, mb-6) or Tailwind utility. Document in Bevel design system."
+    },
+    {
+      "persona_id": "P38",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "60% of touch targets on meal log page are below 44x44px minimum; unusable for large-handed users",
+      "reproduction_steps": [
+        "Navigate to /app/log on mobile (390x844)",
+        "Measure button dimensions: filter chips (All, Favorites, Dislikes, Recently used), meal category buttons (Breakfast, Lunch, Dinner, Snack), edit/delete icons",
+        "Count how many are < 44x44px",
+        "Try to tap on a small button with thumb"
+      ],
+      "observed_evidence": "Mobile log screenshot shows: 'All' button 39x28px, 'Favorites' 75x28px (height too small), 'Dislikes' 66x28px, 'Recently used' 101x28px. Edit button 32x32px. Meal category buttons show 0x0px (rendering issue or hidden). Total: 30/50 interactive elements < 44px in either dimension.",
+      "suggested_fix": "Increase min-height to 44px on all filter chips and buttons. For small icon buttons (edit, delete), wrap in larger touch target (44x44px) with padding. Use design system toggle-chip component with enforced 44px height."
+    },
+    {
+      "persona_id": "P38",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Workout filter chips lack hover affordance (cursor not pointer, no background change)",
+      "reproduction_steps": [
+        "Navigate to /app/workouts on mobile",
+        "Hover over filter chips (All, Upper, Lower, Full body, Core, Mobility, Cardio, etc)",
+        "Observe cursor and background color",
+        "Repeat on desktop"
+      ],
+      "observed_evidence": "Workouts page filter chips: cursor=default (should be pointer), backgroundColor does not change on :hover. Visual feedback is minimal; user can't tell chip is clickable without trying to tap it.",
+      "suggested_fix": "Add CSS: .filter-chip { cursor: pointer; } .filter-chip:hover { background-color: rgba($color-primary, 0.1); } and transition: background-color 150ms ease;"
+    },
+    {
+      "persona_id": "P38",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Workout card names truncated on mobile; user can't read full exercise name before tapping",
+      "reproduction_steps": [
+        "Navigate to /app/workouts on mobile (390x844)",
+        "Observe workout card titles (e.g., 'Upper push gym builder', 'Lower hinge strength')",
+        "Look for tooltips or title attribute",
+        "Identify which names are cut off"
+      ],
+      "observed_evidence": "Workouts page mobile: card titles like 'Upper push gym builder' display as 'Upper push gym bi...' with ellipsis. No title attribute fallback. Coach needs to read full name to verify it matches client's fitness level before recommending.",
+      "suggested_fix": "Increase card height to fit 2 lines of text, or add title attribute to card: title='Upper push gym builder \u2014 structured gym work'. Alternatively, show full name in a detail sheet on tap."
+    },
+    {
+      "persona_id": "P38",
+      "category": "suggestion",
+      "severity": 2,
+      "description": "Workout list lacks skeleton loaders; content pops in suddenly, causing layout shift",
+      "reproduction_steps": [
+        "Navigate to /app/workouts on slow 3G (DevTools throttle)",
+        "Watch initial render",
+        "Observe if cards appear suddenly or gradually",
+        "Check for CLS (Cumulative Layout Shift) in Lighthouse"
+      ],
+      "observed_evidence": "Workouts page structure analysis: no [class*='skeleton'], [data-placeholder], or [aria-busy] elements. Content loads and renders instantly, but on slow 3G this would cause jank/shift.",
+      "suggested_fix": "Add skeleton card loaders matching workout card dimensions (e.g., 189x52px per card) while data fetches. Show 8-10 skeleton cards initially, then replace with real content."
+    },
+    {
+      "persona_id": "P39",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Onboarding form uses technical nutrition jargon (Protein target, Macros, Activity level) with no inline help",
+      "reproduction_steps": [
+        "Navigate to /app/onboarding",
+        "Look at form fields and labels",
+        "Search for [title], [aria-describedby], .tooltip, or help icons",
+        "Try to understand what 'Protein target' means without external knowledge"
+      ],
+      "observed_evidence": "Onboarding screenshot shows form asking about 'Protein target', 'Activity level', 'Body metrics' with zero explanation. No help elements detected (0 [title], 0 [aria-describedby], 0 tooltip elements). First-time dieter (22y/o, zero nutrition knowledge) has no guidance.",
+      "suggested_fix": "Add help icon next to each technical term with tooltip: 'Protein target: recommended daily protein in grams (e.g., 100g for a 150lb person)'. Use aria-describedby to link help text to input field."
+    },
+    {
+      "persona_id": "P39",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Onboarding form has no visible progress indicator; user doesn't know if form is 10% or 80% complete",
+      "reproduction_steps": [
+        "Navigate to /app/onboarding",
+        "Look at top of form for progress bar or step counter",
+        "Check entire page for 'Step X of Y' text or % complete",
+        "Observe page text with textContent()"
+      ],
+      "observed_evidence": "Onboarding screenshot: no progress bar, no 'Step 3 of 15' text, no % complete indicator visible. Page text contains 'Setup takes a few minutes' but no concrete step indication. Anxious user has no sense of commitment required.",
+      "suggested_fix": "Add progress bar at top of form (e.g., <div style='width: 20%; background: accent; height: 4px;'></div>) and text 'Step 3 of 15' in header. Update both as user progresses."
+    },
+    {
+      "persona_id": "P39",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Form fields lack [required] attribute and error message area; validation feedback unclear",
+      "reproduction_steps": [
+        "Navigate to /app/onboarding",
+        "Look at form inputs for [required] attribute",
+        "Search for [role='alert'] or .error-message element",
+        "Try to submit form with empty field (if possible in preview)"
+      ],
+      "observed_evidence": "Onboarding form fields: no [required], no [aria-required='true'], no [aria-invalid]. No [role='alert'] or error message container visible. If validation fails on submit, user has no inline feedback.",
+      "suggested_fix": "Add aria-required='true' to required fields. Add error message area (role='alert') below each field. Show 'This field is required' text in red on blur or submit if empty."
+    },
+    {
+      "persona_id": "P39",
+      "category": "suggestion",
+      "severity": 2,
+      "description": "Daily review uses formal, neutral tone; lacks warmth and encouragement for anxious users",
+      "reproduction_steps": [
+        "Navigate to /app/daily-review",
+        "Read all text content (headers, descriptions, CTAs)",
+        "Assess tone for supportiveness, warmth, celebration",
+        "Note if any positive micro-messaging is present"
+      ],
+      "observed_evidence": "Daily review text: 'If a meal isn\\'t logged here, it isn\\'t counted on the dashboard. Keep it honest and the daily decision stays accurate.' Tone is instructional, not celebratory. No 'Great job logging today!' or 'You\\'re tracking consistently!' messaging. Neutral tone can feel judgmental to anxious user.",
+      "suggested_fix": "Add supportive micro-messaging: 'You\\'re doing great!' or 'Every day counts' near summary. Reframe as encouragement: 'Keep it honest \u2014 you\\'re building a real picture of your day' instead of 'Keep it honest and the daily decision stays accurate.'"
+    },
+    {
+      "persona_id": "P40",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Food search autocomplete lacks loading spinner/feedback; user on slow network can't tell if search is working",
+      "reproduction_steps": [
+        "Navigate to /app/log on mobile",
+        "Type 'chicken' in search field",
+        "Watch for spinner or [role='status'] element",
+        "Throttle network to slow 3G and repeat",
+        "Observe if feedback appears while results load"
+      ],
+      "observed_evidence": "Log page search interaction: type 'chicken' and autocomplete loads results (Chicken breast, Chicken thigh, etc). No [role='status'], .spinner, or loading indicator visible during fetch. On slow 3G (P40's typical airport wifi), user won't know if search is working or if page froze.",
+      "suggested_fix": "Add spinner or pulse animation while autocomplete query is in-flight. Show [role='status']: 'Loading food options...' and hide after results appear. Use aria-live='polite' for accessibility."
+    },
+    {
+      "persona_id": "P40",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Coach send button disabled state lacks aria-label or tooltip; user doesn't know why button is disabled",
+      "reproduction_steps": [
+        "Navigate to /app/coach",
+        "Look at send button (right side of message input)",
+        "Inspect button in DevTools for aria-label and title attributes",
+        "Note that button is disabled when input is empty"
+      ],
+      "observed_evidence": "Coach page: send button is disabled (button[type='submit'][disabled]) with cursor=default, opacity=0.5. No aria-label, no title attribute. User sees grey button but doesn't understand 'I need to type a message to enable this'.",
+      "suggested_fix": "Add aria-label='Send message (type to enable)' or title='Type a message and press send'. Use aria-label to make disabled reason clear to screen reader users and keyboard users."
+    },
+    {
+      "persona_id": "P40",
+      "category": "suggestion",
+      "severity": 2,
+      "description": "Message input placeholder text is 95 characters long; unclear and cuts off on mobile",
+      "reproduction_steps": [
+        "Navigate to /app/coach on mobile",
+        "Look at message input placeholder",
+        "Measure placeholder text length and readability",
+        "Note what's cut off"
+      ],
+      "observed_evidence": "Coach message input placeholder: 'Upload a food photo, email, label, workout image, or ask anything...' (95 chars). Cuts off to 'Upload a food photo, email, label, workout im...' on mobile. Unclear what primary action is (chat vs file upload).",
+      "suggested_fix": "Shorten placeholder to 'Message Coach\u2026' (15 chars). Move 'Upload photos, files' to help text or secondary UI. Keep placeholder concise and action-focused."
+    },
+    {
+      "persona_id": "P40",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "No visible error/retry messaging for network failures; user on spotty hotel wifi has no feedback",
+      "reproduction_steps": [
+        "Navigate to /app/coach on mobile",
+        "Throttle network to offline or very slow",
+        "Try to send a message or load coach page",
+        "Look for error toast, retry button, or error message"
+      ],
+      "observed_evidence": "Coach page structure: no error boundary detected, no [role='alert'], no retry button visible. If network times out (P40's travel scenario: hotel wifi dropout), user sees loading state but no error message or recovery path.",
+      "suggested_fix": "Add error toast on network timeout: 'Connection lost. Retry?' with button. Use error boundary to catch fetch failures. Show [role='alert']: 'Unable to load \u2014 check your connection and try again' with retry button."
+    },
+    {
+      "persona_id": "P37",
+      "category": "suggestion",
+      "severity": 2,
+      "description": "Mobile sidebar navigation links measure 0x0px on most routes; rendering or layout issue affecting parity check",
+      "reproduction_steps": [
+        "Open /app/dashboard on mobile (390x844)",
+        "Inspect left sidebar navigation links",
+        "Check DevTools for element visibility and dimensions",
+        "Repeat on /app/log, /app/workouts"
+      ],
+      "observed_evidence": "Mobile dashboard: nav link elements detected but measured as 0x0px. Same on /app/log mobile, /app/workouts mobile. Likely hidden via CSS (display:none or width:0) on mobile. Home/Log/Coach/Move/Groceries/Review bottom nav links measure 65x45px to 65x49px.",
+      "suggested_fix": "If sidebar intentionally hidden on mobile, document this design pattern. If unintentional, ensure sidebar is accessible via hamburger or responsive layout. Ensure bottom tab nav is 44px+ height."
+    }
+  ]
+}

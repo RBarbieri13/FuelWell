@@ -1,0 +1,236 @@
+{
+  "agent_id": "A17",
+  "persona_set": "S17",
+  "app_exercised": "Exercised FuelWell across 10+ routes on desktop and mobile (390x844): /app/dashboard, /app/log (search, filtering, meal list), /app/daily-review, /app/progress, /app/recipes (open recipe detail), /app/grocery-list (multi-item interactions), /app/coach, /app/settings, /app/profile, /app/fitness, /app/workouts, /app/activity, /app/recovery, /app/meal-plan. Tested keyboard navigation (tab order, focus visibility), touch target sizing on mobile, form submission states, text overflow at various zoom/accessibility scales, and interaction patterns with meal-logging, filtering, and form inputs. Captured screenshots at both desktop (1280x800) and mobile (390x844) viewports. Verified console errors, element sizing, and interactive element positioning.",
+  "findings": [
+    {
+      "persona_id": "P65",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Sidebar navigation uses 0x0 pixel invisible touch/click targets on mobile causing navigation links to be unclickable when screen is rotated or accessed from landscape mode.",
+      "reproduction_steps": [
+        "Navigate to /app/dashboard on mobile (390x844)",
+        "Inspect interactive elements via NODE_PATH=$HOME/node_modules node surf-browse.js",
+        "Observe sidebar links (Dashboard, Daily Review, Log Meal, etc.) all report 0x0 dimensions",
+        "Attempt to click sidebar link on actual mobile device or mobile viewport"
+      ],
+      "observed_evidence": "Mobile viewport output shows multiple sidebar anchors with dimensions [0x0]: 'a[0x0] \"Dashboard\", a[0x0] \"Daily Review\", a[0x0] \"Log Meal\"'. These navigation elements are rendered but have zero width/height, making them invisible and un-tappable. Screenshot A17-mobile-log.png shows sidebar is visually present but non-functional.",
+      "suggested_fix": "Restore proper sizing to sidebar navigation links. Ensure min-width and min-height are set (typically 48px x 48px for touch) or that the nav container has correct flex/grid dimensions. Check CSS for overflow:hidden or width:0 constraints inadvertently applied to mobile nav."
+    },
+    {
+      "persona_id": "P65",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Keyboard focus ring is not visible or inconsistently visible during Tab navigation, making keyboard-only navigation unreliable for a desktop power user relying on visual focus indicators.",
+      "reproduction_steps": [
+        "Navigate to /app/log",
+        "Run: NODE_PATH=$HOME/node_modules node surf-browse.js http://localhost:3000/app/log --tab 5",
+        "Inspect output for focus element outline and ring visibility",
+        "Repeat Tab navigation across 10+ elements and verify focus outline appears on every focused element"
+      ],
+      "observed_evidence": "Tab navigation output shows 'FOCUSED after 5 tabs: BUTTON.rounded-full.px-3.py-1.5 text=\"All\" outline=2px solid ring=no'. The 'ring=no' indicates no visible focus ring despite an outline style being present. Users navigating by keyboard cannot reliably identify which element has focus.",
+      "suggested_fix": "Ensure all interactive elements (buttons, inputs, links, selects) have a visible focus indicator using either :focus-visible { outline: 2px solid } or Tailwind's ring utilities. Verify focus-ring color has sufficient contrast (at least 3:1) against the background. Test across all routes to ensure consistency."
+    },
+    {
+      "persona_id": "P65",
+      "category": "improvement-idea",
+      "severity": 3,
+      "description": "Dashboard macros display and protein progress tracking lack hierarchical visual separation, making it difficult to scan quickly at a glance when reading at 110% zoom (P65's stated need for dense, credible data).",
+      "reproduction_steps": [
+        "Navigate to /app/dashboard on desktop",
+        "Apply 110% CSS zoom: Open DevTools, type document.documentElement.style.zoom = '1.1'",
+        "Screenshot and compare macro rings/protein display against competitor nutrition apps",
+        "Attempt to glance-read the protein remaining value in <2 seconds without re-reading"
+      ],
+      "observed_evidence": "Desktop dashboard shows macro metrics (1400 CALORIES LEFT, 102g PROTEIN LEFT) in large text but without visual hierarchy \u2014 all values are similarly sized and weighted. Screenshot A17-desktop-dashboard.png shows numbers laid out linearly without visual separation (color differentiation, grouping cards, or emphasis on protein-first layout). At 110% zoom, the layout becomes cramped and the secondary information (carbs, fat) appears equally prominent as the primary metric (protein).",
+      "suggested_fix": "Introduce visual hierarchy: (1) Size protein value 10-15% larger than other macros to match P65's protein-forward priority; (2) Group macro rings with stronger background cards or separators; (3) Use color-coding consistently (e.g., Protein = primary accent color, Carbs/Fat = secondary); (4) Test readability at 110% zoom by adding explicit padding and ensuring no macro value wraps or truncates."
+    },
+    {
+      "persona_id": "P65",
+      "category": "suggestion",
+      "severity": 2,
+      "description": "Weekly progress trend labels (Mon\u2013Sun) are small and difficult to read at 110% zoom without expanding the chart to full screen width.",
+      "reproduction_steps": [
+        "Navigate to /app/progress on desktop",
+        "Apply 110% zoom to page",
+        "Hover over or inspect the bar chart showing 7-day calorie/macro trend",
+        "Attempt to read day-of-week labels without zooming further or widening the viewport"
+      ],
+      "observed_evidence": "Progress page bar chart displays 'Mon Tue Wed Thu Fri Sat Sun' labels below bars. At 1280x800 desktop resolution with 110% zoom applied, these labels compress into a narrow space and become difficult to distinguish. Screenshot A17-desktop-zoom-110.png shows chart labels are present but small relative to zoom level.",
+      "suggested_fix": "Ensure chart container remains at least 600px wide or uses responsive sizing. Consider rotating day labels to 45 degrees or abbreviating to single letters if width is constrained. Provide a legend separate from the x-axis for clarity at high zoom levels."
+    },
+    {
+      "persona_id": "P66",
+      "category": "pain-point",
+      "severity": 5,
+      "description": "Multiple UI buttons have touch targets smaller than 44px (minimum recommended by WCAG), making accurate tapping impossible on a cracked-screen Android phone with one-thumb use.",
+      "reproduction_steps": [
+        "Navigate to /app/log on mobile (390x844)",
+        "Run edge case test: Check all button bounding boxes",
+        "Identify buttons with width < 44px or height < 44px",
+        "Attempt to tap small buttons on actual cracked-screen phone or mobile device with large fingers"
+      ],
+      "observed_evidence": "Edge case test output: 'Small touch targets (< 44px): 23'. Examples include like/dislike buttons (44x44 but often appearing at edge of screen), filter pills (buttons reported 39x28, 69x34, etc.), and quantity adjustment buttons on grocery list (32x32 reduce/increase). Screenshot A17-mobile-log.png shows filter buttons (High protein, Low carb, etc.) are visually compact. On a cracked screen with imprecise touch, these targets will result in frequent mis-taps.",
+      "suggested_fix": "Audit all interactive elements across mobile views and ensure minimum 44x44px (per WCAG 2.5.5). For filter pills, increase horizontal padding from current (appears to be ~8px) to 12-16px, and increase vertical height from 28px to 36-40px. For quantity buttons (grocery list), increase from 32x32 to 44x44. Group nearby buttons with at least 8px spacing to avoid accidental multi-taps."
+    },
+    {
+      "persona_id": "P66",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Grocery list item editing controls (input fields, +/- buttons, quantity spinner) are densely packed and difficult to operate accurately with one thumb on a cracked-screen phone, especially the quantity input field.",
+      "reproduction_steps": [
+        "Navigate to /app/grocery-list on mobile",
+        "Locate a grocery item (e.g., 'Lean Ground Turkey')",
+        "Attempt to edit quantity using the +/- buttons and quantity input field",
+        "Observe spacing and target sizes for each control",
+        "Try operating with one thumb only, avoiding the cracked screen area"
+      ],
+      "observed_evidence": "Grocery list item shows controls: checkbox (36x36), edit name input (74x42), reduce button (32x32), quantity input (112x38), increase button (32x32), serving-size input (128x38), category select (92x36), remove button (32x32). This is 8 interactive controls in ~308px width. Screenshot A17-grocery-list-mobile.png shows all these controls in a single row, making one-thumb accurate tapping nearly impossible without accidentally triggering adjacent controls.",
+      "suggested_fix": "Reorganize item controls into two rows: (1) Top row: checkbox + item name input (full width) + remove button, (2) Bottom row: quantity controls (quantity input flanked by +/- buttons, serving select, category select). Increase vertical spacing between rows to 12px minimum. Ensure each primary control (+/- buttons) is 44x44px with 8px spacing between them. Allow horizontal swipe-to-delete as an alternative to the delete button."
+    },
+    {
+      "persona_id": "P66",
+      "category": "improvement-idea",
+      "severity": 3,
+      "description": "Recipe card layout on /app/recipes uses inconsistent height and vertical alignment of nutrition badges, causing text like 'Cal 360' to appear at different positions across cards, making fast scanning difficult.",
+      "reproduction_steps": [
+        "Navigate to /app/recipes on mobile",
+        "Observe recipe cards in the list",
+        "Note the position of nutrition badge text (Cal, Pro, Carb, Fat) across 5+ cards",
+        "Time how quickly you can compare calorie values without reading card headers"
+      ],
+      "observed_evidence": "Recipe cards show format 'Cal360Pro30gCarb38gFat9g' but some cards have longer recipe names that push the badge lower. Screenshot A17-mobile-recipes.png shows recipe cards with variable heights (244x64, 244x91 px noted in output), causing nutrition info to sit at different vertical positions. This breaks scanning rhythm for P66 who wants to quickly compare calorie and protein values while shopping on a budget.",
+      "suggested_fix": "Standardize recipe card height to 80px minimum. Move nutrition badges (Cal, Pro, Carb, Fat) to a fixed position below the recipe name, not adjacent. Use a consistent grid layout (e.g., CSS Grid with row templates) to align all badges vertically. Consider showing only Calories and Protein for mobile view to reduce visual clutter."
+    },
+    {
+      "persona_id": "P66",
+      "category": "suggestion",
+      "severity": 2,
+      "description": "Empty states and zero-item scenarios are not visible in the current preview data, but the app should confirm that grocery list empty state and 'no workouts logged' states are encouraging (not shaming) for a budget-conscious beginner.",
+      "reproduction_steps": [
+        "Test the app with a fresh account (onboarding \u2192 first login)",
+        "Clear all items from grocery list and observe the empty state message",
+        "Log zero meals for a day and check dashboard message",
+        "Verify empty states use positive, motivational tone (not 'You haven\\'t logged anything yet')"
+      ],
+      "observed_evidence": "Current preview uses sample data with pre-populated groceries and meals. No empty state messages were observed during testing. However, P66's persona notes state 'anything that feels like homework is out' \u2014 if empty states use language like 'Start logging' or 'No items yet' without encouragement, this could discourage engagement.",
+      "suggested_fix": "Audit all empty states across the app for tone. Ensure messages are positive and action-oriented: instead of 'No meals logged today', use 'Your plate is blank \u2014 ready to log your first meal?' Consider adding a friendly illustration or icon. For grocery list, use 'No items yet. Build a list from your meal plan to get started.' This aligns with P66's need for a friendly, non-judgmental UX."
+    },
+    {
+      "persona_id": "P67",
+      "category": "pain-point",
+      "severity": 5,
+      "description": "Settings page input fields appear to have missing or non-visible labels, and form inputs lack proper ARIA labels, making it impossible for P67 (using iPhone with Large Accessibility Sizes) to understand which field is which.",
+      "reproduction_steps": [
+        "Navigate to /app/settings on mobile",
+        "Enable iPhone Accessibility Settings > Display & Text Size > Larger Accessibility Sizes (set to largest)",
+        "Attempt to navigate the form without zoom",
+        "Inspect input fields via DevTools: check for placeholder text or associated label elements",
+        "Enable VoiceOver and navigate each form input to verify ARIA labels"
+      ],
+      "observed_evidence": "Settings page inputs show in output: 'input[226x20] \"(unlabeled)\", input[228x20] \"(unlabeled)\", input[274x20] \"(unlabeled)\"'. These inputs have no visible placeholder or label text. At Large Accessibility Sizes (e.g., 150% text scale), these 20px-height inputs become too small to tap accurately and their purpose is completely unclear. Screenshot A17-mobile-settings.png shows the form layout but inputs are visually unlabeled.",
+      "suggested_fix": "Add explicit <label> elements for every input field associated via htmlFor attribute. Example: <label htmlFor=\"weight-input\">Weight</label>. Add placeholder text as backup: placeholder=\"Weight (lbs)\". Ensure label and input are at minimum 44px tall when Large Accessibility Sizes are enabled (use CSS: @supports (--sat: environment-safe-area-inset-bottom) { font-size: clamp(16px, 5vw, 20px); } or similar). Verify ARIA labels are present: <input aria-label=\"Weight in pounds\">."
+    },
+    {
+      "persona_id": "P67",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Form select dropdowns (goal, activity level, dietary preferences) do not expand vertically at Large Accessibility Sizes, causing options to be clipped or truncated, preventing P67 from reading all available choices.",
+      "reproduction_steps": [
+        "Navigate to /app/settings with iPhone Large Accessibility Sizes enabled (e.g., 150%+)",
+        "Open the 'Goal' select dropdown",
+        "Observe whether all options (Lose weight, Maintain, Gain muscle) are fully visible and readable",
+        "Measure the visible height of the dropdown menu vs. the required height for all options at 150% text scale"
+      ],
+      "observed_evidence": "Settings page shows select elements: 'select[274x46] \"Lose fatMaintainGain muscle\"'. At 274px width and 46px height, with text scaled to 150%, a dropdown menu will not have sufficient vertical space to display all three options. Screenshot A17-mobile-settings.png suggests compact form layout. At Large Text scales, the dropdown will either clip options or force horizontal scrolling within the dropdown itself.",
+      "suggested_fix": "Apply CSS to dropdowns: max-height: none (remove any max-height constraints), and padding: 8px 4px. Use CSS @supports or media queries to detect accessibility text-scale settings and increase dropdown height proportionally. For mobile, consider replacing select dropdowns with native radio button groups or segmented controls that don't truncate at high zoom. Ensure min-height of dropdown menu is calculated based on text size: min-height = number of options \u00d7 (line-height \u00d7 font-size)."
+    },
+    {
+      "persona_id": "P67",
+      "category": "improvement-idea",
+      "severity": 3,
+      "description": "Daily Review and Progress pages use small axis labels and legend text (e.g., 'Mon Tue Wed' on chart, metric tags like 'Pro', 'Carb', 'Fat') that become unreadable at Large Accessibility Sizes without further zoom or truncation.",
+      "reproduction_steps": [
+        "Navigate to /app/progress on mobile with Large Accessibility Sizes enabled",
+        "Observe the 7-day trend chart and its day-of-week labels",
+        "Enable Display & Text Size > Larger Accessibility Sizes and take a screenshot",
+        "Verify that all chart labels remain fully visible and readable without horizontal scrolling"
+      ],
+      "observed_evidence": "Progress page bar chart has labels 'Mon Tue Wed Thu Fri Sat Sun' and metric abbreviations 'Calories', 'Protein', 'Carbs', 'Fat'. These are rendered at a fixed small size (likely 12-14px) that does not scale with Large Accessibility Sizes. At 150%+ text scale, the labels become tiny relative to the rest of the interface.",
+      "suggested_fix": "Use CSS font-size that respects system accessibility settings: font-size: var(--chart-label-size, 14px); and define --chart-label-size in a CSS custom property that responds to prefers-color-scheme and accessibility media queries. Alternatively, use scalable SVG text with textAnchor and dominant-baseline to allow native scaling. For mobile, abbreviate day labels ('M Tu W Th F Sa Su') and consider stacking them vertically if space is limited."
+    },
+    {
+      "persona_id": "P67",
+      "category": "suggestion",
+      "severity": 2,
+      "description": "Coach interface (chat input, suggested prompts) does not clearly indicate which text is interactive (clickable prompt suggestions) vs. non-interactive help text, especially at Large Accessibility Sizes where visual button styling may blur.",
+      "reproduction_steps": [
+        "Navigate to /app/coach on mobile with Large Accessibility Sizes enabled",
+        "Observe the prompt suggestions ('What should I do right now?', 'Suggest a meal with 102g protein left', etc.)",
+        "Verify that each suggestion appears as a distinct, clearly tappable button",
+        "Compare visual styling to other buttons on the page (Log Meal, Save, etc.) to confirm consistency"
+      ],
+      "observed_evidence": "Coach page shows suggested prompts as 'button[316x48] \"What should I do right now?\", button[316x48] \"Suggest a meal with 102g protein left\"' but these appear to be styled identically to informational text blocks in the UI. At Large Text sizes, the distinction between button and text becomes less clear, and users may not attempt to tap suggestions.",
+      "suggested_fix": "Apply clear button styling to all interactive prompts: background-color, border, and rounded corners that differ from regular text. Ensure buttons have explicit :hover and :active states. Use aria-button role if not using semantic <button> elements: role=\"button\" tabindex=\"0\". Add onKeyDown handler to trigger click on Enter key for keyboard users."
+    },
+    {
+      "persona_id": "P68",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Food search input and meal-log buttons are positioned and sized such that a user with sweaty fingers post-ride will frequently mis-tap adjacent controls (like/dislike buttons, quantity spinners) instead of intended target.",
+      "reproduction_steps": [
+        "Navigate to /app/log on mobile (390x844)",
+        "Identify the search input and the food list below it",
+        "Observe the spacing and size of Like/Dislike buttons next to each food item",
+        "Simulate sweaty-finger use: test tapping buttons from angles, slightly off-center, or with thumb side (not tip)",
+        "Count frequency of mis-taps in a 20-tap sequence"
+      ],
+      "observed_evidence": "Log page shows meal buttons: 'button[278x42] \"Chicken breast, grilledPoultry \u00b7 165 cal /100g \u00b7 31g protein\", button[44x44] \"Like this\", button[44x44] \"Not for me\", button[40x40] \"Choose Chicken breast, grilled\"'. The Choose button (40x40) is smaller than the Like/Dislike buttons (44x44), and all three are in close horizontal proximity. Screenshot A17-mobile-log.png shows tight horizontal layout. When tapping with a sweaty thumb, the margin for error is minimal.",
+      "suggested_fix": "Increase spacing between Like/Dislike/Choose buttons from current (~4px) to 12-16px. Enlarge the Choose button to 44x44px minimum. Consider moving Like/Dislike to a secondary row or to a long-press/swipe action. Add haptic feedback (vibration) on successful tap to confirm intent. Alternatively, place Like/Dislike in a menu (right-click or long-press) rather than inline, reserving primary row space for the Choose action."
+    },
+    {
+      "persona_id": "P68",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Workouts page filter buttons are small (39x28 to ~80x36 pixels) and densely packed in multi-row pill layout, causing frequent mis-selection of adjacent filters when tapping with sweaty/imprecise fingers.",
+      "reproduction_steps": [
+        "Navigate to /app/workouts on mobile",
+        "Observe filter pill layout (All, Upper, Lower, Full body, Core, Mobility, etc.)",
+        "Measure button sizes and spacing between them",
+        "Simulate sweaty-finger interaction: attempt to tap 'Lower' without accidentally tapping 'Upper', 'Full body', or adjacent pills",
+        "Repeat 10 times and note mis-tap frequency"
+      ],
+      "observed_evidence": "Workouts page shows filter pills: 'button[43x32] \"All\", button[61x32] \"Upper\", button[62x32] \"Lower\", button[78x32] \"Full body\", button[55x32] \"Core\"' with minimal spacing (~4-6px between pills). Screenshot A17-mobile-workouts.png shows these as compact horizontal rows. With sweaty fingers, it's easy to tap the wrong pill and accidentally apply an unintended filter.",
+      "suggested_fix": "Increase pill height from 32px to 40-44px. Increase horizontal padding from ~12px to 16-20px. Separate pill rows with 12px vertical gap. Consider implementing a touch-hold + 200ms debounce to prevent accidental rapid re-taps. Add visual feedback (scale or opacity change) on tap-down to confirm which button is being targeted before release."
+    },
+    {
+      "persona_id": "P68",
+      "category": "improvement-idea",
+      "severity": 3,
+      "description": "Macro rings and numeric displays on the Dashboard and Daily Review lack clear visual separation between 'remaining' vs. 'consumed' values, making it difficult to glance-read the actionable protein amount post-ride when sweaty and fatigued.",
+      "reproduction_steps": [
+        "Navigate to /app/dashboard on mobile post-workout (simulate fatigue/sweat condition)",
+        "Attempt to read protein remaining value in <2 seconds without re-reading",
+        "Note whether '102g PROTEIN LEFT' is immediately obvious vs. buried among 'Protein 73 / 175g' stats",
+        "Compare visual hierarchy: is 'remaining' value larger, bolder, or differently colored than 'total consumed'?"
+      ],
+      "observed_evidence": "Dashboard shows 'PROTEIN LEFT: 102g' prominently at top, but also shows 'Protein: 73 / 175g' in the macro breakdown. When tired and sweaty, a user needs to quickly identify how much protein they can still log. The breakdown view (73/175) requires math/interpretation, while the headline 'PROTEIN LEFT' is clearer. However, they are presented in different locations with similar visual weight.",
+      "suggested_fix": "Use color differentiation: Protein remaining (102g) in a primary accent color (e.g., brand green or blue), consumed value (73g) in a secondary/muted color. Enlarge the 'PROTEIN LEFT' value by 20% (e.g., from 48px to 56px) relative to calorie remaining. Add a subtle icon next to protein (e.g., a muscle or protein symbol) to draw the eye. On Daily Review, repeat this pattern for consistency."
+    },
+    {
+      "persona_id": "P68",
+      "category": "suggestion",
+      "severity": 2,
+      "description": "Workout logging form (select exercise type, duration input, optional distance input) uses small input fields (300x46, 274x46) that are difficult to interact with accurately when wearing post-workout gloves or with wet fingers.",
+      "reproduction_steps": [
+        "Navigate to /app/fitness on mobile",
+        "Locate the 'Add workout' button and the form that appears",
+        "Attempt to fill the form with one hand while simulating gloved/wet finger use",
+        "Measure input field height and assess whether min-height is 44px or greater",
+        "Test tap accuracy by attempting to place cursor in center of input field"
+      ],
+      "observed_evidence": "Fitness page add-workout form shows: 'select[300x46] \"Walking...Biking...\"', 'input[300x46] \"Optional mi\"', 'button[300x40] \"Add\"'. While these are width-compliant (300px is full mobile width), the height of 46px is barely above the 44px minimum and only for the input itself. The select dropdown and button are slightly shorter (40-46px). Form labels are not visible in the output, suggesting they may be above or missing.",
+      "suggested_fix": "Increase input field height to 48-52px and add bottom padding/margin to 12px. Ensure the select dropdown expands to at least 180px height when opened (not scrolling if fewer than 5 options). Add visible labels above each input. Consider a two-step flow: (1) select workout type, (2) enter duration/distance \u2014 rather than a compact 3-field form, to reduce visual density and tap error."
+    }
+  ]
+}

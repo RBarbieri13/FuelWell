@@ -1,0 +1,4117 @@
+{
+  "desktop": [
+    {
+      "route_name": "Landing",
+      "route_path": "/",
+      "viewport": "desktop",
+      "hScroll": false,
+      "text": "FuelWell\nLog in\nGet started\nDAILY DECISION SYSTEM\nFuelWell\n\nA nutrition coach for the next choice, not a spreadsheet for the last mistake.\n\nStart free\nPreview the app\nFree to start\nNo credit card\nWorks with any diet\n\nTODAY'S DECISION\n\nYou have room to make a clean next choice.\n\n1400\n\nCALORIES LEFT\n\n102g\n\nPROTEIN LEFT\n\nToday's plate\n\nLogged meals only.\n\n1400\n\nREMAINING\n\nLog Meal\n\nBreakfast and lunch are already counted.\n\nAsk Coach\n\nGenerate dinner options that close the gap.\n\nMove\n\nPick a low-impact workout for today.\n\nHOW IT WORKS\n\nThe same loop, every day\n\nLog what happened, see what still matters, and let the coach pick the highest-leverage next move.\n\nLog the real meal\n\nSearch, scan, snap a photo, or add a custom plate without turning dinner into data entry.\n\nAsk the coach\n\nGet a next move based on what you already ate, what you still need, and how your day is going.\n\nWatch the pattern\n\nProgress reads like direction over time, not a pass/fail scoreboard for one imperfect day.\n\nPRODUCT\n\nBuilt for messy real life\n\nFuelWell keeps the practical surfaces close together: food, coach, workouts, recipes, groceries, recovery, and progress.\n\nThe point is not perfect tracking.\n\nThe point is making the next clean choice obvious enough to act on when your day is already moving.\n\nDaily targets\n\nCalories and macros sized from setup.\n\nPhoto estimates\n\nDraft meals from a plate image.\n\nBarcode lookup\n\nFast grocery and packaged-food logging.\n\nRecipes\n\nMeals that respect goals and preferences.\n\nWorkouts\n\nSuggestions that fit energy and recovery.\n\nFood rules\n\nDiet and allergy context stays attached.\n\nCOACH\n\nAnswers that can carry structure\n\nThe coach can respond with practical plans, comparisons, lists, tables, meal ideas, and progress explanations right in the chat.\n\nI have 1,400 calories and 102g protein left. What should dinner be?\n\nBuild dinner around lean protein first. Chicken quinoa bowl or salmon with sweet potatoes both close the gap cleanly.\n\nI only have 20 minutes to move. Is that worth logging?\n\nYes. Pick a low-impact full-body circuit and keep intensity moderate so tomorrow still works.\n\nWhy did my weight jump after a good day?\n\nLikely water, sodium, stress, or sleep. Your trend matters more than one weigh-in.\n\nSTART IN TWO MINUTES\n\nGet a starting plan, then let the app adapt from real logs.\nCreate account\nLog in\nFuelWell\n\n© 2026 FuelWell. Built for the next clean choice.",
+      "els": [
+        {
+          "tag": "a",
+          "w": 92,
+          "h": 32,
+          "label": "FuelWell home",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 63,
+          "h": 34,
+          "label": "Log in",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 63,
+          "h": 34,
+          "label": "Log in",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 119,
+          "h": 32,
+          "label": "Get started",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 119,
+          "h": 32,
+          "label": "Get started",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 144,
+          "h": 50,
+          "label": "Start free",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 144,
+          "h": 48,
+          "label": "Start free",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 166,
+          "h": 50,
+          "label": "Preview the app",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 166,
+          "h": 50,
+          "label": "Preview the app",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 186,
+          "h": 50,
+          "label": "Create account",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 186,
+          "h": 48,
+          "label": "Create account",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 93,
+          "h": 50,
+          "label": "Log in",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 93,
+          "h": 50,
+          "label": "Log in",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 69,
+          "h": 28,
+          "label": "FuelWell home",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        }
+      ],
+      "focusTest": [
+        {
+          "label": "Log in",
+          "hasOutline": false,
+          "outline": "0px",
+          "outlineStyle": "none"
+        },
+        {
+          "label": "Get started",
+          "hasOutline": false,
+          "outline": "0px",
+          "outlineStyle": "none"
+        },
+        {
+          "label": "Start free",
+          "hasOutline": false,
+          "outline": "0px",
+          "outlineStyle": "none"
+        }
+      ],
+      "colorEls": [],
+      "errs": []
+    },
+    {
+      "route_name": "Preview Hub",
+      "route_path": "/preview",
+      "viewport": "desktop",
+      "hScroll": false,
+      "text": "FUELWELL LIVE PREVIEW\nWeb app and iOS simulator review deck\n\nOne shared preview platform for Max and Robert. Use the established-user deck below, or open the new-user deck to test signup and intake from a clean first-run state.\n\nNew in v1.4.0: Daily nutrition + fitness detail, expanded intake, workout previews, grocery history, and richer review cards.\n\nPreflight\nDashboard\nNutrition\nFitness\nDaily review\nCoach\nUploads\nMenu review\nLog meal\nRecipes\nWorkouts\nGroceries\nRecovery\nProgress\n1. Existing user preview\n\nOpens the current sample account with logged meals, coach history, workouts, groceries, progress, and settings.\n\n2. New user signup + intake\n\nStarts at account creation, then walks through the full onboarding questionnaire and target preview.\n\nLaunch preflight\nPreview ready\n\nAI, database, RLS, route health, and storage readiness without exposing secrets.\n\nRoute health\n\nBrowser checks for the review routes Max is most likely to open.\n\nRetry\nPreview hub\n/preview\n200\nEstablished dashboard\n/app/dashboard\n200\nNew user intake preview\n/preview/new-user\n200\nCoach\n/app/coach\n200\nCoach attachments\n/app/coach/attachments\n200\nCoach artifact history\n/api/coach/artifacts\n200\nMenu review\n/app/coach/menu-review\n200\nNutrition detail\n/app/nutrition\n200\nFitness detail\n/app/fitness\n200\nDaily review\n/app/daily-review\n200\nWorkout database\n/app/workouts\n200\nProgress\n/app/progress\n200\nSettings\n/app/settings\n200\nWeb app preview\n\nDesktop-width product review\n\nOpen\niOS simulator\n\n375 x 812 phone viewport\n\nFocus\nPreview mode uses sample data and does not write to production user accounts.\nReview route: /preview",
+      "els": [
+        {
+          "tag": "a",
+          "w": 95,
+          "h": 34,
+          "label": "Preflight",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 107,
+          "h": 34,
+          "label": "Dashboard",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 98,
+          "h": 34,
+          "label": "Nutrition",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 87,
+          "h": 34,
+          "label": "Fitness",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 115,
+          "h": 34,
+          "label": "Daily review",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 83,
+          "h": 34,
+          "label": "Coach",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 92,
+          "h": 34,
+          "label": "Uploads",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 118,
+          "h": 34,
+          "label": "Menu review",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 97,
+          "h": 34,
+          "label": "Log meal",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 90,
+          "h": 34,
+          "label": "Recipes",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 102,
+          "h": 34,
+          "label": "Workouts",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 102,
+          "h": 34,
+          "label": "Groceries",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 99,
+          "h": 34,
+          "label": "Recovery",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 96,
+          "h": 34,
+          "label": "Progress",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 682,
+          "h": 110,
+          "label": "2. New user signup + intakeStarts at account creat",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 477,
+          "h": 450,
+          "label": "Launch preflightPreview readyAI, database, RLS, ro",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 78,
+          "h": 34,
+          "label": "Retry",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 279,
+          "h": 64,
+          "label": "Preview hub/preview200",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 279,
+          "h": 64,
+          "label": "Established dashboard/app/dashboard200",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 279,
+          "h": 64,
+          "label": "New user intake preview/preview/new-user200",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 279,
+          "h": 64,
+          "label": "Coach/app/coach200",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 279,
+          "h": 64,
+          "label": "Coach attachments/app/coach/attachments200",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 279,
+          "h": 64,
+          "label": "Coach artifact history/api/coach/artifacts200",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 279,
+          "h": 64,
+          "label": "Menu review/app/coach/menu-review200",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 279,
+          "h": 64,
+          "label": "Nutrition detail/app/nutrition200",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 279,
+          "h": 64,
+          "label": "Fitness detail/app/fitness200",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 279,
+          "h": 64,
+          "label": "Daily review/app/daily-review200",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 279,
+          "h": 64,
+          "label": "Workout database/app/workouts200",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 279,
+          "h": 64,
+          "label": "Progress/app/progress200",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 279,
+          "h": 64,
+          "label": "Settings/app/settings200",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 83,
+          "h": 32,
+          "label": "Open",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 88,
+          "h": 34,
+          "label": "Focus",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        }
+      ],
+      "focusTest": [
+        {
+          "label": "Retry",
+          "hasOutline": false,
+          "outline": "0px",
+          "outlineStyle": "none"
+        }
+      ],
+      "colorEls": [],
+      "errs": []
+    },
+    {
+      "route_name": "Dashboard",
+      "route_path": "/app/dashboard",
+      "viewport": "desktop",
+      "hScroll": false,
+      "text": "FuelWell\n\nDaily decision system\n\nDashboard\nDaily Review\nLog Meal\nCoach\nWorkouts\nFitness\nRecipes\nGroceries\nRecovery\nProgress\nProfile\nSettings\n\n6-day streak\n\nLog dinner to keep it alive tonight.\n\nGood afternoon, Alex Preview\n\nSaturday · keep the momentum\n\nA\n\nTODAY'S DECISION\n\nYou have room to make a clean next choice.\n\n1400\n\nCALORIES LEFT\n\n102g\n\nPROTEIN LEFT\n\n1400 calories and 102g protein remain. Plan the next meal around that gap.\n\nFind meals that fit\nHealth score\n39\nToday's plate\n\nCalculated from logged meals only.\n\nDetails\n1400\nREMAINING\n38% of target\n850 / 2250 kcal\n\nMeal makeup\n\nBreakfast, lunch, and dinner counted today\n\nBreakfast\n\nGreek yogurt with berries, Protein granola\n\n330 cal\n\n31g protein\n\n31g pro\n40g carb\n7g fat\n\nLunch\n\nChicken quinoa bowl\n\n520 cal\n\n42g protein\n\n42g pro\n48g carb\n18g fat\n\nDinner\n\nNot logged yet\n\n--\n\nopen\n\n102g\n\nProtein left\n\n1400\n\nCalories left\n\n2\n\nMeals\n\nMacros\n38% calories\nCalories\n850 / 2,250 kcal\nProtein\n73 / 175g\nCarbs\n88 / 240g\nFat\n25 / 75g\nOpen meal breakdown\nToday's focus\n\nNutrition\n\n2 meals logged\n\nActivity\n\nNo wearable connected\n\nRecovery\n\nChecklist incomplete\n\nQUICK ACTIONS\nLog Meal\nSnap Photo\nAsk Coach\nScan Barcode\nDaily Review\nMeal Plan\nLogged today\n\nTap Nutrition for full macro detail by meal.\n\nBreakfast\n\nGreek yogurt power bowl\n\n330 cal\n\n31g protein\n\nLunch\n\nChicken quinoa bowl\n\n520 cal\n\n42g protein\n\nReview the full day\n\nSee nutrition, activity, and energy balance in one ledger.\n\nOpen\n\nPlan movement\n\nPick a workout that matches today's energy and recovery.\n\nOpen\n\nFind food that fits\n\nUse remaining macros to choose dinner or snacks.\n\nOpen\n\nCheck trajectory\n\nSee what today changes about the weekly direction.\n\nOpen\n\nProfile context: goal lose, diet none, allergies Shellfish.",
+      "els": [
+        {
+          "tag": "a",
+          "w": 227,
+          "h": 85,
+          "label": "FuelWellDaily decision system",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 39,
+          "h": 40,
+          "label": "Collapse menu",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Dashboard",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Daily Review",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Log Meal",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Coach",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Workouts",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Fitness",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Recipes",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Groceries",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Recovery",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Progress",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Profile",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Settings",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Open desktop user settings menu",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 42,
+          "h": 42,
+          "label": "Search",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 42,
+          "h": 42,
+          "label": "Notifications",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 188,
+          "h": 44,
+          "label": "Find meals that fit",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 188,
+          "h": 44,
+          "label": "Find meals that fit",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 169,
+          "h": 46,
+          "label": "Health score39",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 68,
+          "h": 44,
+          "label": "Details",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 461,
+          "h": 21,
+          "label": "Open meal breakdown",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 461,
+          "h": 42,
+          "label": "Open meal breakdown",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 461,
+          "h": 78,
+          "label": "Nutrition2 meals logged",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 461,
+          "h": 78,
+          "label": "ActivityNo wearable connected",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 461,
+          "h": 78,
+          "label": "RecoveryChecklist incomplete",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 339,
+          "h": 86,
+          "label": "Log Meal",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 339,
+          "h": 86,
+          "label": "Snap Photo",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 339,
+          "h": 86,
+          "label": "Ask Coach",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 339,
+          "h": 86,
+          "label": "Scan Barcode",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 339,
+          "h": 86,
+          "label": "Daily Review",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 339,
+          "h": 86,
+          "label": "Meal Plan",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 990,
+          "h": 76,
+          "label": "BreakfastGreek yogurt power bowl330 cal31g protein",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 990,
+          "h": 76,
+          "label": "LunchChicken quinoa bowl520 cal42g protein",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 251,
+          "h": 210,
+          "label": "Review the full daySee nutrition, activity, and en",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 251,
+          "h": 210,
+          "label": "Plan movementPick a workout that matches today's e",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 251,
+          "h": 210,
+          "label": "Find food that fitsUse remaining macros to choose ",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 251,
+          "h": 210,
+          "label": "Check trajectorySee what today changes about the w",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        }
+      ],
+      "focusTest": [
+        {
+          "label": "",
+          "hasOutline": false,
+          "outline": "0px",
+          "outlineStyle": "none"
+        },
+        {
+          "label": "",
+          "hasOutline": false,
+          "outline": "0px",
+          "outlineStyle": "none"
+        },
+        {
+          "label": "",
+          "hasOutline": false,
+          "outline": "0px",
+          "outlineStyle": "none"
+        }
+      ],
+      "colorEls": [
+        {
+          "tag": "div",
+          "color": "rgb(22, 48, 42)"
+        },
+        {
+          "tag": "div",
+          "color": "rgb(22, 48, 42)"
+        },
+        {
+          "tag": "div",
+          "color": "rgb(22, 48, 42)"
+        },
+        {
+          "tag": "div",
+          "color": "rgb(22, 48, 42)"
+        },
+        {
+          "tag": "div",
+          "color": "rgb(22, 48, 42)"
+        }
+      ],
+      "errs": []
+    },
+    {
+      "route_name": "Log Meal",
+      "route_path": "/app/log",
+      "viewport": "desktop",
+      "hScroll": false,
+      "text": "FuelWell\n\nDaily decision system\n\nDashboard\nDaily Review\nLog Meal\nCoach\nWorkouts\nFitness\nRecipes\nGroceries\nRecovery\nProgress\nProfile\nSettings\n\n6-day streak\n\nLog dinner to keep it alive tonight.\n\nFAST LOGGING\n\nLog a meal\n\nSearch updates as you type. Adding food updates Today's Plate, dashboard macros, and coach context.\n\nView today's plate\nSearch\nRestaurants\nPhoto\nScan\n\nBest for known foods\n\nSearch the database, then choose a reviewed portion before saving.\n\nBreakfast\nHigh protein\nLow carb\nLow fat\nVegan\nAll\nFavorites\nDislikes\nRecently used\nShowing common foods first. Type to narrow the list.\n\nChicken breast, grilled\n\nPoultry · 165 cal /100g · 31g protein\n\nChicken breast, fried\n\nPoultry · 222 cal /100g · 28g protein\n\nChicken thigh, roasted\n\nPoultry · 209 cal /100g · 26g protein\n\nChicken thigh, skin-on\n\nPoultry · 232 cal /100g · 24g protein\n\nChicken drumstick\n\nPoultry · 172 cal /100g · 24g protein\n\nChicken wing, roasted\n\nPoultry · 203 cal /100g · 30g protein\n\nRotisserie chicken, mixed\n\nPoultry · 190 cal /100g · 25g protein\n\nGround chicken, cooked\n\nPoultry · 189 cal /100g · 27g protein\n\nChicken tenders, breaded\n\nPoultry · 271 cal /100g · 18g protein\n\nTurkey breast, roasted\n\nPoultry · 135 cal /100g · 30g protein\n\nGround turkey 93/7, cooked\n\nPoultry · 213 cal /100g · 27g protein\n\nGround turkey 99/1, cooked\n\nPoultry · 151 cal /100g · 32g protein\n\nTurkey deli slices\n\nPoultry · 104 cal /100g · 17g protein\n\nDuck breast, roasted\n\nPoultry · 201 cal /100g · 24g protein\n\nChicken sausage\n\nPoultry · 172 cal /100g · 16g protein\n\nTurkey bacon\n\nPoultry · 218 cal /100g · 17g protein\n\nChicken nuggets\n\nPoultry · 297 cal /100g · 15g protein\n\nChicken liver, cooked\n\nPoultry · 167 cal /100g · 26g protein\n\nGround beef 90/10, cooked\n\nBeef & Pork · 217 cal /100g · 26g protein\n\nGround beef 80/20, cooked\n\nBeef & Pork · 254 cal /100g · 26g protein\n\nRibeye steak, grilled\n\nBeef & Pork · 291 cal /100g · 24g protein\n\nSirloin steak, grilled\n\nBeef & Pork · 212 cal /100g · 29g protein\n\nFilet mignon\n\nBeef & Pork · 227 cal /100g · 28g protein\n\nNY strip steak\n\nBeef & Pork · 232 cal /100g · 27g protein\n\nFlank steak\n\nBeef & Pork · 192 cal /100g · 28g protein\n\nBeef brisket, smoked\n\nBeef & Pork · 288 cal /100g · 26g protein\n\nBeef short ribs\n\nBeef & Pork · 295 cal /100g · 26g protein\n\nRoast beef deli slices\n\nBeef & Pork · 115 cal /100g · 18g protein\n\nBeef jerky\n\nBeef & Pork · 410 cal /100g · 33g protein\n\nCorned beef\n\nBeef & Pork · 251 cal /100g · 18g protein\n\nPork chop, grilled\n\nBeef & Pork · 197 cal /100g · 27g protein\n\nPork tenderloin\n\nBeef & Pork · 143 cal /100g · 26g protein\n\nPulled pork, no sauce\n\nBeef & Pork · 247 cal /100g · 25g protein\n\nPork belly\n\nBeef & Pork · 518 cal /100g · 9g protein\n\nBacon, pan-fried\n\nBeef & Pork · 541 cal /100g · 37g protein\n\nHam, sliced\n\nBeef & Pork · 145 cal /100g · 21g protein\n\nRecent meals\n\nOne tap repeats a meal and updates today's goal math.\n\nChicken quinoa bowl\n\n520 kcal · 42g protein\n\nGreek yogurt power bowl\n\n330 kcal · 31g protein\n\nAdd your own meal\nLogged today\n\nBREAKFAST\n\nGreek yogurt power bowl\n\nRemove\n\nGreek yogurt with berries\n\n190 cal · 23p · 22c · 2f\n\nProtein granola\n\n140 cal · 8p · 18c · 5f\n\nLUNCH\n\nChicken quinoa bowl\n\nRemove\n\nChicken quinoa bowl\n\n520 cal · 42p · 48c · 18f\n\nLogging for\nBreakfast\nLunch\nDinner\nSnack\nAdd to Today's Plate\n\nPick a food from search to choose a portion.\n\nNo food selected.\n\nChoose a result from Search. Its one-tap portions appear here.\n\nToday's totals\n\nLive macro math for the selected day.\n\nCalories\n\n850/2250\n\n1400 left\n\nProtein\n\n73g/175g\n\n102g left\n\nCarbs\n\n88g/240g\n\n152g left\n\nFat\n\n25g/75g\n\n50g left\n\nCURRENT MEAL\n\nIngredient drawer\n\nSame-session ingredients and macro totals.\n\n0\n\nCAL\n\n0g\n\nPRO\n\n0g\n\nCARB\n\n0g\n\nFAT\n\nAdd foods and they will appear here for this meal-building session.",
+      "els": [
+        {
+          "tag": "a",
+          "w": 227,
+          "h": 85,
+          "label": "FuelWellDaily decision system",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 39,
+          "h": 40,
+          "label": "Collapse menu",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Dashboard",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Daily Review",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Log Meal",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Coach",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Workouts",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Fitness",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Recipes",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Groceries",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Recovery",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Progress",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Profile",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Settings",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Open desktop user settings menu",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 150,
+          "h": 42,
+          "label": "View today's plate",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 138,
+          "h": 48,
+          "label": "Search",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 138,
+          "h": 48,
+          "label": "Restaurants",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 138,
+          "h": 48,
+          "label": "Photo",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 138,
+          "h": 48,
+          "label": "Scan",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "input",
+          "w": 543,
+          "h": 58,
+          "label": "Search 1,000+ foods by name",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 107,
+          "h": 34,
+          "label": "High protein",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 88,
+          "h": 34,
+          "label": "Low carb",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 77,
+          "h": 34,
+          "label": "Low fat",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 69,
+          "h": 34,
+          "label": "Vegan",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 39,
+          "h": 28,
+          "label": "All",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 75,
+          "h": 28,
+          "label": "Favorites",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 66,
+          "h": 28,
+          "label": "Dislikes",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 101,
+          "h": 28,
+          "label": "Recently used",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 393,
+          "h": 42,
+          "label": "Chicken breast, grilledPoultry · 165 cal /100g · 3",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Like this",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Not for me",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Chicken breast, grilled",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 393,
+          "h": 42,
+          "label": "Chicken breast, friedPoultry · 222 cal /100g · 28g",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Like this",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Not for me",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Chicken breast, fried",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 393,
+          "h": 42,
+          "label": "Chicken thigh, roastedPoultry · 209 cal /100g · 26",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Like this",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Not for me",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Chicken thigh, roasted",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 393,
+          "h": 42,
+          "label": "Chicken thigh, skin-onPoultry · 232 cal /100g · 24",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Like this",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Not for me",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Chicken thigh, skin-on",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 393,
+          "h": 42,
+          "label": "Chicken drumstickPoultry · 172 cal /100g · 24g pro",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Like this",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Not for me",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Chicken drumstick",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 393,
+          "h": 42,
+          "label": "Chicken wing, roastedPoultry · 203 cal /100g · 30g",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Like this",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Not for me",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Chicken wing, roasted",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 393,
+          "h": 42,
+          "label": "Rotisserie chicken, mixedPoultry · 190 cal /100g ·",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Like this",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Not for me",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Rotisserie chicken, mixed",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 393,
+          "h": 42,
+          "label": "Ground chicken, cookedPoultry · 189 cal /100g · 27",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Like this",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Not for me",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Ground chicken, cooked",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 393,
+          "h": 42,
+          "label": "Chicken tenders, breadedPoultry · 271 cal /100g · ",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Like this",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Not for me",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Chicken tenders, breaded",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 393,
+          "h": 42,
+          "label": "Turkey breast, roastedPoultry · 135 cal /100g · 30",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Like this",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Not for me",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Turkey breast, roasted",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 393,
+          "h": 42,
+          "label": "Ground turkey 93/7, cookedPoultry · 213 cal /100g ",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Like this",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Not for me",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Ground turkey 93/7, cooked",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 393,
+          "h": 42,
+          "label": "Ground turkey 99/1, cookedPoultry · 151 cal /100g ",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Like this",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Not for me",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Ground turkey 99/1, cooked",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 393,
+          "h": 42,
+          "label": "Turkey deli slicesPoultry · 104 cal /100g · 17g pr",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Like this",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Not for me",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        }
+      ],
+      "focusTest": [
+        {
+          "label": "",
+          "hasOutline": false,
+          "outline": "0px",
+          "outlineStyle": "none"
+        },
+        {
+          "label": "",
+          "hasOutline": false,
+          "outline": "0px",
+          "outlineStyle": "none"
+        },
+        {
+          "label": "",
+          "hasOutline": false,
+          "outline": "0px",
+          "outlineStyle": "none"
+        }
+      ],
+      "colorEls": [
+        {
+          "tag": "div",
+          "color": "rgb(22, 48, 42)"
+        },
+        {
+          "tag": "div",
+          "color": "rgb(22, 48, 42)"
+        },
+        {
+          "tag": "div",
+          "color": "rgb(22, 48, 42)"
+        },
+        {
+          "tag": "div",
+          "color": "rgb(22, 48, 42)"
+        }
+      ],
+      "errs": []
+    },
+    {
+      "route_name": "Coach",
+      "route_path": "/app/coach",
+      "viewport": "desktop",
+      "hScroll": false,
+      "text": "FuelWell\n\nDaily decision system\n\nDashboard\nDaily Review\nLog Meal\nCoach\nWorkouts\nFitness\nRecipes\nGroceries\nRecovery\nProgress\nProfile\nSettings\n\n6-day streak\n\nLog dinner to keep it alive tonight.\n\nCoach\n\nLogs meals, plans workouts, answers — right here\n\nAttachments\nMenu review\nNew chat\nDashboard\nAGENTIC COACH\nAsk for the next useful move.\n\nI can log meals, generate tables, plan workouts, compare choices, render recipes, update groceries, and explain your numbers directly in chat.\n\n102g\n\nPROTEIN LEFT\n\n4\n\nRICH FORMATS\n\nlive\n\nTOOLS\n\nTRY ASKING\n\nStart with a useful question\nWhat should I do right now?\nSuggest a meal with 102g protein left\nGive me my daily recap\nAnalyze a menu or food photo\nPlan a workout for today\n\nRICH RESPONSE SUPPORT\n\nCoach answers can be structured, visual, and math-aware.\n\nThe same chat bubble supports headers, nested lists, tables, formulas, links, and inline media when the coach replies.\n\nTables\n\nMeal comparisons and macro rows\n\nNested lists\n\nSteps, substeps, and checklists\n\nFormulas\n\nMath rendered inline with KaTeX\n\nMedia\n\nImages and links inside replies\n\nDinner options for 102g protein left\nOption\tProtein\tWhy it fits\nSalmon bowl\t42g\tBalanced fats, easy carbs\nTurkey quinoa bowl\t48g\tHighest protein density\nBuild the plate:\nStart with protein\nAdd produce\nFinish with the carb gap\n\nFormula check: \n102\n𝑔\n−\n42\n𝑔\n=\n60\n𝑔\n102g−42g=60g left after dinner.\n\nOpen nutrition detail\n\nInline artifacts stay in the conversation.\n\nThe coach can answer in prose, then attach action cards for logging meals, opening pages, or saving preferences.\n\nChat-native actions",
+      "els": [
+        {
+          "tag": "a",
+          "w": 227,
+          "h": 85,
+          "label": "FuelWellDaily decision system",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 39,
+          "h": 40,
+          "label": "Collapse menu",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Dashboard",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Daily Review",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Log Meal",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Coach",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Workouts",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Fitness",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Recipes",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Groceries",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Recovery",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Progress",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Profile",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Settings",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Open desktop user settings menu",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 82,
+          "h": 20,
+          "label": "Attachments",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 82,
+          "h": 20,
+          "label": "Menu review",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 75,
+          "h": 32,
+          "label": "New chat",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 69,
+          "h": 20,
+          "label": "Dashboard",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 380,
+          "h": 48,
+          "label": "What should I do right now?",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 380,
+          "h": 48,
+          "label": "Suggest a meal with 102g protein left",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 380,
+          "h": 48,
+          "label": "Give me my daily recap",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 380,
+          "h": 48,
+          "label": "Analyze a menu or food photo",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 380,
+          "h": 48,
+          "label": "Plan a workout for today",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 134,
+          "h": 18,
+          "label": "Open nutrition detail",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "input",
+          "w": 1,
+          "h": 1,
+          "label": "Attach screenshot, menu, photo, or file",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "input",
+          "w": 912,
+          "h": 48,
+          "label": "Message Coach",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 48,
+          "h": 48,
+          "label": "Send",
+          "disabled": " DISABLED",
+          "small": "",
+          "visible": true
+        }
+      ],
+      "focusTest": [
+        {
+          "label": "",
+          "hasOutline": false,
+          "outline": "0px",
+          "outlineStyle": "none"
+        },
+        {
+          "label": "",
+          "hasOutline": false,
+          "outline": "0px",
+          "outlineStyle": "none"
+        },
+        {
+          "label": "",
+          "hasOutline": false,
+          "outline": "0px",
+          "outlineStyle": "none"
+        }
+      ],
+      "colorEls": [],
+      "errs": []
+    },
+    {
+      "route_name": "Settings",
+      "route_path": "/app/settings",
+      "viewport": "desktop",
+      "hScroll": false,
+      "text": "FuelWell\n\nDaily decision system\n\nDashboard\nDaily Review\nLog Meal\nCoach\nWorkouts\nFitness\nRecipes\nGroceries\nRecovery\nProgress\nProfile\nSettings\n\n6-day streak\n\nLog dinner to keep it alive tonight.\n\nSettings\n\nAccount, preferences, integrations, and data controls\n\nv1.4.0\n\nPreview mode is using a sample account. Account details below are placeholder values, not a real signed-in user.\n\nACCOUNT CONTROL CENTER\n\nAlex Preview\n\npreview@fuelwell.local\n\nMetric\n\nUNITS\n\n0\n\nDIETS\n\nOff\n\nGARMIN\n\nGarmin Connect\n\nTop priority for active calories, steps, sleep, recovery, and planned workouts.\n\nDisconnected\n\nConnect Garmin to use activity, sleep, and recovery context in meal guidance.\n\nRequest Garmin access\nUse preview sample\nACCOUNT\nDisplay name\nAlex Preview\nEmail\npreview@fuelwell.local\n\nSign in to manage your real account details.\n\nPREFERENCES\nUnits\nImperial\nMetric\nDietary preferences\n\nNo dietary filters selected. Choose some in Log or Recipes.\n\nAllergies\n\nNo allergies recorded.\n\nHEALTH PROFILE\nEdit your health profile\n\nThese rows drive calorie targets, macro targets, workout estimates, and coach recommendations.\n\nSave health profile\n\nWeight\n\nUsed for energy targets and workout burn estimates.\n\nWEIGHT IN POUNDS\nLB\n\nHeight\n\nUsed with weight, age, activity, and goal to calculate targets.\n\nHEIGHT IN INCHES\nIN\n\nGoal\n\nPrimary body-composition direction for daily planning.\n\nGOAL\nLose fat\nMaintain\nGain muscle\n\nRestrictions\n\nAllergies or foods FuelWell should avoid in suggestions.\n\nFOOD RESTRICTIONS AND ALLERGIES\n\nActivity level\n\nBaseline movement level before specific workouts are logged.\n\nACTIVITY LEVEL\nSedentary\nLight\nModerate\nActive\nVery active\n\nEquipment\n\nAvailable workout equipment saved with intake context.\n\nAVAILABLE EQUIPMENT\nFull gym\nBarbell + rack\nDumbbells\nBodyweight only\nOutdoor cardio\n\nUnits\n\nDisplay preference saved locally and with profile preferences.\n\nImperial\nMetric\n\nNotifications\n\nCoach nudge cadence; push and email delivery are not enabled here.\n\nNOTIFICATION PREFERENCE\nOnly when useful\nDaily\nWeekly\nDATE OF BIRTH\nGENDER\nMale\nFemale\nOther\nDIET\nNo preference\nVegetarian\nVegan\nPescatarian\nKeto\nPaleo\nTRAINING LEVEL\nBeginner\nIntermediate\nAdvanced\nMEALS PER DAY\n\nPreview saves stay on this device. Signed-in saves update your profile inputs and stored preference context.\n\nINTAKE PREFERENCES\nEdit your signup answers\n\nThese preferences guide coaching, meal flexibility, grocery suggestions, and workout recommendations.\n\nSave changes\n\nRe-run the full intake when you want the guided setup flow to rebuild these answers from scratch.\n\nRe-run intake\n\nGoal timeline\n\nPatient\nSteady\nUrgent\n\nGoal aggressiveness\n\nGentle cut\nSteady cut\nAggressive cut\nMaintain\nLean gain\nMuscle gain\nRapid bulk\n\nDiet flexibility\n\nStructured\nBalanced\nFlexible\n\nGrocery budget\n\nBudget\nModerate\nPremium\n\nCooking habits\n\nSimple prep\nMix\nCook often\n\nWorkout location\n\nGym\nHome\nOutdoors\nGym + home\n\nCheck-ins\n\nOnly when useful\nDaily\nWeekly\n\nCoach style\n\nDirect + supportive\nData first\nEncouraging\nNOTIFICATIONS\n\nCoach nudge preference\n\nCurrent cadence: Only when useful. This saves preference context only.\n\nEditable\nDATA\n\nExport your data\n\nDownload your logs and preferences as a file.\n\nComing soon\nRequest export\nPRIVACY\n\nPrivacy controls\n\nReview what Coach can remember, what files are attached, and what data is used for guidance.\n\nPreview\nSUBSCRIPTION\n\nPlan and billing\n\nManage your FuelWell plan, invoices, and subscription status.\n\nComing soon\nSUPPORT\n\nGet help\n\nContact support, report an issue, or request a coach-data review.\n\nContact support\nDELETE ACCOUNT\n\nDelete account\n\nPermanently remove your account, logs, preferences, and coach history.\n\nDelete\nCOACH ACTIVITY\n\nNo Coach actions yet. Everything Coach does in chat is recorded here.\n\nSESSION\nSign out\nABOUT\nApp\nFuelWell — AI Nutrition Coach\nVersion\n1.4.0",
+      "els": [
+        {
+          "tag": "a",
+          "w": 227,
+          "h": 85,
+          "label": "FuelWellDaily decision system",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 39,
+          "h": 40,
+          "label": "Collapse menu",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Dashboard",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Daily Review",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Log Meal",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Coach",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Workouts",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Fitness",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Recipes",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Groceries",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Recovery",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Progress",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Profile",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 301,
+          "h": 56,
+          "label": "Settings",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Open desktop user settings menu",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 174,
+          "h": 34,
+          "label": "Request Garmin access",
+          "disabled": " DISABLED",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 152,
+          "h": 34,
+          "label": "Use preview sample",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 93,
+          "h": 36,
+          "label": "Imperial",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 82,
+          "h": 36,
+          "label": "Metric",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 174,
+          "h": 40,
+          "label": "Save health profile",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "input",
+          "w": 304,
+          "h": 20,
+          "label": "(unlabeled)",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "input",
+          "w": 306,
+          "h": 20,
+          "label": "(unlabeled)",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "w": 352,
+          "h": 46,
+          "label": "Lose fatMaintainGain muscle",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "input",
+          "w": 352,
+          "h": 46,
+          "label": "Separate restrictions with commas",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "w": 352,
+          "h": 46,
+          "label": "SedentaryLightModerateActiveVery active",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "w": 352,
+          "h": 46,
+          "label": "Full gymBarbell + rackDumbbellsBodyweight onlyOutd",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 93,
+          "h": 36,
+          "label": "Imperial",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 82,
+          "h": 36,
+          "label": "Metric",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "w": 352,
+          "h": 46,
+          "label": "Only when usefulDailyWeekly",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "input",
+          "w": 185,
+          "h": 46,
+          "label": "(unlabeled)",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "w": 185,
+          "h": 46,
+          "label": "MaleFemaleOther",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "w": 185,
+          "h": 46,
+          "label": "No preferenceVegetarianVeganPescatarianKetoPaleo",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "select",
+          "w": 185,
+          "h": 46,
+          "label": "BeginnerIntermediateAdvanced",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "input",
+          "w": 151,
+          "h": 20,
+          "label": "(unlabeled)",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 142,
+          "h": 40,
+          "label": "Save changes",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 98,
+          "h": 28,
+          "label": "Re-run intake",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 67,
+          "h": 32,
+          "label": "Patient",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 66,
+          "h": 32,
+          "label": "Steady",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 65,
+          "h": 32,
+          "label": "Urgent",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 86,
+          "h": 32,
+          "label": "Gentle cut",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 87,
+          "h": 32,
+          "label": "Steady cut",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 109,
+          "h": 32,
+          "label": "Aggressive cut",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 76,
+          "h": 32,
+          "label": "Maintain",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 80,
+          "h": 32,
+          "label": "Lean gain",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 93,
+          "h": 32,
+          "label": "Muscle gain",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 86,
+          "h": 32,
+          "label": "Rapid bulk",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 88,
+          "h": 32,
+          "label": "Structured",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 79,
+          "h": 32,
+          "label": "Balanced",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 71,
+          "h": 32,
+          "label": "Flexible",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 66,
+          "h": 32,
+          "label": "Budget",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 81,
+          "h": 32,
+          "label": "Moderate",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 77,
+          "h": 32,
+          "label": "Premium",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 93,
+          "h": 32,
+          "label": "Simple prep",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 48,
+          "h": 32,
+          "label": "Mix",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 89,
+          "h": 32,
+          "label": "Cook often",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 54,
+          "h": 32,
+          "label": "Gym",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 60,
+          "h": 32,
+          "label": "Home",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 80,
+          "h": 32,
+          "label": "Outdoors",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 97,
+          "h": 32,
+          "label": "Gym + home",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 123,
+          "h": 32,
+          "label": "Only when useful",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 56,
+          "h": 32,
+          "label": "Daily",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 69,
+          "h": 32,
+          "label": "Weekly",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 133,
+          "h": 32,
+          "label": "Direct + supportive",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 79,
+          "h": 32,
+          "label": "Data first",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 96,
+          "h": 32,
+          "label": "Encouraging",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 143,
+          "h": 34,
+          "label": "Request export",
+          "disabled": " DISABLED",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 103,
+          "h": 54,
+          "label": "Contact support",
+          "disabled": " DISABLED",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 65,
+          "h": 32,
+          "label": "Delete",
+          "disabled": " DISABLED",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 107,
+          "h": 40,
+          "label": "Sign out",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        }
+      ],
+      "focusTest": [
+        {
+          "label": "",
+          "hasOutline": false,
+          "outline": "0px",
+          "outlineStyle": "none"
+        },
+        {
+          "label": "",
+          "hasOutline": false,
+          "outline": "0px",
+          "outlineStyle": "none"
+        },
+        {
+          "label": "",
+          "hasOutline": false,
+          "outline": "0px",
+          "outlineStyle": "none"
+        }
+      ],
+      "colorEls": [],
+      "errs": []
+    }
+  ],
+  "keyboard": [
+    {
+      "route_name": "Landing",
+      "tabResults": [
+        {
+          "tag": "a",
+          "label": "FuelWell",
+          "focusVisible": true,
+          "outline": "2px",
+          "outlineColor": "rgb(21, 145, 108)",
+          "boxShadow": "none"
+        },
+        {
+          "tag": "a",
+          "label": "Log in",
+          "focusVisible": true,
+          "outline": "2px",
+          "outlineColor": "rgb(21, 145, 108)",
+          "boxShadow": "none"
+        },
+        {
+          "tag": "button",
+          "label": "Log in",
+          "focusVisible": true,
+          "outline": "0px",
+          "outlineColor": "oklab(0.669282 -0.127436 0.029258 / 0.5)",
+          "boxShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px"
+        },
+        {
+          "tag": "a",
+          "label": "Get started",
+          "focusVisible": true,
+          "outline": "2px",
+          "outlineColor": "rgb(21, 145, 108)",
+          "boxShadow": "none"
+        },
+        {
+          "tag": "button",
+          "label": "Get started",
+          "focusVisible": true,
+          "outline": "0px",
+          "outlineColor": "oklab(0.669282 -0.127436 0.029258 / 0.5)",
+          "boxShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px"
+        },
+        {
+          "tag": "a",
+          "label": "Start free",
+          "focusVisible": true,
+          "outline": "2px",
+          "outlineColor": "rgb(21, 145, 108)",
+          "boxShadow": "none"
+        },
+        {
+          "tag": "button",
+          "label": "Start free",
+          "focusVisible": true,
+          "outline": "0px",
+          "outlineColor": "oklab(0.669282 -0.127436 0.029258 / 0.5)",
+          "boxShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px"
+        },
+        {
+          "tag": "a",
+          "label": "Preview the app",
+          "focusVisible": true,
+          "outline": "2px",
+          "outlineColor": "rgb(21, 145, 108)",
+          "boxShadow": "none"
+        }
+      ]
+    },
+    {
+      "route_name": "Preview Hub",
+      "tabResults": [
+        {
+          "tag": "a",
+          "label": "Preflight",
+          "focusVisible": true,
+          "outline": "2px",
+          "outlineColor": "oklab(0.669282 -0.127436 0.029258 / 0.5)",
+          "boxShadow": "none"
+        },
+        {
+          "tag": "a",
+          "label": "Dashboard",
+          "focusVisible": true,
+          "outline": "2px",
+          "outlineColor": "oklab(0.669282 -0.127436 0.029258 / 0.5)",
+          "boxShadow": "none"
+        },
+        {
+          "tag": "a",
+          "label": "Nutrition",
+          "focusVisible": true,
+          "outline": "2px",
+          "outlineColor": "oklab(0.669282 -0.127436 0.029258 / 0.5)",
+          "boxShadow": "none"
+        },
+        {
+          "tag": "a",
+          "label": "Fitness",
+          "focusVisible": true,
+          "outline": "2px",
+          "outlineColor": "oklab(0.669282 -0.127436 0.029258 / 0.5)",
+          "boxShadow": "none"
+        },
+        {
+          "tag": "a",
+          "label": "Daily review",
+          "focusVisible": true,
+          "outline": "2px",
+          "outlineColor": "oklab(0.669282 -0.127436 0.029258 / 0.5)",
+          "boxShadow": "none"
+        },
+        {
+          "tag": "a",
+          "label": "Coach",
+          "focusVisible": true,
+          "outline": "2px",
+          "outlineColor": "oklab(0.669282 -0.127436 0.029258 / 0.5)",
+          "boxShadow": "none"
+        },
+        {
+          "tag": "a",
+          "label": "Uploads",
+          "focusVisible": true,
+          "outline": "2px",
+          "outlineColor": "oklab(0.669282 -0.127436 0.029258 / 0.5)",
+          "boxShadow": "none"
+        },
+        {
+          "tag": "a",
+          "label": "Menu review",
+          "focusVisible": true,
+          "outline": "2px",
+          "outlineColor": "oklab(0.669282 -0.127436 0.029258 / 0.5)",
+          "boxShadow": "none"
+        }
+      ]
+    },
+    {
+      "route_name": "Dashboard",
+      "tabResults": [
+        {
+          "tag": "a",
+          "label": "FuelWellDaily decision system",
+          "focusVisible": true,
+          "outline": "2px",
+          "outlineColor": "rgb(21, 145, 108)",
+          "boxShadow": "none"
+        },
+        {
+          "tag": "button",
+          "label": "Collapse menu",
+          "focusVisible": true,
+          "outline": "2px",
+          "outlineColor": "oklab(0.669282 -0.127436 0.029258 / 0.5)",
+          "boxShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px"
+        },
+        {
+          "tag": "a",
+          "label": "Dashboard",
+          "focusVisible": true,
+          "outline": "0px",
+          "outlineColor": "oklab(0.669282 -0.127436 0.029258 / 0.5)",
+          "boxShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px"
+        },
+        {
+          "tag": "a",
+          "label": "Daily Review",
+          "focusVisible": false,
+          "outline": "0px",
+          "outlineColor": "oklab(0.669282 -0.127436 0.029258 / 0.5)",
+          "boxShadow": "none"
+        },
+        {
+          "tag": "a",
+          "label": "Log Meal",
+          "focusVisible": false,
+          "outline": "0px",
+          "outlineColor": "oklab(0.669282 -0.127436 0.029258 / 0.5)",
+          "boxShadow": "none"
+        },
+        {
+          "tag": "a",
+          "label": "Coach",
+          "focusVisible": false,
+          "outline": "0px",
+          "outlineColor": "oklab(0.669282 -0.127436 0.029258 / 0.5)",
+          "boxShadow": "none"
+        },
+        {
+          "tag": "a",
+          "label": "Workouts",
+          "focusVisible": false,
+          "outline": "0px",
+          "outlineColor": "oklab(0.669282 -0.127436 0.029258 / 0.5)",
+          "boxShadow": "none"
+        },
+        {
+          "tag": "a",
+          "label": "Fitness",
+          "focusVisible": false,
+          "outline": "0px",
+          "outlineColor": "oklab(0.669282 -0.127436 0.029258 / 0.5)",
+          "boxShadow": "none"
+        }
+      ]
+    }
+  ],
+  "mobile": [
+    {
+      "route_name": "Dashboard",
+      "route_path": "/app/dashboard",
+      "viewport": "mobile",
+      "hScroll": false,
+      "text": "FuelWell\nToday\nGood afternoon, Alex Preview\n\nSaturday · keep the momentum\n\nA\n\nTODAY'S DECISION\n\nYou have room to make a clean next choice.\n\n1400\n\nCALORIES LEFT\n\n102g\n\nPROTEIN LEFT\n\n1400 calories and 102g protein remain. Plan the next meal around that gap.\n\nFind meals that fit\nHealth score\n39\nToday's plate\n\nCalculated from logged meals only.\n\nDetails\n1400\nREMAINING\n38% of target\n850 / 2250 kcal\n\nMeal makeup\n\nBreakfast, lunch, and dinner counted today\n\nBreakfast\n\nGreek yogurt with berries, Protein granola\n\n330 cal\n\n31g protein\n\n31g pro\n40g carb\n7g fat\n\nLunch\n\nChicken quinoa bowl\n\n520 cal\n\n42g protein\n\n42g pro\n48g carb\n18g fat\n\nDinner\n\nNot logged yet\n\n--\n\nopen\n\n102g\n\nProtein left\n\n1400\n\nCalories left\n\n2\n\nMeals\n\nMacros\n38% calories\nCalories\n850 / 2,250 kcal\nProtein\n73 / 175g\nCarbs\n88 / 240g\nFat\n25 / 75g\nOpen meal breakdown\nToday's focus\n\nNutrition\n\n2 meals logged\n\nActivity\n\nNo wearable connected\n\nRecovery\n\nChecklist incomplete\n\nQUICK ACTIONS\nLog Meal\nSnap Photo\nAsk Coach\nScan Barcode\nDaily Review\nMeal Plan\nLogged today\n\nTap Nutrition for full macro detail by meal.\n\nBreakfast\n\nGreek yogurt power bowl\n\n330 cal\n\n31g protein\n\nLunch\n\nChicken quinoa bowl\n\n520 cal\n\n42g protein\n\nReview the full day\n\nSee nutrition, activity, and energy balance in one ledger.\n\nOpen\n\nPlan movement\n\nPick a workout that matches today's energy and recovery.\n\nOpen\n\nFind food that fits\n\nUse remaining macros to choose dinner or snacks.\n\nOpen\n\nCheck trajectory\n\nSee what today changes about the weekly direction.\n\nOpen\n\nProfile context: goal lose, diet none, allergies Shellfish.\n\nHome\nLog\nCoach\nMove\nGroceries\nReview",
+      "els": [
+        {
+          "tag": "a",
+          "w": 77,
+          "h": 28,
+          "label": "FuelWell home",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 32,
+          "h": 32,
+          "label": "Open daily review",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 32,
+          "h": 32,
+          "label": "Open user settings menu",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 42,
+          "h": 42,
+          "label": "Search",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 42,
+          "h": 42,
+          "label": "Notifications",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 188,
+          "h": 44,
+          "label": "Find meals that fit",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 188,
+          "h": 44,
+          "label": "Find meals that fit",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 169,
+          "h": 46,
+          "label": "Health score39",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 68,
+          "h": 44,
+          "label": "Details",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 308,
+          "h": 21,
+          "label": "Open meal breakdown",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 308,
+          "h": 42,
+          "label": "Open meal breakdown",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 308,
+          "h": 78,
+          "label": "Nutrition2 meals logged",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 308,
+          "h": 78,
+          "label": "ActivityNo wearable connected",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 308,
+          "h": 78,
+          "label": "RecoveryChecklist incomplete",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 173,
+          "h": 90,
+          "label": "Log Meal",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 173,
+          "h": 90,
+          "label": "Snap Photo",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 173,
+          "h": 90,
+          "label": "Ask Coach",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 173,
+          "h": 90,
+          "label": "Scan Barcode",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 173,
+          "h": 90,
+          "label": "Daily Review",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 173,
+          "h": 90,
+          "label": "Meal Plan",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 308,
+          "h": 76,
+          "label": "BreakfastGreek yogurt power bowl330 cal31g protein",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 308,
+          "h": 76,
+          "label": "LunchChicken quinoa bowl520 cal42g protein",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 358,
+          "h": 210,
+          "label": "Review the full daySee nutrition, activity, and en",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 358,
+          "h": 210,
+          "label": "Plan movementPick a workout that matches today's e",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 358,
+          "h": 190,
+          "label": "Find food that fitsUse remaining macros to choose ",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 358,
+          "h": 210,
+          "label": "Check trajectorySee what today changes about the w",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 65,
+          "h": 45,
+          "label": "Home",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 65,
+          "h": 49,
+          "label": "Log",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 65,
+          "h": 45,
+          "label": "Coach",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 65,
+          "h": 45,
+          "label": "Move",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 65,
+          "h": 45,
+          "label": "Groceries",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 65,
+          "h": 45,
+          "label": "Review",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        }
+      ],
+      "focusTest": [
+        {
+          "label": "",
+          "hasOutline": false,
+          "outline": "0px",
+          "outlineStyle": "none"
+        },
+        {
+          "label": "",
+          "hasOutline": false,
+          "outline": "0px",
+          "outlineStyle": "none"
+        },
+        {
+          "label": "",
+          "hasOutline": false,
+          "outline": "0px",
+          "outlineStyle": "none"
+        }
+      ],
+      "colorEls": [
+        {
+          "tag": "div",
+          "color": "rgb(22, 48, 42)"
+        },
+        {
+          "tag": "div",
+          "color": "rgb(22, 48, 42)"
+        },
+        {
+          "tag": "div",
+          "color": "rgb(22, 48, 42)"
+        },
+        {
+          "tag": "div",
+          "color": "rgb(22, 48, 42)"
+        },
+        {
+          "tag": "div",
+          "color": "rgb(22, 48, 42)"
+        }
+      ],
+      "errs": []
+    },
+    {
+      "route_name": "Log Meal",
+      "route_path": "/app/log",
+      "viewport": "mobile",
+      "hScroll": false,
+      "text": "FuelWell\nLog\n\nFAST LOGGING\n\nLog a meal\n\nSearch updates as you type. Adding food updates Today's Plate, dashboard macros, and coach context.\n\nView today's plate\nSearch\nRestaurants\nPhoto\nScan\n\nBest for known foods\n\nSearch the database, then choose a reviewed portion before saving.\n\nBreakfast\nLogging for\nBreakfast\nLunch\nDinner\nSnack\nHigh protein\nLow carb\nLow fat\nVegan\nAll\nFavorites\nDislikes\nRecently used\nShowing common foods first. Type to narrow the list.\n\nChicken breast, grilled\n\nPoultry · 165 cal /100g · 31g protein\n\nChicken breast, fried\n\nPoultry · 222 cal /100g · 28g protein\n\nChicken thigh, roasted\n\nPoultry · 209 cal /100g · 26g protein\n\nChicken thigh, skin-on\n\nPoultry · 232 cal /100g · 24g protein\n\nChicken drumstick\n\nPoultry · 172 cal /100g · 24g protein\n\nChicken wing, roasted\n\nPoultry · 203 cal /100g · 30g protein\n\nRotisserie chicken, mixed\n\nPoultry · 190 cal /100g · 25g protein\n\nGround chicken, cooked\n\nPoultry · 189 cal /100g · 27g protein\n\nChicken tenders, breaded\n\nPoultry · 271 cal /100g · 18g protein\n\nTurkey breast, roasted\n\nPoultry · 135 cal /100g · 30g protein\n\nGround turkey 93/7, cooked\n\nPoultry · 213 cal /100g · 27g protein\n\nGround turkey 99/1, cooked\n\nPoultry · 151 cal /100g · 32g protein\n\nTurkey deli slices\n\nPoultry · 104 cal /100g · 17g protein\n\nDuck breast, roasted\n\nPoultry · 201 cal /100g · 24g protein\n\nChicken sausage\n\nPoultry · 172 cal /100g · 16g protein\n\nTurkey bacon\n\nPoultry · 218 cal /100g · 17g protein\n\nChicken nuggets\n\nPoultry · 297 cal /100g · 15g protein\n\nChicken liver, cooked\n\nPoultry · 167 cal /100g · 26g protein\n\nGround beef 90/10, cooked\n\nBeef & Pork · 217 cal /100g · 26g protein\n\nGround beef 80/20, cooked\n\nBeef & Pork · 254 cal /100g · 26g protein\n\nRibeye steak, grilled\n\nBeef & Pork · 291 cal /100g · 24g protein\n\nSirloin steak, grilled\n\nBeef & Pork · 212 cal /100g · 29g protein\n\nFilet mignon\n\nBeef & Pork · 227 cal /100g · 28g protein\n\nNY strip steak\n\nBeef & Pork · 232 cal /100g · 27g protein\n\nFlank steak\n\nBeef & Pork · 192 cal /100g · 28g protein\n\nBeef brisket, smoked\n\nBeef & Pork · 288 cal /100g · 26g protein\n\nBeef short ribs\n\nBeef & Pork · 295 cal /100g · 26g protein\n\nRoast beef deli slices\n\nBeef & Pork · 115 cal /100g · 18g protein\n\nBeef jerky\n\nBeef & Pork · 410 cal /100g · 33g protein\n\nCorned beef\n\nBeef & Pork · 251 cal /100g · 18g protein\n\nPork chop, grilled\n\nBeef & Pork · 197 cal /100g · 27g protein\n\nPork tenderloin\n\nBeef & Pork · 143 cal /100g · 26g protein\n\nPulled pork, no sauce\n\nBeef & Pork · 247 cal /100g · 25g protein\n\nPork belly\n\nBeef & Pork · 518 cal /100g · 9g protein\n\nBacon, pan-fried\n\nBeef & Pork · 541 cal /100g · 37g protein\n\nHam, sliced\n\nBeef & Pork · 145 cal /100g · 21g protein\n\nRecent meals\n\nOne tap repeats a meal and updates today's goal math.\n\nChicken quinoa bowl\n\n520 kcal · 42g protein\n\nGreek yogurt power bowl\n\n330 kcal · 31g protein\n\nAdd your own meal\nLogged today\n\nBREAKFAST\n\nGreek yogurt power bowl\n\nRemove\n\nGreek yogurt with berries\n\n190 cal · 23p · 22c · 2f\n\nProtein granola\n\n140 cal · 8p · 18c · 5f\n\nLUNCH\n\nChicken quinoa bowl\n\nRemove\n\nChicken quinoa bowl\n\n520 cal · 42p · 48c · 18f\n\nAdd to Today's Plate\n\nPick a food from search to choose a portion.\n\nNo food selected.\n\nChoose a result from Search. Its one-tap portions appear here.\n\nToday's totals\n\nLive macro math for the selected day.\n\nCalories\n\n850/2250\n\n1400 left\n\nProtein\n\n73g/175g\n\n102g left\n\nCarbs\n\n88g/240g\n\n152g left\n\nFat\n\n25g/75g\n\n50g left\n\nCURRENT MEAL\n\nIngredient drawer\n\nSame-session ingredients and macro totals.\n\n0\n\nCAL\n\n0g\n\nPRO\n\n0g\n\nCARB\n\n0g\n\nFAT\n\nAdd foods and they will appear here for this meal-building session.\nHome\nLog\nCoach\nMove\nGroceries\nReview",
+      "els": [
+        {
+          "tag": "a",
+          "w": 77,
+          "h": 28,
+          "label": "FuelWell home",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 32,
+          "h": 32,
+          "label": "Open daily review",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 32,
+          "h": 32,
+          "label": "Open user settings menu",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 308,
+          "h": 42,
+          "label": "View today's plate",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 166,
+          "h": 48,
+          "label": "Search",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 166,
+          "h": 48,
+          "label": "Restaurants",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 166,
+          "h": 48,
+          "label": "Photo",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 166,
+          "h": 48,
+          "label": "Scan",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 150,
+          "h": 46,
+          "label": "Breakfast",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 150,
+          "h": 46,
+          "label": "Lunch",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 150,
+          "h": 46,
+          "label": "Dinner",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 150,
+          "h": 46,
+          "label": "Snack",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "input",
+          "w": 308,
+          "h": 58,
+          "label": "Search 1,000+ foods by name",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 107,
+          "h": 44,
+          "label": "High protein",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 88,
+          "h": 44,
+          "label": "Low carb",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 77,
+          "h": 44,
+          "label": "Low fat",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 69,
+          "h": 44,
+          "label": "Vegan",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 39,
+          "h": 28,
+          "label": "All",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 75,
+          "h": 28,
+          "label": "Favorites",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 66,
+          "h": 28,
+          "label": "Dislikes",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 101,
+          "h": 28,
+          "label": "Recently used",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Chicken breast, grilledPoultry · 165 cal /100g · 3",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Like this",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Not for me",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Chicken breast, grilled",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Chicken breast, friedPoultry · 222 cal /100g · 28g",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Like this",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Not for me",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Chicken breast, fried",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Chicken thigh, roastedPoultry · 209 cal /100g · 26",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Like this",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Not for me",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Chicken thigh, roasted",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Chicken thigh, skin-onPoultry · 232 cal /100g · 24",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Like this",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Not for me",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Chicken thigh, skin-on",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Chicken drumstickPoultry · 172 cal /100g · 24g pro",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Like this",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Not for me",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Chicken drumstick",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Chicken wing, roastedPoultry · 203 cal /100g · 30g",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Like this",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Not for me",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Chicken wing, roasted",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Rotisserie chicken, mixedPoultry · 190 cal /100g ·",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Like this",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Not for me",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Rotisserie chicken, mixed",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Ground chicken, cookedPoultry · 189 cal /100g · 27",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Like this",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Not for me",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Ground chicken, cooked",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Chicken tenders, breadedPoultry · 271 cal /100g · ",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Like this",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Not for me",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Chicken tenders, breaded",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Turkey breast, roastedPoultry · 135 cal /100g · 30",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Like this",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Not for me",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Turkey breast, roasted",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Ground turkey 93/7, cookedPoultry · 213 cal /100g ",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Like this",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Not for me",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Ground turkey 93/7, cooked",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Ground turkey 99/1, cookedPoultry · 151 cal /100g ",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Like this",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Not for me",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Ground turkey 99/1, cooked",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Turkey deli slicesPoultry · 104 cal /100g · 17g pr",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Like this",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Not for me",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Turkey deli slices",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Duck breast, roastedPoultry · 201 cal /100g · 24g ",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Like this",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Not for me",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Duck breast, roasted",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Chicken sausagePoultry · 172 cal /100g · 16g prote",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Like this",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 44,
+          "h": 44,
+          "label": "Not for me",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        }
+      ],
+      "focusTest": [
+        {
+          "label": "",
+          "hasOutline": false,
+          "outline": "0px",
+          "outlineStyle": "none"
+        },
+        {
+          "label": "",
+          "hasOutline": false,
+          "outline": "0px",
+          "outlineStyle": "none"
+        },
+        {
+          "label": "",
+          "hasOutline": false,
+          "outline": "0px",
+          "outlineStyle": "none"
+        }
+      ],
+      "colorEls": [
+        {
+          "tag": "div",
+          "color": "rgb(22, 48, 42)"
+        },
+        {
+          "tag": "div",
+          "color": "rgb(22, 48, 42)"
+        },
+        {
+          "tag": "div",
+          "color": "rgb(22, 48, 42)"
+        },
+        {
+          "tag": "div",
+          "color": "rgb(22, 48, 42)"
+        }
+      ],
+      "errs": []
+    },
+    {
+      "route_name": "Coach",
+      "route_path": "/app/coach",
+      "viewport": "mobile",
+      "hScroll": false,
+      "text": "FuelWell\nCoach\nCoach\n\nLogs meals, plans workouts, answers — right here\n\nNew chat\nAGENTIC COACH\nAsk for the next useful move.\n\nI can log meals, generate tables, plan workouts, compare choices, render recipes, update groceries, and explain your numbers directly in chat.\n\n102g\n\nPROTEIN LEFT\n\n4\n\nRICH FORMATS\n\nlive\n\nTOOLS\n\nTRY ASKING\n\nStart with a useful question\nWhat should I do right now?\nSuggest a meal with 102g protein left\nGive me my daily recap\nAnalyze a menu or food photo\nPlan a workout for today\n\nRICH RESPONSE SUPPORT\n\nCoach answers can be structured, visual, and math-aware.\n\nThe same chat bubble supports headers, nested lists, tables, formulas, links, and inline media when the coach replies.\n\nTables\n\nMeal comparisons and macro rows\n\nNested lists\n\nSteps, substeps, and checklists\n\nFormulas\n\nMath rendered inline with KaTeX\n\nMedia\n\nImages and links inside replies\n\nDinner options for 102g protein left\nOption\tProtein\tWhy it fits\nSalmon bowl\t42g\tBalanced fats, easy carbs\nTurkey quinoa bowl\t48g\tHighest protein density\nBuild the plate:\nStart with protein\nAdd produce\nFinish with the carb gap\n\nFormula check: \n102\n𝑔\n−\n42\n𝑔\n=\n60\n𝑔\n102g−42g=60g left after dinner.\n\nOpen nutrition detail\n\nInline artifacts stay in the conversation.\n\nThe coach can answer in prose, then attach action cards for logging meals, opening pages, or saving preferences.\n\nChat-native actions\nHome\nLog\nCoach\nMove\nGroceries\nReview",
+      "els": [
+        {
+          "tag": "a",
+          "w": 77,
+          "h": 28,
+          "label": "FuelWell home",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 32,
+          "h": 32,
+          "label": "Open daily review",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 32,
+          "h": 32,
+          "label": "Open user settings menu",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 75,
+          "h": 32,
+          "label": "New chat",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 316,
+          "h": 48,
+          "label": "What should I do right now?",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 316,
+          "h": 48,
+          "label": "Suggest a meal with 102g protein left",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 316,
+          "h": 48,
+          "label": "Give me my daily recap",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 316,
+          "h": 48,
+          "label": "Analyze a menu or food photo",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 316,
+          "h": 48,
+          "label": "Plan a workout for today",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 134,
+          "h": 18,
+          "label": "Open nutrition detail",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "input",
+          "w": 1,
+          "h": 1,
+          "label": "Attach screenshot, menu, photo, or file",
+          "disabled": "",
+          "small": " [SMALL]",
+          "visible": true
+        },
+        {
+          "tag": "input",
+          "w": 246,
+          "h": 48,
+          "label": "Message Coach",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "button",
+          "w": 48,
+          "h": 48,
+          "label": "Send",
+          "disabled": " DISABLED",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 65,
+          "h": 45,
+          "label": "Home",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 65,
+          "h": 49,
+          "label": "Log",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 65,
+          "h": 45,
+          "label": "Coach",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 65,
+          "h": 45,
+          "label": "Move",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 65,
+          "h": 45,
+          "label": "Groceries",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        },
+        {
+          "tag": "a",
+          "w": 65,
+          "h": 45,
+          "label": "Review",
+          "disabled": "",
+          "small": "",
+          "visible": true
+        }
+      ],
+      "focusTest": [
+        {
+          "label": "",
+          "hasOutline": false,
+          "outline": "0px",
+          "outlineStyle": "none"
+        },
+        {
+          "label": "",
+          "hasOutline": false,
+          "outline": "0px",
+          "outlineStyle": "none"
+        },
+        {
+          "label": "",
+          "hasOutline": false,
+          "outline": "0px",
+          "outlineStyle": "none"
+        }
+      ],
+      "colorEls": [],
+      "errs": []
+    },
+    {
+      "route_name": "Dashboard",
+      "states": {
+        "hasSpinner": false,
+        "hasSkeleton": false,
+        "hasEmptyState": false,
+        "hasError": false
+      }
+    },
+    {
+      "route_name": "Log Meal",
+      "states": {
+        "hasSpinner": false,
+        "hasSkeleton": false,
+        "hasEmptyState": false,
+        "hasError": false
+      }
+    },
+    {
+      "route_name": "Coach",
+      "states": {
+        "hasSpinner": false,
+        "hasSkeleton": false,
+        "hasEmptyState": false,
+        "hasError": false
+      }
+    }
+  ],
+  "forms": {
+    "form_validation": true
+  },
+  "timestamp": "2026-07-04T20:18:37.131Z"
+}

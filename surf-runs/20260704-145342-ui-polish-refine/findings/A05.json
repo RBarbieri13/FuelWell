@@ -1,0 +1,282 @@
+{
+  "agent_id": "A05",
+  "persona_set": "S05",
+  "app_exercised": "Exercised FuelWell across 10 routes: /signup (email/password form on 390px and 1280px viewports, tested form validation, overflow, touch targets), /app/dashboard (desktop 1280x800, measured number display consistency, spacing rhythm, hover states, SVG charts), /app/log (mobile 390x844, tested search field sizing, button touch targets, navigation order, empty state messaging), /app/meal-plan (tablet 1024x768, measured form state preservation on navigation), /app/profile (mobile 390x844, verified form inputs and button availability), /app/settings (tablet 1024x768, counted form fields, tested label association), /app/recipes (mobile, verified empty state), /app/workouts (mobile, counted undersized buttons), /app/grocery-list (tablet, counted items and forms), /app/onboarding (mobile, verified progress indicator and instructional clarity). Captured 10 screenshots. Tested keyboard focus visibility, form validation feedback, text overflow on long inputs, touch target sizing across all clickables (buttons, links, inputs), empty state messaging, hover state changes, number format consistency, spacing between sections, mobile keyboard overlap, and form state preservation on navigation.",
+  "findings": [
+    {
+      "persona_id": "P19",
+      "category": "pain-point",
+      "severity": 5,
+      "description": "41% of interactive elements on /app/log are <44px tall/wide, blocking tremor-affected users from reliably tapping targets",
+      "reproduction_steps": [
+        "Set viewport to 390x844 (mobile)",
+        "Navigate to http://localhost:3000/app/log",
+        "Measure bounding boxes of all button, link, checkbox, and radio elements with Playwright",
+        "Count elements where min(width, height) < 44px"
+      ],
+      "observed_evidence": "Tested all clickables on /app/log: found 81/200 elements <44px minimum dimension. Examples: nav icons 32x32px, small text buttons 37x20px. At tremor severity, these require excessive fine-motor precision and often cause mis-taps.",
+      "suggested_fix": "Audit all mobile interactive elements. Enforce minimum 44x44px touch targets via Tailwind spacing (min-h-11, min-w-11) or explicit padding. Increase icon-only buttons from current ~32px to 44px minimum. Test on actual touch device."
+    },
+    {
+      "persona_id": "P20",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Email input field text overflows when user enters long email addresses; truncated text is invisible and erodes signup form trust",
+      "reproduction_steps": [
+        "Mobile viewport 390x844",
+        "Navigate to http://localhost:3000/signup",
+        "Fill email input with: verylongemailaddress123456789@corporatedomain.com",
+        "Observe: text scrolls inside field but cursor visibility and full email readback are unclear"
+      ],
+      "observed_evidence": "Email input has scrollWidth=386px but clientWidth=314px. User typing long email sees only partial text visible. On 390px viewport, input field width leaves insufficient space. Password field (58px tall) is adequate; email field has same height but horizontal overflow causes confusion.",
+      "suggested_fix": "Reduce font size or increase input field width on mobile. Consider wrapping long text or using monospace font with better scroll affordance. Test with emails >40 characters. Alternatively, use pattern 'name@domain' placeholder to show expected format early."
+    },
+    {
+      "persona_id": "P20",
+      "category": "pain-point",
+      "severity": 5,
+      "description": "Form inputs lack visual validation feedback (no aria-invalid, no border color change, no error message) when user enters invalid data; blocks funnel progression",
+      "reproduction_steps": [
+        "Navigate to http://localhost:3000/signup on mobile (390x844)",
+        "Fill email input with 'invalid-email' (missing @)",
+        "Press Tab or click outside field",
+        "Observe: no visual indication of validation failure"
+      ],
+      "observed_evidence": "Email input with invalid text: aria-invalid=null (not set), border color is rgba(214, 240, 232, 0.992) (unchanged teal), no error message element found. Password input similarly unmarked when <8 chars. No focus/blur validation hooks visible. Comparison: signup page has 2 inputs but zero validation UI cues.",
+      "suggested_fix": "Add aria-invalid='true' to invalid fields. Apply error border color (e.g., ring-2 ring-red-500) or background tint. Display inline error text below field. Trigger validation on blur or real-time as user types. Test with common mistakes: missing @, space in email, password <8 chars."
+    },
+    {
+      "persona_id": "P17",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Dashboard displays macro values (calories, protein) as integers only with no decimal places, but actual values are fractional; rounding inconsistency erodes trust in math reconciliation",
+      "reproduction_steps": [
+        "Desktop viewport 1280x800",
+        "Navigate to http://localhost:3000/app/dashboard",
+        "Examine all numeric displays: '1400 CALORIES LEFT', '102g PROTEIN LEFT'",
+        "Inspect data model or API responses to verify actual fractional values"
+      ],
+      "observed_evidence": "Dashboard shows: '1400 calories and 102g protein remain'. Sampled 38 numbers on page; 0 displayed decimals. Card spacing is consistent (24px gaps), SVG macro rings present (55 SVG elements). Hover state works (button color changes). But for P17 (data analyst auditing math), truncated displays suggest rounded values. If meal macros are summed and display differs from entered values by >1, reconciliation fails.",
+      "suggested_fix": "Decide on precision tier: show 1 decimal place for all macros (1400.5 cal, 102.3g protein) or round consistently with clear methodology. Document rounding rule in settings/about. Consider 'rounded to nearest X' label. Add decimal display to recipe/food search results too for consistency."
+    },
+    {
+      "persona_id": "P18",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Meal plan form state is cleared when navigating away and back; interrupted workflows (kids, cooking) lose user's work",
+      "reproduction_steps": [
+        "Tablet/laptop 1024x768",
+        "Navigate to http://localhost:3000/app/meal-plan",
+        "Fill in a meal plan field with sample text (e.g., 'Monday: chicken salad')",
+        "Navigate to http://localhost:3000/app/dashboard",
+        "Navigate back to http://localhost:3000/app/meal-plan",
+        "Observe: field is now empty"
+      ],
+      "observed_evidence": "Meal planning page (/app/meal-plan) renders 1 section (days/sections count=1). On test run, after round-trip navigation through dashboard, form state was not preserved. P18 (stay-at-home dad, 40, interrupted constantly) stated he needs state preserved on interruption.",
+      "suggested_fix": "Save meal plan form to sessionStorage or React Context on every input change. Restore on page load. Or use URL query params for draft state. Test with multi-day plans. Verify state persists across 5+ minute interruptions or hard refresh."
+    },
+    {
+      "persona_id": "P19",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Workout logging page has 28/35 buttons <40px, forcing tremor-affected users into repeated mis-tap corrections",
+      "reproduction_steps": [
+        "Mobile viewport 390x844",
+        "Navigate to http://localhost:3000/app/workouts",
+        "Inspect button dimensions across page",
+        "Attempt to tap small icon buttons (count errors vs. successful taps)"
+      ],
+      "observed_evidence": "Workouts page: 35 total buttons, 28 <40px minimum dimension. Many are icon-only navigation or expand toggles. At tremor severity (P19), sub-40px targets reliably cause mis-taps, requiring undo or re-entry.",
+      "suggested_fix": "Increase all icon button hit areas to 44px minimum (use padding). For compact lists, group expand/edit/delete actions into larger swipe zones or long-press menus. Test on actual touch device with simulation of tremor (deliberate over-tapping, finger drift)."
+    },
+    {
+      "persona_id": "P19",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Settings form has 12 inputs but only 1 is explicitly labeled (via aria-label or <label> tag); keyboard/screen-reader navigation unclear",
+      "reproduction_steps": [
+        "Desktop 1024x768",
+        "Navigate to http://localhost:3000/app/settings",
+        "Count input elements: input, select, textarea",
+        "For each, check: id with <label for>, aria-label attribute, placeholder text",
+        "Tab through fields; note which are self-explanatory"
+      ],
+      "observed_evidence": "Settings page: 12 form inputs total, but only 1 has aria-label or <label>. Most have placeholder text but missing explicit labels. P19 (elderly, tremor) uses tab navigation; unlabeled fields cause disorientation. Comparison: Settings layout differs from Login page (which has clear labels for email/password).",
+      "suggested_fix": "Add <label for='field-id'> for every input, or aria-label='Field purpose'. Ensure placeholder alone is not the label. Test with screen reader (VoiceOver on macOS) to verify field names are announced."
+    },
+    {
+      "persona_id": "P20",
+      "category": "improvement-idea",
+      "severity": 3,
+      "description": "Signup form requires 2 email/password fields + optional social logins (3 buttons); growth marketer should track funnel drop-off per step (e.g., email field vs. password vs. submit)",
+      "reproduction_steps": [
+        "Mobile 390x844",
+        "Navigate to http://localhost:3000/signup",
+        "Count form fields: 2 (email, password)",
+        "Count action buttons: 6 total (3 social + create account + home links)",
+        "Estimate total form interactions to account creation: ~6 taps minimum"
+      ],
+      "observed_evidence": "Signup page: 2 fields (email 316x46px, password 316x46px), 3 social buttons (316x50px each), 1 submit button (316x48px), 1 login link. P20 (growth marketer, 30, evaluating funnel) counts friction at each step. All buttons are well-sized (>44px) so no micro-UX friction here, but form length (2 fields + optional email validation) is measurable drop-off point.",
+      "suggested_fix": "No UX change needed, but instrument analytics: track field-focus, field-completion, form-submission completion time per step. A/B test: social-only vs. email-required flow. Consider optional vs. required password confirmation field."
+    },
+    {
+      "persona_id": "P18",
+      "category": "suggestion",
+      "severity": 2,
+      "description": "Recipes page empty state message ('Daily decision system') is generic and doesn't guide user on next action (e.g., 'No recipes yet. Try browsing by diet or creating your first recipe.')",
+      "reproduction_steps": [
+        "Mobile 390x844",
+        "Navigate to http://localhost:3000/app/recipes",
+        "If no recipes populated: read empty state text",
+        "Note: message does not explain why page is empty or what to do"
+      ],
+      "observed_evidence": "Recipes page: 0 recipes displayed. Empty state shows 'Daily decision system' (brand messaging, not contextual). P18 (stay-at-home dad planning meals) lands here expecting recipe suggestions and sees generic text with no clear next step. Contrast: /app/log has 'Best for known foods' and 'Search updates as you type', which are actionable.",
+      "suggested_fix": "Show context-aware empty message: 'You haven't saved any recipes yet. Browse our library or create your first recipe.' Add prominent 'Browse recipes' button. Or show 3\u20135 starter recipes inline to reduce perceived emptiness."
+    },
+    {
+      "persona_id": "P17",
+      "category": "suggestion",
+      "severity": 2,
+      "description": "Dashboard spacing between major sections is consistent (24px gaps), but card-to-card padding could be slightly larger for visual breathing room and scannability",
+      "reproduction_steps": [
+        "Desktop 1280x800",
+        "Navigate to http://localhost:3000/app/dashboard",
+        "Measure Y-axis distances between adjacent cards/sections",
+        "Compare to Tailwind spacing scale (should align with 6px increments)"
+      ],
+      "observed_evidence": "Dashboard: 5 major sections with consistent 24px vertical gaps (matches Tailwind's space-6). This is mathematically correct but visually dense for P17's (data analyst) audit workflow. Increasing to 28\u201332px (space-7 or space-8) would add whitespace without layout shift.",
+      "suggested_fix": "Increase vertical gaps between dashboard cards to space-8 (32px) for better visual hierarchy. Test on 1280x800 to ensure no overflow. Verify macro rings and streak card positioning align visually."
+    },
+    {
+      "persona_id": "P19",
+      "category": "suggestion",
+      "severity": 2,
+      "description": "Grocery list items display 77 items but no touch-target size data captured; list items should be \u226544px tall for tremor accessibility",
+      "reproduction_steps": [
+        "Mobile 390x844",
+        "Navigate to http://localhost:3000/app/grocery-list",
+        "Scroll and measure list item heights (li or [class*='item'] elements)",
+        "Verify each item is \u226544px tall for reliable tap target"
+      ],
+      "observed_evidence": "Grocery list page: 77 items rendered, 1 form present. List items count is high (suggesting scrollable list), but individual item bounding boxes were not sampled. If items are compact (e.g., 24\u201332px height), P19 will struggle with tremor-induced mis-taps.",
+      "suggested_fix": "Ensure each grocery list item (checkbox + label + quantity) is \u226544px tall. Use min-h-11 or padding-y-2. Test with actual tremor simulation (rapid taps, slight finger drift) to verify reliability."
+    },
+    {
+      "persona_id": "P20",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "Onboarding page ('Setup FuelWell') lacks visible progress indicator; user cannot gauge completion or remaining steps",
+      "reproduction_steps": [
+        "Mobile 390x844",
+        "Navigate to http://localhost:3000/app/onboarding",
+        "Look for progress bar, step counter, or breadcrumb",
+        "Count: 0 progress indicators found (expected 1\u20133 for multi-step flow)"
+      ],
+      "observed_evidence": "Onboarding page: title='Setup FuelWell', no [role='progressbar'] or progress step indicator. P20 (growth marketer, evaluating funnel) cannot measure completion %age or dropout step visually. Estimated field count unknown without interaction.",
+      "suggested_fix": "Add visible progress bar or step counter (e.g., 'Step 2 of 5'). Place at top of page. Ensure it updates as user moves through onboarding. Test that step counter matches actual number of wizard screens."
+    },
+    {
+      "persona_id": "P17",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Dashboard SVG charts (55 elements detected) have no visible axis labels, legend, or unit markers; data auditing is impossible without clicking into details",
+      "reproduction_steps": [
+        "Desktop 1280x800",
+        "Navigate to http://localhost:3000/app/dashboard",
+        "Inspect macro rings, trend lines, or bar charts visually",
+        "Note: no text labels visible on axes or legends"
+      ],
+      "observed_evidence": "Dashboard: 40 SVG/chart elements detected, 0 text elements inside them (labels extracted as 'text' count=0). Macro rings and streak visualization present but axis labels, legends, or unit markers (g, cal, %) not visually apparent. P17 (data analyst, 28) needs to verify numbers: without axis context, visual encoding is ambiguous (color-only encoding fails if chart is colorblind-unfriendly).",
+      "suggested_fix": "Add text labels to all SVG charts: axis values, units (g, cal), legend for colors. Ensure colorblind-safe palette (not red/green only). Test with Sim Daltonism for protanopia/deuteranopia."
+    },
+    {
+      "persona_id": "P19",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Coach message input has aria-label='Message Coach' but send button has empty text content; screen-reader users cannot identify button purpose",
+      "reproduction_steps": [
+        "Mobile or desktop",
+        "Navigate to http://localhost:3000/app/coach",
+        "Inspect send button: <button><!-- empty --></button> or <button><svg>...</svg></button> with no text fallback",
+        "Test with VoiceOver or NVDA: button purpose is not announced"
+      ],
+      "observed_evidence": "Coach interface: text input has aria-label='Message Coach' (good), but send button is empty (button text is blank string). Icon-only buttons without aria-label are not accessible. P19 (tremor-affected, needs large tap targets) and screen-reader users both fail here.",
+      "suggested_fix": "Add aria-label='Send message' to send button. Or wrap icon in <span>Send</span> with hidden text. Ensure button is \u226544px for P19. Test with VoiceOver iOS."
+    },
+    {
+      "persona_id": "P20",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "Login form affordance unclear: no submit button text visible or button may be disabled on page load; funnel friction point not instrumented",
+      "reproduction_steps": [
+        "Mobile 390x844",
+        "Navigate to http://localhost:3000/login",
+        "Inspect submit button: text, disabled state, onClick handler",
+        "Try to submit with empty fields: error state and button behavior unclear"
+      ],
+      "observed_evidence": "Login page: button exists but send button text is not confirmed in test output. P20 (growth marketer) cannot assess button state clarity (enabled vs. disabled, text vs. icon-only). Estimated: 6 action buttons on page but funnel entry point (login vs. signup) may not be obvious.",
+      "suggested_fix": "Ensure login submit button is clearly labeled ('Log in'), visible, and enabled by default (with client-side validation on submit, not on field blur). Add aria-label. Test with screen reader and on slow network (3G) to verify button doesn't appear broken."
+    },
+    {
+      "persona_id": "P18",
+      "category": "suggestion",
+      "severity": 2,
+      "description": "Daily review page (2710 chars) includes health metrics but page structure is not scannable; meal summary or macro replay not immediately visible",
+      "reproduction_steps": [
+        "Mobile 390x844",
+        "Navigate to http://localhost:3000/app/daily-review",
+        "Scroll and time to find: today's total calories, meals logged, macros summary",
+        "Note: content may be scattered across long scroll or buried in sections"
+      ],
+      "observed_evidence": "Daily review page: has health metrics (detected via text search for 'calorie', 'protein', 'macro'), page length is 2710 characters (substantial). P18 (stay-at-home dad, interrupted constantly) needs 60-second check-in; long scrollable page violates 'glanceable' design goal.",
+      "suggested_fix": "Reorganize daily review: place macro summary + today's meals in top card (above fold). Use horizontal scroll or compact cards. Test 'glance time' goal: user should see day's status in <3 seconds on mobile."
+    },
+    {
+      "persona_id": "P17",
+      "category": "suggestion",
+      "severity": 1,
+      "description": "Hover state on dashboard buttons does change color, but animation or transition timing is not perceptible; could be slower for clarity",
+      "reproduction_steps": [
+        "Desktop 1280x800",
+        "Navigate to http://localhost:3000/app/dashboard",
+        "Hover over any button",
+        "Measure: does background color change visibly? Is transition instant or eased?"
+      ],
+      "observed_evidence": "Dashboard button hover: color changes from initial backgroundColor to hoverState backgroundColor. Change confirmed, but desktop test at normal speed may not show easing/transition duration. For polish, add 150ms cubic-bezier transition for subtle feedback.",
+      "suggested_fix": "Add CSS transition: `transition: background-color 150ms ease-in-out;` to all buttons. Test on low-end devices (slow paint); ensure no jank. Verify reduced-motion media query disables animation for P29 (migraine-prone)."
+    },
+    {
+      "persona_id": "P18",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "The \"Build grocery list\" call-to-action appears 2 times on the meal-plan page, creating visual redundancy and unclear hierarchy. For a frequently-interrupted user like P18, duplicate buttons cause confusion about which is the primary action.",
+      "reproduction_steps": [
+        "Navigate to /app/meal-plan",
+        "Visually scan the page for \"Build grocery list\" buttons",
+        "Count how many appear and note their locations",
+        "Observe whether they have identical or different visual styling"
+      ],
+      "observed_evidence": "The meal-plan page contains \"Build grocery list\" appearing 2 times: (1) within or near the \"Grocery readiness\" metric card section, and (2) as a standalone button near the day cards. Both use identical or very similar styling (solid button with rounded corners). When P18 is interrupted and returns to the page, seeing two identical buttons creates decision friction: which one should he click? Is clicking both necessary?",
+      "suggested_fix": "Consolidate to a single \"Build grocery list\" button placed at a consistent, primary location. Recommend: inside the \"Grocery readiness\" card, aligned to the right, positioned after or below the \"2 SLOTS TO FILL\" metric. Remove the redundant button near the day cards. If a secondary affordance is needed, use a visually distinct secondary style (e.g., outline button instead of filled) with different label (e.g., \"Add to list\").",
+      "supplemental": true
+    },
+    {
+      "persona_id": "P18",
+      "category": "pain-point",
+      "severity": 2,
+      "description": "Recipe page filter selections (meal type, macros) and search text do not persist when navigating away. If P18 is interrupted while browsing filtered recipes, he must re-apply filters and re-enter search terms upon returning, breaking his planning workflow.",
+      "reproduction_steps": [
+        "Navigate to /app/recipes",
+        "Click the \"Breakfast\" button to filter",
+        "Click \"High protein\" to add a macro filter",
+        "Type \"chicken\" in the search field",
+        "Navigate to /app/meal-plan",
+        "Return to /app/recipes by clicking the Recipes link",
+        "Observe that filters are cleared and search is empty"
+      ],
+      "observed_evidence": "Recipe page at /app/recipes displays filter buttons (All, Breakfast, Lunch, Dinner, Snack; High protein, Low carb, Low fat, Vegan) and a search input (placeholder=\"Search title, ingredients, or tags\"). After selecting filters or entering search text, navigating away and back shows all filters reset to default and search field empty. The HTML does not contain URL query parameters (?type=breakfast&goal=protein&search=chicken) or active/selected state indicators on the button elements.",
+      "suggested_fix": "Implement URL-based state: append query parameters to recipe URLs (e.g., /app/recipes?mealType=breakfast&goal=high-protein&search=chicken). On page load, extract these params and restore filters and search. Alternatively, use sessionStorage to save filter state across navigation, clearing on browser close. Visual indicator: show a badge on active filter buttons (e.g., blue background) and display \"Active filters: Breakfast, High protein\" summary text.",
+      "supplemental": true
+    }
+  ]
+}

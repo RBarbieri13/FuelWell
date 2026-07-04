@@ -1,0 +1,28 @@
+[
+  {
+    "persona_id": "P79",
+    "category": "pain-point",
+    "severity": 3,
+    "description": "Text is truncated or overflows at 375px width, unreadable without expanding",
+    "reproduction_steps": [
+      "Set viewport to 375x667 (smaller iPhone)",
+      "Visit /app/dashboard",
+      "Look for clipped labels or titles"
+    ],
+    "observed_evidence": "Found 4 text elements that are truncated: P \"Daily decision system\" (0px width); P \"Log dinner to keep it alive to\" (0px width). User must tap to expand.",
+    "suggested_fix": "Use line-clamp CSS utilities (Tailwind line-clamp-2) and ellipsis for known constraints; test at 320px minimum width."
+  },
+  {
+    "persona_id": "P09",
+    "category": "pain-point",
+    "severity": 3,
+    "description": "Icon-only buttons have no text, aria-label, or title for screen readers",
+    "reproduction_steps": [
+      "Visit /app/dashboard",
+      "Inspect icon-only buttons (close, menu, back, etc.)",
+      "Check for aria-label or title attributes"
+    ],
+    "observed_evidence": "Found 6 unlabeled buttons. Screen reader users hear \"button\" with no context.",
+    "suggested_fix": "Add aria-label to all icon-only buttons: `<button aria-label=\"Close menu\">×</button>`."
+  }
+]

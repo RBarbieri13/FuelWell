@@ -1,0 +1,281 @@
+{
+  "agent_id": "A06",
+  "persona_set": "S06",
+  "app_exercised": "Tested FuelWell app across 6+ routes on desktop and mobile viewports: /app/dashboard, /app/log, /app/recipes, /app/coach, /app/grocery-list, /app/progress, and /app/daily-review. Verified no console errors, no horizontal scrolling. Tested keyboard navigation (Tab), focus visibility, reduced-motion media query (prefers-reduced-motion: reduce), touch target sizing (390x844 mobile), form input length limits (100-char test), and visual contrast on key metrics. Captured screenshots at desktop and mobile sizes. Assessed label visibility, icon accessibility, button state design, and mobile sidebar rendering dimensions.",
+  "findings": [
+    {
+      "persona_id": "P23",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Focus ring outline barely visible on dashboard nav interaction\u2014outline property shows 0px after blur, breaking keyboard-only navigation experience",
+      "reproduction_steps": [
+        "Navigate to http://localhost:3000/app/dashboard",
+        "Press Tab 5 times to focus on a nav link or button",
+        "Observe the focused element (inspect shows outline=0px solid ring=no for most elements)"
+      ],
+      "observed_evidence": "Keyboard test on dashboard shows focused anchor element with 'A.flex.min-h-14.items-center' (Log Meal) has outline=0px solid ring=no. P23 (UX designer evaluating state design) would flag this as inconsistent focus visibility\u2014some elements show proper 2px green ring (input search field: outline: 'rgb(21, 145, 108) solid 2px'), others show none. Screenshot saved: A06-keyboard-tab-focus.png.",
+      "suggested_fix": "Ensure :focus-visible pseudo-class is applied consistently to all interactive elements. Set a uniform focus ring (e.g., outline: 2px solid rgb(21, 145, 108)) on all keyboard-navigable elements (buttons, links, inputs) and verify ring is visible on desktop at default zoom."
+    },
+    {
+      "persona_id": "P22",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Mobile sidebar navigation items render at 0x0 pixel dimensions\u2014invisible touch targets despite being in DOM",
+      "reproduction_steps": [
+        "Navigate to http://localhost:3000/app/dashboard on 390x844 mobile viewport",
+        "Inspect the left sidebar navigation links (Dashboard, Log Meal, Coach, etc.)",
+        "Check bounding box dimensions: all sidebar anchors/buttons report 0x0 size"
+      ],
+      "observed_evidence": "Mobile viewport test shows: sidebar links have button[0x0] and a[0x0] dimensions. Desktop same route shows button[301x56] and a[301x56] (proper size). Indicates sidebar is hidden/collapsed on mobile but not properly removed from tab order or sized to match hidden state. Screenshot: A06-dashboard-mobile.png shows collapsed sidebar not visible. Test confirms: 'Mobile sidebar: 0 of first 5 nav items have dimensions > 0'.",
+      "suggested_fix": "Mobile sidebar should either: (1) use CSS display:none or visibility:hidden when collapsed (not just zero dimensions), or (2) if intentionally positioned off-screen, ensure it has proper width/height when expanded. Add data-testid to sidebar and verify dimensions update after burger menu click."
+    },
+    {
+      "persona_id": "P21",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Dashboard macro labels ('CALORIES LEFT', 'PROTEIN LEFT') are missing from rendered output\u2014only numbers visible, not unit labels",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/app/dashboard",
+        "Look at the TODAY'S DECISION section showing large numbers (1400, 102g)",
+        "Check page text: '1400 CALORIES LEFT' and '102g PROTEIN LEFT' text is NOT present in readable form"
+      ],
+      "observed_evidence": "Page text audit shows dashboard includes 'CALORIES LEFT' and 'PROTEIN LEFT' are not found in body.innerText. However, dashboard visually shows the numbers with labels. This suggests labels are either: (a) rendered as images/SVG without alt text, or (b) hidden via CSS (opacity:0, aria-hidden). Screenshot A06-dashboard-mobile.png shows labels ARE visible: '1400 CALORIES LEFT' and '102g PROTEIN LEFT' appear as readable text. Discrepancy indicates label rendering via CSS-generated content or transform, not semantic HTML. P21 (content research) needs to verify if keto macros are correctly labeled throughout.",
+      "suggested_fix": "Verify that macro labels ('CALORIES LEFT', 'PROTEIN LEFT', etc.) are rendered as semantic text nodes, not CSS generated-content or image-based. Ensure aria-label or visible text matches displayed labels. If using CSS ::before/::after for labels, provide fallback text via aria-label."
+    },
+    {
+      "persona_id": "P23",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "No visible focus indicator on most desktop buttons and links\u2014state design lacks polish for a UX hire evaluating",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/app/dashboard",
+        "Press Tab to cycle through buttons (Find meals that fit, Health score Details, Log Meal, etc.)",
+        "Check if each button shows a clear visual focus ring or highlight"
+      ],
+      "observed_evidence": "Tab test shows input fields get focus ring (green 2px outline + shadow), but buttons do not show consistent focus styling. Survey of button elements shows aria-pressed attributes present, but no visible outline or ring on focus. Desktop screenshot A06-dashboard-mobile.png and button state test ('ariaPressed: null' on unlabeled buttons, 'ariaPressed: true/false' on filter buttons) shows mixed state design. Expected: all interactive elements should have visible focus rings at \u22652px contrast against background.",
+      "suggested_fix": "Add :focus-visible selector with consistent 2px outlineand box-shadow to all button and anchor elements. Ensure focus ring color meets WCAG AA contrast (currently green #159D6C works). Test focus order with Tab key end-to-end on each route."
+    },
+    {
+      "persona_id": "P22",
+      "category": "pain-point",
+      "severity": 2,
+      "description": "Mobile touch targets for filter buttons and category selectors are undersized (< 44px minimum recommended)",
+      "reproduction_steps": [
+        "Open http://localhost:3000/app/log on 390x844 mobile viewport",
+        "Inspect the filter buttons (High protein, Low carb, Low fat, Vegan) and category tabs (Breakfast, Lunch, Dinner, Snack)",
+        "Check bounding box width/height of each button"
+      ],
+      "observed_evidence": "Playwright test on mobile /app/log found 3 of first 20 interactive elements < 44px dimensions. Visual inspection of A06-log-mobile.png shows filter buttons roughly 44-88px height (acceptable), but category quick-select buttons (All, Favorites, Dislikes, Recently used) show variable sizing. Test result: small icon-only buttons in top bar (search, notifications, menu) measure 32x32px, below WCAG AA 44px minimum for touch. P22 (truck driver, big fingers) would struggle with precision on these.",
+      "suggested_fix": "Increase all mobile touch targets to minimum 44x44px (WCAG AA). For icon-only buttons, increase padding or use larger icons. Verify with 390px and 375px mobile widths. Consider testing with actual large-fingered user if available."
+    },
+    {
+      "persona_id": "P23",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "Button state design inconsistency: some buttons use aria-pressed, others don't\u2014no clear visual feedback for active/inactive state",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/app/recipes",
+        "Click category filter buttons (All, Breakfast, Lunch, Dinner, Snack)",
+        "Check if button changes appearance (color, background) and aria-pressed updates"
+      ],
+      "observed_evidence": "Button state survey shows: 'All' button has aria-pressed='true' and visible teal background (selected state), but most other buttons are unlabeled (ariaPressed: null). Visual design shows active filters with solid fill vs. inactive with outline. However, not all togglable buttons consistently use aria-pressed attribute. P23 (UX designer) expects state machine clarity: pressed (aria-pressed='true'), unpressed (aria-pressed='false'), and disabled (disabled attribute) should be uniformly applied across all toggle-style buttons for consistency.",
+      "suggested_fix": "Audit all toggle buttons (category filters, quick filters, view options) and ensure: (1) each has aria-pressed attribute, (2) aria-pressed updates on click, (3) visual state matches aria-pressed (pressed = darker/solid bg, unpressed = outline). Document button state pattern in Storybook if available."
+    },
+    {
+      "persona_id": "P21",
+      "category": "pain-point",
+      "severity": 2,
+      "description": "Recipe diet tags and filters do not visually distinguish keto-relevant content\u2014no highlighting for low-carb recipes on recipes page",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/app/recipes",
+        "Scroll through recipe list and look for visual indicators of keto-friendly, low-carb, or diet-specific recipes",
+        "Click 'Low carb' filter and observe if filtered results have distinct visual treatment"
+      ],
+      "observed_evidence": "Recipe page screenshot (A06-recipes-desktop.png) shows recipes listed with meal type (Breakfast, Lunch, Dinner) and macro breakdown (Cal/Pro/Carb/Fat), but no diet tag badges or visual highlighting for low-carb recipes. Filter button states are visible (active button is teal), but filtered results don't have a visual badge or highlight to indicate they match the selected filter. P21 (keto influencer) needs quick visual confirmation that recipes fit keto macros for content research. Suggestion: add diet-tag badges (e.g., 'Keto-friendly', 'Low-carb') to recipe cards when filter is active.",
+      "suggested_fix": "Add diet-specific badges or tags to recipe cards (e.g., 'Keto', 'Vegan', 'Low-carb') that update when filters are applied. Use distinct colors or icons (e.g., green 'K' for keto) to make diet alignment scannable for influencer-use content research. Verify macro thresholds (carbs/fat) align with stated keto targets."
+    },
+    {
+      "persona_id": "P24",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "Grocery list layout on mobile (390x390) requires horizontal scroll or text truncation for item names and edit controls\u2014not optimized for one-handed use",
+      "reproduction_steps": [
+        "Open http://localhost:3000/app/grocery-list on 390x844 mobile viewport",
+        "View grocery items with long names (e.g., 'Frozen Broccoli Florets')",
+        "Attempt to interact with quantity +/- buttons and edit fields without horizontal scrolling"
+      ],
+      "observed_evidence": "Grocery list desktop has compact 32px +/- buttons and 112px quantity input. Mobile viewport should stack or wrap these controls vertically. Did not capture mobile screenshot of grocery list, but desktop layout suggests controls are left-aligned in a single row: [checkbox] [item name] [qty -/+] [size input] [category select] [delete]. On 390px width, this row overflows. P24 (grad student, one hand on bus) needs controls to fit within viewport without requiring horizontal swipe.",
+      "suggested_fix": "Adapt grocery list item layout for mobile: use vertical stack (checkbox + name on top row, then qty/size/category in collapsible or tab-accessible sub-section). Or wrap controls to second row if needed. Test that all controls remain 44px+ touch targets."
+    },
+    {
+      "persona_id": "P23",
+      "category": "improvement-idea",
+      "severity": 1,
+      "description": "Reduced-motion media query is respected (animation-duration set to 1e-05s), but no explicit testing of which animations are disabled\u2014spring/bounce micro-interactions may still fire",
+      "reproduction_steps": [
+        "Set system prefers-reduced-motion: reduce",
+        "Visit http://localhost:3000/app/dashboard",
+        "Trigger any button or navigation transition (click Log Meal, scroll, etc.)",
+        "Check browser DevTools for animation/transition properties on interactive elements"
+      ],
+      "observed_evidence": "Reduced-motion test shows CSS vars correctly set to 1e-05s durations (nearly instant), indicating Tailwind or CSS framework respects prefers-reduced-motion. However, survey shows 0 inline [style*='animation'] and 0 inline [style*='transition'] elements, suggesting animations are defined in CSS classes. Test did not visually inspect actual animation behavior, only CSS rules. P23 (vestibular sensitivity) expects: no parallax, no bounce effects, no auto-play video/GIFs. Verify by loading page in browser with reduced-motion ON and confirming no visual motion on page load or interaction.",
+      "suggested_fix": "Visually test all routes with prefers-reduced-motion: reduce enabled on an actual browser/device. Use Firefox DevTools' 'Emulate CSS media feature prefers-reduced-motion' or macOS System Preferences \u2192 Accessibility \u2192 Display \u2192 Reduce motion. Verify no unauthorized animations fire. Document any third-party libraries (Framer Motion, etc.) and their prefers-reduced-motion support."
+    },
+    {
+      "persona_id": "P22",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "Icon buttons (search, notifications, user menu) lack visible text labels on mobile\u2014accessibility issue for users relying on screen readers or seeking clarity under glare",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/app/dashboard on mobile (390x844)",
+        "Inspect the top-right icon buttons (search magnifying glass, bell, user avatar)",
+        "Check if each has aria-label, title attribute, or visible text label"
+      ],
+      "observed_evidence": "Icon accessibility survey found 0 of 10 sampled icons have aria-label, title, or SVG <desc> elements. Button text properties show empty strings ('text: '', disabled: false') for icon-only buttons. Mobile screenshot A06-dashboard-mobile.png shows search, notification, and user icons without visible labels. Buttons are interactive (clickable), but purpose is unclear for: (1) screen reader users (P09 priority), and (2) truck drivers under glare (P22 priority) who might not recognize icon intent without label.",
+      "suggested_fix": "Add aria-label to all icon-only buttons: e.g., button with aria-label='Search meals' for magnifying glass, aria-label='Notifications' for bell, aria-label='User menu' for avatar. Optionally add title attribute for desktop tooltip on hover. Audit all <svg> and <img> elements for alt text or role='img' + aria-label."
+    },
+    {
+      "persona_id": "P21",
+      "category": "improvement-idea",
+      "severity": 1,
+      "description": "Meal plan and recipe pages do not display dietary restriction tags (keto, vegan, vegetarian, gluten-free) in a consistent visual style\u2014P21 cannot quickly scan for content eligibility",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/app/recipes",
+        "Look for recipes tagged as 'keto', 'vegan', or 'vegetarian'",
+        "Check if tags are visible on recipe cards or if they require clicking 'Open recipe' to see ingredients"
+      ],
+      "observed_evidence": "Recipe list (A06-recipes-desktop.png) shows recipe cards with: meal type (Breakfast), prep time (7 min), recipe name, and macro breakdown (Cal/Pro/Carb/Fat). Dietary restriction tags are NOT visible on cards. Filter buttons exist (High protein, Low carb, Low fat, Vegan), but filtered results do not display matching tag badges. This forces P21 (keto influencer researching content) to either: (1) click each recipe to verify ingredients, or (2) rely on macro numbers to infer keto-friendliness. Suggested: add small badge tags to recipe cards when viewing filtered results.",
+      "suggested_fix": "Add dietary tag badges to recipe cards (visible when corresponding filter is active, or always-on). Use color-coding: green for vegan, blue for keto, orange for high-protein, gray for allergen-free. Ensure tags are text-based, not image-only, for screen reader users."
+    },
+    {
+      "persona_id": "P24",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Add-to-grocery-list flow lacks immediate visual confirmation\u2014after adding a recipe to grocery list, no toast/success message or list update visible without navigation",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/app/recipes",
+        "Click 'Open recipe' on any recipe",
+        "Look for 'Add to grocery list' button and click it",
+        "Check if page shows toast notification, badge update, or other success feedback"
+      ],
+      "observed_evidence": "Route /app/recipes was tested but full recipe detail page (accessed via 'Open recipe' link) was not captured in testing. However, grocery list page shows items are present (Lean Ground Turkey, Salmon Fillets, etc.), suggesting prior addition succeeded. But without testing the add-to-list action in real time, cannot confirm if success feedback was shown. P24 (pull-to-refresh generation, expects instant feedback) would need visual confirmation. Suggested: add toast notification or success message: 'Added to grocery list' after clicking button.",
+      "suggested_fix": "Add toast notification (e.g., Radix UI Toast, Headless UI transition) on successful 'Add to grocery list' action. Show for 2-3 seconds, then auto-dismiss. Or update a badge on the Groceries nav link (e.g., 'Groceries (3)' if 3 items added). Test that notification is visible on mobile without blocking other UI."
+    },
+    {
+      "persona_id": "P22",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "Macro numbers on dashboard show white text (255, 255, 255) on dark green background\u2014contrast is good, but no visible distinction between calorie and protein labels under bright sunlight (P22 glare scenario)",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/app/dashboard",
+        "Inspect the large numbers in 'TODAY'S DECISION' section: 1400 (calories) and 102g (protein)",
+        "Check computed color and background: {color: 'rgb(255, 255, 255)', fontSize: '26px', fontWeight: '900', background: 'rgba(0, 0, 0, 0)'}"
+      ],
+      "observed_evidence": "Color test shows white text (255,255,255 = #fff) on dark green background (appears to be ~#1a3e38 or similar from screenshot), which provides good contrast (7:1+ likely). However, under bright outdoor glare (truck cab sunlight), white text and green background may blur together or appear low-contrast. P22 description: 'phone in cab, sunlight glare, needs strong contrast'. Recommend testing on actual bright-sun conditions or using explicit WCAG AAA contrast (7:1+) verification tool.",
+      "suggested_fix": "Verify macro number contrast meets WCAG AAA standard (7:1) using contrast checker tool (e.g., WebAIM, Contrast Ratio). If at risk, add a subtle text shadow (e.g., text-shadow: 0 2px 4px rgba(0,0,0,0.3)) or increase background saturation to improve glare readability. Consider adding icons (calorie flame, protein muscle) to distinguish macro types beyond color/position."
+    },
+    {
+      "persona_id": "P23",
+      "category": "improvement-idea",
+      "severity": 1,
+      "description": "Type scale and spacing rhythm not uniformly consistent across routes\u2014dashboard uses different heading sizes and padding than recipes or grocery list",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/app/dashboard, then /app/recipes, then /app/grocery-list",
+        "Compare heading sizes (h1, h2, h3), button padding, and section spacing (gap between cards)",
+        "Note if spacing follows a consistent scale (e.g., 4px, 8px, 16px, 24px)"
+      ],
+      "observed_evidence": "Screenshots show: Dashboard heading 'Good afternoon, Alex Preview' = 27.2px, Dashboard buttons 44-48px height, Recipe cards ~222x91px size, Grocery items in compact rows. Type scale test shows heading at 27.2px (font-weight 900), body text at smaller size. No explicit type-scale constant was observed. P23 (UX designer evaluating for hire) would expect documented type scale (e.g., xs: 12px, sm: 14px, base: 16px, lg: 20px, xl: 24px, 2xl: 30px) and consistent spacing units. Recommend auditing Tailwind config or CSS variables for type scale.",
+      "suggested_fix": "Document and audit the type scale and spacing rhythm. Define explicit sizes: heading h1/h2/h3, body text, label, caption. Ensure all headings, buttons, and cards use consistent sizes across routes. Use Tailwind scale or CSS custom properties (--type-h1, --space-4, etc.). Test on multiple routes to ensure uniformity."
+    },
+    {
+      "persona_id": "P24",
+      "category": "pain-point",
+      "severity": 1,
+      "description": "Empty state on daily-review does not provide encouraging or actionable message\u2014just shows metrics without context for first-time logging",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/app/daily-review",
+        "Observe the page content when no meals have been logged yet (or minimal data)",
+        "Check if there is a call-to-action message, encouragement, or next-step guidance"
+      ],
+      "observed_evidence": "Empty state test on daily-review page found: hasEmptyMsg: false, hasCTA: true, hasEncouragement: false. Page includes 'Log' and 'Add' actions (CTA), but no encouraging tone (e.g., 'Great start!' or 'You're on track!'). P24 (grad student, expects pull-to-refresh instant feedback) needs positive reinforcement to stay engaged. Screenshot was not captured for this route, but text audit shows lack of motivational copy.",
+      "suggested_fix": "Add an empty-state card or message on daily-review when no data is logged yet. Example: 'Ready to log your first meal? Start with breakfast to see your daily summary.' Include encouraging tone and direct CTA (e.g., 'Log breakfast' button). For users with 1-2 meals logged, show progress message: 'You're off to a great start! Log one more meal to see your daily totals.'"
+    },
+    {
+      "persona_id": "P21",
+      "category": "improvement-idea",
+      "severity": 1,
+      "description": "Coach response section lacks visual distinction between coach-generated content (tables, recommendations) and user data (logged meals)\u2014hard to scan for macro analysis",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/app/coach",
+        "Send a message to Coach (e.g., 'Suggest a meal with 102g protein left')",
+        "Observe the response format: check if coach tables/recommendations are visually distinct from chat messages"
+      ],
+      "observed_evidence": "Coach page screenshot (A06-coach-desktop.png) shows coach introduction text describing 'RICH FORMATS' and example response: 'Dinner options for 102g protein left' with table format. Response includes tables (Option | Protein | Why it fits), nested lists, and formulas. Visual design appears to use distinct styling (indentation, borders, colors) for different content types. However, did not test actual coach interaction to verify real response rendering. P21 (content researcher) would need to verify that keto-specific coach responses (e.g., 'Suggest keto dinners') include proper macro highlighting and are visually distinct from generic advice.",
+      "suggested_fix": "Verify coach response styling by sending test messages and inspecting rendered HTML. Ensure tables have clear borders/headers, recommendations are bulleted/numbered, and formulas use distinct styling (e.g., background highlight, monospace font). Add visual feedback (e.g., 'Coach recommends' badge or icon) to distinguish coach-generated content from user messages."
+    },
+    {
+      "persona_id": "P22",
+      "category": "improvement-idea",
+      "severity": 1,
+      "description": "Form inputs (search, grocery item name, quantity) do not show visible focus state or error messages on validation failure\u2014unclear if input was accepted or has an error",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/app/log",
+        "Click in the search input and type 'xyz999'\u2014a food that doesn't exist",
+        "Check if any error message or 'no results' feedback appears"
+      ],
+      "observed_evidence": "Focus ring test on search input showed proper focus styling: outline: 'rgb(21, 145, 108) solid 2px' with box-shadow ring. However, error-state testing was not performed (no invalid input scenario tested). Grocery list form has placeholders ('e.g. sparkling water', '1 pack') but no visible validation feedback observed. Test showed input accepted 100 characters without truncation warning. P22 (truck driver needing clear feedback) requires: (1) visible focus on inputs, (2) clear error messages on invalid input, (3) success message on form submission.",
+      "suggested_fix": "Add validation feedback: (1) show error message below input if invalid (e.g., 'Food not found\u2014try searching differently'); (2) highlight input border in red on error; (3) show green checkmark or 'Added' message on successful submission. Test all input states: focus, valid, invalid, disabled, loading."
+    },
+    {
+      "persona_id": "P24",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Excessive use of text-xs (12px) makes recipe metadata unreadable on bus in outdoor lighting",
+      "reproduction_steps": [
+        "Open http://localhost:3000/app/recipes on mobile (iPhone SE, 375px viewport)",
+        "Scroll through recipe list in portrait orientation",
+        "Locate recipe card for \"Veggie tofu scramble\"",
+        "Attempt to read the nutritional metadata (Pro 21g, Carb 12g, Fat 12g) on the card",
+        "Simulate bright sunlight by maximizing screen brightness",
+        "Observe: Text is too small to read comfortably while standing on bus"
+      ],
+      "observed_evidence": "HTML analysis detected 3,054 instances of text-xs class in /app/recipes. Recipe cards display nutrition info with text-xs sizing. Tailwind text-xs = 0.75rem = 12px font size, which is below Apple's recommended 16px minimum for readable body text on mobile.",
+      "suggested_fix": "Change recipe card nutrition metadata to use text-sm (14px) minimum. For cooking time badges, use text-base (16px). Increase line-height to 1.6 for better spacing in outdoor lighting conditions. Consider using font-semibold for nutrition values to improve contrast.",
+      "supplemental": true
+    },
+    {
+      "persona_id": "P24",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Button and icon sizes below 44px minimum make one-handed use on bus difficult",
+      "reproduction_steps": [
+        "Open http://localhost:3000/app/recipes on mobile at 375px width",
+        "Look at the filter buttons (All, Breakfast, Lunch, Vegan, High protein, etc.)",
+        "Look at action buttons on recipe cards (Like this, Not for me, Open recipe)",
+        "Identify small icon buttons or close buttons (if any)",
+        "Hold phone with left hand only (one-handed bus riding position)",
+        "Attempt to tap \"Like this\" or \"Not for me\" buttons with right thumb",
+        "Observe: Small buttons (40px or less) are difficult to hit accurately one-handed"
+      ],
+      "observed_evidence": "HTML contains 11,705 small sizing classes including w-4 (16px), h-5 (20px), w-5 (20px), h-6 (24px), which are well below the 44x44px minimum touch target size recommended by Apple HIG and WCAG 2.5.5 Level AAA.",
+      "suggested_fix": "Ensure all interactive touch targets are minimum 44x44px (iOS) or 48x48px (Android). For icon buttons, use min-h-11 min-w-11 (44px). For text buttons, add padding: px-4 py-3 minimum. Group small actions (like/dislike) with min 6px gap for easier thumb targeting.",
+      "supplemental": true
+    },
+    {
+      "persona_id": "P24",
+      "category": "improvement-idea",
+      "severity": 3,
+      "description": "Missing clear visual feedback when filtering recipes by dietary preference (Vegan)",
+      "reproduction_steps": [
+        "Navigate to http://localhost:3000/app/recipes",
+        "Click \"Vegan\" filter button",
+        "Observe the button appearance before and after click",
+        "Check if button background color, border, or icon changes",
+        "Verify if user can immediately tell the filter is active without looking carefully"
+      ],
+      "observed_evidence": "Page contains aria-pressed attributes (for a11y) but filter button styling may lack visible active state. Filter results update, but button state change may be subtle (no prominent background color shift or checkmark icon).",
+      "suggested_fix": "Add prominent active state styling: solid background color (e.g., bg-primary) + white text + checkmark icon. Include smooth transition: transition-colors duration-200. Consider adding \"Clear filters\" button visibility when filter is active to reinforce selection.",
+      "supplemental": true
+    }
+  ]
+}

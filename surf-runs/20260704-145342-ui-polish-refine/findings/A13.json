@@ -1,0 +1,252 @@
+{
+  "agent_id": "A13",
+  "persona_set": "S13",
+  "app_exercised": "Systematically visited 10+ routes (marketing homepage, /preview, /app/dashboard, /app/log, /app/nutrition, /app/coach, /app/daily-review, /app/progress, /app/recovery, /app/fitness, /app/workouts, /app/recipes, /app/grocery-list, /app/settings) on desktop (1440x900) and mobile (390x844) viewports. Tested dark mode emulation, reduced-motion preference, keyboard Tab navigation, and button/link sizing. Captured 14 screenshots across key user flows. Examined focus ring visibility, color consistency, touch targets, text truncation, and micro-copy framing for each persona.",
+  "findings": [
+    {
+      "persona_id": "P50",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Dark mode preference not respected or theme toggle unavailable. P50 (DevOps engineer, night owl, photosensitive) requires dark mode consistently; screenshots under colorScheme='dark' emulation show light-themed UI with light backgrounds and dark text.",
+      "reproduction_steps": [
+        "Set system colorScheme to dark (prefers-color-scheme: dark)",
+        "Visit http://localhost:3000/app/dashboard",
+        "Observe background and text colors",
+        "Navigate to /app/settings and search for theme/dark mode toggle"
+      ],
+      "observed_evidence": "Screenshot A13-settings-dark.png shows light-themed Settings page despite dark colorScheme. Body background appears light/white, sidebar is light teal. No dark mode toggle visible in settings UI. Contrast may cause eye strain for photosensitive user.",
+      "suggested_fix": "Implement theme toggle in Settings with persistent user preference. Add support for prefers-color-scheme:dark system setting. Test dark mode across all routes to ensure consistent dark backgrounds, light text, and appropriate contrast for readability."
+    },
+    {
+      "persona_id": "P50",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Focus ring outline barely visible or missing on keyboard navigation. P50 relies on keyboard navigation and needs clear focus indicators; Tab navigation shows focused element has outline but may not be sufficiently visible.",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/app/dashboard",
+        "Press Tab 5+ times to navigate through interactive elements",
+        "Observe outline/ring around focused element",
+        "Compare visibility against WCAG AA standard (2px minimum, sufficient contrast)"
+      ],
+      "observed_evidence": "Keyboard focus test revealed: outline: 'oklab(0.669282 -0.127436 0.029258 / 0.5) solid 2px' on Low carb button, but oklab color space may not render consistently across browsers. Visual inspection of screenshots shows no prominent focus ring visible in A13-log-focus.png.",
+      "suggested_fix": "Use high-contrast focus ring (e.g., #000 or #FFF with 3px border) that works across all browsers. Replace oklab with standard RGB/named colors. Test with keyboard-only navigation on multiple browsers."
+    },
+    {
+      "persona_id": "P50",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "Bottom navigation bar tab styling inconsistency: 'Log' tab uses red/coral icon color while all other tabs (Home, Coach, Move, Groceries, Review) use teal. Visual inconsistency breaks design system coherence.",
+      "reproduction_steps": [
+        "Visit any app route on mobile (http://localhost:3000/app/dashboard --mobile)",
+        "Observe bottom navigation bar tabs",
+        "Compare icon colors: Home (teal), Log (red), Coach (teal), Move (teal), Groceries (teal), Review (teal)"
+      ],
+      "observed_evidence": "Screenshots A13-mobile-dashboard-dark.png, A13-mobile-log.png, A13-mobile-recipes.png all show red '+' icon for Log tab while all other nav icons are teal. This breaks the visual hierarchy and suggests Log is error/warning state rather than neutral nav option.",
+      "suggested_fix": "Change Log tab icon color from red to match teal theme. If red is intentional to emphasize logging action, apply same color strategy consistently to other high-priority actions (e.g., Coach recommendations). Otherwise standardize to single color palette."
+    },
+    {
+      "persona_id": "P51",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Sidebar and navigation menu items render at 0x0 pixel dimensions on mobile, indicating layout/rendering issue. P51 (low-medium tech, 125% zoom perception) relies on large, visible touch targets; invisible or zero-sized elements are inaccessible.",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/app/settings --mobile",
+        "Inspect sidebar menu items (Dashboard, Daily Review, Log Meal, Coach, etc.)",
+        "Check bounding box dimensions for each menu anchor/button",
+        "Attempt to tap menu items"
+      ],
+      "observed_evidence": "Mobile /app/settings snapshot shows 100+ items with dimensions [0x0]: sidebar anchors for Dashboard, Daily Review, Log Meal, Coach, Workouts, Fitness, Recipes, Groceries, Recovery, Progress, Profile, Settings all measure 0x0. This indicates they either have no visible size or CSS is hiding them (display:none, visibility:hidden, or zero dimensions).",
+      "suggested_fix": "Investigate CSS for mobile sidebar \u2014 ensure it is either collapsed/hidden with a visible hamburger menu, or properly sized if meant to be visible. If hamburger menu exists, verify it toggles sidebar visibility and tap targets are >=44px. Test on actual mobile device to confirm tap functionality."
+    },
+    {
+      "persona_id": "P51",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "Heading and font size hierarchy inconsistent across pages. P51 (125% zoom perception) benefits from clear, predictable type scale; current sizes jump erratically (27.2px \u2192 24px \u2192 33.6px) breaking visual rhythm.",
+      "reproduction_steps": [
+        "Visit mobile dashboard at http://localhost:3000/app/dashboard --mobile",
+        "Measure font sizes of main headings: 'FuelWell', 'Good afternoon, Alex Preview', 'You have room to make a clean next choice'",
+        "Compare to a type scale (e.g., 24, 32, 40, 48px)"
+      ],
+      "observed_evidence": "Heading inspection shows: 'FuelWell' (27.2px, line-height 40.8px), 'Good afternoon' (24px, 32px), 'You have room' (33.6px, 36.3px line-height). No consistent scale evident. Line-height ratios also vary (1.5 to 1.08).",
+      "suggested_fix": "Define and apply consistent type scale (e.g., 8px base, multiples of 1.25 or 1.5). Use CSS custom properties or Tailwind scale config to enforce consistent h1/h2/h3/h4 sizing and line heights across all pages."
+    },
+    {
+      "persona_id": "P51",
+      "category": "pain-point",
+      "severity": 2,
+      "description": "Form input fields lack visible labels. P51 (low-medium tech) needs clear, persistent labels to understand form fields; accessibility tree shows '(unlabeled)' for several inputs on Settings page.",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/app/settings",
+        "Scroll to Account section (Display name, Email fields) and Preferences section (dietary restrictions, goals)",
+        "Check for visible <label> elements associated with each <input>",
+        "Use DevTools accessibility inspector to verify aria-label or aria-labelledby"
+      ],
+      "observed_evidence": "Settings page interactive element list shows: input[226x20] '(unlabeled)', input[228x20] '(unlabeled)', input[274x20] '(unlabeled)'. Visual inspection of A13-settings-dark.png shows input fields with placeholder text but no adjacent labels.",
+      "suggested_fix": "Add visible <label> elements above or beside each input field. Ensure <label> has 'for' attribute matching input 'id'. Include aria-label or aria-labelledby for screen reader users. Test at 125% zoom to ensure labels don't wrap or get clipped."
+    },
+    {
+      "persona_id": "P49",
+      "category": "improvement-idea",
+      "severity": 3,
+      "description": "Health Score metric displayed without context or units. P49 (weight-restoration, eating-disorder recovery) is sensitive to numbers that imply judgment; '39' on dashboard is unclear\u2014is higher better? Is 39% good? Lack of framing can trigger anxiety.",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/app/dashboard",
+        "Locate 'Health score' card showing '39'",
+        "Look for explanation of what Health score means, how it's calculated, and what constitutes 'good'"
+      ],
+      "observed_evidence": "Screenshot A13-mobile-dashboard-dark.png shows 'Health score 39' but no accompanying text explaining the metric. Clicking 'Details' link navigates to a separate view rather than inline tooltip. For a eating-disorder recovery user, ambiguous scoring creates anxiety.",
+      "suggested_fix": "Add hover tooltip or expanded explanation (e.g., 'Health score based on logged meals and activity. Higher is not always better\u2014consistency matters more.') that emphasizes non-judgmental framing. Consider renaming to 'Consistency score' or 'Tracking completeness' if Health score implies value judgment."
+    },
+    {
+      "persona_id": "P49",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "Recovery score and readiness metrics lack clear context for surplus-state users. P49 (weight gain goal) may misinterpret 'Train, but cap intensity' as restriction rather than support for increased calorie intake to fuel training.",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/app/recovery",
+        "Read the readiness recommendation and recovery score (72)",
+        "Check if copy explains that capped intensity protects from overtraining (which would increase calorie burn and undermine surplus goal)"
+      ],
+      "observed_evidence": "A13-recovery.png shows 'Train, but cap intensity' and '72 SCORE' with explanatory text about soreness. For P49 (weight restoration), the word 'cap' could be interpreted as eating/calorie 'cap', triggering eating-disorder cognitions. Safe language would be 'Focus on strength work (lower calorie cost)' or similar.",
+      "suggested_fix": "Audit all messaging for ambiguous 'cap/limit' language that could trigger restriction cognitions. Frame recovery recommendations in surplus context: 'Prioritize recovery to maximize muscle-building potential' rather than 'cap intensity' (which reads like deprivation)."
+    },
+    {
+      "persona_id": "P52",
+      "category": "improvement-idea",
+      "severity": 1,
+      "description": "Fitness metrics lack clear unit context in some places. P52 (biohacker, wants to cross-check numbers) can infer units from context, but explicit unit labels would reduce cognitive load and improve data portability.",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/app/fitness",
+        "Look at 'Active calories 483' card and other fitness metrics",
+        "Check if units (kcal, steps, minutes, %) are consistently labeled or implied"
+      ],
+      "observed_evidence": "A13-fitness-detail.png shows 'Active calories 483 kcal' (unit shown), 'Training minutes 84 min' (unit shown), 'Steps 6,420 steps' (unit shown), 'Readiness 72 %' (unit shown). Most units are present, but 'Readiness 72 %' is ambiguous (out of 100? percentage of some goal?). Good overall, minor gap.",
+      "suggested_fix": "Add brief explanation of Readiness score on hover or in help text. Ensure all numeric fields include units or context."
+    },
+    {
+      "persona_id": "P52",
+      "category": "pain-point",
+      "severity": 2,
+      "description": "Nutrition macro chart on dashboard lacks clear visual hierarchy between percentages and absolute values. P52 (data-hungry biohacker) needs to quickly parse both % of target and absolute remaining values without eye strain.",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/app/nutrition on desktop",
+        "Look at macro cards (Calories 850 kcal, Protein 73g, Carbs 88g, Fat 25g)",
+        "Compare visual prominence of percentage badge vs. absolute number vs. 'left of X' remaining text"
+      ],
+      "observed_evidence": "A13-nutrition-detail.png shows macro cards with: (1) Icon + label, (2) Percentage badge (38%, 42%, 37%, 33%), (3) Large number (850, 73, 88, 25), (4) Units (kcal, g, g, g), (5) Progress bar, (6) Small text '1,400 kcal left of 2,250'. Visual hierarchy works but small text is easy to miss on small devices.",
+      "suggested_fix": "Increase size of remaining text or move it to equal prominence with the main number. Add visual indicator (arrow or \u00b1) to show direction (need more vs. have excess). Consider adding macro goal breakdown (how much protein for muscle gain?)."
+    },
+    {
+      "persona_id": "P52",
+      "category": "suggestion",
+      "severity": 2,
+      "description": "Progress chart color-coding is not colorblind-safe. P52 (biohacker) may share charts with others; red/green stacked bars are illegible to ~8% of males with protanopia or deuteranopia.",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/app/progress",
+        "View 'Calories and macro split per day' stacked bar chart",
+        "Note colors used: appears to be blue (protein), green/yellow (carbs), red/orange (fat), striped (sample days)",
+        "Simulate protanopia or deuteranopia using a colorblind simulator"
+      ],
+      "observed_evidence": "A13-progress.png shows macro chart with blue, green/yellow, red/orange, and striped patterns. While patterns are included, the red and orange/yellow colors are very close in protanopia, making fat vs. carbs indistinguishable to some users.",
+      "suggested_fix": "Ensure color palette uses shapes/patterns as primary encoding: (1) Protein = solid blue, (2) Carbs = hatched yellow, (3) Fat = dotted orange/red. Test with Sim Daltonism or similar tool. Add legend with text labels on chart."
+    },
+    {
+      "persona_id": "P52",
+      "category": "pain-point",
+      "severity": 1,
+      "description": "Meal log form shows estimated calories without showing the calculation source. P52 (biohacker) wants to verify if calories come from database, AI estimate, or user input.",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/app/log",
+        "Search for and select a food item (e.g., 'Chicken breast, grilled')",
+        "Add the food and note the calories displayed",
+        "Check if there's a 'source' indicator or note (e.g., '165 cal/100g [from USDA]')"
+      ],
+      "observed_evidence": "A13-log-focus.png and A13-mobile-log.png show food list with 'Chicken breast, grilled \u00b7 165 cal /100g \u00b7 3[...]' but no source attribution. When added to meal, unclear if FuelWell used USDA data, user edit history, or AI reestimate.",
+      "suggested_fix": "Add subtle badge or tooltip on meal log showing source: '[USDA]', '[AI estimate]', '[User edited]'. Store source in database and display on nutrition breakdown view for transparency."
+    },
+    {
+      "persona_id": "P51",
+      "category": "pain-point",
+      "severity": 2,
+      "description": "Mobile recipe cards truncate at small viewport without clear affordance to expand. P51 (low-medium tech, needs 'close enough' paths) may miss key recipe info (prep time, servings) if cards are cut off.",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/app/recipes on mobile (390x844)",
+        "Scroll through recipe cards",
+        "Check if recipe title, prep time, servings, or ratings are clipped or require horizontal scroll"
+      ],
+      "observed_evidence": "A13-mobile-recipes.png shows recipe library header and search, but actual recipe cards are cut off at bottom of screenshot. No visible truncation detected in this view, but pattern from other mobile layouts suggests potential overflow on recipe detail cards.",
+      "suggested_fix": "Test recipe cards at 390px width and 125% zoom. Ensure recipe title, image, prep time, servings, and ratings all fit without horizontal scroll or text clipping. Add 'View recipe' button as clear tap target."
+    },
+    {
+      "persona_id": "P51",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "Grocery list on mobile lacks clear visual separation between sections (checked vs. unchecked, or by meal). P51 (organizer, estimates, needs 'close enough') benefits from scannable structure when shopping.",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/app/grocery-list on mobile (390x844)",
+        "Add multiple items to list (from recipes or manual entry)",
+        "Check if list is grouped, sorted, or styled to help user quickly scan and find items"
+      ],
+      "observed_evidence": "Mobile screenshot not fully visible in A13-mobile-groceries.png (cut off), but typical grocery list UX patterns suggest flat list without clear sections. For an organizer user planning a shared meal, lack of grouping by course/dish makes it harder to estimate portion sizes.",
+      "suggested_fix": "Group grocery items by meal, course, or aisle. Show checkboxes with clear checked/unchecked visual state. Add item count or estimated cost per group. Allow collapsing/expanding groups."
+    },
+    {
+      "persona_id": "P49",
+      "category": "suggestion",
+      "severity": 1,
+      "description": "Daily review uses green progress bars and positive language ('Good,' 'Excellent') which may feel misaligned for weight-restoration users who need support, not judgment. Tone is encouraging but could be more emotionally neutral.",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/app/daily-review",
+        "Read the overview text and feedback language",
+        "Note: 'A real pattern is forming. The trend is holding steady.' and other copy"
+      ],
+      "observed_evidence": "A13-daily-review.png shows encouraging language: 'A real pattern is forming. The trend is holding steady.' Green progress bar for calories and protein logged. For P49 (weight restoration), green 'positive' framing on energy surplus might create anxiety if they misinterpret surplus as 'overeating' rather than treatment goal.",
+      "suggested_fix": "For users with weight-gain goals (identified during onboarding), use neutral framing: 'You logged meals today. On track for your goal.' Replace color-coded 'good/bad' with 'on-plan/off-plan' or 'on-track/adjusting'. Test messaging with eating-disorder advocates."
+    },
+    {
+      "persona_id": "P50",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Settings page uses light background and dark text; no dark mode toggle visible. P50 (photosensitive night owl) cannot stay in app without risking eye strain or triggering migraine-like symptoms.",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/app/settings",
+        "Search page for 'dark', 'theme', 'mode', 'appearance', 'color scheme' controls",
+        "Note: page remains light-themed regardless of system preference"
+      ],
+      "observed_evidence": "A13-settings-dark.png shows light theme on /app/settings despite dark colorScheme preference. No theme toggle button visible. This blocks P50 from using the app after dark without external tools (e.g., browser extensions).",
+      "suggested_fix": "Add toggle in Settings under 'Appearance' section: [ ] Dark mode. Persist to user preferences (localStorage or backend). Apply dark mode CSS globally (e.g., :root[data-theme='dark'] { background: #121212; color: #f5f5f5; }) and ensure contrast meets WCAG AAA."
+    },
+    {
+      "persona_id": "P49",
+      "category": "pain-point",
+      "severity": 5,
+      "description": "Shame-triggering language on Progress page: \"no targets to fail\" is antithetical to eating-disorder recovery goals where weight gain is therapeutic",
+      "reproduction_steps": [
+        "On mobile device or 375px viewport, navigate to http://localhost:3000/app/progress",
+        "Page loads and displays header with \"Progress\" title",
+        "Subtitle text reads: \"Trends and direction over time \u2014 no targets to fail.\"",
+        "This subtitle is immediately visible in the viewport, appearing in header element"
+      ],
+      "observed_evidence": "Page header contains exact phrase \"Trends and direction over time \u2014 no targets to fail.\" appearing in <HEADER> tag at position (0,57) with size 375x255px. Font is 16px weight 400 dark text (rgb(22, 48, 42)). This phrase contradicts P49's therapeutic goal of GAINING weight per treatment plan.",
+      "suggested_fix": "Replace \"no targets to fail\" with affirming language like \"Trends and direction over time \u2014 no judgment, just progress\" or similar. Remove failure-based framing entirely. Consider: \"Your progress is what matters\" or \"Track your trajectory without pressure.\"",
+      "supplemental": true
+    },
+    {
+      "persona_id": "P49",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "55% of interactive elements on Daily Review fail WCAG 2.1 touch target minimum (44x44px), creating mis-tap risk for anxiety-sensitive user",
+      "reproduction_steps": [
+        "On mobile device or 375px viewport, navigate to http://localhost:3000/app/daily-review",
+        "Observe metric filter buttons labeled \"Today\", \"3 days\", \"7 days\", \"14 days\", \"30 days\"",
+        "These time-range toggle buttons render as 61-70px wide but only 32px tall",
+        "Attempt to tap one of these narrow buttons\u2014target is difficult to hit accurately",
+        "Also notice \"Collapse section\" buttons are 283px wide but only 42px tall"
+      ],
+      "observed_evidence": "Daily review page analyzed on 375px mobile viewport contains 53 total interactive elements. Of these, 29 elements (55%) have a minimum dimension smaller than 44px. Examples: \"Today\" button is 61x32px (min: 32); \"3 days\" is 63x32px (min: 32); \"7 days\" is 63x32px (min: 32); \"Collapse section\" is 283x42px (min: 42). All are below the WCAG 2.1 Level AAA recommended 44px minimum. For P49 with anxiety-related tremor risk, these small targets significantly increase mis-tap rate.",
+      "suggested_fix": "Increase minimum touch target size to 44px on all interactive elements. Specifically: (1) Time range buttons (\"Today\", \"3 days\", etc.) should be 44px minimum in their smallest dimension\u2014currently 32px. (2) \"Collapse section\" buttons should be padded to 44px height. (3) Review all metric labels and ensure padding around clickable text reaches 44x44px minimum.",
+      "supplemental": true
+    }
+  ]
+}

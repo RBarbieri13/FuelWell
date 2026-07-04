@@ -1,0 +1,41 @@
+[
+  {
+    "persona_id": "P78",
+    "category": "improvement-idea",
+    "severity": 2,
+    "description": "Dashboard macro cards use inconsistent spacing, unclear visual hierarchy between targets and actuals",
+    "reproduction_steps": [
+      "Visit /app/dashboard on mobile",
+      "Look at macros breakdown section (Protein, Carbs, Fat)",
+      "Measure padding/margin between target and actual values"
+    ],
+    "observed_evidence": "Dashboard macro cards show target/actual values stacked with unclear visual relationship. Screenshot: A20-p78-spacing-hierarchy.png. P78 looks for clear visual separation to avoid perfectionist second-guessing (\"wait, is this target or actual?\").",
+    "suggested_fix": "Use consistent spacing pattern: 4px tiny gaps for sub-items, 16px medium gaps for sections. Label clearly (lighter color for \"target\", emphasis for \"actual\")."
+  },
+  {
+    "persona_id": "P79",
+    "category": "pain-point",
+    "severity": 2,
+    "description": "Log page action buttons (\"Snap Photo\", \"Ask Coach\", \"Scan Barcode\") are too closely spaced, cause accidental mis-taps",
+    "reproduction_steps": [
+      "Visit /app/log on 390px mobile",
+      "Look at the 4 quick-action buttons below search",
+      "Measure spacing between buttons (ideal >=8px minimum tap target separation)"
+    ],
+    "observed_evidence": "Action buttons are horizontally aligned but touch targets are adjacent with minimal gap. Carpenter with coarse hand/gloves easily taps wrong button. Screenshot: A20-p79-button-spacing.png.",
+    "suggested_fix": "Add 12px (gap-3 in Tailwind) between all button edges. Increase button padding to 44x44px minimum. Test with gloved hand."
+  },
+  {
+    "persona_id": "P77",
+    "category": "improvement-idea",
+    "severity": 2,
+    "description": "/preview hub navigation links lack clear affordance, hard to distinguish from body text",
+    "reproduction_steps": [
+      "Visit /preview (demo hub)",
+      "Look at numbered section headings (\"1. Existing user preview\", \"2. New user signup...\")",
+      "Try to identify which text is clickable vs. descriptive"
+    ],
+    "observed_evidence": "Preview hub sections are labeled but lack clear CTA styling (button look, underline, color change on hover). Program director walking through demo with committee cannot quickly identify next clickable item. Screenshot: A20-p77-preview-labels.png.",
+    "suggested_fix": "Make section headings explicit CTAs: use button styling (background, padding), or add icon (→, →), or ensure clear color change and underline on hover."
+  }
+]

@@ -1,0 +1,1548 @@
+[
+  {
+    "id": "C01",
+    "title": "Undersized/densely packed touch targets below 44px across mobile pages",
+    "agents": [
+      "A01",
+      "A02",
+      "A03",
+      "A04",
+      "A05",
+      "A06",
+      "A08",
+      "A09",
+      "A10",
+      "A11",
+      "A12",
+      "A13",
+      "A14",
+      "A15",
+      "A16",
+      "A17",
+      "A18",
+      "A19",
+      "A20"
+    ],
+    "personas": 25,
+    "max_severity": 5,
+    "categories": "pain-point (28), suggestion (4), improvement-idea (1)",
+    "representative_evidence": "A19-F13: \"Comprehensive audit found 199 interactive elements on /app/log. Of these: 100 are < 44px (either width or height)... unlabeled icons, close buttons, small menu toggles, increment/decrement spinners.\" A02-F5: \"'Open daily review' 32x32 at (302,12), 'Open user settings menu' 32x32, 'All' 39x28 \u2014 P06 requires >=44px minimum.\"",
+    "proposed_fix_theme": "Establish a global 44x44px minimum touch-target token (min-h-11/min-w-11 + padding/spacing) and sweep filter pills, nav icons, checkboxes, spinners, and time selectors across /app/log, fitness, grocery, progress, and daily review.",
+    "finding_ids": [
+      "A01-F2",
+      "A02-F5",
+      "A02-F6",
+      "A02-F8",
+      "A03-F5",
+      "A04-F1",
+      "A04-F2",
+      "A05-F1",
+      "A05-F6",
+      "A05-F11",
+      "A06-F5",
+      "A06-F19",
+      "A08-F8",
+      "A09-F5",
+      "A10-F5",
+      "A11-F19",
+      "A12-F11",
+      "A12-F13",
+      "A13-F18",
+      "A14-F1",
+      "A14-F9",
+      "A14-F16",
+      "A15-F14",
+      "A16-F1",
+      "A16-F4",
+      "A17-F5",
+      "A17-F13",
+      "A17-F14",
+      "A17-F16",
+      "A18-F2",
+      "A19-F13",
+      "A20-F10",
+      "A20-F14"
+    ]
+  },
+  {
+    "id": "C02",
+    "title": "Mobile sidebar/nav elements render at 0x0 pixels (invisible but in DOM)",
+    "agents": [
+      "A04",
+      "A06",
+      "A08",
+      "A10",
+      "A11",
+      "A12",
+      "A13",
+      "A14",
+      "A17"
+    ],
+    "personas": 11,
+    "max_severity": 5,
+    "categories": "pain-point (9), suggestion (2), improvement-idea (1)",
+    "representative_evidence": "A12-F1: \"Sidebar navigation links on mobile viewport 390x844 show width=0, height=0 pixels; links are completely invisible and untappable.\" A11-F8: \"Found 15 out of 20 sampled buttons have dimensions less than 44x44px, with many at exactly 0x0.\"",
+    "proposed_fix_theme": "Fix the responsive layout bug that leaves desktop sidebar/nav buttons in the mobile DOM at 0x0: properly hide with display:none/aria-hidden or render a real mobile nav, so the accessibility tree and tab order match what is visible.",
+    "finding_ids": [
+      "A04-F17",
+      "A06-F2",
+      "A06-F3",
+      "A08-F3",
+      "A10-F17",
+      "A11-F3",
+      "A11-F8",
+      "A12-F1",
+      "A12-F3",
+      "A13-F4",
+      "A14-F6",
+      "A17-F1"
+    ]
+  },
+  {
+    "id": "C03",
+    "title": "No form validation feedback (no errors, aria-invalid, required marks, or limits)",
+    "agents": [
+      "A01",
+      "A03",
+      "A04",
+      "A05",
+      "A06",
+      "A10",
+      "A14",
+      "A15",
+      "A19"
+    ],
+    "personas": 10,
+    "max_severity": 5,
+    "categories": "pain-point (8), improvement-idea (2)",
+    "representative_evidence": "A19-F6: \"Empty form submission on /signup produces 0 error messages in DOM. No red borders on inputs, no aria-invalid attributes, no [role=alert] elements.\" A05-F3: \"Email input with invalid text: aria-invalid=null, border color unchanged teal, no error message element found.\"",
+    "proposed_fix_theme": "Add a shared inline-validation pattern: required-field indication, real-time aria-invalid + red border + error text under fields, and sane limits/rejection for extreme values (0g, 99999 kcal, overlong strings).",
+    "finding_ids": [
+      "A01-F13",
+      "A03-F14",
+      "A04-F9",
+      "A05-F3",
+      "A06-F17",
+      "A10-F11",
+      "A14-F14",
+      "A15-F10",
+      "A19-F6",
+      "A19-F16"
+    ]
+  },
+  {
+    "id": "C04",
+    "title": "Keyboard focus indicators missing or too subtle",
+    "agents": [
+      "A02",
+      "A04",
+      "A06",
+      "A08",
+      "A09",
+      "A10",
+      "A13",
+      "A15",
+      "A17",
+      "A18",
+      "A19"
+    ],
+    "personas": 13,
+    "max_severity": 4,
+    "categories": "pain-point (9), improvement-idea (3), suggestion (1)",
+    "representative_evidence": "A19-F14: \"Button focus test showed: outline=0px, boxShadow=rgba(0,0,0,0) (fully transparent). Buttons have no visible focus indicator.\" A06-F1: \"focused anchor element (Log Meal) has outline=0px solid ring=no.\"",
+    "proposed_fix_theme": "Define one high-visibility :focus-visible token (>=2px solid outline + offset, adequate contrast on light and dark surfaces) and apply it consistently instead of the mixed outline/box-shadow/0px states.",
+    "finding_ids": [
+      "A02-F4",
+      "A04-F11",
+      "A06-F1",
+      "A06-F4",
+      "A08-F5",
+      "A09-F6",
+      "A10-F2",
+      "A13-F2",
+      "A15-F3",
+      "A15-F15",
+      "A17-F2",
+      "A18-F1",
+      "A19-F14"
+    ]
+  },
+  {
+    "id": "C05",
+    "title": "Inconsistent unit notation for calories/grams (cal vs kcal, '102g pro' vs '30gCarb', missing units)",
+    "agents": [
+      "A01",
+      "A02",
+      "A04",
+      "A08",
+      "A09",
+      "A13",
+      "A19",
+      "A20"
+    ],
+    "personas": 9,
+    "max_severity": 5,
+    "categories": "pain-point (7), improvement-idea (5), suggestion (1)",
+    "representative_evidence": "A08-F9: \"Macro format test across pages: Dashboard: ['102gPro', '102g pro', '31g pro'], Nutrition: ['23g pro', '22g carb'], Recipes: ['30gCarb', '38gFat']. Formats vary significantly\" (dangerous for T1D carb dosing). A01-F3: \"39 instances of 'cal', 2 instances of 'kcal'... No universal notation found.\"",
+    "proposed_fix_theme": "Adopt a single number-formatting utility and style guide (kcal everywhere, '30 g carb' spacing, thousands separators, units on every bare number) and route all macro displays through it.",
+    "finding_ids": [
+      "A01-F3",
+      "A02-F9",
+      "A02-F10",
+      "A02-F12",
+      "A04-F13",
+      "A08-F9",
+      "A08-F10",
+      "A08-F14",
+      "A09-F2",
+      "A13-F9",
+      "A19-F10",
+      "A20-F7",
+      "A20-F13"
+    ]
+  },
+  {
+    "id": "C06",
+    "title": "Missing loading states: no spinners/skeletons, blank pages and layout shift during fetch",
+    "agents": [
+      "A01",
+      "A02",
+      "A03",
+      "A04",
+      "A10",
+      "A12",
+      "A16",
+      "A18",
+      "A19"
+    ],
+    "personas": 12,
+    "max_severity": 4,
+    "categories": "pain-point (6), improvement-idea (5), suggestion (3)",
+    "representative_evidence": "A18-F13: \"Mobile recipes page: 0 loading-state indicators (0 skeleton elements detected), 0 recipe cards visible in DOM initially... user sees blank/empty page.\" A10-F13: \"No [role='status'], .spinner, or loading indicator visible during fetch. On slow 3G... user won't know if search is working.\"",
+    "proposed_fix_theme": "Add skeleton loaders and role=status spinners to search, recipes, log, progress, and coach fetches to eliminate blank states and layout shift on slow networks.",
+    "finding_ids": [
+      "A01-F10",
+      "A02-F7",
+      "A03-F7",
+      "A04-F12",
+      "A10-F8",
+      "A10-F13",
+      "A12-F12",
+      "A16-F7",
+      "A18-F3",
+      "A18-F4",
+      "A18-F13",
+      "A19-F7",
+      "A19-F8",
+      "A19-F17"
+    ]
+  },
+  {
+    "id": "C07",
+    "title": "Form inputs lack programmatic/visible labels (Settings, Progress weight, onboarding)",
+    "agents": [
+      "A03",
+      "A05",
+      "A07",
+      "A11",
+      "A12",
+      "A13",
+      "A17"
+    ],
+    "personas": 8,
+    "max_severity": 5,
+    "categories": "pain-point (9)",
+    "representative_evidence": "A17-F9: \"Settings page inputs show in output: 'input[226x20] \\\"(unlabeled)\\\"' x3 \u2014 no visible placeholder or label text.\" A11-F1: \"Progress page weight input... found 1 input on the page with label='(no label)'\" \u2014 announced as bare 'edit text' to AT.",
+    "proposed_fix_theme": "Associate every input with a persistent visible <label> (plus aria-label where needed); stop using placeholder-as-label so pairs survive zoom and screen readers.",
+    "finding_ids": [
+      "A03-F2",
+      "A05-F7",
+      "A07-F1",
+      "A11-F1",
+      "A11-F2",
+      "A12-F4",
+      "A12-F15",
+      "A13-F6",
+      "A17-F9"
+    ]
+  },
+  {
+    "id": "C08",
+    "title": "Icon-only buttons missing accessible names / visible labels (nav icons, send button, expand controls)",
+    "agents": [
+      "A01",
+      "A03",
+      "A05",
+      "A06",
+      "A09",
+      "A15",
+      "A18",
+      "A20"
+    ],
+    "personas": 7,
+    "max_severity": 4,
+    "categories": "pain-point (4), improvement-idea (5), suggestion (1)",
+    "representative_evidence": "A03-F1: \"audit revealed buttons with no text content and no aria-label attribute. Specifically the 'Open user settings menu' icon button... has 0 readable text.\" A05-F14: coach send button has empty text content; screen-reader users cannot identify its purpose.",
+    "proposed_fix_theme": "Audit all icon-only controls and add aria-labels (and small visible text labels on bottom nav) plus proper roles, so screen-reader and voice-control users can target them.",
+    "finding_ids": [
+      "A01-F5",
+      "A01-F16",
+      "A03-F1",
+      "A05-F14",
+      "A06-F10",
+      "A09-F7",
+      "A15-F13",
+      "A15-F16",
+      "A18-F21",
+      "A20-F6"
+    ]
+  },
+  {
+    "id": "C09",
+    "title": "Inconsistent spacing/padding rhythm between sections and buttons",
+    "agents": [
+      "A03",
+      "A04",
+      "A05",
+      "A08",
+      "A10",
+      "A14",
+      "A15",
+      "A20"
+    ],
+    "personas": 9,
+    "max_severity": 4,
+    "categories": "pain-point (2), improvement-idea (3), suggestion (4)",
+    "representative_evidence": "A14-F13: \"Spacing consistency check: sectionCount=9, spacingGaps=[-177, 45, 28], consistent=false. The first gap is negative (sections overlap).\" A08-F4: \"3 unique padding values (0px, 12px 24px, 10px 16px) for similar-looking buttons.\"",
+    "proposed_fix_theme": "Adopt a spacing scale (e.g. 4/8/16/24) and shared button padding tokens; fix the negative-gap overlap on Daily Review and normalize section margins app-wide.",
+    "finding_ids": [
+      "A03-F11",
+      "A04-F5",
+      "A04-F19",
+      "A05-F10",
+      "A08-F4",
+      "A10-F4",
+      "A14-F13",
+      "A15-F4",
+      "A20-F8"
+    ]
+  },
+  {
+    "id": "C10",
+    "title": "Shaming/discouraging/clinical tone in progress, recovery, and target messaging",
+    "agents": [
+      "A07",
+      "A09",
+      "A10",
+      "A11",
+      "A13",
+      "A20"
+    ],
+    "personas": 6,
+    "max_severity": 5,
+    "categories": "pain-point (8), suggestion (3), improvement-idea (1)",
+    "representative_evidence": "A13-F17: header phrase \"Trends and direction over time \u2014 no targets to fail\" contradicts eating-disorder-recovery goals where weight gain is therapeutic. A20-F1: \"'350 kcal over target' implies failure rather than data... triggers relapse anxiety.\"",
+    "proposed_fix_theme": "Copy pass with a neutral-supportive voice guide: replace judgment/failure framing with factual reporting, add encouragement for under-target and recovery states, and explain reasoning behind recommendations like 'cap intensity'.",
+    "finding_ids": [
+      "A07-F4",
+      "A09-F12",
+      "A09-F13",
+      "A10-F12",
+      "A11-F6",
+      "A11-F7",
+      "A11-F21",
+      "A11-F22",
+      "A13-F15",
+      "A13-F17",
+      "A20-F1",
+      "A20-F3"
+    ]
+  },
+  {
+    "id": "C11",
+    "title": "Missing or unhelpful empty states (dashboard, coach, recipes, daily review)",
+    "agents": [
+      "A02",
+      "A03",
+      "A05",
+      "A06",
+      "A08",
+      "A12",
+      "A17"
+    ],
+    "personas": 7,
+    "max_severity": 4,
+    "categories": "pain-point (2), improvement-idea (1), suggestion (4)",
+    "representative_evidence": "A03-F10: \"an empty coach state with ambiguous next-action is a problem. Either the page should show an empty-state illustration with a clear 'Ask coach' CTA...\" A02-F16: \"Empty/error state test: 'empty=false error=false' \u2014 no empty-state messaging detected.\"",
+    "proposed_fix_theme": "Design a standard empty-state component (illustration + encouraging copy + primary next-action CTA) and deploy it on dashboard, coach, recipes, grocery, and daily review.",
+    "finding_ids": [
+      "A02-F16",
+      "A03-F10",
+      "A05-F9",
+      "A06-F15",
+      "A08-F15",
+      "A12-F8",
+      "A17-F8"
+    ]
+  },
+  {
+    "id": "C12",
+    "title": "No success confirmation after actions (log meal, add grocery item, save settings; no undo, no aria-live)",
+    "agents": [
+      "A01",
+      "A03",
+      "A06",
+      "A08",
+      "A14",
+      "A18",
+      "A19"
+    ],
+    "personas": 8,
+    "max_severity": 4,
+    "categories": "pain-point (2), improvement-idea (3), suggestion (3)",
+    "representative_evidence": "A19-F5: \"After form submit, no toast container, no success color indicator, no loading spinner, no button disabled state, and no page state change observed. Log request appears to complete silently.\" A06-F12: after adding a recipe to grocery list, \"no toast/success message or list update visible without navigation.\"",
+    "proposed_fix_theme": "Add a global toast/aria-live confirmation pattern (with undo for meal logs) fired on every mutating action: log meal, favorite, grocery add, settings save.",
+    "finding_ids": [
+      "A01-F14",
+      "A03-F8",
+      "A06-F12",
+      "A08-F12",
+      "A14-F4",
+      "A14-F8",
+      "A18-F10",
+      "A19-F5"
+    ]
+  },
+  {
+    "id": "C13",
+    "title": "Layout breaks at zoom/large accessibility text (truncated labels, clipped dropdowns, focus scrolled offscreen)",
+    "agents": [
+      "A01",
+      "A03",
+      "A09",
+      "A11",
+      "A12",
+      "A14",
+      "A17"
+    ],
+    "personas": 7,
+    "max_severity": 4,
+    "categories": "pain-point (5), improvement-idea (3)",
+    "representative_evidence": "A03-F13: \"Zoom test at 125% on /app/settings... 2 confirmed truncated labels: 'Food restrictions and allergies' (1px visible < 262px needed).\" A14-F5: \"At 200% zoom... when tabbed through, the focused element may not be visible in the magnified viewport, leaving P54 disoriented.\"",
+    "proposed_fix_theme": "Test and fix 125\u2013200% zoom / Large Accessibility Sizes: allow labels and dropdowns to wrap/expand, keep sidebar labels readable, and scroll focused elements into view.",
+    "finding_ids": [
+      "A01-F6",
+      "A03-F13",
+      "A09-F16",
+      "A11-F13",
+      "A11-F15",
+      "A12-F16",
+      "A14-F5",
+      "A17-F10"
+    ]
+  },
+  {
+    "id": "C14",
+    "title": "WCAG contrast failures on brand/logo, buttons, and key numbers",
+    "agents": [
+      "A01",
+      "A02",
+      "A03",
+      "A14",
+      "A20"
+    ],
+    "personas": 6,
+    "max_severity": 5,
+    "categories": "pain-point (6)",
+    "representative_evidence": "A02-F13: \"ratio=2.77 | fg=rgb(17, 117, 88) bg=rgb(255, 255, 255)' \u2014 teal-green text on white yields 2.77:1, below WCAG AA.\" A01-F4: \"Logo anchor element 'FuelWell...' measured at 1.49:1 contrast ratio.\"",
+    "proposed_fix_theme": "Run a contrast audit against the palette and darken the teal/light-teal text tokens (logo, buttons, Health Score, macro numbers) to meet 4.5:1 in both themes.",
+    "finding_ids": [
+      "A01-F4",
+      "A02-F13",
+      "A03-F6",
+      "A14-F10",
+      "A20-F11",
+      "A20-F12"
+    ]
+  },
+  {
+    "id": "C15",
+    "title": "Undefined decimal precision/rounding policy for macros and weight",
+    "agents": [
+      "A02",
+      "A05",
+      "A07",
+      "A15",
+      "A19"
+    ],
+    "personas": 5,
+    "max_severity": 5,
+    "categories": "pain-point (3), improvement-idea (2)",
+    "representative_evidence": "A07-F9: \"'Protein 73g' (no decimals)... For P27 (expert nutrition, precision-focused) missing decimals = untrustworthy precision.\" A05-F4: \"Sampled 38 numbers on page; 0 displayed decimals\" while actual values are fractional, breaking reconciliation.",
+    "proposed_fix_theme": "Define and document one rounding policy (e.g. macros to 1 decimal, calories integer) applied consistently across dashboard, nutrition, progress, and detail views.",
+    "finding_ids": [
+      "A02-F11",
+      "A05-F4",
+      "A07-F9",
+      "A15-F11",
+      "A19-F12"
+    ]
+  },
+  {
+    "id": "C16",
+    "title": "Preview/QA hub lacks hierarchy, labels, and explanation of its purpose",
+    "agents": [
+      "A03",
+      "A07",
+      "A11",
+      "A16",
+      "A20"
+    ],
+    "personas": 5,
+    "max_severity": 5,
+    "categories": "pain-point (2), improvement-idea (3), suggestion (2)",
+    "representative_evidence": "A03-F9: \"Preview hub inconsistently labeled (missing route descriptions and affordances)... every inconsistency between /preview documentation and actual routes is a red flag.\" A07-F5: \"All cards have the same card styling... No visual priority cues.\"",
+    "proposed_fix_theme": "Polish /preview: add a 'Preflight / QA hub' title, route descriptions, status-legend explanation, clear link affordances, and visual hierarchy consistent with the app theme.",
+    "finding_ids": [
+      "A03-F9",
+      "A07-F5",
+      "A11-F12",
+      "A16-F2",
+      "A16-F3",
+      "A16-F16",
+      "A20-F9"
+    ]
+  },
+  {
+    "id": "C17",
+    "title": "Disabled buttons (Coach send, settings, login) never explain why they are disabled",
+    "agents": [
+      "A01",
+      "A03",
+      "A04",
+      "A05",
+      "A10",
+      "A11"
+    ],
+    "personas": 6,
+    "max_severity": 4,
+    "categories": "pain-point (4), suggestion (1), improvement-idea (1)",
+    "representative_evidence": "A10-F14: \"send button is disabled... No aria-label, no title attribute. User sees grey button but doesn't understand 'I need to type a message to enable this'.\" A11-F9: \"no visual affordance or aria-label explaining *why* it's disabled.\"",
+    "proposed_fix_theme": "Give disabled controls an explanation: helper text/tooltip + aria-disabled description (e.g. 'Type a message to send'), and distinct disabled styling on mobile.",
+    "finding_ids": [
+      "A01-F8",
+      "A03-F12",
+      "A04-F22",
+      "A05-F15",
+      "A10-F14",
+      "A11-F9"
+    ]
+  },
+  {
+    "id": "C18",
+    "title": "Charts lack axis labels, legends, units, and glanceable hierarchy; label text too small",
+    "agents": [
+      "A04",
+      "A05",
+      "A06",
+      "A12",
+      "A13",
+      "A16",
+      "A17"
+    ],
+    "personas": 9,
+    "max_severity": 3,
+    "categories": "pain-point (4), improvement-idea (4), suggestion (2)",
+    "representative_evidence": "A05-F13: \"Dashboard: 40 SVG/chart elements detected, 0 text elements inside them... axis labels, legends, or unit markers (g, cal, %) not visually apparent.\" A04-F14: \"Progress chart... font size appears small (~12px or less). In low-light conditions, small text is harder to read.\"",
+    "proposed_fix_theme": "Add labeled axes, legends, and unit markers to all SVG charts; bump axis/legend type to >=12-14px high-contrast; visually separate consumed vs remaining and % vs absolute values.",
+    "finding_ids": [
+      "A04-F14",
+      "A05-F13",
+      "A06-F13",
+      "A12-F18",
+      "A13-F10",
+      "A16-F13",
+      "A16-F15",
+      "A17-F4",
+      "A17-F11",
+      "A17-F15"
+    ]
+  },
+  {
+    "id": "C19",
+    "title": "prefers-reduced-motion not respected \u2014 animations still run",
+    "agents": [
+      "A06",
+      "A08",
+      "A09",
+      "A18"
+    ],
+    "personas": 4,
+    "max_severity": 5,
+    "categories": "pain-point (4), improvement-idea (1)",
+    "representative_evidence": "A09-F14: \"Testing with prefers-reduced-motion:reduce detected '72 animated elements still animating'... The animations continue despite the user's accessibility preference.\" A08-F1: \"transition: '1e-05s ease' and animation: '1e-05s ease' on HTML, HEAD, and many other elements... hard blocker for vestibular disorder sufferers.\"",
+    "proposed_fix_theme": "Honor prefers-reduced-motion for real: disable (not just shorten to 1e-05s) transitions/animations under the media query and verify with the emulated setting.",
+    "finding_ids": [
+      "A06-F9",
+      "A08-F1",
+      "A09-F14",
+      "A18-F8",
+      "A18-F9"
+    ]
+  },
+  {
+    "id": "C20",
+    "title": "Color-only encoding of macro rings, charts, and active tab is colorblind-hostile",
+    "agents": [
+      "A04",
+      "A07",
+      "A13",
+      "A16"
+    ],
+    "personas": 4,
+    "max_severity": 5,
+    "categories": "pain-point (3), suggestion (4)",
+    "representative_evidence": "A16-F11: \"4 circular progress rings: green (Calories), blue (Protein), yellow (Carbs), red (Fat)... rings are illegible for protanopia\" with no text labels on rings. A16-F12: chart legend uses colored boxes \"with NO text\" distinctions.",
+    "proposed_fix_theme": "Add redundant coding everywhere color carries meaning: text labels/icons on rings, text legends on charts, colorblind-safe palette, and non-color active-tab indicator (underline/weight).",
+    "finding_ids": [
+      "A04-F4",
+      "A07-F6",
+      "A07-F7",
+      "A13-F11",
+      "A16-F11",
+      "A16-F12",
+      "A16-F14"
+    ]
+  },
+  {
+    "id": "C21",
+    "title": "No dark mode: prefers-color-scheme ignored, no toggle, transparent body background",
+    "agents": [
+      "A01",
+      "A02",
+      "A04",
+      "A08",
+      "A13"
+    ],
+    "personas": 5,
+    "max_severity": 4,
+    "categories": "pain-point (3), improvement-idea (3)",
+    "representative_evidence": "A08-F6: \"Dark mode test: isDark: false... hasDarkClass: false (app has no .dark class implementation)... Light UI forces bright text/bg at 2am.\" A02-F14: \"'HTML bg: rgba(0, 0, 0, 0)' and 'Body bg: rgba(0, 0, 0, 0)' \u2014 both transparent.\"",
+    "proposed_fix_theme": "Implement a real dark theme: respond to prefers-color-scheme, add a settings toggle, set explicit dark backgrounds, and contrast-check dark-mode tokens.",
+    "finding_ids": [
+      "A01-F12",
+      "A02-F14",
+      "A04-F18",
+      "A08-F6",
+      "A13-F1",
+      "A13-F16"
+    ]
+  },
+  {
+    "id": "C22",
+    "title": "Design-token drift: button dimensions, radii, colors, and alignment inconsistent across routes",
+    "agents": [
+      "A02",
+      "A10",
+      "A13",
+      "A17",
+      "A18"
+    ],
+    "personas": 5,
+    "max_severity": 4,
+    "categories": "pain-point (4), improvement-idea (3), suggestion (1)",
+    "representative_evidence": "A10-F1: \"nav links with varying widths: some 227px, others 301px... Search field measures 308x58px while nearby buttons measure inconsistently.\" A13-F3: \"'Log' tab uses red/coral icon color while all other tabs use teal.\"",
+    "proposed_fix_theme": "Consolidate button/nav styling into shared component tokens (height, radius, color mode, alignment) and fix one-off deviations like the Log tab color and misaligned recipe badges.",
+    "finding_ids": [
+      "A02-F1",
+      "A02-F3",
+      "A10-F1",
+      "A10-F3",
+      "A13-F3",
+      "A17-F7",
+      "A18-F20",
+      "A18-F22"
+    ]
+  },
+  {
+    "id": "C23",
+    "title": "Text/input overflow and truncation with long values or narrow viewports",
+    "agents": [
+      "A05",
+      "A10",
+      "A13",
+      "A15",
+      "A20"
+    ],
+    "personas": 6,
+    "max_severity": 4,
+    "categories": "pain-point (6)",
+    "representative_evidence": "A05-F2: \"Email input has scrollWidth=386px but clientWidth=314px. User typing long email sees only partial text.\" A20-F5: \"Found 4 text elements clipped or with width=0: 'Daily decision system' (0px), 'Log dinner to keep it alive to' (truncated).\"",
+    "proposed_fix_theme": "Handle overflow gracefully: widen/scroll inputs for long values, wrap or ellipsize-with-expand card titles, and audit 375px viewport for clipped text.",
+    "finding_ids": [
+      "A05-F2",
+      "A10-F7",
+      "A13-F13",
+      "A15-F9",
+      "A20-F5",
+      "A20-F16"
+    ]
+  },
+  {
+    "id": "C24",
+    "title": "Dashboard action hierarchy is flat: equal-weight quick actions, duplicate CTAs, no primary path",
+    "agents": [
+      "A05",
+      "A11",
+      "A15",
+      "A17",
+      "A19"
+    ],
+    "personas": 5,
+    "max_severity": 4,
+    "categories": "pain-point (1), improvement-idea (4)",
+    "representative_evidence": "A15-F6: \"Six buttons (each 188x44) are arranged in a 2x3 grid with equal visual weight... no visual guide to the 'Daily Review' or 'Nutrition detail' path.\" A05-F18: \"'Build grocery list' call-to-action appears 2 times on the meal-plan page.\"",
+    "proposed_fix_theme": "Introduce clear primary/secondary action styling, dedupe repeated CTAs, and give the dashboard one obvious top task for a 60-second check-in.",
+    "finding_ids": [
+      "A05-F18",
+      "A11-F23",
+      "A15-F6",
+      "A17-F3",
+      "A19-F2"
+    ]
+  },
+  {
+    "id": "C25",
+    "title": "Selected/toggle state not visually clear (meal-type tabs, filters, 'Keep screen awake', menu toggle label)",
+    "agents": [
+      "A01",
+      "A06",
+      "A08",
+      "A09",
+      "A11",
+      "A15"
+    ],
+    "personas": 6,
+    "max_severity": 3,
+    "categories": "pain-point (2), improvement-idea (3), suggestion (1)",
+    "representative_evidence": "A08-F16: \"Meal-type buttons (Breakfast, Lunch, Dinner, Snack) on /app/log mobile do not indicate currently-selected meal type visually.\" A15-F8: \"Navigation menu toggle button always says 'Collapse menu' even when menu is collapsed.\"",
+    "proposed_fix_theme": "Pair aria-pressed with a strong visual selected treatment (fill + icon/check), fix stateful button labels, and make toggle on/off states legible at a glance.",
+    "finding_ids": [
+      "A01-F7",
+      "A06-F6",
+      "A08-F16",
+      "A09-F3",
+      "A11-F5",
+      "A15-F8"
+    ]
+  },
+  {
+    "id": "C26",
+    "title": "Fitness/nutrition jargon and idioms without plain-language help (cut/bulk, macros, net calories)",
+    "agents": [
+      "A03",
+      "A04",
+      "A07",
+      "A10"
+    ],
+    "personas": 5,
+    "max_severity": 4,
+    "categories": "pain-point (5), suggestion (3)",
+    "representative_evidence": "A07-F13: \"'Goal' buttons: 'Gentle cut | Steady cut | Aggressive cut | Maintain | Lean gain | Muscle gain | Rapid bulk' (jargon)\" with no explanation for ESL users. A10-F9: \"form asking about 'Protein target', 'Activity level'... No help elements detected (0 [title], 0 [aria-describedby], 0 tooltip elements).\"",
+    "proposed_fix_theme": "Add inline plain-language helper text/tooltips for every jargon term in onboarding, coach, and review copy; avoid idioms and define terms like 'net calories'.",
+    "finding_ids": [
+      "A03-F16",
+      "A04-F16",
+      "A07-F2",
+      "A07-F3",
+      "A07-F13",
+      "A07-F14",
+      "A07-F16",
+      "A10-F9"
+    ]
+  },
+  {
+    "id": "C27",
+    "title": "'Health Score 39' shown with zero context, scale, or calculation explanation",
+    "agents": [
+      "A07",
+      "A09",
+      "A11",
+      "A13"
+    ],
+    "personas": 4,
+    "max_severity": 4,
+    "categories": "pain-point (2), improvement-idea (1), suggestion (1)",
+    "representative_evidence": "A09-F1: \"The Health score card shows only a number '39' with a 'Details' button... no immediate context about what score range is healthy or how it was calculated.\" A11-F17: \"displayed as a large number without context (no explainer, no gauge, no 'out of 100' label).\"",
+    "proposed_fix_theme": "Add scale context to the Health Score card (out-of-100 gauge, good/needs-work band, one-line 'how this is computed' link) so the number is self-explanatory.",
+    "finding_ids": [
+      "A07-F8",
+      "A09-F1",
+      "A11-F17",
+      "A13-F7"
+    ]
+  },
+  {
+    "id": "C28",
+    "title": "Grocery list/meal-plan mobile experience broken: horizontal-scroll table, dense controls, unclear completeness",
+    "agents": [
+      "A06",
+      "A11",
+      "A13",
+      "A17"
+    ],
+    "personas": 4,
+    "max_severity": 4,
+    "categories": "pain-point (3), improvement-idea (2)",
+    "representative_evidence": "A11-F18: \"Grocery list page renders a table with min-w-[980px] class... on mobile (375px), the table content extends beyond the right edge, requiring horizontal scrolling\" in the store aisle. A11-F4: no clear state for 'slots to fill' so shoppers can't tell if the list is complete.",
+    "proposed_fix_theme": "Rebuild grocery list as a mobile-first card/list layout (no 980px table), space out edit controls, group sections, and show meal-plan completeness status.",
+    "finding_ids": [
+      "A06-F8",
+      "A11-F4",
+      "A11-F18",
+      "A13-F14",
+      "A17-F6"
+    ]
+  },
+  {
+    "id": "C29",
+    "title": "Recipe-card macro strings cramped and concatenated without delimiters ('Cal360Pro30gCarb38gFat9g')",
+    "agents": [
+      "A01",
+      "A08",
+      "A16",
+      "A18"
+    ],
+    "personas": 4,
+    "max_severity": 4,
+    "categories": "pain-point (1), improvement-idea (2), suggestion (2)",
+    "representative_evidence": "A18-F17: \"Recipe cards display nutrition as compressed, label-concatenated strings: 'Cal360Pro30gCarb38gFat9g'... No whitespace or delimiters between labels.\" A08-F17: dense text formatting slows fast carb lookup on phone.",
+    "proposed_fix_theme": "Redesign the macro chip row on recipe cards: separated labeled tiles ('Cal 360 \u00b7 Pro 30 g'), full or standard abbreviations with units, adequate spacing.",
+    "finding_ids": [
+      "A01-F15",
+      "A08-F17",
+      "A16-F9",
+      "A18-F17",
+      "A18-F19"
+    ]
+  },
+  {
+    "id": "C30",
+    "title": "Type scale/heading hierarchy inconsistent across pages (erratic h2 sizes, jumpy font sizes)",
+    "agents": [
+      "A02",
+      "A06",
+      "A09",
+      "A13",
+      "A16"
+    ],
+    "personas": 6,
+    "max_severity": 3,
+    "categories": "pain-point (1), improvement-idea (4), suggestion (1)",
+    "representative_evidence": "A13-F5: \"current sizes jump erratically (27.2px \u2192 24px \u2192 33.6px) breaking visual rhythm.\" A02-F2: \"h2 elements range from 14px to 16px on same page.\"",
+    "proposed_fix_theme": "Define a fixed typographic scale and heading-level mapping, apply it across routes, and keep the semantic heading outline consistent for screen readers.",
+    "finding_ids": [
+      "A02-F2",
+      "A02-F17",
+      "A06-F14",
+      "A09-F8",
+      "A13-F5",
+      "A16-F5"
+    ]
+  },
+  {
+    "id": "C31",
+    "title": "Form/search/scroll state lost on navigation \u2014 interrupted users lose work",
+    "agents": [
+      "A05",
+      "A12",
+      "A15"
+    ],
+    "personas": 3,
+    "max_severity": 5,
+    "categories": "pain-point (4), improvement-idea (1), suggestion (1)",
+    "representative_evidence": "A12-F7: \"after typing 'chicken' in search field, navigating to /app/dashboard and back to /app/log, search input is cleared; state not persisted.\" A15-F5: \"No scroll position restoration observed on route transitions\" \u2014 interrupted caregiver must re-hunt for her place.",
+    "proposed_fix_theme": "Persist in-progress state (search text, filters, form drafts, scroll position) across navigation via session storage or router state restoration.",
+    "finding_ids": [
+      "A05-F5",
+      "A05-F19",
+      "A12-F7",
+      "A12-F9",
+      "A15-F5",
+      "A15-F7"
+    ]
+  },
+  {
+    "id": "C32",
+    "title": "Recipe cards and details have no food images",
+    "agents": [
+      "A11",
+      "A14",
+      "A16"
+    ],
+    "personas": 3,
+    "max_severity": 5,
+    "categories": "pain-point (2), improvement-idea (2)",
+    "representative_evidence": "A16-F17: \"Recipe cards in grid show only text-based information... Recipe detail modal shows header... ingredients list, and numbered steps - but no food image.\" A16-F8: \"three recipe cards visible... all text only.\"",
+    "proposed_fix_theme": "Add recipe imagery (photos or quality illustrated placeholders) to cards and detail views to enable visual scanning and food appeal.",
+    "finding_ids": [
+      "A11-F20",
+      "A14-F3",
+      "A16-F8",
+      "A16-F17"
+    ]
+  },
+  {
+    "id": "C33",
+    "title": "No data provenance or calculation transparency (calorie source, TDEE formula, coach sources)",
+    "agents": [
+      "A13",
+      "A15",
+      "A18",
+      "A19"
+    ],
+    "personas": 4,
+    "max_severity": 3,
+    "categories": "pain-point (3), improvement-idea (2)",
+    "representative_evidence": "A15-F12: \"TDEE calculation methodology is not disclosed; no 'show your math' transparency for Mifflin-St Jeor formula used.\" A19-F11: \"Coach section has no visible attribution or source transparency... is this AI? Is it based on specific guidelines?\"",
+    "proposed_fix_theme": "Add 'where this number comes from' affordances: data source per food entry, TDEE formula disclosure, and AI/guideline attribution on coach responses.",
+    "finding_ids": [
+      "A13-F12",
+      "A15-F12",
+      "A18-F6",
+      "A18-F7",
+      "A19-F11"
+    ]
+  },
+  {
+    "id": "C34",
+    "title": "Keyboard & screen-reader interaction gaps (tab order, Enter-to-search, skip links, result-count announcements)",
+    "agents": [
+      "A03",
+      "A04",
+      "A14",
+      "A15"
+    ],
+    "personas": 4,
+    "max_severity": 3,
+    "categories": "improvement-idea (2), suggestion (3)",
+    "representative_evidence": "A03-F3: \"Focus management during meal-log search could announce result count to screen reader.\" A15-F17: \"Daily Review and Nutrition Detail pages lack skip links or keyboard shortcuts to jump to key sections.\"",
+    "proposed_fix_theme": "Round out keyboard/SR support: aria-live result counts, Enter submits search, logical tab order, skip links, and keyboard access to quick actions.",
+    "finding_ids": [
+      "A03-F3",
+      "A03-F4",
+      "A04-F10",
+      "A14-F17",
+      "A15-F17"
+    ]
+  },
+  {
+    "id": "C35",
+    "title": "Recipe nutrition ambiguous: per-serving vs whole-recipe unclear, servings count missing",
+    "agents": [
+      "A07",
+      "A16",
+      "A18"
+    ],
+    "personas": 3,
+    "max_severity": 4,
+    "categories": "pain-point (1), suggestion (2)",
+    "representative_evidence": "A18-F5: \"Recipe card shows: [CAL 360] [PRO 30g]... with no labels, no 'per serving', no '(USDA 2023)'.\" A07-F11: \"user cannot tell if the 520 cal is the whole recipe or per serving without opening the recipe detail.\"",
+    "proposed_fix_theme": "Display servings count on cards and label all macros explicitly 'per serving' (with per-recipe toggle in detail view).",
+    "finding_ids": [
+      "A07-F11",
+      "A16-F10",
+      "A18-F5"
+    ]
+  },
+  {
+    "id": "C36",
+    "title": "Onboarding/profile setup lacks a progress indicator",
+    "agents": [
+      "A03",
+      "A05",
+      "A10"
+    ],
+    "personas": 3,
+    "max_severity": 4,
+    "categories": "pain-point (1), improvement-idea (2)",
+    "representative_evidence": "A10-F10: \"no progress bar, no 'Step 3 of 15' text, no % complete indicator visible... Anxious user has no sense of commitment required.\"",
+    "proposed_fix_theme": "Add a step/percent progress indicator to onboarding and profile-completion flows.",
+    "finding_ids": [
+      "A03-F15",
+      "A05-F12",
+      "A10-F10"
+    ]
+  },
+  {
+    "id": "C37",
+    "title": "Weight-loss-centric goal framing harms pregnant/gain/recovery users",
+    "agents": [
+      "A12",
+      "A13"
+    ],
+    "personas": 2,
+    "max_severity": 5,
+    "categories": "pain-point (3), improvement-idea (1)",
+    "representative_evidence": "A12-F20: \"Goal dropdown displays 'Lose fat' | Maintain | Gain muscle, with 'Lose fat' first... Profile context reads 'goal lose'\" \u2014 diet-culture shame for a pregnant user. A12-F21: weight projection widget \"assumes weight loss goal, displaying negative change as success.\"",
+    "proposed_fix_theme": "Make goal direction a first-class setting: neutral goal labels (add pregnancy/health-maintenance options), and flip projection/surplus logic and success framing for gain-focused users.",
+    "finding_ids": [
+      "A12-F2",
+      "A12-F20",
+      "A12-F21",
+      "A13-F8"
+    ]
+  },
+  {
+    "id": "C38",
+    "title": "Coach quick-answer friction: too many steps, generic quick-ask prompts, no TL;DR",
+    "agents": [
+      "A04",
+      "A09"
+    ],
+    "personas": 2,
+    "max_severity": 5,
+    "categories": "pain-point (1), improvement-idea (2), suggestion (1)",
+    "representative_evidence": "A04-F6: \"the message input field is not autofocused. After clicking a preset, the UX flow requires waiting for coach response, scrolling to see full answer\" \u2014 fails a 90-second window. A09-F11: suggested questions lack time-of-day/fasting-state context.",
+    "proposed_fix_theme": "Streamline coach for speed: autofocus input, contextual quick-ask chips (time-of-day, allergy, restaurant), and a one-line answer-first response format.",
+    "finding_ids": [
+      "A04-F6",
+      "A04-F8",
+      "A04-F21",
+      "A09-F11"
+    ]
+  },
+  {
+    "id": "C39",
+    "title": "Weak hover/pressed affordances on chips and buttons",
+    "agents": [
+      "A05",
+      "A10",
+      "A14"
+    ],
+    "personas": 3,
+    "max_severity": 3,
+    "categories": "pain-point (1), suggestion (2)",
+    "representative_evidence": "A10-F6: \"Workout filter chips lack hover affordance (cursor not pointer, no background change).\" A14-F12: \"Meal category buttons lack visual hover/focus state feedback... cannot confirm button will register before lifting thumb.\"",
+    "proposed_fix_theme": "Add consistent hover/active/pressed styles (cursor:pointer, background shift, press feedback) to all interactive chips and buttons.",
+    "finding_ids": [
+      "A05-F17",
+      "A10-F6",
+      "A14-F12"
+    ]
+  },
+  {
+    "id": "C40",
+    "title": "Verbose or unhelpful placeholder/instructional microcopy",
+    "agents": [
+      "A09",
+      "A10",
+      "A14",
+      "A20"
+    ],
+    "personas": 4,
+    "max_severity": 2,
+    "categories": "pain-point (2), suggestion (1), improvement-idea (1)",
+    "representative_evidence": "A10-F15: \"Message input placeholder text is 95 characters long; unclear and cuts off on mobile.\" A20-F15: \"Log form has excessive instructional language ('Please enter', 'Click here', 'Type your search').\"",
+    "proposed_fix_theme": "Tighten microcopy: short purposeful placeholders that hint at expected format, drop boilerplate instructions.",
+    "finding_ids": [
+      "A09-F4",
+      "A10-F15",
+      "A14-F2",
+      "A20-F15"
+    ]
+  },
+  {
+    "id": "C41",
+    "title": "Search inputs lack a clear (X) button and search-state affordances",
+    "agents": [
+      "A01",
+      "A18"
+    ],
+    "personas": 2,
+    "max_severity": 4,
+    "categories": "pain-point (2)",
+    "representative_evidence": "A01-F1: \"Search input at /app/log... no clearing affordance. Playwright test confirmed clearButton === null. Users must triple-click and delete or backspace.\"",
+    "proposed_fix_theme": "Add a 44px clear-X inside search fields (food search, recipe search) with aria-label and visible search state.",
+    "finding_ids": [
+      "A01-F1",
+      "A18-F18"
+    ]
+  },
+  {
+    "id": "C42",
+    "title": "Key mobile actions unreachable for one-thumb/left-thumb use",
+    "agents": [
+      "A18",
+      "A20"
+    ],
+    "personas": 2,
+    "max_severity": 4,
+    "categories": "pain-point (2)",
+    "representative_evidence": "A18-F12: \"Mobile recipe filter buttons unreachable from left thumb (9 out of 20 visible buttons).\" A20-F4: \"/app/log: Key actions positioned at right edge, unreachable for left-thumb user.\"",
+    "proposed_fix_theme": "Move primary actions into the bottom thumb zone and avoid pinning key controls to one screen edge.",
+    "finding_ids": [
+      "A18-F12",
+      "A20-F4"
+    ]
+  },
+  {
+    "id": "C43",
+    "title": "Base text too small (12px text-xs, <14px) for outdoor/projector legibility",
+    "agents": [
+      "A06",
+      "A20"
+    ],
+    "personas": 2,
+    "max_severity": 4,
+    "categories": "pain-point (2)",
+    "representative_evidence": "A06-F18: \"Excessive use of text-xs (12px) makes recipe metadata unreadable on bus in outdoor lighting.\"",
+    "proposed_fix_theme": "Raise the minimum body/metadata font size to 14px+ and reserve 12px for truly tertiary content.",
+    "finding_ids": [
+      "A06-F18",
+      "A20-F2"
+    ]
+  },
+  {
+    "id": "C44",
+    "title": "Vague/generic button labels and CTAs ('Open meal breakdown', 'Log') don't communicate outcome",
+    "agents": [
+      "A11",
+      "A19"
+    ],
+    "personas": 4,
+    "max_severity": 4,
+    "categories": "pain-point (1), improvement-idea (2), suggestion (1)",
+    "representative_evidence": "A11-F10: buttons like 'Open meal breakdown', 'Open daily review' \"use vague affordance names that don't clearly indicate what page or modal will open; support agents cannot reliably guide users.\"",
+    "proposed_fix_theme": "Rename actions to outcome-oriented, unique labels (and contextual quick-action copy) so users, support, and voice control can identify them.",
+    "finding_ids": [
+      "A11-F10",
+      "A11-F14",
+      "A11-F16",
+      "A19-F18"
+    ]
+  },
+  {
+    "id": "C45",
+    "title": "No orientation/context cues for returning users (what changed, which day, shift context)",
+    "agents": [
+      "A16",
+      "A19"
+    ],
+    "personas": 2,
+    "max_severity": 4,
+    "categories": "pain-point (3), improvement-idea (1)",
+    "representative_evidence": "A19-F4: \"Dashboard missing onboarding summary for returning users. No 'here's what's new' or 'you have X unread coach messages' indicator.\" A19-F3: \"'Calories left' could refer to today, this week, or cumulative\u2014unclear.\"",
+    "proposed_fix_theme": "Add explicit date/timeframe labels and a lightweight 'since you were away' strip (unread coach messages, gaps to fill, current logging window).",
+    "finding_ids": [
+      "A16-F6",
+      "A19-F1",
+      "A19-F3",
+      "A19-F4"
+    ]
+  },
+  {
+    "id": "C46",
+    "title": "Daily Review too dense: no glance mode, no collapse/back control, poor scannability",
+    "agents": [
+      "A01",
+      "A05"
+    ],
+    "personas": 2,
+    "max_severity": 4,
+    "categories": "pain-point (1), improvement-idea (2), suggestion (1)",
+    "representative_evidence": "A01-F9: \"Daily review on mobile lacks a visible 'back' or 'collapse' button at the top of collapsed sections... P04 one-handed on a phone gets cognitively disoriented.\"",
+    "proposed_fix_theme": "Add a summary-first 'glance' layout with collapsible sections and clear collapse/back affordances on Daily Review.",
+    "finding_ids": [
+      "A01-F9",
+      "A01-F11",
+      "A05-F16"
+    ]
+  },
+  {
+    "id": "C47",
+    "title": "Progress/review shows data but no insight: no pattern flags or daily-variance view",
+    "agents": [
+      "A04",
+      "A07"
+    ],
+    "personas": 2,
+    "max_severity": 4,
+    "categories": "improvement-idea (1), suggestion (1)",
+    "representative_evidence": "A04-F15: \"P16's goal is to 'spot why energy crashes mid-shift,' but the layout is passive; no flags, narratives, or coaching cues highlight patterns.\"",
+    "proposed_fix_theme": "Layer insight onto review/progress: pattern callouts, daily values with variance, not just weekly aggregates.",
+    "finding_ids": [
+      "A04-F15",
+      "A07-F12"
+    ]
+  },
+  {
+    "id": "C48",
+    "title": "Dietary-restriction tags (keto, vegan, gluten-free) not consistently visible or filter feedback missing",
+    "agents": [
+      "A06",
+      "A15"
+    ],
+    "personas": 3,
+    "max_severity": 3,
+    "categories": "pain-point (2), improvement-idea (2), suggestion (1)",
+    "representative_evidence": "A15-F2: \"Recipe cards lack explicit gluten-free indicator in the main list view; dietary badges only appear after filtering.\" A06-F20: \"Missing clear visual feedback when filtering recipes by dietary preference (Vegan).\"",
+    "proposed_fix_theme": "Show consistent dietary badges on every recipe card and give filter application clear visual confirmation.",
+    "finding_ids": [
+      "A06-F7",
+      "A06-F11",
+      "A06-F20",
+      "A15-F1",
+      "A15-F2"
+    ]
+  },
+  {
+    "id": "C49",
+    "title": "No offline/network-failure feedback (retry messaging, sync status)",
+    "agents": [
+      "A10",
+      "A12"
+    ],
+    "personas": 2,
+    "max_severity": 3,
+    "categories": "pain-point (2)",
+    "representative_evidence": "A10-F16: \"No visible error/retry messaging for network failures; user on spotty hotel wifi has no feedback.\"",
+    "proposed_fix_theme": "Add network-error toasts with retry and an offline/sync-status indicator.",
+    "finding_ids": [
+      "A10-F16",
+      "A12-F14"
+    ]
+  },
+  {
+    "id": "C50",
+    "title": "Mobile log/meal-plan flow inefficiency: extra taps to search, no macro summary, filters push content down",
+    "agents": [
+      "A18"
+    ],
+    "personas": 1,
+    "max_severity": 5,
+    "categories": "pain-point (3), improvement-idea (1)",
+    "representative_evidence": "A18-F11: \"Mobile meal log interaction flow requires multiple taps before reaching food search\" \u2014 search focus and results add friction to fast logging.",
+    "proposed_fix_theme": "Compress the mobile logging path (autofocus search, inline macro 'am I on track' summary, compact filters, prominent Day/Week toggle).",
+    "finding_ids": [
+      "A18-F11",
+      "A18-F14",
+      "A18-F15",
+      "A18-F16"
+    ]
+  },
+  {
+    "id": "C51",
+    "title": "Fixed Breakfast/Lunch/Dinner/Snack categories exclude Ramadan and non-standard eating windows",
+    "agents": [
+      "A09"
+    ],
+    "personas": 1,
+    "max_severity": 4,
+    "categories": "pain-point (3), improvement-idea (1)",
+    "representative_evidence": "A09-F17: \"Meal category buttons lack flexible options for Ramadan and other non-standard eating patterns; no way to log suhoor (pre-dawn) or iftar (post-sunset) meals with meaningful categories.\"",
+    "proposed_fix_theme": "Allow custom/renamable meal slots and time-aware meal labels; acknowledge fasting windows in the energy ledger and coach prompts.",
+    "finding_ids": [
+      "A09-F9",
+      "A09-F10",
+      "A09-F17",
+      "A09-F18"
+    ]
+  },
+  {
+    "id": "C52",
+    "title": "Allergen status from profile not surfaced in coach responses or UI",
+    "agents": [
+      "A04"
+    ],
+    "personas": 1,
+    "max_severity": 4,
+    "categories": "pain-point (1), improvement-idea (1)",
+    "representative_evidence": "A04-F7: \"there is no visible allergen-confirmation step or warning badge in quick response cards. Settings shows 'Food restrictions' field, but integration is\" not visible for a shellfish-allergic user.",
+    "proposed_fix_theme": "Surface profile allergies as a visible badge and automatic allergen check in coach answers and food suggestions.",
+    "finding_ids": [
+      "A04-F7",
+      "A04-F20"
+    ]
+  },
+  {
+    "id": "C53",
+    "title": "Recipe page interaction defects: non-interactive 'Best Fit' panel and overlapping click targets",
+    "agents": [
+      "A16"
+    ],
+    "personas": 1,
+    "max_severity": 4,
+    "categories": "pain-point (1), suggestion (1)",
+    "representative_evidence": "A16-F18: \"Best Fit recommendation panel is orphaned and non-interactive - presents a recipe recommendation with no way to view its details.\"",
+    "proposed_fix_theme": "Make the Best Fit card link to its recipe detail and untangle nested/overlapping click targets on recipe cards.",
+    "finding_ids": [
+      "A16-F18",
+      "A16-F19"
+    ]
+  },
+  {
+    "id": "C54",
+    "title": "No medical disclaimer anywhere despite precise health numbers",
+    "agents": [
+      "A19"
+    ],
+    "personas": 1,
+    "max_severity": 4,
+    "categories": "pain-point (1)",
+    "representative_evidence": "A19-F9: \"Searched dashboard, log, coach pages. No disclaimer found... without any legal or educational qualifier.\"",
+    "proposed_fix_theme": "Add a 'not medical advice / consult your provider' disclaimer in footer, coach, and settings.",
+    "finding_ids": [
+      "A19-F9"
+    ]
+  },
+  {
+    "id": "C55",
+    "title": "Serving-size selector hidden until after food selection in search results",
+    "agents": [
+      "A07"
+    ],
+    "personas": 1,
+    "max_severity": 4,
+    "categories": "pain-point (1)",
+    "representative_evidence": "A07-F10: \"search results show '165 cal /100g', but do NOT display serving size selector until after the user selects an ingredient\" \u2014 friction for weigh-everything users.",
+    "proposed_fix_theme": "Expose quantity/serving controls directly in the search-result row or immediately on selection.",
+    "finding_ids": [
+      "A07-F10"
+    ]
+  },
+  {
+    "id": "C56",
+    "title": "Coach UI doesn't distinguish interactive prompts vs content vs user data",
+    "agents": [
+      "A06",
+      "A17"
+    ],
+    "personas": 2,
+    "max_severity": 2,
+    "categories": "improvement-idea (1), suggestion (1)",
+    "representative_evidence": "A17-F12: \"Coach interface... does not clearly indicate which text is interactive (clickable prompt suggestions) vs. non-interactive help text.\"",
+    "proposed_fix_theme": "Style coach suggestion chips as obvious buttons and visually separate coach-generated content from user data.",
+    "finding_ids": [
+      "A06-F16",
+      "A17-F12"
+    ]
+  },
+  {
+    "id": "C57",
+    "title": "Photosensitivity comfort: bright white elements and no high-contrast-mode support",
+    "agents": [
+      "A08"
+    ],
+    "personas": 1,
+    "max_severity": 3,
+    "categories": "improvement-idea (2), suggestion (1)",
+    "representative_evidence": "A08-F2: \"24 elements with rgb(255, 255, 255) or rgb(254, 254, 254) on light-background page may trigger eye strain and migraine symptoms.\"",
+    "proposed_fix_theme": "Soften pure-white surfaces, and detect/respond to OS 'Increase Contrast' preference.",
+    "finding_ids": [
+      "A08-F2",
+      "A08-F13",
+      "A08-F18"
+    ]
+  },
+  {
+    "id": "C58",
+    "title": "No date picker for back-logging meals on previous days",
+    "agents": [
+      "A08"
+    ],
+    "personas": 1,
+    "max_severity": 3,
+    "categories": "improvement-idea (1)",
+    "representative_evidence": "A08-F7: \"P31 wants to log yesterday's meals at 2am but meal-type buttons... only log for 'today'.\"",
+    "proposed_fix_theme": "Add a date selector to the log flow for retroactive entries.",
+    "finding_ids": [
+      "A08-F7"
+    ]
+  },
+  {
+    "id": "C59",
+    "title": "No double-submit protection on forms",
+    "agents": [
+      "A19"
+    ],
+    "personas": 1,
+    "max_severity": 3,
+    "categories": "improvement-idea (1)",
+    "representative_evidence": "A19-F15: \"Submit buttons on /signup and /app/log showed no visible disabled state or loading indicator after first click... user taps twice, two POST requests fire, two meals logged.\"",
+    "proposed_fix_theme": "Disable submit buttons and show pending state while requests are in flight.",
+    "finding_ids": [
+      "A19-F15"
+    ]
+  },
+  {
+    "id": "C60",
+    "title": "Metric/Imperial unit preference doesn't persist or convert",
+    "agents": [
+      "A20"
+    ],
+    "personas": 1,
+    "max_severity": 3,
+    "categories": "pain-point (1)",
+    "representative_evidence": "A20-F17: \"After clicking Metric button in Settings, the page still displays 'WEIGHT IN POUNDS'... weight is shown as '186.4 lb'... no KG option.\"",
+    "proposed_fix_theme": "Wire the unit toggle to a persisted preference that converts weight/height labels and values app-wide.",
+    "finding_ids": [
+      "A20-F17"
+    ]
+  },
+  {
+    "id": "C61",
+    "title": "Streak status not glanceable for ritual-driven users",
+    "agents": [
+      "A14"
+    ],
+    "personas": 1,
+    "max_severity": 3,
+    "categories": "pain-point (1)",
+    "representative_evidence": "A14-F15: \"P56 cannot quickly confirm if today's entry will keep the 6-day streak alive\u2014the metric P56 relies on for ritual motivation.\"",
+    "proposed_fix_theme": "Add a prominent streak indicator showing today's status and what keeps the streak alive.",
+    "finding_ids": [
+      "A14-F15"
+    ]
+  },
+  {
+    "id": "C62",
+    "title": "Settings form lacks section headers/visual grouping",
+    "agents": [
+      "A11"
+    ],
+    "personas": 1,
+    "max_severity": 3,
+    "categories": "improvement-idea (1)",
+    "representative_evidence": "A11-F11: \"support agents cannot easily identify which form fields belong to 'Health Profile' vs. 'Preferences' when troubleshooting.\"",
+    "proposed_fix_theme": "Group settings fields under labeled section headers with spacing/dividers.",
+    "finding_ids": [
+      "A11-F11"
+    ]
+  },
+  {
+    "id": "C63",
+    "title": "Signup funnel steps not instrumented for drop-off analytics",
+    "agents": [
+      "A05"
+    ],
+    "personas": 1,
+    "max_severity": 3,
+    "categories": "improvement-idea (1)",
+    "representative_evidence": "A05-F8: \"growth marketer should track funnel drop-off per step (e.g., email field vs. password vs. submit).\"",
+    "proposed_fix_theme": "Add per-step funnel event tracking on signup/onboarding.",
+    "finding_ids": [
+      "A05-F8"
+    ]
+  },
+  {
+    "id": "C64",
+    "title": "Activity framing limited to generic steps \u2014 excludes wheelchair/adaptive athletes",
+    "agents": [
+      "A04"
+    ],
+    "personas": 1,
+    "max_severity": 3,
+    "categories": "improvement-idea (1)",
+    "representative_evidence": "A04-F3: \"P13 is a wheelchair rugby player with a non-standard energy profile; the app should offer activity-type customization beyond generic step counting.\"",
+    "proposed_fix_theme": "Offer activity-type customization beyond step counts for adaptive athletes.",
+    "finding_ids": [
+      "A04-F3"
+    ]
+  },
+  {
+    "id": "C65",
+    "title": "Over-broad CSS transition property lists risk jank on low-end devices",
+    "agents": [
+      "A02"
+    ],
+    "personas": 1,
+    "max_severity": 2,
+    "categories": "improvement-idea (1)",
+    "representative_evidence": "A02-F15: \"Button transitions... include all CSS properties (display, content-visibility, overlay) which may cause jank on lower-end devices.\"",
+    "proposed_fix_theme": "Narrow transition declarations to the specific animated properties.",
+    "finding_ids": [
+      "A02-F15"
+    ]
+  },
+  {
+    "id": "C66",
+    "title": "oklab()/lab() color formats risk inconsistent rendering across browsers/AT",
+    "agents": [
+      "A14"
+    ],
+    "personas": 2,
+    "max_severity": 2,
+    "categories": "suggestion (2)",
+    "representative_evidence": "A14-F11: \"Main calorie number (1400) uses lab() color format... which may render inconsistently across phone vendors.\"",
+    "proposed_fix_theme": "Provide sRGB fallbacks for oklab/lab color values on focus rings and key numbers.",
+    "finding_ids": [
+      "A14-F7",
+      "A14-F11"
+    ]
+  },
+  {
+    "id": "C67",
+    "title": "Sample/illustrative history data not labeled as example",
+    "agents": [
+      "A09"
+    ],
+    "personas": 1,
+    "max_severity": 2,
+    "categories": "improvement-idea (1)",
+    "representative_evidence": "A09-F15: \"Progress view shows 'sample history' bars but doesn't clarify that older bars are example data, potentially confusing a low-tech retiree.\"",
+    "proposed_fix_theme": "Visually mark example/sample data distinctly from real logged data.",
+    "finding_ids": [
+      "A09-F15"
+    ]
+  },
+  {
+    "id": "C68",
+    "title": "Inconsistent label capitalization style ('Display name' vs 'WEIGHT IN POUNDS')",
+    "agents": [
+      "A07"
+    ],
+    "personas": 1,
+    "max_severity": 2,
+    "categories": "suggestion (1)",
+    "representative_evidence": "A07-F15: \"Settings page and form labels use sentence-case capitalization inconsistently ('Display name' vs 'Email' vs 'WEIGHT IN POUNDS').\"",
+    "proposed_fix_theme": "Standardize label casing (sentence case) across all forms.",
+    "finding_ids": [
+      "A07-F15"
+    ]
+  },
+  {
+    "id": "C69",
+    "title": "Anomalous seed-data value (53230g) erodes trust in macro accuracy",
+    "agents": [
+      "A08"
+    ],
+    "personas": 1,
+    "max_severity": 2,
+    "categories": "improvement-idea (1)",
+    "representative_evidence": "A08-F11: \"One very large macro number (53230g) found in recipes text, suggesting possible data entry error or unit mismatch in seed data.\"",
+    "proposed_fix_theme": "Validate/clean seed nutrition data and add sanity bounds on displayed macro values.",
+    "finding_ids": [
+      "A08-F11"
+    ]
+  },
+  {
+    "id": "C70",
+    "title": "Positive observations \u2014 behaviors verified working, no action needed",
+    "agents": [
+      "A12"
+    ],
+    "personas": 3,
+    "max_severity": 1,
+    "categories": "suggestion (4), improvement-idea (1)",
+    "representative_evidence": "A12-F5: \"Tab order reaches interactive elements in logical sequence\"; A12-F6: \"CSS includes :focus-visible styling for keyboard users.\" (Note: partially contradicted by other agents' focus-visibility findings in C04 \u2014 verify per-route.)",
+    "proposed_fix_theme": "No fix required; retain as regression checkpoints when addressing related clusters.",
+    "finding_ids": [
+      "A12-F5",
+      "A12-F6",
+      "A12-F10",
+      "A12-F17",
+      "A12-F19"
+    ]
+  }
+]

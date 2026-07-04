@@ -1,0 +1,1187 @@
+[
+  {
+    "p73_orientation": {
+      "hasMainHeading": true,
+      "mainHeadingText": "Good afternoon, Alex Preview",
+      "hasDateDisplay": true,
+      "dateText": "FuelWell — AI Nutrition Coach@font-face{font-famil",
+      "statsCount": 0,
+      "statsVisible": [],
+      "ctaCount": 1,
+      "ctas": [
+        "Open meal breakdown"
+      ],
+      "h2Count": 6,
+      "h3Count": 0
+    },
+    "screenshot": "/Users/robert.barbieri/Developer/FuelWell/surf-runs/20260704-145342-ui-polish-refine/evidence/phase3/A19-P73-dashboard-orientation.png"
+  },
+  {
+    "p74_visual_feedback": {
+      "hasToastContainer": false,
+      "hasSuccessColor": false,
+      "hasErrorColor": false,
+      "hasProgressBar": false,
+      "hasSpinner": false,
+      "formGroups": 7
+    },
+    "screenshot": "/Users/robert.barbieri/Developer/FuelWell/surf-runs/20260704-145342-ui-polish-refine/evidence/phase3/A19-P74-visual-feedback.png"
+  },
+  {
+    "p75_credibility": {
+      "numbers": {
+        "numbers": [
+          {
+            "value": "1400",
+            "context": "1400Calories left",
+            "hasUnit": false
+          },
+          {
+            "value": "39",
+            "context": "Health score39",
+            "hasUnit": false
+          },
+          {
+            "value": "1400",
+            "context": "1400remaining38% of target850 / 2250 kcal",
+            "hasUnit": false
+          },
+          {
+            "value": "1400",
+            "context": "1400Calories left",
+            "hasUnit": false
+          },
+          {
+            "value": "2",
+            "context": "2Meals",
+            "hasUnit": false
+          },
+          {
+            "value": "850",
+            "context": "850 / 2,250 kcal",
+            "hasUnit": false
+          },
+          {
+            "value": "73",
+            "context": "73 / 175g",
+            "hasUnit": false
+          },
+          {
+            "value": "88",
+            "context": "88 / 240g",
+            "hasUnit": false
+          },
+          {
+            "value": "25",
+            "context": "25 / 75g",
+            "hasUnit": false
+          }
+        ],
+        "hasDisclaimer": false,
+        "coachSection": false
+      },
+      "nutrition": {
+        "macroLabelsWithUnits": [
+          {
+            "text": "FuelWell — AI Nutrition Coach@font-face{font-family:'__nextj",
+            "hasUnit": true
+          },
+          {
+            "text": "FuelWell — AI Nutrition Coach@font-face{font-family:'__nextj",
+            "hasUnit": true
+          },
+          {
+            "text": "@font-face{font-family:'__nextjs-Geist';font-style:normal;fo",
+            "hasUnit": true
+          },
+          {
+            "text": "FuelWellDaily decision systemDashboardDaily ReviewLog MealCo",
+            "hasUnit": true
+          },
+          {
+            "text": "FuelWellDaily decision systemDashboardDaily ReviewLog MealCo",
+            "hasUnit": true
+          }
+        ],
+        "unitConsistency": true
+      }
+    },
+    "screenshot": "/Users/robert.barbieri/Developer/FuelWell/surf-runs/20260704-145342-ui-polish-refine/evidence/phase3/A19-P75-credibility.png"
+  },
+  {
+    "p76_speed": {
+      "perf": {
+        "domContentLoaded": 0,
+        "loadComplete": 0,
+        "firstPaint": 248
+      },
+      "stability": {
+        "buttonSizes": [
+          {
+            "width": 0,
+            "height": 0,
+            "text": ""
+          },
+          {
+            "width": 0,
+            "height": 0,
+            "text": ""
+          },
+          {
+            "width": 32,
+            "height": 32,
+            "text": ""
+          }
+        ],
+        "imagesWithoutDimensions": 0
+      }
+    },
+    "screenshot": "/Users/robert.barbieri/Developer/FuelWell/surf-runs/20260704-145342-ui-polish-refine/evidence/phase3/A19-P76-speed-perf.png"
+  },
+  {
+    "touch_targets": {
+      "small": [
+        {
+          "tag": "a",
+          "w": 0,
+          "h": 0,
+          "label": "FuelWellDaily decision system"
+        },
+        {
+          "tag": "button",
+          "w": 0,
+          "h": 0,
+          "label": "Collapse menu"
+        },
+        {
+          "tag": "a",
+          "w": 0,
+          "h": 0,
+          "label": "Dashboard"
+        },
+        {
+          "tag": "a",
+          "w": 0,
+          "h": 0,
+          "label": "Daily Review"
+        },
+        {
+          "tag": "a",
+          "w": 0,
+          "h": 0,
+          "label": "Log Meal"
+        },
+        {
+          "tag": "a",
+          "w": 0,
+          "h": 0,
+          "label": "Coach"
+        },
+        {
+          "tag": "a",
+          "w": 0,
+          "h": 0,
+          "label": "Workouts"
+        },
+        {
+          "tag": "a",
+          "w": 0,
+          "h": 0,
+          "label": "Fitness"
+        },
+        {
+          "tag": "a",
+          "w": 0,
+          "h": 0,
+          "label": "Recipes"
+        },
+        {
+          "tag": "a",
+          "w": 0,
+          "h": 0,
+          "label": "Groceries"
+        },
+        {
+          "tag": "a",
+          "w": 0,
+          "h": 0,
+          "label": "Recovery"
+        },
+        {
+          "tag": "a",
+          "w": 0,
+          "h": 0,
+          "label": "Progress"
+        },
+        {
+          "tag": "a",
+          "w": 0,
+          "h": 0,
+          "label": "Profile"
+        },
+        {
+          "tag": "a",
+          "w": 0,
+          "h": 0,
+          "label": "Settings"
+        },
+        {
+          "tag": "button",
+          "w": 0,
+          "h": 0,
+          "label": "Open desktop user settings menu"
+        },
+        {
+          "tag": "a",
+          "w": 77,
+          "h": 28,
+          "label": "FuelWell"
+        },
+        {
+          "tag": "a",
+          "w": 32,
+          "h": 32,
+          "label": "Open daily review"
+        },
+        {
+          "tag": "button",
+          "w": 32,
+          "h": 32,
+          "label": "Open user settings menu"
+        },
+        {
+          "tag": "button",
+          "w": 308,
+          "h": 42,
+          "label": "View today's plate"
+        },
+        {
+          "tag": "button",
+          "w": 39,
+          "h": 28,
+          "label": "All"
+        },
+        {
+          "tag": "button",
+          "w": 75,
+          "h": 28,
+          "label": "Favorites"
+        },
+        {
+          "tag": "button",
+          "w": 66,
+          "h": 28,
+          "label": "Dislikes"
+        },
+        {
+          "tag": "button",
+          "w": 101,
+          "h": 28,
+          "label": "Recently used"
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Chicken breast, grilledPoultry · 165 cal"
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Chicken breast, grilled"
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Chicken breast, friedPoultry · 222 cal /"
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Chicken breast, fried"
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Chicken thigh, roastedPoultry · 209 cal "
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Chicken thigh, roasted"
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Chicken thigh, skin-onPoultry · 232 cal "
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Chicken thigh, skin-on"
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Chicken drumstickPoultry · 172 cal /100g"
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Chicken drumstick"
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Chicken wing, roastedPoultry · 203 cal /"
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Chicken wing, roasted"
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Rotisserie chicken, mixedPoultry · 190 c"
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Rotisserie chicken, mixed"
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Ground chicken, cookedPoultry · 189 cal "
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Ground chicken, cooked"
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Chicken tenders, breadedPoultry · 271 ca"
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Chicken tenders, breaded"
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Turkey breast, roastedPoultry · 135 cal "
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Turkey breast, roasted"
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Ground turkey 93/7, cookedPoultry · 213 "
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Ground turkey 93/7, cooked"
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Ground turkey 99/1, cookedPoultry · 151 "
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Ground turkey 99/1, cooked"
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Turkey deli slicesPoultry · 104 cal /100"
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Turkey deli slices"
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Duck breast, roastedPoultry · 201 cal /1"
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Duck breast, roasted"
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Chicken sausagePoultry · 172 cal /100g ·"
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Chicken sausage"
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Turkey baconPoultry · 218 cal /100g · 17"
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Turkey bacon"
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Chicken nuggetsPoultry · 297 cal /100g ·"
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Chicken nuggets"
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Chicken liver, cookedPoultry · 167 cal /"
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Chicken liver, cooked"
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Ground beef 90/10, cookedBeef & Pork · 2"
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Ground beef 90/10, cooked"
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Ground beef 80/20, cookedBeef & Pork · 2"
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Ground beef 80/20, cooked"
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Ribeye steak, grilledBeef & Pork · 291 c"
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Ribeye steak, grilled"
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Sirloin steak, grilledBeef & Pork · 212 "
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Sirloin steak, grilled"
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Filet mignonBeef & Pork · 227 cal /100g "
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Filet mignon"
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "NY strip steakBeef & Pork · 232 cal /100"
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose NY strip steak"
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Flank steakBeef & Pork · 192 cal /100g ·"
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Flank steak"
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Beef brisket, smokedBeef & Pork · 288 ca"
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Beef brisket, smoked"
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Beef short ribsBeef & Pork · 295 cal /10"
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Beef short ribs"
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Roast beef deli slicesBeef & Pork · 115 "
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Roast beef deli slices"
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Beef jerkyBeef & Pork · 410 cal /100g · "
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Beef jerky"
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Corned beefBeef & Pork · 251 cal /100g ·"
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Corned beef"
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Pork chop, grilledBeef & Pork · 197 cal "
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Pork chop, grilled"
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Pork tenderloinBeef & Pork · 143 cal /10"
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Pork tenderloin"
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Pulled pork, no sauceBeef & Pork · 247 c"
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Pulled pork, no sauce"
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Pork bellyBeef & Pork · 518 cal /100g · "
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Pork belly"
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Bacon, pan-friedBeef & Pork · 541 cal /1"
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Bacon, pan-fried"
+        },
+        {
+          "tag": "button",
+          "w": 278,
+          "h": 42,
+          "label": "Ham, slicedBeef & Pork · 145 cal /100g ·"
+        },
+        {
+          "tag": "button",
+          "w": 40,
+          "h": 40,
+          "label": "Choose Ham, sliced"
+        },
+        {
+          "tag": "button",
+          "w": 0,
+          "h": 0,
+          "label": "Breakfast"
+        },
+        {
+          "tag": "button",
+          "w": 0,
+          "h": 0,
+          "label": "Lunch"
+        },
+        {
+          "tag": "button",
+          "w": 0,
+          "h": 0,
+          "label": "Dinner"
+        },
+        {
+          "tag": "button",
+          "w": 0,
+          "h": 0,
+          "label": "Snack"
+        },
+        {
+          "tag": "button",
+          "w": 36,
+          "h": 36,
+          "label": "Close ingredient drawer"
+        }
+      ],
+      "adequate": [
+        {
+          "w": 166,
+          "h": 48
+        },
+        {
+          "w": 166,
+          "h": 48
+        },
+        {
+          "w": 166,
+          "h": 48
+        },
+        {
+          "w": 166,
+          "h": 48
+        },
+        {
+          "w": 150,
+          "h": 46
+        },
+        {
+          "w": 150,
+          "h": 46
+        },
+        {
+          "w": 150,
+          "h": 46
+        },
+        {
+          "w": 150,
+          "h": 46
+        },
+        {
+          "w": 308,
+          "h": 58
+        },
+        {
+          "w": 107,
+          "h": 44
+        },
+        {
+          "w": 88,
+          "h": 44
+        },
+        {
+          "w": 77,
+          "h": 44
+        },
+        {
+          "w": 69,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 308,
+          "h": 64
+        },
+        {
+          "w": 308,
+          "h": 64
+        },
+        {
+          "w": 358,
+          "h": 48
+        },
+        {
+          "w": 81,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 81,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 65,
+          "h": 45
+        },
+        {
+          "w": 65,
+          "h": 49
+        },
+        {
+          "w": 65,
+          "h": 45
+        },
+        {
+          "w": 65,
+          "h": 45
+        },
+        {
+          "w": 65,
+          "h": 45
+        },
+        {
+          "w": 65,
+          "h": 45
+        }
+      ],
+      "total": 199
+    }
+  },
+  {
+    "spacing_rhythm": {
+      "samples": [
+        {
+          "element": "svg",
+          "padding": "0px",
+          "margin": "0px",
+          "gap": "normal",
+          "bgColor": "rgba(0, 0, 0, 0)"
+        },
+        {
+          "element": "section",
+          "padding": "0px",
+          "margin": "0px 0px 24px",
+          "gap": "18px",
+          "bgColor": "rgba(0, 0, 0, 0)"
+        },
+        {
+          "element": "div",
+          "padding": "0px",
+          "margin": "0px",
+          "gap": "normal",
+          "bgColor": "rgb(255, 255, 255)"
+        },
+        {
+          "element": "section",
+          "padding": "0px",
+          "margin": "0px 0px 24px",
+          "gap": "18px",
+          "bgColor": "rgba(0, 0, 0, 0)"
+        },
+        {
+          "element": "section",
+          "padding": "0px",
+          "margin": "0px 0px 24px",
+          "gap": "16px",
+          "bgColor": "rgba(0, 0, 0, 0)"
+        }
+      ]
+    }
+  }
+]

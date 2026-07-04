@@ -1,0 +1,14 @@
+[
+  {
+    "persona_id": "P80",
+    "category": "pain-point",
+    "severity": 2,
+    "description": "Mixed calorie terminology: \"calories\", \"kcal\", \"cal\" used interchangeably",
+    "reproduction_steps": [
+      "Visit /app/dashboard",
+      "Search text for \"calorie\", \"kcal\", \"cal\""
+    ],
+    "observed_evidence": "Dashboard uses mixed terminology: \"calories\" (yes), \"kcal\" (yes), \"cal\" (yes). Inconsistency confuses users.",
+    "suggested_fix": "Pick one: \"kcal\" is scientifically correct and unambiguous. Use consistently throughout."
+  }
+]

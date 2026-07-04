@@ -1,0 +1,15 @@
+[
+  {
+    "persona_id": "P79",
+    "category": "pain-point",
+    "severity": 4,
+    "description": "Touch targets smaller than 44px minimum, cause mis-taps especially with gloves/fatigue",
+    "reproduction_steps": [
+      "Set viewport to 390x844",
+      "Visit /app/dashboard or /app/log",
+      "Inspect button/target dimensions"
+    ],
+    "observed_evidence": "Found 8 targets <44px:  (0x0);  (0x0);  (32x32). Carpenter with work-hardened hands and possible glove residue needs ≥44px.",
+    "suggested_fix": "Increase all interactive elements to ≥44px × 44px; test on actual phone in hand."
+  }
+]

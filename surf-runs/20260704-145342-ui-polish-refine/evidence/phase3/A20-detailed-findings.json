@@ -1,0 +1,76 @@
+[
+  {
+    "persona_id": "P77",
+    "category": "pain-point",
+    "severity": 3,
+    "description": "Small font sizes (<14px) difficult to read on projected display",
+    "reproduction_steps": [
+      "Set viewport to 1024x768 (projector)",
+      "Visit /preview",
+      "Observe text sizes in demo content"
+    ],
+    "observed_evidence": "Found 4 text elements <14px: P \"New in v1.4.0: Daily nutrition + fitness\" (12px); BUTTON \"Retry\" (12px); P \"Desktop-width product review\" (12px). At projector viewing distance, <14px is hard to read.",
+    "suggested_fix": "Ensure all demo-path text ≥14px; prefer 16px+ for body, 20px+ for headings on projector flow."
+  },
+  {
+    "persona_id": "P77",
+    "category": "pain-point",
+    "severity": 2,
+    "description": "CTA buttons <40px height are small click targets on projector",
+    "reproduction_steps": [
+      "Visit /preview on 1024px viewport",
+      "Locate action buttons"
+    ],
+    "observed_evidence": "Found buttons <40px high: \"Retry\" (34px). Small targets difficult to click with mouse from projector distance.",
+    "suggested_fix": "Use ≥40px button heights for demo CTAs; add generous padding."
+  },
+  {
+    "persona_id": "P78",
+    "category": "pain-point",
+    "severity": 3,
+    "description": "Empty meal plan state messaging tone is dismissive or obligatory",
+    "reproduction_steps": [
+      "Visit /app/meal-plan with fresh account",
+      "Read empty state message"
+    ],
+    "observed_evidence": "Empty state shows: \"FuelWell\nFuelWell\nMeal plan\n\nPlan the next few days around protein, prep time, and grocery needs.\n\nDay\nWeek\n\nPLAN QUALITY\n\n13 of 16 meals are planned.\n\nYour next step is to fill the open dinner and lu...\". Language frames absence as failure rather than invitation.",
+    "suggested_fix": "Use invitational tone: \"Ready to plan ahead? Start whenever.\" instead of \"No meal plan set.\""
+  },
+  {
+    "persona_id": "P78",
+    "category": "pain-point",
+    "severity": 4,
+    "description": "\"Over target\" messaging uses shame language instead of neutral reporting",
+    "reproduction_steps": [
+      "Log meals that exceed targets",
+      "View dashboard macro display"
+    ],
+    "observed_evidence": "Dashboard text: \"FuelWell\nToday\nGood afternoon, Alex Preview\n\nSaturday · keep the momentum\n\nA\n\nTODAY'S DECISION\n\nYou have room to make a clean next choice.\n\n1400\n\nCALORIES LEFT\n\n102g\n\nPROTEIN LEFT\n\n1400 calories and 102g protein remain. Plan the next meal around that gap.\n\nFind meals that fit\nHealth score\n39\nToday's...\". \"Over\" framing implies failure rather than data point.",
+    "suggested_fix": "Use neutral language: \"350 kcal above target\" (data) not \"350 kcal over\" or \"you exceeded\" (judgment)."
+  },
+  {
+    "persona_id": "P79",
+    "category": "pain-point",
+    "severity": 3,
+    "description": "/app/log: Key actions positioned at right edge, unreachable for left-thumb user",
+    "reproduction_steps": [
+      "Set viewport to 390x844",
+      "Visit /app/log",
+      "Map button positions (DevTools Inspect)"
+    ],
+    "observed_evidence": "Found 3 interactive elements (center >300px) in bottom half: \"\" at x=318px; \"\" at x=358px. Require hand shift or right hand for left-thumb user.",
+    "suggested_fix": "Place primary actions within 0-200px horizontal range for left-thumb reach; mirror/duplicate critical nav/actions on both sides."
+  },
+  {
+    "persona_id": "P78",
+    "category": "improvement-idea",
+    "severity": 1,
+    "description": "Log form has excessive instructional language (\"Please enter\", \"Click here\", \"Type your search\")",
+    "reproduction_steps": [
+      "Visit /app/log",
+      "Read form labels and helper text"
+    ],
+    "observed_evidence": "Found 7 instructional word instances. Over-explanation clutters the form.",
+    "suggested_fix": "Simplify: use placeholder text instead of labels when obvious (search input = \"Banana, yogurt, ...\"). Reduce \"please\" and imperatives."
+  }
+]

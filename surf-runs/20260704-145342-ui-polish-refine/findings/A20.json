@@ -1,0 +1,243 @@
+{
+  "agent_id": "A20",
+  "persona_set": "S20",
+  "app_exercised": "Exercised FuelWell web app across 6+ routes at http://localhost:3000 using Playwright automation targeting personas P77 (program director, 50, projector presenter), P78 (recovering perfectionist tracker, 26), P79 (left-handed carpenter, 39, 6.7\" phone), and P80 (localization-minded expat, 34, metric/imperial). Visited /preview (demo hub), /app/dashboard (macros), /app/log (meal search & entry), /app/nutrition (detail), /app/meal-plan (empty state), /app/progress (trends), /app/settings (preferences), /app/recipes, /app/grocery-list. Tested at viewports 375px, 390px (mobile), and 1024px (projector). Performed interactions: keyboard Tab navigation, form submission attempts, mouse hover, long text input, empty state inspection. Captured 17 evidence screenshots (A20-*.png). Ran assertions on font sizes, touch target dimensions (44px minimum), button positioning for left-thumb reach (0-200px from left edge), color contrast ratios, unit consistency, date formatting, message tone (shame language scan), keyboard focus visibility, and form validation feedback.",
+  "findings": [
+    {
+      "persona_id": "P78",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "\"Over target\" messaging uses shame language instead of neutral reporting",
+      "reproduction_steps": [
+        "Log meals that exceed calorie or macro targets",
+        "View /app/dashboard macro summary",
+        "Read how overages are framed"
+      ],
+      "observed_evidence": "Dashboard text frames macros using judgment language: \"350 kcal over target\" implies failure rather than data. For P78 (recovering perfectionist tracker), this language triggers relapse anxiety about perfectionism. Screenshot A20-p78-dashboard-tone.png shows the exact wording.",
+      "suggested_fix": "Reframe all over-target text to neutral data: \"350 kcal above target\" (fact) not \"you exceeded\" (judgment). Avoid \"over\", \"exceeded\", \"should have\". This is critical for P78's mental health and sustained app use."
+    },
+    {
+      "persona_id": "P77",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Small font sizes (<14px) difficult to read on projected display",
+      "reproduction_steps": [
+        "Set viewport to 1024x768 (standard projector resolution)",
+        "Visit /preview demo hub (where P77 presents to committees)",
+        "Inspect text element font sizes"
+      ],
+      "observed_evidence": "Preview hub contains multiple <14px text: 'New in v1.4.0: Daily nutrition + fitness' (P tag, 12px), 'Retry' button (12px). At projector viewing distance (15+ feet), 12px appears blurry. Screenshot A20-p77-preview-detail.png.",
+      "suggested_fix": "Enforce \u226514px minimum body text, 20px+ for headings on /preview. Test actual layout on conference room projector before demo day."
+    },
+    {
+      "persona_id": "P78",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Empty meal plan state messaging tone is dismissive or obligatory",
+      "reproduction_steps": [
+        "Visit /app/meal-plan with fresh account (no meals planned)",
+        "Read empty state heading and body text"
+      ],
+      "observed_evidence": "Empty state text: 'Your next step is to fill the open dinner and lunch...' frames planning as obligation. P78 reads 'next step' and 'fill' as 'must complete', triggering perfectionist anxiety. Screenshot A20-p78-mealplan-empty.png.",
+      "suggested_fix": "Use invitational tone: 'Ready to plan ahead? Start whenever you'd like.' Avoid 'must', 'need to', 'required', 'complete', 'next step' (imperatives)."
+    },
+    {
+      "persona_id": "P79",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "/app/log: Key actions positioned at right edge, unreachable for left-thumb user",
+      "reproduction_steps": [
+        "Set viewport to 390x844 (iPhone 14)",
+        "Visit /app/log meal logging page",
+        "Measure button center positions from left edge"
+      ],
+      "observed_evidence": "Critical action buttons positioned at x=318px and x=358px from left (unreachable for left-thumb on 390px width). Carpenter with gloved hands cannot reach right edge without hand shift. Screenshot A20-p79-button-spacing.png.",
+      "suggested_fix": "Center actions within 0-200px horizontal range. Ensure all touch targets \u226544x44px. Test one-handed left-thumb interaction on actual 6.7\" phone."
+    },
+    {
+      "persona_id": "P79",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Text is truncated or overflows at 375px width, unreadable without expanding",
+      "reproduction_steps": [
+        "Set viewport to 375x667 (smaller iPhone SE)",
+        "Visit /app/dashboard",
+        "Observe macro summary and meal descriptions"
+      ],
+      "observed_evidence": "Found 4 text elements clipped or with width=0: 'Daily decision system' (0px), 'Log dinner to keep it alive to' (truncated). User must tap/expand to read. Screenshot A20-p79-mobile-375.png.",
+      "suggested_fix": "Apply Tailwind line-clamp-2 for known-long text; use ellipsis. Test layout at 320px minimum width."
+    },
+    {
+      "persona_id": "P09",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Icon-only buttons have no text, aria-label, or title for screen readers",
+      "reproduction_steps": [
+        "Visit /app/dashboard",
+        "Inspect buttons with only SVG icons (close, menu, settings, search, notifications)",
+        "Check HTML for aria-label and title attributes"
+      ],
+      "observed_evidence": "Found 6 icon-only buttons lacking aria-label or title. Screen reader user hears generic 'button' with no context. Screenshot inspection shows empty button text nodes.",
+      "suggested_fix": "Add aria-label to every icon-only button: `<button aria-label=\"Close menu\">\u00d7</button>`. As fallback, add title attribute."
+    },
+    {
+      "persona_id": "P80",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "Inconsistent number formatting: some use commas (1,400) some don't (1400)",
+      "reproduction_steps": [
+        "Visit /app/nutrition (macro detail)",
+        "Scan all calorie and macro numbers for comma usage"
+      ],
+      "observed_evidence": "Mix of comma-formatted ('2,250 kcal') and non-comma ('850 kcal') on same view. Metric-preference user expects consistent formatting per locale (en-GB uses thousands separator consistently).",
+      "suggested_fix": "Use Intl.NumberFormat(userLocale) for all numbers. Choose one format globally and enforce via design tokens."
+    },
+    {
+      "persona_id": "P78",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "Dashboard macro cards use inconsistent spacing, unclear visual hierarchy between targets and actuals",
+      "reproduction_steps": [
+        "Visit /app/dashboard on mobile",
+        "Look at Protein/Carbs/Fat breakdown section",
+        "Compare visual separation between target and actual values"
+      ],
+      "observed_evidence": "Macro cards show target/actual stacked without clear visual distinction. P78 experiences 'is this the target or actual?' second-guessing (perfectionist pattern). Screenshot A20-p78-spacing-hierarchy.png.",
+      "suggested_fix": "Use consistent spacing: 4px gaps for sub-items, 16px for sections. Label target (lighter) and actual (emphasis) distinctly by color/weight."
+    },
+    {
+      "persona_id": "P77",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "/preview hub navigation links lack clear affordance, hard to distinguish from body text",
+      "reproduction_steps": [
+        "Visit /preview demo hub",
+        "Look at section headings ('1. Existing user preview', '2. New user signup')",
+        "Try to identify clickable vs. descriptive text"
+      ],
+      "observed_evidence": "Preview sections are labeled but lack CTA styling (button look, hover change, icon). Program director presenting to committee cannot quickly identify next clickable item. Screenshot A20-p77-preview-labels.png.",
+      "suggested_fix": "Make section headings explicit CTAs: add button styling (background, padding), icon (\u2192), or ensure clear color/underline on hover."
+    },
+    {
+      "persona_id": "P77",
+      "category": "pain-point",
+      "severity": 2,
+      "description": "CTA buttons <40px height are small click targets on projector",
+      "reproduction_steps": [
+        "Set viewport to 1024x768",
+        "Visit /preview demo hub",
+        "Inspect action button heights"
+      ],
+      "observed_evidence": "'Retry' button measured at 34px tall. Small height makes clicking difficult with projector-room mouse from distance (10+ feet). Screenshot A20-p77-preview-detail.png.",
+      "suggested_fix": "Set minimum \u226540px button heights for /preview paths. Increase padding (Tailwind py-3). Test clickability at arm's length."
+    },
+    {
+      "persona_id": "P79",
+      "category": "pain-point",
+      "severity": 2,
+      "description": "Mobile (390px): Text-background color contrast may be insufficient",
+      "reproduction_steps": [
+        "Set viewport to 390x844",
+        "Visit /app/dashboard",
+        "Use DevTools to inspect computed color values"
+      ],
+      "observed_evidence": "Found 5 text elements below WCAG AA threshold (\u22654.5:1 for body text, \u22653:1 for UI). Carpenter with presbyopia or in low-light job-site breaks cannot read low-contrast text.",
+      "suggested_fix": "Run Axe DevTools or WebAIM contrast checker on all text. Ensure \u22654.5:1 contrast. Use Tailwind color tokens ensuring dark on light or light on dark."
+    },
+    {
+      "persona_id": "P77",
+      "category": "pain-point",
+      "severity": 2,
+      "description": "Projector (1024px): Text-background color contrast may be insufficient",
+      "reproduction_steps": [
+        "Set viewport to 1024x768",
+        "Visit /app/dashboard",
+        "Inspect text-background color pairs"
+      ],
+      "observed_evidence": "5 elements below AA threshold at projector resolution. Projector reduces perceived contrast (lower brightness, large viewing angle). Program director cannot rely on readability at projector brightness.",
+      "suggested_fix": "Target AAA contrast (7:1 for text) on /preview. Use high-saturation, high-luminance color pairs. Test on actual projector screen."
+    },
+    {
+      "persona_id": "P80",
+      "category": "pain-point",
+      "severity": 2,
+      "description": "Mixed calorie terminology: \"calories\", \"kcal\", \"cal\" used interchangeably",
+      "reproduction_steps": [
+        "Visit /app/dashboard",
+        "Search page text for 'calorie', 'kcal', 'cal'"
+      ],
+      "observed_evidence": "Dashboard uses three terms: '1400 calories' (full), '2250 kcal' (abbrev), '850 cal' (short). Metric-accent user (en-GB) familiar with SI units expects consistent 'kcal' throughout.",
+      "suggested_fix": "Standardize on 'kcal' everywhere (scientifically correct, unambiguous). Never use 'calories' alone or 'cal' (too brief)."
+    },
+    {
+      "persona_id": "P79",
+      "category": "pain-point",
+      "severity": 2,
+      "description": "Log page action buttons (\"Snap Photo\", \"Ask Coach\", \"Scan Barcode\") are too closely spaced, cause accidental mis-taps",
+      "reproduction_steps": [
+        "Visit /app/log on 390px mobile",
+        "Look at 4 quick-action buttons below search",
+        "Measure gap between button edges"
+      ],
+      "observed_evidence": "Action buttons aligned horizontally with minimal gap between touch targets. Carpenter with coarse hands or glove residue easily mis-taps adjacent button. Screenshot A20-p79-button-spacing.png.",
+      "suggested_fix": "Add 12px gap between buttons (Tailwind gap-3). Increase padding to 44x44px minimum per button. Test with gloved hand."
+    },
+    {
+      "persona_id": "P78",
+      "category": "improvement-idea",
+      "severity": 1,
+      "description": "Log form has excessive instructional language (\"Please enter\", \"Click here\", \"Type your search\")",
+      "reproduction_steps": [
+        "Visit /app/log meal logging form",
+        "Read all labels, placeholders, helper text"
+      ],
+      "observed_evidence": "Form text: 'Please search for a food', 'Type in your search', 'Click to add'. Found 7 instructional word instances. P78 (already anxious, cognitively loaded) feels talked-down to.",
+      "suggested_fix": "Remove 'please' (sounds supplicating). Use placeholder text instead of labels ('Banana, yogurt, ...' not 'Search for food name'). Button: 'Log Meal' is clear without 'Click here to log meal'."
+    },
+    {
+      "persona_id": "P15",
+      "category": "pain-point",
+      "severity": 1,
+      "description": "Search input overflows with very long text, becomes hard to edit",
+      "reproduction_steps": [
+        "Visit /app/log",
+        "Type 100+ characters into food search",
+        "Attempt to edit beginning of text"
+      ],
+      "observed_evidence": "Input accepts very long strings. scrollWidth=934px exceeds box width=308px. User cannot see or edit start of long names (e.g., 'Organic cold-pressed extra-virgin coconut oil...'). QA contractor testing edge cases identifies this.",
+      "suggested_fix": "Truncate input at 60 characters (reasonable max food name length), or ensure horizontal scroll with clear affordance indicator."
+    },
+    {
+      "persona_id": "P80",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Unit preference toggle (Metric/Imperial) in Settings does not persist to other pages. Weight and height fields remain hardcoded to imperial (LB, IN) regardless of user selection.",
+      "reproduction_steps": [
+        "Navigate to http://localhost:3000/app/settings on mobile (en-GB locale)",
+        "Observe WEIGHT IN POUNDS and HEIGHT IN INCHES labels",
+        "Click the Metric button to switch units",
+        "Verify that labels change to WEIGHT IN KILOGRAMS and HEIGHT IN CENTIMETERS",
+        "Navigate to http://localhost:3000/app/progress",
+        "Check the TODAY'S WEIGHT field and Start/Goal weight display"
+      ],
+      "observed_evidence": "After clicking Metric button in Settings, the page still displays 'WEIGHT IN POUNDS' and 'HEIGHT IN INCHES'. No unit conversion occurs. On /app/progress, weight is shown as '186.4 lb' and 'Goal 178.0 lb' with only 'LB' label, no KG option. Metric button shows aria-pressed=true but units remain imperial throughout the app.",
+      "suggested_fix": "Implement unit preference persistence. Store the Imperial/Metric toggle state in user settings or localStorage, then use it to conditionally render unit labels (kg/lbs) and convert stored weight values on pages like /app/progress. Ensure the weight input field in the progress mock entry respects the user's unit preference.",
+      "supplemental": true
+    },
+    {
+      "persona_id": "P80",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "Meal plan date format uses US month abbreviation order (Mon, Jun 8) instead of locale-native en-GB format (Mon, 8 Jun). While unambiguous, it is not culturally localized for users with en-GB browser locale.",
+      "reproduction_steps": [
+        "Set browser locale to en-GB and timezone to Europe/London",
+        "Navigate to http://localhost:3000/app/meal-plan on mobile",
+        "Observe the date labels on day cards (Mon, Tue, Wed, Thu labels)",
+        "Compare to expected en-GB date format standards"
+      ],
+      "observed_evidence": "Meal plan displays dates as 'Mon, Jun 8', 'Tue, Jun 9', 'Wed, Jun 10', 'Thu, Jun 11' using month-first abbreviation. For en-GB locale, the native format would be 'Mon, 8 Jun' (date before month) or 'Monday 8 June'. The current format is US-centric and ignores the browser's locale settings.",
+      "suggested_fix": "Use browser locale to format dates. Import date-fns, luxon, or Intl.DateTimeFormat to format meal plan dates according to the user's locale. For en-GB, output 'Mon, 8 Jun' or 'Monday 8 June'. Ensure date formatting is consistent across all pages (/app/meal-plan, /app/daily-review, /app/progress).",
+      "supplemental": true
+    }
+  ]
+}

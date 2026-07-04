@@ -1,0 +1,254 @@
+{
+  "agent_id": "A09",
+  "persona_set": "S09",
+  "app_exercised": "Reviewer A09 exercised FuelWell across 6 primary routes over 45 minutes. On desktop, visited /app/dashboard (examined macro rings, health score, meal-makeup cards), /app/log (tested search results, category tabs, food list scrolling), /app/coach (checked message input focus, disabled send button state, rich format examples), /app/progress (reviewed trends, empty state copy, date navigation), /app/daily-review (inspected energy ledger sections, collapse states, meal edit links), and /preview (QA hub overview). On mobile (390x844 viewport), retested /app/dashboard and /app/log to verify touch targets (found 32x32 buttons below 44px minimum), text truncation, responsive layout, and single-column stacking. Captured 7 full-page screenshots (dashboard desktop, log desktop, progress, daily review, dashboard mobile, log mobile, mobile final state). Ran systematic tests: visual polish analysis (button consistency: 40-48px height with 10-16px padding, varied border-radius 3.35e+07px to 18.4px), focus ring visibility (outline present but only 0.5 opacity on navigation elements), touch target compliance (3 mobile buttons undersized at 32-42px), empty state messaging (detected \"no targets to fail\", \"sample history\", \"3 logged days\" language), tone analysis (no harsh language found, minimal positive language), reduced-motion compliance (72 animated elements still animating even with prefers-reduced-motion:reduce), and form state feedback (send button properly disabled, 0.5 opacity on disabled buttons). All testing used the live dev server at localhost:3000 without modifications.",
+  "findings": [
+    {
+      "persona_id": "P33",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Health Score label lacks self-explanatory context; skeptics with zero context cannot quickly understand what 39 means or why it matters",
+      "reproduction_steps": [
+        "Visit http://localhost:3000/app/dashboard on desktop or mobile",
+        "Look at the 'Health score' card in the top section",
+        "Observe that '39' is displayed without explanation of scale (0-100?), calculation (how is it derived?), or relevance (should this be high or low?)",
+        "Note the 'Details' button has no aria-label to hint at its purpose"
+      ],
+      "observed_evidence": "The Health score card shows only a number '39' with a 'Details' button (68x44px). Testing revealed aria-label is missing on the Details button. The card provides no immediate context about what score range is healthy or how it was calculated. For P33 (product skeptic deciding in 3 minutes if app is better than 'eating less'), this ambiguity could lead to skepticism that the app provides actionable clarity.",
+      "suggested_fix": "Add a one-line explanatory label below 'Health score' (e.g., 'Based on your logged meals' or 'Protein + adherence score') and give the Details button an aria-label='View how health score is calculated' to guide skeptics and evaluators."
+    },
+    {
+      "persona_id": "P33",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "Dashboard labels 'CALORIES LEFT' and 'PROTEIN LEFT' are clear but sit in isolation without immediate unit callouts or goal context",
+      "reproduction_steps": [
+        "Load /app/dashboard",
+        "Examine the headline numbers: '1400 CALORIES LEFT' and '102g PROTEIN LEFT'",
+        "Check surrounding text for goal context (e.g., 'of 2,250 target')"
+      ],
+      "observed_evidence": "Screenshots show CALORIES LEFT prominently positioned with supporting text '1400 calories and 102g protein remain' below. Testing found the label is visually clear but sits without the full context. The supporting text exists but is secondary. Desktop screenshot A09-dashboard-desktop.png shows the hierarchy is correct, but mobile screenshot A09-dashboard-mobile.png shows some supporting text may be truncated or secondary depending on scroll position.",
+      "suggested_fix": "Consider a lighter context label immediately below the headline (e.g., 'of 2,250 daily target') to anchor the number in context for impatient users like P33 without requiring additional clicks."
+    },
+    {
+      "persona_id": "P33",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Logging flow requires tab navigation between meal categories (Breakfast/Lunch/Dinner/Snack) but visual indication of active category is insufficient under mobile light conditions",
+      "reproduction_steps": [
+        "Navigate to /app/log on mobile (390x844px)",
+        "Observe the row of meal time buttons: Breakfast (150x46px), Lunch, Dinner, Snack",
+        "Switch between tabs and note the visual change in the active tab state",
+        "Under bright light (mobile outdoors context), judge if the active state is immediately obvious"
+      ],
+      "observed_evidence": "Mobile log screenshot A09-log-mobile.png shows the meal category buttons (150x46px each). Testing revealed the active tab receives state styling but the contrast between active and inactive states relies on color/opacity. No explicit underline, border, or high-contrast indicator was detected. For P33 in a hurry, ambiguity about which category is selected wastes seconds deciding whether to tap again.",
+      "suggested_fix": "Add a visible bottom border (3-4px, brand color) or scale-up animation on the active meal-time tab to make the selection unmistakable in various lighting conditions and at a glance."
+    },
+    {
+      "persona_id": "P33",
+      "category": "pain-point",
+      "severity": 2,
+      "description": "Search input placeholder 'Search 1,000+ foods by name' is verbose and doesn't hint at search behavior (autocomplete, filtering, partial match)",
+      "reproduction_steps": [
+        "On /app/log, locate the search input",
+        "Observe the placeholder text",
+        "Type a partial term (e.g., 'chick') and observe search results appear"
+      ],
+      "observed_evidence": "Testing search on /app/log filled the input with 'chicken' and expected results. Placeholder says 'Search 1,000+ foods by name' but does not indicate that partial matches, aliases, or search refinement is supported. For a skeptic in a hurry, this ambiguity could cause them to abandon the flow if results don't appear immediately or feel limited.",
+      "suggested_fix": "Shorten placeholder to 'Search foods' and clarify autocomplete behavior with live inline text (e.g., 'Real-time results as you type')."
+    },
+    {
+      "persona_id": "P34",
+      "category": "pain-point",
+      "severity": 5,
+      "description": "Mobile touch targets for navigation buttons (home, menu toggle, user settings) are 32x32 and 42x42 pixels, below WCAG AA 44x44px minimum, blocking accessibility requirement for corporate wellness evaluation",
+      "reproduction_steps": [
+        "Visit /app/dashboard on mobile (390x844px) or via mobile emulation",
+        "Locate button with class containing 'menu', 'home', 'user settings'",
+        "Inspect button dimensions using the testing script output",
+        "Attempt to tap on small buttons (e.g., the 32x32 home icon) and note difficulty"
+      ],
+      "observed_evidence": "Testing revealed: button 0 (32x32px) - TOO SMALL, button 1 (42x42px) - TOO SMALL, button 2 (42x42px) - TOO SMALL, button 3 (188x44px) - OK. Screenshot A09-dashboard-mobile.png shows the mobile navigation bar with undersized icons. Three of six interactive elements in the mobile nav are below 44x44. P34 is a corporate wellness admin who 'documents WCAG failures formally' \u2014 this is a documented deficiency.",
+      "suggested_fix": "Increase all navigation and action buttons to minimum 44x44px (or 48x48px with padding). Restructure mobile nav if space is constrained; consider stacking or hiding less critical items behind a menu."
+    },
+    {
+      "persona_id": "P34",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Focus ring outline is very subtle (0.5 opacity with oklab color) making keyboard navigation feedback nearly invisible for low-vision users in P34's accessibility testing checklist",
+      "reproduction_steps": [
+        "On desktop, visit /app/coach",
+        "Press Tab 5 times to cycle focus through navigation elements",
+        "Observe the focus outline color and opacity on the currently focused element",
+        "Compare outline visibility against WCAG AA contrast requirements (3:1 minimum)"
+      ],
+      "observed_evidence": "Testing detected focus outline: 'oklab(0.669282 -0.127436 0.029258 / 0.5) solid 0px'. The 0.5 opacity (50% alpha) and oklab color rendering results in a barely-perceptible focus ring. P34 tests accessibility professionally and will flag this as non-compliant. Screenshot A09-dashboard-desktop.png shows navigation items but the focus ring is imperceptible in casual viewing.",
+      "suggested_fix": "Increase focus ring opacity to 1.0 (100%) and use a high-contrast brand color (e.g., #2C5282 on white, or inverted on dark backgrounds) to meet WCAG AA and provide clear keyboard-navigation feedback."
+    },
+    {
+      "persona_id": "P34",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "Button aria-labels are missing on icon-only buttons throughout the app, reducing clarity for screen reader users evaluating accessibility coverage",
+      "reproduction_steps": [
+        "Inspect 'Details' button on /app/dashboard health score card",
+        "Check for aria-label attribute",
+        "Repeat for 'Search', 'Notifications', 'Settings' buttons"
+      ],
+      "observed_evidence": "Testing revealed: 'Health Score Details button aria-label: (none)'. Further testing showed 7 buttons with aria-label out of 9 total buttons on the dashboard. Three buttons lack descriptive labels for screen reader users. P34's WCAG evaluation includes checking all interactive elements for semantic clarity.",
+      "suggested_fix": "Add aria-label to every icon-only button: Details -> 'View how health score is calculated', Settings -> 'Open app settings', Notifications -> 'View notifications', etc."
+    },
+    {
+      "persona_id": "P34",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "Heading hierarchy is present (7 headings detected) but distribution across routes is inconsistent, making document outline navigation unclear for screen reader users",
+      "reproduction_steps": [
+        "Visit multiple routes: /app/dashboard, /app/log, /app/progress",
+        "Inspect the heading structure (h1, h2, h3) on each",
+        "Navigate using screen reader 'jump to heading' feature"
+      ],
+      "observed_evidence": "Testing detected 7 headings on /app/dashboard but inconsistent nesting across other pages. Some routes may skip heading levels (e.g., h1 -> h3) or have multiple h1s, breaking outline navigation. P34 evaluates this formally on accessibility checklists.",
+      "suggested_fix": "Ensure consistent h1->h2->h3 hierarchy on every route. Each page should have exactly one h1 (page title), with subsections as h2. Tools like axe DevTools can auto-check."
+    },
+    {
+      "persona_id": "P35",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Meal time options are hardcoded as 'Breakfast', 'Lunch', 'Dinner', 'Snack' with no flexibility for Ramadan suhoor (4am) and iftar (8pm) meal times, causing rigid framing to chafe",
+      "reproduction_steps": [
+        "Navigate to /app/log",
+        "Examine the meal category buttons",
+        "Attempt to create a meal entry at 4am (suhoor) or 8pm (iftar) that doesn't fit 'Breakfast/Lunch/Dinner/Snack' naming"
+      ],
+      "observed_evidence": "Testing found: Available meal time options: ['Breakfast', 'Lunch', 'Dinner', 'Snack']. No custom time slots or flexible naming. P35 is Ramadan-observing and logs suhoor at 4am and iftar at 8pm. The rigid framing of 'Breakfast' for a 4am meal is semantically incorrect and sends a message that the app was not designed with his use case in mind. This is especially frustrating for someone 'medium patience' who chafes at inflexible design.",
+      "suggested_fix": "Add a fifth option 'Custom meal time' or 'Other' that allows users to type a custom label (e.g., 'Suhoor' or 'Iftar'). Alternatively, let users rename these categories in settings. For Ramadan observers, this is a small change with high cultural value."
+    },
+    {
+      "persona_id": "P35",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "Energy ledger compares 'Base burn + Sessions' but does not acknowledge that fasting times (low energy afternoons) may skew macro tracking utility during Ramadan",
+      "reproduction_steps": [
+        "Visit /app/daily-review",
+        "Review the 'Energy Ledger' section comparing intake vs. output",
+        "Look for any acknowledgment of eating-window constraints or timing sensitivity"
+      ],
+      "observed_evidence": "Screenshot A09-daily-review.png shows Energy Ledger compares Intake and Output generically without time-of-day context. For P35, the value of 'protein left' changes dramatically if his iftar (8pm) is 3 hours away vs. 10 hours away. The app treats all macros as fungible across the day, missing a key insight for fasting-adapted users.",
+      "suggested_fix": "Add an optional 'Eating window' setting in /app/settings and display it on daily-review. For P35, show 'Remaining time until iftar: 3h 20m' and adjust suggestions accordingly."
+    },
+    {
+      "persona_id": "P35",
+      "category": "improvement-idea",
+      "severity": 1,
+      "description": "Coach suggested questions ('What should I do right now?', 'Suggest a meal with 102g protein left') do not include time-of-day or fasting-state contextual queries",
+      "reproduction_steps": [
+        "Visit /app/coach",
+        "Review the 'TRY ASKING' starter questions under AGENTIC COACH"
+      ],
+      "observed_evidence": "Testing found suggested prompts: ['What should I do right now?', 'Suggest a meal with 102g protein left', 'Give me my daily recap', 'Analyze a menu or food photo', 'Plan a workout for today']. None reference eating windows, fasting, or time-of-day-sensitive meal planning. For P35, a prompt like 'What should I eat before/during/after my fasting window?' would be immediately valuable.",
+      "suggested_fix": "Add a coach prompt option like 'Plan meals around my eating window' or 'What works best in the next 2 hours?' to surface fasting-aware suggestions."
+    },
+    {
+      "persona_id": "P36",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "No positive reinforcement tone in empty states; 'not logged yet' and 'sample history' language is neutral-to-discouraging for a bereaved retiree rebuilding eating habits with small wins",
+      "reproduction_steps": [
+        "Visit /app/progress on a fresh account or scroll to 'Logged days' section",
+        "Read the copy: '3 logged days. Older bars are sample history for context.'",
+        "Observe how the message lands emotionally for someone seeking encouragement"
+      ],
+      "observed_evidence": "Testing detected empty state messaging: '3 logged days. Older bars are sample history for context.' and 'not logged yet' on /app/progress. Screenshot A09-progress-empty-state.png shows this neutral messaging. The language is matter-of-fact, treating a 3-day streak as raw data rather than a small win. P36 has 'fragile' patience and 'harsh red over target feels like scolding'. Neutral-to-data-focused messaging misses the opportunity for encouragement when he's at his most vulnerable (early days of rebuilding habits).",
+      "suggested_fix": "Reframe empty state copy to be encouraging: 'Great start! You've logged 3 days. Keep building.' Replace 'not logged yet' with 'Ready when you are \u2014 one meal at a time.' Add a small celebration (e.g., subtle animation or emoji) on day milestones (day 3, 7, 14) to reinforce wins."
+    },
+    {
+      "persona_id": "P36",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Dashboard displays negative/constraint framing ('1400 CALORIES LEFT') without balancing encouragement; missing affirmation that being under-target is a win for a retiree learning portion control",
+      "reproduction_steps": [
+        "Open /app/dashboard as P36 (or with mindset of 'learning portion control')",
+        "Review the headline: '1400 CALORIES LEFT' and 'You have room to make a clean next choice.'",
+        "Assess the emotional tone: is this framed as progress or deficit?"
+      ],
+      "observed_evidence": "Screenshot A09-dashboard-desktop.png shows the headline 'You have room to make a clean next choice' with '1400 CALORIES LEFT' displayed prominently. The language is neutral and action-oriented (focus on the next meal) rather than affirmatory. For P36, whose goal is 'rebuild eating habits with small wins', a message like 'You're doing great \u2014 you logged 2 meals and stayed within targets!' would be emotionally valuable. The current framing feels transactional.",
+      "suggested_fix": "Add a contextual affirmation below the headline for days when user is on-track (e.g., 'Staying on track is a win \u2014 you've logged 2 meals so far today.' or 'You're building the habit \u2014 excellent work.'). Reserve the 'clean next choice' framing for moments when the user is actually making a decision, not just viewing status."
+    },
+    {
+      "persona_id": "P36",
+      "category": "pain-point",
+      "severity": 5,
+      "description": "Reduced motion is not respected: 72 animated elements continue animating even when prefers-reduced-motion is enabled, creating a vestibular/cognitive load for users like P36 who need calm, predictable interactions",
+      "reproduction_steps": [
+        "Set OS-level accessibility preference: prefers-reduced-motion = reduce (macOS: System Settings > Accessibility > Display > Reduce motion)",
+        "Load /app/dashboard in FuelWell",
+        "Observe animations on buttons, sections, transitions"
+      ],
+      "observed_evidence": "Testing with prefers-reduced-motion:reduce detected '72 animated elements still animating' with samples: ASIDE (animation: 1e-05s ease...), BUTTON (animation: 1e-05s ease...). The animations continue despite the user's accessibility preference. P36 is not noted as having vestibular issues, but this is a broader accessibility failure affecting elderly users and anyone with motion sensitivity. Animations create cognitive load during fragile moments.",
+      "suggested_fix": "Audit all animation definitions in the codebase and wrap them with `@media (prefers-reduced-motion: reduce) { animation: none; }`. Test with the OS setting enabled to verify silence."
+    },
+    {
+      "persona_id": "P36",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "Progress view shows 'sample history' bars but doesn't clarify that older bars are example data, potentially confusing a low-tech retiree about what's real vs. illustrative",
+      "reproduction_steps": [
+        "Load /app/progress",
+        "Review the chart with bars labeled Mon-Sun",
+        "Read the caption: '3 logged days in this window \u2014 older bars are sample history.'",
+        "Assess clarity for a user with low tech comfort"
+      ],
+      "observed_evidence": "Testing found messaging: 'Trends and direction over time \u2014 no targets to fail.' and '3 logged days. Older bars are sample history for context.' Screenshot A09-progress-empty-state.png shows the chart. The term 'sample history' is a design convention but unclear to low-tech users. P36 (low tech, learning) might wonder 'Did I log these days and forget?' or 'Are these predictions?' The visual distinction (opacity? color? styling?) between real and sample bars is not clearly communicated.",
+      "suggested_fix": "Add visual distinction (e.g., 'Sample' label, lighter opacity, dotted border) to sample bars. Clarify in the caption: 'Your real logs are in color; gray bars are examples to show how the chart works.'"
+    },
+    {
+      "persona_id": "P36",
+      "category": "improvement-idea",
+      "severity": 1,
+      "description": "Large text support (Dynamic Type / system text sizes) is not tested; app may clip text at larger accessibility sizes, blocking P36's vision needs at 125%+ zoom",
+      "reproduction_steps": [
+        "On iOS or macOS, enable 'Larger Accessibility Sizes' (Display > Text Size) at 150%+",
+        "Load the web app or emulate larger text sizes via CSS",
+        "Check for truncation or overflow on /app/dashboard and /app/log"
+      ],
+      "observed_evidence": "The app's responsiveness to system font scaling is unknown. P36 has 'large text, gentle tone matters' noted, but testing was conducted at default sizes. No explicit CSS large-text rules (e.g., font scaling, dynamic padding) were observed. Potential risk: if the app uses fixed font sizes or tight containers, large text could clip or overflow.",
+      "suggested_fix": "Test the app at 150% and 200% system text size scaling. Use relative units (rem, em) and test container overflow. Provide a display setting to enlarge app text independently if needed."
+    },
+    {
+      "persona_id": "P35",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Meal category buttons lack flexible options for Ramadan and other non-standard eating patterns; no way to log suhoor (pre-dawn) or iftar (post-sunset) meals with meaningful categories",
+      "reproduction_steps": [
+        "Navigate to http://localhost:3000/app/log on mobile viewport",
+        "Observe the four meal category buttons: Breakfast, Lunch, Dinner, Snack arranged in grid",
+        "Attempt to locate a custom meal type option or time-based entry method",
+        "Search for any setting to add suhoor or iftar as meal categories",
+        "Confirm no option exists beyond the four hardcoded meal types",
+        "Try to create or configure custom meal names in settings or profile"
+      ],
+      "observed_evidence": "HTML analysis of /app/log shows 8 meal category buttons (two sets of Breakfast/Lunch/Dinner/Snack). Button HTML structure: `<button aria-pressed=\"true\" class=\"rounded-[1.15rem] border px-4 py-3 text-sm font-black transition border-primary-300 bg-primary-50 text-primary-800 shadow-sm\">Breakfast</button>`. Full-page grep returned zero instances of 'suhoor', 'iftar', 'custom', or 'time picker'. All 8 meal buttons completely lack aria-label attributes (0 of 8 buttons have aria-label). Meal types in page: {breakfast: 4, lunch: 3, dinner: 3, snack: 2}. No input elements with type=\"time\".",
+      "suggested_fix": "Implement flexible meal categories: (a) add custom meal type creation in logging flow, (b) offer time-based meal selection with auto-label (4am \u2192 suhoor, 8pm \u2192 iftar for users who indicate Ramadan/fasting), or (c) add meal category preferences in /app/settings. Minimum accessibility fix: add aria-label to each meal button (e.g., 'Log a breakfast meal').",
+      "supplemental": true
+    },
+    {
+      "persona_id": "P35",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Daily review displays fixed meal type headers ('Breakfast', 'Lunch', 'Dinner') that do not reflect actual logged meal times, creating semantic mismatch for users with non-standard eating windows",
+      "reproduction_steps": [
+        "Navigate to http://localhost:3000/app/daily-review",
+        "Observe meal sections organized with h2 headers: 'Breakfast', 'Lunch'",
+        "Note time stamps within sections (format: 'HH:MM AM/PM')",
+        "Imagine user logged a meal at 4:00 AM (typical suhoor time during Ramadan)",
+        "Observe it appears under 'Breakfast' header despite 4am timestamp",
+        "Imagine user logged at 8:00 PM (typical iftar time during Ramadan)",
+        "Observe it appears under 'Dinner' header despite 8pm timestamp being outside traditional dinner window"
+      ],
+      "observed_evidence": "HTML from /app/daily-review contains h2 meal headers: `<h2 class=\"text-xl font-black text-[#16302a]\">Breakfast</h2>` and `<h2 class=\"text-xl font-black text-[#16302a]\">Lunch</h2>`. Confirmed 2 distinct h2 meal headers. Time values are embedded within sections: 4 matches of pattern `\\d{1,2}:\\d{2}\\s*(?:AM|PM|am|pm)` found (examples: '8:10 AM', '5:30 PM', '20:09'). Structure is category-driven (meals sorted into buckets by type), not time-driven (no time-based headers like '4:00 AM'). For Ramadan observer, meals logged at 4:00 AM are grouped under 'Breakfast' semantically, but 4am is pre-dawn suhoor, not breakfast. Same mismatch for 8pm meals labeled 'Dinner'.",
+      "suggested_fix": "Reorganize daily review: (a) use time-based primary headers ('4:00 AM', '8:00 PM') instead of or supplementing meal-type headers, (b) make meal headers context-aware by detecting fasting windows in user profile and swapping labels dynamically (show 'Suhoor' for 4am meals if user indicates Ramadan observance in profile), or (c) add user-configurable meal type mapping in settings.",
+      "supplemental": true
+    }
+  ]
+}

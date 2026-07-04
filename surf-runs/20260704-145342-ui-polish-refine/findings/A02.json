@@ -1,0 +1,232 @@
+{
+  "agent_id": "A02",
+  "persona_set": "S02",
+  "app_exercised": "Exercised FuelWell app at localhost:3000 across 6 routes (marketing homepage, /preview hub, /app/dashboard, /app/log, /app/nutrition, /app/fitness) in both desktop (1440x900) and mobile (390x844 iPhone) viewports. For P05 (evaluator), inspected visual polish on /preview hub including font sizes, font weights, colors, and heading consistency \u2014 found outlines/focus rings present. For P06 (shift worker), measured touch targets on /app/log and /app/fitness in mobile viewport \u2014 found 81 undersized buttons on log, 12 on fitness (including 32x32 navigation icons). For P07 (dietitian), extracted nutrition display from /app/nutrition and analyzed macro formatting, unit consistency, and decimal precision. For P08 (athlete), tested dark mode (prefers-color-scheme: dark) on /app/dashboard and analyzed color contrast, transition states, and button styling in dark context. All routes returned 200 status with no console errors. Captured 83 screenshots and detailed element measurements.",
+  "findings": [
+    {
+      "persona_id": "P05",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Button styling inconsistency across preview hub \u2014 background color applied inconsistently to interactive elements",
+      "reproduction_steps": [
+        "Navigate to http://localhost:3000/preview on desktop (1440x900)",
+        "Inspect the 'Retry' button in the error state area",
+        "Compare its background color (oklab) against other buttons like 'Preflight', 'Dashboard', 'Nutrition' nav links",
+        "Note that Retry uses oklab(0.999994...) while nav links use standard RGB"
+      ],
+      "observed_evidence": "P05 at /preview \u2014 Retry button shows bg=oklab(0.999994 0.0000455678 0.0000200868 / 0.1) while nav link buttons show white (rgb(255,255,255)) for text but no explicit button styling samples. Evidence: screenshot A02-P05-polish-headings.png shows the inconsistency in computed styles.",
+      "suggested_fix": "Standardize button background and text colors across /preview hub. Replace oklab color values with consistent Tailwind tokens (e.g., bg-slate-900, text-white). Ensure all buttons on the hub follow the same color palette."
+    },
+    {
+      "persona_id": "P05",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "Heading type scale varies inconsistently \u2014 h2 elements range from 14px to 16px on same page",
+      "reproduction_steps": [
+        "Load /preview on desktop",
+        "Inspect h2 headings: '1. Existing user preview', '2. New user signup + intake', 'Launch preflight', 'Web app preview', 'iOS simulator'",
+        "Note computed font sizes: some are 16px, others are 14px"
+      ],
+      "observed_evidence": "Deep inspection output shows: '<h2> \"1. Existing user preview\" | size=16px' and '<h2> \"Web app preview\" | size=14px' \u2014 inconsistency in hierarchy. See A02-P05-polish-headings.png.",
+      "suggested_fix": "Define a strict heading scale in Tailwind/design tokens. All h2 elements should be 16px (or whatever the design system specifies). Use CSS classes or semantic heading sizes, not inline size variations."
+    },
+    {
+      "persona_id": "P05",
+      "category": "improvement-idea",
+      "severity": 1,
+      "description": "Paragraph text colors use mixed color modes (rgb vs lab) for the same semantic purpose",
+      "reproduction_steps": [
+        "Load /preview on desktop",
+        "Inspect body text and paragraph styling",
+        "Note that some text is color=lab(84.92 0 -0.0000119209) and others are color=rgb(255, 195, 181)"
+      ],
+      "observed_evidence": "Inspection output: 'color=lab(84.92 0 -0.0000119209)' for regular paragraphs and 'color=rgb(255, 195, 181)' for accent text. This color space inconsistency is not visible to users but violates design consistency. See A02-P05-polish-headings.png.",
+      "suggested_fix": "Standardize on a single color space (rgb or Tailwind hex). Use consistent color tokens from the design system for all text colors (e.g., text-slate-200 for secondary text, text-orange-200 for accents)."
+    },
+    {
+      "persona_id": "P05",
+      "category": "pain-point",
+      "severity": 4,
+      "description": "Multiple navigation links have focus outlines but no visible focus rings on dark background \u2014 keyboard navigation is hard to follow",
+      "reproduction_steps": [
+        "Load /preview on desktop",
+        "Press Tab 3 times to navigate through nav links (Preflight, Dashboard, Nutrition)",
+        "Observe focus state: outline=true but visual ring may be hard to see on dark background"
+      ],
+      "observed_evidence": "Focus test output shows 'Tab 1: a text=\"Preflight\" outline=true ring=false' \u2014 outline exists but ring property is false, meaning box-shadow-based focus ring is not applied. On a dark preview hub background, an outline alone may lack sufficient contrast. See focus ring visibility in screenshots.",
+      "suggested_fix": "Pair outline with a box-shadow ring for better visibility. Use Tailwind's focus-ring utilities (focus:ring-2 focus:ring-offset-2) or ensure outline color has sufficient contrast against dark background (white or light color for dark bg)."
+    },
+    {
+      "persona_id": "P06",
+      "category": "pain-point",
+      "severity": 5,
+      "description": "CRITICAL: 81 undersized touch targets on /app/log \u2014 icons and filter buttons are 32x32 or smaller, fail WCAG 2.5 (44x44 minimum)",
+      "reproduction_steps": [
+        "Load http://localhost:3000/app/log on mobile (390x844 iPhone viewport)",
+        "Inspect top navigation: 'Open daily review' (32x32), 'Open user settings menu' (32x32)",
+        "Inspect meal filter tabs: 'All' (39x28), 'Favorites' (75x28 \u2014 only height fails), 'Dislikes' (66x28), 'Recently used' (101x28)",
+        "Attempt one-thumb tap on these small targets (P06 has large hands and uses one thumb while standing)"
+      ],
+      "observed_evidence": "Mobile inspection of /app/log shows: 'Open daily review' 32x32 at (302,12), 'Open user settings menu' 32x32 at (342,12), 'All' 39x28. P06 requires >=44px minimum. Photos: A02-P06-targets-log.png shows these undersized elements mapped on the page layout.",
+      "suggested_fix": "Increase all interactive targets to 44x44 minimum. For top-nav icons, increase from 32x32 to 44x44. For filter tabs, increase height from 28 to 44px. Add padding or use larger icons. Use Tailwind sizing (w-11 h-11 = 44px) consistently."
+    },
+    {
+      "persona_id": "P06",
+      "category": "pain-point",
+      "severity": 5,
+      "description": "CRITICAL: /app/fitness also has 12 undersized buttons including 32x32 nav icons and 36px-tall 'View full day' link",
+      "reproduction_steps": [
+        "Load http://localhost:3000/app/fitness on mobile (390x844)",
+        "Inspect 'View full day' (308x36 \u2014 height is 36, below 44px)",
+        "Inspect 'Workout page' (308x36)",
+        "Inspect navigation icons (same 32x32 as log page)"
+      ],
+      "observed_evidence": "Mobile inspection shows 'View full day' 308x36 and 'Workout page' 308x36 \u2014 both below the 44px height minimum. Width is adequate but height fails. See A02-P06-targets-fitness.png.",
+      "suggested_fix": "Increase button heights from 36px to 44px minimum. For 'View full day' and 'Workout page' links, add vertical padding to reach 44px total height. Ensure all interactive elements across app routes meet minimum target size."
+    },
+    {
+      "persona_id": "P06",
+      "category": "improvement-idea",
+      "severity": 3,
+      "description": "No visible loading spinners or skeletons on /app/log \u2014 P06 on spotty warehouse wifi cannot tell if page is loading or broken",
+      "reproduction_steps": [
+        "Load http://localhost:3000/app/log on mobile",
+        "Inspect page for loading UI elements (spinners, skeleton screens, progress bars)",
+        "Evaluate whether a user on slow network could distinguish 'loading' from 'broken'"
+      ],
+      "observed_evidence": "Inspection output: 'Loading UI indicators: spinners=0 skeletons=0' \u2014 no loading UI detected. If page took 5+ seconds to load (as it might on warehouse wifi), P06 would have no feedback that it's still working. Evidence in log output.",
+      "suggested_fix": "Add skeleton loaders for meal list items while fetching data. Show spinners during searches. Display explicit 'Loading meals...' text or animated placeholder cards. Use Tailwind animations or libraries like React Query for loading states."
+    },
+    {
+      "persona_id": "P06",
+      "category": "suggestion",
+      "severity": 2,
+      "description": "Filter tabs on /app/log have inconsistent sizing \u2014 'Favorites' (75x28) is wider but still below 44px height",
+      "reproduction_steps": [
+        "Load /app/log on mobile",
+        "View filter tabs: 'All' (39x28), 'Favorites' (75x28), 'Dislikes' (66x28), 'Recently used' (101x28)",
+        "Tap each filter \u2014 widths vary but all heights are 28px (16px below WCAG minimum)"
+      ],
+      "observed_evidence": "Tab sizing is: All=39x28, Favorites=75x28, Dislikes=66x28, Recently used=101x28. Only height is the issue (all 28px < 44px). See A02-P06-targets-log.png for visual layout.",
+      "suggested_fix": "Increase filter tab height to 44px. Consider making tabs more uniform in width or using text wrapping for longer labels. Ensure consistent padding within tabs (e.g., py-2 px-3 = 44px height)."
+    },
+    {
+      "persona_id": "P07",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Inconsistent number formatting for calories \u2014 some are '850kcal' (no space), others are '1,400 kcal' (space and comma)",
+      "reproduction_steps": [
+        "Load http://localhost:3000/app/nutrition on desktop",
+        "Extract macro display text and search for kcal/cal values",
+        "Compare formatting: '850kcal' vs '1,400 kcal' vs '190 cal'"
+      ],
+      "observed_evidence": "Macro display samples show: '850kcal', '1,400 kcal' (inconsistent spacing before unit), and '190 cal' (different spacing again). Number formatting check: 'with-comma=2 without-comma=1', showing mix of 1,400 and non-comma formats. See A02-P07-nutrition-precision.png. P07 is exacting about numbers \u2014 this inconsistency erodes trust.",
+      "suggested_fix": "Standardize number formatting: either '850 kcal' or '850kcal', not mixed. Apply consistent spacing before units across all nutrition values. Use a format utility function (e.g., formatCalories(850) \u2192 '850 kcal') and apply it everywhere."
+    },
+    {
+      "persona_id": "P07",
+      "category": "pain-point",
+      "severity": 3,
+      "description": "Gram values also show inconsistent spacing \u2014 '102 g' vs '73g' vs '88g' on same page",
+      "reproduction_steps": [
+        "Load /app/nutrition on desktop",
+        "Inspect all protein/carb/fat gram values",
+        "Note spacing: '102 g' (with space), '73g' (no space), '88g' (no space)"
+      ],
+      "observed_evidence": "Macro display shows: '42g protein', '102 g' (same display), '88g', '152 g' \u2014 mixed spacing. Numbers with units: '73g', '102 g', '88g', '152 g', '50 g'. See A02-P07-nutrition-precision.png.",
+      "suggested_fix": "Apply a single spacing rule for all gram values. Decide: is it 'X g' or 'Xg'? Use a consistent formatter like formatGrams(102) \u2192 '102 g' everywhere."
+    },
+    {
+      "persona_id": "P07",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "Decimal precision varies \u2014 some values show 0.5 (decimal places), others do not \u2014 unclear rounding policy to dietitian",
+      "reproduction_steps": [
+        "Load /app/nutrition on desktop",
+        "Search page for decimal values (0.5, 1.2, etc.)",
+        "Check if decimals are consistent across all nutrients or only certain ones"
+      ],
+      "observed_evidence": "Decimal precision search found: [0.5] in page text. Not all macro values show decimals, suggesting inconsistent rounding. A dietitian (P07) needs transparent rules: are macros always rounded to nearest gram? Do some nutrients show 0.5g? See A02-P07-nutrition-precision.png.",
+      "suggested_fix": "Document and enforce a rounding policy: e.g., 'All macros rounded to nearest gram, except protein (0.1g precision).' Display this policy in settings or help. Apply consistently across all nutrition displays."
+    },
+    {
+      "persona_id": "P07",
+      "category": "suggestion",
+      "severity": 1,
+      "description": "Meal-level calorie display mixes 'cal' and 'kcal' units in same view",
+      "reproduction_steps": [
+        "Load /app/nutrition on desktop",
+        "View meal breakdown: 'Breakfast 330 cal' vs 'Lunch 520 cal' vs 'Dinner 1400 kcal of room left'",
+        "Note unit mix-up: small meals in 'cal', remaining budget in 'kcal'"
+      ],
+      "observed_evidence": "Macro samples show: 'Breakfast Greek yogurt power bowl \u00b7 2 items 330 cal 31g protein' and 'Dinner Not logged yet \u00b7 1400 kcal of room left'. One meal is '330 cal', another is '1400 kcal'. This inconsistency is confusing. See A02-P07-nutrition-precision.png.",
+      "suggested_fix": "Pick one unit (kcal) and use it everywhere, or clearly label when switching. Prefer 'kcal' (industry standard in nutrition). Convert all displays: '330 kcal', '1,400 kcal'."
+    },
+    {
+      "persona_id": "P08",
+      "category": "pain-point",
+      "severity": 5,
+      "description": "CRITICAL: Dark mode contrast failure \u2014 button text color rgb(17, 117, 88) on white background has 2.77:1 ratio (WCAG AA requires 4.5:1)",
+      "reproduction_steps": [
+        "Load http://localhost:3000/app/dashboard on mobile (390x844) with prefers-color-scheme=dark",
+        "Inspect button text color vs background",
+        "Calculate contrast ratio using WCAG formula: (L1 + 0.05) / (L2 + 0.05)",
+        "Compare against WCAG AA threshold (4.5:1 for normal text)"
+      ],
+      "observed_evidence": "Dark-mode contrast test shows: '\u2717 \"\" ratio=2.77 | fg=rgb(17, 117, 88) bg=rgb(255, 255, 255)' \u2014 a teal-green text on white background yields 2.77:1 contrast, below WCAG AA. This fails P08's dark-mode requirement and violates accessibility. See A02-P08-dark-mode.png.",
+      "suggested_fix": "In dark mode, override button text color to white or light gray (e.g., text-white or text-gray-100) instead of rgb(17, 117, 88). Use Tailwind's dark mode: 'dark:text-white'. Test contrast ratio after change \u2014 must be >=4.5:1."
+    },
+    {
+      "persona_id": "P08",
+      "category": "improvement-idea",
+      "severity": 3,
+      "description": "Dark mode theme is not fully applied \u2014 body background appears as rgba(0,0,0,0) (transparent) instead of dark color",
+      "reproduction_steps": [
+        "Load /app/dashboard on mobile with dark mode enabled",
+        "Inspect html and body element background colors",
+        "Note computed style: 'body bg: rgba(0, 0, 0, 0)' (transparent) instead of dark background"
+      ],
+      "observed_evidence": "Dark-mode color test shows: 'HTML bg: rgba(0, 0, 0, 0)' and 'Body bg: rgba(0, 0, 0, 0)' \u2014 both transparent. Without an explicit dark background, the app may render on the system default, which on iPhone is still light. See A02-P08-dark-mode.png.",
+      "suggested_fix": "Add explicit dark-mode background to body: 'dark:bg-slate-950' or equivalent. In Tailwind, ensure dark mode variant is enabled and applied to the root element. Test with system dark mode ON to verify the app respects prefers-color-scheme."
+    },
+    {
+      "persona_id": "P08",
+      "category": "improvement-idea",
+      "severity": 2,
+      "description": "Button transitions are over-comprehensive \u2014 includes all CSS properties (display, content-visibility, overlay) which may cause jank on lower-end devices",
+      "reproduction_steps": [
+        "Load /app/dashboard on mobile dark mode",
+        "Inspect button transition property",
+        "Count the number of transitioned properties (should be 5-10, not 30+)"
+      ],
+      "observed_evidence": "Button transition property shows: 'transition=color 0.15s cubic-bezier(...), background-color 0.15s..., [28 more properties]' \u2014 the transition includes display, content-visibility, overlay, and other properties that shouldn't animate. This can cause layout jank. See inspection output.",
+      "suggested_fix": "Limit transitions to visual properties: color, background-color, border-color, transform, opacity, box-shadow. Remove structural properties (display, content-visibility) and overlay from transition. Use: 'transition: color bg border-color transform opacity box-shadow 0.15s cubic-bezier(0.4,0,0.2,1)'."
+    },
+    {
+      "persona_id": "P08",
+      "category": "suggestion",
+      "severity": 2,
+      "description": "No empty state messaging visible on /app/dashboard \u2014 if user has no logged meals, no guidance text appears",
+      "reproduction_steps": [
+        "Load /app/dashboard on mobile dark mode",
+        "Check page text for empty state indicators (e.g., 'No meals logged', 'Start by logging breakfast')",
+        "Verify presence of encouraging or instructional empty state"
+      ],
+      "observed_evidence": "Empty/error state test: 'empty=false error=false' \u2014 no empty-state messaging detected in page text. For P08 who logs 6 meals a day, this might not be an issue, but for new users it's confusing. Evidence in inspection output.",
+      "suggested_fix": "Add empty-state UI when no meals are logged: e.g., 'No meals logged today. Tap + to add your first meal.' Include an icon and a call-to-action button. Use a friendly, encouraging tone (not clinical)."
+    },
+    {
+      "persona_id": "P08",
+      "category": "suggestion",
+      "severity": 1,
+      "description": "Heading hierarchy on /preview hub mixes 16px and 14px h2 elements \u2014 P08 on small phone may miss visual grouping",
+      "reproduction_steps": [
+        "Load /preview on mobile (390x844)",
+        "Inspect section headings",
+        "Note size inconsistency between 'Existing user preview' (16px) and 'Web app preview' (14px)"
+      ],
+      "observed_evidence": "Visual polish test on preview shows h2 sizes: 16px for main sections, 14px for subsections. On a 390px phone, a 2px difference is subtle and may reduce visual hierarchy clarity. See A02-P05-polish-headings.png.",
+      "suggested_fix": "Increase size difference or increase both: main section h2 = 18px, subsection h2 = 14px. Or, reserve h2 for main sections (16px) and use h3 for subsections (14px) \u2014 semantic and visual consistency."
+    }
+  ]
+}
