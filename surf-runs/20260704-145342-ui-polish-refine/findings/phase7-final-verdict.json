@@ -1,0 +1,24 @@
+{
+  "verdict": "COHESIVE",
+  "seams": [
+    {
+      "title": "\"left of\" target sometimes carries unit, sometimes not",
+      "where": "src/components/daily-detail/detail-surfaces.tsx \u2014 TargetTile (~line 738) vs SimpleSummaryCard protein detail (line ~481)",
+      "evidence": "Live daily-review renders \"1,400 kcal left of 2,250\" (kcal TargetTile, unitless target) alongside \"102g left of 175\" (protein SimpleSummaryCard, unitless target), while g-unit TargetTiles on /app/nutrition render \"102g left of 175g\" (target carries unit). Wording nit only; numbers and kcal/g units themselves are consistent.",
+      "severity": 1
+    },
+    {
+      "title": "Signup error-text typography differs from in-app form errors",
+      "where": "src/components/ui/input.tsx line 43 vs src/components/log/custom-meal-form.tsx / progress page error paragraphs",
+      "evidence": "Input component renders errors as text-sm text-red-600 (regular weight); in-app validation errors (custom meal, portion, weight) use text-xs font-bold text-red-600. Different surface (auth vs app shell), same color and role=alert semantics \u2014 cosmetic only.",
+      "severity": 1
+    },
+    {
+      "title": "Focus outline color fades in over 150ms on elements with transition-all",
+      "where": "Chips/buttons with the pre-existing `transition` utility (e.g. src/components/log/food-search.tsx chips) + globals.css :focus-visible",
+      "evidence": "Immediately after Tab, computed outline-color is mid-transition (text color \u2192 primary-600); it settles at 3px solid rgb(21,145,108) within 150ms on every element tested. The transition-all classes pre-date the campaign; the campaign only changed outline width/color, so the fade is inherited, sub-perceptual, and uniform in its end state.",
+      "severity": 1
+    }
+  ],
+  "summary": "Final clean-context cohesion review of surf/ui-polish-refine (3103286..HEAD, 50 files, +448/-159). Read the full diff and walked the live app at 1440x900 and 390x844: dashboard (live greeting, 44px icon buttons, kcal + toLocaleString formatting), log (chips, portion live validation incl. 5,000-unit typo guard, custom-meal submit validation with focus-to-first-invalid), progress (weight blur validation for junk and out-of-range), signup (empty-submit field errors + focus, blur email validation), daily-review, settings, plus a keyboard focus walk. Unit unification is complete (zero bare \\\"cal\\\" in src or rendered output), touch targets hit 44px on mobile across all chip/icon/button patterns, all 14 routes have loading skeletons, focus indicator settles at a uniform 3px primary-600 outline, and no console or page errors occurred. The three remaining observations are severity-1 wording/typography nits; everything else matches the deliberately accepted decisions list. Verdict: COHESIVE."
+}
