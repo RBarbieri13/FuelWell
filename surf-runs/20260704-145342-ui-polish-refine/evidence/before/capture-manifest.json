@@ -1,0 +1,328 @@
+[
+  {
+    "route": "/",
+    "viewport": "desktop",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/login",
+    "viewport": "desktop",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/signup",
+    "viewport": "desktop",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/forgot-password",
+    "viewport": "desktop",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/preview",
+    "viewport": "desktop",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/preview/new-user",
+    "viewport": "desktop",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/app/dashboard",
+    "viewport": "desktop",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/app/dashboard/score",
+    "viewport": "desktop",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/app/nutrition",
+    "viewport": "desktop",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/app/fitness",
+    "viewport": "desktop",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/app/log",
+    "viewport": "desktop",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/app/meal-plan",
+    "viewport": "desktop",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/app/recipes",
+    "viewport": "desktop",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/app/grocery-list",
+    "viewport": "desktop",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/app/workouts",
+    "viewport": "desktop",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/app/activity",
+    "viewport": "desktop",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/app/recovery",
+    "viewport": "desktop",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/app/progress",
+    "viewport": "desktop",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/app/daily-review",
+    "viewport": "desktop",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/app/coach",
+    "viewport": "desktop",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/app/coach/attachments",
+    "viewport": "desktop",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/app/coach/menu-review",
+    "viewport": "desktop",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/app/onboarding",
+    "viewport": "desktop",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/app/profile",
+    "viewport": "desktop",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/app/settings",
+    "viewport": "desktop",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/app/launch-preflight",
+    "viewport": "desktop",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "viewport": "desktop",
+    "consoleErrors": [
+      "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+      "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+    ]
+  },
+  {
+    "route": "/",
+    "viewport": "iphone",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/login",
+    "viewport": "iphone",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/signup",
+    "viewport": "iphone",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/forgot-password",
+    "viewport": "iphone",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/preview",
+    "viewport": "iphone",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/preview/new-user",
+    "viewport": "iphone",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/app/dashboard",
+    "viewport": "iphone",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/app/dashboard/score",
+    "viewport": "iphone",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/app/nutrition",
+    "viewport": "iphone",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/app/fitness",
+    "viewport": "iphone",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/app/log",
+    "viewport": "iphone",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/app/meal-plan",
+    "viewport": "iphone",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/app/recipes",
+    "viewport": "iphone",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/app/grocery-list",
+    "viewport": "iphone",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/app/workouts",
+    "viewport": "iphone",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/app/activity",
+    "viewport": "iphone",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/app/recovery",
+    "viewport": "iphone",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/app/progress",
+    "viewport": "iphone",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/app/daily-review",
+    "viewport": "iphone",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/app/coach",
+    "viewport": "iphone",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/app/coach/attachments",
+    "viewport": "iphone",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/app/coach/menu-review",
+    "viewport": "iphone",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/app/onboarding",
+    "viewport": "iphone",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/app/profile",
+    "viewport": "iphone",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/app/settings",
+    "viewport": "iphone",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "route": "/app/launch-preflight",
+    "viewport": "iphone",
+    "status": 200,
+    "hScroll": false
+  },
+  {
+    "viewport": "iphone",
+    "consoleErrors": [
+      "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+      "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+    ]
+  }
+]
