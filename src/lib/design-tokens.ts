@@ -1,60 +1,71 @@
-/**
- * FuelWell Design Tokens — Single source of truth
- * All brand constants referenced from docs/04-brand-identity.md
- *
- * Usage: import from this file instead of hardcoding hex values.
- * CSS variables in globals.css mirror these values for Tailwind use.
- */
-
+// FuelWell Design Tokens — FW.zip Lagoon & Coral system
 export const colors = {
-  // Primary brand
-  orange: "#E87A1D",
-  green: "#47E7B0", // canonical brand mark, resolved May '26 (was #3D9B2F)
-  accent: "#00D278", // action / success green — separate token, see docs/ios-guide/DESIGN.md
-
-  // Backgrounds
-  background: "#0A0A0F",
-  surface: "#111118",
-  elevated: "#1A1A24",
-  border: "#2A2A3A",
-
-  // Text
-  textPrimary: "#FFFFFF",
-  textBody: "#E0E0E0",
-  textSecondary: "#999999",
-  textMuted: "#777777",
-  textDisabled: "#555555",
-
+  // Primary - Lagoon
+  primary: {
+    50: "#edf8f5",
+    100: "#d6f0e8",
+    200: "#aee2d3",
+    300: "#7bd1b9",
+    400: "#45bf9c",
+    500: "#1eae84",
+    600: "#15916c",
+    700: "#117558",
+    800: "#0e5d48",
+    900: "#0a4436",
+  },
+  // Accent - Coral
+  accent: {
+    50: "#fff1ed",
+    100: "#ffe0d8",
+    200: "#ffc3b5",
+    300: "#f7a08d",
+    400: "#f0795b",
+    500: "#df6345",
+    600: "#c74f33",
+    700: "#9f3e28",
+    800: "#7d3828",
+    900: "#5e271b",
+  },
+  // Neutrals
+  neutral: {
+    50: "#f7faf8",
+    100: "#eef4f1",
+    200: "#dbe3df",
+    300: "#c7d4ce",
+    400: "#9db0aa",
+    500: "#7c968f",
+    600: "#54635d",
+    700: "#3a4a44",
+    800: "#243832",
+    900: "#16302a",
+    950: "#0b1d19",
+  },
   // Semantic
-  success: "#00D278",
-  warning: "#F59E0B",
-  error: "#EF4444",
-  info: "#00B4D8",
-  premium: "#A855F7",
-} as const;
-
-export const gradients = {
-  brand: "linear-gradient(135deg, #E87A1D, #00D278)",
-  header: "linear-gradient(135deg, #1A1A2E, #16213E)",
-  premiumGlow: "linear-gradient(135deg, #2A1A3E, #1A2A3E)",
-  text: "linear-gradient(90deg, #00D278, #00B4D8)",
+  success: "#1eae84",
+  warning: "#c7a91e",
+  error: "#ef4444",
+  info: "#3e92c9",
+  // Macros
+  protein: "#1eae84",
+  carbs: "#c7a91e",
+  fat: "#f0795b",
+  calories: "#1eae84",
 } as const;
 
 export const spacing = {
-  xs: "4px",
-  sm: "8px",
-  md: "16px",
-  lg: "24px",
-  xl: "32px",
-  "2xl": "48px",
-  "3xl": "64px",
-  "4xl": "96px",
+  xs: "0.25rem",
+  sm: "0.5rem",
+  md: "1rem",
+  lg: "1.5rem",
+  xl: "2rem",
+  "2xl": "3rem",
+  "3xl": "4rem",
 } as const;
 
-export const animation = {
-  cardHover: { duration: 200, easing: "ease" },
-  buttonHover: { duration: 150, easing: "ease-out" },
-  fadeIn: { duration: 400, easing: "ease-out" },
-  countUp: { duration: 800, easing: "ease-out" },
-  pulse: { duration: 300, easing: "ease-in-out" },
+export const typography = {
+  fontFamily: {
+    sans: '"Hanken Grotesk", system-ui, -apple-system, sans-serif',
+    display: '"Quicksand", system-ui, -apple-system, sans-serif',
+    mono: '"JetBrains Mono", monospace',
+  },
 } as const;

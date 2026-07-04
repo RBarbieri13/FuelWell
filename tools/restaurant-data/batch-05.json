@@ -1,0 +1,89 @@
+[
+  {
+    "id": "whataburger",
+    "name": "Whataburger",
+    "items": [
+      { "name": "Whataburger", "serving": "1 burger", "calories": 590, "protein": 29, "carbs": 62, "fat": 25, "sourceUrl": "https://wbimageserver.whataburger.com/Nutrition.pdf" },
+      { "name": "Double Meat Whataburger", "serving": "1 burger", "calories": 830, "protein": 47, "carbs": 62, "fat": 44, "sourceUrl": "https://wbimageserver.whataburger.com/Nutrition.pdf" },
+      { "name": "Bacon & Cheese Whataburger", "serving": "1 burger", "calories": 750, "protein": 39, "carbs": 62, "fat": 37, "sourceUrl": "https://wbimageserver.whataburger.com/Nutrition.pdf" },
+      { "name": "Whataburger Jr.", "serving": "1 burger", "calories": 310, "protein": 14, "carbs": 37, "fat": 11, "sourceUrl": "https://wbimageserver.whataburger.com/Nutrition.pdf" },
+      { "name": "Whataburger Patty Melt", "serving": "1 sandwich", "calories": 940, "protein": 49, "carbs": 45, "fat": 61, "sourceUrl": "https://wbimageserver.whataburger.com/Nutrition.pdf" },
+      { "name": "Whatachick'n Sandwich with Whatasauce", "serving": "1 sandwich", "calories": 540, "protein": 32, "carbs": 54, "fat": 22, "sourceUrl": "https://wbimageserver.whataburger.com/Nutrition.pdf" },
+      { "name": "Whatachick'n Strips (3)", "serving": "3 strips", "calories": 460, "protein": 24, "carbs": 30, "fat": 27, "sourceUrl": "https://wbimageserver.whataburger.com/Nutrition.pdf" },
+      { "name": "Honey Butter Chicken Biscuit", "serving": "1 biscuit sandwich", "calories": 580, "protein": 13, "carbs": 52, "fat": 36, "sourceUrl": "https://wbimageserver.whataburger.com/Nutrition.pdf" },
+      { "name": "Breakfast On A Bun with Sausage", "serving": "1 sandwich", "calories": 510, "protein": 27, "carbs": 35, "fat": 28, "sourceUrl": "https://wbimageserver.whataburger.com/Nutrition.pdf" },
+      { "name": "Taquito with Cheese & Bacon", "serving": "1 taquito", "calories": 400, "protein": 20, "carbs": 29, "fat": 23, "sourceUrl": "https://wbimageserver.whataburger.com/Nutrition.pdf" },
+      { "name": "Medium French Fries", "serving": "1 medium order", "calories": 400, "protein": 4, "carbs": 51, "fat": 21, "sourceUrl": "https://wbimageserver.whataburger.com/Nutrition.pdf" },
+      { "name": "Medium Onion Rings", "serving": "1 medium order", "calories": 300, "protein": 4, "carbs": 33, "fat": 17, "sourceUrl": "https://wbimageserver.whataburger.com/Nutrition.pdf" },
+      { "name": "Medium Chocolate Shake", "serving": "20 fl oz", "calories": 560, "protein": 13, "carbs": 102, "fat": 14, "sourceUrl": "https://wbimageserver.whataburger.com/Nutrition.pdf" },
+      { "name": "Hot Apple Pie", "serving": "1 pie", "calories": 270, "protein": 3, "carbs": 34, "fat": 14, "sourceUrl": "https://wbimageserver.whataburger.com/Nutrition.pdf" }
+    ]
+  },
+  {
+    "id": "papa-johns",
+    "name": "Papa Johns",
+    "items": [
+      { "name": "Cheese Pizza (large, original crust)", "serving": "1 slice (1/8 pizza)", "calories": 290, "protein": 11, "carbs": 37, "fat": 10, "sourceUrl": "https://fastfoodnutrition.org/papa-johns/cheese-pizza/large" },
+      { "name": "Pepperoni Pizza (large, original crust)", "serving": "1 slice (1/8 pizza)", "calories": 330, "protein": 13, "carbs": 37, "fat": 14, "sourceUrl": "https://fastfoodnutrition.org/papa-johns/pepperoni-pizza/large" },
+      { "name": "The Works Pizza (large, original crust)", "serving": "1 slice (1/8 pizza)", "calories": 330, "protein": 13, "carbs": 39, "fat": 14, "sourceUrl": "https://fastfoodnutrition.org/papa-johns/the-works-pizza/large" },
+      { "name": "BBQ Chicken Bacon Pizza (large, original crust)", "serving": "1 slice (1/8 pizza)", "calories": 350, "protein": 15, "carbs": 45, "fat": 12, "sourceUrl": "https://fastfoodnutrition.org/papa-johns/bbq-chicken-bacon-pizza/large" },
+      { "name": "Breadsticks", "serving": "2 sticks", "calories": 290, "protein": 9, "carbs": 53, "fat": 5, "sourceUrl": "https://fastfoodnutrition.org/papa-johns/breadsticks" },
+      { "name": "Cheesesticks", "serving": "4 sticks", "calories": 370, "protein": 14, "carbs": 41, "fat": 16, "sourceUrl": "https://fastfoodnutrition.org/papa-johns/cheesesticks" },
+      { "name": "Italian Papadia", "serving": "1 papadia", "calories": 940, "protein": 38, "carbs": 76, "fat": 53, "sourceUrl": "https://fastfoodnutrition.org/papa-johns/italian-papadia" },
+      { "name": "BBQ Wings", "serving": "2 wings", "calories": 190, "protein": 12, "carbs": 6, "fat": 12, "sourceUrl": "https://fastfoodnutrition.org/papa-johns/bbq-wings" },
+      { "name": "Special Garlic Sauce", "serving": "1 cup (14g)", "calories": 75, "protein": 0, "carbs": 2, "fat": 9, "sourceUrl": "https://fastfoodnutrition.org/papa-johns/garlic-sauce-1-tablespoon" }
+    ]
+  },
+  {
+    "id": "raising-canes",
+    "name": "Raising Cane's",
+    "items": [
+      { "name": "Chicken Finger", "serving": "1 finger", "calories": 130, "protein": 13, "carbs": 5, "fat": 6, "sourceUrl": "https://fastfoodnutrition.org/raising-canes/chicken-fingers" },
+      { "name": "Chicken Sandwich", "serving": "1 sandwich", "calories": 780, "protein": 48, "carbs": 66, "fat": 39, "sourceUrl": "https://fastfoodnutrition.org/raising-canes/chicken-sandwich" },
+      { "name": "Box Combo", "serving": "1 meal", "calories": 1250, "protein": 61, "carbs": 97, "fat": 68, "sourceUrl": "https://fastfoodnutrition.org/raising-canes/box-combo" },
+      { "name": "Caniac Combo", "serving": "1 meal", "calories": 1790, "protein": 89, "carbs": 124, "fat": 104, "sourceUrl": "https://fastfoodnutrition.org/raising-canes/caniac-combo" },
+      { "name": "Crinkle-Cut Fries", "serving": "1 basket", "calories": 390, "protein": 5, "carbs": 49, "fat": 19, "sourceUrl": "https://fastfoodnutrition.org/raising-canes/crinkle-cut-fries" },
+      { "name": "Texas Toast", "serving": "1 piece", "calories": 140, "protein": 4, "carbs": 23, "fat": 4, "sourceUrl": "https://fastfoodnutrition.org/raising-canes/texas-toast" },
+      { "name": "Coleslaw", "serving": "1 serving", "calories": 100, "protein": 1, "carbs": 11, "fat": 6, "sourceUrl": "https://fastfoodnutrition.org/raising-canes/coleslaw" },
+      { "name": "Cane's Sauce", "serving": "1 serving (1.5 oz)", "calories": 190, "protein": 0, "carbs": 6, "fat": 19, "sourceUrl": "https://fastfoodnutrition.org/raising-canes/canes-sauce" }
+    ]
+  },
+  {
+    "id": "culvers",
+    "name": "Culver's",
+    "items": [
+      { "name": "ButterBurger \"The Original\", Single", "serving": "1 burger", "calories": 390, "protein": 20, "carbs": 39, "fat": 19, "sourceUrl": "https://cdn.culvers.com/page-content/menu/nutrition-guide.pdf" },
+      { "name": "ButterBurger Cheese, Double", "serving": "1 burger", "calories": 700, "protein": 40, "carbs": 41, "fat": 44, "sourceUrl": "https://cdn.culvers.com/page-content/menu/nutrition-guide.pdf" },
+      { "name": "The Culver's Deluxe, Single", "serving": "1 burger", "calories": 570, "protein": 23, "carbs": 42, "fat": 36, "sourceUrl": "https://cdn.culvers.com/page-content/menu/nutrition-guide.pdf" },
+      { "name": "The Culver's Bacon Deluxe, Double", "serving": "1 burger", "calories": 850, "protein": 44, "carbs": 43, "fat": 58, "sourceUrl": "https://cdn.culvers.com/page-content/menu/nutrition-guide.pdf" },
+      { "name": "Chicken Tenders (4 piece)", "serving": "4 tenders", "calories": 540, "protein": 40, "carbs": 42, "fat": 24, "sourceUrl": "https://cdn.culvers.com/page-content/menu/nutrition-guide.pdf" },
+      { "name": "North Atlantic Cod Filet Sandwich", "serving": "1 sandwich", "calories": 599, "protein": 27, "carbs": 48, "fat": 34, "sourceUrl": "https://cdn.culvers.com/page-content/menu/nutrition-guide.pdf" },
+      { "name": "Beef Pot Roast Sandwich", "serving": "1 sandwich", "calories": 410, "protein": 31, "carbs": 41, "fat": 16, "sourceUrl": "https://cdn.culvers.com/page-content/menu/nutrition-guide.pdf" },
+      { "name": "Wisconsin Cheese Curds", "serving": "1 serving (150g)", "calories": 510, "protein": 20, "carbs": 51, "fat": 25, "sourceUrl": "https://cdn.culvers.com/page-content/menu/nutrition-guide.pdf" },
+      { "name": "Crinkle Cut Fries, Regular", "serving": "1 regular order", "calories": 360, "protein": 6, "carbs": 53, "fat": 14, "sourceUrl": "https://cdn.culvers.com/page-content/menu/nutrition-guide.pdf" },
+      { "name": "Onion Rings", "serving": "1 serving (118g)", "calories": 400, "protein": 6, "carbs": 44, "fat": 22, "sourceUrl": "https://cdn.culvers.com/page-content/menu/nutrition-guide.pdf" },
+      { "name": "Vanilla Fresh Frozen Custard, Dish (2 scoop)", "serving": "2 scoops", "calories": 590, "protein": 11, "carbs": 59, "fat": 35, "sourceUrl": "https://cdn.culvers.com/page-content/menu/nutrition-guide.pdf" },
+      { "name": "Chocolate Shake, Short", "serving": "1 short shake", "calories": 620, "protein": 11, "carbs": 75, "fat": 32, "sourceUrl": "https://cdn.culvers.com/page-content/menu/nutrition-guide.pdf" },
+      { "name": "Turtle Sundae (2 scoop)", "serving": "1 sundae", "calories": 1040, "protein": 16, "carbs": 112, "fat": 62, "sourceUrl": "https://cdn.culvers.com/page-content/menu/nutrition-guide.pdf" },
+      { "name": "Cookie Dough Concrete Mixer, Short", "serving": "1 short mixer", "calories": 770, "protein": 13, "carbs": 83, "fat": 43, "sourceUrl": "https://cdn.culvers.com/page-content/menu/nutrition-guide.pdf" }
+    ]
+  },
+  {
+    "id": "five-guys",
+    "name": "Five Guys",
+    "items": [
+      { "name": "Hamburger", "serving": "1 burger (2 patties)", "calories": 700, "protein": 39, "carbs": 39, "fat": 43, "sourceUrl": "https://fastfoodnutrition.org/five-guys/hamburger" },
+      { "name": "Cheeseburger", "serving": "1 burger (2 patties)", "calories": 840, "protein": 47, "carbs": 40, "fat": 55, "sourceUrl": "https://fastfoodnutrition.org/five-guys/cheeseburger" },
+      { "name": "Bacon Cheeseburger", "serving": "1 burger (2 patties)", "calories": 920, "protein": 51, "carbs": 40, "fat": 62, "sourceUrl": "https://fastfoodnutrition.org/five-guys/bacon-cheeseburger" },
+      { "name": "Little Hamburger", "serving": "1 burger (1 patty)", "calories": 480, "protein": 23, "carbs": 39, "fat": 26, "sourceUrl": "https://fastfoodnutrition.org/five-guys/little-hamburger" },
+      { "name": "Little Cheeseburger", "serving": "1 burger (1 patty)", "calories": 550, "protein": 27, "carbs": 40, "fat": 32, "sourceUrl": "https://fastfoodnutrition.org/five-guys/little-cheeseburger" },
+      { "name": "Hot Dog", "serving": "1 hot dog", "calories": 545, "protein": 18, "carbs": 40, "fat": 35, "sourceUrl": "https://fastfoodnutrition.org/five-guys/hot-dog" },
+      { "name": "Bacon Cheese Dog", "serving": "1 hot dog", "calories": 695, "protein": 26, "carbs": 41, "fat": 48, "sourceUrl": "https://fastfoodnutrition.org/five-guys/bacon-cheese-dog" },
+      { "name": "Grilled Cheese", "serving": "1 sandwich", "calories": 470, "protein": 11, "carbs": 41, "fat": 26, "sourceUrl": "https://fastfoodnutrition.org/five-guys/grilled-cheese" },
+      { "name": "Little Fries (Five Guys Style)", "serving": "1 little order (227g)", "calories": 526, "protein": 8, "carbs": 72, "fat": 23, "sourceUrl": "https://www.fiveguys.com/wp-content/uploads/2025/07/five-guys-us-nutrition-allergen-guide-english-1-final.pdf" },
+      { "name": "Regular Fries (Five Guys Style)", "serving": "1 regular order (411g)", "calories": 953, "protein": 15, "carbs": 131, "fat": 41, "sourceUrl": "https://www.fiveguys.com/wp-content/uploads/2025/07/five-guys-us-nutrition-allergen-guide-english-1-final.pdf" },
+      { "name": "Large Fries (Five Guys Style)", "serving": "1 large order (567g)", "calories": 1314, "protein": 20, "carbs": 181, "fat": 57, "sourceUrl": "https://www.fiveguys.com/wp-content/uploads/2025/07/five-guys-us-nutrition-allergen-guide-english-1-final.pdf" },
+      { "name": "Vanilla Milkshake (base, no mix-ins)", "serving": "1 shake (396g)", "calories": 670, "protein": 13, "carbs": 84, "fat": 32, "sourceUrl": "https://www.fiveguys.com/wp-content/uploads/2025/07/five-guys-us-nutrition-allergen-guide-english-1-final.pdf" }
+    ]
+  }
+]

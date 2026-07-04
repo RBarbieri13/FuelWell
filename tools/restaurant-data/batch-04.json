@@ -1,0 +1,608 @@
+[
+  {
+    "id": "arbys",
+    "name": "Arby's",
+    "items": [
+      {
+        "name": "Classic Roast Beef",
+        "serving": "1 sandwich (154g)",
+        "calories": 360,
+        "protein": 23,
+        "carbs": 37,
+        "fat": 14,
+        "sourceUrl": "https://fastfoodnutrition.org/arbys/classic-roast-beef"
+      },
+      {
+        "name": "Classic Beef 'N Cheddar",
+        "serving": "1 sandwich",
+        "calories": 450,
+        "protein": 23,
+        "carbs": 45,
+        "fat": 20,
+        "sourceUrl": "https://fastfoodnutrition.org/arbys/beef-n-cheddar-classic"
+      },
+      {
+        "name": "Double Roast Beef",
+        "serving": "1 sandwich",
+        "calories": 510,
+        "protein": 38,
+        "carbs": 38,
+        "fat": 24,
+        "sourceUrl": "https://fastfoodnutrition.org/arbys/double-roast-beef"
+      },
+      {
+        "name": "Smokehouse Brisket Sandwich",
+        "serving": "1 sandwich (203g)",
+        "calories": 600,
+        "protein": 33,
+        "carbs": 42,
+        "fat": 35,
+        "sourceUrl": "https://fastfoodnutrition.org/arbys/smokehouse-brisket"
+      },
+      {
+        "name": "Classic French Dip & Swiss w/ Au Jus",
+        "serving": "1 sandwich",
+        "calories": 540,
+        "protein": 34,
+        "carbs": 51,
+        "fat": 22,
+        "sourceUrl": "https://fastfoodnutrition.org/arbys/classic-french-dip-swissau-jus"
+      },
+      {
+        "name": "Greek Gyro",
+        "serving": "1 gyro",
+        "calories": 710,
+        "protein": 23,
+        "carbs": 55,
+        "fat": 44,
+        "sourceUrl": "https://fastfoodnutrition.org/arbys/greek-gyro"
+      },
+      {
+        "name": "Buttermilk Chicken Bacon & Swiss",
+        "serving": "1 sandwich",
+        "calories": 610,
+        "protein": 35,
+        "carbs": 51,
+        "fat": 30,
+        "sourceUrl": "https://fastfoodnutrition.org/arbys/buttermilk-chicken-bacon-swiss"
+      },
+      {
+        "name": "Curly Fries (Medium)",
+        "serving": "1 medium order (170g)",
+        "calories": 550,
+        "protein": 6,
+        "carbs": 65,
+        "fat": 29,
+        "sourceUrl": "https://fastfoodnutrition.org/arbys/curly-fries/medium"
+      },
+      {
+        "name": "Mozzarella Sticks (4 Piece)",
+        "serving": "4 pieces",
+        "calories": 440,
+        "protein": 19,
+        "carbs": 37,
+        "fat": 23,
+        "sourceUrl": "https://fastfoodnutrition.org/arbys/mozzarella-sticks/4-piece"
+      },
+      {
+        "name": "Jalapeno Bites (5 Piece)",
+        "serving": "5 pieces",
+        "calories": 290,
+        "protein": 5,
+        "carbs": 31,
+        "fat": 17,
+        "sourceUrl": "https://fastfoodnutrition.org/arbys/jalapeno-bites/5-piece"
+      },
+      {
+        "name": "Jamocha Shake (Medium)",
+        "serving": "1 medium shake (587g)",
+        "calories": 810,
+        "protein": 19,
+        "carbs": 132,
+        "fat": 23,
+        "sourceUrl": "https://fastfoodnutrition.org/arbys/jamocha-shake/medium"
+      }
+    ]
+  },
+  {
+    "id": "little-caesars",
+    "name": "Little Caesars",
+    "items": [
+      {
+        "name": "Classic Pepperoni Pizza",
+        "serving": "1 large pizza (8 slices)",
+        "calories": 2300,
+        "protein": 109,
+        "carbs": 250,
+        "fat": 97,
+        "sourceUrl": "https://littlecaesars.com/static/usnutritionguide.pdf"
+      },
+      {
+        "name": "Classic Cheese Pizza",
+        "serving": "1 large pizza (8 slices)",
+        "calories": 1950,
+        "protein": 95,
+        "carbs": 248,
+        "fat": 65,
+        "sourceUrl": "https://littlecaesars.com/static/usnutritionguide.pdf"
+      },
+      {
+        "name": "ExtraMostBestest Pepperoni Pizza",
+        "serving": "1 large pizza (8 slices)",
+        "calories": 2500,
+        "protein": 122,
+        "carbs": 252,
+        "fat": 113,
+        "sourceUrl": "https://littlecaesars.com/static/usnutritionguide.pdf"
+      },
+      {
+        "name": "Detroit-Style Deep Dish Pepperoni Pizza",
+        "serving": "1 large pizza (8 slices)",
+        "calories": 2770,
+        "protein": 129,
+        "carbs": 319,
+        "fat": 111,
+        "sourceUrl": "https://littlecaesars.com/static/usnutritionguide.pdf"
+      },
+      {
+        "name": "Crazy Bread",
+        "serving": "8 bread sticks",
+        "calories": 800,
+        "protein": 25,
+        "carbs": 128,
+        "fat": 22,
+        "sourceUrl": "https://littlecaesars.com/static/usnutritionguide.pdf"
+      },
+      {
+        "name": "Crazy Sauce",
+        "serving": "1 sauce cup",
+        "calories": 30,
+        "protein": 1,
+        "carbs": 7,
+        "fat": 0,
+        "sourceUrl": "https://littlecaesars.com/static/usnutritionguide.pdf"
+      },
+      {
+        "name": "Italian Cheese Bread",
+        "serving": "10 bread sticks",
+        "calories": 1340,
+        "protein": 59,
+        "carbs": 156,
+        "fat": 54,
+        "sourceUrl": "https://littlecaesars.com/static/usnutritionguide.pdf"
+      },
+      {
+        "name": "Stuffed Crazy Bread",
+        "serving": "3 bread sticks & Crazy Sauce",
+        "calories": 980,
+        "protein": 36,
+        "carbs": 126,
+        "fat": 38,
+        "sourceUrl": "https://littlecaesars.com/static/usnutritionguide.pdf"
+      },
+      {
+        "name": "Pepperoni Crazy Puffs",
+        "serving": "1 order (4 puffs)",
+        "calories": 680,
+        "protein": 34,
+        "carbs": 56,
+        "fat": 36,
+        "sourceUrl": "https://littlecaesars.com/static/usnutritionguide.pdf"
+      },
+      {
+        "name": "Caesar Wings - Buffalo",
+        "serving": "1 order (8 wings)",
+        "calories": 520,
+        "protein": 47,
+        "carbs": 7,
+        "fat": 35,
+        "sourceUrl": "https://littlecaesars.com/static/usnutritionguide.pdf"
+      },
+      {
+        "name": "Cookie Dough Brownie made with M&M'S Minis",
+        "serving": "1 full package",
+        "calories": 840,
+        "protein": 12,
+        "carbs": 96,
+        "fat": 44,
+        "sourceUrl": "https://littlecaesars.com/static/usnutritionguide.pdf"
+      }
+    ]
+  },
+  {
+    "id": "dairy-queen",
+    "name": "Dairy Queen",
+    "items": [
+      {
+        "name": "Oreo Cookies Blizzard (Medium)",
+        "serving": "1 medium",
+        "calories": 790,
+        "protein": 14,
+        "carbs": 117,
+        "fat": 31,
+        "sourceUrl": "https://fastfoodnutrition.org/dairy-queen/oreo-cookies-blizzard/medium"
+      },
+      {
+        "name": "Chocolate Chip Cookie Dough Blizzard (Medium)",
+        "serving": "1 medium",
+        "calories": 1030,
+        "protein": 17,
+        "carbs": 151,
+        "fat": 41,
+        "sourceUrl": "https://fastfoodnutrition.org/dairy-queen/chocolate-chip-cookie-dough-blizzard/medium"
+      },
+      {
+        "name": "Choco Brownie Extreme Blizzard (Medium)",
+        "serving": "1 medium",
+        "calories": 810,
+        "protein": 16,
+        "carbs": 111,
+        "fat": 36,
+        "sourceUrl": "https://fastfoodnutrition.org/dairy-queen/choco-brownie-extreme-blizzard/medium"
+      },
+      {
+        "name": "Vanilla Cone (Medium)",
+        "serving": "1 medium cone",
+        "calories": 320,
+        "protein": 8,
+        "carbs": 50,
+        "fat": 10,
+        "sourceUrl": "https://fastfoodnutrition.org/dairy-queen/vanilla-cone/medium"
+      },
+      {
+        "name": "Chocolate Dipped Cone (Medium)",
+        "serving": "1 medium cone",
+        "calories": 460,
+        "protein": 9,
+        "carbs": 58,
+        "fat": 22,
+        "sourceUrl": "https://fastfoodnutrition.org/dairy-queen/chocolate-dipped-cone/medium"
+      },
+      {
+        "name": "Hot Fudge Sundae (Medium)",
+        "serving": "1 medium sundae",
+        "calories": 430,
+        "protein": 9,
+        "carbs": 66,
+        "fat": 15,
+        "sourceUrl": "https://fastfoodnutrition.org/dairy-queen/hot-fudge-sundae/medium"
+      },
+      {
+        "name": "Peanut Buster Parfait",
+        "serving": "1 parfait",
+        "calories": 710,
+        "protein": 17,
+        "carbs": 95,
+        "fat": 31,
+        "sourceUrl": "https://fastfoodnutrition.org/dairy-queen/peanut-buster-parfait"
+      },
+      {
+        "name": "Banana Split",
+        "serving": "1 banana split",
+        "calories": 520,
+        "protein": 9,
+        "carbs": 94,
+        "fat": 14,
+        "sourceUrl": "https://fastfoodnutrition.org/dairy-queen/banana-split"
+      },
+      {
+        "name": "DQ Sandwich",
+        "serving": "1 sandwich",
+        "calories": 180,
+        "protein": 4,
+        "carbs": 30,
+        "fat": 5,
+        "sourceUrl": "https://fastfoodnutrition.org/dairy-queen/dq-sandwich"
+      },
+      {
+        "name": "Chocolate Shake (Medium)",
+        "serving": "1 medium shake",
+        "calories": 710,
+        "protein": 16,
+        "carbs": 110,
+        "fat": 23,
+        "sourceUrl": "https://fastfoodnutrition.org/dairy-queen/chocolate-shake/medium"
+      },
+      {
+        "name": "Bacon Two Cheese Deluxe Stackburger (Double)",
+        "serving": "1 burger",
+        "calories": 720,
+        "protein": 37,
+        "carbs": 39,
+        "fat": 47,
+        "sourceUrl": "https://fastfoodnutrition.org/dairy-queen/bacon-two-cheese-deluxe-stackburger/double"
+      },
+      {
+        "name": "Chicken Strip Basket w/ Country Gravy (4 Piece)",
+        "serving": "1 basket (432g)",
+        "calories": 1020,
+        "protein": 35,
+        "carbs": 111,
+        "fat": 48,
+        "sourceUrl": "https://fastfoodnutrition.org/dairy-queen/chicken-strip-basket-w-country-gravy/4-piece"
+      },
+      {
+        "name": "French Fries (Regular)",
+        "serving": "1 regular order",
+        "calories": 280,
+        "protein": 5,
+        "carbs": 36,
+        "fat": 13,
+        "sourceUrl": "https://fastfoodnutrition.org/dairy-queen/french-fries/regular"
+      },
+      {
+        "name": "Onion Rings (Regular)",
+        "serving": "1 regular order (113g)",
+        "calories": 360,
+        "protein": 6,
+        "carbs": 48,
+        "fat": 16,
+        "sourceUrl": "https://fastfoodnutrition.org/dairy-queen/onion-rings/regular"
+      },
+      {
+        "name": "Hot Dog",
+        "serving": "1 hot dog",
+        "calories": 330,
+        "protein": 12,
+        "carbs": 25,
+        "fat": 19,
+        "sourceUrl": "https://fastfoodnutrition.org/dairy-queen/hot-dog"
+      }
+    ]
+  },
+  {
+    "id": "jack-in-the-box",
+    "name": "Jack in the Box",
+    "items": [
+      {
+        "name": "Jumbo Jack with Cheese",
+        "serving": "1 burger (241g)",
+        "calories": 570,
+        "protein": 30,
+        "carbs": 45,
+        "fat": 30,
+        "sourceUrl": "https://fastfoodnutrition.org/jack-in-the-box/jumbo-jack/w-cheese"
+      },
+      {
+        "name": "Bacon Ultimate Cheeseburger",
+        "serving": "1 burger (284g)",
+        "calories": 910,
+        "protein": 57,
+        "carbs": 44,
+        "fat": 56,
+        "sourceUrl": "https://fastfoodnutrition.org/jack-in-the-box/bacon-ultimate-cheeseburger"
+      },
+      {
+        "name": "Double Jack",
+        "serving": "1 burger (319g)",
+        "calories": 830,
+        "protein": 46,
+        "carbs": 34,
+        "fat": 58,
+        "sourceUrl": "https://fastfoodnutrition.org/jack-in-the-box/double-jack"
+      },
+      {
+        "name": "Sourdough Jack",
+        "serving": "1 burger (223g)",
+        "calories": 660,
+        "protein": 35,
+        "carbs": 40,
+        "fat": 41,
+        "sourceUrl": "https://fastfoodnutrition.org/jack-in-the-box/sourdough-jack"
+      },
+      {
+        "name": "Jack's Spicy Chicken",
+        "serving": "1 sandwich (242g)",
+        "calories": 530,
+        "protein": 28,
+        "carbs": 61,
+        "fat": 20,
+        "sourceUrl": "https://fastfoodnutrition.org/jack-in-the-box/jacks-spicy-chicken/no-cheese"
+      },
+      {
+        "name": "Beef Taco",
+        "serving": "1 taco (84g)",
+        "calories": 190,
+        "protein": 6,
+        "carbs": 17,
+        "fat": 11,
+        "sourceUrl": "https://fastfoodnutrition.org/jack-in-the-box/beef-taco-1-taco"
+      },
+      {
+        "name": "Jumbo Egg Rolls (3 Piece)",
+        "serving": "3 egg rolls",
+        "calories": 570,
+        "protein": 21,
+        "carbs": 60,
+        "fat": 30,
+        "sourceUrl": "https://fastfoodnutrition.org/jack-in-the-box/jumbo-egg-rolls/3-piece"
+      },
+      {
+        "name": "Seasoned Curly Fries (Medium)",
+        "serving": "1 medium order (130g)",
+        "calories": 430,
+        "protein": 5,
+        "carbs": 46,
+        "fat": 25,
+        "sourceUrl": "https://fastfoodnutrition.org/jack-in-the-box/seasoned-curly-fries/medium"
+      },
+      {
+        "name": "Chicken Nuggets (10 Piece)",
+        "serving": "10 nuggets (153g)",
+        "calories": 480,
+        "protein": 19,
+        "carbs": 26,
+        "fat": 33,
+        "sourceUrl": "https://fastfoodnutrition.org/jack-in-the-box/chicken-nuggets/10-piece"
+      },
+      {
+        "name": "Breakfast Jack",
+        "serving": "1 sandwich (125g)",
+        "calories": 280,
+        "protein": 16,
+        "carbs": 30,
+        "fat": 11,
+        "sourceUrl": "https://fastfoodnutrition.org/jack-in-the-box/breakfast-jack"
+      },
+      {
+        "name": "Supreme Croissant",
+        "serving": "1 sandwich (148g)",
+        "calories": 450,
+        "protein": 19,
+        "carbs": 32,
+        "fat": 27,
+        "sourceUrl": "https://fastfoodnutrition.org/jack-in-the-box/supreme-croissant"
+      },
+      {
+        "name": "Oreo Cookie Shake w/ Whipped Topping (Small)",
+        "serving": "1 small shake (362g)",
+        "calories": 810,
+        "protein": 13,
+        "carbs": 92,
+        "fat": 43,
+        "sourceUrl": "https://fastfoodnutrition.org/jack-in-the-box/oreo-cookie-shake-w-whipped-topping/small"
+      }
+    ]
+  },
+  {
+    "id": "panda-express",
+    "name": "Panda Express",
+    "items": [
+      {
+        "name": "The Original Orange Chicken",
+        "serving": "1 entree serving",
+        "calories": 370,
+        "protein": 19,
+        "carbs": 38,
+        "fat": 17,
+        "sourceUrl": "https://fastfoodnutrition.org/panda-express/orange-chicken"
+      },
+      {
+        "name": "Beijing Beef",
+        "serving": "1 entree serving",
+        "calories": 470,
+        "protein": 13,
+        "carbs": 46,
+        "fat": 26,
+        "sourceUrl": "https://fastfoodnutrition.org/panda-express/beijing-beef"
+      },
+      {
+        "name": "Broccoli Beef",
+        "serving": "1 entree serving",
+        "calories": 150,
+        "protein": 9,
+        "carbs": 13,
+        "fat": 7,
+        "sourceUrl": "https://fastfoodnutrition.org/panda-express/broccoli-beef"
+      },
+      {
+        "name": "Kung Pao Chicken",
+        "serving": "1 entree serving",
+        "calories": 290,
+        "protein": 16,
+        "carbs": 14,
+        "fat": 19,
+        "sourceUrl": "https://fastfoodnutrition.org/panda-express/kung-pao-chicken"
+      },
+      {
+        "name": "Grilled Teriyaki Chicken",
+        "serving": "1 entree serving",
+        "calories": 300,
+        "protein": 36,
+        "carbs": 8,
+        "fat": 13,
+        "sourceUrl": "https://fastfoodnutrition.org/panda-express/grilled-teriyaki-chicken"
+      },
+      {
+        "name": "Honey Walnut Shrimp",
+        "serving": "1 entree serving",
+        "calories": 360,
+        "protein": 13,
+        "carbs": 35,
+        "fat": 23,
+        "sourceUrl": "https://fastfoodnutrition.org/panda-express/honey-walnut-shrimp"
+      },
+      {
+        "name": "Black Pepper Chicken",
+        "serving": "1 entree serving",
+        "calories": 280,
+        "protein": 13,
+        "carbs": 15,
+        "fat": 19,
+        "sourceUrl": "https://fastfoodnutrition.org/panda-express/black-pepper-chicken"
+      },
+      {
+        "name": "Mushroom Chicken",
+        "serving": "1 entree serving",
+        "calories": 220,
+        "protein": 12,
+        "carbs": 11,
+        "fat": 14,
+        "sourceUrl": "https://fastfoodnutrition.org/panda-express/mushroom-chicken"
+      },
+      {
+        "name": "Honey Sesame Chicken Breast",
+        "serving": "1 entree serving",
+        "calories": 490,
+        "protein": 16,
+        "carbs": 40,
+        "fat": 22,
+        "sourceUrl": "https://fastfoodnutrition.org/panda-express/honey-sesame-chicken-breast"
+      },
+      {
+        "name": "Chow Mein",
+        "serving": "1 side serving",
+        "calories": 510,
+        "protein": 13,
+        "carbs": 80,
+        "fat": 20,
+        "sourceUrl": "https://fastfoodnutrition.org/panda-express/chow-mein"
+      },
+      {
+        "name": "Fried Rice",
+        "serving": "1 side serving",
+        "calories": 520,
+        "protein": 11,
+        "carbs": 85,
+        "fat": 16,
+        "sourceUrl": "https://fastfoodnutrition.org/panda-express/fried-rice"
+      },
+      {
+        "name": "White Steamed Rice",
+        "serving": "1 side serving",
+        "calories": 380,
+        "protein": 7,
+        "carbs": 86,
+        "fat": 0,
+        "sourceUrl": "https://fastfoodnutrition.org/panda-express/steamed-white-rice"
+      },
+      {
+        "name": "Mixed Vegetables (Side)",
+        "serving": "1 side serving",
+        "calories": 90,
+        "protein": 6,
+        "carbs": 10,
+        "fat": 2.5,
+        "sourceUrl": "https://fastfoodnutrition.org/panda-express/mixed-veggies-side"
+      },
+      {
+        "name": "Cream Cheese Rangoon",
+        "serving": "3 pieces",
+        "calories": 190,
+        "protein": 5,
+        "carbs": 24,
+        "fat": 8,
+        "sourceUrl": "https://fastfoodnutrition.org/panda-express/cream-cheese-rangoon"
+      },
+      {
+        "name": "Chicken Egg Roll",
+        "serving": "1 egg roll",
+        "calories": 200,
+        "protein": 8,
+        "carbs": 16,
+        "fat": 12,
+        "sourceUrl": "https://fastfoodnutrition.org/panda-express/chicken-egg-roll"
+      }
+    ]
+  }
+]

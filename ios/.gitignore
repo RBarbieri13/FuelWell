@@ -1,6 +1,0 @@
-vendor/bundle/
-fastlane/build/
-fastlane/test_output/
-fastlane/report.xml
-fastlane/Preview.html
-fastlane/screenshots/

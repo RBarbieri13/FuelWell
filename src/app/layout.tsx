@@ -1,54 +1,34 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono, Outfit, DM_Sans } from "next/font/google";
-import { Navbar } from "@/components/navbar";
-import { Footer } from "@/components/footer";
+import { Geist_Mono, Hanken_Grotesk, Quicksand } from "next/font/google";
+import "katex/dist/katex.min.css";
 import "./globals.css";
 
-const inter = Inter({
-  variable: "--font-inter",
+const hankenGrotesk = Hanken_Grotesk({
+  variable: "--font-fw-body",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
 });
 
-const outfit = Outfit({
-  variable: "--font-outfit",
+const quicksand = Quicksand({
+  variable: "--font-fw-display",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
 });
 
-const dmSans = DM_Sans({
-  variable: "--font-dm-sans",
+const geistMono = Geist_Mono({
+  variable: "--font-fw-mono",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains-mono",
-  subsets: ["latin"],
-  weight: ["400", "500"],
 });
 
 export const metadata: Metadata = {
-  title: {
-    default: "FuelWell — AI-Powered Nutrition & Fitness Coaching",
-    template: "%s | FuelWell",
-  },
+  title: "FuelWell — AI Nutrition Coach",
   description:
-    "Your AI-powered wellness coach for smarter food choices, adaptive workouts, real-time progress tracking, and sustainable habits that actually fit your life.",
-  keywords: [
-    "AI fitness coach",
-    "nutrition coaching",
-    "macro tracking",
-    "meal planning",
-    "adaptive workouts",
-    "FuelWell",
-  ],
-  openGraph: {
-    title: "FuelWell — Fuel Well, Feel Well",
-    description:
-      "AI-powered nutrition and fitness coaching that adapts to your life.",
-    type: "website",
-    images: ["/og-image.svg"],
+    "Your personal AI-powered nutrition coach. Track meals, hit macros, and reach your goals.",
+  appleWebApp: {
+    capable: true,
+    title: "FuelWell",
+    statusBarStyle: "black-translucent",
+  },
+  icons: {
+    apple: "/apple-touch-icon.png",
   },
 };
 
@@ -60,12 +40,11 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${outfit.variable} ${dmSans.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      data-scroll-behavior="smooth"
+      className={`${hankenGrotesk.variable} ${quicksand.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
-        <Navbar />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        {children}
       </body>
     </html>
   );

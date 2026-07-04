@@ -1,0 +1,608 @@
+[
+  {
+    "id": "del-taco",
+    "name": "Del Taco",
+    "items": [
+      {
+        "name": "The Del Taco",
+        "serving": "1 taco",
+        "calories": 310,
+        "protein": 17,
+        "carbs": 14,
+        "fat": 20,
+        "sourceUrl": "https://fastfoodnutrition.org/del-taco/the-del-taco/crunchy"
+      },
+      {
+        "name": "Epic Cali Bacon Burrito",
+        "serving": "1 burrito",
+        "calories": 1030,
+        "protein": 47,
+        "carbs": 71,
+        "fat": 60,
+        "sourceUrl": "https://fastfoodnutrition.org/del-taco/epic-cali-bacon-burrito/chicken"
+      },
+      {
+        "name": "Macho Combo Burrito",
+        "serving": "1 burrito",
+        "calories": 950,
+        "protein": 46,
+        "carbs": 100,
+        "fat": 37,
+        "sourceUrl": "https://fastfoodnutrition.org/del-taco/macho-combo-burrito"
+      },
+      {
+        "name": "Combo Burrito",
+        "serving": "1 burrito",
+        "calories": 470,
+        "protein": 23,
+        "carbs": 54,
+        "fat": 17,
+        "sourceUrl": "https://fastfoodnutrition.org/del-taco/combo-burrito/beef"
+      },
+      {
+        "name": "Del Beef Burrito",
+        "serving": "1 burrito",
+        "calories": 500,
+        "protein": 27,
+        "carbs": 40,
+        "fat": 24,
+        "sourceUrl": "https://fastfoodnutrition.org/del-taco/beef-burrito"
+      },
+      {
+        "name": "Grilled Chicken Taco",
+        "serving": "1 taco",
+        "calories": 210,
+        "protein": 12,
+        "carbs": 16,
+        "fat": 12,
+        "sourceUrl": "https://fastfoodnutrition.org/del-taco/grilled-chicken-taco"
+      },
+      {
+        "name": "Chicken Quesadilla",
+        "serving": "1 quesadilla",
+        "calories": 550,
+        "protein": 34,
+        "carbs": 36,
+        "fat": 31,
+        "sourceUrl": "https://fastfoodnutrition.org/del-taco/chicken-quesadilla/spicy-jack"
+      },
+      {
+        "name": "8 Layer Veggie Burrito",
+        "serving": "1 burrito",
+        "calories": 530,
+        "protein": 18,
+        "carbs": 72,
+        "fat": 18,
+        "sourceUrl": "https://fastfoodnutrition.org/del-taco/8-layer-veggie-burrito"
+      },
+      {
+        "name": "Crinkle Cut Fries (Medium)",
+        "serving": "170g",
+        "calories": 320,
+        "protein": 4,
+        "carbs": 34,
+        "fat": 19,
+        "sourceUrl": "https://fastfoodnutrition.org/del-taco/crinkle-cut-fries/medium"
+      },
+      {
+        "name": "Carne Asada Fries",
+        "serving": "1 basket of fries",
+        "calories": 810,
+        "protein": 24,
+        "carbs": 46,
+        "fat": 59,
+        "sourceUrl": "https://fastfoodnutrition.org/del-taco/carne-asada-fries"
+      },
+      {
+        "name": "Chocolate Shake",
+        "serving": "1 shake",
+        "calories": 560,
+        "protein": 15,
+        "carbs": 105,
+        "fat": 11,
+        "sourceUrl": "https://fastfoodnutrition.org/del-taco/chocolate-shake/regular"
+      }
+    ]
+  },
+  {
+    "id": "firehouse-subs",
+    "name": "Firehouse Subs",
+    "items": [
+      {
+        "name": "Hook & Ladder Sub (Medium)",
+        "serving": "1 medium sub",
+        "calories": 718,
+        "protein": 36,
+        "carbs": 63,
+        "fat": 36.2,
+        "sourceUrl": "https://fastfoodnutrition.org/firehouse-subs/hook-ladder-sub/medium"
+      },
+      {
+        "name": "Italian Sub (Medium)",
+        "serving": "1 medium sub",
+        "calories": 939,
+        "protein": 39,
+        "carbs": 65,
+        "fat": 57.9,
+        "sourceUrl": "https://fastfoodnutrition.org/firehouse-subs/italian-sub/medium"
+      },
+      {
+        "name": "Turkey Bacon Ranch Sub (Medium)",
+        "serving": "1 medium sub",
+        "calories": 831,
+        "protein": 40,
+        "carbs": 61,
+        "fat": 48.3,
+        "sourceUrl": "https://fastfoodnutrition.org/firehouse-subs/turkey-bacon-ranch-sub/medium"
+      },
+      {
+        "name": "Meatball Sub (Medium)",
+        "serving": "1 medium sub",
+        "calories": 834,
+        "protein": 37,
+        "carbs": 59,
+        "fat": 50.7,
+        "sourceUrl": "https://fastfoodnutrition.org/firehouse-subs/meatball-sub/medium"
+      },
+      {
+        "name": "Engineer Sub (Medium)",
+        "serving": "1 medium sub",
+        "calories": 687,
+        "protein": 38,
+        "carbs": 60,
+        "fat": 35,
+        "sourceUrl": "https://fastfoodnutrition.org/firehouse-subs/engineer-sub/medium"
+      },
+      {
+        "name": "Club on a Sub (Medium)",
+        "serving": "1 medium sub",
+        "calories": 768,
+        "protein": 40,
+        "carbs": 63,
+        "fat": 40.1,
+        "sourceUrl": "https://fastfoodnutrition.org/firehouse-subs/club-on-a-sub/medium"
+      },
+      {
+        "name": "New York Steamer Sub (Medium)",
+        "serving": "1 medium sub",
+        "calories": 725,
+        "protein": 40,
+        "carbs": 48,
+        "fat": 40.5,
+        "sourceUrl": "https://fastfoodnutrition.org/firehouse-subs/new-york-steamer-sub/medium"
+      },
+      {
+        "name": "Smokehouse Beef & Cheddar Brisket Sub (Medium)",
+        "serving": "1 medium sub",
+        "calories": 890,
+        "protein": 31,
+        "carbs": 59,
+        "fat": 59.2,
+        "sourceUrl": "https://fastfoodnutrition.org/firehouse-subs/smokehouse-beef-cheddar-brisket-sub/medium"
+      },
+      {
+        "name": "Steak & Cheese Sub (Medium)",
+        "serving": "1 medium sub",
+        "calories": 831,
+        "protein": 38,
+        "carbs": 53,
+        "fat": 50.6,
+        "sourceUrl": "https://fastfoodnutrition.org/firehouse-subs/steak-cheese-sub/medium"
+      },
+      {
+        "name": "Firehouse Chopped Salad with Grilled Chicken",
+        "serving": "1 salad",
+        "calories": 375,
+        "protein": 57,
+        "carbs": 14,
+        "fat": 10.1,
+        "sourceUrl": "https://fastfoodnutrition.org/firehouse-subs/firehouse-chopped-salad-with-grilled-chicken"
+      },
+      {
+        "name": "5-Cheese Mac & Cheese",
+        "serving": "1 serving",
+        "calories": 380,
+        "protein": 17,
+        "carbs": 33,
+        "fat": 20,
+        "sourceUrl": "https://fastfoodnutrition.org/firehouse-subs/5-cheese-mac-cheese"
+      },
+      {
+        "name": "Loaded Potato Soup",
+        "serving": "1 cup",
+        "calories": 240,
+        "protein": 5,
+        "carbs": 15,
+        "fat": 18,
+        "sourceUrl": "https://fastfoodnutrition.org/firehouse-subs/loaded-potato-soup/cup"
+      },
+      {
+        "name": "Chocolate Chip Cookie",
+        "serving": "1 cookie",
+        "calories": 310,
+        "protein": 4,
+        "carbs": 44,
+        "fat": 15,
+        "sourceUrl": "https://fastfoodnutrition.org/firehouse-subs/chocolate-chip-cookie"
+      }
+    ]
+  },
+  {
+    "id": "qdoba",
+    "name": "Qdoba",
+    "items": [
+      {
+        "name": "Chicken Queso Burrito",
+        "serving": "584 grams",
+        "calories": 1080,
+        "protein": 51,
+        "carbs": 127,
+        "fat": 41,
+        "sourceUrl": "https://fastfoodnutrition.org/qdoba/chicken-queso-burrito"
+      },
+      {
+        "name": "Chicken Queso Bowl",
+        "serving": "482 grams",
+        "calories": 780,
+        "protein": 43,
+        "carbs": 75,
+        "fat": 34,
+        "sourceUrl": "https://fastfoodnutrition.org/qdoba/chicken-queso-bowl"
+      },
+      {
+        "name": "Chicken Protein Bowl",
+        "serving": "546 grams",
+        "calories": 610,
+        "protein": 44,
+        "carbs": 48,
+        "fat": 29,
+        "sourceUrl": "https://fastfoodnutrition.org/qdoba/chicken-protein-bowl"
+      },
+      {
+        "name": "Fresca Chicken Bowl",
+        "serving": "1 bowl",
+        "calories": 490,
+        "protein": 37,
+        "carbs": 54,
+        "fat": 16,
+        "sourceUrl": "https://fastfoodnutrition.org/qdoba/fresca-chicken-bowl"
+      },
+      {
+        "name": "Southwest Steak Burrito",
+        "serving": "1 burrito",
+        "calories": 1060,
+        "protein": 48,
+        "carbs": 134,
+        "fat": 37,
+        "sourceUrl": "https://fastfoodnutrition.org/qdoba/southwest-steak-burrito"
+      },
+      {
+        "name": "Smoked Brisket Keto Bowl",
+        "serving": "369 grams",
+        "calories": 620,
+        "protein": 36,
+        "carbs": 18,
+        "fat": 45,
+        "sourceUrl": "https://fastfoodnutrition.org/qdoba/smoked-brisket-keto-bowl"
+      },
+      {
+        "name": "Impossible Fajita Bowl",
+        "serving": "428 grams",
+        "calories": 580,
+        "protein": 28,
+        "carbs": 85,
+        "fat": 15,
+        "sourceUrl": "https://fastfoodnutrition.org/qdoba/impossible-fajita-bowl"
+      },
+      {
+        "name": "Street Style Chicken Tacos",
+        "serving": "324 grams",
+        "calories": 470,
+        "protein": 24,
+        "carbs": 50,
+        "fat": 22,
+        "sourceUrl": "https://fastfoodnutrition.org/qdoba/street-style-chicken-tacos/with-corn-tortilla"
+      },
+      {
+        "name": "Steak Fajita Quesadilla",
+        "serving": "491 grams",
+        "calories": 1130,
+        "protein": 57,
+        "carbs": 72,
+        "fat": 68,
+        "sourceUrl": "https://fastfoodnutrition.org/qdoba/steak-fajita-quesadilla"
+      },
+      {
+        "name": "3-Cheese Queso",
+        "serving": "57 grams",
+        "calories": 90,
+        "protein": 3,
+        "carbs": 3,
+        "fat": 8,
+        "sourceUrl": "https://fastfoodnutrition.org/qdoba/3-cheese-queso/2-oz"
+      },
+      {
+        "name": "Guacamole",
+        "serving": "57 grams",
+        "calories": 90,
+        "protein": 1,
+        "carbs": 5,
+        "fat": 7,
+        "sourceUrl": "https://fastfoodnutrition.org/qdoba/guacamole/2-oz"
+      },
+      {
+        "name": "Corn Tortilla Chips",
+        "serving": "113 grams",
+        "calories": 560,
+        "protein": 7,
+        "carbs": 75,
+        "fat": 26,
+        "sourceUrl": "https://fastfoodnutrition.org/qdoba/corn-tortilla-chips"
+      },
+      {
+        "name": "Chocolate Chunk Cookie",
+        "serving": "54 grams",
+        "calories": 260,
+        "protein": 2,
+        "carbs": 34,
+        "fat": 14,
+        "sourceUrl": "https://fastfoodnutrition.org/qdoba/chocolate-chunk-cookie"
+      }
+    ]
+  },
+  {
+    "id": "churchs-chicken",
+    "name": "Church's Texas Chicken",
+    "items": [
+      {
+        "name": "Original Chicken Breast",
+        "serving": "1 breast",
+        "calories": 250,
+        "protein": 23,
+        "carbs": 9,
+        "fat": 14,
+        "sourceUrl": "https://fastfoodnutrition.org/churchs-chicken/original-chicken-breast"
+      },
+      {
+        "name": "Original Chicken Leg",
+        "serving": "1 leg",
+        "calories": 150,
+        "protein": 12,
+        "carbs": 6,
+        "fat": 8,
+        "sourceUrl": "https://fastfoodnutrition.org/churchs-chicken/original-chicken-leg"
+      },
+      {
+        "name": "Original Chicken Thigh",
+        "serving": "1 thigh",
+        "calories": 360,
+        "protein": 18,
+        "carbs": 12,
+        "fat": 27,
+        "sourceUrl": "https://fastfoodnutrition.org/churchs-chicken/original-chicken-thigh"
+      },
+      {
+        "name": "Original Chicken Wing",
+        "serving": "1 wing",
+        "calories": 290,
+        "protein": 24,
+        "carbs": 8,
+        "fat": 18,
+        "sourceUrl": "https://fastfoodnutrition.org/churchs-chicken/original-chicken-wing"
+      },
+      {
+        "name": "Spicy Chicken Breast",
+        "serving": "1 breast",
+        "calories": 280,
+        "protein": 22,
+        "carbs": 12,
+        "fat": 17,
+        "sourceUrl": "https://fastfoodnutrition.org/churchs-chicken/spicy-chicken-breast"
+      },
+      {
+        "name": "Texas Tender",
+        "serving": "1 tender",
+        "calories": 110,
+        "protein": 8,
+        "carbs": 6,
+        "fat": 6,
+        "sourceUrl": "https://fastfoodnutrition.org/churchs-chicken/texas-tender"
+      },
+      {
+        "name": "Chicken Sandwich",
+        "serving": "1 sandwich",
+        "calories": 651,
+        "protein": 32,
+        "carbs": 53,
+        "fat": 35,
+        "sourceUrl": "https://fastfoodnutrition.org/churchs-chicken/chicken-sandwich/original"
+      },
+      {
+        "name": "Honey-Butter Biscuit",
+        "serving": "1 biscuit",
+        "calories": 230,
+        "protein": 3,
+        "carbs": 25,
+        "fat": 15,
+        "sourceUrl": "https://fastfoodnutrition.org/churchs-chicken/honey-butter-biscuit"
+      },
+      {
+        "name": "Mashed Potatoes with Gravy",
+        "serving": "127g",
+        "calories": 110,
+        "protein": 2,
+        "carbs": 24,
+        "fat": 1,
+        "sourceUrl": "https://fastfoodnutrition.org/churchs-chicken/mashed-potatoes-gravy/regular"
+      },
+      {
+        "name": "Fried Okra",
+        "serving": "96g",
+        "calories": 260,
+        "protein": 3,
+        "carbs": 30,
+        "fat": 15,
+        "sourceUrl": "https://fastfoodnutrition.org/churchs-chicken/fried-okra/regular"
+      },
+      {
+        "name": "Cole Slaw",
+        "serving": "117g",
+        "calories": 170,
+        "protein": 1,
+        "carbs": 16,
+        "fat": 11,
+        "sourceUrl": "https://fastfoodnutrition.org/churchs-chicken/cole-slaw/regular"
+      },
+      {
+        "name": "Jalapeno Cheese Bombers",
+        "serving": "4 bombers",
+        "calories": 220,
+        "protein": 6,
+        "carbs": 24,
+        "fat": 11,
+        "sourceUrl": "https://fastfoodnutrition.org/churchs-chicken/jalapeno-cheese-bombers/4-piece"
+      },
+      {
+        "name": "Apple Pie",
+        "serving": "1 pie",
+        "calories": 270,
+        "protein": 3,
+        "carbs": 37,
+        "fat": 13,
+        "sourceUrl": "https://fastfoodnutrition.org/churchs-chicken/apple-pie"
+      }
+    ]
+  },
+  {
+    "id": "tropical-smoothie-cafe",
+    "name": "Tropical Smoothie Cafe",
+    "items": [
+      {
+        "name": "Mango Magic Smoothie",
+        "serving": "24 fl oz smoothie",
+        "calories": 400,
+        "protein": 3,
+        "carbs": 98,
+        "fat": 0,
+        "sourceUrl": "https://fastfoodnutrition.org/tropical-smoothie-cafe/mango-magic-smoothie"
+      },
+      {
+        "name": "Jetty Punch Smoothie",
+        "serving": "24 fl oz smoothie",
+        "calories": 370,
+        "protein": 2,
+        "carbs": 94,
+        "fat": 0,
+        "sourceUrl": "https://fastfoodnutrition.org/tropical-smoothie-cafe/jetty-punch-smoothie"
+      },
+      {
+        "name": "Bahama Mama Smoothie",
+        "serving": "24 fl oz smoothie",
+        "calories": 500,
+        "protein": 3,
+        "carbs": 117,
+        "fat": 4.5,
+        "sourceUrl": "https://fastfoodnutrition.org/tropical-smoothie-cafe/bahama-mama-smoothie"
+      },
+      {
+        "name": "Sunshine Smoothie",
+        "serving": "24 fl oz smoothie",
+        "calories": 390,
+        "protein": 2,
+        "carbs": 98,
+        "fat": 0,
+        "sourceUrl": "https://fastfoodnutrition.org/tropical-smoothie-cafe/sunshine-smoothie"
+      },
+      {
+        "name": "Detox Island Green Smoothie",
+        "serving": "24 fl oz smoothie",
+        "calories": 180,
+        "protein": 4,
+        "carbs": 43,
+        "fat": 0,
+        "sourceUrl": "https://fastfoodnutrition.org/tropical-smoothie-cafe/detox-island-green-smoothie"
+      },
+      {
+        "name": "Island Green Smoothie",
+        "serving": "24 fl oz smoothie",
+        "calories": 410,
+        "protein": 3,
+        "carbs": 102,
+        "fat": 0,
+        "sourceUrl": "https://fastfoodnutrition.org/tropical-smoothie-cafe/island-green-smoothie"
+      },
+      {
+        "name": "Peanut Paradise Smoothie",
+        "serving": "24 fl oz smoothie",
+        "calories": 690,
+        "protein": 33,
+        "carbs": 105,
+        "fat": 17,
+        "sourceUrl": "https://fastfoodnutrition.org/tropical-smoothie-cafe/peanut-paradise-smoothie/with-whey"
+      },
+      {
+        "name": "Kiwi Quencher Smoothie",
+        "serving": "24 fl oz smoothie",
+        "calories": 450,
+        "protein": 2,
+        "carbs": 111,
+        "fat": 0,
+        "sourceUrl": "https://fastfoodnutrition.org/tropical-smoothie-cafe/kiwi-quencher-smoothie"
+      },
+      {
+        "name": "Avocolada Smoothie",
+        "serving": "24 fl oz smoothie",
+        "calories": 600,
+        "protein": 4,
+        "carbs": 112,
+        "fat": 17,
+        "sourceUrl": "https://fastfoodnutrition.org/tropical-smoothie-cafe/avocolada-smoothie"
+      },
+      {
+        "name": "Acai Berry Boost Smoothie",
+        "serving": "24 fl oz smoothie",
+        "calories": 470,
+        "protein": 1,
+        "carbs": 114,
+        "fat": 2,
+        "sourceUrl": "https://fastfoodnutrition.org/tropical-smoothie-cafe/acai-berry-boost-smoothie"
+      },
+      {
+        "name": "Caribbean Jerk Chicken Toasted Wrap",
+        "serving": "1 wrap",
+        "calories": 590,
+        "protein": 37,
+        "carbs": 74,
+        "fat": 17,
+        "sourceUrl": "https://fastfoodnutrition.org/tropical-smoothie-cafe/caribbean-jerk-chicken-toasted-wrap"
+      },
+      {
+        "name": "Baja Chicken Toasted Wrap",
+        "serving": "1 wrap",
+        "calories": 640,
+        "protein": 38,
+        "carbs": 67,
+        "fat": 24,
+        "sourceUrl": "https://fastfoodnutrition.org/tropical-smoothie-cafe/baja-chicken-toasted-wrap"
+      },
+      {
+        "name": "Chipotle Chicken Club Toasted Flatbread",
+        "serving": "1 flatbread",
+        "calories": 490,
+        "protein": 27,
+        "carbs": 42,
+        "fat": 24,
+        "sourceUrl": "https://fastfoodnutrition.org/tropical-smoothie-cafe/chipotle-chicken-club-toasted-flatbread"
+      },
+      {
+        "name": "Turkey Bacon Ranch Pressed Sandwich",
+        "serving": "1 Serving",
+        "calories": 560,
+        "protein": 42,
+        "carbs": 59,
+        "fat": 20,
+        "sourceUrl": "https://fastfoodnutrition.org/tropical-smoothie-cafe/turkey-bacon-ranch-pressed-sandwich/whole"
+      }
+    ]
+  }
+]

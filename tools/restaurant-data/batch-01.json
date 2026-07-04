@@ -1,0 +1,99 @@
+[
+  {
+    "id": "mcdonalds",
+    "name": "McDonald's",
+    "items": [
+      { "name": "Big Mac", "serving": "1 sandwich", "calories": 540, "protein": 25, "carbs": 45, "fat": 29, "sourceUrl": "https://www.nutrition-charts.com/mcdonalds-nutrition-facts/" },
+      { "name": "Quarter Pounder with Cheese", "serving": "1 sandwich", "calories": 510, "protein": 29, "carbs": 40, "fat": 26, "sourceUrl": "https://www.nutrition-charts.com/mcdonalds-nutrition-facts/" },
+      { "name": "McChicken", "serving": "1 sandwich", "calories": 360, "protein": 14, "carbs": 40, "fat": 16, "sourceUrl": "https://www.nutrition-charts.com/mcdonalds-nutrition-facts/" },
+      { "name": "Chicken McNuggets (10 piece)", "serving": "10 pieces", "calories": 470, "protein": 22, "carbs": 30, "fat": 30, "sourceUrl": "https://www.nutrition-charts.com/mcdonalds-nutrition-facts/" },
+      { "name": "Medium French Fries", "serving": "1 medium order", "calories": 380, "protein": 4, "carbs": 48, "fat": 19, "sourceUrl": "https://www.nutrition-charts.com/mcdonalds-nutrition-facts/" },
+      { "name": "Filet-O-Fish", "serving": "1 sandwich", "calories": 380, "protein": 15, "carbs": 38, "fat": 18, "sourceUrl": "https://www.nutrition-charts.com/mcdonalds-nutrition-facts/" },
+      { "name": "Egg McMuffin", "serving": "1 sandwich", "calories": 300, "protein": 18, "carbs": 30, "fat": 12, "sourceUrl": "https://www.nutrition-charts.com/mcdonalds-nutrition-facts/" },
+      { "name": "Sausage McMuffin with Egg", "serving": "1 sandwich", "calories": 450, "protein": 21, "carbs": 30, "fat": 27, "sourceUrl": "https://www.nutrition-charts.com/mcdonalds-nutrition-facts/" },
+      { "name": "McDouble", "serving": "1 sandwich", "calories": 390, "protein": 22, "carbs": 33, "fat": 19, "sourceUrl": "https://www.nutrition-charts.com/mcdonalds-nutrition-facts/" },
+      { "name": "Cheeseburger", "serving": "1 sandwich", "calories": 300, "protein": 15, "carbs": 33, "fat": 12, "sourceUrl": "https://www.nutrition-charts.com/mcdonalds-nutrition-facts/" },
+      { "name": "Hash Brown", "serving": "1 hash brown", "calories": 150, "protein": 1, "carbs": 15, "fat": 9, "sourceUrl": "https://www.nutrition-charts.com/mcdonalds-nutrition-facts/" },
+      { "name": "Hot Fudge Sundae", "serving": "1 sundae", "calories": 330, "protein": 8, "carbs": 54, "fat": 10, "sourceUrl": "https://www.nutrition-charts.com/mcdonalds-nutrition-facts/" },
+      { "name": "McFlurry with OREO Cookies", "serving": "12 fl oz cup", "calories": 580, "protein": 13, "carbs": 89, "fat": 19, "sourceUrl": "https://www.nutrition-charts.com/mcdonalds-nutrition-facts/" }
+    ]
+  },
+  {
+    "id": "starbucks",
+    "name": "Starbucks",
+    "items": [
+      { "name": "Caffe Latte (Grande, 2% Milk)", "serving": "16 fl oz", "calories": 190, "protein": 12, "carbs": 18, "fat": 7, "sourceUrl": "https://fastfoodnutrition.org/starbucks/caffe-latte-with-2-milk/grande" },
+      { "name": "Caramel Macchiato (Grande, 2% Milk)", "serving": "16 fl oz", "calories": 250, "protein": 10, "carbs": 35, "fat": 7, "sourceUrl": "https://fastfoodnutrition.org/starbucks/caramel-macchiato-with-2-milk/grande" },
+      { "name": "Vanilla Latte (Grande, 2% Milk)", "serving": "16 fl oz", "calories": 250, "protein": 12, "carbs": 37, "fat": 6, "sourceUrl": "https://fastfoodnutrition.org/starbucks/vanilla-latte-with-2-milk/grande" },
+      { "name": "Caffe Mocha (Grande, 2% Milk)", "serving": "16 fl oz", "calories": 290, "protein": 13, "carbs": 42, "fat": 8, "sourceUrl": "https://fastfoodnutrition.org/starbucks/caffe-mocha-with-2-milk/grande" },
+      { "name": "White Chocolate Mocha (Grande, 2% Milk)", "serving": "16 fl oz", "calories": 400, "protein": 14, "carbs": 60, "fat": 11, "sourceUrl": "https://fastfoodnutrition.org/starbucks/white-chocolate-mocha-with-2-milk/grande" },
+      { "name": "Caramel Frappuccino (Grande)", "serving": "16 fl oz", "calories": 370, "protein": 4, "carbs": 57, "fat": 15, "sourceUrl": "https://fastfoodnutrition.org/starbucks/caramel-frappuccino/grande" },
+      { "name": "Mocha Frappuccino (Grande)", "serving": "16 fl oz", "calories": 370, "protein": 5, "carbs": 55, "fat": 15, "sourceUrl": "https://fastfoodnutrition.org/starbucks/mocha-frappuccino/grande" },
+      { "name": "Pink Drink (Grande)", "serving": "16 fl oz", "calories": 140, "protein": 1, "carbs": 27, "fat": 3, "sourceUrl": "https://fastfoodnutrition.org/starbucks/pink-drink/grande" },
+      { "name": "Iced Brown Sugar Oatmilk Shaken Espresso (Grande)", "serving": "16 fl oz", "calories": 120, "protein": 2, "carbs": 20, "fat": 3, "sourceUrl": "https://fastfoodnutrition.org/starbucks/iced-brown-sugar-oatmilk-shaken-espresso/grande" },
+      { "name": "Bacon & Gouda Breakfast Sandwich", "serving": "1 sandwich (116g)", "calories": 370, "protein": 18, "carbs": 33, "fat": 18, "sourceUrl": "https://fastfoodnutrition.org/starbucks/bacon-gouda-artisan-breakfast-sandwich" },
+      { "name": "Double-Smoked Bacon, Cheddar & Egg Sandwich", "serving": "1 sandwich", "calories": 510, "protein": 22, "carbs": 42, "fat": 28, "sourceUrl": "https://fastfoodnutrition.org/starbucks/double-smoked-bacon-cheddar-egg-sandwich" },
+      { "name": "Butter Croissant", "serving": "1 croissant", "calories": 260, "protein": 5, "carbs": 27, "fat": 15, "sourceUrl": "https://fastfoodnutrition.org/starbucks/butter-croissant" },
+      { "name": "Chocolate Croissant", "serving": "1 croissant", "calories": 340, "protein": 5, "carbs": 38, "fat": 20, "sourceUrl": "https://fastfoodnutrition.org/starbucks/chocolate-croissant" },
+      { "name": "Blueberry Streusel Muffin", "serving": "1 muffin", "calories": 360, "protein": 7, "carbs": 59, "fat": 11, "sourceUrl": "https://fastfoodnutrition.org/starbucks/blueberry-streusel-muffin" },
+      { "name": "Birthday Cake Pop", "serving": "1 cake pop (43g)", "calories": 170, "protein": 1, "carbs": 23, "fat": 9, "sourceUrl": "https://fastfoodnutrition.org/starbucks/birthday-cake-pop" }
+    ]
+  },
+  {
+    "id": "chick-fil-a",
+    "name": "Chick-fil-A",
+    "items": [
+      { "name": "Chick-fil-A Chicken Sandwich", "serving": "1 sandwich (183g)", "calories": 440, "protein": 29, "carbs": 41, "fat": 17, "sourceUrl": "https://www.nutrition-charts.com/chick-fil-a-nutrition-information/" },
+      { "name": "Spicy Chicken Sandwich", "serving": "1 sandwich (188g)", "calories": 460, "protein": 28, "carbs": 45, "fat": 19, "sourceUrl": "https://www.nutrition-charts.com/chick-fil-a-nutrition-information/" },
+      { "name": "Chick-fil-A Deluxe Sandwich", "serving": "1 sandwich (247g)", "calories": 500, "protein": 32, "carbs": 44, "fat": 22, "sourceUrl": "https://www.nutrition-charts.com/chick-fil-a-nutrition-information/" },
+      { "name": "Grilled Chicken Sandwich", "serving": "1 sandwich (206g)", "calories": 320, "protein": 28, "carbs": 41, "fat": 6, "sourceUrl": "https://www.nutrition-charts.com/chick-fil-a-nutrition-information/" },
+      { "name": "Chicken Nuggets (8 count)", "serving": "8 nuggets (113g)", "calories": 250, "protein": 27, "carbs": 11, "fat": 11, "sourceUrl": "https://www.nutrition-charts.com/chick-fil-a-nutrition-information/" },
+      { "name": "Chicken Nuggets (12 count)", "serving": "12 nuggets (170g)", "calories": 380, "protein": 40, "carbs": 16, "fat": 17, "sourceUrl": "https://www.nutrition-charts.com/chick-fil-a-nutrition-information/" },
+      { "name": "Chick-n-Strips (3 count)", "serving": "3 strips (136g)", "calories": 310, "protein": 29, "carbs": 16, "fat": 14, "sourceUrl": "https://www.nutrition-charts.com/chick-fil-a-nutrition-information/" },
+      { "name": "Waffle Potato Fries (Medium)", "serving": "1 medium order (125g)", "calories": 420, "protein": 5, "carbs": 45, "fat": 24, "sourceUrl": "https://www.nutrition-charts.com/chick-fil-a-nutrition-information/" },
+      { "name": "Mac & Cheese (Medium)", "serving": "1 medium (227g)", "calories": 450, "protein": 20, "carbs": 28, "fat": 29, "sourceUrl": "https://www.nutrition-charts.com/chick-fil-a-nutrition-information/" },
+      { "name": "Cobb Salad with Nuggets", "serving": "1 salad (413g)", "calories": 850, "protein": 42, "carbs": 34, "fat": 61, "sourceUrl": "https://www.nutrition-charts.com/chick-fil-a-nutrition-information/" },
+      { "name": "Chicken Biscuit", "serving": "1 biscuit (153g)", "calories": 460, "protein": 19, "carbs": 45, "fat": 23, "sourceUrl": "https://www.nutrition-charts.com/chick-fil-a-nutrition-information/" },
+      { "name": "Hash Browns", "serving": "1 order (77g)", "calories": 270, "protein": 3, "carbs": 23, "fat": 18, "sourceUrl": "https://www.nutrition-charts.com/chick-fil-a-nutrition-information/" },
+      { "name": "Chocolate Chunk Cookie", "serving": "1 cookie (78g)", "calories": 370, "protein": 5, "carbs": 49, "fat": 17, "sourceUrl": "https://www.nutrition-charts.com/chick-fil-a-nutrition-information/" },
+      { "name": "Icedream Cone", "serving": "1 cone (135g)", "calories": 180, "protein": 4, "carbs": 32, "fat": 4, "sourceUrl": "https://www.nutrition-charts.com/chick-fil-a-nutrition-information/" },
+      { "name": "Lemonade (Medium)", "serving": "1 medium (410g)", "calories": 220, "protein": 0, "carbs": 58, "fat": 0, "sourceUrl": "https://www.nutrition-charts.com/chick-fil-a-nutrition-information/" }
+    ]
+  },
+  {
+    "id": "taco-bell",
+    "name": "Taco Bell",
+    "items": [
+      { "name": "Crunchy Taco", "serving": "1 taco", "calories": 170, "protein": 8, "carbs": 13, "fat": 9, "sourceUrl": "https://www.nutrition-charts.com/taco-bell-nutrition-facts-calorie-information/" },
+      { "name": "Soft Taco (Beef)", "serving": "1 taco", "calories": 180, "protein": 9, "carbs": 17, "fat": 9, "sourceUrl": "https://www.nutrition-charts.com/taco-bell-nutrition-facts-calorie-information/" },
+      { "name": "Nacho Cheese Doritos Locos Taco", "serving": "1 taco", "calories": 170, "protein": 8, "carbs": 13, "fat": 9, "sourceUrl": "https://www.nutrition-charts.com/taco-bell-nutrition-facts-calorie-information/" },
+      { "name": "Crunchwrap Supreme", "serving": "1 crunchwrap", "calories": 530, "protein": 16, "carbs": 71, "fat": 21, "sourceUrl": "https://www.nutrition-charts.com/taco-bell-nutrition-facts-calorie-information/" },
+      { "name": "Beefy 5-Layer Burrito", "serving": "1 burrito", "calories": 490, "protein": 18, "carbs": 63, "fat": 18, "sourceUrl": "https://www.nutrition-charts.com/taco-bell-nutrition-facts-calorie-information/" },
+      { "name": "Bean Burrito", "serving": "1 burrito", "calories": 350, "protein": 13, "carbs": 54, "fat": 9, "sourceUrl": "https://www.nutrition-charts.com/taco-bell-nutrition-facts-calorie-information/" },
+      { "name": "Burrito Supreme (Beef)", "serving": "1 burrito", "calories": 390, "protein": 16, "carbs": 51, "fat": 14, "sourceUrl": "https://www.nutrition-charts.com/taco-bell-nutrition-facts-calorie-information/" },
+      { "name": "Chicken Quesadilla", "serving": "1 quesadilla", "calories": 510, "protein": 27, "carbs": 38, "fat": 26, "sourceUrl": "https://www.nutrition-charts.com/taco-bell-nutrition-facts-calorie-information/" },
+      { "name": "Cheesy Gordita Crunch", "serving": "1 gordita", "calories": 500, "protein": 20, "carbs": 41, "fat": 28, "sourceUrl": "https://www.nutrition-charts.com/taco-bell-nutrition-facts-calorie-information/" },
+      { "name": "Chalupa Supreme (Beef)", "serving": "1 chalupa", "calories": 350, "protein": 13, "carbs": 33, "fat": 18, "sourceUrl": "https://www.nutrition-charts.com/taco-bell-nutrition-facts-calorie-information/" },
+      { "name": "Nachos BellGrande", "serving": "1 order", "calories": 740, "protein": 16, "carbs": 82, "fat": 38, "sourceUrl": "https://www.nutrition-charts.com/taco-bell-nutrition-facts-calorie-information/" },
+      { "name": "Cinnamon Twists", "serving": "1 order", "calories": 170, "protein": 1, "carbs": 27, "fat": 6, "sourceUrl": "https://www.nutrition-charts.com/taco-bell-nutrition-facts-calorie-information/" }
+    ]
+  },
+  {
+    "id": "wendys",
+    "name": "Wendy's",
+    "items": [
+      { "name": "Dave's Single", "serving": "1 sandwich", "calories": 570, "protein": 30, "carbs": 40, "fat": 34, "sourceUrl": "https://www.nutrition-charts.com/wendys-nutrition-facts/" },
+      { "name": "Dave's Double", "serving": "1 sandwich", "calories": 810, "protein": 49, "carbs": 41, "fat": 51, "sourceUrl": "https://www.nutrition-charts.com/wendys-nutrition-facts/" },
+      { "name": "Baconator", "serving": "1 sandwich", "calories": 950, "protein": 59, "carbs": 40, "fat": 62, "sourceUrl": "https://www.nutrition-charts.com/wendys-nutrition-facts/" },
+      { "name": "Jr. Bacon Cheeseburger", "serving": "1 sandwich", "calories": 380, "protein": 19, "carbs": 25, "fat": 22, "sourceUrl": "https://www.nutrition-charts.com/wendys-nutrition-facts/" },
+      { "name": "Spicy Chicken Sandwich", "serving": "1 sandwich", "calories": 510, "protein": 29, "carbs": 54, "fat": 20, "sourceUrl": "https://www.nutrition-charts.com/wendys-nutrition-facts/" },
+      { "name": "Crispy Chicken Sandwich", "serving": "1 sandwich", "calories": 330, "protein": 14, "carbs": 33, "fat": 16, "sourceUrl": "https://www.nutrition-charts.com/wendys-nutrition-facts/" },
+      { "name": "Chicken Nuggets (10 piece)", "serving": "10 pieces", "calories": 420, "protein": 22, "carbs": 24, "fat": 27, "sourceUrl": "https://www.nutrition-charts.com/wendys-nutrition-facts/" },
+      { "name": "Natural-Cut Fries (Medium)", "serving": "1 medium order", "calories": 420, "protein": 6, "carbs": 56, "fat": 19, "sourceUrl": "https://www.nutrition-charts.com/wendys-nutrition-facts/" },
+      { "name": "Chili (Small)", "serving": "1 small cup", "calories": 170, "protein": 15, "carbs": 16, "fat": 5, "sourceUrl": "https://www.nutrition-charts.com/wendys-nutrition-facts/" },
+      { "name": "Chili (Large)", "serving": "1 large cup", "calories": 250, "protein": 23, "carbs": 23, "fat": 7, "sourceUrl": "https://www.nutrition-charts.com/wendys-nutrition-facts/" },
+      { "name": "Plain Baked Potato", "serving": "1 potato", "calories": 270, "protein": 7, "carbs": 61, "fat": 0, "sourceUrl": "https://www.nutrition-charts.com/wendys-nutrition-facts/" },
+      { "name": "Classic Chocolate Frosty (Medium)", "serving": "1 medium", "calories": 470, "protein": 13, "carbs": 79, "fat": 12, "sourceUrl": "https://www.nutrition-charts.com/wendys-nutrition-facts/" }
+    ]
+  }
+]

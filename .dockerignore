@@ -1,6 +1,7 @@
 node_modules
 .next
 .git
-*.md
-.env*
-.vscode
+.claude
+.env.local
+.env*.local
+memory.md

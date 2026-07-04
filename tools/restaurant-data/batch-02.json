@@ -1,0 +1,88 @@
+[
+  {
+    "id": "dunkin",
+    "name": "Dunkin'",
+    "items": [
+      { "name": "Glazed Donut", "serving": "1 donut", "calories": 240, "protein": 4, "carbs": 33, "fat": 11, "sourceUrl": "https://www.dunkindonuts.com/content/dam/dd/pdf/nutrition.pdf" },
+      { "name": "Boston Kreme Donut", "serving": "1 donut", "calories": 270, "protein": 5, "carbs": 39, "fat": 11, "sourceUrl": "https://www.dunkindonuts.com/content/dam/dd/pdf/nutrition.pdf" },
+      { "name": "Chocolate Frosted Donut", "serving": "1 donut", "calories": 260, "protein": 4, "carbs": 34, "fat": 11, "sourceUrl": "https://www.dunkindonuts.com/content/dam/dd/pdf/nutrition.pdf" },
+      { "name": "Old Fashioned Donut", "serving": "1 donut", "calories": 310, "protein": 4, "carbs": 30, "fat": 19, "sourceUrl": "https://www.dunkindonuts.com/content/dam/dd/pdf/nutrition.pdf" },
+      { "name": "Jelly Donut", "serving": "1 donut", "calories": 250, "protein": 4, "carbs": 36, "fat": 10, "sourceUrl": "https://www.dunkindonuts.com/content/dam/dd/pdf/nutrition.pdf" },
+      { "name": "French Cruller", "serving": "1 donut", "calories": 230, "protein": 3, "carbs": 21, "fat": 14, "sourceUrl": "https://www.dunkindonuts.com/content/dam/dd/pdf/nutrition.pdf" },
+      { "name": "Coffee Roll", "serving": "1 coffee roll", "calories": 390, "protein": 7, "carbs": 48, "fat": 19, "sourceUrl": "https://www.dunkindonuts.com/content/dam/dd/pdf/nutrition.pdf" },
+      { "name": "Bacon, Egg and Cheese on Croissant", "serving": "1 sandwich", "calories": 520, "protein": 19, "carbs": 34, "fat": 34, "sourceUrl": "https://www.dunkindonuts.com/content/dam/dd/pdf/nutrition.pdf" },
+      { "name": "Sausage, Egg and Cheese on English Muffin", "serving": "1 sandwich", "calories": 560, "protein": 21, "carbs": 40, "fat": 35, "sourceUrl": "https://www.dunkindonuts.com/content/dam/dd/pdf/nutrition.pdf" },
+      { "name": "Egg and Cheese on English Muffin", "serving": "1 sandwich", "calories": 340, "protein": 14, "carbs": 38, "fat": 15, "sourceUrl": "https://www.dunkindonuts.com/content/dam/dd/pdf/nutrition.pdf" },
+      { "name": "Hash Browns", "serving": "6 pieces", "calories": 110, "protein": 1, "carbs": 13, "fat": 6, "sourceUrl": "https://www.dunkindonuts.com/content/dam/dd/pdf/nutrition.pdf" },
+      { "name": "Plain Bagel", "serving": "1 bagel", "calories": 300, "protein": 11, "carbs": 64, "fat": 1, "sourceUrl": "https://www.dunkindonuts.com/content/dam/dd/pdf/nutrition.pdf" },
+      { "name": "Everything Bagel", "serving": "1 bagel", "calories": 340, "protein": 12, "carbs": 67, "fat": 3, "sourceUrl": "https://www.dunkindonuts.com/content/dam/dd/pdf/nutrition.pdf" }
+    ]
+  },
+  {
+    "id": "burger-king",
+    "name": "Burger King",
+    "items": [
+      { "name": "Whopper", "serving": "1 sandwich", "calories": 670, "protein": 32, "carbs": 54, "fat": 41, "sourceUrl": "https://fastfoodnutrition.org/burger-king/whopper/wo-cheese" },
+      { "name": "Whopper with Cheese", "serving": "1 sandwich", "calories": 770, "protein": 37, "carbs": 58, "fat": 51, "sourceUrl": "https://fastfoodnutrition.org/burger-king/whopper/w-cheese" },
+      { "name": "Double Whopper", "serving": "1 sandwich", "calories": 920, "protein": 53, "carbs": 54, "fat": 60, "sourceUrl": "https://fastfoodnutrition.org/burger-king/double-whopper/wo-cheese" },
+      { "name": "Whopper Jr.", "serving": "1 sandwich", "calories": 330, "protein": 15, "carbs": 30, "fat": 19, "sourceUrl": "https://fastfoodnutrition.org/burger-king/whopper-jr/wo-cheese" },
+      { "name": "Original Chicken Sandwich", "serving": "1 sandwich", "calories": 892, "protein": 24, "carbs": 64, "fat": 52, "sourceUrl": "https://fastfoodnutrition.org/burger-king/original-chicken-sandwich" },
+      { "name": "Cheeseburger", "serving": "1 sandwich", "calories": 290, "protein": 15, "carbs": 31, "fat": 13, "sourceUrl": "https://fastfoodnutrition.org/burger-king/cheeseburger" },
+      { "name": "Chicken Nuggets", "serving": "8 pieces", "calories": 390, "protein": 18, "carbs": 23, "fat": 25, "sourceUrl": "https://fastfoodnutrition.org/burger-king/chicken-nuggets/8-piece" },
+      { "name": "Chicken Fries", "serving": "8 pieces", "calories": 220, "protein": 13, "carbs": 16, "fat": 12, "sourceUrl": "https://fastfoodnutrition.org/burger-king/chicken-fries/8-piece" },
+      { "name": "French Fries (Medium)", "serving": "1 medium order", "calories": 370, "protein": 5, "carbs": 54, "fat": 16, "sourceUrl": "https://fastfoodnutrition.org/burger-king/french-fries/medium" },
+      { "name": "Onion Rings (Medium)", "serving": "1 medium order", "calories": 360, "protein": 4, "carbs": 48, "fat": 16, "sourceUrl": "https://fastfoodnutrition.org/burger-king/onion-rings/medium" }
+    ]
+  },
+  {
+    "id": "subway",
+    "name": "Subway",
+    "items": [
+      { "name": "6-inch Turkey Breast Sub", "serving": "1 six-inch sub, standard recipe", "calories": 260, "protein": 20, "carbs": 39, "fat": 3, "sourceUrl": "https://fastfoodnutrition.org/subway/turkey-breast/6" },
+      { "name": "6-inch Italian B.M.T. Sub", "serving": "1 six-inch sub, standard recipe", "calories": 360, "protein": 19, "carbs": 39, "fat": 16, "sourceUrl": "https://fastfoodnutrition.org/subway/italian-bmt/6" },
+      { "name": "6-inch Meatball Marinara Sub", "serving": "1 six-inch sub, standard recipe", "calories": 410, "protein": 20, "carbs": 48, "fat": 18, "sourceUrl": "https://fastfoodnutrition.org/subway/meatball-marinara/6" },
+      { "name": "6-inch Tuna Sub", "serving": "1 six-inch sub, standard recipe", "calories": 430, "protein": 19, "carbs": 37, "fat": 25, "sourceUrl": "https://fastfoodnutrition.org/subway/tuna/6" },
+      { "name": "6-inch Spicy Italian Sub", "serving": "1 six-inch sub, standard recipe", "calories": 430, "protein": 19, "carbs": 39, "fat": 24, "sourceUrl": "https://fastfoodnutrition.org/subway/spicy-italian/6" },
+      { "name": "6-inch Black Forest Ham Sub", "serving": "1 six-inch sub, standard recipe", "calories": 270, "protein": 18, "carbs": 41, "fat": 4, "sourceUrl": "https://fastfoodnutrition.org/subway/black-forest-ham/6" },
+      { "name": "6-inch Cold Cut Combo Sub", "serving": "1 six-inch sub, standard recipe", "calories": 280, "protein": 17, "carbs": 38, "fat": 10, "sourceUrl": "https://fastfoodnutrition.org/subway/cold-cut-combo/6" },
+      { "name": "6-inch Sweet Onion Chicken Teriyaki Sub", "serving": "1 six-inch sub, standard recipe", "calories": 340, "protein": 24, "carbs": 54, "fat": 4, "sourceUrl": "https://fastfoodnutrition.org/subway/sweet-onion-chicken-teriyaki/6" },
+      { "name": "6-inch Oven Roasted Chicken Sub", "serving": "1 six-inch sub, standard recipe", "calories": 280, "protein": 21, "carbs": 41, "fat": 5, "sourceUrl": "https://fastfoodnutrition.org/subway/oven-roasted-chicken/6" },
+      { "name": "6-inch Veggie Delite Sub", "serving": "1 six-inch sub, standard recipe", "calories": 200, "protein": 8, "carbs": 39, "fat": 2, "sourceUrl": "https://fastfoodnutrition.org/subway/veggie-delite/6" },
+      { "name": "Chocolate Chip Cookie", "serving": "1 cookie", "calories": 220, "protein": 2, "carbs": 30, "fat": 10, "sourceUrl": "https://fastfoodnutrition.org/subway/chocolate-chip-cookie" }
+    ]
+  },
+  {
+    "id": "chipotle",
+    "name": "Chipotle",
+    "items": [
+      { "name": "Chicken Burrito Bowl (chicken, white rice, black beans, fresh tomato salsa, cheese)", "serving": "1 bowl (sum of published per-ingredient servings)", "calories": 600, "protein": 51, "carbs": 59, "fat": 21, "sourceUrl": "https://fastfoodnutrition.org/chipotle/chicken-burrito-bowl" },
+      { "name": "Steak Burrito Bowl (steak, white rice, black beans, fresh tomato salsa, cheese)", "serving": "1 bowl (sum of published per-ingredient servings)", "calories": 600, "protein": 49, "carbs": 60, "fat": 21, "sourceUrl": "https://fastfoodnutrition.org/chipotle/steak-burrito-bowl" },
+      { "name": "Carnitas Burrito Bowl (carnitas, white rice, black beans, fresh tomato salsa, cheese)", "serving": "1 bowl (sum of published per-ingredient servings)", "calories": 600, "protein": 46, "carbs": 59, "fat": 22, "sourceUrl": "https://fastfoodnutrition.org/chipotle/carnitas-burrito-bowl" },
+      { "name": "Barbacoa Burrito Bowl (barbacoa, white rice, black beans, fresh tomato salsa, cheese)", "serving": "1 bowl (sum of published per-ingredient servings)", "calories": 580, "protein": 43, "carbs": 60, "fat": 21, "sourceUrl": "https://fastfoodnutrition.org/chipotle/barbacoa-burrito-bowl" },
+      { "name": "Sofritas Burrito Bowl (sofritas, white rice, black beans, fresh tomato salsa, cheese)", "serving": "1 bowl (sum of published per-ingredient servings)", "calories": 555, "protein": 27, "carbs": 67, "fat": 24, "sourceUrl": "https://fastfoodnutrition.org/chipotle/sofritas-burrito-bowl" },
+      { "name": "Cheese Quesadilla", "serving": "1 quesadilla", "calories": 650, "protein": 26, "carbs": 53, "fat": 33, "sourceUrl": "https://fastfoodnutrition.org/chipotle/cheese-quesadilla" },
+      { "name": "Chips", "serving": "4 oz bag", "calories": 570, "protein": 8, "carbs": 73, "fat": 27, "sourceUrl": "https://fastfoodnutrition.org/chipotle/chips" },
+      { "name": "Chips & Guacamole", "serving": "7.5 oz", "calories": 720, "protein": 10, "carbs": 81, "fat": 40, "sourceUrl": "https://fastfoodnutrition.org/chipotle/chips-guacamole" },
+      { "name": "Chips & Queso", "serving": "8 oz", "calories": 770, "protein": 20, "carbs": 82, "fat": 41, "sourceUrl": "https://fastfoodnutrition.org/chipotle/chips-queso" },
+      { "name": "Side of Guacamole", "serving": "3.5 oz", "calories": 150, "protein": 2, "carbs": 8, "fat": 13, "sourceUrl": "https://fastfoodnutrition.org/chipotle/guacamole" }
+    ]
+  },
+  {
+    "id": "dominos",
+    "name": "Domino's",
+    "items": [
+      { "name": "Pepperoni Pizza, 12\" Medium Hand Tossed (crust, garlic oil, pizza sauce, regular cheese, pepperoni)", "serving": "2 slices (1/4 of pizza; sum of published per-slice components)", "calories": 420, "protein": 16, "carbs": 48, "fat": 17, "sourceUrl": "https://cache.dominos.com/olo/6_118_2/assets/build/market/US/_en/pdf/DominosNutritionGuide.pdf" },
+      { "name": "Cheese Pizza, 12\" Medium Hand Tossed (crust, garlic oil, pizza sauce, regular cheese)", "serving": "2 slices (1/4 of pizza; sum of published per-slice components)", "calories": 400, "protein": 16, "carbs": 48, "fat": 15, "sourceUrl": "https://cache.dominos.com/olo/6_118_2/assets/build/market/US/_en/pdf/DominosNutritionGuide.pdf" },
+      { "name": "Italian Sausage Pizza, 12\" Medium Hand Tossed (crust, garlic oil, pizza sauce, regular cheese, Italian sausage)", "serving": "2 slices (1/4 of pizza; sum of published per-slice components)", "calories": 460, "protein": 18, "carbs": 48, "fat": 21, "sourceUrl": "https://cache.dominos.com/olo/6_118_2/assets/build/market/US/_en/pdf/DominosNutritionGuide.pdf" },
+      { "name": "Stuffed Cheesy Bread", "serving": "1 piece", "calories": 150, "protein": 6, "carbs": 16, "fat": 7, "sourceUrl": "https://cache.dominos.com/olo/6_118_2/assets/build/market/US/_en/pdf/DominosNutritionGuide.pdf" },
+      { "name": "Parmesan Bread Bites", "serving": "4 pieces", "calories": 220, "protein": 5, "carbs": 27, "fat": 10, "sourceUrl": "https://cache.dominos.com/olo/6_118_2/assets/build/market/US/_en/pdf/DominosNutritionGuide.pdf" },
+      { "name": "Boneless Chicken", "serving": "3 pieces", "calories": 170, "protein": 9, "carbs": 18, "fat": 7, "sourceUrl": "https://cache.dominos.com/olo/6_118_2/assets/build/market/US/_en/pdf/DominosNutritionGuide.pdf" },
+      { "name": "Hot Buffalo Wings", "serving": "4 pieces", "calories": 260, "protein": 15, "carbs": 9, "fat": 20, "sourceUrl": "https://cache.dominos.com/olo/6_118_2/assets/build/market/US/_en/pdf/DominosNutritionGuide.pdf" },
+      { "name": "Philly Cheese Steak Oven-Baked Sandwich", "serving": "1/2 sandwich", "calories": 380, "protein": 20, "carbs": 38, "fat": 15, "sourceUrl": "https://cache.dominos.com/olo/6_118_2/assets/build/market/US/_en/pdf/DominosNutritionGuide.pdf" },
+      { "name": "Chicken Bacon Ranch Oven-Baked Sandwich", "serving": "1/2 sandwich", "calories": 450, "protein": 23, "carbs": 37, "fat": 22, "sourceUrl": "https://cache.dominos.com/olo/6_118_2/assets/build/market/US/_en/pdf/DominosNutritionGuide.pdf" },
+      { "name": "Chocolate Lava Crunch Cake", "serving": "1 cake", "calories": 350, "protein": 4, "carbs": 47, "fat": 17, "sourceUrl": "https://cache.dominos.com/olo/6_118_2/assets/build/market/US/_en/pdf/DominosNutritionGuide.pdf" },
+      { "name": "Marbled Cookie Brownie", "serving": "1 brownie", "calories": 200, "protein": 2, "carbs": 26, "fat": 10, "sourceUrl": "https://cache.dominos.com/olo/6_118_2/assets/build/market/US/_en/pdf/DominosNutritionGuide.pdf" },
+      { "name": "Cinnamon Bread Twists", "serving": "2 pieces", "calories": 250, "protein": 5, "carbs": 31, "fat": 12, "sourceUrl": "https://cache.dominos.com/olo/6_118_2/assets/build/market/US/_en/pdf/DominosNutritionGuide.pdf" }
+    ]
+  }
+]

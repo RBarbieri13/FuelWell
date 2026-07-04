@@ -1,0 +1,98 @@
+[
+  {
+    "id": "panera-bread",
+    "name": "Panera Bread",
+    "items": [
+      { "name": "Broccoli Cheddar Soup (bowl)", "serving": "1 bowl", "calories": 360, "protein": 14, "carbs": 30, "fat": 21, "sourceUrl": "https://fastfoodnutrition.org/panera-bread/broccoli-cheddar-soup/bowl" },
+      { "name": "Chicken Noodle Soup (bowl)", "serving": "1 bowl", "calories": 160, "protein": 14, "carbs": 19, "fat": 5, "sourceUrl": "https://fastfoodnutrition.org/panera-bread/chicken-noodle-soup/bowl" },
+      { "name": "Mac & Cheese (cup)", "serving": "1 cup", "calories": 470, "protein": 17, "carbs": 33, "fat": 31, "sourceUrl": "https://fastfoodnutrition.org/panera-bread/mac-cheese" },
+      { "name": "Chicken Caesar Salad (full)", "serving": "1 full salad", "calories": 470, "protein": 34, "carbs": 21, "fat": 28, "sourceUrl": "https://fastfoodnutrition.org/panera-bread/chicken-caesar-salad/full" },
+      { "name": "Fuji Apple Salad with Chicken (full)", "serving": "1 full salad", "calories": 580, "protein": 32, "carbs": 38, "fat": 36, "sourceUrl": "https://fastfoodnutrition.org/panera-bread/fuji-apple-with-chicken-salad/full" },
+      { "name": "Green Goddess Cobb Salad with Chicken (whole)", "serving": "1 whole salad", "calories": 530, "protein": 42, "carbs": 27, "fat": 30, "sourceUrl": "https://fastfoodnutrition.org/panera-bread/green-goddess-cobb-salad-with-chicken/whole" },
+      { "name": "Bacon Turkey Bravo on XL Tomato Basil (full)", "serving": "1 full sandwich", "calories": 640, "protein": 45, "carbs": 68, "fat": 21, "sourceUrl": "https://fastfoodnutrition.org/panera-bread/full-bacon-turkey-bravo-on-xl-tomato-basil" },
+      { "name": "Chipotle Chicken Avocado Melt (whole)", "serving": "1 whole sandwich", "calories": 850, "protein": 41, "carbs": 80, "fat": 41, "sourceUrl": "https://fastfoodnutrition.org/panera-bread/chipotle-chicken-avocado-melt/whole" },
+      { "name": "Frontega Chicken Panini (whole)", "serving": "1 whole panini", "calories": 730, "protein": 39, "carbs": 79, "fat": 29, "sourceUrl": "https://fastfoodnutrition.org/panera-bread/frontega-chicken-panini/whole" },
+      { "name": "Mediterranean Veggie on XL Tomato Basil (whole)", "serving": "1 whole sandwich", "calories": 470, "protein": 18, "carbs": 68, "fat": 13, "sourceUrl": "https://fastfoodnutrition.org/panera-bread/mediterranean-veggie-on-xl-tomato-basil/whole" },
+      { "name": "Cinnamon Crunch Bagel", "serving": "1 bagel", "calories": 420, "protein": 10, "carbs": 82, "fat": 6, "sourceUrl": "https://fastfoodnutrition.org/panera-bread/cinnamon-crunch-bagel" },
+      { "name": "Chocolate Chipper Cookie", "serving": "1 cookie", "calories": 390, "protein": 4, "carbs": 52, "fat": 19, "sourceUrl": "https://fastfoodnutrition.org/panera-bread/chocolate-chipper-cookie" },
+      { "name": "Kitchen Sink Cookie", "serving": "1 cookie", "calories": 800, "protein": 8, "carbs": 99, "fat": 44, "sourceUrl": "https://fastfoodnutrition.org/panera-bread/kitchen-sink-cookie" },
+      { "name": "Mango Yuzu Citrus Charged Lemonade (regular)", "serving": "20 fl oz", "calories": 350, "protein": 0, "carbs": 86, "fat": 0, "sourceUrl": "https://fastfoodnutrition.org/panera-bread/mango-yuzu-citrus-charged-lemonade/regular" }
+    ]
+  },
+  {
+    "id": "pizza-hut",
+    "name": "Pizza Hut",
+    "items": [
+      { "name": "Pepperoni Pan Pizza (medium slice)", "serving": "1 slice, medium 12\"", "calories": 260, "protein": 10, "carbs": 26, "fat": 13, "sourceUrl": "https://fastfoodnutrition.org/pizza-hut/pepperoni-pan-pizza/medium" },
+      { "name": "Cheese Pan Pizza (medium slice)", "serving": "1 slice, medium 12\"", "calories": 240, "protein": 10, "carbs": 26, "fat": 10, "sourceUrl": "https://fastfoodnutrition.org/pizza-hut/cheese-pan-pizza/medium" },
+      { "name": "Meat Lover's Pan Pizza (medium slice)", "serving": "1 slice, medium 12\"", "calories": 320, "protein": 13, "carbs": 26, "fat": 18, "sourceUrl": "https://fastfoodnutrition.org/pizza-hut/meat-lovers-pan-pizza/medium" },
+      { "name": "Supreme Pan Pizza (medium slice)", "serving": "1 slice, medium 12\"", "calories": 280, "protein": 11, "carbs": 27, "fat": 14, "sourceUrl": "https://fastfoodnutrition.org/pizza-hut/supreme-pan-pizza/medium" },
+      { "name": "Hand Tossed Pepperoni Pizza (medium slice)", "serving": "1 slice, medium", "calories": 230, "protein": 9, "carbs": 25, "fat": 10, "sourceUrl": "https://fastfoodnutrition.org/pizza-hut/hand-tossed-pepperoni-pizza/medium" },
+      { "name": "Hand Tossed Cheese Pizza (medium slice)", "serving": "1 slice, medium", "calories": 210, "protein": 9, "carbs": 26, "fat": 8, "sourceUrl": "https://fastfoodnutrition.org/pizza-hut/hand-tossed-cheese-pizza/medium" },
+      { "name": "Pepperoni Stuffed Crust Pizza (slice)", "serving": "1 slice, large", "calories": 340, "protein": 15, "carbs": 35, "fat": 16, "sourceUrl": "https://fastfoodnutrition.org/pizza-hut/pepperoni-stuffed-crust-pizza" },
+      { "name": "Breadstick", "serving": "1 breadstick (44g)", "calories": 140, "protein": 5, "carbs": 19, "fat": 5, "sourceUrl": "https://fastfoodnutrition.org/pizza-hut/breadsticks-each" },
+      { "name": "Cinnamon Sticks", "serving": "2 pieces", "calories": 160, "protein": 4, "carbs": 26, "fat": 5, "sourceUrl": "https://fastfoodnutrition.org/pizza-hut/cinnamon-sticks" },
+      { "name": "Honey BBQ Traditional Wings", "serving": "2 wings", "calories": 140, "protein": 8, "carbs": 16, "fat": 5, "sourceUrl": "https://fastfoodnutrition.org/pizza-hut/honey-bbq-wings" },
+      { "name": "Garlic Parmesan Boneless Wings", "serving": "2 wings", "calories": 260, "protein": 11, "carbs": 11, "fat": 19, "sourceUrl": "https://fastfoodnutrition.org/pizza-hut/garlic-parmesan-bonless-wings" },
+      { "name": "Pepperoni P'Zone", "serving": "1/2 P'Zone", "calories": 460, "protein": 19, "carbs": 60, "fat": 16, "sourceUrl": "https://fastfoodnutrition.org/pizza-hut/pepperoni-pzone" }
+    ]
+  },
+  {
+    "id": "kfc",
+    "name": "KFC",
+    "items": [
+      { "name": "Original Recipe Chicken Breast", "serving": "1 breast", "calories": 390, "protein": 39, "carbs": 11, "fat": 21, "sourceUrl": "https://fastfoodnutrition.org/kfc/original-recipe-chicken-breast" },
+      { "name": "Original Recipe Chicken Drumstick", "serving": "1 drumstick", "calories": 130, "protein": 12, "carbs": 4, "fat": 8, "sourceUrl": "https://fastfoodnutrition.org/kfc/original-recipe-chicken-drumstick" },
+      { "name": "Original Recipe Chicken Thigh", "serving": "1 thigh", "calories": 280, "protein": 19, "carbs": 8, "fat": 19, "sourceUrl": "https://fastfoodnutrition.org/kfc/original-recipe-chicken-thigh" },
+      { "name": "Extra Crispy Tenders (3 pc)", "serving": "3 tenders", "calories": 410, "protein": 29, "carbs": 24, "fat": 22, "sourceUrl": "https://fastfoodnutrition.org/kfc/extra-crispy-tenders-3" },
+      { "name": "Classic Chicken Sandwich", "serving": "1 sandwich", "calories": 650, "protein": 34, "carbs": 49, "fat": 35, "sourceUrl": "https://fastfoodnutrition.org/kfc/chicken-sandwich/classic" },
+      { "name": "Famous Bowl (Mashed Potato with Gravy)", "serving": "1 bowl", "calories": 740, "protein": 26, "carbs": 81, "fat": 35, "sourceUrl": "https://fastfoodnutrition.org/kfc/kfc-famous-bowls-mashed-potato-with-gravy" },
+      { "name": "Popcorn Chicken Nuggets (large)", "serving": "1 large serving", "calories": 620, "protein": 27, "carbs": 39, "fat": 39, "sourceUrl": "https://fastfoodnutrition.org/kfc/popcorn-chicken-nuggets/large" },
+      { "name": "Mashed Potatoes with Gravy (individual)", "serving": "1 individual (156g)", "calories": 130, "protein": 3, "carbs": 20, "fat": 5, "sourceUrl": "https://fastfoodnutrition.org/kfc/mashed-potatoes-with-gravy/individual" },
+      { "name": "Mac & Cheese (individual)", "serving": "1 individual (120g)", "calories": 140, "protein": 5, "carbs": 17, "fat": 6, "sourceUrl": "https://fastfoodnutrition.org/kfc/macaroni-and-cheese/individual" },
+      { "name": "Cole Slaw (individual)", "serving": "1 individual (113g)", "calories": 170, "protein": 1, "carbs": 14, "fat": 12, "sourceUrl": "https://fastfoodnutrition.org/kfc/cole-slaw/individual" },
+      { "name": "Secret Recipe Fries", "serving": "1 serving", "calories": 320, "protein": 5, "carbs": 41, "fat": 15, "sourceUrl": "https://fastfoodnutrition.org/kfc/secret-recipe-fries" },
+      { "name": "Biscuit", "serving": "1 biscuit", "calories": 180, "protein": 4, "carbs": 22, "fat": 8, "sourceUrl": "https://fastfoodnutrition.org/kfc/biscuit" },
+      { "name": "Chocolate Chip Cookie", "serving": "1 cookie", "calories": 120, "protein": 1, "carbs": 17, "fat": 6, "sourceUrl": "https://fastfoodnutrition.org/kfc/sweet-life-chocolate-chip-cookie" }
+    ]
+  },
+  {
+    "id": "popeyes",
+    "name": "Popeyes",
+    "items": [
+      { "name": "Classic Chicken Sandwich", "serving": "1 sandwich", "calories": 699, "protein": 28, "carbs": 50, "fat": 42, "sourceUrl": "https://fastfoodnutrition.org/popeyes/chicken-sandwich" },
+      { "name": "Spicy Chicken Sandwich", "serving": "1 sandwich", "calories": 700, "protein": 28, "carbs": 50, "fat": 42, "sourceUrl": "https://fastfoodnutrition.org/popeyes/spicy-chicken-sandwich" },
+      { "name": "Bonafide Mild Chicken Breast", "serving": "1 breast (157g)", "calories": 440, "protein": 35, "carbs": 16, "fat": 27, "sourceUrl": "https://fastfoodnutrition.org/popeyes/bonafide-mild-chicken-breast" },
+      { "name": "Bonafide Mild Chicken Thigh", "serving": "1 thigh (80g)", "calories": 280, "protein": 14, "carbs": 7, "fat": 21, "sourceUrl": "https://fastfoodnutrition.org/popeyes/bonafide-mild-chicken-thigh" },
+      { "name": "Bonafide Mild Chicken Leg", "serving": "1 leg (67g)", "calories": 160, "protein": 14, "carbs": 5, "fat": 9, "sourceUrl": "https://fastfoodnutrition.org/popeyes/bonafide-mild-chicken-leg" },
+      { "name": "Handcrafted Mild Tenders (3 pc)", "serving": "3 tenders (126g)", "calories": 340, "protein": 27, "carbs": 26, "fat": 14, "sourceUrl": "https://fastfoodnutrition.org/popeyes/chicken-mild-tenders-3pcs" },
+      { "name": "Cajun Fries (regular)", "serving": "1 regular (85g)", "calories": 260, "protein": 3, "carbs": 30, "fat": 14, "sourceUrl": "https://fastfoodnutrition.org/popeyes/cajun-fries/regular" },
+      { "name": "Mashed Potatoes with Cajun Gravy (regular)", "serving": "1 regular (142g)", "calories": 110, "protein": 3, "carbs": 18, "fat": 4, "sourceUrl": "https://fastfoodnutrition.org/popeyes/mashed-potatoes/regular" },
+      { "name": "Red Beans & Rice (regular)", "serving": "1 regular (146g)", "calories": 230, "protein": 7, "carbs": 23, "fat": 14, "sourceUrl": "https://fastfoodnutrition.org/popeyes/red-beans-rice/regular" },
+      { "name": "Cole Slaw (regular)", "serving": "1 regular (138g)", "calories": 220, "protein": 1, "carbs": 19, "fat": 15, "sourceUrl": "https://fastfoodnutrition.org/popeyes/cole-slaw/regular" },
+      { "name": "Homestyle Mac & Cheese (regular)", "serving": "1 regular (132g)", "calories": 300, "protein": 11, "carbs": 15, "fat": 22, "sourceUrl": "https://fastfoodnutrition.org/popeyes/macaroni-cheese/regular" },
+      { "name": "Biscuit", "serving": "1 biscuit (60g)", "calories": 260, "protein": 4, "carbs": 26, "fat": 15, "sourceUrl": "https://fastfoodnutrition.org/popeyes/biscuit" },
+      { "name": "Popcorn Shrimp (1/4 lb)", "serving": "1/4 pound", "calories": 390, "protein": 14, "carbs": 28, "fat": 25, "sourceUrl": "https://fastfoodnutrition.org/popeyes/popcorn-shrimp" }
+    ]
+  },
+  {
+    "id": "sonic-drive-in",
+    "name": "Sonic Drive-In",
+    "items": [
+      { "name": "Sonic Cheeseburger with Ketchup & Mayo", "serving": "1 burger", "calories": 700, "protein": 30, "carbs": 52, "fat": 41, "sourceUrl": "https://assets.ctfassets.net/2iottqjdrp5h/65XT3FGLAwpNbHl1HpDh3Y/e51df0cbbe1224e12bc7d5abfc271205/58778-3_F25_NAT_NutritionalBrochure_FA_rg_Spread_WCAG__1_.pdf" },
+      { "name": "SuperSONIC Double Cheeseburger with Ketchup & Mayo", "serving": "1 burger", "calories": 1040, "protein": 50, "carbs": 54, "fat": 68, "sourceUrl": "https://assets.ctfassets.net/2iottqjdrp5h/65XT3FGLAwpNbHl1HpDh3Y/e51df0cbbe1224e12bc7d5abfc271205/58778-3_F25_NAT_NutritionalBrochure_FA_rg_Spread_WCAG__1_.pdf" },
+      { "name": "Jr. Double Cheeseburger", "serving": "1 burger", "calories": 390, "protein": 21, "carbs": 25, "fat": 23, "sourceUrl": "https://assets.ctfassets.net/2iottqjdrp5h/65XT3FGLAwpNbHl1HpDh3Y/e51df0cbbe1224e12bc7d5abfc271205/58778-3_F25_NAT_NutritionalBrochure_FA_rg_Spread_WCAG__1_.pdf" },
+      { "name": "Chili Cheese Coney", "serving": "1 coney", "calories": 470, "protein": 18, "carbs": 34, "fat": 29, "sourceUrl": "https://assets.ctfassets.net/2iottqjdrp5h/65XT3FGLAwpNbHl1HpDh3Y/e51df0cbbe1224e12bc7d5abfc271205/58778-3_F25_NAT_NutritionalBrochure_FA_rg_Spread_WCAG__1_.pdf" },
+      { "name": "Crispy Tenders (3 pc)", "serving": "3 tenders", "calories": 260, "protein": 21, "carbs": 16, "fat": 12, "sourceUrl": "https://assets.ctfassets.net/2iottqjdrp5h/65XT3FGLAwpNbHl1HpDh3Y/e51df0cbbe1224e12bc7d5abfc271205/58778-3_F25_NAT_NutritionalBrochure_FA_rg_Spread_WCAG__1_.pdf" },
+      { "name": "Crispy Tenders (5 pc)", "serving": "5 tenders", "calories": 430, "protein": 35, "carbs": 27, "fat": 20, "sourceUrl": "https://assets.ctfassets.net/2iottqjdrp5h/65XT3FGLAwpNbHl1HpDh3Y/e51df0cbbe1224e12bc7d5abfc271205/58778-3_F25_NAT_NutritionalBrochure_FA_rg_Spread_WCAG__1_.pdf" },
+      { "name": "Tots (medium)", "serving": "1 medium", "calories": 360, "protein": 3, "carbs": 43, "fat": 19, "sourceUrl": "https://assets.ctfassets.net/2iottqjdrp5h/65XT3FGLAwpNbHl1HpDh3Y/e51df0cbbe1224e12bc7d5abfc271205/58778-3_F25_NAT_NutritionalBrochure_FA_rg_Spread_WCAG__1_.pdf" },
+      { "name": "Groovy Fries (medium)", "serving": "1 medium", "calories": 370, "protein": 4, "carbs": 39, "fat": 22, "sourceUrl": "https://assets.ctfassets.net/2iottqjdrp5h/65XT3FGLAwpNbHl1HpDh3Y/e51df0cbbe1224e12bc7d5abfc271205/58778-3_F25_NAT_NutritionalBrochure_FA_rg_Spread_WCAG__1_.pdf" },
+      { "name": "Mozzarella Sticks (6 pc, medium)", "serving": "6 sticks", "calories": 560, "protein": 22, "carbs": 54, "fat": 28, "sourceUrl": "https://assets.ctfassets.net/2iottqjdrp5h/65XT3FGLAwpNbHl1HpDh3Y/e51df0cbbe1224e12bc7d5abfc271205/58778-3_F25_NAT_NutritionalBrochure_FA_rg_Spread_WCAG__1_.pdf" },
+      { "name": "Onion Rings (medium)", "serving": "1 medium", "calories": 580, "protein": 8, "carbs": 74, "fat": 29, "sourceUrl": "https://assets.ctfassets.net/2iottqjdrp5h/65XT3FGLAwpNbHl1HpDh3Y/e51df0cbbe1224e12bc7d5abfc271205/58778-3_F25_NAT_NutritionalBrochure_FA_rg_Spread_WCAG__1_.pdf" },
+      { "name": "Corn Dog", "serving": "1 corn dog", "calories": 230, "protein": 6, "carbs": 23, "fat": 13, "sourceUrl": "https://assets.ctfassets.net/2iottqjdrp5h/65XT3FGLAwpNbHl1HpDh3Y/e51df0cbbe1224e12bc7d5abfc271205/58778-3_F25_NAT_NutritionalBrochure_FA_rg_Spread_WCAG__1_.pdf" },
+      { "name": "Vanilla Shake (medium)", "serving": "1 medium", "calories": 770, "protein": 12, "carbs": 107, "fat": 27, "sourceUrl": "https://assets.ctfassets.net/2iottqjdrp5h/65XT3FGLAwpNbHl1HpDh3Y/e51df0cbbe1224e12bc7d5abfc271205/58778-3_F25_NAT_NutritionalBrochure_FA_rg_Spread_WCAG__1_.pdf" },
+      { "name": "Sonic Blast with Oreo Cookie Pieces (medium)", "serving": "1 medium", "calories": 770, "protein": 15, "carbs": 121, "fat": 28, "sourceUrl": "https://assets.ctfassets.net/2iottqjdrp5h/65XT3FGLAwpNbHl1HpDh3Y/e51df0cbbe1224e12bc7d5abfc271205/58778-3_F25_NAT_NutritionalBrochure_FA_rg_Spread_WCAG__1_.pdf" },
+      { "name": "Limeade Slush (medium)", "serving": "1 medium", "calories": 280, "protein": 0, "carbs": 75, "fat": 0, "sourceUrl": "https://assets.ctfassets.net/2iottqjdrp5h/65XT3FGLAwpNbHl1HpDh3Y/e51df0cbbe1224e12bc7d5abfc271205/58778-3_F25_NAT_NutritionalBrochure_FA_rg_Spread_WCAG__1_.pdf" }
+    ]
+  }
+]

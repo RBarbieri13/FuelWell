@@ -1,0 +1,40 @@
+"use client";
+
+import { AlertTriangle } from "lucide-react";
+import type { CoachCardAction } from "./contract";
+
+export type ConfirmCardProps = {
+  toolName: string;
+  input: unknown;
+  prompt: string;
+  onAction: (action: CoachCardAction) => void;
+};
+
+export function ConfirmCard({ toolName, input, prompt, onAction }: ConfirmCardProps) {
+  return (
+    <div className="max-w-full rounded-2xl border border-lemon-200 bg-lemon-50 p-4 shadow-sm">
+      <div className="flex items-start gap-2">
+        <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-lemon-600" />
+        <p className="text-sm font-bold leading-5 text-lemon-700">{prompt}</p>
+      </div>
+      <div className="mt-3 flex flex-wrap gap-2">
+        <button
+          type="button"
+          aria-label={`Confirm ${toolName.replaceAll("_", " ")}`}
+          onClick={() => onAction({ kind: "confirm_tool", name: toolName, input })}
+          className="min-h-10 rounded-full bg-lemon-600 px-4 py-2 text-xs font-black text-white transition hover:bg-lemon-700"
+        >
+          Yes, do it
+        </button>
+        <button
+          type="button"
+          aria-label="Cancel this action"
+          onClick={() => onAction({ kind: "cancel_confirm" })}
+          className="min-h-10 rounded-full border border-lemon-200 bg-white px-4 py-2 text-xs font-black text-lemon-700 transition hover:bg-lemon-100"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  );
+}
