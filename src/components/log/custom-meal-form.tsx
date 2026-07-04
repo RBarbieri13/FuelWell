@@ -15,18 +15,18 @@ export type CustomMealDraft = {
 
 type FieldKey = "calories" | "protein" | "carbs" | "fat";
 
-const MACRO_FIELDS: { key: FieldKey; label: string }[] = [
-  { key: "calories", label: "Calories" },
-  { key: "protein", label: "Protein (g)" },
-  { key: "carbs", label: "Carbs (g)" },
-  { key: "fat", label: "Fat (g)" },
+const MACRO_FIELDS: { key: FieldKey; label: string; max: number }[] = [
+  { key: "calories", label: "Calories", max: 10000 },
+  { key: "protein", label: "Protein (g)", max: 1000 },
+  { key: "carbs", label: "Carbs (g)", max: 1000 },
+  { key: "fat", label: "Fat (g)", max: 1000 },
 ];
 
-/** Returns a non-negative number, or null when the string is not valid. */
-function parseNonNegative(value: string): number | null {
+/** Returns a number within [0, max], or null when the string is not valid. */
+function parseMacro(value: string, max: number): number | null {
   if (value.trim() === "") return null;
   const n = Number(value);
-  if (!Number.isFinite(n) || n < 0) return null;
+  if (!Number.isFinite(n) || n < 0 || n > max) return null;
   return n;
 }
 
@@ -54,10 +54,10 @@ export function CustomMealForm({
   const [touched, setTouched] = useState(false);
 
   const parsed: Record<FieldKey, number | null> = {
-    calories: parseNonNegative(values.calories),
-    protein: parseNonNegative(values.protein),
-    carbs: parseNonNegative(values.carbs),
-    fat: parseNonNegative(values.fat),
+    calories: parseMacro(values.calories, 10000),
+    protein: parseMacro(values.protein, 1000),
+    carbs: parseMacro(values.carbs, 1000),
+    fat: parseMacro(values.fat, 1000),
   };
 
   const nameValid = name.trim().length > 0;
@@ -134,19 +134,26 @@ export function CustomMealForm({
           value={name}
           onChange={(event) => setName(event.target.value)}
           placeholder="Meal name (e.g. Homemade chili)"
+          aria-label="Meal name"
+          aria-invalid={touched && !nameValid ? "true" : undefined}
+          maxLength={120}
           className={cn(
             "w-full rounded-[1.15rem] border bg-white px-4 py-3 text-base font-semibold text-[#16302a] placeholder:text-[#91a7a0] focus:outline-none focus:ring-2 focus:ring-primary-500",
             touched && !nameValid ? "border-red-300" : "border-primary-100"
           )}
         />
         {touched && !nameValid && (
-          <p className="text-xs font-bold text-red-600">Add a meal name.</p>
+          <p className="text-xs font-bold text-red-600" role="alert">
+            Add a meal name.
+          </p>
         )}
         <input
           type="text"
           value={portionLabel}
           onChange={(event) => setPortionLabel(event.target.value)}
           placeholder="Portion label (e.g. 1 bowl) — optional"
+          aria-label="Portion label (optional)"
+          maxLength={60}
           className="w-full rounded-[1.15rem] border border-primary-100 bg-white px-4 py-3 text-base font-semibold text-[#16302a] placeholder:text-[#91a7a0] focus:outline-none focus:ring-2 focus:ring-primary-500"
         />
       </div>
@@ -163,6 +170,8 @@ export function CustomMealForm({
                 type="number"
                 inputMode="decimal"
                 min={0}
+                max={field.max}
+                aria-invalid={invalid ? "true" : undefined}
                 value={values[field.key]}
                 onChange={(event) =>
                   setValues((current) => ({
@@ -181,8 +190,9 @@ export function CustomMealForm({
         })}
       </div>
       {touched && !numbersValid && (
-        <p className="text-xs font-bold text-red-600">
-          Enter a number of 0 or more in every macro field.
+        <p className="text-xs font-bold text-red-600" role="alert">
+          Enter a number in every macro field (0–10,000 calories, 0–1,000 g per
+          macro).
         </p>
       )}
 

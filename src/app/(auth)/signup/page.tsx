@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -12,13 +12,31 @@ import { Brain, Leaf, ShieldCheck, Sparkles, Target } from "lucide-react";
 const ONBOARDING_STORAGE_KEY = "fuelwell:onboarding:v1";
 const PREVIEW_KIND_STORAGE_KEY = "fuelwell:preview-user-kind";
 
+function validateEmail(value: string) {
+  if (!value.trim()) return "Enter your email address.";
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())) {
+    return "That doesn't look like an email address — check for typos.";
+  }
+  return null;
+}
+
+function validatePassword(value: string) {
+  if (!value) return "Enter a password.";
+  if (value.length < 8) return "Passwords need at least 8 characters.";
+  return null;
+}
+
 export default function SignupPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [isNewUserPreview, setIsNewUserPreview] = useState(false);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
 
   const passwordStrength = getPasswordStrength(password);
 
@@ -36,6 +54,16 @@ export default function SignupPage() {
 
   async function handleEmailSignup(e: React.FormEvent) {
     e.preventDefault();
+
+    const nextEmailError = validateEmail(email);
+    const nextPasswordError = validatePassword(password);
+    setEmailError(nextEmailError);
+    setPasswordError(nextPasswordError);
+    if (nextEmailError || nextPasswordError) {
+      (nextEmailError ? emailRef : passwordRef).current?.focus();
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
@@ -120,27 +148,38 @@ export default function SignupPage() {
               </div>
             </div>
 
-            <form onSubmit={handleEmailSignup} className="space-y-4">
+            <form onSubmit={handleEmailSignup} noValidate className="space-y-4">
               <Input
+                ref={emailRef}
                 label="Email"
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (emailError && !validateEmail(e.target.value)) setEmailError(null);
+                }}
+                onBlur={() => setEmailError(email ? validateEmail(email) : null)}
                 required
                 placeholder="you@example.com"
                 autoComplete="email"
+                error={emailError || undefined}
               />
               <div>
                 <Input
+                  ref={passwordRef}
                   label="Password"
                   type="password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (passwordError && !validatePassword(e.target.value)) setPasswordError(null);
+                  }}
+                  onBlur={() => setPasswordError(password ? validatePassword(password) : null)}
                   required
                   minLength={8}
                   placeholder="Min 8 characters"
                   autoComplete="new-password"
-                  error={error || undefined}
+                  error={passwordError || error || undefined}
                 />
                 {/* Password strength indicator */}
                 {password.length > 0 && (

@@ -358,6 +358,32 @@ export default function OnboardingPage() {
     }
   }
 
+  function proceedHint(): string | null {
+    if (canProceed()) return null;
+    switch (step) {
+      case 2:
+        return "Add your birthday to continue.";
+      case 3:
+        return "Choose an option to continue.";
+      case 4:
+        return "Enter your height (3 ft or more) and weight (60 lb or more) to continue.";
+      case 5:
+        return "Choose your activity level to continue.";
+      case 6:
+        return "Pick a goal to continue.";
+      case 7:
+        return "Pick a timeline to continue.";
+      case 8:
+        return "Answer both questions to continue.";
+      case 12:
+        return "Pick at least one workout type to continue.";
+      case 13:
+        return "Answer all three questions to continue.";
+      default:
+        return null;
+    }
+  }
+
   function next() {
     if (step < totalSteps - 1 && canProceed()) setStep(step + 1);
   }
@@ -1009,7 +1035,7 @@ export default function OnboardingPage() {
               )}
             </div>
 
-            <div className="flex items-center justify-between gap-3 border-t border-primary-100/70 p-4 md:p-7">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-primary-100/70 p-4 md:p-7">
               {step > 0 ? (
                 <Button variant="ghost" onClick={back}>
                   <ArrowLeft className="h-4 w-4" />
@@ -1017,6 +1043,15 @@ export default function OnboardingPage() {
                 </Button>
               ) : (
                 <div />
+              )}
+
+              {proceedHint() && (
+                <p
+                  aria-live="polite"
+                  className="order-last w-full text-center text-sm font-semibold text-[#78928a] md:order-none md:w-auto md:text-right"
+                >
+                  {proceedHint()}
+                </p>
               )}
 
               {step < totalSteps - 1 ? (

@@ -264,9 +264,16 @@ export default function ProgressPage() {
   const [activeMacros, setActiveMacros] = useState<MacroKey[]>(ALL_MACROS);
 
   const previewWeight = Number.parseFloat(weightEntry);
-  const projectedDelta = Number.isFinite(previewWeight)
-    ? snapshot.startingWeight - previewWeight
-    : snapshot.startingWeight - snapshot.currentWeight;
+  const weightError =
+    weightEntry.trim() === "" || !Number.isFinite(Number(weightEntry))
+      ? "Enter a number, like 176.5."
+      : previewWeight < 50 || previewWeight > 1000
+        ? "Enter a weight between 50 and 1,000 lb."
+        : null;
+  const projectedDelta =
+    Number.isFinite(previewWeight) && !weightError
+      ? snapshot.startingWeight - previewWeight
+      : snapshot.startingWeight - snapshot.currentWeight;
 
   const loggedMealCount = snapshot.meals.filter((meal) => meal.logged).length;
 
@@ -496,18 +503,31 @@ export default function ProgressPage() {
             <span className="text-xs font-black text-[#91a7a0] uppercase tracking-[0.14em]">
               Today&apos;s weight
             </span>
-            <div className="mt-2 flex items-center gap-2 rounded-[1rem] border border-primary-100 bg-primary-50/60 px-4 py-3">
+            <div
+              className={`mt-2 flex items-center gap-2 rounded-[1rem] border px-4 py-3 ${
+                weightError
+                  ? "border-red-300 bg-red-50/40"
+                  : "border-primary-100 bg-primary-50/60"
+              }`}
+            >
               <input
                 value={weightEntry}
                 onChange={(event) => setWeightEntry(event.target.value)}
                 inputMode="decimal"
+                aria-invalid={weightError ? "true" : undefined}
                 className="w-full bg-transparent text-lg font-black text-[#16302a] tabular-nums focus:outline-none"
               />
               <span className="text-sm font-bold text-[#91a7a0]">lb</span>
             </div>
-            <p className="text-xs font-semibold text-[#78928a] mt-2">
-              This updates the preview only; it is not saved.
-            </p>
+            {weightError ? (
+              <p className="mt-2 text-xs font-bold text-red-600" role="alert">
+                {weightError} The preview below uses your last logged weight.
+              </p>
+            ) : (
+              <p className="text-xs font-semibold text-[#78928a] mt-2">
+                This updates the preview only; it is not saved.
+              </p>
+            )}
           </label>
 
           <div className="space-y-3 rounded-[18px] border border-primary-100 bg-[#f7faf8] p-5">

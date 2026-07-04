@@ -34,7 +34,11 @@ export function PortionPicker({
   const [customAmount, setCustomAmount] = useState("");
   const unit = food.servingUnit;
   const parsedCustom = Number(customAmount);
-  const customValid = customAmount.trim() !== "" && parsedCustom > 0;
+  const MAX_AMOUNT = 5000;
+  const customTooBig =
+    customAmount.trim() !== "" && Number.isFinite(parsedCustom) && parsedCustom > MAX_AMOUNT;
+  const customValid =
+    customAmount.trim() !== "" && parsedCustom > 0 && parsedCustom <= MAX_AMOUNT;
 
   return (
     <div className="space-y-4">
@@ -100,9 +104,12 @@ export function PortionPicker({
             type="number"
             inputMode="decimal"
             min={0}
+            max={MAX_AMOUNT}
             value={customAmount}
             onChange={(event) => setCustomAmount(event.target.value)}
             placeholder={`Amount in ${unit}`}
+            aria-label={`Custom amount in ${unit}`}
+            aria-invalid={customAmount.trim() !== "" && !customValid ? "true" : undefined}
             className={cn(
               "w-full rounded-[1.15rem] border bg-white px-4 py-3 text-base font-semibold text-[#16302a] placeholder:text-[#91a7a0] focus:outline-none focus:ring-2 focus:ring-primary-500",
               customAmount.trim() !== "" && !customValid
@@ -129,8 +136,10 @@ export function PortionPicker({
           </Button>
         </div>
         {customAmount.trim() !== "" && !customValid && (
-          <p className="mt-1 text-xs font-bold text-red-600">
-            Enter an amount greater than 0.
+          <p className="mt-1 text-xs font-bold text-red-600" role="alert">
+            {customTooBig
+              ? `Amounts above ${MAX_AMOUNT.toLocaleString()} ${unit} usually mean a typo — double-check the number.`
+              : "Enter an amount greater than 0."}
           </p>
         )}
       </div>
