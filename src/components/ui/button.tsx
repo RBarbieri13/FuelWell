@@ -9,13 +9,13 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantStyles = {
   primary:
-    "bg-gradient-to-r from-primary-500 to-[#159aa2] text-white hover:from-primary-600 hover:to-[#138893] active:from-primary-700 active:to-primary-800 shadow-[0_16px_34px_rgba(21,145,108,0.24)] focus-visible:ring-primary-500",
+    "bg-gradient-to-r from-primary-500 to-[#159aa2] text-white hover:from-primary-600 hover:to-[#138893] active:from-primary-700 active:to-primary-800 shadow-[0_16px_34px_rgba(21,145,108,0.24)] focus-visible:ring-primary-600",
   secondary:
-    "bg-white/92 text-primary-800 border border-primary-100 hover:border-primary-200 hover:bg-primary-50 active:bg-primary-100 shadow-sm shadow-primary-900/5 focus-visible:ring-primary-400",
+    "bg-white/92 text-primary-800 border border-primary-100 hover:border-primary-200 hover:bg-primary-50 active:bg-primary-100 shadow-sm shadow-primary-900/5 focus-visible:ring-primary-600",
   ghost:
-    "text-neutral-600 hover:bg-primary-50 active:bg-primary-100 focus-visible:ring-primary-400",
+    "text-neutral-600 hover:bg-primary-50 active:bg-primary-100 focus-visible:ring-primary-600",
   danger:
-    "text-red-600 hover:bg-red-50 active:bg-red-100 focus-visible:ring-red-400",
+    "text-red-600 hover:bg-red-50 active:bg-red-100 focus-visible:ring-red-500",
 };
 
 const sizeStyles = {
@@ -42,7 +42,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={disabled || loading}
         className={cn(
-          "inline-flex min-h-11 items-center justify-center font-bold rounded-[1.15rem] transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none select-none md:min-h-0",
+          "inline-flex min-h-11 items-center justify-center font-bold rounded-[1.15rem] transition-all duration-150 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none select-none md:min-h-0",
           variantStyles[variant],
           sizeStyles[size],
           className

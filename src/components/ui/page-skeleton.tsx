@@ -5,7 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
  * shape most /app pages share. Route loading.tsx files render this so slow
  * navigations show a pending state instead of a frozen previous page.
  */
-export function PageSkeleton({ cards = 3 }: { cards?: number }) {
+export function PageSkeleton({ cards = 3, hero = false }: { cards?: number; hero?: boolean }) {
   return (
     <div className="fw-app-surface min-h-full">
       <div className="fw-page-header">
@@ -15,7 +15,8 @@ export function PageSkeleton({ cards = 3 }: { cards?: number }) {
         </div>
       </div>
       <div className="fw-page-inner space-y-6 pb-28 md:pb-8">
-        {Array.from({ length: cards }, (_, i) => (
+        {hero && <Skeleton className="h-44 rounded-[2rem] bg-[#123d32]/85" />}
+        {Array.from({ length: hero ? cards - 1 : cards }, (_, i) => (
           <Skeleton key={i} className="h-44 rounded-[1.5rem] bg-white/80" />
         ))}
       </div>

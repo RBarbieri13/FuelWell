@@ -44,7 +44,7 @@ export function MacroBar({
         </div>
         <span className={large ? "text-base font-bold text-neutral-500 tabular-nums md:text-lg" : "text-sm font-semibold text-neutral-500 tabular-nums"}>
           <span className={large ? "text-2xl font-black text-neutral-900" : "font-black text-neutral-800"}>{current.toLocaleString()}</span> / {target.toLocaleString()}
-          {unit.length > 1 ? ` ${unit}` : unit}
+          {unit === "g" ? "g" : ` ${unit}`}
         </span>
       </div>
       <div

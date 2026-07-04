@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Check, Plus, SquarePen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -52,6 +52,8 @@ export function CustomMealForm({
     fat: "",
   });
   const [touched, setTouched] = useState(false);
+  const nameRef = useRef<HTMLInputElement>(null);
+  const firstMacroRef = useRef<HTMLInputElement>(null);
 
   const parsed: Record<FieldKey, number | null> = {
     calories: parseMacro(values.calories, 10000),
@@ -62,6 +64,9 @@ export function CustomMealForm({
 
   const nameValid = name.trim().length > 0;
   const numbersValid = MACRO_FIELDS.every((f) => parsed[f.key] !== null);
+  const overMax = MACRO_FIELDS.some(
+    (f) => values[f.key].trim() !== "" && Number(values[f.key]) > f.max
+  );
   const canSubmit = nameValid && numbersValid;
 
   function reset() {
@@ -73,7 +78,10 @@ export function CustomMealForm({
 
   function handleSubmit() {
     setTouched(true);
-    if (!canSubmit) return;
+    if (!canSubmit) {
+      (!nameValid ? nameRef : firstMacroRef).current?.focus();
+      return;
+    }
     onSubmit({
       name: name.trim(),
       portionLabel: portionLabel.trim() || "1 serving",
@@ -130,6 +138,7 @@ export function CustomMealForm({
 
       <div className="space-y-2">
         <input
+          ref={nameRef}
           type="text"
           value={name}
           onChange={(event) => setName(event.target.value)}
@@ -167,6 +176,7 @@ export function CustomMealForm({
                 {field.label}
               </label>
               <input
+                ref={field.key === "calories" ? firstMacroRef : undefined}
                 type="number"
                 inputMode="decimal"
                 min={0}
@@ -191,8 +201,9 @@ export function CustomMealForm({
       </div>
       {touched && !numbersValid && (
         <p className="text-xs font-bold text-red-600" role="alert">
-          Enter a number in every macro field (0–10,000 calories, 0–1,000 g per
-          macro).
+          {overMax
+            ? "Values above 10,000 calories or 1,000 g per macro usually mean a typo — double-check the numbers."
+            : "Enter a number of 0 or more in every macro field."}
         </p>
       )}
 
@@ -200,7 +211,6 @@ export function CustomMealForm({
         type="button"
         size="lg"
         className="w-full"
-        disabled={touched && !canSubmit}
         onClick={handleSubmit}
       >
         <Check className="h-4 w-4" />

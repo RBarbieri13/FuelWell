@@ -185,7 +185,7 @@ export default function MealPlanPage() {
             </p>
             <div className="mt-6 grid grid-cols-3 gap-2 sm:gap-3">
               {[
-                ["Avg cals", Math.round(weekTotals.calories / days.length).toLocaleString()],
+                ["Avg kcal", Math.round(weekTotals.calories / days.length).toLocaleString()],
                 ["Avg protein", `${Math.round(weekTotals.protein / days.length)}g`],
                 ["Open slots", `${days.length * 4 - weekTotals.planned}`],
               ].map(([label, value]) => (
@@ -349,7 +349,7 @@ export default function MealPlanPage() {
                               {addedTitle ?? meal.title}
                             </h3>
                             <div className="mt-2 flex flex-wrap items-center gap-2 text-xs font-bold text-[#78928a]">
-                              <span className="tabular-nums">{meal.calories} kcal</span>
+                              <span className="tabular-nums">{meal.calories.toLocaleString()} kcal</span>
                               <span className="tabular-nums">{meal.protein}g protein</span>
                               <span className="inline-flex items-center gap-1">
                                 <Clock className="w-3 h-3" />

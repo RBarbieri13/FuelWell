@@ -263,15 +263,17 @@ export default function ProgressPage() {
   const [windowKey, setWindowKey] = useState<WindowKey>("7d");
   const [activeMacros, setActiveMacros] = useState<MacroKey[]>(ALL_MACROS);
 
+  const [weightTouched, setWeightTouched] = useState(false);
   const previewWeight = Number.parseFloat(weightEntry);
-  const weightError =
+  const weightInvalid =
     weightEntry.trim() === "" || !Number.isFinite(Number(weightEntry))
       ? "Enter a number, like 176.5."
-      : previewWeight < 50 || previewWeight > 1000
-        ? "Enter a weight between 50 and 1,000 lb."
+      : previewWeight < 60 || previewWeight > 1000
+        ? "Enter a weight between 60 and 1,000 lb."
         : null;
+  const weightError = weightTouched ? weightInvalid : null;
   const projectedDelta =
-    Number.isFinite(previewWeight) && !weightError
+    Number.isFinite(previewWeight) && !weightInvalid
       ? snapshot.startingWeight - previewWeight
       : snapshot.startingWeight - snapshot.currentWeight;
 
@@ -367,7 +369,7 @@ export default function ProgressPage() {
           <div className="grid grid-cols-3 gap-3">
             <StatTile label="Logged days" value={snapshot.loggedDays.toString()} icon={CalendarCheck} />
             <StatTile label="Consistency" value={`${snapshot.adherence}%`} icon={Gauge} />
-            <StatTile label="Avg cals" value={snapshot.caloriesAverage ? snapshot.caloriesAverage.toLocaleString() : "—"} icon={Flame} />
+            <StatTile label="Avg kcal" value={snapshot.caloriesAverage ? snapshot.caloriesAverage.toLocaleString() : "—"} icon={Flame} />
           </div>
         </div>
       </Card>
@@ -513,6 +515,7 @@ export default function ProgressPage() {
               <input
                 value={weightEntry}
                 onChange={(event) => setWeightEntry(event.target.value)}
+                onBlur={() => setWeightTouched(true)}
                 inputMode="decimal"
                 aria-invalid={weightError ? "true" : undefined}
                 className="w-full bg-transparent text-lg font-black text-[#16302a] tabular-nums focus:outline-none"

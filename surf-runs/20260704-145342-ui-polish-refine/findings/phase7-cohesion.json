@@ -1,0 +1,153 @@
+[
+  {
+    "verdict": "SEAMS_FOUND",
+    "summary": "Read the full 1756-line diff (11 commits, 50 files) of surf/ui-polish-refine vs 3103286. The campaign is broadly coherent \u2014 the loading.tsx/PageSkeleton pattern, the cal\u2192kcal rename, and most min-h-11 md:min-h-0 touch targets are applied uniformly. But three of the phase-5 sweeps (B1 touch targets, B3 focus indicator, B4 unit/number format) each leave a visible seam where the same defect-class was fixed two different ways or half-applied on lines the campaign itself edited, and B2's validation layer uses three different timing models across forms. No contradictory changes or leftover debug debris found.",
+    "seams": [
+      {
+        "title": "Same unit-spacing fix implemented with two different heuristics in two files",
+        "where": "src/components/dashboard/macro-bar.tsx:47 and src/components/daily-detail/detail-surfaces.tsx:742",
+        "evidence": "Both hunks were added by this campaign to solve the identical problem (space before 'kcal', none before 'g'). macro-bar.tsx uses `{unit.length > 1 ? ` ${unit}` : unit}` while detail-surfaces.tsx TargetTile uses `{unit === \"g\" ? \"g\" : ` ${unit}`}` plus a second `{unit === \"g\" ? \"g\" : \"\"}` tail. Two idioms, one defect-class, same commit series (B4).",
+        "suggested_fix": "Pick one heuristic (unit === \"g\" is the clearer intent) or extract a tiny formatUnit(value, unit) helper and use it in both components.",
+        "severity": 2
+      },
+      {
+        "title": "kcal standardization skips 'Avg cals' on a line the campaign edited",
+        "where": "src/app/app/meal-plan/page.tsx:188",
+        "evidence": "B4 renamed every 'Cal'/'cal' label to 'kcal' across ~15 files, and this exact line was edited by the campaign (Math.round(...).toString() \u2192 .toLocaleString()) \u2014 yet its label stays `[\"Avg cals\", ...]`. The identical pre-existing 'Avg cals' at src/app/app/progress/page.tsx:363 was also left, so the app now shows 'kcal' everywhere except these two tiles.",
+        "suggested_fix": "Rename both labels to match the new standard (e.g. 'Avg kcal'), or document why 'cals' survives.",
+        "severity": 2
+      },
+      {
+        "title": "toLocaleString applied to some calorie values but not sibling values on campaign-edited lines",
+        "where": "src/app/app/dashboard/dashboard-client.tsx:314 (also :403, src/app/app/meal-plan/page.tsx:352)",
+        "evidence": "B4's commit message is 'one unit and number format everywhere'. The campaign edited `{mealTotals.calories} cal` \u2192 `{mealTotals.calories} kcal` at dashboard-client 314/403 and `{meal.calories} kcal` at meal-plan 352 without adding .toLocaleString(), while the same commit added .toLocaleString() to remaining(), selectedTotals.calories, and detail-surfaces SmallStat (`item.calories.toLocaleString()`). A 1,200-kcal meal renders as '1200 kcal' in the dashboard meal list but '1,200' in the totals ring beside it.",
+        "suggested_fix": "Apply .toLocaleString() to the meal-level calorie values touched by the rename, or drop it everywhere below 4 digits \u2014 one rule.",
+        "severity": 2
+      },
+      {
+        "title": "Three different idioms used for the B1 44px touch-target fix",
+        "where": "src/app/app/log/page.tsx:454 (also food-search.tsx:168, mobile-header.tsx:43, series-toggle.tsx:31, button.tsx:22)",
+        "evidence": "Most B1 fixes use `min-h-11 ... md:min-h-0` (mobile-only). But the log-drawer close button and food-search add button were fixed by bumping padding (p-2\u2192p-3, p-2.5\u2192p-3), which enlarges them on desktop too; mobile-header/user-menu use fixed `h-11 w-11` with a `-my-1.5` offset hack; series-toggle uses `md:min-h-9` instead of `md:min-h-0`; and button.tsx md size changed py-2.5\u2192py-3, which persists on desktop even though min-h resets there \u2014 quietly changing desktop button height despite the 'layouts unchanged' promise. Pre-existing code (recipe-card.tsx:111, coach/page.tsx:614) uses plain `min-h-11` with no md reset, so the codebase now has four coexisting variants.",
+        "suggested_fix": "Standardize on `min-h-11 md:min-h-0` for the campaign's fixes; revert the padding-based bumps to min-h so desktop metrics are untouched, and revert button.tsx md padding to py-2.5.",
+        "severity": 2
+      },
+      {
+        "title": "B3 focus-indicator upgrade (3px outline) does not reach Button, which keeps its own 2px ring",
+        "where": "src/app/globals.css:111 (vs src/components/ui/button.tsx:45)",
+        "evidence": "globals.css :focus-visible was bumped 2px\u21923px and `outline-ring/50` removed from the base layer ('high-contrast keyboard focus indicator'). But button.tsx \u2014 a file this campaign edited on the same line \u2014 retains `focus-visible:outline-none focus-visible:ring-2`, so every <Button> suppresses the new global indicator and shows the old 2px ring while adjacent links/inputs show the new 3px outline. Keyboard focus now looks visibly different between the app's most common control and everything else.",
+        "suggested_fix": "Either bump Button to ring-[3px] (or drop its outline-none and let the global outline apply) so the focus treatment is one style, or scope B3's claim.",
+        "severity": 2
+      },
+      {
+        "title": "B2 inline validation uses three different timing models across forms",
+        "where": "src/app/(auth)/signup/page.tsx:161 (vs progress/page.tsx:267, custom-meal-form.tsx:54)",
+        "evidence": "All added by B2/R1: signup validates on blur and clears errors while typing (onBlur + validate-on-change-if-error, with focus management); progress's weight field computes weightError live on every keystroke \u2014 clearing the field instantly shows 'Enter a number, like 176.5.'; custom-meal-form shows nothing until first submit (`touched` flag); portion-picker errors live as you type. Same feature, four forms, three interaction models.",
+        "suggested_fix": "Pick one model (blur-validate + clear-on-fix, as signup does) and apply it to the weight field and portion picker; keep submit-gating only where a form has no blur boundary.",
+        "severity": 2
+      },
+      {
+        "title": "Re-run intake link: redundant md:py-1.5 and tacked-on class ordering",
+        "where": "src/components/settings/settings-client.tsx:855",
+        "evidence": "Campaign changed the class to `\"min-h-11 self-start rounded-full bg-white px-3 py-1.5 ... md:min-h-0 md:py-1.5 inline-flex items-center\"`. `md:py-1.5` is a no-op (base is already py-1.5), and `inline-flex items-center` is appended after the responsive variants instead of leading the string as in every other B1 edit (`inline-flex min-h-11 items-center ...`).",
+        "suggested_fix": "Drop md:py-1.5 and reorder to the campaign's own idiom: `inline-flex min-h-11 items-center ... md:min-h-0`.",
+        "severity": 1
+      },
+      {
+        "title": "Error copy tone mixes terse-imperative and conversational within the new validation layer",
+        "where": "src/components/log/portion-picker.tsx:141",
+        "evidence": "New copy ranges from terse ('Add a meal name.', 'Enter a password.') to conversational ('Amounts above 5,000 g usually mean a typo \u2014 double-check the number.', 'That doesn't look like an email address \u2014 check for typos.'). All introduced by this campaign; adjacent fields in the same flow can show both registers.",
+        "suggested_fix": "Settle on one register (the friendly-with-example style of 'Enter a number, like 176.5.' fits the brand) and normalize the handful of new strings.",
+        "severity": 1
+      },
+      {
+        "title": "hasSupabaseConfig guard shaped differently in the two sibling coach routes",
+        "where": "src/app/api/coach/audit/route.ts:9 (vs history/route.ts:11)",
+        "evidence": "Same commit adds the no-Supabase guard as an early return in history/route.ts (`if (!hasSupabaseConfig()) return Response.json(...)`) but as an inline nullable-client ternary in audit/route.ts (`hasSupabaseConfig() ? await createClient() : null` plus `user && supabase` checks). Audit's shape is partly forced by its preview fallback, but the divergence makes the two routes read as if written by different authors.",
+        "suggested_fix": "Optional: hoist a shared getOptionalUser() helper in preview-session.ts used by both routes, or add a one-line comment in audit/route.ts explaining why the early return doesn't apply.",
+        "severity": 1
+      }
+    ]
+  },
+  {
+    "verdict": "SEAMS_FOUND",
+    "summary": "Walked dashboard, log, coach, daily-review, progress, recipes, settings, meal-plan, and signup at 1440x900 and 390x844 against the 3103286..HEAD diff. The campaign largely holds together: 44px touch targets use a consistent min-h-11/md:min-h-0 pattern, chip rows wrap cleanly on mobile, signup/custom-meal/portion errors share one red style, the 3px focus outline renders as a single coherent indicator (it wins over Button's own ring classes everywhere, so no double indicator), and the live greeting/kcal changes render correctly. Found two mid-level seams \u2014 the kcal standardization (B4) missed the two 'Avg cals' labels that now sit next to freshly-converted 'kcal' text, and the new progress weight validation fires an error the instant the field is cleared, unlike the blur/submit timing the same campaign gave signup and the custom-meal form \u2014 plus two nits.",
+    "seams": [
+      {
+        "title": "B4 'one unit everywhere' missed the two 'Avg cals' labels",
+        "where": "src/app/app/meal-plan/page.tsx:188 and src/app/app/progress/page.tsx:370",
+        "evidence": "The campaign converted ~50 'cal' strings to 'kcal' (workout-library.ts, dashboard, log, daily-review tiles), but the meal-plan hero tile still renders 'AVG CALS' directly above meal rows the same diff changed to '{meal.calories} kcal' (meal-plan/page.tsx:351), and the progress StatTile still says 'Avg cals' on a page whose bars/tooltips the diff converted to kcal (macro-stacked-bars.tsx). Verified live: meal-plan mobile/desktop hero shows '1,641 AVG CALS' while the card below shows '360 kcal \u00b7 31g protein'; progress mobile shows '2,058 / Avg cals'. The diff even edited the adjacent value on meal-plan line 188 (added toLocaleString) but left the label.",
+        "suggested_fix": "Rename both labels to 'Avg kcal' (they are already uppercase-transformed tiles, matching the KCAL tile labels elsewhere).",
+        "severity": 2
+      },
+      {
+        "title": "Progress weight field errors instantly on empty, unlike the validation timing the same campaign gave other forms",
+        "where": "src/app/app/progress/page.tsx:527",
+        "evidence": "weightError is computed reactively with no touched/blur gate: clearing the field to retype immediately shows the red border + role=alert 'Enter a number, like 176.5. The preview below uses your last logged weight.' (reproduced live at 390x844 and 1440x900). The same B2 commit gave signup blur-then-clear-on-fix validation (signup/page.tsx onBlur) and gave the custom meal form submit-gated validation (custom-meal-form.tsx `touched`). Three timings in one 'inline validation layer'; the eager-on-empty one flashes red at every user who clears the field mid-edit.",
+        "suggested_fix": "Suppress the error while the field is empty (keep the neutral 'preview only' caption, fall back to last logged weight silently), or gate it on blur like signup.",
+        "severity": 2
+      },
+      {
+        "title": "Log food-search filter chips restyled to font-semibold, diverging from the font-black chip language used by equivalent filter rows elsewhere",
+        "where": "src/components/log/food-search.tsx:107",
+        "evidence": "Diff changed the All/Favorites/Dislikes/Recently-used chips from 'text-xs font-black' to 'text-sm font-semibold' (measured live: weight 600 on log vs 900 for the recipes meal-filter chips, progress macro toggles, chart FilterButtons, and settings IntakePreferenceGroup chips, which all kept font-black in the same B1 pass). It now matches its DietFilterChips sibling row locally, but the identical-role filter row on recipes ('All/Breakfast/Lunch/Dinner') remains font-black, so the same control reads differently across the two pages.",
+        "suggested_fix": "Pick one chip spec for filter rows (either font-black like the rest of the pass, or migrate the recipes/settings/chart chips to the semibold spec) and apply it in one place.",
+        "severity": 1
+      },
+      {
+        "title": "One generic PageSkeleton for 14 routes with distinct hero layouts",
+        "where": "src/components/ui/page-skeleton.tsx:8",
+        "evidence": "B5 added identical loading.tsx files (light fw-page-header title/sub lines + 3 white 11rem cards) for coach, log, meal-plan, etc. Coach opens with a chat panel + composer and log/meal-plan open with a full-width dark-green hero card, so the flash-frame shape doesn't match those pages; the dashboard, by contrast, kept its bespoke skeleton (dark hero block + ring placeholder). Only visible as a brief flash on slow navigations (client pages, prefetch hides it in most cases), so it's a nit.",
+        "suggested_fix": "Add a dark hero-block variant of PageSkeleton (like dashboard's existing loading.tsx) for the routes that open with a dark hero (log, meal-plan, coach, recipes).",
+        "severity": 1
+      }
+    ]
+  },
+  {
+    "verdict": "SEAMS_FOUND",
+    "seams": [
+      {
+        "title": "Too-big-value errors speak in two different voices within the same logging flow",
+        "where": "src/components/log/custom-meal-form.tsx:193",
+        "evidence": "Both messages are new in this diff. Portion picker with 99999 g shows the friendly, specific \"Amounts above 5,000 g usually mean a typo \u2014 double-check the number.\" (portion-picker.tsx:139-142), live as you type. Custom meal form with calories=20000 and all other fields valid shows the blanket \"Enter a number in every macro field (0\u201310,000 calories, 0\u20131,000 g per macro).\" \u2014 verified live: the user HAS entered a number in every field, so the message misdescribes the problem, and it only appears after a submit attempt while the picker flags instantly.",
+        "suggested_fix": "In custom-meal-form, distinguish the over-max case from the missing/invalid case and reuse the portion picker's typo-hint voice, e.g. \"Calories above 10,000 usually mean a typo \u2014 double-check the number.\"",
+        "severity": 2
+      },
+      {
+        "title": "Progress weight field flashes a range error on the first keystroke; other new validation waits for blur or submit",
+        "where": "src/app/app/progress/page.tsx:267",
+        "evidence": "weightError is computed live from weightEntry with no touched/blur gating (diff added this block). Verified live: clearing the field and typing \"1\" (first char of a valid 176.5) immediately shows \"Enter a weight between 50 and 1,000 lb. The preview below uses your last logged weight.\" in red. Signup (same campaign) deliberately validates on blur/submit and only clears live; custom meal form validates only on submit. Three timings across the three forms this campaign touched.",
+        "suggested_fix": "Gate the progress weight error behind blur (or a short debounce), matching the blur-then-clear-live pattern the campaign established on signup.",
+        "severity": 2
+      },
+      {
+        "title": "Failed submit: signup moves focus to the invalid field, custom meal form drops focus and disables the button that was just clicked",
+        "where": "src/components/log/custom-meal-form.tsx:203",
+        "evidence": "Signup's new submit handler focuses the first invalid input ((nextEmailError ? emailRef : passwordRef).current?.focus() \u2014 verified live, activeElement=email). Custom meal form's empty submit sets touched=true which makes disabled={touched && !canSubmit} kick in on the submit button itself; verified live that document.activeElement falls back to BODY, so a keyboard user loses their place entirely. Two invalid-submit treatments introduced by the same campaign.",
+        "suggested_fix": "In custom-meal-form, keep the submit button enabled (submit-guard already returns early) or focus the first invalid input on failed submit, mirroring the signup pattern.",
+        "severity": 2
+      },
+      {
+        "title": "\"Avg cals\" label survived the B4 \"one unit everywhere\" pass \u2014 including on a line the pass itself edited",
+        "where": "src/app/app/meal-plan/page.tsx:188",
+        "evidence": "Commit 94cd187 (B4 \u2014 one unit and number format everywhere) converted \"cal\"\u2192\"kcal\" across ~10 files and touched this exact line ([\"Avg cals\", ...toString()] \u2192 toLocaleString()) but left the \"Avg cals\" label. src/app/app/progress/page.tsx:370 has the same leftover \"Avg cals\" StatTile. Everywhere else in the app now reads kcal (verified via grep: no other bare cal/cals unit strings remain).",
+        "suggested_fix": "Rename both labels to \"Avg kcal\" (or \"Avg calories\") to finish the unit standardization.",
+        "severity": 1
+      },
+      {
+        "title": "Escape now dismisses the user menu but not the ingredient drawer on the same page",
+        "where": "src/components/layout/user-menu.tsx:41",
+        "evidence": "The diff added Escape + outside-click dismissal (with focus return) to UserMenu only. The log page's SessionIngredientDrawer \u2014 also touched by this diff (close-button padding p-2\u2192p-3) \u2014 ignores Escape: verified live that after adding a meal opens the drawer, pressing Escape leaves it open. Two dismissible overlays on the same screen now respond differently to the same key.",
+        "suggested_fix": "Add the same Escape-to-close (and ideally focus-return) handler to SessionIngredientDrawer in src/app/app/log/page.tsx.",
+        "severity": 1
+      },
+      {
+        "title": "Minimum weight is 60 lb in onboarding copy but 50 lb in progress validation",
+        "where": "src/app/app/progress/page.tsx:270",
+        "evidence": "New onboarding hint (onboarding/page.tsx:369): \"Enter your height (3 ft or more) and weight (60 lb or more) to continue.\" (matches pre-existing canProceed >= 60). New progress validation accepts 50\u20131,000 lb: \"Enter a weight between 50 and 1,000 lb.\" Both weight-entry bounds surfaced to users were written in this campaign and disagree on the floor.",
+        "suggested_fix": "Pick one floor (60 lb) and use it in both the progress bounds and its error copy, or extract a shared constant.",
+        "severity": 1
+      }
+    ],
+    "summary": "Exercised all requested flows live (signup bad/good input, search\u2192portion\u2192add incl. 99999g, custom meal form open/close/submit, keyboard-Tab on dashboard and log, onboarding steps 0-3, progress weight junk). The campaign is largely cohesive: kcal + toLocaleString formatting is consistent, focus outlines are uniformly 3px including on dark panels, onboarding proceed-hints are coherent and aria-live, both add paths give identical ingredient-drawer feedback, and no console/hydration errors surfaced. Six seams found, all inconsistencies between changes the campaign itself introduced: three moderate (error-message voice diverges between portion picker and custom meal form for the same too-big-value case; validation timing is keystroke-live on progress vs blur on signup vs submit-only on custom meal; failed-submit focus handling differs \u2014 signup focuses the invalid field while custom meal drops focus to body and disables its own submit button) and three nits (\"Avg cals\" label survived the one-unit pass on a line that pass edited; Escape closes the new user menu but not the ingredient drawer; 60 lb vs 50 lb weight floors in two campaign-authored strings)."
+  }
+]

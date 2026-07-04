@@ -852,7 +852,7 @@ export function SettingsClient({
               </p>
               <Link
                 href="/app/onboarding"
-                className="min-h-11 self-start rounded-full bg-white px-3 py-1.5 text-xs font-black text-primary-700 transition hover:bg-primary-100 sm:self-center md:min-h-0 md:py-1.5 inline-flex items-center"
+                className="inline-flex min-h-11 items-center self-start rounded-full bg-white px-3 py-1.5 text-xs font-black text-primary-700 transition hover:bg-primary-100 sm:self-center md:min-h-0"
               >
                 Re-run intake
               </Link>

@@ -311,7 +311,7 @@ export function DashboardClient({
                     </div>
                     <div className="text-right">
                       <p className="font-black tabular-nums text-neutral-900">
-                        {mealTotals.calories} kcal
+                        {mealTotals.calories.toLocaleString()} kcal
                       </p>
                       <p className="text-xs font-bold text-neutral-400">
                         {mealTotals.protein}g protein
@@ -400,7 +400,7 @@ function MealMakeupHover({
                   </div>
                   <div className="shrink-0 text-right">
                     <p className="text-sm font-black tabular-nums text-neutral-900">
-                      {mealTotals ? `${mealTotals.calories} kcal` : "--"}
+                      {mealTotals ? `${mealTotals.calories.toLocaleString()} kcal` : "--"}
                     </p>
                     <p className="text-xs font-bold text-primary-600">
                       {mealTotals ? `${mealTotals.protein}g protein` : "open"}

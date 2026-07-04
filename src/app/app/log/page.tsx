@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   Barcode,
@@ -417,6 +417,15 @@ function SessionIngredientDrawer({
   ingredients: SessionIngredient[];
   onClose: () => void;
 }) {
+  useEffect(() => {
+    if (!open) return;
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") onClose();
+    }
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [open, onClose]);
+
   const totals = ingredients.reduce(
     (sum, ingredient) => ({
       calories: sum.calories + ingredient.totals.calories,
