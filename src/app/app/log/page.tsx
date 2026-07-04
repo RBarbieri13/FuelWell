@@ -451,7 +451,7 @@ function SessionIngredientDrawer({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full bg-white p-2 text-[#78928a] shadow-sm transition hover:bg-primary-50 hover:text-primary-700"
+            className="rounded-full bg-white p-3 text-[#78928a] shadow-sm transition hover:bg-primary-50 hover:text-primary-700"
             aria-label="Close ingredient drawer"
           >
             <X className="h-5 w-5" />

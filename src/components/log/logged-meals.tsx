@@ -74,7 +74,7 @@ export function LoggedMeals({
                 type="button"
                 onClick={() => onRemoveMeal(meal.id)}
                 aria-label={`Remove ${meal.name}`}
-                className="flex min-h-11 shrink-0 items-center gap-1 rounded-[0.9rem] px-2.5 py-1 text-xs font-bold text-[#91a7a0] transition hover:bg-red-50 hover:text-red-600 md:min-h-0"
+                className="flex min-h-11 shrink-0 items-center gap-1 rounded-[0.9rem] p-3 text-xs font-bold text-[#91a7a0] transition hover:bg-red-50 hover:text-red-600 md:min-h-0"
               >
                 <Trash2 className="h-3.5 w-3.5" />
                 Remove
@@ -159,7 +159,7 @@ function LoggedItem({
           type="button"
           onClick={startEdit}
           aria-label={`Edit ${item.name}`}
-          className="-m-1.5 rounded-[0.9rem] p-3.5 text-[#91a7a0] transition hover:bg-white hover:text-primary-600 md:-m-0 md:p-2"
+          className="-m-1.5 rounded-[0.9rem] p-3.5 text-[#91a7a0] transition hover:bg-white hover:text-primary-600 md:-m-0 md:p-3"
         >
           <Pencil className="h-4 w-4" />
         </button>

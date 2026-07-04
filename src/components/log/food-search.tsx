@@ -104,7 +104,7 @@ export function FoodSearch({
             type="button"
             onClick={() => setPreferenceFilter(id as typeof preferenceFilter)}
             className={cn(
-              "min-h-11 rounded-full px-3.5 py-1.5 text-sm font-semibold transition md:min-h-0",
+              "min-h-11 rounded-full border border-transparent px-3.5 py-1.5 text-sm font-semibold transition md:min-h-0",
               preferenceFilter === id
                 ? "bg-primary-600 text-white"
                 : "bg-primary-50 text-primary-800 hover:bg-primary-100"
