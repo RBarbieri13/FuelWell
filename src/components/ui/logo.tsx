@@ -29,7 +29,11 @@ export function Logo({ href = "/", size = "md", className }: LogoProps) {
 
   if (href) {
     return (
-      <Link href={href} aria-label="FuelWell home">
+      <Link
+        href={href}
+        aria-label="FuelWell home"
+        className="inline-flex min-h-11 items-center md:min-h-0"
+      >
         {content}
       </Link>
     );

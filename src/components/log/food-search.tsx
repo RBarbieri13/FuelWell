@@ -104,7 +104,7 @@ export function FoodSearch({
             type="button"
             onClick={() => setPreferenceFilter(id as typeof preferenceFilter)}
             className={cn(
-              "rounded-full px-3 py-1.5 text-xs font-black transition",
+              "min-h-11 rounded-full px-3.5 py-1.5 text-sm font-semibold transition md:min-h-0",
               preferenceFilter === id
                 ? "bg-primary-600 text-white"
                 : "bg-primary-50 text-primary-800 hover:bg-primary-100"
@@ -150,7 +150,7 @@ export function FoodSearch({
               <button
                 type="button"
                 onClick={() => onSelect(food)}
-                className="text-left"
+                className="min-h-11 text-left md:min-h-0"
               >
                 <p className="font-black text-[#16302a]">{food.name}</p>
                 <p className="mt-0.5 text-xs font-semibold text-[#78928a]">
@@ -165,7 +165,7 @@ export function FoodSearch({
                   onClick={() => onSelect(food)}
                   aria-label={`Choose ${food.name}`}
                   className={cn(
-                    "rounded-[1rem] bg-primary-100 p-2.5 text-primary-700 transition hover:bg-primary-200",
+                    "rounded-[1rem] bg-primary-100 p-3 text-primary-700 transition hover:bg-primary-200",
                     recentlyAddedId === food.id && "animate-pulse bg-primary-600 text-white ring-4 ring-primary-200"
                   )}
                 >

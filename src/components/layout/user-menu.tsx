@@ -66,11 +66,11 @@ export function UserMenu({ variant = "floating" }: { variant?: "floating" | "inl
           className={cn(
             "flex items-center justify-center rounded-full border border-primary-100 bg-white/92 text-primary-700 backdrop-blur transition hover:bg-primary-50",
             inline
-              ? "h-8 w-8 shadow-sm shadow-primary-900/10"
+              ? "-my-1.5 h-11 w-11 shadow-sm shadow-primary-900/10"
               : "h-11 w-11 shadow-[0_12px_28px_rgba(20,90,75,0.12)]"
           )}
         >
-          <User className={cn(inline ? "h-4 w-4" : "h-5 w-5")} />
+          <User className="h-5 w-5" />
         </button>
 
         {open && (

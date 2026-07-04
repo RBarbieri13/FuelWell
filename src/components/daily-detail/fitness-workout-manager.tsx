@@ -86,7 +86,7 @@ export function FitnessWorkoutManager() {
         </div>
         <Link
           href="/app/workouts"
-          className="inline-flex items-center justify-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-sm font-black text-primary-700 transition hover:bg-primary-100"
+          className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-sm font-black text-primary-700 transition hover:bg-primary-100 md:min-h-0"
         >
           Workout page
           <ArrowRight className="h-4 w-4" />

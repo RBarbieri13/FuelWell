@@ -16,7 +16,7 @@
     "tsc": "stale .next types noise; use lint+tests+live checks"
   },
   "backlog": {
-    "B1": "pending",
+    "B1": "done",
     "B2": "pending",
     "B3": "pending",
     "B4": "pending",

@@ -40,9 +40,9 @@ export function MobileHeader() {
             <Link
               href="/app/daily-review"
               aria-label="Open daily review"
-              className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-primary-700 shadow-sm shadow-primary-900/10"
+              className="-my-1.5 flex h-11 w-11 items-center justify-center rounded-full bg-white text-primary-700 shadow-sm shadow-primary-900/10"
             >
-              <ClipboardList className="h-4 w-4" />
+              <ClipboardList className="h-5 w-5" />
             </Link>
           )}
           <UserMenu variant="inline" />

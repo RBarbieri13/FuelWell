@@ -267,7 +267,7 @@ export function FitnessDetailSurface() {
             </div>
             <Link
               href="/app/daily-review"
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-sm font-black text-primary-700 transition hover:bg-primary-100"
+              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-sm font-black text-primary-700 transition hover:bg-primary-100 md:min-h-0"
             >
               View full day
               <ArrowRight className="h-4 w-4" />
@@ -853,14 +853,14 @@ function ActivityLogCard({
       <div className="flex flex-wrap gap-2">
         <Link
           href="/app/fitness"
-          className="inline-flex items-center gap-2 rounded-full bg-primary-50 px-3.5 py-2 text-xs font-black text-primary-700 transition hover:bg-primary-100"
+          className="inline-flex min-h-11 items-center gap-2 rounded-full bg-primary-50 px-3.5 py-2 text-xs font-black text-primary-700 transition hover:bg-primary-100 md:min-h-0"
         >
           <Pencil className="h-3.5 w-3.5" />
           Edit routine
         </Link>
         <Link
           href="/app/workouts"
-          className="inline-flex items-center gap-2 rounded-full bg-[#f4f8f6] px-3.5 py-2 text-xs font-black text-[#54635d] transition hover:bg-primary-50 hover:text-primary-700"
+          className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[#f4f8f6] px-3.5 py-2 text-xs font-black text-[#54635d] transition hover:bg-primary-50 hover:text-primary-700 md:min-h-0"
         >
           Open workouts
           <ArrowRight className="h-3.5 w-3.5" />
