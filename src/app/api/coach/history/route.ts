@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { loadRecentMessages } from "@/lib/coach/persistence";
+import { hasSupabaseConfig } from "@/lib/preview-session";
 
 /**
  * GET /api/coach/history — replay the signed-in user's latest coach
@@ -7,6 +8,9 @@ import { loadRecentMessages } from "@/lib/coach/persistence";
  * { signedIn: false } and the client falls back to localStorage replay.
  */
 export async function GET() {
+  if (!hasSupabaseConfig()) {
+    return Response.json({ signedIn: false, conversationId: null, messages: [] });
+  }
   const supabase = await createClient();
   const {
     data: { user },
@@ -25,6 +29,7 @@ export async function GET() {
  * the old thread. Rows are kept (archived_at set), not deleted.
  */
 export async function DELETE() {
+  if (!hasSupabaseConfig()) return Response.json({ signedIn: false });
   const supabase = await createClient();
   const {
     data: { user },

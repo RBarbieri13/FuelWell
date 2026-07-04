@@ -1,13 +1,18 @@
 {
   "aspect": "refine and polish every layer of the existing UI without changing its major structure (layouts, navigation, routes, page architecture unchanged); improve visual consistency, interaction states, micro-interactions, form quality, accessibility, responsiveness, microcopy, perceived performance, affordances, robustness with awkward data",
   "slug": "ui-polish-refine",
-  "phase": "1-digest-inventory",
-  "status": "in-progress",
+  "phase": "3-review-swarm",
+  "status": "phase-2-complete",
   "branch": "surf/ui-polish-refine",
   "base_commit": "3103286",
   "project_dir": "/Users/robert.barbieri/Developer/FuelWell",
   "dev_server": "http://localhost:3000",
   "started": "2026-07-04T14:53:42-04:00",
   "budget": null,
-  "notes": "Fresh run from origin/main (post 'Merge FuelWell preview app into main'). Deployed reference: https://fuelwell-preview.vercel.app/preview"
+  "notes": "Fresh run from origin/main (post 'Merge FuelWell preview app into main'). Deployed reference: https://fuelwell-preview.vercel.app/preview",
+  "baselines": {
+    "lint": "3851 problems / 164 errors (pre-existing)",
+    "test_unit": "1 pre-existing failure: tools.test.ts check_grocery_item",
+    "tsc": "stale .next types noise; use lint+tests+live checks"
+  }
 }

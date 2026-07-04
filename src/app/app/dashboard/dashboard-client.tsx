@@ -34,6 +34,15 @@ import {
 } from "@/lib/fuelwell-data";
 import { useDayLog } from "@/lib/use-day-log";
 
+function getTimeGreeting(now: Date) {
+  const hour = now.getHours();
+  const weekday = now.toLocaleDateString(undefined, { weekday: "long" });
+  if (hour < 5) return { salutation: "Good evening", tagline: `${weekday} · time to wind down` };
+  if (hour < 12) return { salutation: "Good morning", tagline: `${weekday} · fuel up for the day` };
+  if (hour < 17) return { salutation: "Good afternoon", tagline: `${weekday} · keep the momentum` };
+  return { salutation: "Good evening", tagline: `${weekday} · time to wind down` };
+}
+
 interface DashboardClientProps {
   displayName: string;
   targets: MacroTargets;
@@ -65,14 +74,19 @@ export function DashboardClient({
   const contributors = buildScoreContributors(totals, targets, todaysMeals.length);
   const healthScore = calculateHealthScore(contributors);
   const coachVerdict = buildCoachVerdict(totals, targets, todaysMeals.length);
+  const { salutation, tagline } = getTimeGreeting(new Date());
 
   return (
     <div className="fw-app-surface">
       <header className="fw-page-header">
         <div className="fw-page-inner flex flex-col gap-4 py-6 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="fw-heading text-2xl md:text-[1.7rem]">Good evening, {displayName}</h1>
-            <p className="fw-muted mt-1 text-sm">Tuesday · time to wind down</p>
+            <h1 className="fw-heading text-2xl md:text-[1.7rem]" suppressHydrationWarning>
+              {salutation}, {displayName}
+            </h1>
+            <p className="fw-muted mt-1 text-sm" suppressHydrationWarning>
+              {tagline}
+            </p>
           </div>
           <div className="flex items-center gap-3">
             <button className="flex h-[42px] w-[42px] items-center justify-center rounded-full border border-primary-100 bg-white text-neutral-700 shadow-[0_4px_12px_rgba(20,90,75,0.05)]" aria-label="Search">
@@ -204,7 +218,7 @@ export function DashboardClient({
               {percentOf(totals.calories, targets.calories)}% calories
             </span>
           </div>
-          <MacroBar label="Calories" current={totals.calories} target={targets.calories} color="#1eae84" />
+          <MacroBar label="Calories" current={totals.calories} target={targets.calories} unit="kcal" color="#1eae84" />
           <MacroBar label="Protein" current={totals.protein} target={targets.protein} color="#3e92c9" />
           <MacroBar label="Carbs" current={totals.carbs} target={targets.carbs} color="#c7a91e" />
           <MacroBar label="Fat" current={totals.fat} target={targets.fat} color="#f0795b" />

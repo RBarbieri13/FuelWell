@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   CreditCard,
   Download,
@@ -29,14 +29,39 @@ const menuItems = [
 export function UserMenu({ variant = "floating" }: { variant?: "floating" | "inline" }) {
   const [open, setOpen] = useState(false);
   const inline = variant === "inline";
+  const containerRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function onPointerDown(event: PointerEvent) {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    }
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setOpen(false);
+        buttonRef.current?.focus();
+      }
+    }
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open]);
 
   return (
     <div className={cn(inline ? "relative" : "pointer-events-none fixed bottom-4 right-4 z-[70] hidden md:block")}>
-      <div className={cn(!inline && "pointer-events-auto relative")}>
+      <div ref={containerRef} className={cn(!inline && "pointer-events-auto relative")}>
         <button
+          ref={buttonRef}
           type="button"
           onClick={() => setOpen((current) => !current)}
           aria-expanded={open}
+          aria-haspopup="menu"
           aria-label={inline ? "Open user settings menu" : "Open desktop user settings menu"}
           className={cn(
             "flex items-center justify-center rounded-full border border-primary-100 bg-white/92 text-primary-700 backdrop-blur transition hover:bg-primary-50",

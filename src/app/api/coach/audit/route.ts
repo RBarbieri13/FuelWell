@@ -1,21 +1,19 @@
 import { headers } from "next/headers";
-import { isPreviewHost, SAMPLE_USER } from "@/lib/preview-session";
+import { hasSupabaseConfig, isPreviewHost, SAMPLE_USER } from "@/lib/preview-session";
 import { createClient } from "@/lib/supabase/server";
 import { getRecentAudit } from "@/lib/coach/audit";
 
 /** E6: the user's own Coach tool-call activity, shown under Settings. */
 export async function GET() {
   const host = (await headers()).get("host");
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const supabase = hasSupabaseConfig() ? await createClient() : null;
+  const user = supabase ? (await supabase.auth.getUser()).data.user : null;
   const isPreview = !user && isPreviewHost(host);
   if (!user && !isPreview) {
     return Response.json({ error: "Sign in required." }, { status: 401 });
   }
 
-  if (user) {
+  if (user && supabase) {
     const { data } = await supabase
       .from("coach_audit")
       .select("tool, result_summary, ts")
