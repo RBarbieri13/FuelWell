@@ -70,7 +70,7 @@ export function MenuSaveAction({ option }: { option: MenuSaveOption }) {
             ))}
           </select>
         </label>
-        <NumberField label="Cal" value={calories} onChange={setCalories} />
+        <NumberField label="kcal" value={calories} onChange={setCalories} />
         <NumberField label="Pro" value={protein} onChange={setProtein} />
         <NumberField label="Carb" value={carbs} onChange={setCarbs} />
         <NumberField label="Fat" value={fat} onChange={setFat} />

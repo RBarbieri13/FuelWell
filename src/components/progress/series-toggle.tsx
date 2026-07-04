@@ -28,7 +28,7 @@ export function SeriesToggle({
             onClick={() => onToggle(key)}
             title={isLast ? "Keep at least one series visible" : undefined}
             className={cn(
-              "inline-flex min-h-9 items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs font-black transition-colors",
+              "inline-flex min-h-11 items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs font-black transition-colors md:min-h-9",
               isOn
                 ? "border-primary-100 bg-white text-[#516b63] shadow-sm"
                 : "border-primary-100 bg-primary-50/50 text-[#91a7a0]",

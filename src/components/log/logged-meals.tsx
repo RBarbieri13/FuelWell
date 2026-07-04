@@ -12,7 +12,7 @@ type ItemPatch = Partial<Omit<MealItem, "id">>;
 type FieldKey = "calories" | "protein" | "carbs" | "fat";
 
 const MACRO_FIELDS: { key: FieldKey; label: string }[] = [
-  { key: "calories", label: "Cal" },
+  { key: "calories", label: "kcal" },
   { key: "protein", label: "Pro" },
   { key: "carbs", label: "Carb" },
   { key: "fat", label: "Fat" },

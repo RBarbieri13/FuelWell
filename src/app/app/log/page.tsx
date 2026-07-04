@@ -460,7 +460,7 @@ function SessionIngredientDrawer({
 
         <div className="grid grid-cols-4 gap-2 px-5 py-4">
           {[
-            ["Cal", totals.calories],
+            ["kcal", totals.calories],
             ["Pro", `${totals.protein}g`],
             ["Carb", `${totals.carbs}g`],
             ["Fat", `${totals.fat}g`],

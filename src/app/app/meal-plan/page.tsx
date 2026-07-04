@@ -185,7 +185,7 @@ export default function MealPlanPage() {
             </p>
             <div className="mt-6 grid grid-cols-3 gap-2 sm:gap-3">
               {[
-                ["Avg cals", Math.round(weekTotals.calories / days.length).toString()],
+                ["Avg cals", Math.round(weekTotals.calories / days.length).toLocaleString()],
                 ["Avg protein", `${Math.round(weekTotals.protein / days.length)}g`],
                 ["Open slots", `${days.length * 4 - weekTotals.planned}`],
               ].map(([label, value]) => (
@@ -288,7 +288,7 @@ export default function MealPlanPage() {
                   <div className="rounded-[1rem] bg-primary-50 px-4 py-3">
                     <p className="text-[11px] font-black uppercase tracking-[0.12em] text-primary-700">Calories</p>
                     <p className="text-xl font-black tabular-nums text-[#16302a]">
-                      {selectedTotals.calories}
+                      {selectedTotals.calories.toLocaleString()}
                     </p>
                   </div>
                   <div className="rounded-[1rem] bg-sky-50 px-4 py-3">
@@ -406,7 +406,7 @@ export default function MealPlanPage() {
                         <div className="rounded-[1rem] bg-white px-4 py-3">
                           <p className="text-[11px] font-black uppercase tracking-[0.12em] text-[#91a7a0]">Calories</p>
                           <p className="text-xl font-black tabular-nums text-[#16302a]">
-                            {totals.calories}
+                            {totals.calories.toLocaleString()}
                           </p>
                         </div>
                         <div className="rounded-[1rem] bg-white px-4 py-3">

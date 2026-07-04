@@ -328,7 +328,7 @@ export default function ProgressPage() {
               }}
               aria-pressed={selectedState === state}
               className={cn(
-                "rounded-full px-5 py-2 text-sm font-bold transition-all duration-150",
+                "min-h-11 rounded-full px-5 py-2 text-sm font-bold transition-all duration-150 md:min-h-0",
                 selectedState === state
                   ? "bg-primary-500 text-white shadow-[0_6px_14px_rgba(30,174,132,0.24)]"
                   : "text-[#78928a] hover:text-primary-800"
@@ -387,7 +387,7 @@ export default function ProgressPage() {
                 onClick={() => setWindowKey(option.key)}
                 aria-pressed={windowKey === option.key}
                 className={cn(
-                  "rounded-full px-5 py-2 text-sm font-bold transition-all duration-150",
+                  "min-h-11 rounded-full px-5 py-2 text-sm font-bold transition-all duration-150 md:min-h-0",
                   windowKey === option.key
                     ? "bg-white text-[#16302a] shadow-[0_3px_8px_rgba(20,90,75,0.08)]"
                     : "text-[#78928a] hover:text-primary-800"

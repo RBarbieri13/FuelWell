@@ -48,3 +48,11 @@ Swarm: 20 agents × 4 personas → 368 evidence-backed findings → 70 clusters 
 
 Full cluster list with member finding ids: `findings/clusters.json`. Skeptic evidence:
 `findings/skeptic-verdicts.json`.
+
+## Phase 6 remediation (fresh-eyes ≥3/10 + skeptic)
+
+| id | item | fresh-eyes votes | skeptic verdict | acceptance check | status |
+|----|------|------------------|-----------------|------------------|--------|
+| R1 | B1 residual: sub-44px controls on routes outside original fix scope (progress day/window/macro filters 36px, coach New chat 32px, settings segmented toggles + intake chips 32-36px, daily-review selectors/collapse/edit links 32-42px, recipes meal filters 36px) | 6/10 on B1 | REPRODUCED | All named controls ≥44px tall at 390×844 on the 5 routes | done (check passed: 5/5 routes PASS) |
+| R2 | B4 residual: bare "Cal" stat labels (5 component sources incl. 612 renders on /app/recipes) + unseparated numbers on /app/meal-plan (1641, 1730) | 3/10 on B4 | REPRODUCED (reviewers' "7551"/"2550" examples not found; "1,400 calories" prose ruled acceptable) | 13-route text-node scan: zero bare Cal/cal unit tokens, zero unseparated ≥1,000 | done (check passed: 13/13 routes PASS) |
+| R3 | B5 claim: skeletons missing during slow navigations | 6/10 on B5 | NOT_REPRODUCED — client-side transitions under 400ms/50kBps throttle showed the 5-element PageSkeleton for 400-1100ms on both tested navs; reviewers had tested full document loads, which loading.tsx does not cover; no blank states found there either | n/a | rejected (no change needed) |

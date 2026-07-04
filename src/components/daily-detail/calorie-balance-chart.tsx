@@ -290,7 +290,7 @@ export function CalorieBalanceChart({
                     setOffset(0);
                   }}
                   className={cn(
-                    "rounded-full px-3.5 py-2 text-xs font-black transition",
+                    "min-h-11 rounded-full px-3.5 py-2 text-xs font-black transition md:min-h-0",
                     range === option.value
                       ? "bg-primary-600 text-white shadow-[0_12px_24px_rgba(21,145,108,0.2)]"
                       : "bg-[#f4f8f6] text-[#6f8981] hover:bg-primary-50"
@@ -619,7 +619,7 @@ function FilterButton({
       type="button"
       onClick={onClick}
       className={cn(
-        "rounded-full px-3.5 py-2 text-xs font-black transition",
+        "min-h-11 rounded-full px-3.5 py-2 text-xs font-black transition md:min-h-0",
         active
           ? "bg-primary-100 text-primary-700"
           : "bg-[#f4f8f6] text-[#9db0aa] line-through"

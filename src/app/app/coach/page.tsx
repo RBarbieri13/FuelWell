@@ -298,7 +298,7 @@ export default function CoachPage() {
             <button
               type="button"
               onClick={newConversation}
-              className="whitespace-nowrap rounded-full bg-white/70 px-3 py-2 text-xs font-black text-[#78928a] shadow-sm transition hover:text-primary-700"
+              className="min-h-11 whitespace-nowrap rounded-full bg-white/70 px-3 py-2 text-xs font-black text-[#78928a] shadow-sm transition hover:text-primary-700 md:min-h-0"
             >
               New chat
             </button>

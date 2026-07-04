@@ -18,7 +18,7 @@ export function RecipeCard({
 }) {
   const macroTiles = [
     {
-      label: "Cal",
+      label: "kcal",
       value: recipe.perServing.calories,
       className: "bg-primary-50 text-primary-700 border-primary-100",
       icon: Flame,

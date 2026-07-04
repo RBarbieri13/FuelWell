@@ -627,7 +627,7 @@ function DailyReviewSection({
           <button
             type="button"
             onClick={onToggle}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-primary-100 bg-white px-4 py-2.5 text-sm font-black text-primary-700 shadow-[0_10px_22px_rgba(20,90,75,0.08)] transition hover:bg-primary-50 sm:w-auto"
+            className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-primary-100 bg-white px-4 py-2.5 text-sm font-black text-primary-700 shadow-[0_10px_22px_rgba(20,90,75,0.08)] transition hover:bg-primary-50 sm:w-auto md:min-h-0"
             aria-expanded={expanded}
           >
             {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
@@ -918,14 +918,14 @@ function MealLogCard({
       <div className="flex flex-wrap gap-2">
         <Link
           href="/app/log"
-          className="inline-flex items-center gap-2 rounded-full bg-primary-50 px-3.5 py-2 text-xs font-black text-primary-700 transition hover:bg-primary-100"
+          className="inline-flex min-h-11 items-center gap-2 rounded-full bg-primary-50 px-3.5 py-2 text-xs font-black text-primary-700 transition hover:bg-primary-100 md:min-h-0"
         >
           <Pencil className="h-3.5 w-3.5" />
           Edit meal
         </Link>
         <Link
           href="/app/log"
-          className="inline-flex items-center gap-2 rounded-full bg-[#f4f8f6] px-3.5 py-2 text-xs font-black text-[#54635d] transition hover:bg-primary-50 hover:text-primary-700"
+          className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[#f4f8f6] px-3.5 py-2 text-xs font-black text-[#54635d] transition hover:bg-primary-50 hover:text-primary-700 md:min-h-0"
         >
           Log another
           <Plus className="h-3.5 w-3.5" />
@@ -962,7 +962,7 @@ function MealLogCard({
               </p>
             </div>
             <div className="grid grid-cols-4 gap-2 text-center">
-              <SmallStat label="Cal" value={`${item.calories}`} tone="primary" />
+              <SmallStat label="kcal" value={item.calories.toLocaleString()} tone="primary" />
               <SmallStat label="Pro" value={`${item.protein}`} tone="sky" />
               <SmallStat label="Carb" value={`${item.carbs}`} tone="lemon" />
               <SmallStat label="Fat" value={`${item.fat}`} tone="accent" />
@@ -1048,7 +1048,7 @@ function CollapsibleLogPanel({
           <button
             type="button"
             onClick={onToggle}
-            className="inline-flex items-center justify-center gap-2 rounded-full bg-primary-50 px-3.5 py-2 text-xs font-black text-primary-700 transition hover:bg-primary-100"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-primary-50 px-3.5 py-2 text-xs font-black text-primary-700 transition hover:bg-primary-100 md:min-h-0"
             aria-expanded={expanded}
           >
             {expanded ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
@@ -1056,7 +1056,7 @@ function CollapsibleLogPanel({
           </button>
           <Link
             href={href}
-            className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-3.5 py-2 text-xs font-black text-primary-700 shadow-[0_8px_18px_rgba(20,90,75,0.07)] transition hover:bg-primary-50"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-white px-3.5 py-2 text-xs font-black text-primary-700 shadow-[0_8px_18px_rgba(20,90,75,0.07)] transition hover:bg-primary-50 md:min-h-0"
           >
             <Pencil className="h-3.5 w-3.5" />
             {action}

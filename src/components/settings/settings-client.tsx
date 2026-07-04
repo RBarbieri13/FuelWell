@@ -852,7 +852,7 @@ export function SettingsClient({
               </p>
               <Link
                 href="/app/onboarding"
-                className="self-start rounded-full bg-white px-3 py-1.5 text-xs font-black text-primary-700 transition hover:bg-primary-100 sm:self-center"
+                className="min-h-11 self-start rounded-full bg-white px-3 py-1.5 text-xs font-black text-primary-700 transition hover:bg-primary-100 sm:self-center md:min-h-0 md:py-1.5 inline-flex items-center"
               >
                 Re-run intake
               </Link>
@@ -1064,7 +1064,7 @@ function IntakePreferenceGroup({
             onClick={() => onChange(option.value)}
             aria-pressed={value === option.value}
             className={cn(
-              "rounded-full px-3.5 py-2 text-xs font-black transition",
+              "min-h-11 rounded-full px-3.5 py-2 text-xs font-black transition md:min-h-0",
               value === option.value
                 ? "bg-primary-600 text-white shadow-sm shadow-primary-900/10"
                 : "bg-white text-neutral-500 hover:bg-primary-50 hover:text-primary-700"
@@ -1097,7 +1097,7 @@ function SegmentedField({
           type="button"
           onClick={() => onChange(optionValue)}
           className={cn(
-            "rounded-full px-5 py-2 text-sm font-black transition-colors",
+            "min-h-11 rounded-full px-5 py-2 text-sm font-black transition-colors md:min-h-0",
             value === optionValue
               ? "bg-white text-neutral-900 shadow-sm"
               : "text-neutral-500 hover:text-neutral-700"
