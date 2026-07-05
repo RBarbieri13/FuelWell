@@ -1,0 +1,5 @@
+git_url(ENV["FUELWELL_MATCH_GIT_URL"])
+storage_mode("git")
+type("appstore")
+app_identifier(ENV.fetch("FUELWELL_APP_IDENTIFIER", "com.fuelwell.app"))
+readonly(ENV.fetch("FUELWELL_MATCH_READONLY", "true") == "true")
