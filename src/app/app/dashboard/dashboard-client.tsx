@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState, type ReactNode } from "react";
 import {
   Activity,
   ArrowRight,
@@ -54,6 +55,18 @@ interface DashboardClientProps {
   allergies: string[];
 }
 
+type PreviewCompletedOnboarding = {
+  data?: {
+    displayName?: string;
+    goal?: string;
+    dietaryPreference?: string;
+    allergies?: string[];
+  };
+  macros?: Partial<MacroTargets>;
+};
+
+const PREVIEW_COMPLETED_STORAGE_KEY = "fuelwell:new-user-onboarding:v1";
+
 export function DashboardClient({
   displayName,
   targets,
@@ -64,6 +77,33 @@ export function DashboardClient({
   dietaryPreference,
   allergies,
 }: DashboardClientProps) {
+  const [previewOverride, setPreviewOverride] = useState<PreviewCompletedOnboarding | null>(null);
+
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem(PREVIEW_COMPLETED_STORAGE_KEY);
+      if (!raw) return;
+      const parsed = JSON.parse(raw) as PreviewCompletedOnboarding;
+      setPreviewOverride(parsed);
+    } catch {
+      setPreviewOverride(null);
+    }
+  }, []);
+
+  const effectiveDisplayName =
+    previewOverride?.data?.displayName?.trim() || displayName;
+  const effectiveTargets: MacroTargets = {
+    calories: Number(previewOverride?.macros?.calories) || targets.calories,
+    protein: Number(previewOverride?.macros?.protein) || targets.protein,
+    carbs: Number(previewOverride?.macros?.carbs) || targets.carbs,
+    fat: Number(previewOverride?.macros?.fat) || targets.fat,
+  };
+  const effectiveGoal = previewOverride?.data?.goal || goal;
+  const effectiveDietaryPreference =
+    previewOverride?.data?.dietaryPreference || dietaryPreference;
+  const effectiveAllergies = previewOverride?.data?.allergies ?? allergies;
+  const effectiveOnboardingComplete = onboardingComplete || Boolean(previewOverride);
+
   // Live client store wins for today's view: meals logged from Log or Coach
   // chat update these totals immediately (D-gate). Server meals are the
   // fallback for first paint / signed-in history.
@@ -71,9 +111,9 @@ export function DashboardClient({
   const todaysMeals = liveMeals.length > 0 ? liveMeals : meals;
   const totals = sumMeals(todaysMeals, fallbackTotals);
   const hasLoggedToday = totals.calories > 0;
-  const contributors = buildScoreContributors(totals, targets, todaysMeals.length);
+  const contributors = buildScoreContributors(totals, effectiveTargets, todaysMeals.length);
   const healthScore = calculateHealthScore(contributors);
-  const coachVerdict = buildCoachVerdict(totals, targets, todaysMeals.length);
+  const coachVerdict = buildCoachVerdict(totals, effectiveTargets, todaysMeals.length);
   const { salutation, tagline } = getTimeGreeting(new Date());
 
   return (
@@ -82,7 +122,7 @@ export function DashboardClient({
         <div className="fw-page-inner flex flex-col gap-4 py-6 md:flex-row md:items-center md:justify-between">
           <div>
             <h1 className="fw-heading text-2xl md:text-[1.7rem]" suppressHydrationWarning>
-              {salutation}, {displayName}
+              {salutation}, {effectiveDisplayName}
             </h1>
             <p className="fw-muted mt-1 text-sm" suppressHydrationWarning>
               {tagline}
@@ -97,14 +137,14 @@ export function DashboardClient({
               <span className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full border-2 border-white bg-accent-500" />
             </button>
             <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primary-600 text-base font-black text-white shadow-[0_8px_18px_rgba(30,174,132,0.3)]">
-              {displayName.slice(0, 1).toUpperCase()}
+              {effectiveDisplayName.slice(0, 1).toUpperCase()}
             </div>
           </div>
         </div>
       </header>
 
       <div className="fw-page-inner space-y-6">
-      {!onboardingComplete && (
+      {!effectiveOnboardingComplete && (
         <Link href="/app/onboarding" className="block group">
           <Card className="border-accent-200/80 bg-accent-50/70 transition-colors group-hover:border-accent-300">
             <div className="flex items-center justify-between gap-4">
@@ -136,18 +176,18 @@ export function DashboardClient({
                     Today&apos;s decision
                   </p>
                   <h2 className="mt-4 max-w-[24rem] text-[2.1rem] font-black leading-[1.08] tracking-normal text-white md:text-[2.45rem]">
-                    {hasLoggedToday ? coachVerdict.title : `Hey, ${displayName}. Start with one real input.`}
+                    {hasLoggedToday ? coachVerdict.title : `Hey, ${effectiveDisplayName}. Start with one real input.`}
                   </h2>
                 </div>
                 {hasLoggedToday && (
                   <div className="flex gap-3">
                     <EnergyStat
                       label="Calories left"
-                      value={remaining(totals.calories, targets.calories).toLocaleString()}
+                      value={remaining(totals.calories, effectiveTargets.calories).toLocaleString()}
                     />
                     <EnergyStat
                       label="Protein left"
-                      value={`${remaining(totals.protein, targets.protein)}g`}
+                      value={`${remaining(totals.protein, effectiveTargets.protein)}g`}
                     />
                   </div>
                 )}
@@ -196,13 +236,13 @@ export function DashboardClient({
 
           <div className="my-2 flex justify-center">
             <MealMakeupHover meals={todaysMeals}>
-              <CalorieRing consumed={totals.calories} target={targets.calories} emphasis="compact" />
+              <CalorieRing consumed={totals.calories} target={effectiveTargets.calories} emphasis="compact" />
             </MealMakeupHover>
           </div>
 
           <div className="mt-auto grid grid-cols-3 gap-2">
-            <MiniMetric label="Protein left" value={`${remaining(totals.protein, targets.protein)}g`} />
-            <MiniMetric label="Calories left" value={remaining(totals.calories, targets.calories).toLocaleString()} />
+            <MiniMetric label="Protein left" value={`${remaining(totals.protein, effectiveTargets.protein)}g`} />
+            <MiniMetric label="Calories left" value={remaining(totals.calories, effectiveTargets.calories).toLocaleString()} />
             <MiniMetric label="Meals" value={`${todaysMeals.length}`} />
           </div>
         </Card>
@@ -215,13 +255,13 @@ export function DashboardClient({
               <h2 className="text-base font-black text-neutral-900">Macros</h2>
             </div>
             <span className="shrink-0 rounded-full bg-primary-50 px-3.5 py-1.5 text-xs font-black text-primary-700">
-              {percentOf(totals.calories, targets.calories)}% calories
+              {percentOf(totals.calories, effectiveTargets.calories)}% calories
             </span>
           </div>
-          <MacroBar label="Calories" current={totals.calories} target={targets.calories} unit="kcal" color="#1eae84" />
-          <MacroBar label="Protein" current={totals.protein} target={targets.protein} color="#3e92c9" />
-          <MacroBar label="Carbs" current={totals.carbs} target={targets.carbs} color="#c7a91e" />
-          <MacroBar label="Fat" current={totals.fat} target={targets.fat} color="#f0795b" />
+          <MacroBar label="Calories" current={totals.calories} target={effectiveTargets.calories} unit="kcal" color="#1eae84" />
+          <MacroBar label="Protein" current={totals.protein} target={effectiveTargets.protein} color="#3e92c9" />
+          <MacroBar label="Carbs" current={totals.carbs} target={effectiveTargets.carbs} color="#c7a91e" />
+          <MacroBar label="Fat" current={totals.fat} target={effectiveTargets.fat} color="#f0795b" />
           <Link href="/app/nutrition" className="block">
             <Button variant="secondary" className="w-full rounded-[0.9rem]">
               Open meal breakdown
@@ -353,8 +393,8 @@ export function DashboardClient({
       </section>
 
       <p className="text-xs font-medium text-neutral-400">
-        Profile context: goal {goal}, diet {dietaryPreference}
-        {allergies.length > 0 ? `, allergies ${allergies.join(", ")}` : ""}.
+        Profile context: goal {effectiveGoal}, diet {effectiveDietaryPreference}
+        {effectiveAllergies.length > 0 ? `, allergies ${effectiveAllergies.join(", ")}` : ""}.
       </p>
       </div>
     </div>
@@ -366,7 +406,7 @@ function MealMakeupHover({
   children,
 }: {
   meals: MealRecord[];
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   const mealTypes = ["breakfast", "lunch", "dinner"] as const;
 
@@ -456,7 +496,7 @@ function DeepLinkCard({
   body,
 }: {
   href: string;
-  icon: React.ReactNode;
+  icon: ReactNode;
   title: string;
   body: string;
 }) {

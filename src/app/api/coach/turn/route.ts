@@ -103,6 +103,55 @@ function isWebSearchUnavailable(error: unknown): boolean {
   return /web_search|server tool|tool/i.test(message) && /unavailable|not enabled|unsupported|invalid|permission|beta/i.test(message);
 }
 
+function isProviderBillingOrAccessError(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error);
+  return /credit balance|billing|purchase credits|payment required|insufficient_quota|quota|rate limit|unauthorized|api key/i.test(message);
+}
+
+function buildProviderFallbackReply(userText: string, snapshot: CoachDaySnapshot): string {
+  const name = snapshot.profile.displayName?.trim();
+  const proteinLeft = Math.max(0, snapshot.targets.protein - snapshot.totals.protein);
+  const caloriesLeft = Math.max(0, snapshot.targets.calories - snapshot.totals.calories);
+  const lower = userText.toLowerCase();
+
+  if (/\bprotein\b|\bmeal\b|\beat\b|\brecipe\b|\bdinner\b|\blunch\b|\bbreakfast\b/.test(lower)) {
+    return [
+      `${name ? `${name}, ` : ""}the live AI provider is temporarily unavailable, but I can still make the next FuelWell decision from your current day.`,
+      "",
+      `You have about ${caloriesLeft.toLocaleString()} calories and ${proteinLeft}g protein left against today’s targets.`,
+      "",
+      "A strong protein meal would be:",
+      "- Grilled chicken or salmon bowl",
+      "- Rice or sweet potato if you still need carbs",
+      "- A large serving of greens",
+      "- Greek yogurt or cottage cheese if you need more protein without much prep",
+      "",
+      "For a quick target, aim for 35-50g protein and keep the meal simple enough that you will actually log it.",
+    ].join("\n");
+  }
+
+  if (/\bworkout\b|\bexercise\b|\bmove\b|\brun\b|\bwalk\b|\blift\b/.test(lower)) {
+    return [
+      "The live AI provider is temporarily unavailable, but FuelWell can still make a practical movement call.",
+      "",
+      "Choose the lowest-friction option that you can complete today:",
+      "- 20-30 minutes walking for recovery and consistency",
+      "- Zone 2 bike or jog if you feel fresh",
+      "- A short full-body strength session if you have not lifted recently",
+      "",
+      "Log the minutes and intensity afterward so today’s activity and nutrition review stay aligned.",
+    ].join("\n");
+  }
+
+  return [
+    "The live AI provider is temporarily unavailable, so I’m using FuelWell’s local fallback instead of showing you a raw provider error.",
+    "",
+    `Today: ${snapshot.totals.calories.toLocaleString()} calories logged, ${snapshot.totals.protein}g protein logged, ${caloriesLeft.toLocaleString()} calories left, and ${proteinLeft}g protein left.`,
+    "",
+    "You can still log meals, review macros, and make a next clean choice. Try asking for a meal, workout, grocery, or daily review action.",
+  ].join("\n");
+}
+
 function parseDirectMealLog(text: string):
   | {
       name: string;
@@ -693,9 +742,41 @@ export async function POST(request: Request) {
           conversationId: conversationId ?? undefined,
         });
       } catch (err) {
+        if (isProviderBillingOrAccessError(err)) {
+          assistantText = buildProviderFallbackReply(lastUserText, snapshot);
+          emit({ type: "text_delta", text: assistantText });
+          if (user && conversationId) {
+            const lastUser = body.messages[body.messages.length - 1];
+            await saveMessages(supabase, conversationId, [
+              ...(lastUser?.role === "user"
+                ? [{ role: "user" as const, content: lastUser.content }]
+                : []),
+              {
+                role: "assistant" as const,
+                content: assistantText,
+                toolCalls: turnToolCalls,
+                artifacts: turnArtifacts,
+                model: "deterministic-provider-fallback",
+                tokensIn: 0,
+                tokensOut: 0,
+              },
+            ]);
+          }
+          emit({
+            type: "turn_done",
+            usage: {
+              inputTokens: 0,
+              outputTokens: 0,
+              costUsdCents: 0,
+              model: "deterministic-provider-fallback",
+            },
+            conversationId: conversationId ?? undefined,
+          });
+          return;
+        }
         emit({
           type: "error",
-          message: err instanceof Error ? err.message : "Coach hit an unexpected error.",
+          message: "Coach is temporarily unavailable. Your app data is still safe, and you can try again in a moment.",
         });
       } finally {
         controller.close();

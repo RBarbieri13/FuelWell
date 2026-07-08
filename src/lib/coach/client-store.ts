@@ -414,7 +414,10 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
               case "error":
                 patchAssistant((cur) => ({
                   error: true,
-                  text: cur.text || `Something broke mid-thought: ${event.message}`,
+                  text:
+                    cur.text ||
+                    event.message ||
+                    "Coach is temporarily unavailable. Try again in a moment.",
                 }));
                 break;
             }
