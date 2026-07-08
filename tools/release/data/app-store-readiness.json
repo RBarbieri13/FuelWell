@@ -1,0 +1,184 @@
+{
+  "generatedAt": "2026-06-01T16:22:32.785Z",
+  "status": "externally_blocked",
+  "counts": {
+    "pass": 17,
+    "blocker": 7,
+    "fail": 0
+  },
+  "paths": {
+    "metadata": "ios/fastlane/metadata/en-US",
+    "screenshots": "ios/fastlane/screenshots/en-US",
+    "privacyManifest": "ios/FuelWellApp/Resources/PrivacyInfo.xcprivacy"
+  },
+  "results": [
+    {
+      "area": "metadata",
+      "status": "pass",
+      "label": "App name ready",
+      "detail": "8/30 characters.",
+      "file": "ios/fastlane/metadata/en-US/name.txt"
+    },
+    {
+      "area": "metadata",
+      "status": "pass",
+      "label": "Subtitle ready",
+      "detail": "21/30 characters.",
+      "file": "ios/fastlane/metadata/en-US/subtitle.txt"
+    },
+    {
+      "area": "metadata",
+      "status": "pass",
+      "label": "Promotional text ready",
+      "detail": "85/170 characters.",
+      "file": "ios/fastlane/metadata/en-US/promotional_text.txt"
+    },
+    {
+      "area": "metadata",
+      "status": "pass",
+      "label": "Description ready",
+      "detail": "615/4000 characters.",
+      "file": "ios/fastlane/metadata/en-US/description.txt"
+    },
+    {
+      "area": "metadata",
+      "status": "pass",
+      "label": "Keywords ready",
+      "detail": "68/100 characters.",
+      "file": "ios/fastlane/metadata/en-US/keywords.txt"
+    },
+    {
+      "area": "metadata",
+      "status": "pass",
+      "label": "Release notes ready",
+      "detail": "117/4000 characters.",
+      "file": "ios/fastlane/metadata/en-US/release_notes.txt"
+    },
+    {
+      "area": "metadata",
+      "status": "pass",
+      "label": "Marketing URL ready",
+      "detail": "20 characters.",
+      "file": "ios/fastlane/metadata/en-US/marketing_url.txt"
+    },
+    {
+      "area": "metadata",
+      "status": "pass",
+      "label": "Privacy URL ready",
+      "detail": "28 characters.",
+      "file": "ios/fastlane/metadata/en-US/privacy_url.txt"
+    },
+    {
+      "area": "metadata",
+      "status": "pass",
+      "label": "Support URL ready",
+      "detail": "28 characters.",
+      "file": "ios/fastlane/metadata/en-US/support_url.txt"
+    },
+    {
+      "area": "privacy",
+      "status": "pass",
+      "label": "Tracking disabled",
+      "detail": "Manifest declares no tracking domains.",
+      "file": "ios/FuelWellApp/Resources/PrivacyInfo.xcprivacy"
+    },
+    {
+      "area": "privacy",
+      "status": "pass",
+      "label": "Privacy data type: NSPrivacyCollectedDataTypeHealth",
+      "detail": "Declared in privacy manifest.",
+      "file": "ios/FuelWellApp/Resources/PrivacyInfo.xcprivacy"
+    },
+    {
+      "area": "privacy",
+      "status": "pass",
+      "label": "Privacy data type: NSPrivacyCollectedDataTypePhotosorVideos",
+      "detail": "Declared in privacy manifest.",
+      "file": "ios/FuelWellApp/Resources/PrivacyInfo.xcprivacy"
+    },
+    {
+      "area": "privacy",
+      "status": "pass",
+      "label": "Privacy data type: NSPrivacyCollectedDataTypeFitness",
+      "detail": "Declared in privacy manifest.",
+      "file": "ios/FuelWellApp/Resources/PrivacyInfo.xcprivacy"
+    },
+    {
+      "area": "privacy",
+      "status": "pass",
+      "label": "Privacy data type: NSPrivacyCollectedDataTypeCrashData",
+      "detail": "Declared in privacy manifest.",
+      "file": "ios/FuelWellApp/Resources/PrivacyInfo.xcprivacy"
+    },
+    {
+      "area": "privacy",
+      "status": "pass",
+      "label": "Privacy data type: NSPrivacyCollectedDataTypeProductInteraction",
+      "detail": "Declared in privacy manifest.",
+      "file": "ios/FuelWellApp/Resources/PrivacyInfo.xcprivacy"
+    },
+    {
+      "area": "privacy",
+      "status": "pass",
+      "label": "Required API type: NSPrivacyAccessedAPICategoryFileTimestamp",
+      "detail": "Declared in privacy manifest.",
+      "file": "ios/FuelWellApp/Resources/PrivacyInfo.xcprivacy"
+    },
+    {
+      "area": "privacy",
+      "status": "pass",
+      "label": "Required API type: NSPrivacyAccessedAPICategoryUserDefaults",
+      "detail": "Declared in privacy manifest.",
+      "file": "ios/FuelWellApp/Resources/PrivacyInfo.xcprivacy"
+    },
+    {
+      "area": "screenshots",
+      "status": "blocker",
+      "label": "App Store screenshots missing",
+      "detail": "No screenshots are present under ios/fastlane/screenshots/en-US.",
+      "file": "ios/fastlane/screenshots/en-US"
+    },
+    {
+      "area": "human-gates",
+      "status": "blocker",
+      "label": "FUELWELL_APP_IDENTIFIER configured",
+      "detail": "Required for Fastlane beta/release, but should not be committed.",
+      "file": null
+    },
+    {
+      "area": "human-gates",
+      "status": "blocker",
+      "label": "FUELWELL_APPLE_ID configured",
+      "detail": "Required for Fastlane beta/release, but should not be committed.",
+      "file": null
+    },
+    {
+      "area": "human-gates",
+      "status": "blocker",
+      "label": "FUELWELL_APPLE_TEAM_ID configured",
+      "detail": "Required for Fastlane beta/release, but should not be committed.",
+      "file": null
+    },
+    {
+      "area": "human-gates",
+      "status": "blocker",
+      "label": "FUELWELL_APP_STORE_CONNECT_TEAM_ID configured",
+      "detail": "Required for Fastlane beta/release, but should not be committed.",
+      "file": null
+    },
+    {
+      "area": "human-gates",
+      "status": "blocker",
+      "label": "FUELWELL_MATCH_GIT_URL configured",
+      "detail": "Required for Fastlane beta/release, but should not be committed.",
+      "file": null
+    },
+    {
+      "area": "human-gates",
+      "status": "blocker",
+      "label": "App Store submission requires Robert",
+      "detail": "The release lane intentionally sets submit_for_review=false; App Review submission is a Vital Question.",
+      "file": "ios/fastlane/Fastfile"
+    }
+  ]
+}

@@ -27,7 +27,7 @@ test("Health Score is a compact chip + working detail page, not a hero surface",
 
 test("Log: live food search returns ranked results", async ({ page }) => {
   await page.goto("/app/log");
-  await page.getByPlaceholder("Search 500+ foods by name").fill("chicken");
+  await page.getByPlaceholder("Search 1,000+ foods by name").fill("chicken");
   await expect(page.getByRole("button", { name: /Choose .*hicken/i }).first()).toBeVisible();
 });
 
@@ -142,8 +142,8 @@ test("Workouts: two paths and working category filters", async ({ page }) => {
   await page.goto("/app/workouts");
   await expect(page.getByText("Pick my own")).toBeVisible();
   await expect(page.getByText("Coach recommends")).toBeVisible();
-  await page.getByLabel("Body part").selectOption("upper");
-  await page.getByLabel("Workout type").selectOption("Strength");
+  await page.getByRole("button", { name: "Upper", exact: true }).click();
+  await page.getByRole("button", { name: "Strength", exact: true }).click();
   await expect(page.getByText("Upper push base")).toBeVisible();
   await expect(page.getByRole("link", { name: /Preview Upper push base/i })).toBeVisible();
 });

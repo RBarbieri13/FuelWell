@@ -52,6 +52,7 @@ function expectArtifact(page: Page, type: string) {
 
 test.describe("agentic Coach", () => {
   test.describe.configure({ mode: "serial" });
+  test.skip(!process.env.ANTHROPIC_API_KEY, "Live Coach E2E requires ANTHROPIC_API_KEY.");
 
   test("log meal updates dashboard", async ({ page }) => {
     test.setTimeout(90_000);

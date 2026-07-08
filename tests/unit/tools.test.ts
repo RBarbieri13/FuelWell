@@ -376,7 +376,7 @@ describe("edge cases", () => {
     const { ctx } = makeCtx();
     const result = (await getTool("check_grocery_item")!.run({ item: "eggs" }, ctx)) as ToolRunResult;
     expect(result.persisted).toBe(true);
-    expect(result.modelResult).toEqual({ toggled: "Eggs", checked: true });
+    expect(result.modelResult).toEqual({ name: "Eggs", toggled: "Eggs", checked: true });
     expect(ctx.snapshot.grocery.find((g) => g.name === "Eggs")?.checked).toBe(true);
   });
 });
