@@ -3,7 +3,7 @@ set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 env_file="${FUELWELL_SUPABASE_ENV_FILE:-${HOME}/.fuelwell/supabase-staging.env}"
-migrations_dir="${FUELWELL_SUPABASE_MIGRATIONS_DIR:-${repo_root}/ios/supabase/migrations}"
+migrations_dir="${FUELWELL_SUPABASE_MIGRATIONS_DIR:-${repo_root}/supabase/migrations}"
 command_name="${1:-plan}"
 
 usage() {

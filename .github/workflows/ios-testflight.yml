@@ -12,6 +12,26 @@ on:
         required: false
         default: "FuelWell pilot build."
         type: string
+      candidate_url:
+        description: "Immutable Vercel deployment origin, without a path."
+        required: true
+        type: string
+      candidate_git_sha:
+        description: "Exact Git SHA reported by the candidate release manifest."
+        required: true
+        type: string
+      candidate_deployment_id:
+        description: "Exact Vercel deployment ID reported by the candidate release manifest."
+        required: true
+        type: string
+      candidate_environment:
+        description: "Candidate release environment."
+        required: true
+        default: "preview"
+        type: choice
+        options:
+          - preview
+          - production
 
 concurrency:
   group: ios-testflight-${{ github.ref }}
@@ -35,6 +55,12 @@ env:
   FUELWELL_ASC_KEY_P8_BASE64: ${{ secrets.FUELWELL_ASC_KEY_P8_BASE64 }}
   FUELWELL_BUILD_NUMBER: ${{ inputs.build_number }}
   FUELWELL_TESTFLIGHT_CHANGELOG: ${{ inputs.changelog }}
+  FUELWELL_CANDIDATE_URL: ${{ inputs.candidate_url }}
+  FUELWELL_CANDIDATE_GIT_SHA: ${{ inputs.candidate_git_sha }}
+  FUELWELL_CANDIDATE_DEPLOYMENT_ID: ${{ inputs.candidate_deployment_id }}
+  FUELWELL_CANDIDATE_ENVIRONMENT: ${{ inputs.candidate_environment }}
+  FUELWELL_UI_TEST_EMAIL: ${{ secrets.FUELWELL_UI_TEST_EMAIL }}
+  FUELWELL_UI_TEST_PASSWORD: ${{ secrets.FUELWELL_UI_TEST_PASSWORD }}
 
 jobs:
   testflight:
@@ -97,6 +123,14 @@ jobs:
       - name: TestFlight readiness gate
         working-directory: .
         run: tools/release/check-testflight-readiness.sh --ci
+
+      - name: Verify immutable web release binding
+        working-directory: .
+        run: tools/release/verify-release-binding.sh
+
+      - name: Verify candidate through the iOS shell
+        working-directory: .
+        run: tools/release/test-ios-candidate-ui.sh
 
       - name: Upload internal TestFlight build
         run: bundle exec fastlane beta
