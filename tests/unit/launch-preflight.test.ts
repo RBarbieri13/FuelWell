@@ -24,5 +24,6 @@ describe("launch preflight", () => {
     const ids = getLaunchPreflight().checks.map((check) => check.id);
     expect(ids).toContain("goal-context-schema");
     expect(ids).toContain("fitness-grocery-schema");
+    expect(ids).toContain("body-log-schema");
   });
 });

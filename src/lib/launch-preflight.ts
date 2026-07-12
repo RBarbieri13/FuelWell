@@ -64,6 +64,7 @@ export function getLaunchPreflight(): LaunchPreflight {
   const hasArtifactStorage = migrationExists("20260627042014_coach_uploaded_artifacts.sql");
   const hasGoalContext = migrationExists("20260612170000_goal_loop_integrations.sql");
   const hasFitnessGrocery = migrationExists("20260712200713_fitness_grocery_foundation.sql");
+  const hasBodyLog = migrationExists("20260712213000_body_log_entries.sql");
 
   const checks: PreflightCheck[] = [
     {
@@ -143,6 +144,16 @@ export function getLaunchPreflight(): LaunchPreflight {
         ? "Workout sessions, exercise sets, activities, and grocery lists are defined with ownership policies."
         : "Fitness and grocery persistence migration is missing.",
       state: hasFitnessGrocery ? "pass" : "fail",
+      requiredForPreview: false,
+      requiredForProduction: true,
+    },
+    {
+      id: "body-log-schema",
+      label: "Body check-in persistence",
+      detail: hasBodyLog
+        ? "Weight, mood, and water check-ins are defined with one user-owned entry per day."
+        : "Body check-in persistence migration is missing.",
+      state: hasBodyLog ? "pass" : "fail",
       requiredForPreview: false,
       requiredForProduction: true,
     },
