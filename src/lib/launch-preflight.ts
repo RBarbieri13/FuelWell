@@ -47,7 +47,10 @@ const routeChecks = [
 ];
 
 export function getLaunchPreflight(): LaunchPreflight {
-  const hasAnthropic = present(process.env.ANTHROPIC_API_KEY);
+  const hasCoachProvider =
+    present(process.env.VERCEL_OIDC_TOKEN) ||
+    present(process.env.AI_GATEWAY_API_KEY) ||
+    (process.env.VERCEL_ENV !== "production" && present(process.env.ANTHROPIC_API_KEY));
   const hasSupabase =
     present(process.env.NEXT_PUBLIC_SUPABASE_URL) &&
     present(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
@@ -59,15 +62,17 @@ export function getLaunchPreflight(): LaunchPreflight {
   const hasCoachRls = migrationExists("20260611180100_coach_tables.sql");
   const hasKnowledgeRls = migrationExists("20260620170000_coach_knowledge_bases.sql");
   const hasArtifactStorage = migrationExists("20260627042014_coach_uploaded_artifacts.sql");
+  const hasGoalContext = migrationExists("20260612170000_goal_loop_integrations.sql");
+  const hasFitnessGrocery = migrationExists("20260712200713_fitness_grocery_foundation.sql");
 
   const checks: PreflightCheck[] = [
     {
-      id: "anthropic",
+      id: "coach-provider",
       label: "Vision-capable Coach AI",
-      detail: hasAnthropic
-        ? "Server has an Anthropic key configured. Coach can attempt image, PDF, and text interpretation."
-        : "Missing Anthropic key. Coach attachments must show fallback copy and cannot perform live AI interpretation.",
-      state: hasAnthropic ? "pass" : "fail",
+      detail: hasCoachProvider
+        ? "Coach has an approved AI Gateway or development provider credential for streamed tools, image, PDF, and text interpretation."
+        : "Missing an approved Coach provider credential. Production requires Vercel deployment OIDC or an AI Gateway key.",
+      state: hasCoachProvider ? "pass" : "fail",
       requiredForPreview: false,
       requiredForProduction: true,
     },
@@ -118,6 +123,26 @@ export function getLaunchPreflight(): LaunchPreflight {
         ? "Coach knowledge-base migration is present and scoped by user_id."
         : "Coach knowledge-base migration was not found. Durable Coach memory isolation is not proven.",
       state: hasKnowledgeRls ? "pass" : "fail",
+      requiredForPreview: false,
+      requiredForProduction: true,
+    },
+    {
+      id: "goal-context-schema",
+      label: "Goal and daily context persistence",
+      detail: hasGoalContext
+        ? "Goal plans, events, daily decision context, and integration summaries are defined in a user-scoped migration."
+        : "Goal-context persistence migration is missing.",
+      state: hasGoalContext ? "pass" : "fail",
+      requiredForPreview: false,
+      requiredForProduction: true,
+    },
+    {
+      id: "fitness-grocery-schema",
+      label: "Workout and grocery persistence",
+      detail: hasFitnessGrocery
+        ? "Workout sessions, exercise sets, activities, and grocery lists are defined with ownership policies."
+        : "Fitness and grocery persistence migration is missing.",
+      state: hasFitnessGrocery ? "pass" : "fail",
       requiredForPreview: false,
       requiredForProduction: true,
     },
