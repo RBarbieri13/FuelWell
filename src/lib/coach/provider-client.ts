@@ -6,6 +6,16 @@ export type CoachProviderConfig = {
   baseURL?: string;
 };
 
+const GATEWAY_MODELS: Record<string, string> = {
+  "claude-haiku-4-5": "anthropic/claude-haiku-4.5",
+  "claude-sonnet-4-6": "anthropic/claude-sonnet-4.6",
+};
+
+const GATEWAY_FALLBACKS: Record<string, string[]> = {
+  "claude-haiku-4-5": ["google/gemini-3-flash", "openai/gpt-5.4-mini"],
+  "claude-sonnet-4-6": ["openai/gpt-5.4", "google/gemini-3-flash"],
+};
+
 function configured(value: string | undefined) {
   const trimmed = value?.trim();
   return trimmed ? trimmed : null;
@@ -16,7 +26,7 @@ export function resolveCoachProviderConfig(
   env: Record<string, string | undefined> = process.env,
 ): CoachProviderConfig | null {
   const gatewayCredential =
-    configured(env.AI_GATEWAY_API_KEY) ?? configured(env.VERCEL_OIDC_TOKEN);
+    configured(env.VERCEL_OIDC_TOKEN) ?? configured(env.AI_GATEWAY_API_KEY);
   if (gatewayCredential) {
     return {
       provider: "vercel_ai_gateway",
@@ -25,7 +35,9 @@ export function resolveCoachProviderConfig(
     };
   }
 
-  const anthropicCredential = configured(env.ANTHROPIC_API_KEY);
+  const allowDirect =
+    env.VERCEL_ENV !== "production" || /^(1|true|yes)$/i.test(env.COACH_ALLOW_DIRECT_ANTHROPIC ?? "");
+  const anthropicCredential = allowDirect ? configured(env.ANTHROPIC_API_KEY) : null;
   return anthropicCredential
     ? { provider: "anthropic", credential: anthropicCredential }
     : null;
@@ -33,7 +45,17 @@ export function resolveCoachProviderConfig(
 
 export function providerModelId(config: CoachProviderConfig, model: string) {
   if (config.provider !== "vercel_ai_gateway" || model.includes("/")) return model;
-  return `anthropic/${model}`;
+  return GATEWAY_MODELS[model] ?? `anthropic/${model}`;
+}
+
+export function providerModelCandidates(config: CoachProviderConfig, model: string) {
+  const primary = providerModelId(config, model);
+  if (config.provider !== "vercel_ai_gateway") return [primary];
+  const configuredFallbacks = process.env.COACH_GATEWAY_FALLBACK_MODELS
+    ?.split(",")
+    .map((candidate) => candidate.trim())
+    .filter(Boolean);
+  return [primary, ...(configuredFallbacks?.length ? configuredFallbacks : (GATEWAY_FALLBACKS[model] ?? []))];
 }
 
 export function createCoachProviderClient(config: CoachProviderConfig) {

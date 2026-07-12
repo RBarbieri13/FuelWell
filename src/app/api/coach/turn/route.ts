@@ -28,7 +28,7 @@ import {
 } from "@/lib/coach/provider-health";
 import {
   createCoachProviderClient,
-  providerModelId,
+  providerModelCandidates,
   resolveCoachProviderConfig,
 } from "@/lib/coach/provider-client";
 import { getTool, toAnthropicTools } from "@/lib/coach/registry";
@@ -424,9 +424,11 @@ export async function POST(request: Request) {
     retrieveCoachKnowledge(coachKnowledge, lastUserText),
   );
   const providerConfig = resolveCoachProviderConfig();
-  const model = providerConfig
-    ? providerModelId(providerConfig, pickModel(body))
-    : pickModel(body);
+  const requestedModel = pickModel(body);
+  const modelCandidates = providerConfig
+    ? providerModelCandidates(providerConfig, requestedModel)
+    : [requestedModel];
+  let model = modelCandidates[0];
 
   // E1: prompt-injection defense — user content is data, wrapped explicitly.
   const apiMessages: Anthropic.MessageParam[] = body.messages.map(toAnthropicMessage);
@@ -677,23 +679,36 @@ export async function POST(request: Request) {
           rounds += 1;
 
           let pendingText = "";
-          let final: Anthropic.Message;
+          let final: Anthropic.Message | null = null;
+          let providerFailure: unknown;
           try {
-            const msgStream = anthropic.messages.stream({
-              model,
-              max_tokens: 1500,
-              system: buildSystemPrompt(snapshot, retrievedKnowledge),
-              tools: toCoachAnthropicTools(offerWebSearch),
-              messages: apiMessages,
-            });
+            for (const candidate of modelCandidates) {
+              let candidateText = "";
+              try {
+                const msgStream = anthropic.messages.stream({
+                  model: candidate,
+                  max_tokens: 1500,
+                  system: buildSystemPrompt(snapshot, retrievedKnowledge),
+                  tools: toCoachAnthropicTools(offerWebSearch),
+                  messages: apiMessages,
+                });
 
-            msgStream.on("text", (delta) => {
-              pendingText += delta;
-              emit({ type: "text_delta", text: redactPii(delta) });
-            });
+                msgStream.on("text", (delta) => {
+                  candidateText += delta;
+                  pendingText += delta;
+                  emit({ type: "text_delta", text: redactPii(delta) });
+                });
 
-            final = await msgStream.finalMessage();
-            markProviderSuccess();
+                final = await msgStream.finalMessage();
+                model = candidate;
+                markProviderSuccess();
+                break;
+              } catch (error) {
+                providerFailure = error;
+                if (candidateText || isWebSearchUnavailable(error)) throw error;
+              }
+            }
+            if (!final) throw providerFailure ?? new Error("All Coach provider routes failed.");
           } catch (err) {
             if (offerWebSearch && isWebSearchUnavailable(err)) {
               offerWebSearch = false;
@@ -706,6 +721,7 @@ export async function POST(request: Request) {
             );
             return;
           }
+          if (!final) throw new Error("Coach provider returned no final message.");
           totalIn += final.usage.input_tokens;
           totalOut += final.usage.output_tokens;
           assistantText += pendingText;

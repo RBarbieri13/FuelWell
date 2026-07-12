@@ -16,7 +16,12 @@ export const BUDGET_EXCEEDED_MESSAGE =
 /** USD per million tokens. */
 const PRICING: Record<string, { input: number; output: number }> = {
   "claude-haiku-4-5": { input: 1, output: 5 },
+  "anthropic/claude-haiku-4.5": { input: 1, output: 5 },
   "claude-sonnet-4-6": { input: 3, output: 15 },
+  "anthropic/claude-sonnet-4.6": { input: 3, output: 15 },
+  "google/gemini-3-flash": { input: 0.5, output: 3 },
+  "openai/gpt-5.4-mini": { input: 0.75, output: 4.5 },
+  "openai/gpt-5.4": { input: 2.5, output: 15 },
 };
 
 export function costUsdCents(model: string, inputTokens: number, outputTokens: number): number {
