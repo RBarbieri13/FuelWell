@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState, type ReactNode } from "react";
+import { useMemo, useSyncExternalStore, type ReactNode } from "react";
 import {
   Activity,
   ArrowRight,
@@ -67,6 +67,16 @@ type PreviewCompletedOnboarding = {
 
 const PREVIEW_COMPLETED_STORAGE_KEY = "fuelwell:new-user-onboarding:v1";
 
+const subscribeToPreviewOverride = () => () => {};
+
+function getPreviewOverrideSnapshot() {
+  return window.localStorage.getItem(PREVIEW_COMPLETED_STORAGE_KEY);
+}
+
+function getServerPreviewOverrideSnapshot() {
+  return null;
+}
+
 export function DashboardClient({
   displayName,
   targets,
@@ -77,18 +87,20 @@ export function DashboardClient({
   dietaryPreference,
   allergies,
 }: DashboardClientProps) {
-  const [previewOverride, setPreviewOverride] = useState<PreviewCompletedOnboarding | null>(null);
-
-  useEffect(() => {
+  const previewOverrideRaw = useSyncExternalStore(
+    subscribeToPreviewOverride,
+    getPreviewOverrideSnapshot,
+    getServerPreviewOverrideSnapshot
+  );
+  const previewOverride = useMemo(() => {
     try {
-      const raw = window.localStorage.getItem(PREVIEW_COMPLETED_STORAGE_KEY);
-      if (!raw) return;
-      const parsed = JSON.parse(raw) as PreviewCompletedOnboarding;
-      setPreviewOverride(parsed);
+      return previewOverrideRaw
+        ? (JSON.parse(previewOverrideRaw) as PreviewCompletedOnboarding)
+        : null;
     } catch {
-      setPreviewOverride(null);
+      return null;
     }
-  }, []);
+  }, [previewOverrideRaw]);
 
   const effectiveDisplayName =
     previewOverride?.data?.displayName?.trim() || displayName;
