@@ -23,6 +23,7 @@
 		46DCE2683117D957327FC93F /* AppFeatureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47ED229A15FF76E83E8AE703 /* AppFeatureTests.swift */; };
 		4A0CAB4DC482140B2AC9D636 /* ComponentGalleryRenderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE88D7C304B0C1BA0647DE4D /* ComponentGalleryRenderTests.swift */; };
 		4A68EA3913138FAEB615CFA2 /* ReleaseReadinessTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A28F2F0ABD1EE46F9986AD86 /* ReleaseReadinessTests.swift */; };
+		50682046127C2D03AB0BB719 /* ReleaseManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D93348F6009DC371BE98EA83 /* ReleaseManifest.swift */; };
 		50A890D6205BB70A187E71B5 /* Outfit-Variable.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AA8195CED831D47B85B2D1A0 /* Outfit-Variable.ttf */; };
 		5932B1786E235844770D782E /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 370FE810A7736B66746FACA9 /* DesignSystem */; };
 		5F5DB4958C9C634B24FB37B3 /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 4D23E8317116A890B8DAA8FE /* DesignSystem */; };
@@ -39,6 +40,7 @@
 		8B214741ADCEF773C22621B8 /* SupabaseClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E87BC127E4591BBD7B5FB190 /* SupabaseClientTests.swift */; };
 		8F6B160359BB70A1C50CC771 /* SupabaseClient in Frameworks */ = {isa = PBXBuildFile; productRef = 35F9875A95C99DBD77AE5434 /* SupabaseClient */; };
 		92F494003A3D9A020E442A07 /* PersistenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61512A7A4DAA2D43BD804368 /* PersistenceTests.swift */; };
+		95F8932467529BBBCB266CDF /* ReleaseManifestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FEC7B2F55BECF23A61C7337 /* ReleaseManifestTests.swift */; };
 		96922C84363B7364690F169F /* NutritionDomain in Frameworks */ = {isa = PBXBuildFile; productRef = DF3D5011F498564731103745 /* NutritionDomain */; };
 		96B84DF5876AE3B8619608DC /* testComponentGalleryAccessibilitySnapshot.1.png in Resources */ = {isa = PBXBuildFile; fileRef = A6B65369A6BA9DE8A2C3B364 /* testComponentGalleryAccessibilitySnapshot.1.png */; };
 		9BD4AB79B855F1F5D294BB66 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 165F0021ABA3E00997286AAC /* PrivacyInfo.xcprivacy */; };
@@ -69,6 +71,13 @@
 
 /* Begin PBXContainerItemProxy section */
 		268136D1A02E0EF95608D609 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2A9726E314373D145CDE4934 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C2CA1E955E162F8261AF65EE;
+			remoteInfo = FuelWellApp;
+		};
+		61A112624726CDCEB2F970A2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 2A9726E314373D145CDE4934 /* Project object */;
 			proxyType = 1;
@@ -107,6 +116,7 @@
 		8C0F7AAB7BBED97139CEEE47 /* AnalyticsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsTests.swift; sourceTree = "<group>"; };
 		8D184EE2B81C96B09945B6A7 /* HealthKitClient */ = {isa = PBXFileReference; lastKnownFileType = folder; name = HealthKitClient; path = Packages/HealthKitClient; sourceTree = SOURCE_ROOT; };
 		8FA880CBB610408730DED8C0 /* BrandFontTestSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrandFontTestSupport.swift; sourceTree = "<group>"; };
+		8FEC7B2F55BECF23A61C7337 /* ReleaseManifestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReleaseManifestTests.swift; sourceTree = "<group>"; };
 		92F937B0FC7D1B03570C7AA7 /* testComponentGalleryCompactSnapshot.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = testComponentGalleryCompactSnapshot.1.png; sourceTree = "<group>"; };
 		979353D4ECBE5F2A5B9B4EB1 /* SubscriptionClientTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = SubscriptionClientTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B253880B90B3461ED1C8DFA /* AnalyticsTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = AnalyticsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -119,6 +129,7 @@
 		AE88D7C304B0C1BA0647DE4D /* ComponentGalleryRenderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComponentGalleryRenderTests.swift; sourceTree = "<group>"; };
 		B1EAC66EFCFC2CB8A89481FA /* FuelWellUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = FuelWellUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B1FFE6812124FEDF63F66AFF /* ComponentGallerySnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComponentGallerySnapshotTests.swift; sourceTree = "<group>"; };
+		B23E7209CA626943A587B0CD /* FuelWellAppTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = FuelWellAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B9CEB224194E971DDEBD9AA0 /* Persistence */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Persistence; path = Packages/Persistence; sourceTree = SOURCE_ROOT; };
 		BE9240DF4329198C935AEECE /* CrashReporting */ = {isa = PBXFileReference; lastKnownFileType = folder; name = CrashReporting; path = Packages/CrashReporting; sourceTree = SOURCE_ROOT; };
 		C35877AF42BEB66CACA82281 /* Inter-Variable.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inter-Variable.ttf"; sourceTree = "<group>"; };
@@ -126,6 +137,7 @@
 		CD2C076E08E25E6CFE03D62A /* DailyLogFailureStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyLogFailureStateTests.swift; sourceTree = "<group>"; };
 		D59EA91E45C2851A49603D09 /* NutritionDomain */ = {isa = PBXFileReference; lastKnownFileType = folder; name = NutritionDomain; path = Packages/NutritionDomain; sourceTree = SOURCE_ROOT; };
 		D7621B9AA750FF5C21B4E26A /* Networking */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Networking; path = Packages/Networking; sourceTree = SOURCE_ROOT; };
+		D93348F6009DC371BE98EA83 /* ReleaseManifest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReleaseManifest.swift; sourceTree = "<group>"; };
 		DE805F56F775B95F520692DA /* DesignSystem */ = {isa = PBXFileReference; lastKnownFileType = folder; name = DesignSystem; path = Packages/DesignSystem; sourceTree = SOURCE_ROOT; };
 		DF042C3459C06538638038CC /* HealthKitClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitClientTests.swift; sourceTree = "<group>"; };
 		E87BC127E4591BBD7B5FB190 /* SupabaseClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseClientTests.swift; sourceTree = "<group>"; };
@@ -322,6 +334,7 @@
 			isa = PBXGroup;
 			children = (
 				6CA9C6656CAB7C1C83089C72 /* FuelWellApp.swift */,
+				D93348F6009DC371BE98EA83 /* ReleaseManifest.swift */,
 			);
 			name = Sources;
 			path = FuelWellApp/Sources;
@@ -373,6 +386,7 @@
 				611D7A6B199A70FB3BB2A6E7 /* CrashReportingTests.xctest */,
 				4D71BBF4FC1AD348C933CFC2 /* DesignSystemTests.xctest */,
 				C80BB3055E9CA31719A9FE33 /* FuelWellApp.app */,
+				B23E7209CA626943A587B0CD /* FuelWellAppTests.xctest */,
 				B1EAC66EFCFC2CB8A89481FA /* FuelWellUITests.xctest */,
 				3CAF1EF868C725498221E215 /* HealthKitClientTests.xctest */,
 				AD17B4ABA97C270B763FF1CD /* NutritionDomainTests.xctest */,
@@ -443,8 +457,18 @@
 				4969F225C8640DB5294F6ED5 /* Sources */,
 				8693147FD1302B81F10EC0AD /* SubscriptionClientTests */,
 				E0D9F9B1D588D054F375588E /* SupabaseClientTests */,
+				B4BE7FB87E4501692A22CECB /* Tests */,
 				7D7F7C0172E0B3D15E76EEC0 /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		B4BE7FB87E4501692A22CECB /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				8FEC7B2F55BECF23A61C7337 /* ReleaseManifestTests.swift */,
+			);
+			name = Tests;
+			path = FuelWellApp/Tests;
 			sourceTree = "<group>";
 		};
 		C105F591167C2EF5A7D65CE1 /* PersistenceTests */ = {
@@ -552,6 +576,24 @@
 			);
 			productName = PersistenceTests;
 			productReference = 31C57EA7EB3516BFB4923EDE /* PersistenceTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		53F6EF05EDD6EB680780346F /* FuelWellAppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 24E579E81E2E3A6BA33C95E5 /* Build configuration list for PBXNativeTarget "FuelWellAppTests" */;
+			buildPhases = (
+				3BE3F46C5A2892EBE5459EBB /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				9705B7825CB8EC895B39D067 /* PBXTargetDependency */,
+			);
+			name = FuelWellAppTests;
+			packageProductDependencies = (
+			);
+			productName = FuelWellAppTests;
+			productReference = B23E7209CA626943A587B0CD /* FuelWellAppTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		5D8FBFD9FDC520E7735CF092 /* DesignSystemTests */ = {
@@ -833,6 +875,7 @@
 				B3DF299CD302435A019CDA3D /* CrashReportingTests */,
 				5D8FBFD9FDC520E7735CF092 /* DesignSystemTests */,
 				C2CA1E955E162F8261AF65EE /* FuelWellApp */,
+				53F6EF05EDD6EB680780346F /* FuelWellAppTests */,
 				8ACFA4D29183B335B7029E31 /* FuelWellUITests */,
 				EBDA7026A910722A15EF9240 /* HealthKitClientTests */,
 				CE9B743CB865DD1F0C435B5B /* NutritionDomainTests */,
@@ -914,6 +957,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3BE3F46C5A2892EBE5459EBB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				95F8932467529BBBCB266CDF /* ReleaseManifestTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3F841726B3C24F7AD89B4DB3 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -984,12 +1035,18 @@
 			buildActionMask = 2147483647;
 			files = (
 				24FE11C46090BD2F0F3DE4E8 /* FuelWellApp.swift in Sources */,
+				50682046127C2D03AB0BB719 /* ReleaseManifest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		9705B7825CB8EC895B39D067 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C2CA1E955E162F8261AF65EE /* FuelWellApp */;
+			targetProxy = 61A112624726CDCEB2F970A2 /* PBXContainerItemProxy */;
+		};
 		EA176CDF0BFD40DAD2A85E7B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = C2CA1E955E162F8261AF65EE /* FuelWellApp */;
@@ -1022,6 +1079,13 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleIconName = AppIcon;
+				INFOPLIST_KEY_FuelWellExpectedDeploymentID = "$(FUELWELL_EXPECTED_DEPLOYMENT_ID)";
+				INFOPLIST_KEY_FuelWellExpectedDeploymentURL = "$(FUELWELL_EXPECTED_DEPLOYMENT_URL)";
+				INFOPLIST_KEY_FuelWellExpectedEnvironment = "$(FUELWELL_EXPECTED_ENVIRONMENT)";
+				INFOPLIST_KEY_FuelWellExpectedGitSHA = "$(FUELWELL_EXPECTED_GIT_SHA)";
+				INFOPLIST_KEY_FuelWellExpectedPackageVersion = "$(FUELWELL_EXPECTED_PACKAGE_VERSION)";
+				INFOPLIST_KEY_FuelWellReleaseSchemaVersion = "$(FUELWELL_RELEASE_SCHEMA_VERSION)";
+				INFOPLIST_KEY_FuelWellStartURL = "$(FUELWELL_START_URL)";
 				INFOPLIST_KEY_NSCameraUsageDescription = "FuelWell uses the camera to log meal photos for nutrition tracking.";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "FuelWell reads workouts, sleep, steps, energy, and body measurements to personalize coaching.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "FuelWell does not write Health data in this phase.";
@@ -1168,6 +1232,24 @@
 				SWIFT_VERSION = 6.0;
 			};
 			name = Release;
+		};
+		350652B2666FD1BC2482C04A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.fuelwell.FuelWellAppTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FuelWellApp.app/FuelWellApp";
+			};
+			name = Debug;
 		};
 		43A1739B8FC7A19FC6DAEDB3 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -1515,6 +1597,13 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleIconName = AppIcon;
+				INFOPLIST_KEY_FuelWellExpectedDeploymentID = "$(FUELWELL_EXPECTED_DEPLOYMENT_ID)";
+				INFOPLIST_KEY_FuelWellExpectedDeploymentURL = "$(FUELWELL_EXPECTED_DEPLOYMENT_URL)";
+				INFOPLIST_KEY_FuelWellExpectedEnvironment = "$(FUELWELL_EXPECTED_ENVIRONMENT)";
+				INFOPLIST_KEY_FuelWellExpectedGitSHA = "$(FUELWELL_EXPECTED_GIT_SHA)";
+				INFOPLIST_KEY_FuelWellExpectedPackageVersion = "$(FUELWELL_EXPECTED_PACKAGE_VERSION)";
+				INFOPLIST_KEY_FuelWellReleaseSchemaVersion = "$(FUELWELL_RELEASE_SCHEMA_VERSION)";
+				INFOPLIST_KEY_FuelWellStartURL = "$(FUELWELL_START_URL)";
 				INFOPLIST_KEY_NSCameraUsageDescription = "FuelWell uses the camera to log meal photos for nutrition tracking.";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "FuelWell reads workouts, sleep, steps, energy, and body measurements to personalize coaching.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "FuelWell does not write Health data in this phase.";
@@ -1619,6 +1708,24 @@
 			};
 			name = Release;
 		};
+		EF25CFAE71FF53EA221D9D1B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.fuelwell.FuelWellAppTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FuelWellApp.app/FuelWellApp";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1627,6 +1734,15 @@
 			buildConfigurations = (
 				1DE75C6B60032AF54E02A4C6 /* Debug */,
 				6BEA88AFC3E8E24266F2692C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		24E579E81E2E3A6BA33C95E5 /* Build configuration list for PBXNativeTarget "FuelWellAppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				350652B2666FD1BC2482C04A /* Debug */,
+				EF25CFAE71FF53EA221D9D1B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

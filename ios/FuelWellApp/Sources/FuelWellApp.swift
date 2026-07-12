@@ -1,5 +1,6 @@
 import DesignSystem
 import SwiftUI
+import UIKit
 import WebKit
 
 @main
@@ -132,6 +133,7 @@ private struct FuelWellWebView: UIViewRepresentable {
 
         let webView = WKWebView(frame: .zero, configuration: configuration)
         webView.navigationDelegate = context.coordinator
+        webView.uiDelegate = context.coordinator
         webView.allowsBackForwardNavigationGestures = true
         webView.scrollView.contentInsetAdjustmentBehavior = .never
         webView.load(URLRequest(url: url, cachePolicy: .reloadRevalidatingCacheData, timeoutInterval: 30))
@@ -145,7 +147,7 @@ private struct FuelWellWebView: UIViewRepresentable {
         webView.load(URLRequest(url: url, cachePolicy: .reloadRevalidatingCacheData, timeoutInterval: 30))
     }
 
-    final class Coordinator: NSObject, WKNavigationDelegate {
+    final class Coordinator: NSObject, WKNavigationDelegate, WKUIDelegate {
         @Binding var isLoading: Bool
         @Binding var errorMessage: String?
         var lastReloadToken: UUID?
@@ -173,6 +175,31 @@ private struct FuelWellWebView: UIViewRepresentable {
         func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
             isLoading = false
             errorMessage = error.localizedDescription
+        }
+
+        func webView(
+            _ webView: WKWebView,
+            createWebViewWith configuration: WKWebViewConfiguration,
+            for navigationAction: WKNavigationAction,
+            windowFeatures: WKWindowFeatures
+        ) -> WKWebView? {
+            guard navigationAction.targetFrame == nil else { return nil }
+            webView.load(navigationAction.request)
+            return nil
+        }
+
+        func webView(
+            _ webView: WKWebView,
+            decidePolicyFor navigationAction: WKNavigationAction
+        ) async -> WKNavigationActionPolicy {
+            guard let url = navigationAction.request.url else { return .cancel }
+
+            if let scheme = url.scheme?.lowercased(), !["http", "https", "about"].contains(scheme) {
+                await UIApplication.shared.open(url)
+                return .cancel
+            }
+
+            return .allow
         }
     }
 }
