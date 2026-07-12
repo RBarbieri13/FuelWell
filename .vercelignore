@@ -1,0 +1,11 @@
+.playwright-cli/
+output/
+test-results/
+playwright-report/
+ios/build/
+ios/fastlane/build/
+ios/fastlane/test_output/
+ios/
+docs/
+surf-runs/
+tsconfig.tsbuildinfo

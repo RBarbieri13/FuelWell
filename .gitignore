@@ -47,6 +47,10 @@ polish-*.png
 verify-*.png
 test-results/
 playwright-report/
+.playwright-cli/
+output/
+ios/FuelWellApp.xcodeproj/xcshareddata/xcschemes/CandidateUITests.xcscheme
+ios/FuelWellApp.xcodeproj/xcshareddata/xcschemes/ReleaseBindingTests.xcscheme
 blob-report/
 .playwright/
 polly-*.png
