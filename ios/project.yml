@@ -278,6 +278,18 @@ targets:
         GENERATE_INFOPLIST_FILE: YES
         TEST_TARGET_NAME: FuelWellApp
 schemes:
+  CandidateUITests:
+    build:
+      targets:
+        FuelWellApp: all
+        FuelWellUITests: [test]
+    test:
+      config: Debug
+      environmentVariables:
+        FUELWELL_UI_TEST_EMAIL: "$(FUELWELL_UI_TEST_EMAIL)"
+        FUELWELL_UI_TEST_PASSWORD: "$(FUELWELL_UI_TEST_PASSWORD)"
+      targets:
+        - FuelWellUITests
   ReleaseBindingTests:
     build:
       targets:
