@@ -1,16 +1,9 @@
 "use client";
 
-/**
- * Shared persisted grocery list. The Grocery page previously held ephemeral
- * useState; this store gives Coach and the page one source of truth.
- * Items keep the page's rich shape (amount/category/source); Coach mutations
- * carry the compact {id,name,checked} shape and are reconciled by id so rich
- * fields survive.
- */
-
-import { useSyncExternalStore } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { normalizeGroceryInput } from "@/lib/grocery-normalization";
 import type { GroceryItem as CoachGroceryItem } from "@/lib/coach/types";
+import { todayIsoDate } from "@/lib/fuelwell-data";
 
 export type GroceryCategory = "Protein" | "Produce" | "Pantry" | "Dairy" | "Frozen" | "Other";
 
@@ -27,9 +20,35 @@ export type RichGroceryItem = {
   quantity?: string;
 };
 
-const STORAGE_KEY = "fuelwell-grocery-list-v1";
+export type GroceryPersistence = {
+  mode: "unknown" | "preview" | "authenticated";
+  status: "idle" | "loading" | "saving" | "saved" | "error";
+  userId: string | null;
+  error: string | null;
+};
 
-/** Same seed the Grocery page shipped with pre-store, so nothing visually changes. */
+export type GroceryMutationResult =
+  | { ok: true; value: RichGroceryItem[] }
+  | { ok: false; error: string };
+
+type GrocerySnapshot = {
+  items: RichGroceryItem[];
+  persistence: GroceryPersistence;
+};
+
+type GroceryResponse = {
+  signedIn: boolean;
+  userId?: string;
+  date?: string;
+  items: RichGroceryItem[];
+  error?: string;
+};
+
+const PREVIEW_CACHE_PREFIX = "fuelwell-grocery-preview-v2";
+const USER_CACHE_PREFIX = "fuelwell-grocery-user-v2";
+const LEGACY_CACHE_KEY = "fuelwell-grocery-list-v1";
+const date = todayIsoDate();
+
 const SEED: RichGroceryItem[] = [
   { id: "turkey", name: "Lean ground turkey", amount: "1.5 lb", category: "Protein", source: "Turkey Quinoa Bowl", checked: false },
   { id: "salmon", name: "Salmon fillets", amount: "2 portions", category: "Protein", source: "Salmon Dinner", checked: false },
@@ -46,7 +65,7 @@ const SEED: RichGroceryItem[] = [
 export function inferGroceryDetails(
   name: string,
   amount: string,
-  category: GroceryCategory = "Other"
+  category: GroceryCategory = "Other",
 ): Pick<RichGroceryItem, "servingSize" | "classification" | "vitaminBenefit" | "quantity"> {
   const lower = name.toLowerCase();
   const quantity = amount.trim() || "1 item";
@@ -91,7 +110,7 @@ export function inferGroceryDetails(
 
 function enrichItem(item: RichGroceryItem): RichGroceryItem {
   const normalized = normalizeGroceryInput(item.name, item.quantity ?? item.amount);
-  const amount = normalized.quantity ?? item.amount;
+  const amount = normalized.quantity ?? (item.amount.trim() || "1 item");
   const inferred = inferGroceryDetails(normalized.name, amount, item.category);
   return {
     ...item,
@@ -100,38 +119,126 @@ function enrichItem(item: RichGroceryItem): RichGroceryItem {
     servingSize: item.servingSize ?? inferred.servingSize,
     classification: item.classification ?? inferred.classification,
     vitaminBenefit: item.vitaminBenefit ?? inferred.vitaminBenefit,
-    quantity: normalized.quantity ?? item.quantity ?? inferred.quantity,
+    quantity: amount,
   };
 }
 
-function loadInitial(): RichGroceryItem[] {
-  if (typeof window === "undefined") return SEED;
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw) as RichGroceryItem[];
-      if (Array.isArray(parsed) && parsed.length > 0) return parsed.map(enrichItem);
-    }
-  } catch {
-    // fall through
-  }
-  return SEED.map(enrichItem);
+const SERVER_ITEMS = SEED.map(enrichItem);
+let snapshot: GrocerySnapshot = {
+  items: SERVER_ITEMS,
+  persistence: { mode: "unknown", status: "idle", userId: null, error: null },
+};
+const serverSnapshot = snapshot;
+const listeners = new Set<() => void>();
+const idAliases = new Map<string, string>();
+let initialized = false;
+let initializePromise: Promise<boolean> | null = null;
+let mutationQueue: Promise<void> = Promise.resolve();
+
+function previewCacheKey() {
+  return `${PREVIEW_CACHE_PREFIX}:${date}`;
 }
 
-let items: RichGroceryItem[] = loadInitial();
-const listeners = new Set<() => void>();
-const SERVER_SNAPSHOT: RichGroceryItem[] = SEED.map(enrichItem);
+function userCacheKey(userId: string) {
+  return `${USER_CACHE_PREFIX}:${userId}:${date}`;
+}
 
-function persist(next: RichGroceryItem[]) {
-  items = next;
-  if (typeof window !== "undefined") {
-    try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-    } catch {
-      // best-effort
-    }
+function readCache(key: string): RichGroceryItem[] | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const parsed = JSON.parse(window.localStorage.getItem(key) ?? "null") as unknown;
+    return Array.isArray(parsed) ? (parsed as RichGroceryItem[]).map(enrichItem) : null;
+  } catch {
+    return null;
   }
-  listeners.forEach((l) => l());
+}
+
+function writeCache(key: string, items: RichGroceryItem[]) {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(key, JSON.stringify(items));
+}
+
+function setSnapshot(items: RichGroceryItem[], patch: Partial<GroceryPersistence>) {
+  snapshot = {
+    items: items.map(enrichItem),
+    persistence: { ...snapshot.persistence, ...patch },
+  };
+  listeners.forEach((listener) => listener());
+}
+
+function errorText(error: unknown) {
+  return error instanceof Error ? error.message : "Grocery list request failed.";
+}
+
+async function readResponse(response: Response): Promise<GroceryResponse> {
+  const body = (await response.json()) as GroceryResponse;
+  if (!response.ok) throw new Error(body.error || "Grocery list request failed.");
+  return body;
+}
+
+export function getGrocerySnapshot() {
+  return snapshot;
+}
+
+export async function initializeGroceryList() {
+  if (initialized) return true;
+  if (initializePromise) return initializePromise;
+  initializePromise = (async () => {
+    setSnapshot(snapshot.items, { status: "loading", error: null });
+    try {
+      const body = await readResponse(await fetch(`/api/grocery-list?date=${date}`));
+      if (body.signedIn && body.userId) {
+        const items = body.items.map(enrichItem);
+        writeCache(userCacheKey(body.userId), items);
+        setSnapshot(items, {
+          mode: "authenticated",
+          status: "saved",
+          userId: body.userId,
+          error: null,
+        });
+      } else {
+        const previewItems =
+          readCache(previewCacheKey()) ?? readCache(LEGACY_CACHE_KEY) ?? SERVER_ITEMS;
+        writeCache(previewCacheKey(), previewItems);
+        setSnapshot(previewItems, {
+          mode: "preview",
+          status: "saved",
+          userId: null,
+          error: null,
+        });
+      }
+      initialized = true;
+      return true;
+    } catch (error) {
+      setSnapshot(snapshot.items, { status: "error", error: errorText(error) });
+      return false;
+    } finally {
+      initializePromise = null;
+    }
+  })();
+  return initializePromise;
+}
+
+function normalizeId(id: string) {
+  if (/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)) {
+    return id;
+  }
+  const existing = idAliases.get(id);
+  if (existing) return existing;
+  const generated = crypto.randomUUID();
+  idAliases.set(id, generated);
+  return generated;
+}
+
+function normalizeItems(items: RichGroceryItem[]) {
+  const byName = new Map<string, RichGroceryItem>();
+  for (const candidate of items) {
+    const item = enrichItem({ ...candidate, id: normalizeId(candidate.id) });
+    const key = item.name.toLocaleLowerCase();
+    const existing = byName.get(key);
+    byName.set(key, existing ? { ...existing, ...item, id: existing.id } : item);
+  }
+  return [...byName.values()];
 }
 
 function subscribe(listener: () => void) {
@@ -139,38 +246,74 @@ function subscribe(listener: () => void) {
   return () => listeners.delete(listener);
 }
 
-export function setGroceryItems(next: RichGroceryItem[]) {
-  persist(next);
+function enqueue(operation: () => Promise<GroceryMutationResult>) {
+  const result = mutationQueue.then(operation, operation);
+  mutationQueue = result.then(() => undefined, () => undefined);
+  return result;
 }
 
-/** Apply a Coach set_grocery mutation: reconcile compact items against rich ones. */
+export function setGroceryItems(next: RichGroceryItem[]): Promise<GroceryMutationResult> {
+  return enqueue(async () => {
+    if (!(await initializeGroceryList())) {
+      return { ok: false, error: snapshot.persistence.error || "Grocery list did not initialize." };
+    }
+    const before = snapshot.items;
+    const normalized = normalizeItems(next);
+    setSnapshot(normalized, { status: "saving", error: null });
+
+    if (snapshot.persistence.mode === "preview") {
+      writeCache(previewCacheKey(), normalized);
+      setSnapshot(normalized, { status: "saved", error: null });
+      return { ok: true, value: normalized };
+    }
+    if (snapshot.persistence.mode !== "authenticated" || !snapshot.persistence.userId) {
+      const message = "Authentication state is unknown; grocery list was not persisted.";
+      setSnapshot(before, { status: "error", error: message });
+      return { ok: false, error: message };
+    }
+
+    try {
+      const body = await readResponse(await fetch("/api/grocery-list", {
+        method: "PUT",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ date, items: normalized }),
+      }));
+      if (!body.signedIn || body.userId !== snapshot.persistence.userId) {
+        throw new Error("Authenticated grocery response did not match the current user.");
+      }
+      const saved = body.items.map(enrichItem);
+      writeCache(userCacheKey(body.userId), saved);
+      setSnapshot(saved, { status: "saved", error: null });
+      return { ok: true, value: saved };
+    } catch (error) {
+      const message = errorText(error);
+      setSnapshot(before, { status: "error", error: message });
+      return { ok: false, error: message };
+    }
+  });
+}
+
 export function applyCoachGrocery(compact: CoachGroceryItem[]) {
-  const byId = new Map(items.map((i) => [i.id, i]));
-  persist(
-    compact.map((c) => {
-      const existing = byId.get(c.id);
-      const normalized = normalizeGroceryInput(c.name, c.quantity ?? existing?.quantity ?? existing?.amount);
-      const quantityPatch = normalized.quantity
-        ? { amount: normalized.quantity, quantity: normalized.quantity }
-        : {};
-      return existing
-        ? {
-            ...existing,
-            name: normalized.name,
-            ...quantityPatch,
-            checked: c.checked,
-          }
-        : enrichItem({
-            id: c.id,
-            name: normalized.name,
-            amount: normalized.quantity ?? "1 item",
-            category: "Other" as const,
-            source: "Coach",
-            checked: c.checked,
-            ...(normalized.quantity ? { quantity: normalized.quantity } : {}),
-          });
-    })
-  );
+  const byId = new Map(snapshot.items.map((item) => [item.id, item]));
+  return setGroceryItems(compact.map((candidate) => {
+    const existing = byId.get(candidate.id);
+    const normalized = normalizeGroceryInput(
+      candidate.name,
+      candidate.quantity ?? existing?.quantity ?? existing?.amount,
+    );
+    const amount = normalized.quantity ?? existing?.amount ?? "1 item";
+    return existing
+      ? { ...existing, name: normalized.name, amount, quantity: amount, checked: candidate.checked }
+      : {
+          id: candidate.id,
+          name: normalized.name,
+          amount,
+          quantity: amount,
+          category: "Other",
+          source: "Coach",
+          checked: candidate.checked,
+        };
+  }));
 }
 
 export function toCoachGrocery(rich: RichGroceryItem[]): CoachGroceryItem[] {
@@ -186,6 +329,14 @@ export function toCoachGrocery(rich: RichGroceryItem[]): CoachGroceryItem[] {
 }
 
 export function useGroceryList() {
-  const current = useSyncExternalStore(subscribe, () => items, () => SERVER_SNAPSHOT);
-  return { items: current, setGroceryItems, applyCoachGrocery };
+  useEffect(() => {
+    void initializeGroceryList();
+  }, []);
+  const current = useSyncExternalStore(subscribe, getGrocerySnapshot, () => serverSnapshot);
+  return {
+    items: current.items,
+    persistence: current.persistence,
+    setGroceryItems,
+    applyCoachGrocery,
+  };
 }
