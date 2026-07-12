@@ -4,6 +4,8 @@ set -euo pipefail
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 candidate_url="${FUELWELL_CANDIDATE_URL:-}"
 expected_git_sha="${FUELWELL_CANDIDATE_GIT_SHA:-}"
+expected_deployment_id="${FUELWELL_CANDIDATE_DEPLOYMENT_ID:-}"
+expected_environment="${FUELWELL_CANDIDATE_ENVIRONMENT:-}"
 device="${FUELWELL_RELEASE_TEST_DEVICE:-iPhone 15}"
 result_path="${FUELWELL_UI_TEST_RESULT_PATH:-${repo_root}/ios/build/reports/FuelWellCandidateUITests.xcresult}"
 
@@ -14,6 +16,8 @@ Verify an immutable FuelWell web candidate through the actual iOS WKWebView shel
 Required release gate:
   FUELWELL_CANDIDATE_URL=https://<immutable-deployment>.vercel.app \
   FUELWELL_CANDIDATE_GIT_SHA=<exact-candidate-sha> \
+  FUELWELL_CANDIDATE_DEPLOYMENT_ID=<exact-vercel-deployment-id> \
+  FUELWELL_CANDIDATE_ENVIRONMENT=preview \
   FUELWELL_UI_TEST_EMAIL=<dedicated-test-user> \
   FUELWELL_UI_TEST_PASSWORD=<dedicated-test-password> \
   tools/release/test-ios-candidate-ui.sh
@@ -39,6 +43,8 @@ fi
 
 [[ -n "${candidate_url}" ]] || fail "FUELWELL_CANDIDATE_URL is required"
 [[ -n "${expected_git_sha}" ]] || fail "FUELWELL_CANDIDATE_GIT_SHA is required"
+[[ -n "${expected_deployment_id}" ]] || fail "FUELWELL_CANDIDATE_DEPLOYMENT_ID is required"
+[[ -n "${expected_environment}" ]] || fail "FUELWELL_CANDIDATE_ENVIRONMENT is required"
 [[ "${candidate_url}" == https://* ]] || fail "candidate URL must use HTTPS"
 
 candidate_url="${candidate_url%/}"
@@ -64,10 +70,20 @@ environment="$(read_manifest '.environment' 'environment')"
 
 [[ "${manifest_git_sha}" == "${expected_git_sha}" ]] || \
   fail "candidate Git SHA ${manifest_git_sha} does not match expected ${expected_git_sha}"
+[[ "${deployment_id}" == "${expected_deployment_id}" ]] || \
+  fail "candidate deployment ID ${deployment_id} does not match expected ${expected_deployment_id}"
+[[ "${environment}" == "${expected_environment}" ]] || \
+  fail "candidate environment ${environment} does not match expected ${expected_environment}"
 [[ "${deployment_url}" == "${candidate_origin}" ]] || \
   fail "manifest deployment URL does not match candidate origin"
 [[ "${package_version}" == "$(node -p "require('${repo_root}/package.json').version")" ]] || \
   fail "manifest package version does not match package.json"
+
+preflight_url="${candidate_origin}/api/launch-preflight"
+preflight="$(curl --fail --silent --show-error --max-time 20 \
+  -H 'Accept: application/json' "${preflight_url}")" || fail "candidate launch preflight is unavailable"
+jq -e '.ready == true' <<<"${preflight}" >/dev/null || \
+  fail "candidate launch preflight is not ready: $(jq -c '{ready, checks}' <<<"${preflight}")"
 
 if [[ "${FUELWELL_UI_TEST_ALLOW_ANONYMOUS:-0}" != "1" ]]; then
   [[ -n "${FUELWELL_UI_TEST_EMAIL:-}" ]] || fail "FUELWELL_UI_TEST_EMAIL is required"

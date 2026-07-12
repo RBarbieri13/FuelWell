@@ -61,6 +61,7 @@ env:
   FUELWELL_CANDIDATE_ENVIRONMENT: ${{ inputs.candidate_environment }}
   FUELWELL_UI_TEST_EMAIL: ${{ secrets.FUELWELL_UI_TEST_EMAIL }}
   FUELWELL_UI_TEST_PASSWORD: ${{ secrets.FUELWELL_UI_TEST_PASSWORD }}
+  FUELWELL_RELEASE_TEST_DEVICE: "iPhone 17"
 
 jobs:
   testflight:
