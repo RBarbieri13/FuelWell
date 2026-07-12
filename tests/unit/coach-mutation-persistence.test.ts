@@ -7,6 +7,7 @@ const repositories = vi.hoisted(() => ({
   saveWorkoutEntry: vi.fn(),
   deleteWorkoutEntry: vi.fn(),
   replaceGroceryList: vi.fn(),
+  saveBodyLogEntry: vi.fn(),
 }));
 
 vi.mock("@/lib/day-log-repository", () => ({
@@ -19,6 +20,9 @@ vi.mock("@/lib/workout-log-repository", () => ({
 }));
 vi.mock("@/lib/grocery-repository", () => ({
   replaceGroceryList: repositories.replaceGroceryList,
+}));
+vi.mock("@/lib/body-log-repository", () => ({
+  saveBodyLogEntry: repositories.saveBodyLogEntry,
 }));
 
 describe("Coach mutation persistence", () => {
@@ -50,6 +54,10 @@ describe("Coach mutation persistence", () => {
         kind: "set_grocery",
         items: [{ id: crypto.randomUUID(), name: "five bananas", checked: false }],
       },
+      {
+        kind: "add_body_log",
+        entry: { date: "2026-07-12", weightKg: 80 },
+      },
     ]);
 
     expect(repositories.saveMeal).toHaveBeenCalledWith(supabase, "user-1", "2026-07-12", meal);
@@ -64,6 +72,12 @@ describe("Coach mutation persistence", () => {
       "user-1",
       "2026-07-12",
       [expect.objectContaining({ name: "Bananas", amount: "5", source: "Coach" })],
+    );
+    expect(repositories.saveBodyLogEntry).toHaveBeenCalledWith(
+      supabase,
+      "user-1",
+      expect.stringMatching(/^[0-9a-f-]{36}$/i),
+      { date: "2026-07-12", weightKg: 80 },
     );
   });
 

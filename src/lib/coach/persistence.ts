@@ -11,6 +11,7 @@ import { deleteDayMeal, saveMeal } from "@/lib/day-log-repository";
 import { deleteWorkoutEntry, saveWorkoutEntry } from "@/lib/workout-log-repository";
 import { replaceGroceryList } from "@/lib/grocery-repository";
 import { normalizeGroceryInput } from "@/lib/grocery-normalization";
+import { saveBodyLogEntry } from "@/lib/body-log-repository";
 
 /**
  * Server-side Supabase persistence for signed-in users. Preview users skip
@@ -499,6 +500,14 @@ export async function persistCoachMutations(
             checked: item.checked,
           };
         }),
+      );
+    }
+    if (mutation.kind === "add_body_log") {
+      await saveBodyLogEntry(
+        supabase,
+        userId,
+        crypto.randomUUID(),
+        mutation.entry,
       );
     }
     if (mutation.kind === "set_goal_plan") {
