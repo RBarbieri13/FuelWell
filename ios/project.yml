@@ -50,26 +50,8 @@ targets:
       - path: FuelWellApp/Resources
         buildPhase: resources
     dependencies:
-      - package: App
-        product: App
       - package: DesignSystem
         product: DesignSystem
-      - package: Analytics
-        product: Analytics
-      - package: AnthropicClient
-        product: AnthropicClient
-      - package: CrashReporting
-        product: CrashReporting
-      - package: HealthKitClient
-        product: HealthKitClient
-      - package: NutritionDomain
-        product: NutritionDomain
-      - package: NutritionFeature
-        product: Nutrition
-      - package: SupabaseClient
-        product: SupabaseClient
-      - package: SubscriptionClient
-        product: SubscriptionClient
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.fuelwell.app
