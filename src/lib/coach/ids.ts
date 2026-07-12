@@ -1,4 +1,9 @@
-/** Unique-enough ids for coach-created entities (meals, workouts, grocery items). */
+/**
+ * Persisted FuelWell entities use UUID primary keys in Supabase. The prefix is
+ * retained at call sites as useful intent documentation, but must never leak
+ * into the stored identifier.
+ */
 export function newEntityId(prefix: string): string {
-  return `${prefix}-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+  void prefix;
+  return crypto.randomUUID();
 }
