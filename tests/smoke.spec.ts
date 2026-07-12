@@ -148,11 +148,28 @@ test("Workouts: two paths and working category filters", async ({ page }) => {
   await expect(page.getByRole("link", { name: /Preview Upper push base/i })).toBeVisible();
 });
 
-test("Progress: stacked macro bars render and window toggles", async ({ page }) => {
+test("Progress: owns fitness navigation and keeps the activity deep link", async ({ page }) => {
   await page.goto("/app/progress");
+  const mainNavigation = page.getByRole("navigation", { name: "Main" });
+  await expect(mainNavigation.getByRole("link", { name: "Progress" })).toHaveAttribute(
+    "aria-current",
+    "page"
+  );
+  await expect(mainNavigation.getByRole("link", { name: "Fitness", exact: true })).toHaveCount(0);
+
+  const activityEntry = page.getByRole("link", { name: "Open Fitness and Activity" });
+  await expect(activityEntry).toBeVisible();
   await expect(page.getByRole("button", { name: /30 days/i })).toBeVisible();
   await page.getByRole("button", { name: /30 days/i }).click();
   await expect(page.getByRole("button", { name: /7 days/i })).toBeVisible();
+
+  await activityEntry.click();
+  await expect(page).toHaveURL(/\/app\/fitness$/);
+  await expect(page.getByRole("heading", { name: "Fitness detail" })).toBeVisible();
+  await expect(mainNavigation.getByRole("link", { name: "Progress" })).toHaveAttribute(
+    "aria-current",
+    "page"
+  );
 });
 
 test("Settings: page loads with sign out", async ({ page }) => {

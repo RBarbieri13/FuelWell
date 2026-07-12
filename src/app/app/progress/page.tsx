@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import {
   ArrowRight,
+  Activity,
   BarChart3,
   CalendarCheck,
   CheckCircle2,
@@ -373,6 +374,27 @@ export default function ProgressPage() {
           </div>
         </div>
       </Card>
+
+      <Link
+        href="/app/fitness"
+        aria-label="Open Fitness and Activity"
+        className="group flex min-h-24 items-center justify-between gap-5 rounded-[24px] border border-primary-200 bg-white px-6 py-5 shadow-[0_12px_30px_rgba(20,90,75,0.07)] transition hover:border-primary-300 hover:bg-primary-50/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+      >
+        <div className="flex min-w-0 items-start gap-4">
+          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[1rem] bg-primary-100 text-primary-700">
+            <Activity className="h-6 w-6" />
+          </span>
+          <div>
+            <h2 className="font-heading text-lg font-black text-[#16302a]">
+              Fitness &amp; Activity
+            </h2>
+            <p className="mt-1 text-sm font-semibold leading-6 text-[#78928a]">
+              Review workouts, active calories, steps, and readiness alongside your progress.
+            </p>
+          </div>
+        </div>
+        <ArrowRight className="h-5 w-5 shrink-0 text-primary-600 transition-transform group-hover:translate-x-1" />
+      </Link>
 
       <Card className="space-y-6 rounded-[24px] border-[#e6efeb] px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">

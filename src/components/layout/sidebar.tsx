@@ -17,7 +17,6 @@ import {
   Leaf,
   ShoppingBasket,
   Settings,
-  Activity,
   PanelLeftClose,
   PanelLeftOpen,
 } from "lucide-react";
@@ -30,7 +29,6 @@ const navItems = [
   { href: "/app/log", label: "Log Meal", icon: UtensilsCrossed },
   { href: "/app/coach", label: "Coach", icon: MessageSquare },
   { href: "/app/workouts", label: "Workouts", icon: Dumbbell },
-  { href: "/app/fitness", label: "Fitness", icon: Activity },
   { href: "/app/recipes", label: "Recipes", icon: BookOpen },
   { href: "/app/grocery-list", label: "Groceries", icon: ShoppingBasket },
   { href: "/app/recovery", label: "Recovery", icon: HeartPulse },
@@ -106,7 +104,9 @@ export function Sidebar() {
 
       <nav className={cn("flex-1 space-y-2 px-4 py-2", collapsed && "px-3")} role="navigation" aria-label="Main">
         {navItems.map((item) => {
-          const isActive = pathname.startsWith(item.href);
+          const isActive =
+            pathname.startsWith(item.href) ||
+            (item.href === "/app/progress" && pathname.startsWith("/app/fitness"));
           return (
             <Link
               key={item.href}
