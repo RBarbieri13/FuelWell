@@ -1,6 +1,10 @@
-import Anthropic from "@anthropic-ai/sdk";
 import { searchFoods } from "@/lib/food-database";
 import type { MacroTotals } from "@/lib/fuelwell-data";
+import {
+  createCoachProviderClient,
+  providerModelCandidates,
+  resolveCoachProviderConfig,
+} from "@/lib/coach/provider-client";
 
 export type PhotoEstimateCandidate = {
   name: string;
@@ -72,13 +76,14 @@ export async function estimateFromImage(input: {
     };
   }
 
-  if (!process.env.ANTHROPIC_API_KEY) {
+  const providerConfig = resolveCoachProviderConfig();
+  if (!providerConfig) {
     return {
       enabled: false,
       candidates: input.description ? estimateFromDescription(input.description) : [],
       reviewRequired: true,
       sourceNote:
-        "Photo AI is enabled but no server API key is configured. No image analysis ran.",
+        "Photo AI is enabled but no approved server provider is configured. No image analysis ran.",
     };
   }
 
@@ -92,30 +97,51 @@ export async function estimateFromImage(input: {
     };
   }
 
-  const anthropic = new Anthropic();
-  const message = await anthropic.messages.create({
-    model: process.env.PHOTO_LOGGING_MODEL ?? "claude-haiku-4-5",
-    max_tokens: 500,
-    system:
-      "Identify likely foods in the meal photo. Return only JSON: {\"foods\":[\"short food name\"]}. Do not estimate calories.",
-    messages: [
-      {
-        role: "user",
-        content: [
+  const anthropic = createCoachProviderClient(providerConfig);
+  const models = providerModelCandidates(
+    providerConfig,
+    process.env.PHOTO_LOGGING_MODEL ?? "claude-haiku-4-5",
+  );
+  let message: Awaited<ReturnType<typeof anthropic.messages.create>> | null = null;
+  for (const model of models) {
+    try {
+      message = await anthropic.messages.create({
+        model,
+        max_tokens: 500,
+        system:
+          "Identify likely foods in the meal photo. Return only JSON: {\"foods\":[\"short food name\"]}. Do not estimate calories.",
+        messages: [
           {
-            type: "image",
-            source: { type: "base64", media_type: match[1] as "image/jpeg" | "image/png" | "image/webp", data: match[2] },
-          },
-          {
-            type: "text",
-            text: input.description
-              ? `User note: ${input.description}`
-              : "List the likely foods in this meal photo.",
+            role: "user",
+            content: [
+              {
+                type: "image",
+                source: { type: "base64", media_type: match[1] as "image/jpeg" | "image/png" | "image/webp", data: match[2] },
+              },
+              {
+                type: "text",
+                text: input.description
+                  ? `User note: ${input.description}`
+                  : "List the likely foods in this meal photo.",
+              },
+            ],
           },
         ],
-      },
-    ],
-  });
+      });
+      break;
+    } catch {
+      // Try the next approved vision-capable Gateway model.
+    }
+  }
+  if (!message) {
+    return {
+      enabled: false,
+      candidates: input.description ? estimateFromDescription(input.description) : [],
+      reviewRequired: true,
+      sourceNote:
+        "Photo analysis is temporarily unavailable. Any draft comes from your description and must be reviewed before saving.",
+    };
+  }
   const text = message.content.find((block) => block.type === "text")?.text ?? "{}";
   let names: string[] = [];
   try {
