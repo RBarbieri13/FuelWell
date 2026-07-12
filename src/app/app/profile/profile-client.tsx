@@ -20,6 +20,13 @@ import {
   X,
 } from "lucide-react";
 import Link from "next/link";
+import { clearPreferencesForUser } from "@/lib/use-preferences";
+import {
+  clearUserScopedIdentityCaches,
+  normalizeDisplayName,
+  updateProfileAndVerify,
+  type ProfileUpdateClient,
+} from "@/lib/profile-preferences";
 
 interface ProfileClientProps {
   email: string;
@@ -54,28 +61,46 @@ export function ProfileClient({
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
   const [editingName, setEditingName] = useState(false);
   const [nameValue, setNameValue] = useState(displayName);
+  const [currentDisplayName, setCurrentDisplayName] = useState(displayName);
   const [savingName, setSavingName] = useState(false);
+  const [nameError, setNameError] = useState<string | null>(null);
   const weightLb = weightKg ? Math.round(weightKg * 2.20462) : null;
   const heightIn = heightCm ? Math.round(heightCm / 2.54) : null;
 
   async function handleSaveName() {
+    const normalizedName = normalizeDisplayName(nameValue);
     if (isPreview) {
+      setCurrentDisplayName(normalizedName ?? "");
+      setNameValue(normalizedName ?? "");
+      setNameError(null);
       setEditingName(false);
       return;
     }
 
     setSavingName(true);
+    setNameError(null);
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      await supabase
-        .from("profiles")
-        .update({ display_name: nameValue })
-        .eq("id", user.id);
+    if (!user) {
+      setNameError("Your session expired. Please sign in again.");
+      setSavingName(false);
+      return;
     }
-    setSavingName(false);
-    setEditingName(false);
-    router.refresh();
+    try {
+      await updateProfileAndVerify(
+        supabase as unknown as ProfileUpdateClient,
+        user.id,
+        { display_name: normalizedName }
+      );
+      setCurrentDisplayName(normalizedName ?? "");
+      setNameValue(normalizedName ?? "");
+      setEditingName(false);
+      router.refresh();
+    } catch (saveError) {
+      setNameError(saveError instanceof Error ? saveError.message : "Name save failed.");
+    } finally {
+      setSavingName(false);
+    }
   }
 
   async function handleSignOut() {
@@ -85,6 +110,13 @@ export function ProfileClient({
     }
 
     const supabase = createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (user) {
+      clearUserScopedIdentityCaches(user.id);
+      clearPreferencesForUser(user.id);
+    }
     await supabase.auth.signOut();
     router.push("/login");
     router.refresh();
@@ -145,7 +177,8 @@ export function ProfileClient({
                         variant="secondary"
                         onClick={() => {
                           setEditingName(false);
-                          setNameValue(displayName);
+                          setNameValue(currentDisplayName);
+                          setNameError(null);
                         }}
                         aria-label="Cancel name edit"
                       >
@@ -156,7 +189,7 @@ export function ProfileClient({
                 ) : (
                   <div className="mt-3 flex min-w-0 items-center gap-3">
                     <h2 className="truncate text-4xl font-black leading-tight text-white md:text-5xl">
-                      {displayName || "Set your name"}
+                      {currentDisplayName || "Set your name"}
                     </h2>
                     <button
                       onClick={() => setEditingName(true)}
@@ -166,6 +199,11 @@ export function ProfileClient({
                       <Pencil className="h-4 w-4" />
                     </button>
                   </div>
+                )}
+                {nameError && (
+                  <p role="alert" className="mt-3 rounded-xl bg-red-500/15 px-3 py-2 text-sm font-bold text-red-100">
+                    {nameError}
+                  </p>
                 )}
                 <p className="mt-3 truncate text-base font-semibold text-white/66">{email}</p>
               </div>

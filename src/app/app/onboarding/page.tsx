@@ -46,8 +46,20 @@ import { Input } from "@/components/ui/input";
 import { Logo } from "@/components/ui/logo";
 import { cn } from "@/lib/utils/cn";
 import type { CoachKnowledgeBase } from "@/lib/coach/knowledge";
+import {
+  PREVIEW_IDENTITY_SCOPE,
+  combineHeightParts,
+  normalizeAllergies,
+  normalizeDisplayName,
+  normalizeGoalTimeline,
+  onboardingDraftStorageKey,
+  splitHeightInches,
+  toggleAllergySelection,
+  updateProfileAndVerify,
+  type ProfileUpdateClient,
+} from "@/lib/profile-preferences";
 
-const STORAGE_KEY = "fuelwell:onboarding:v1";
+const LEGACY_STORAGE_KEY = "fuelwell:onboarding:v1";
 const PREVIEW_KIND_STORAGE_KEY = "fuelwell:preview-user-kind";
 const PREVIEW_COMPLETED_STORAGE_KEY = "fuelwell:new-user-onboarding:v1";
 
@@ -107,6 +119,7 @@ const INITIAL_DATA: OnboardingData = {
 };
 
 const ALLERGY_OPTIONS = [
+  "None",
   "Dairy",
   "Gluten",
   "Nuts",
@@ -152,7 +165,7 @@ const GOAL_OPTIONS = [
 const TIMELINE_OPTIONS = [
   { value: "patient", label: "Patient", desc: "Slow and low-pressure", icon: Leaf },
   { value: "steady", label: "Steady", desc: "Meaningful progress without over-correction", icon: Target },
-  { value: "urgent", label: "Urgent", desc: "A tighter plan for a near-term target", icon: Flame },
+  { value: "aggressive", label: "Aggressive", desc: "A tighter plan for a near-term target", icon: Flame },
 ];
 
 const AGGRESSION_OPTIONS = GOAL_AGGRESSIVENESS_OPTIONS.map((option) => ({
@@ -234,6 +247,7 @@ export default function OnboardingPage() {
   const [error, setError] = useState<string | null>(null);
   const [resumed, setResumed] = useState(false);
   const [isNewUserPreview, setIsNewUserPreview] = useState(false);
+  const [draftStorageKey, setDraftStorageKey] = useState<string | null>(null);
   const hydrated = useRef(false);
 
   const totalSteps = STEP_META.length;
@@ -241,58 +255,80 @@ export default function OnboardingPage() {
   const currentStep = STEP_META[step];
   const CurrentStepIcon = currentStep.icon;
 
-  // Resume in-progress onboarding from localStorage.
   useEffect(() => {
-    try {
-      const params = new URLSearchParams(window.location.search);
-      const newUserPreview =
-        params.get("preview") === "new-user" ||
-        window.localStorage.getItem(PREVIEW_KIND_STORAGE_KEY) === "new-user";
-      // URL/localStorage-derived preview mode must be read after hydration.
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setIsNewUserPreview(newUserPreview);
+    let cancelled = false;
 
-      if (params.get("reset") === "1") {
-        window.localStorage.removeItem(STORAGE_KEY);
-        window.localStorage.setItem(PREVIEW_KIND_STORAGE_KEY, "new-user");
-        window.history.replaceState(null, "", "/app/onboarding?preview=new-user");
-        hydrated.current = true;
-        return;
-      }
+    async function hydrateDraft() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const newUserPreview =
+          params.get("preview") === "new-user" ||
+          window.localStorage.getItem(PREVIEW_KIND_STORAGE_KEY) === "new-user";
+        setIsNewUserPreview(newUserPreview);
 
-      const raw = window.localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const saved = JSON.parse(raw) as PersistedProgress;
-        // Post-hydration resume from localStorage: setState here is intentional
-        // and avoids an SSR hydration mismatch a lazy initializer would cause.
-        if (saved.data) setData({ ...INITIAL_DATA, ...saved.data });
-        if (typeof saved.step === "number") {
-          setStep(Math.min(Math.max(saved.step, 0), totalSteps - 1));
+        const scope = newUserPreview
+          ? PREVIEW_IDENTITY_SCOPE
+          : (await createClient().auth.getUser()).data.user?.id;
+        if (!scope || cancelled) return;
+
+        const storageKey = onboardingDraftStorageKey(scope);
+        window.localStorage.removeItem(LEGACY_STORAGE_KEY);
+        if (params.get("reset") === "1") {
+          window.localStorage.removeItem(storageKey);
+          if (newUserPreview) {
+            window.localStorage.setItem(PREVIEW_KIND_STORAGE_KEY, "new-user");
+            window.history.replaceState(null, "", "/app/onboarding?preview=new-user");
+          }
+          setDraftStorageKey(storageKey);
+          return;
         }
-        setResumed(true);
+
+        const raw = window.localStorage.getItem(storageKey);
+        if (raw) {
+          const saved = JSON.parse(raw) as PersistedProgress;
+          if (saved.data) {
+            setData({
+              ...INITIAL_DATA,
+              ...saved.data,
+              goalTimeline: normalizeGoalTimeline(saved.data.goalTimeline),
+              allergies: normalizeAllergies(saved.data.allergies),
+            });
+          }
+          if (typeof saved.step === "number") {
+            setStep(Math.min(Math.max(saved.step, 0), totalSteps - 1));
+          }
+          setResumed(true);
+        }
+        setDraftStorageKey(storageKey);
+      } catch {
+        // Corrupt or blocked storage starts a clean, in-memory intake.
+      } finally {
+        hydrated.current = true;
       }
-    } catch {
-      // Corrupt/blocked storage - start fresh, nothing to surface.
     }
-    hydrated.current = true;
+
+    void hydrateDraft();
+    return () => {
+      cancelled = true;
+    };
   }, [totalSteps]);
 
   // Persist progress so it survives a refresh or leaving the page.
   useEffect(() => {
-    if (!hydrated.current) return;
+    if (!hydrated.current || !draftStorageKey) return;
     try {
       const payload: PersistedProgress = { step, data };
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+      window.localStorage.setItem(draftStorageKey, JSON.stringify(payload));
     } catch {
       // Storage unavailable - progress simply won't persist this session.
     }
-  }, [step, data]);
+  }, [step, data, draftStorageKey]);
 
   const previewMacros = useMemo(() => getPreviewMacros(data), [data]);
 
   function clearProgress() {
     try {
-      window.localStorage.removeItem(STORAGE_KEY);
+      if (draftStorageKey) window.localStorage.removeItem(draftStorageKey);
     } catch {
       // ignore
     }
@@ -309,9 +345,7 @@ export default function OnboardingPage() {
   function toggleAllergy(allergy: string) {
     setData((prev) => ({
       ...prev,
-      allergies: prev.allergies.includes(allergy)
-        ? prev.allergies.filter((a) => a !== allergy)
-        : [...prev.allergies, allergy],
+      allergies: toggleAllergySelection(prev.allergies, allergy),
     }));
   }
 
@@ -442,31 +476,34 @@ export default function OnboardingPage() {
       return;
     }
 
-    const { error: updateError } = await supabase
-      .from("profiles")
-      .update({
-        display_name: data.displayName || undefined,
-        date_of_birth: data.dateOfBirth,
-        gender: data.gender,
-        height_cm: heightCm,
-        weight_kg: weightKg,
-        activity_level: data.activityLevel,
-        goal: data.goal,
-        dietary_preference: data.dietaryPreference,
-        allergies: data.allergies,
-        meals_per_day: data.mealsPerDay,
-        experience_level: data.experienceLevel,
-        calorie_target: macros.calories,
-        protein_target: macros.protein,
-        carbs_target: macros.carbs,
-        fat_target: macros.fat,
-        onboarding_complete: true,
-        preferences_jsonb: preferencesJson,
-      })
-      .eq("id", user.id);
+    const profileValues = {
+      display_name: normalizeDisplayName(data.displayName),
+      date_of_birth: data.dateOfBirth,
+      gender: data.gender,
+      height_cm: heightCm,
+      weight_kg: weightKg,
+      activity_level: data.activityLevel,
+      goal: data.goal,
+      dietary_preference: data.dietaryPreference,
+      allergies: normalizeAllergies(data.allergies),
+      meals_per_day: data.mealsPerDay,
+      experience_level: data.experienceLevel,
+      calorie_target: macros.calories,
+      protein_target: macros.protein,
+      carbs_target: macros.carbs,
+      fat_target: macros.fat,
+      onboarding_complete: true,
+      preferences_jsonb: preferencesJson,
+    };
 
-    if (updateError) {
-      setError(updateError.message);
+    try {
+      await updateProfileAndVerify(
+        supabase as unknown as ProfileUpdateClient,
+        user.id,
+        profileValues
+      );
+    } catch (saveError) {
+      setError(saveError instanceof Error ? saveError.message : "Profile save failed.");
       setSaving(false);
       return;
     }
@@ -683,14 +720,44 @@ export default function OnboardingPage() {
                   subtitle="Height and weight set the baseline. Targets stay editable."
                 >
                   <div className="grid gap-4 sm:grid-cols-2">
-                    <Input
-                      label="Height (in)"
-                      type="number"
-                      value={data.heightIn}
-                      onChange={(event) => update("heightIn", event.target.value ? Number(event.target.value) : "")}
-                      placeholder="70"
-                      className="h-14 text-base"
-                    />
+                    <div className="grid grid-cols-2 gap-3">
+                      <Input
+                        label="Height (ft)"
+                        type="number"
+                        min={3}
+                        max={8}
+                        value={splitHeightInches(data.heightIn).feet}
+                        onChange={(event) =>
+                          update(
+                            "heightIn",
+                            combineHeightParts(
+                              event.target.value ? Number(event.target.value) : "",
+                              splitHeightInches(data.heightIn).inches
+                            )
+                          )
+                        }
+                        placeholder="5"
+                        className="h-14 text-base"
+                      />
+                      <Input
+                        label="Height (in)"
+                        type="number"
+                        min={0}
+                        max={11}
+                        value={splitHeightInches(data.heightIn).inches}
+                        onChange={(event) =>
+                          update(
+                            "heightIn",
+                            combineHeightParts(
+                              splitHeightInches(data.heightIn).feet,
+                              event.target.value ? Number(event.target.value) : 0
+                            )
+                          )
+                        }
+                        placeholder="11"
+                        className="h-14 text-base"
+                      />
+                    </div>
                     <Input
                       label="Weight (lb)"
                       type="number"
@@ -701,7 +768,15 @@ export default function OnboardingPage() {
                     />
                   </div>
                   <div className="grid gap-3 sm:grid-cols-2">
-                    <MiniMetric icon={Ruler} label="Height" value={data.heightIn ? `${data.heightIn} in` : "Needed"} />
+                    <MiniMetric
+                      icon={Ruler}
+                      label="Height"
+                      value={
+                        data.heightIn
+                          ? `${splitHeightInches(data.heightIn).feet} ft ${splitHeightInches(data.heightIn).inches} in`
+                          : "Needed"
+                      }
+                    />
                     <MiniMetric icon={Scale} label="Weight" value={data.weightLb ? `${data.weightLb} lb` : "Needed"} />
                   </div>
                 </StepWrapper>
@@ -894,9 +969,9 @@ export default function OnboardingPage() {
                     {ALLERGY_OPTIONS.map((allergy) => (
                       <OptionTile
                         key={allergy}
-                        selected={data.allergies.includes(allergy)}
+                        selected={allergy === "None" ? data.allergies.length === 0 : data.allergies.includes(allergy)}
                         onClick={() => toggleAllergy(allergy)}
-                        icon={WheatOff}
+                        icon={allergy === "None" ? Check : WheatOff}
                         title={allergy}
                         selectedClassName="border-accent-300 bg-accent-50 text-accent-700"
                       />
@@ -1340,13 +1415,13 @@ function buildOnboardingPreferences(data: OnboardingData) {
   return {
     units: "imperial",
     diets,
-    allergies: data.allergies,
+    allergies: normalizeAllergies(data.allergies),
     likes: parseCommaList(data.foodsLove),
     dislikes: parseCommaList(data.foodsAvoid),
     onboarding: {
       heightIn: data.heightIn,
       weightLb: data.weightLb,
-      goalTimeline: data.goalTimeline,
+      goalTimeline: normalizeGoalTimeline(data.goalTimeline),
       nutritionAggressiveness: data.nutritionAggressiveness,
       dietFlexibility: data.dietFlexibility,
       foodsLove: parseCommaList(data.foodsLove),

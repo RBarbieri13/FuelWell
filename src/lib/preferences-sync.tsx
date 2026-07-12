@@ -16,6 +16,7 @@ import { hasSupabaseConfig } from "@/lib/preview-session";
 import {
   getPreferences,
   mergePreferences,
+  setPreferencesScope,
   subscribePreferences,
   type PreferenceState,
 } from "@/lib/use-preferences";
@@ -35,6 +36,7 @@ export function PreferencesSync() {
         data: { user },
       } = await supabase.auth.getUser();
       if (!user || cancelled) return;
+      setPreferencesScope(user.id);
 
       const { data } = await supabase
         .from("profiles")

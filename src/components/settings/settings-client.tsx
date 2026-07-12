@@ -8,7 +8,12 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils/cn";
-import { DIET_FILTERS, mergePreferences, usePreferences } from "@/lib/use-preferences";
+import {
+  DIET_FILTERS,
+  clearPreferencesForUser,
+  mergePreferences,
+  usePreferences,
+} from "@/lib/use-preferences";
 import { useUnits, type UnitSystem } from "./use-units";
 import { CoachActivity } from "./coach-activity";
 import { useGoalContextStore } from "@/lib/use-goal-context";
@@ -47,6 +52,16 @@ import {
   Dumbbell,
   Activity,
 } from "lucide-react";
+import {
+  clearUserScopedIdentityCaches,
+  combineHeightParts,
+  normalizeAllergies,
+  normalizeDisplayName,
+  normalizeGoalTimeline,
+  splitHeightInches,
+  updateProfileAndVerify,
+  type ProfileUpdateClient,
+} from "@/lib/profile-preferences";
 
 interface SettingsClientProps {
   email: string;
@@ -133,7 +148,7 @@ const INTAKE_GROUPS = [
     options: [
       { value: "patient", label: "Patient" },
       { value: "steady", label: "Steady" },
-      { value: "urgent", label: "Urgent" },
+      { value: "aggressive", label: "Aggressive" },
     ],
   },
   {
@@ -210,17 +225,21 @@ const INTAKE_GROUPS = [
 }>;
 
 function normalizeIntakePreferences(raw?: Record<string, unknown>): IntakePreferences {
-  return {
+  const normalized = {
     ...DEFAULT_INTAKE,
     ...(raw ?? {}),
   } as IntakePreferences;
+  normalized.goalTimeline = normalizeGoalTimeline(normalized.goalTimeline);
+  return normalized;
 }
 
 function normalizeProfileInputs(raw?: Partial<ProfileInputs>): ProfileInputs {
-  return {
+  const normalized = {
     ...DEFAULT_PROFILE_INPUTS,
     ...(raw ?? {}),
   };
+  normalized.allergies = normalizeAllergies(parseCommaList(normalized.allergies)).join(", ");
+  return normalized;
 }
 
 function lbToKg(value: number) {
@@ -281,6 +300,7 @@ export function SettingsClient({
     disconnectIntegrationSummary,
   } = useGoalContextStore();
   const [signingOut, setSigningOut] = useState(false);
+  const [displayNameValue, setDisplayNameValue] = useState(displayName);
   const [intakePrefs, setIntakePrefs] = useState<IntakePreferences>(() =>
     normalizeIntakePreferences(initialIntakePreferences)
   );
@@ -291,6 +311,8 @@ export function SettingsClient({
   const [savedIntake, setSavedIntake] = useState(false);
   const [savingHealth, setSavingHealth] = useState(false);
   const [savedHealth, setSavedHealth] = useState(false);
+  const [intakeError, setIntakeError] = useState<string | null>(null);
+  const [healthError, setHealthError] = useState<string | null>(null);
 
   useEffect(() => {
     if (initialUnits) setUnits(initialUnits);
@@ -299,11 +321,16 @@ export function SettingsClient({
   useEffect(() => {
     if (!isPreview) return;
 
-    const savedProfileInputs = readPreviewStorage<Partial<ProfileInputs>>(
+    const savedProfileInputs = readPreviewStorage<
+      Partial<ProfileInputs> & { displayName?: unknown }
+    >(
       PREVIEW_PROFILE_INPUTS_KEY
     );
     if (savedProfileInputs) {
       setProfileInputs(normalizeProfileInputs(savedProfileInputs));
+      if (typeof savedProfileInputs.displayName === "string") {
+        setDisplayNameValue(savedProfileInputs.displayName);
+      }
     }
 
     const savedIntakePreferences = readPreviewStorage<
@@ -330,6 +357,13 @@ export function SettingsClient({
 
     setSigningOut(true);
     const supabase = createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (user) {
+      clearUserScopedIdentityCaches(user.id);
+      clearPreferencesForUser(user.id);
+    }
     await supabase.auth.signOut();
     router.push("/login");
     router.refresh();
@@ -339,24 +373,29 @@ export function SettingsClient({
     setIntakePrefs((current) => ({ ...current, [key]: value }));
     setSavedIntake(false);
     setSavedHealth(false);
+    setIntakeError(null);
+    setHealthError(null);
   }
 
   function updateProfileInput<K extends keyof ProfileInputs>(key: K, value: ProfileInputs[K]) {
     setProfileInputs((current) => ({ ...current, [key]: value }));
     setSavedHealth(false);
+    setHealthError(null);
   }
 
   function updateUnits(next: UnitSystem) {
     setUnits(next);
     setSavedIntake(false);
     setSavedHealth(false);
+    setIntakeError(null);
+    setHealthError(null);
   }
 
   async function persistProfileInputs() {
     const weightKg = lbToKg(profileInputs.weightLb);
     const heightCm = inchesToCm(profileInputs.heightIn);
     const age = calculateAge(profileInputs.dateOfBirth);
-    const allergyList = parseCommaList(profileInputs.allergies);
+    const allergyList = normalizeAllergies(parseCommaList(profileInputs.allergies));
     const macroTargets = calculateMacroTargets({
       gender: profileInputs.gender,
       weightKg,
@@ -368,7 +407,10 @@ export function SettingsClient({
     });
 
     if (isPreview) {
-      writePreviewStorage(PREVIEW_PROFILE_INPUTS_KEY, profileInputs);
+      writePreviewStorage(PREVIEW_PROFILE_INPUTS_KEY, {
+        ...profileInputs,
+        displayName: displayNameValue,
+      });
       mergePreferences({ allergies: allergyList });
       return;
     }
@@ -377,11 +419,13 @@ export function SettingsClient({
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    if (!user) return;
+    if (!user) throw new Error("Your session expired. Please sign in again.");
 
-    await supabase
-      .from("profiles")
-      .update({
+    await updateProfileAndVerify(
+      supabase as unknown as ProfileUpdateClient,
+      user.id,
+      {
+        display_name: normalizeDisplayName(displayNameValue),
         date_of_birth: profileInputs.dateOfBirth,
         gender: profileInputs.gender,
         height_cm: heightCm,
@@ -396,8 +440,8 @@ export function SettingsClient({
         protein_target: macroTargets.protein,
         carbs_target: macroTargets.carbs,
         fat_target: macroTargets.fat,
-      })
-      .eq("id", user.id);
+      }
+    );
     mergePreferences({ allergies: allergyList });
   }
 
@@ -413,35 +457,40 @@ export function SettingsClient({
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    if (!user) return;
+    if (!user) throw new Error("Your session expired. Please sign in again.");
 
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("profiles")
       .select("preferences_jsonb")
       .eq("id", user.id)
       .single();
+    if (error) throw new Error(error.message);
     const current = (data?.preferences_jsonb ?? {}) as Record<string, unknown>;
-    await supabase
-      .from("profiles")
-      .update({
-        preferences_jsonb: {
+    const preferencesJsonb = {
           ...current,
           units,
           onboarding: {
             ...((current.onboarding ?? {}) as Record<string, unknown>),
             ...intakePrefs,
+            goalTimeline: normalizeGoalTimeline(intakePrefs.goalTimeline),
           },
-        },
-      })
-      .eq("id", user.id);
+        };
+    await updateProfileAndVerify(
+      supabase as unknown as ProfileUpdateClient,
+      user.id,
+      { preferences_jsonb: preferencesJsonb }
+    );
   }
 
   async function saveIntakePreferences() {
     setSavingIntake(true);
     setSavedIntake(false);
+    setIntakeError(null);
     try {
       await persistIntakePreferences();
       setSavedIntake(true);
+    } catch (saveError) {
+      setIntakeError(saveError instanceof Error ? saveError.message : "Preferences save failed.");
     } finally {
       setSavingIntake(false);
     }
@@ -452,11 +501,15 @@ export function SettingsClient({
     setSavingIntake(true);
     setSavedHealth(false);
     setSavedIntake(false);
+    setHealthError(null);
+    setIntakeError(null);
     try {
       await persistProfileInputs();
       await persistIntakePreferences();
       setSavedHealth(true);
       setSavedIntake(true);
+    } catch (saveError) {
+      setHealthError(saveError instanceof Error ? saveError.message : "Profile save failed.");
     } finally {
       setSavingHealth(false);
       setSavingIntake(false);
@@ -490,7 +543,7 @@ export function SettingsClient({
               Account control center
             </p>
             <h2 className="mt-4 text-4xl font-black leading-tight text-white md:text-5xl">
-              {displayName || "FuelWell preview account"}
+              {displayNameValue || "FuelWell preview account"}
             </h2>
             <p className="mt-3 truncate text-base font-semibold text-white/66">
               {email || "No email set"}
@@ -566,7 +619,7 @@ export function SettingsClient({
             <Card className="divide-y divide-primary-100/70 px-6 py-3">
               <Row icon={User} label="Display name">
                 <span className="text-sm font-black text-neutral-900">
-                  {displayName || <span className="text-neutral-400">Not set</span>}
+                  {displayNameValue || <span className="text-neutral-400">Not set</span>}
                 </span>
               </Row>
               <Row icon={Mail} label="Email">
@@ -649,8 +702,30 @@ export function SettingsClient({
                 {savedHealth ? "Saved" : "Save health profile"}
               </Button>
             </div>
+            {healthError && (
+              <p role="alert" className="rounded-[1.15rem] bg-red-50 px-4 py-3 text-sm font-bold text-red-700">
+                {healthError}
+              </p>
+            )}
 
             <div className="divide-y divide-primary-100/80 rounded-[1.35rem] border border-primary-100 bg-muted/60">
+              <HealthProfileRow
+                icon={User}
+                label="Display name"
+                detail="The name shown across Profile, Settings, and Coach."
+              >
+                <TextField
+                  label="Display name"
+                  hideLabel
+                  value={displayNameValue}
+                  onChange={(value) => {
+                    setDisplayNameValue(value);
+                    setSavedHealth(false);
+                    setHealthError(null);
+                  }}
+                  placeholder="Your name"
+                />
+              </HealthProfileRow>
               <HealthProfileRow
                 icon={Scale}
                 label="Weight"
@@ -669,13 +744,30 @@ export function SettingsClient({
                 label="Height"
                 detail="Used with weight, age, activity, and goal to calculate targets."
               >
-                <NumberField
-                  label="Height in inches"
-                  hideLabel
-                  suffix="in"
-                  value={profileInputs.heightIn}
-                  onChange={(value) => updateProfileInput("heightIn", value)}
-                />
+                <div className="grid grid-cols-2 gap-2">
+                  <NumberField
+                    label="Height in feet"
+                    suffix="ft"
+                    value={splitHeightInches(profileInputs.heightIn).feet || 0}
+                    onChange={(value) =>
+                      updateProfileInput(
+                        "heightIn",
+                        Number(combineHeightParts(value, splitHeightInches(profileInputs.heightIn).inches))
+                      )
+                    }
+                  />
+                  <NumberField
+                    label="Remaining inches"
+                    suffix="in"
+                    value={Number(splitHeightInches(profileInputs.heightIn).inches)}
+                    onChange={(value) =>
+                      updateProfileInput(
+                        "heightIn",
+                        Number(combineHeightParts(splitHeightInches(profileInputs.heightIn).feet, value))
+                      )
+                    }
+                  />
+                </div>
               </HealthProfileRow>
               <HealthProfileRow
                 icon={Target}
@@ -706,6 +798,17 @@ export function SettingsClient({
                   onChange={(value) => updateProfileInput("allergies", value)}
                   placeholder="Separate restrictions with commas"
                 />
+                <label className="mt-2 flex min-h-11 cursor-pointer items-center gap-2 text-sm font-bold text-neutral-600">
+                  <input
+                    type="checkbox"
+                    checked={normalizeAllergies(parseCommaList(profileInputs.allergies)).length === 0}
+                    onChange={(event) => {
+                      if (event.target.checked) updateProfileInput("allergies", "");
+                    }}
+                    className="h-4 w-4 accent-primary-600"
+                  />
+                  None
+                </label>
               </HealthProfileRow>
               <HealthProfileRow
                 icon={Activity}
@@ -846,6 +949,11 @@ export function SettingsClient({
                 {savedIntake ? "Saved" : "Save changes"}
               </Button>
             </div>
+            {intakeError && (
+              <p role="alert" className="rounded-[1.15rem] bg-red-50 px-4 py-3 text-sm font-bold text-red-700">
+                {intakeError}
+              </p>
+            )}
             <div className="flex flex-col gap-2 rounded-[1.15rem] border border-primary-100 bg-primary-50/70 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-sm font-semibold leading-6 text-primary-900/70">
                 Re-run the full intake when you want the guided setup flow to rebuild these answers from scratch.

@@ -11,8 +11,10 @@
  */
 
 import { useSyncExternalStore } from "react";
-
-const STORAGE_KEY = "fuelwell-preferences-v1";
+import {
+  PREVIEW_IDENTITY_SCOPE,
+  preferenceStorageKey,
+} from "@/lib/profile-preferences";
 
 export type DietFilter = "high-protein" | "low-carb" | "low-fat" | "vegan";
 
@@ -32,25 +34,29 @@ export type PreferenceState = {
 
 const EMPTY: PreferenceState = { likes: [], dislikes: [], diets: [], allergies: [] };
 
-function loadInitial(): PreferenceState {
+function loadInitial(scope: string): PreferenceState {
   if (typeof window === "undefined") return EMPTY;
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (raw) return { ...EMPTY, ...(JSON.parse(raw) as Partial<PreferenceState>) };
+    const raw = window.localStorage.getItem(preferenceStorageKey(scope));
+    if (raw) {
+      const loaded = { ...EMPTY, ...(JSON.parse(raw) as Partial<PreferenceState>) };
+      return { ...loaded, allergies: normalizeStoredAllergies(loaded.allergies) };
+    }
   } catch {
     // fall through
   }
   return EMPTY;
 }
 
-let state: PreferenceState = loadInitial();
+let activeScope = PREVIEW_IDENTITY_SCOPE;
+let state: PreferenceState = loadInitial(activeScope);
 const listeners = new Set<() => void>();
 
 function persist(next: PreferenceState) {
   state = next;
   if (typeof window !== "undefined") {
     try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      window.localStorage.setItem(preferenceStorageKey(activeScope), JSON.stringify(next));
     } catch {
       // best-effort
     }
@@ -68,6 +74,28 @@ export function getPreferences(): PreferenceState {
   return state;
 }
 
+export function setPreferencesScope(scope: string) {
+  if (scope === activeScope) return;
+  activeScope = scope;
+  state = loadInitial(scope);
+  listeners.forEach((listener) => listener());
+}
+
+export function clearPreferencesForUser(userId: string) {
+  if (typeof window !== "undefined") {
+    try {
+      window.localStorage.removeItem(preferenceStorageKey(userId));
+    } catch {
+      // Cache cleanup must never prevent sign-out.
+    }
+  }
+  if (activeScope === userId) {
+    activeScope = PREVIEW_IDENTITY_SCOPE;
+    state = loadInitial(activeScope);
+    listeners.forEach((listener) => listener());
+  }
+}
+
 /** Subscribe outside React (server sync). Returns an unsubscribe fn. */
 export function subscribePreferences(listener: () => void): () => void {
   listeners.add(listener);
@@ -81,7 +109,15 @@ export function subscribePreferences(listener: () => void): () => void {
  * coach set_preferences mutation). Persists and notifies like any toggle.
  */
 export function mergePreferences(patch: Partial<PreferenceState>) {
-  persist({ ...state, ...patch });
+  persist({
+    ...state,
+    ...patch,
+    allergies: normalizeStoredAllergies(patch.allergies ?? state.allergies),
+  });
+}
+
+function normalizeStoredAllergies(allergies: string[]): string[] {
+  return allergies.filter((allergy) => allergy.trim().toLocaleLowerCase() !== "none");
 }
 
 function toggle(list: string[], id: string): string[] {
