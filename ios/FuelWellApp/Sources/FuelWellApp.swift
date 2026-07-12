@@ -10,29 +10,42 @@ struct FuelWellApp: SwiftUI.App {
 
     var body: some Scene {
         WindowGroup {
-            FuelWellWebAppView(
-                startURL: URL(string: "https://fuelwell-preview.vercel.app/app/dashboard")!
-            )
+            FuelWellWebAppView()
         }
     }
 }
 
 private struct FuelWellWebAppView: View {
-    let startURL: URL
+    private let releaseBinding: ReleaseBinding?
 
-    @State private var isLoading = true
+    @State private var isLoading: Bool
     @State private var errorMessage: String?
+    @State private var releaseIsVerified = false
     @State private var reloadToken = UUID()
+
+    init(infoDictionary: [String: Any] = Bundle.main.infoDictionary ?? [:]) {
+        do {
+            releaseBinding = try ReleaseBinding(infoDictionary: infoDictionary)
+            _isLoading = State(initialValue: true)
+            _errorMessage = State(initialValue: nil)
+        } catch {
+            releaseBinding = nil
+            _isLoading = State(initialValue: false)
+            _errorMessage = State(initialValue: error.localizedDescription)
+        }
+    }
 
     var body: some View {
         ZStack {
-            FuelWellWebView(
-                url: startURL,
-                reloadToken: reloadToken,
-                isLoading: $isLoading,
-                errorMessage: $errorMessage
-            )
-            .ignoresSafeArea(.keyboard)
+            if releaseIsVerified, let releaseBinding {
+                FuelWellWebView(
+                    url: releaseBinding.startURL,
+                    reloadToken: reloadToken,
+                    isLoading: $isLoading,
+                    errorMessage: $errorMessage
+                )
+                .ignoresSafeArea(.keyboard)
+            }
 
             if isLoading {
                 VStack(spacing: 14) {
@@ -54,17 +67,20 @@ private struct FuelWellWebAppView: View {
                         .font(.subheadline)
                         .multilineTextAlignment(.center)
                         .foregroundStyle(.secondary)
-                    Button {
-                        self.errorMessage = nil
-                        isLoading = true
-                        reloadToken = UUID()
-                    } label: {
-                        Text("Try again")
-                            .fontWeight(.bold)
-                            .frame(maxWidth: .infinity)
+                    if releaseBinding != nil {
+                        Button {
+                            self.errorMessage = nil
+                            isLoading = true
+                            releaseIsVerified = false
+                            reloadToken = UUID()
+                        } label: {
+                            Text("Try again")
+                                .fontWeight(.bold)
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .tint(Color(red: 0.06, green: 0.61, blue: 0.44))
                     }
-                    .buttonStyle(.borderedProminent)
-                    .tint(Color(red: 0.06, green: 0.61, blue: 0.44))
                 }
                 .padding(24)
                 .frame(maxWidth: 320)
@@ -73,6 +89,28 @@ private struct FuelWellWebAppView: View {
             }
         }
         .background(Color(red: 0.91, green: 0.98, blue: 0.96))
+        .task(id: reloadToken) {
+            await verifyRelease()
+        }
+    }
+
+    @MainActor
+    private func verifyRelease() async {
+        guard let releaseBinding else { return }
+
+        isLoading = true
+        errorMessage = nil
+        releaseIsVerified = false
+
+        do {
+            try await releaseBinding.fetchAndValidate()
+            guard !Task.isCancelled else { return }
+            releaseIsVerified = true
+        } catch {
+            guard !Task.isCancelled else { return }
+            isLoading = false
+            errorMessage = error.localizedDescription
+        }
     }
 }
 

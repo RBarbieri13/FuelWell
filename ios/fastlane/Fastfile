@@ -1,3 +1,7 @@
+require "json"
+require "shellwords"
+require "uri"
+
 opt_out_usage
 
 default_platform(:ios)
@@ -23,6 +27,7 @@ platform :ios do
 
   desc "Build and upload a TestFlight candidate"
   lane :beta do
+    release_settings = testflight_release_settings
     sh("cd #{repo_root}/ios && xcodegen generate --spec project.yml")
     ensure_testflight_ready!
     build_number = testflight_build_number
@@ -55,8 +60,9 @@ platform :ios do
       },
       xcargs: [
         "CURRENT_PROJECT_VERSION=#{build_number}",
-        "MARKETING_VERSION=#{ENV.fetch("FUELWELL_MARKETING_VERSION", "1.0")}",
+        "MARKETING_VERSION=#{release_settings.fetch(:package_version)}",
         "INFOPLIST_KEY_CFBundleVersion=#{build_number}",
+        release_settings.fetch(:xcargs),
         "-skipMacroValidation",
         "-skipPackagePluginValidation"
       ].join(" ")
@@ -121,6 +127,38 @@ platform :ios do
     return explicit_build_number unless explicit_build_number.empty?
 
     Time.now.utc.strftime("%Y%m%d%H%M")
+  end
+
+  def testflight_release_settings
+    candidate_url = required_release_value("FUELWELL_CANDIDATE_URL").sub(%r{/+\z}, "")
+    parsed_url = URI.parse(candidate_url)
+    unless parsed_url.is_a?(URI::HTTPS) && parsed_url.host && parsed_url.path.to_s.empty? && parsed_url.query.nil?
+      UI.user_error!("FUELWELL_CANDIDATE_URL must be an HTTPS deployment origin without a path or query")
+    end
+
+    package_version = JSON.parse(File.read(File.join(repo_root, "package.json"))).fetch("version")
+    settings = {
+      "FUELWELL_START_URL" => "#{candidate_url}/app/dashboard",
+      "FUELWELL_EXPECTED_PACKAGE_VERSION" => package_version,
+      "FUELWELL_EXPECTED_GIT_SHA" => required_release_value("FUELWELL_CANDIDATE_GIT_SHA"),
+      "FUELWELL_EXPECTED_DEPLOYMENT_ID" => required_release_value("FUELWELL_CANDIDATE_DEPLOYMENT_ID"),
+      "FUELWELL_EXPECTED_DEPLOYMENT_URL" => candidate_url,
+      "FUELWELL_EXPECTED_ENVIRONMENT" => required_release_value("FUELWELL_CANDIDATE_ENVIRONMENT"),
+      "FUELWELL_RELEASE_SCHEMA_VERSION" => "1"
+    }
+
+    {
+      package_version: package_version,
+      xcargs: settings.map { |key, value| "#{key}=#{Shellwords.escape(value)}" }.join(" ")
+    }
+  rescue JSON::ParserError, KeyError, URI::InvalidURIError => error
+    UI.user_error!("Invalid TestFlight release provenance: #{error.message}")
+  end
+
+  def required_release_value(key)
+    value = ENV[key].to_s.strip
+    UI.user_error!("#{key} is required for a TestFlight candidate") if value.empty?
+    value
   end
 
   def repo_root

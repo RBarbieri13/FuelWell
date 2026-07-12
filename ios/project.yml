@@ -76,6 +76,13 @@ targets:
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_CFBundleIconName: AppIcon
+        INFOPLIST_KEY_FuelWellExpectedDeploymentID: "$(FUELWELL_EXPECTED_DEPLOYMENT_ID)"
+        INFOPLIST_KEY_FuelWellExpectedDeploymentURL: "$(FUELWELL_EXPECTED_DEPLOYMENT_URL)"
+        INFOPLIST_KEY_FuelWellExpectedEnvironment: "$(FUELWELL_EXPECTED_ENVIRONMENT)"
+        INFOPLIST_KEY_FuelWellExpectedGitSHA: "$(FUELWELL_EXPECTED_GIT_SHA)"
+        INFOPLIST_KEY_FuelWellExpectedPackageVersion: "$(FUELWELL_EXPECTED_PACKAGE_VERSION)"
+        INFOPLIST_KEY_FuelWellReleaseSchemaVersion: "$(FUELWELL_RELEASE_SCHEMA_VERSION)"
+        INFOPLIST_KEY_FuelWellStartURL: "$(FUELWELL_START_URL)"
         INFOPLIST_KEY_NSCameraUsageDescription: FuelWell uses the camera to log meal photos for nutrition tracking.
         INFOPLIST_KEY_NSHealthShareUsageDescription: FuelWell reads workouts, sleep, steps, energy, and body measurements to personalize coaching.
         INFOPLIST_KEY_NSHealthUpdateUsageDescription: FuelWell does not write Health data in this phase.
@@ -85,6 +92,17 @@ targets:
         INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight
         TARGETED_DEVICE_FAMILY: "1,2"
+  FuelWellAppTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: FuelWellApp/Tests
+    dependencies:
+      - target: FuelWellApp
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
   AppTests:
     type: bundle.unit-test
     platform: iOS
@@ -260,6 +278,15 @@ targets:
         GENERATE_INFOPLIST_FILE: YES
         TEST_TARGET_NAME: FuelWellApp
 schemes:
+  ReleaseBindingTests:
+    build:
+      targets:
+        FuelWellApp: all
+        FuelWellAppTests: [test]
+    test:
+      config: Debug
+      targets:
+        - FuelWellAppTests
   FuelWellApp:
     build:
       targets:
@@ -270,6 +297,7 @@ schemes:
       config: Debug
       gatherCoverageData: true
       targets:
+        - FuelWellAppTests
         - AppTests
         - DesignSystemTests
         - CoreTests
