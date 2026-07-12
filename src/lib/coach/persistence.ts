@@ -7,6 +7,10 @@ import {
   type CoachProfileKnowledgeInput,
 } from "@/lib/coach/knowledge";
 import type { DailyGoalContext, GoalPlan, IntegrationDailySummary } from "@/lib/goal-context";
+import { deleteDayMeal, saveMeal } from "@/lib/day-log-repository";
+import { deleteWorkoutEntry, saveWorkoutEntry } from "@/lib/workout-log-repository";
+import { replaceGroceryList } from "@/lib/grocery-repository";
+import { normalizeGroceryInput } from "@/lib/grocery-normalization";
 
 /**
  * Server-side Supabase persistence for signed-in users. Preview users skip
@@ -463,7 +467,40 @@ export async function persistCoachMutations(
   mutations: CoachMutation[],
   context?: DailyGoalContext,
 ): Promise<void> {
+  const date = context?.date ?? new Date().toISOString().slice(0, 10);
   for (const mutation of mutations) {
+    if (mutation.kind === "add_meal" || mutation.kind === "update_meal") {
+      await saveMeal(supabase, userId, date, mutation.meal);
+    }
+    if (mutation.kind === "remove_meal") {
+      await deleteDayMeal(supabase, userId, date, mutation.mealId);
+    }
+    if (mutation.kind === "add_workout") {
+      await saveWorkoutEntry(supabase, userId, date, mutation.workout);
+    }
+    if (mutation.kind === "remove_workout") {
+      await deleteWorkoutEntry(supabase, userId, date, mutation.workoutId);
+    }
+    if (mutation.kind === "set_grocery") {
+      await replaceGroceryList(
+        supabase,
+        userId,
+        date,
+        mutation.items.map((item) => {
+          const normalized = normalizeGroceryInput(item.name, item.quantity);
+          const amount = normalized.quantity ?? "1 item";
+          return {
+            id: item.id,
+            name: normalized.name,
+            amount,
+            quantity: amount,
+            category: "Other" as const,
+            source: "Coach",
+            checked: item.checked,
+          };
+        }),
+      );
+    }
     if (mutation.kind === "set_goal_plan") {
       await persistGoalPlan(supabase, userId, mutation.plan, "Coach goal tool update");
     }
