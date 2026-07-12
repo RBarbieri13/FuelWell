@@ -96,8 +96,15 @@ applied_checksum() {
 
 record_checksum() {
   local version="$1"
-  local checksum="$2"
-  "${psql_base[@]}" -c "update public.schema_migrations set checksum = '${checksum}' where version = '${version}';" >/dev/null
+  local name="$2"
+  local checksum="$3"
+  "${psql_base[@]}" -c "
+    insert into public.schema_migrations (version, name, checksum)
+    values ('${version}', '${name}', '${checksum}')
+    on conflict (version) do update
+      set name = excluded.name,
+          checksum = excluded.checksum;
+  " >/dev/null
 }
 
 echo "Supabase target: ${target}"
@@ -124,6 +131,9 @@ for migration in "${migrations[@]}"; do
     current_checksum="$(applied_checksum "${version}")"
     if [[ -z "${current_checksum}" ]]; then
       printf 'applied  %s  checksum=%s  tracked=missing\n' "${filename}" "${expected_checksum}"
+      if [[ "${command_name}" == "apply" ]]; then
+        record_checksum "${version}" "${filename}" "${expected_checksum}"
+      fi
     elif [[ "${current_checksum}" == "${expected_checksum}" ]]; then
       printf 'applied  %s  checksum=%s\n' "${filename}" "${expected_checksum}"
     else
@@ -160,7 +170,7 @@ for migration in "${pending[@]}"; do
   expected_checksum="$(checksum_for "${migration}")"
   echo "Applying ${filename}"
   "${psql_base[@]}" -f "${migration}"
-  record_checksum "${version}" "${expected_checksum}"
+  record_checksum "${version}" "${filename}" "${expected_checksum}"
 done
 
 echo
