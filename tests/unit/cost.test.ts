@@ -5,9 +5,24 @@ import {
   SOFT_CAP_USD,
   costUsdCents,
   evaluateBudget,
+  evaluatePaidProviderAccess,
   memoryAddCents,
   memoryGetDayCents,
 } from "@/lib/coach/cost";
+
+describe("evaluatePaidProviderAccess", () => {
+  it("blocks anonymous preview from paid inference", () => {
+    expect(
+      evaluatePaidProviderAccess({ authenticated: false, anonymousPreview: true }),
+    ).toEqual({ allowed: false, reason: "anonymous_preview" });
+  });
+
+  it("allows authenticated requests", () => {
+    expect(
+      evaluatePaidProviderAccess({ authenticated: true, anonymousPreview: false }),
+    ).toEqual({ allowed: true });
+  });
+});
 
 describe("costUsdCents", () => {
   it("prices haiku at $1/M input + $5/M output, rounded up to whole cents", () => {

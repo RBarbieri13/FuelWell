@@ -30,6 +30,20 @@ export type BudgetCheck =
   | { allowed: true; softCapReached: boolean; spentCents: number }
   | { allowed: false; spentCents: number; message: string };
 
+export type PaidProviderAccess =
+  | { allowed: true }
+  | { allowed: false; reason: "anonymous_preview" | "unauthenticated" };
+
+/** Paid Coach inference is reserved for authenticated requests. */
+export function evaluatePaidProviderAccess(input: {
+  authenticated: boolean;
+  anonymousPreview: boolean;
+}): PaidProviderAccess {
+  if (input.anonymousPreview) return { allowed: false, reason: "anonymous_preview" };
+  if (!input.authenticated) return { allowed: false, reason: "unauthenticated" };
+  return { allowed: true };
+}
+
 /** Pure threshold check — caller supplies today's spend from the right ledger. */
 export function evaluateBudget(spentCents: number): BudgetCheck {
   if (spentCents >= HARD_CAP_USD * 100) {

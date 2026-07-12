@@ -13,9 +13,19 @@ import {
 import {
   costUsdCents,
   evaluateBudget,
+  evaluatePaidProviderAccess,
   memoryAddCents,
   memoryGetDayCents,
 } from "@/lib/coach/cost";
+import {
+  classifyProviderError,
+  createSanitizedProviderIncident,
+  getProviderHealth,
+  markProviderSuccess,
+  providerErrorStatus,
+  recordProviderIncident,
+  type ProviderFailureClass,
+} from "@/lib/coach/provider-health";
 import { getTool, toAnthropicTools } from "@/lib/coach/registry";
 import "@/lib/coach/tools";
 import type {
@@ -101,11 +111,6 @@ function toCoachAnthropicTools(includeWebSearch: boolean): Anthropic.ToolUnion[]
 function isWebSearchUnavailable(error: unknown): boolean {
   const message = error instanceof Error ? error.message : String(error);
   return /web_search|server tool|tool/i.test(message) && /unavailable|not enabled|unsupported|invalid|permission|beta/i.test(message);
-}
-
-function isProviderBillingOrAccessError(error: unknown): boolean {
-  const message = error instanceof Error ? error.message : String(error);
-  return /credit balance|billing|purchase credits|payment required|insufficient_quota|quota|rate limit|unauthorized|api key/i.test(message);
 }
 
 function buildProviderFallbackReply(userText: string, snapshot: CoachDaySnapshot): string {
@@ -342,10 +347,6 @@ function toAnthropicMessage(m: CoachTurnMessage): Anthropic.MessageParam {
 }
 
 export async function POST(request: Request) {
-  if (!process.env.ANTHROPIC_API_KEY) {
-    return Response.json({ error: "Coach is not configured." }, { status: 503 });
-  }
-
   const parsed = requestSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) {
     return Response.json({ error: "Invalid request." }, { status: 400 });
@@ -363,6 +364,10 @@ export async function POST(request: Request) {
     return Response.json({ error: "Sign in to use Coach." }, { status: 401 });
   }
   const userId = user?.id ?? SAMPLE_USER.id;
+  const providerAccess = evaluatePaidProviderAccess({
+    authenticated: Boolean(user),
+    anonymousPreview: isPreview,
+  });
 
   // Cost circuit breaker — fires BEFORE any model call (non-negotiable).
   const day = new Date().toISOString().split("T")[0];
@@ -414,7 +419,6 @@ export async function POST(request: Request) {
     retrieveCoachKnowledge(coachKnowledge, lastUserText),
   );
   const model = pickModel(body);
-  const anthropic = new Anthropic();
 
   // E1: prompt-injection defense — user content is data, wrapped explicitly.
   const apiMessages: Anthropic.MessageParam[] = body.messages.map(toAnthropicMessage);
@@ -438,6 +442,58 @@ export async function POST(request: Request) {
         for (const m of mutations ?? []) {
           if (m.kind === "set_preferences") Object.assign(turnPrefPatch, m.patch);
         }
+      };
+
+      const completeWithProviderFallback = async (
+        failureClass?: ProviderFailureClass,
+        statusCode?: number,
+      ) => {
+        if (failureClass) {
+          const incident = createSanitizedProviderIncident({ failureClass, model, statusCode });
+          await recordProviderIncident(
+            incident,
+            user
+              ? async (safeIncident) => {
+                  await insertSupabaseAudit(supabase, {
+                    userId,
+                    tool: "provider_incident",
+                    args: safeIncident,
+                    resultSummary: `provider_error:${safeIncident.failureClass}`,
+                  });
+                }
+              : undefined,
+          );
+        }
+
+        assistantText = buildProviderFallbackReply(lastUserText, snapshot);
+        emit({ type: "text_delta", text: assistantText });
+        if (user && conversationId) {
+          const lastUser = body.messages[body.messages.length - 1];
+          await saveMessages(supabase, conversationId, [
+            ...(lastUser?.role === "user"
+              ? [{ role: "user" as const, content: lastUser.content }]
+              : []),
+            {
+              role: "assistant" as const,
+              content: assistantText,
+              toolCalls: turnToolCalls,
+              artifacts: turnArtifacts,
+              model: "deterministic-provider-fallback",
+              tokensIn: 0,
+              tokensOut: 0,
+            },
+          ]);
+        }
+        emit({
+          type: "turn_done",
+          usage: {
+            inputTokens: 0,
+            outputTokens: 0,
+            costUsdCents: 0,
+            model: "deterministic-provider-fallback",
+          },
+          conversationId: conversationId ?? undefined,
+        });
       };
 
       const audit = async (tool: string, args: unknown, resultSummary: string) => {
@@ -577,6 +633,28 @@ export async function POST(request: Request) {
           return;
         }
 
+        if (!providerAccess.allowed) {
+          await completeWithProviderFallback();
+          return;
+        }
+
+        const providerHealth = getProviderHealth();
+        if (providerHealth.state === "missing_config") {
+          await completeWithProviderFallback("missing_config");
+          return;
+        }
+
+        let anthropic: Anthropic;
+        try {
+          anthropic = new Anthropic();
+        } catch (error) {
+          await completeWithProviderFallback(
+            classifyProviderError(error),
+            providerErrorStatus(error),
+          );
+          return;
+        }
+
         let rounds = 0;
         let continueLoop = true;
         let offerWebSearch = shouldOfferWebSearch(lastUserText);
@@ -601,13 +679,18 @@ export async function POST(request: Request) {
             });
 
             final = await msgStream.finalMessage();
+            markProviderSuccess();
           } catch (err) {
             if (offerWebSearch && isWebSearchUnavailable(err)) {
               offerWebSearch = false;
               rounds -= 1;
               continue;
             }
-            throw err;
+            await completeWithProviderFallback(
+              classifyProviderError(err),
+              providerErrorStatus(err),
+            );
+            return;
           }
           totalIn += final.usage.input_tokens;
           totalOut += final.usage.output_tokens;
@@ -741,39 +824,7 @@ export async function POST(request: Request) {
           usage: { inputTokens: totalIn, outputTokens: totalOut, costUsdCents: cents, model },
           conversationId: conversationId ?? undefined,
         });
-      } catch (err) {
-        if (isProviderBillingOrAccessError(err)) {
-          assistantText = buildProviderFallbackReply(lastUserText, snapshot);
-          emit({ type: "text_delta", text: assistantText });
-          if (user && conversationId) {
-            const lastUser = body.messages[body.messages.length - 1];
-            await saveMessages(supabase, conversationId, [
-              ...(lastUser?.role === "user"
-                ? [{ role: "user" as const, content: lastUser.content }]
-                : []),
-              {
-                role: "assistant" as const,
-                content: assistantText,
-                toolCalls: turnToolCalls,
-                artifacts: turnArtifacts,
-                model: "deterministic-provider-fallback",
-                tokensIn: 0,
-                tokensOut: 0,
-              },
-            ]);
-          }
-          emit({
-            type: "turn_done",
-            usage: {
-              inputTokens: 0,
-              outputTokens: 0,
-              costUsdCents: 0,
-              model: "deterministic-provider-fallback",
-            },
-            conversationId: conversationId ?? undefined,
-          });
-          return;
-        }
+      } catch {
         emit({
           type: "error",
           message: "Coach is temporarily unavailable. Your app data is still safe, and you can try again in a moment.",
