@@ -26,6 +26,11 @@ import {
   recordProviderIncident,
   type ProviderFailureClass,
 } from "@/lib/coach/provider-health";
+import {
+  createCoachProviderClient,
+  providerModelId,
+  resolveCoachProviderConfig,
+} from "@/lib/coach/provider-client";
 import { getTool, toAnthropicTools } from "@/lib/coach/registry";
 import "@/lib/coach/tools";
 import type {
@@ -418,7 +423,10 @@ export async function POST(request: Request) {
   const retrievedKnowledge = formatKnowledgeForPrompt(
     retrieveCoachKnowledge(coachKnowledge, lastUserText),
   );
-  const model = pickModel(body);
+  const providerConfig = resolveCoachProviderConfig();
+  const model = providerConfig
+    ? providerModelId(providerConfig, pickModel(body))
+    : pickModel(body);
 
   // E1: prompt-injection defense — user content is data, wrapped explicitly.
   const apiMessages: Anthropic.MessageParam[] = body.messages.map(toAnthropicMessage);
@@ -449,7 +457,12 @@ export async function POST(request: Request) {
         statusCode?: number,
       ) => {
         if (failureClass) {
-          const incident = createSanitizedProviderIncident({ failureClass, model, statusCode });
+          const incident = createSanitizedProviderIncident({
+            failureClass,
+            model,
+            statusCode,
+            provider: providerConfig?.provider,
+          });
           await recordProviderIncident(
             incident,
             user
@@ -638,7 +651,7 @@ export async function POST(request: Request) {
           return;
         }
 
-        const providerHealth = getProviderHealth();
+        const providerHealth = getProviderHealth(providerConfig?.credential);
         if (providerHealth.state === "missing_config") {
           await completeWithProviderFallback("missing_config");
           return;
@@ -646,7 +659,8 @@ export async function POST(request: Request) {
 
         let anthropic: Anthropic;
         try {
-          anthropic = new Anthropic();
+          if (!providerConfig) throw new Error("Coach provider configuration is missing.");
+          anthropic = createCoachProviderClient(providerConfig);
         } catch (error) {
           await completeWithProviderFallback(
             classifyProviderError(error),

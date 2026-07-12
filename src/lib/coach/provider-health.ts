@@ -11,7 +11,7 @@ export const PROVIDER_FAILURE_CLASSES = [
 export type ProviderFailureClass = (typeof PROVIDER_FAILURE_CLASSES)[number];
 
 export type SanitizedProviderIncident = {
-  provider: "anthropic";
+  provider: "vercel_ai_gateway" | "anthropic";
   operation: "coach_turn";
   failureClass: ProviderFailureClass;
   occurredAt: string;
@@ -111,13 +111,14 @@ function sanitizeModel(model: string | undefined): string | undefined {
 
 export function createSanitizedProviderIncident(input: {
   failureClass: ProviderFailureClass;
+  provider?: SanitizedProviderIncident["provider"];
   model?: string;
   statusCode?: number;
   occurredAt?: string;
 }): SanitizedProviderIncident {
   const statusCode = firstNumber(input.statusCode);
   return {
-    provider: "anthropic",
+    provider: input.provider ?? "anthropic",
     operation: "coach_turn",
     failureClass: input.failureClass,
     occurredAt: input.occurredAt ?? new Date().toISOString(),
@@ -147,7 +148,12 @@ export function markProviderSuccess(at = new Date().toISOString()): void {
   lastSuccessAt = at;
 }
 
-export function getProviderHealth(apiKey = process.env.ANTHROPIC_API_KEY): {
+export function getProviderHealth(
+  apiKey =
+    process.env.AI_GATEWAY_API_KEY ||
+    process.env.VERCEL_OIDC_TOKEN ||
+    process.env.ANTHROPIC_API_KEY,
+): {
   state: "missing_config" | "unverified" | "healthy" | "degraded";
   healthy: boolean;
   configured: boolean;
