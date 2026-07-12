@@ -10,7 +10,10 @@ import { buildDailyGoalContext } from "@/lib/goal-context";
 export function applySnapshotMutation(snapshot: CoachDaySnapshot, m: CoachMutation): void {
   switch (m.kind) {
     case "add_meal":
-      snapshot.meals = [...snapshot.meals, m.meal];
+      snapshot.meals = [
+        ...snapshot.meals.filter((meal) => meal.id !== m.meal.id),
+        m.meal,
+      ];
       break;
     case "update_meal":
       snapshot.meals = snapshot.meals.map((meal) => (meal.id === m.mealId ? m.meal : meal));
@@ -19,7 +22,10 @@ export function applySnapshotMutation(snapshot: CoachDaySnapshot, m: CoachMutati
       snapshot.meals = snapshot.meals.filter((meal) => meal.id !== m.mealId);
       break;
     case "add_workout":
-      snapshot.workouts = [...snapshot.workouts, m.workout];
+      snapshot.workouts = [
+        ...snapshot.workouts.filter((workout) => workout.id !== m.workout.id),
+        m.workout,
+      ];
       break;
     case "remove_workout":
       snapshot.workouts = snapshot.workouts.filter((w) => w.id !== m.workoutId);
@@ -28,7 +34,10 @@ export function applySnapshotMutation(snapshot: CoachDaySnapshot, m: CoachMutati
       snapshot.grocery = m.items;
       break;
     case "add_body_log":
-      snapshot.bodyLog = [...snapshot.bodyLog, m.entry];
+      snapshot.bodyLog = [
+        ...snapshot.bodyLog.filter((entry) => entry.date !== m.entry.date),
+        m.entry,
+      ];
       break;
     case "set_preferences":
       snapshot.preferences = { ...snapshot.preferences, ...m.patch };
