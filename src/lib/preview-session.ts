@@ -29,11 +29,12 @@ export function isPreviewHost(host?: string | null) {
   if (envPreviewMode) return true;
   if (!host) return false;
 
+  // Local development remains convenient, but deployed hostnames never grant
+  // preview identity or bypass authentication by naming convention. Each
+  // review deployment must opt in explicitly with FUELWELL_PREVIEW_MODE.
   return (
     host.includes("localhost") ||
-    host.includes("127.0.0.1") ||
-    host.includes("trycloudflare.com") ||
-    (host.startsWith("fuelwell-preview") && host.endsWith(".vercel.app"))
+    host.includes("127.0.0.1")
   );
 }
 
