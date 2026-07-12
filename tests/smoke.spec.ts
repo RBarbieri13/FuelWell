@@ -142,6 +142,7 @@ test("Workouts: two paths and working category filters", async ({ page }) => {
   await page.goto("/app/workouts");
   await expect(page.getByText("Pick my own")).toBeVisible();
   await expect(page.getByText("Coach recommends")).toBeVisible();
+  await page.getByRole("button", { name: "Browse workout library" }).click();
   await page.getByRole("button", { name: "Upper", exact: true }).click();
   await page.getByRole("button", { name: "Strength", exact: true }).click();
   await expect(page.getByText("Upper push base")).toBeVisible();

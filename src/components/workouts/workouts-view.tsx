@@ -6,6 +6,7 @@ import {
   Activity,
   ArrowRight,
   Check,
+  ChevronDown,
   Eye,
   Flame,
   Info,
@@ -95,31 +96,6 @@ interface DailyVerdict {
   detail: string;
   source: string;
   recommendedId: string;
-}
-
-function FilterButton({
-  active,
-  href,
-  children,
-}: {
-  active: boolean;
-  href: string;
-  children: string;
-}) {
-  return (
-    <a
-      href={href}
-      aria-current={active ? "true" : undefined}
-      className={cn(
-        "rounded-full px-5 py-2.5 text-sm font-bold transition-all",
-        active
-          ? "bg-primary-500 text-white shadow-[0_10px_22px_rgba(30,174,132,0.24)]"
-          : "border border-[#e6efeb] bg-[#f4f8f6] text-[#54635d] hover:bg-white"
-      )}
-    >
-      {children}
-    </a>
-  );
 }
 
 function workoutTone(workout: WorkoutRow) {
@@ -239,7 +215,7 @@ function ManualActivityPlanner({
         </span>
         <div>
           <h2 className="font-heading text-[22px] font-black tracking-tight text-[#16302a]">
-            Add any activity
+            Activity
           </h2>
           <p className="mt-2 text-[15px] font-semibold leading-6 text-[#54635d]">
             Walking, hiking, running, biking, swimming, rowing, sports, lifting, intervals, and more.
@@ -349,6 +325,12 @@ export function WorkoutsView({
   const [activeQuickFilters, setActiveQuickFilters] = useState<QuickFilter[]>([]);
   const [workoutQuery, setWorkoutQuery] = useState(initialQuery ?? "");
   const [showRecommendation, setShowRecommendation] = useState(false);
+  const [showWorkoutLibrary, setShowWorkoutLibrary] = useState(
+    () =>
+      Boolean(initialQuery?.trim()) ||
+      parseBodyPart(initialBodyPart) !== "all" ||
+      parseWorkoutType(initialWorkoutType) !== "all"
+  );
   // Shared store: workouts logged from Coach chat show up here too (D-gate).
   const {
     workouts: loggedWorkouts,
@@ -424,15 +406,6 @@ export function WorkoutsView({
     activeQuickFilters.length > 0 ||
     workoutQuery.trim().length > 0;
 
-  function filterHref(nextBodyPart: BodyPartFilter) {
-    const params = new URLSearchParams();
-    if (workoutQuery.trim()) params.set("q", workoutQuery.trim());
-    if (nextBodyPart !== "all") params.set("body", nextBodyPart);
-    if (workoutType !== "all") params.set("type", workoutType);
-    const query = params.toString();
-    return query ? `/app/workouts?${query}` : "/app/workouts";
-  }
-
   function toggleQuickFilter(filter: QuickFilter) {
     setActiveQuickFilters((current) =>
       current.includes(filter)
@@ -454,10 +427,122 @@ export function WorkoutsView({
 
       <div className="fw-page-inner space-y-6">
 
+      <div className="grid items-start gap-5 xl:grid-cols-3">
+        {/* Path 1: Coach recommends */}
+        <Card className="fw-dark-panel relative overflow-hidden rounded-[24px] border-primary-500/30 px-7 py-7 shadow-[0_22px_46px_rgba(16,48,40,0.34)] ring-2 ring-primary-300/25">
+          <div className="pointer-events-none absolute -right-8 -top-10 h-40 w-40 rounded-full bg-primary-500/25 blur-2xl" />
+          <div className="relative space-y-5">
+          <div className="flex items-start gap-3">
+            <div className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[13px] bg-gradient-to-br from-primary-500 to-[#1592a0] text-white shadow-[0_8px_18px_rgba(30,174,132,0.4)]">
+              <Sparkles className="h-5 w-5" />
+            </div>
+            <div>
+              <div className="flex flex-wrap items-center gap-2">
+                <h2 className="font-heading text-[22px] font-black tracking-tight text-white">
+                  Coach recommends
+                </h2>
+                <span className="rounded-full bg-white/12 px-2.5 py-1 text-[11px] font-black uppercase tracking-[0.12em] text-primary-100">
+                  Start here
+                </span>
+              </div>
+              <p className="mt-2 text-[15px] font-semibold leading-6 text-white/72">
+                Built from your recent workout pattern, current goals, soreness cost, and available body context.
+              </p>
+            </div>
+          </div>
+
+          {!showRecommendation ? (
+            <Button onClick={() => setShowRecommendation(true)} className="w-full">
+              Show today&apos;s pick
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          ) : (
+            <div className="space-y-3">
+              <div className="rounded-[20px] border border-white/10 bg-white/10 p-4">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-primary-500 text-white">
+                    <RecommendedIcon className="h-4 w-4" />
+                  </span>
+                  <h3 className="font-black text-white">{recommended.title}</h3>
+                  <span className="rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-primary-100">
+                    {recommended.duration}
+                  </span>
+                </div>
+                <p className="mt-2 text-sm leading-relaxed text-white/72">
+                  {coachRecommendation.reason}
+                </p>
+                <div className="mt-3 grid gap-2">
+                  {coachRecommendation.options.slice(0, 2).map((option) => (
+                    <Link
+                      key={option.id}
+                      href={workoutHref(option.id)}
+                      className="flex items-center justify-between rounded-[0.95rem] bg-white/10 px-3 py-2 text-xs font-black text-primary-50 transition hover:bg-white/15"
+                    >
+                      <span>{option.title}</span>
+                      <span>{option.duration}</span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+              <Link
+                href={workoutHref(recommended.id)}
+                className="inline-flex w-full items-center justify-center gap-2 rounded-[1.15rem] bg-gradient-to-r from-primary-500 to-[#159aa2] px-4 py-3 text-sm font-bold text-white shadow-[0_16px_34px_rgba(21,145,108,0.24)] transition-colors hover:from-primary-600 hover:to-[#138893] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+              >
+                Preview this workout
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          )}
+          <Link
+            href="/app/coach?prompt=Help%20me%20customize%20today%27s%20workout%20recommendation."
+            className="inline-flex w-full items-center justify-center gap-2 rounded-[1.15rem] border border-white/15 bg-white/10 px-4 py-3 text-sm font-bold text-primary-50 transition hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300"
+          >
+            Customize with Coach
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+          </div>
+        </Card>
+
+        {/* Path 2: Pick my own */}
+        <Card className="space-y-5 rounded-[24px] border-[#e6efeb] px-7 py-7 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
+          <div className="flex items-start gap-4">
+            <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[13px] bg-primary-100 text-primary-600">
+              <ListFilter className="h-5 w-5" />
+            </span>
+            <div>
+              <h2 className="font-heading text-[22px] font-black tracking-tight text-[#16302a]">
+                Pick my own
+              </h2>
+              <p className="mt-2 text-[15px] font-semibold leading-6 text-[#54635d]">
+                Search and filter the full library when you want to choose the session yourself.
+              </p>
+            </div>
+          </div>
+          <Button
+            type="button"
+            variant="secondary"
+            aria-expanded={showWorkoutLibrary}
+            aria-controls="workout-library"
+            onClick={() => setShowWorkoutLibrary((current) => !current)}
+            className="w-full"
+          >
+            {showWorkoutLibrary ? "Hide workout library" : "Browse workout library"}
+            <ChevronDown
+              className={cn(
+                "h-4 w-4 transition-transform",
+                showWorkoutLibrary && "rotate-180"
+              )}
+            />
+          </Button>
+        </Card>
+
+        <ManualActivityPlanner onAdd={addWorkout} />
+      </div>
+
       {loggedWorkouts.length > 0 && (
         <Card className="space-y-3 rounded-[22px] border-[#e6efeb] px-6 py-5 shadow-[0_8px_22px_rgba(20,90,75,0.06)]" data-testid="logged-workouts">
           <div className="flex items-center justify-between gap-3">
-            <h2 className="font-heading text-lg font-black text-[#16302a]">Logged</h2>
+            <h2 className="font-heading text-lg font-black text-[#16302a]">Recent activity</h2>
             <span className="rounded-full bg-primary-50 px-3 py-1 text-xs font-black text-primary-700">
               Editable today
             </span>
@@ -541,114 +626,19 @@ export function WorkoutsView({
         </Card>
       )}
 
-      <div className="grid items-start gap-5 xl:grid-cols-3">
-        {/* Path 1: Coach recommends */}
-        <Card className="fw-dark-panel relative overflow-hidden rounded-[24px] border-primary-500/30 px-7 py-7 shadow-[0_22px_46px_rgba(16,48,40,0.34)] ring-2 ring-primary-300/25">
-          <div className="pointer-events-none absolute -right-8 -top-10 h-40 w-40 rounded-full bg-primary-500/25 blur-2xl" />
-          <div className="relative space-y-5">
-          <div className="flex items-start gap-3">
-            <div className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[13px] bg-gradient-to-br from-primary-500 to-[#1592a0] text-white shadow-[0_8px_18px_rgba(30,174,132,0.4)]">
-              <Sparkles className="h-5 w-5" />
-            </div>
-            <div>
-              <div className="flex flex-wrap items-center gap-2">
-                <h2 className="font-heading text-[22px] font-black tracking-tight text-white">
-                  Coach recommends
-                </h2>
-                <span className="rounded-full bg-white/12 px-2.5 py-1 text-[11px] font-black uppercase tracking-[0.12em] text-primary-100">
-                  Start here
-                </span>
-              </div>
-              <p className="mt-2 text-[15px] font-semibold leading-6 text-white/72">
-                Built from your recent workout pattern, current goals, soreness cost, and available body context.
-              </p>
-            </div>
-          </div>
-
-          {!showRecommendation ? (
-            <Button onClick={() => setShowRecommendation(true)} className="w-full">
-              Show today&apos;s pick
-              <ArrowRight className="h-4 w-4" />
-            </Button>
-          ) : (
-            <div className="space-y-3">
-              <div className="rounded-[20px] border border-white/10 bg-white/10 p-4">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-primary-500 text-white">
-                    <RecommendedIcon className="h-4 w-4" />
-                  </span>
-                  <h3 className="font-black text-white">{recommended.title}</h3>
-                  <span className="rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-primary-100">
-                    {recommended.duration}
-                  </span>
-                </div>
-                <p className="mt-2 text-sm leading-relaxed text-white/72">
-                  {coachRecommendation.reason}
-                </p>
-                <div className="mt-3 grid gap-2">
-                  {coachRecommendation.options.slice(0, 2).map((option) => (
-                    <Link
-                      key={option.id}
-                      href={workoutHref(option.id)}
-                      className="flex items-center justify-between rounded-[0.95rem] bg-white/10 px-3 py-2 text-xs font-black text-primary-50 transition hover:bg-white/15"
-                    >
-                      <span>{option.title}</span>
-                      <span>{option.duration}</span>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-              <Link
-                href={workoutHref(recommended.id)}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-[1.15rem] bg-gradient-to-r from-primary-500 to-[#159aa2] px-4 py-3 text-sm font-bold text-white shadow-[0_16px_34px_rgba(21,145,108,0.24)] transition-colors hover:from-primary-600 hover:to-[#138893] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
-              >
-                Preview this workout
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
-          )}
-          </div>
-        </Card>
-
-        {/* Path 2: Pick my own */}
-        <Card className="space-y-5 rounded-[24px] border-[#e6efeb] px-7 py-7 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
-          <div className="flex items-start gap-4">
-            <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[13px] bg-primary-100 text-primary-600">
-              <ListFilter className="h-5 w-5" />
-            </span>
-            <div>
-              <h2 className="font-heading text-[22px] font-black tracking-tight text-[#16302a]">
-                Pick my own
-              </h2>
-              <p className="mt-2 text-[15px] font-semibold leading-6 text-[#54635d]">
-                Browse the list and filter by what you want to work today.
-              </p>
-            </div>
-          </div>
-          <div className="flex flex-wrap gap-2.5">
-            {bodyPartFilters.slice(0, 4).map((f) => (
-              <FilterButton
-                key={f.id}
-                active={bodyPart === f.id}
-                href={filterHref(f.id)}
-              >
-                {f.label}
-              </FilterButton>
-            ))}
-          </div>
-        </Card>
-
-        <ManualActivityPlanner onAdd={addWorkout} />
-      </div>
-
-      <section className="space-y-4">
+      {showWorkoutLibrary && (
+      <section id="workout-library" className="space-y-4">
         <div className="mt-1 flex items-center justify-between">
           <h2 className="font-heading text-sm font-black uppercase tracking-[0.16em] text-[#9db0aa]">
-            All workouts
+            Workout library
           </h2>
-          <span className="text-sm font-semibold text-[#7c968f]">
-            {visible.length} options
-          </span>
+          <button
+            type="button"
+            onClick={() => setShowWorkoutLibrary(false)}
+            className="text-sm font-black text-primary-700 transition hover:text-primary-800"
+          >
+            Close library
+          </button>
         </div>
 
         <Card className="space-y-5 rounded-[24px] border-[#e6efeb] px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)] md:px-7 md:py-7">
@@ -886,6 +876,7 @@ export function WorkoutsView({
           </div>
         </Card>
       </section>
+      )}
 
       <Card className="rounded-[20px] border-lemon-200 bg-lemon-50/80 px-6 py-5 shadow-none">
         <div className="flex gap-3.5">
