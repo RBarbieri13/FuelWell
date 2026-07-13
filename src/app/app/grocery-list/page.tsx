@@ -483,8 +483,8 @@ export default function GroceryListPage() {
             </div>
           </Card>
 
-          <Card padding="sm" className="min-w-0 overflow-hidden rounded-[22px] border-[#dcebe5] shadow-[0_10px_26px_rgba(20,90,75,0.06)]">
-            <div className="space-y-3 p-3 md:hidden" data-testid="mobile-grocery-list">
+          <Card padding="sm" className="min-w-0 overflow-hidden rounded-[22px] border-[#dcebe5] p-0 shadow-[0_10px_26px_rgba(20,90,75,0.06)] md:p-4">
+            <div className="space-y-3 p-2 md:hidden" data-testid="mobile-grocery-list">
               {filteredItems.map((item) => {
                 const details = inferGroceryDetails(item.name, item.amount, item.category);
                 const servingSize = item.servingSize ?? details.servingSize;
@@ -499,7 +499,7 @@ export default function GroceryListPage() {
                       item.checked ? "bg-primary-50/55" : "bg-white"
                     )}
                   >
-                    <div className="grid min-w-0 grid-cols-[2.75rem_minmax(0,1fr)_2.75rem] items-center gap-1">
+                    <div className="grid min-w-0 grid-cols-[2.75rem_minmax(0,1fr)_2.75rem] items-center gap-2">
                       <button
                         type="button"
                         onClick={() => toggleItem(item.id)}
@@ -515,8 +515,9 @@ export default function GroceryListPage() {
                         value={item.name}
                         onChange={(event) => updateItem(item.id, { name: event.target.value })}
                         rows={2}
+                        data-testid="mobile-grocery-name"
                         className={cn(
-                          "min-w-0 w-full resize-none rounded-xl border border-transparent bg-transparent px-2 py-1.5 font-heading text-sm font-black leading-5 text-[#16302a] outline-none transition focus:border-primary-200 focus:bg-[#f8fbf9] focus:ring-2 focus:ring-primary-100 min-[360px]:text-base",
+                          "min-h-12 min-w-0 w-full resize-none overflow-hidden whitespace-pre-wrap break-words rounded-xl border border-transparent bg-transparent px-2 py-2 font-heading text-base font-black leading-6 text-[#16302a] outline-none transition focus:border-primary-200 focus:bg-[#f8fbf9] focus:ring-2 focus:ring-primary-100",
                           item.checked && "text-[#9db0aa] line-through"
                         )}
                         aria-label={`Edit item name for ${item.name}`}

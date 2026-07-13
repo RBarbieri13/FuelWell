@@ -8,6 +8,7 @@ async function assertContained(page: Page, label: string) {
   const metrics = await page.evaluate(() => {
     const main = document.querySelector<HTMLElement>("main");
     const items = Array.from(document.querySelectorAll<HTMLElement>('[data-testid="mobile-grocery-item"]'));
+    const names = Array.from(document.querySelectorAll<HTMLElement>('[data-testid="mobile-grocery-name"]'));
     return {
       viewport: window.innerWidth,
       documentWidth: document.documentElement.scrollWidth,
@@ -17,6 +18,7 @@ async function assertContained(page: Page, label: string) {
         const rect = item.getBoundingClientRect();
         return { left: rect.left, right: rect.right, width: rect.width };
       }),
+      nameWidths: names.map((name) => name.getBoundingClientRect().width),
     };
   });
 
@@ -26,6 +28,10 @@ async function assertContained(page: Page, label: string) {
   for (const bounds of metrics.itemBounds) {
     expect(bounds.left, `${label}: grocery row starts outside viewport`).toBeGreaterThanOrEqual(0);
     expect(bounds.right, `${label}: grocery row ends outside viewport`).toBeLessThanOrEqual(metrics.viewport + 1);
+    expect(bounds.width, `${label}: grocery row is too narrow to use`).toBeGreaterThanOrEqual(metrics.viewport - 52);
+  }
+  for (const width of metrics.nameWidths) {
+    expect(width, `${label}: grocery item name is squeezed`).toBeGreaterThanOrEqual(140);
   }
   return metrics;
 }

@@ -46,6 +46,9 @@ No production deployment or TestFlight upload was performed in this campaign.
 - Strengthened Coach source behavior so citation, fact-sheet, and named-source
   questions use web search when it is available instead of prematurely claiming
   that a source cannot be found.
+- Removed nested mobile grocery-list padding that made cards technically
+  contained but too narrow to use. Grocery cards now retain nearly the full
+  phone width, and the gate enforces minimum card and editable-name widths.
 
 ## Journey evidence
 
@@ -81,6 +84,8 @@ shown on non-Coach pages. Screenshots and answer transcripts are under
 - Next.js production build: passed; 797 static pages generated.
 - Native release binding: passed, including 8 manifest tests and iOS simulator
   binding tests.
+- Post-release grocery regression: 8 Chromium and 8 mobile WebKit checks passed
+  at 320, 375, 390, and 430px; TypeScript and ESLint passed.
 
 ## Live Coach boundary
 
