@@ -74,6 +74,12 @@ for (const width of [320, 375, 390, 430]) {
     await expect(page.getByText(/Page 1 of \d+ · Showing 1-20 of/)).toBeVisible();
     await expect(page.getByRole("columnheader", { name: "Body part" })).toBeHidden();
 
+    const defaultTableGeometry = await page.getByTestId("workout-results-scroll").evaluate((element) => ({
+      clientWidth: element.clientWidth,
+      scrollWidth: element.scrollWidth,
+    }));
+    expect(defaultTableGeometry.scrollWidth).toBeLessThanOrEqual(defaultTableGeometry.clientWidth);
+
     await page.getByRole("button", { name: "Show all columns" }).click();
     await expect(page.getByRole("columnheader", { name: "Body part" })).toBeVisible();
     await expect(page.getByRole("button", { name: "Essential only" })).toBeVisible();

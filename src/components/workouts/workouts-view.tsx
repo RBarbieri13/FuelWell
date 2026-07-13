@@ -971,7 +971,7 @@ export function WorkoutsView({
           <div className="min-w-0 overflow-hidden rounded-[22px] border border-[#dce8e3]">
             <div className="flex items-center justify-between gap-3 border-b border-[#dce8e3] bg-primary-50/70 px-3 py-2.5 md:hidden">
               <p className="min-w-0 text-xs font-semibold text-primary-900/70">
-                {showAllMobileColumns ? "Swipe within the table for every detail." : "Workout, time, and preview are shown."}
+                {showAllMobileColumns ? "Swipe within the table for every detail." : "Tap a workout to preview it; time is shown."}
               </p>
               <button
                 type="button"
@@ -1005,7 +1005,7 @@ export function WorkoutsView({
                     <th className={cn("whitespace-nowrap px-4 py-3", !showAllMobileColumns && "hidden md:table-cell")}>Intensity</th>
                     <th className={cn("px-4 py-3", !showAllMobileColumns && "hidden md:table-cell")}>Equipment</th>
                     <th className={cn("px-4 py-3", !showAllMobileColumns && "hidden md:table-cell")}>Goal</th>
-                    <th className="px-4 py-3 text-right">Preview</th>
+                    <th className={cn("px-4 py-3 text-right", !showAllMobileColumns && "hidden md:table-cell")}>Preview</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-neutral-100">
@@ -1014,13 +1014,13 @@ export function WorkoutsView({
                     const tone = workoutTone(workout);
                     const muscles = workout.targetMuscles ?? workout.bestFor.slice(0, 3);
                     const title = (
-                      <div className="flex items-center gap-3">
+                      <div className="flex min-w-0 items-center gap-2 sm:gap-3">
                         <span className={cn("flex h-8 w-8 items-center justify-center rounded-[0.75rem]", tone.icon)}>
                           <Icon className="h-4 w-4" />
                         </span>
-                        <div>
-                          <p className="text-sm font-black text-[#16302a]">{workout.title}</p>
-                          <p className="text-xs font-semibold text-[#9db0aa]">{workout.focus}</p>
+                        <div className="min-w-0">
+                          <p className="break-words text-sm font-black leading-5 text-[#16302a]">{workout.title}</p>
+                          <p className="hidden text-xs font-semibold text-[#9db0aa] sm:block">{workout.focus}</p>
                         </div>
                       </div>
                     );
@@ -1030,7 +1030,7 @@ export function WorkoutsView({
                         <td className="min-w-0 px-3 py-2.5 sm:px-4">
                           <Link href={workoutHref(workout.id)} className="group inline-flex items-center gap-2">
                             {title}
-                            <ArrowRight className="h-3.5 w-3.5 text-neutral-300 transition group-hover:translate-x-0.5 group-hover:text-primary-600" />
+                            <ArrowRight className="hidden h-3.5 w-3.5 text-neutral-300 transition group-hover:translate-x-0.5 group-hover:text-primary-600 sm:block" />
                           </Link>
                         </td>
                         <td className={cn("px-4 py-2.5", !showAllMobileColumns && "hidden md:table-cell")}>
@@ -1050,7 +1050,7 @@ export function WorkoutsView({
                         </td>
                         <td className={cn("max-w-[11rem] px-4 py-2.5 text-xs font-semibold text-[#7c968f]", !showAllMobileColumns && "hidden md:table-cell")}>{workout.equipment}</td>
                         <td className={cn("max-w-[12rem] px-4 py-2.5 text-xs font-semibold text-[#7c968f]", !showAllMobileColumns && "hidden md:table-cell")}>{workout.goal}</td>
-                        <td className="px-3 py-2.5 text-right sm:px-4">
+                        <td className={cn("px-3 py-2.5 text-right sm:px-4", !showAllMobileColumns && "hidden md:table-cell")}>
                           <Link
                             href={workoutHref(workout.id)}
                             aria-label={`Preview ${workout.title}`}
