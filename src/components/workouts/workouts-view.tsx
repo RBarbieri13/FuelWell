@@ -1,12 +1,15 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import {
   Activity,
   ArrowRight,
   Check,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Columns3,
   Eye,
   Flame,
   Info,
@@ -48,6 +51,8 @@ type WorkoutTypeFilter = "all" | WorkoutType;
 type LengthFilter = "all" | WorkoutLengthBucket;
 type IntensityFilter = "all" | "Light" | "Easy" | "Moderate" | "Hard";
 type QuickFilter = "recent" | "coach" | "low-recovery" | "minimal-equipment";
+
+const WORKOUTS_PER_PAGE = 20;
 
 const bodyPartFilters: { id: BodyPartFilter; label: string }[] = [
   { id: "all", label: "All" },
@@ -208,17 +213,17 @@ function ManualActivityPlanner({
   const calories = estimateWorkoutCalories({ met: option.met, minutes: resolvedMinutes });
 
   return (
-    <Card className="space-y-5 rounded-[24px] border-[#e6efeb] px-7 py-7 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
+    <Card className="space-y-4 rounded-[24px] border-[#e6efeb] px-5 py-5 shadow-[0_12px_30px_rgba(20,90,75,0.07)] sm:px-6 sm:py-6">
       <div className="flex items-start gap-4">
         <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[13px] bg-sky-100 text-sky-700">
           <Activity className="h-5 w-5" />
         </span>
         <div>
           <h2 className="font-heading text-[22px] font-black tracking-tight text-[#16302a]">
-            Activity
+            Custom activity details
           </h2>
-          <p className="mt-2 text-[15px] font-semibold leading-6 text-[#54635d]">
-            Walking, hiking, running, biking, swimming, rowing, sports, lifting, intervals, and more.
+          <p className="mt-1 text-sm font-semibold leading-5 text-[#54635d]">
+            Log any activity with minutes, distance, and an estimated burn.
           </p>
         </div>
       </div>
@@ -271,11 +276,11 @@ function ManualActivityPlanner({
         </div>
       </div>
 
-      <div className="rounded-[1.15rem] border border-primary-100 bg-primary-50/70 px-4 py-3">
-        <p className="text-xl font-black tabular-nums text-primary-800">
+      <div className="rounded-[1.15rem] border border-primary-100 bg-primary-50/70 px-4 py-2.5">
+        <p className="text-lg font-black tabular-nums text-primary-800">
           {calories} active kcal
         </p>
-        <p className="mt-1 text-xs font-semibold leading-5 text-primary-900/70">
+        <p className="mt-0.5 text-xs font-semibold leading-5 text-primary-900/70">
           Estimate uses {resolvedMinutes} min, {option.label.toLowerCase()} intensity, preview age {PROFILE_AGE}, and profile weight {PROFILE_WEIGHT_LB} lb.
         </p>
       </div>
@@ -325,12 +330,18 @@ export function WorkoutsView({
   const [activeQuickFilters, setActiveQuickFilters] = useState<QuickFilter[]>([]);
   const [workoutQuery, setWorkoutQuery] = useState(initialQuery ?? "");
   const [showRecommendation, setShowRecommendation] = useState(false);
+  const [showActivityPlanner, setShowActivityPlanner] = useState(false);
   const [showWorkoutLibrary, setShowWorkoutLibrary] = useState(
     () =>
       Boolean(initialQuery?.trim()) ||
       parseBodyPart(initialBodyPart) !== "all" ||
       parseWorkoutType(initialWorkoutType) !== "all"
   );
+  const [currentPage, setCurrentPage] = useState(1);
+  const [showAllMobileColumns, setShowAllMobileColumns] = useState(false);
+  const libraryRef = useRef<HTMLElement>(null);
+  const libraryHeadingRef = useRef<HTMLHeadingElement>(null);
+  const shouldFocusLibraryRef = useRef(false);
   // Shared store: workouts logged from Coach chat show up here too (D-gate).
   const {
     workouts: loggedWorkouts,
@@ -395,6 +406,22 @@ export function WorkoutsView({
     workoutQuery,
     workoutType,
   ]);
+  const totalPages = Math.max(1, Math.ceil(visible.length / WORKOUTS_PER_PAGE));
+  const activePage = Math.min(currentPage, totalPages);
+  const paginatedWorkouts = useMemo(
+    () => visible.slice((activePage - 1) * WORKOUTS_PER_PAGE, activePage * WORKOUTS_PER_PAGE),
+    [activePage, visible]
+  );
+
+  useEffect(() => {
+    if (!showWorkoutLibrary || !shouldFocusLibraryRef.current) return;
+    shouldFocusLibraryRef.current = false;
+    const frame = window.requestAnimationFrame(() => {
+      libraryRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      libraryHeadingRef.current?.focus({ preventScroll: true });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [showWorkoutLibrary]);
 
   const recommended = coachRecommendation.pick;
   const RecommendedIcon = recommended.icon;
@@ -407,11 +434,23 @@ export function WorkoutsView({
     workoutQuery.trim().length > 0;
 
   function toggleQuickFilter(filter: QuickFilter) {
+    setCurrentPage(1);
     setActiveQuickFilters((current) =>
       current.includes(filter)
         ? current.filter((item) => item !== filter)
         : [...current, filter]
     );
+  }
+
+  function openWorkoutLibrary() {
+    shouldFocusLibraryRef.current = true;
+    if (showWorkoutLibrary) {
+      libraryRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      libraryHeadingRef.current?.focus({ preventScroll: true });
+      shouldFocusLibraryRef.current = false;
+      return;
+    }
+    setShowWorkoutLibrary(true);
   }
 
   return (
@@ -427,9 +466,9 @@ export function WorkoutsView({
 
       <div className="fw-page-inner space-y-6">
 
-      <div className="grid items-start gap-5 xl:grid-cols-3">
+      <div className="grid min-w-0 grid-cols-2 items-stretch gap-3 sm:gap-5">
         {/* Path 1: Coach recommends */}
-        <Card className="fw-dark-panel relative overflow-hidden rounded-[24px] border-primary-500/30 px-7 py-7 shadow-[0_22px_46px_rgba(16,48,40,0.34)] ring-2 ring-primary-300/25">
+        <Card className="fw-dark-panel relative col-span-2 overflow-hidden rounded-[24px] border-primary-500/30 px-5 py-6 shadow-[0_22px_46px_rgba(16,48,40,0.34)] ring-2 ring-primary-300/25 sm:px-7 sm:py-7">
           <div className="pointer-events-none absolute -right-8 -top-10 h-40 w-40 rounded-full bg-primary-500/25 blur-2xl" />
           <div className="relative space-y-5">
           <div className="flex items-start gap-3">
@@ -504,16 +543,16 @@ export function WorkoutsView({
         </Card>
 
         {/* Path 2: Pick my own */}
-        <Card className="space-y-5 rounded-[24px] border-[#e6efeb] px-7 py-7 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
-          <div className="flex items-start gap-4">
-            <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[13px] bg-primary-100 text-primary-600">
+        <Card className="flex min-w-0 flex-col gap-3 rounded-[20px] border-[#e6efeb] px-3 py-4 shadow-[0_12px_30px_rgba(20,90,75,0.07)] sm:gap-4 sm:rounded-[24px] sm:px-6 sm:py-6">
+          <div className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:gap-4">
+            <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[12px] bg-primary-100 text-primary-600 sm:h-10 sm:w-10 sm:rounded-[13px]">
               <ListFilter className="h-5 w-5" />
             </span>
-            <div>
-              <h2 className="font-heading text-[22px] font-black tracking-tight text-[#16302a]">
+            <div className="min-w-0">
+              <h2 className="font-heading text-base font-black tracking-tight text-[#16302a] sm:text-[22px]">
                 Pick my own
               </h2>
-              <p className="mt-2 text-[15px] font-semibold leading-6 text-[#54635d]">
+              <p className="mt-1 hidden text-sm font-semibold leading-5 text-[#54635d] sm:block">
                 Search and filter the full library when you want to choose the session yourself.
               </p>
             </div>
@@ -521,12 +560,13 @@ export function WorkoutsView({
           <Button
             type="button"
             variant="secondary"
+            aria-label={showWorkoutLibrary ? "Hide workout library" : "Browse workout library"}
             aria-expanded={showWorkoutLibrary}
             aria-controls="workout-library"
-            onClick={() => setShowWorkoutLibrary((current) => !current)}
-            className="w-full"
+            onClick={showWorkoutLibrary ? () => setShowWorkoutLibrary(false) : openWorkoutLibrary}
+            className="mt-auto min-h-11 w-full px-2 text-xs sm:px-4 sm:text-sm"
           >
-            {showWorkoutLibrary ? "Hide workout library" : "Browse workout library"}
+            {showWorkoutLibrary ? "Hide library" : "Browse library"}
             <ChevronDown
               className={cn(
                 "h-4 w-4 transition-transform",
@@ -536,7 +576,43 @@ export function WorkoutsView({
           </Button>
         </Card>
 
-        <ManualActivityPlanner onAdd={addWorkout} />
+        <Card className="flex min-w-0 flex-col gap-3 rounded-[20px] border-[#e6efeb] px-3 py-4 shadow-[0_12px_30px_rgba(20,90,75,0.07)] sm:gap-4 sm:rounded-[24px] sm:px-6 sm:py-6">
+          <div className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:gap-4">
+            <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[12px] bg-sky-100 text-sky-700 sm:h-10 sm:w-10 sm:rounded-[13px]">
+              <Activity className="h-5 w-5" />
+            </span>
+            <div className="min-w-0">
+              <h2 className="font-heading text-base font-black tracking-tight text-[#16302a] sm:text-[22px]">
+                Activity
+              </h2>
+              <p className="mt-1 hidden text-sm font-semibold leading-5 text-[#54635d] sm:block">
+                Log minutes or distance for walking, running, sports, and more.
+              </p>
+            </div>
+          </div>
+          <Button
+            type="button"
+            variant="secondary"
+            aria-expanded={showActivityPlanner}
+            aria-controls="custom-activity-planner"
+            onClick={() => setShowActivityPlanner((current) => !current)}
+            className="mt-auto min-h-11 w-full px-2 text-xs sm:px-4 sm:text-sm"
+          >
+            {showActivityPlanner ? "Hide activity" : "Log activity"}
+            <ChevronDown
+              className={cn(
+                "h-4 w-4 transition-transform",
+                showActivityPlanner && "rotate-180"
+              )}
+            />
+          </Button>
+        </Card>
+
+        {showActivityPlanner && (
+          <div id="custom-activity-planner" className="col-span-2 min-w-0">
+            <ManualActivityPlanner onAdd={addWorkout} />
+          </div>
+        )}
       </div>
 
       {loggedWorkouts.length > 0 && (
@@ -627,7 +703,7 @@ export function WorkoutsView({
       )}
 
       {showWorkoutLibrary && (
-      <section id="workout-library" className="space-y-4">
+      <section ref={libraryRef} id="workout-library" className="min-w-0 scroll-mt-4 space-y-4">
         <div className="mt-1 flex items-center justify-between">
           <h2 className="font-heading text-sm font-black uppercase tracking-[0.16em] text-[#9db0aa]">
             Workout library
@@ -644,7 +720,11 @@ export function WorkoutsView({
         <Card className="space-y-5 rounded-[24px] border-[#e6efeb] px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)] md:px-7 md:py-7">
           <div className="space-y-5">
             <div className="flex flex-wrap items-end justify-between gap-3">
-              <h2 className="flex items-center gap-3 font-heading text-2xl font-black tracking-tight text-[#16302a]">
+              <h2
+                ref={libraryHeadingRef}
+                tabIndex={-1}
+                className="flex min-w-0 items-center gap-3 font-heading text-xl font-black tracking-tight text-[#16302a] outline-none sm:text-2xl"
+              >
                 <span className="inline-flex h-10 w-10 items-center justify-center rounded-[13px] bg-primary-100 text-primary-600">
                   <SlidersHorizontal className="h-5 w-5" />
                 </span>
@@ -663,8 +743,9 @@ export function WorkoutsView({
               {hasActiveFilters && (
                 <button
                   type="button"
-                  onClick={() => {
-                    setBodyPart("all");
+                    onClick={() => {
+                      setCurrentPage(1);
+                      setBodyPart("all");
                     setWorkoutType("all");
                     setLengthFilter("all");
                     setIntensityFilter("all");
@@ -679,12 +760,93 @@ export function WorkoutsView({
             </div>
 
             <div className="space-y-3 rounded-[1.35rem] border border-[#e6efeb] bg-white px-4 py-4">
-              <div className="flex flex-wrap gap-2">
+              <div className="grid gap-3 md:hidden">
+                <label>
+                  <span className="text-xs font-black uppercase tracking-[0.12em] text-[#7c968f]">Body part</span>
+                  <select
+                    aria-label="Body part"
+                    value={bodyPart}
+                    onChange={(event) => {
+                      setCurrentPage(1);
+                      setBodyPart(event.target.value as BodyPartFilter);
+                    }}
+                    className="mt-1.5 w-full rounded-2xl border border-[#dce8e3] bg-[#f4f8f6] px-3 py-2.5 text-sm font-bold text-[#16302a]"
+                  >
+                    {bodyPartFilters.map((filterOption) => <option key={filterOption.id} value={filterOption.id}>{filterOption.label}</option>)}
+                  </select>
+                </label>
+                <div className="grid grid-cols-2 gap-3">
+                  <label className="min-w-0">
+                    <span className="text-xs font-black uppercase tracking-[0.12em] text-[#7c968f]">Length</span>
+                    <select
+                      aria-label="Workout length"
+                      value={lengthFilter}
+                      onChange={(event) => {
+                        setCurrentPage(1);
+                        setLengthFilter(event.target.value as LengthFilter);
+                      }}
+                      className="mt-1.5 w-full rounded-2xl border border-[#dce8e3] bg-[#f4f8f6] px-3 py-2.5 text-sm font-bold text-[#16302a]"
+                    >
+                      {lengthFilters.map((filterOption) => <option key={filterOption.id} value={filterOption.id}>{filterOption.label}</option>)}
+                    </select>
+                  </label>
+                  <label className="min-w-0">
+                    <span className="text-xs font-black uppercase tracking-[0.12em] text-[#7c968f]">Intensity</span>
+                    <select
+                      aria-label="Intensity"
+                      value={intensityFilter}
+                      onChange={(event) => {
+                        setCurrentPage(1);
+                        setIntensityFilter(event.target.value as IntensityFilter);
+                      }}
+                      className="mt-1.5 w-full rounded-2xl border border-[#dce8e3] bg-[#f4f8f6] px-3 py-2.5 text-sm font-bold text-[#16302a]"
+                    >
+                      {intensityFilters.map((filterOption) => <option key={filterOption.id} value={filterOption.id}>{filterOption.label}</option>)}
+                    </select>
+                  </label>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <label className="min-w-0">
+                    <span className="text-xs font-black uppercase tracking-[0.12em] text-[#7c968f]">Type</span>
+                    <select
+                      aria-label="Workout type"
+                      value={workoutType}
+                      onChange={(event) => {
+                        setCurrentPage(1);
+                        setWorkoutType(event.target.value as WorkoutTypeFilter);
+                      }}
+                      className="mt-1.5 w-full rounded-2xl border border-[#dce8e3] bg-[#f4f8f6] px-3 py-2.5 text-sm font-bold text-[#16302a]"
+                    >
+                      {workoutTypeFilters.map((filterOption) => <option key={filterOption.id} value={filterOption.id}>{filterOption.label}</option>)}
+                    </select>
+                  </label>
+                  <label className="min-w-0">
+                    <span className="text-xs font-black uppercase tracking-[0.12em] text-[#7c968f]">Smart filter</span>
+                    <select
+                      aria-label="Smart filter"
+                      value={activeQuickFilters[0] ?? "all"}
+                      onChange={(event) => {
+                        setCurrentPage(1);
+                        setActiveQuickFilters(event.target.value === "all" ? [] : [event.target.value as QuickFilter]);
+                      }}
+                      className="mt-1.5 w-full rounded-2xl border border-[#dce8e3] bg-[#f4f8f6] px-3 py-2.5 text-sm font-bold text-[#16302a]"
+                    >
+                      <option value="all">All workouts</option>
+                      {quickFilters.map((filterOption) => <option key={filterOption.id} value={filterOption.id}>{filterOption.label}</option>)}
+                    </select>
+                  </label>
+                </div>
+              </div>
+
+              <div className="hidden flex-wrap gap-2 md:flex">
                 {bodyPartFilters.map((filterOption) => (
                   <button
                     key={filterOption.id}
                     type="button"
-                    onClick={() => setBodyPart(filterOption.id)}
+                    onClick={() => {
+                      setCurrentPage(1);
+                      setBodyPart(filterOption.id);
+                    }}
                     className={cn(
                       "rounded-full px-3.5 py-2 text-xs font-black transition",
                       bodyPart === filterOption.id
@@ -696,12 +858,15 @@ export function WorkoutsView({
                   </button>
                 ))}
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="hidden flex-wrap gap-2 md:flex">
                 {lengthFilters.map((filterOption) => (
                   <button
                     key={filterOption.id}
                     type="button"
-                    onClick={() => setLengthFilter(filterOption.id)}
+                    onClick={() => {
+                      setCurrentPage(1);
+                      setLengthFilter(filterOption.id);
+                    }}
                     className={cn(
                       "rounded-full px-3.5 py-2 text-xs font-black transition",
                       lengthFilter === filterOption.id
@@ -713,12 +878,15 @@ export function WorkoutsView({
                   </button>
                 ))}
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="hidden flex-wrap gap-2 md:flex">
                 {intensityFilters.map((filterOption) => (
                   <button
                     key={filterOption.id}
                     type="button"
-                    onClick={() => setIntensityFilter(filterOption.id)}
+                    onClick={() => {
+                      setCurrentPage(1);
+                      setIntensityFilter(filterOption.id);
+                    }}
                     className={cn(
                       "rounded-full px-3.5 py-2 text-xs font-black transition",
                       intensityFilter === filterOption.id
@@ -733,7 +901,10 @@ export function WorkoutsView({
                   <button
                     key={filterOption.id}
                     type="button"
-                    onClick={() => setWorkoutType(filterOption.id)}
+                    onClick={() => {
+                      setCurrentPage(1);
+                      setWorkoutType(filterOption.id);
+                    }}
                     className={cn(
                       "rounded-full px-3.5 py-2 text-xs font-black transition",
                       workoutType === filterOption.id
@@ -745,7 +916,7 @@ export function WorkoutsView({
                   </button>
                 ))}
               </div>
-              <div className="flex flex-wrap gap-2 border-t border-primary-100/70 pt-3">
+              <div className="hidden flex-wrap gap-2 border-t border-primary-100/70 pt-3 md:flex">
                 {quickFilters.map((filterOption) => {
                   const active = activeQuickFilters.includes(filterOption.id);
                   return (
@@ -778,7 +949,10 @@ export function WorkoutsView({
                   <input
                     name="q"
                     value={workoutQuery}
-                    onChange={(event) => setWorkoutQuery(event.target.value)}
+                    onChange={(event) => {
+                      setCurrentPage(1);
+                      setWorkoutQuery(event.target.value);
+                    }}
                     placeholder="Search rows, pull, ride..."
                     className="min-w-0 flex-1 bg-transparent text-sm font-bold text-[#16302a] outline-none placeholder:text-[#9db0aa]"
                   />
@@ -794,24 +968,48 @@ export function WorkoutsView({
             </form>
           </div>
 
-          <div className="overflow-hidden rounded-[22px] border border-[#dce8e3]">
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[72rem] border-collapse bg-white text-left">
+          <div className="min-w-0 overflow-hidden rounded-[22px] border border-[#dce8e3]">
+            <div className="flex items-center justify-between gap-3 border-b border-[#dce8e3] bg-primary-50/70 px-3 py-2.5 md:hidden">
+              <p className="min-w-0 text-xs font-semibold text-primary-900/70">
+                {showAllMobileColumns ? "Swipe within the table for every detail." : "Workout, time, and preview are shown."}
+              </p>
+              <button
+                type="button"
+                aria-expanded={showAllMobileColumns}
+                aria-controls="workout-results-table"
+                onClick={() => setShowAllMobileColumns((current) => !current)}
+                className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-primary-100 bg-white px-3 py-2 text-xs font-black text-primary-700"
+              >
+                <Columns3 className="h-3.5 w-3.5" />
+                {showAllMobileColumns ? "Essential only" : "Show all columns"}
+              </button>
+            </div>
+            <div
+              id="workout-results-table"
+              data-testid="workout-results-scroll"
+              className="max-w-full overflow-x-auto overscroll-x-contain"
+            >
+              <table
+                className={cn(
+                  "w-full border-collapse bg-white text-left",
+                  showAllMobileColumns ? "min-w-[72rem]" : "min-w-0 md:min-w-[72rem]"
+                )}
+              >
                 <thead className="bg-[#f4f8f6] text-xs font-black uppercase tracking-[0.14em] text-[#7c968f]">
                   <tr>
                     <th className="px-4 py-3">Workout</th>
-                    <th className="whitespace-nowrap px-4 py-3">Body part</th>
-                    <th className="whitespace-nowrap px-4 py-3">Type</th>
-                    <th className="px-4 py-3">Muscles</th>
+                    <th className={cn("whitespace-nowrap px-4 py-3", !showAllMobileColumns && "hidden md:table-cell")}>Body part</th>
+                    <th className={cn("whitespace-nowrap px-4 py-3", !showAllMobileColumns && "hidden md:table-cell")}>Type</th>
+                    <th className={cn("px-4 py-3", !showAllMobileColumns && "hidden md:table-cell")}>Muscles</th>
                     <th className="whitespace-nowrap px-4 py-3">Duration</th>
-                    <th className="whitespace-nowrap px-4 py-3">Intensity</th>
-                    <th className="px-4 py-3">Equipment</th>
-                    <th className="px-4 py-3">Goal</th>
+                    <th className={cn("whitespace-nowrap px-4 py-3", !showAllMobileColumns && "hidden md:table-cell")}>Intensity</th>
+                    <th className={cn("px-4 py-3", !showAllMobileColumns && "hidden md:table-cell")}>Equipment</th>
+                    <th className={cn("px-4 py-3", !showAllMobileColumns && "hidden md:table-cell")}>Goal</th>
                     <th className="px-4 py-3 text-right">Preview</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-neutral-100">
-                  {visible.map((workout) => {
+                  {paginatedWorkouts.map((workout) => {
                     const Icon = workout.icon;
                     const tone = workoutTone(workout);
                     const muscles = workout.targetMuscles ?? workout.bestFor.slice(0, 3);
@@ -829,30 +1027,30 @@ export function WorkoutsView({
 
                     return (
                       <tr key={workout.id} className="transition hover:bg-primary-50/45">
-                        <td className="px-4 py-2.5">
+                        <td className="min-w-0 px-3 py-2.5 sm:px-4">
                           <Link href={workoutHref(workout.id)} className="group inline-flex items-center gap-2">
                             {title}
                             <ArrowRight className="h-3.5 w-3.5 text-neutral-300 transition group-hover:translate-x-0.5 group-hover:text-primary-600" />
                           </Link>
                         </td>
-                        <td className="px-4 py-2.5">
+                        <td className={cn("px-4 py-2.5", !showAllMobileColumns && "hidden md:table-cell")}>
                           <span className={cn("whitespace-nowrap rounded-full px-3 py-1 text-xs font-black", tone.badge)}>
                             {workout.categoryLabel}
                           </span>
                         </td>
-                        <td className="whitespace-nowrap px-4 py-2.5 text-sm font-bold text-[#54635d]">{workout.workoutType}</td>
-                        <td className="max-w-[12rem] px-4 py-2.5 text-xs font-semibold text-[#7c968f]">
+                        <td className={cn("whitespace-nowrap px-4 py-2.5 text-sm font-bold text-[#54635d]", !showAllMobileColumns && "hidden md:table-cell")}>{workout.workoutType}</td>
+                        <td className={cn("max-w-[12rem] px-4 py-2.5 text-xs font-semibold text-[#7c968f]", !showAllMobileColumns && "hidden md:table-cell")}>
                           {muscles.slice(0, 3).join(", ")}
                         </td>
                         <td className="whitespace-nowrap px-4 py-2.5 text-sm font-bold tabular-nums text-[#54635d]">{workout.duration}</td>
-                        <td className="px-4 py-2.5">
+                        <td className={cn("px-4 py-2.5", !showAllMobileColumns && "hidden md:table-cell")}>
                           <span className={cn("whitespace-nowrap rounded-full px-3 py-1 text-xs font-black", tone.intensity)}>
                             {workout.intensity}
                           </span>
                         </td>
-                        <td className="max-w-[11rem] px-4 py-2.5 text-xs font-semibold text-[#7c968f]">{workout.equipment}</td>
-                        <td className="max-w-[12rem] px-4 py-2.5 text-xs font-semibold text-[#7c968f]">{workout.goal}</td>
-                        <td className="px-4 py-2.5 text-right">
+                        <td className={cn("max-w-[11rem] px-4 py-2.5 text-xs font-semibold text-[#7c968f]", !showAllMobileColumns && "hidden md:table-cell")}>{workout.equipment}</td>
+                        <td className={cn("max-w-[12rem] px-4 py-2.5 text-xs font-semibold text-[#7c968f]", !showAllMobileColumns && "hidden md:table-cell")}>{workout.goal}</td>
+                        <td className="px-3 py-2.5 text-right sm:px-4">
                           <Link
                             href={workoutHref(workout.id)}
                             aria-label={`Preview ${workout.title}`}
@@ -871,6 +1069,33 @@ export function WorkoutsView({
             {visible.length === 0 && (
               <div className="bg-white px-5 py-8 text-center text-sm font-semibold text-neutral-500">
                 No workouts match those filters yet.
+              </div>
+            )}
+            {visible.length > 0 && (
+              <div className="flex flex-col gap-3 border-t border-[#dce8e3] bg-white px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-center text-xs font-bold text-[#7c968f] sm:text-left" aria-live="polite">
+                  Page {activePage} of {totalPages} · Showing {(activePage - 1) * WORKOUTS_PER_PAGE + 1}-{Math.min(activePage * WORKOUTS_PER_PAGE, visible.length)} of {visible.length}
+                </p>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+                    disabled={activePage === 1}
+                    className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full border border-primary-100 bg-white px-4 py-2 text-sm font-black text-primary-700 disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                    Previous
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
+                    disabled={activePage === totalPages}
+                    className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full bg-primary-600 px-4 py-2 text-sm font-black text-white disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    Next
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                </div>
               </div>
             )}
           </div>
