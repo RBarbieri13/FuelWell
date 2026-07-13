@@ -24,11 +24,11 @@ describe("Coach provider routing", () => {
     })?.provider).toBe("vercel_ai_gateway");
   });
 
-  it("prefers deployment OIDC over a stale static Gateway key", () => {
+  it("prefers an explicit Gateway key over blocked deployment OIDC", () => {
     expect(resolveCoachProviderConfig({
       VERCEL_OIDC_TOKEN: "deployment-token",
-      AI_GATEWAY_API_KEY: "stale-static-key",
-    })?.credential).toBe("deployment-token");
+      AI_GATEWAY_API_KEY: "operator-key",
+    })?.credential).toBe("operator-key");
   });
 
   it("falls back to direct Anthropic and reports missing configuration", () => {

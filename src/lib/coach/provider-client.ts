@@ -21,12 +21,12 @@ function configured(value: string | undefined) {
   return trimmed ? trimmed : null;
 }
 
-/** Prefer the deployment-scoped gateway so Coach is not tied to one vendor balance. */
+/** Prefer an explicit Gateway key, then deployment OIDC, so operators can recover from OIDC account gates. */
 export function resolveCoachProviderConfig(
   env: Record<string, string | undefined> = process.env,
 ): CoachProviderConfig | null {
   const gatewayCredential =
-    configured(env.VERCEL_OIDC_TOKEN) ?? configured(env.AI_GATEWAY_API_KEY);
+    configured(env.AI_GATEWAY_API_KEY) ?? configured(env.VERCEL_OIDC_TOKEN);
   if (gatewayCredential) {
     return {
       provider: "vercel_ai_gateway",
