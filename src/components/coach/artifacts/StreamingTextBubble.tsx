@@ -15,7 +15,7 @@ export function StreamingTextBubble({ text, streaming }: StreamingTextBubbleProp
   return (
     <div className="w-full max-w-full min-w-0 overflow-hidden rounded-[1.5rem] rounded-bl-md border border-primary-100/80 bg-white/94 px-3 py-3 text-sm font-semibold leading-6 text-[#516b63] shadow-[0_18px_48px_rgba(22,48,42,0.08)] sm:px-4 md:max-w-[85%]">
       {text ? (
-        <div className="max-w-full min-w-0 break-words [overflow-wrap:anywhere]">
+        <div className="max-w-full min-w-0 break-words [overflow-wrap:anywhere] [&>*]:max-w-full [&>*]:min-w-0">
           <ReactMarkdown
             remarkPlugins={[remarkGfm, remarkMath]}
             rehypePlugins={[rehypeKatex]}
@@ -43,16 +43,16 @@ export function StreamingTextBubble({ text, streaming }: StreamingTextBubbleProp
 
 const markdownComponents = {
   h1: ({ className, ...props }: React.ComponentProps<"h1">) => (
-    <h1 className={cn("mb-2 mt-1 text-xl font-black leading-tight text-[#16302a]", className)} {...props} />
+    <h1 className={cn("mb-2 mt-1 break-words text-xl font-black leading-tight text-[#16302a] [overflow-wrap:anywhere]", className)} {...props} />
   ),
   h2: ({ className, ...props }: React.ComponentProps<"h2">) => (
-    <h2 className={cn("mb-2 mt-3 text-lg font-black leading-tight text-[#16302a]", className)} {...props} />
+    <h2 className={cn("mb-2 mt-3 break-words text-lg font-black leading-tight text-[#16302a] [overflow-wrap:anywhere]", className)} {...props} />
   ),
   h3: ({ className, ...props }: React.ComponentProps<"h3">) => (
-    <h3 className={cn("mb-1.5 mt-3 text-base font-black leading-tight text-[#16302a]", className)} {...props} />
+    <h3 className={cn("mb-1.5 mt-3 break-words text-base font-black leading-tight text-[#16302a] [overflow-wrap:anywhere]", className)} {...props} />
   ),
   h4: ({ className, ...props }: React.ComponentProps<"h4">) => (
-    <h4 className={cn("mb-1.5 mt-2 text-sm font-black uppercase tracking-wide text-[#516b63]", className)} {...props} />
+    <h4 className={cn("mb-1.5 mt-2 break-words text-sm font-black uppercase tracking-wide text-[#516b63] [overflow-wrap:anywhere]", className)} {...props} />
   ),
   p: ({ className, ...props }: React.ComponentProps<"p">) => (
     <p className={cn("my-2 first:mt-0 last:mb-0 whitespace-pre-wrap break-words", className)} {...props} />
@@ -73,13 +73,13 @@ const markdownComponents = {
     />
   ),
   ul: ({ className, ...props }: React.ComponentProps<"ul">) => (
-    <ul className={cn("my-2 ml-4 list-disc space-y-1.5 marker:text-primary-500", className)} {...props} />
+    <ul className={cn("my-2 ml-4 max-w-[calc(100%-1rem)] list-disc space-y-1.5 marker:text-primary-500", className)} {...props} />
   ),
   ol: ({ className, ...props }: React.ComponentProps<"ol">) => (
-    <ol className={cn("my-2 ml-4 list-decimal space-y-1.5 marker:font-black marker:text-primary-600", className)} {...props} />
+    <ol className={cn("my-2 ml-4 max-w-[calc(100%-1rem)] list-decimal space-y-1.5 marker:font-black marker:text-primary-600", className)} {...props} />
   ),
   li: ({ className, ...props }: React.ComponentProps<"li">) => (
-    <li className={cn("pl-1 leading-6 [&>ul]:mt-1.5 [&>ol]:mt-1.5", className)} {...props} />
+    <li className={cn("max-w-full break-words pl-1 leading-6 [overflow-wrap:anywhere] [&>ul]:mt-1.5 [&>ol]:mt-1.5", className)} {...props} />
   ),
   blockquote: ({ className, ...props }: React.ComponentProps<"blockquote">) => (
     <blockquote

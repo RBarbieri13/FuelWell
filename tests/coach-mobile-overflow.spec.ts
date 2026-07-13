@@ -43,12 +43,41 @@ async function assertNoViewportOverflow(page: Page) {
     viewportWidth: window.innerWidth,
     documentScrollWidth: document.documentElement.scrollWidth,
     bodyScrollWidth: document.body.scrollWidth,
+    overflowingContainers: Array.from(
+      document.querySelectorAll<HTMLElement>("main, main > div, main > div > div")
+    )
+      .filter((element) => element.scrollWidth > element.clientWidth + 1)
+      .map((element) => ({
+        tag: element.tagName,
+        className: element.className,
+        clientWidth: element.clientWidth,
+        scrollWidth: element.scrollWidth,
+      })),
   }));
   expect(
     dimensions.documentScrollWidth,
     `document width ${dimensions.documentScrollWidth}px exceeds viewport ${dimensions.viewportWidth}px`
   ).toBeLessThanOrEqual(dimensions.viewportWidth);
+  expect(dimensions.overflowingContainers, "the inner Coach conversation must not scroll horizontally").toEqual([]);
   return dimensions;
+}
+
+async function expectContained(page: Page, locator: Locator, label: string) {
+  const result = await locator.evaluate((element) => {
+    const rect = element.getBoundingClientRect();
+    const parent = element.parentElement?.getBoundingClientRect();
+    return {
+      left: rect.left,
+      right: rect.right,
+      width: rect.width,
+      viewport: window.innerWidth,
+      parentLeft: parent?.left ?? 0,
+      parentRight: parent?.right ?? window.innerWidth,
+    };
+  });
+  expect(result.left, `${label} starts outside its parent: ${JSON.stringify(result)}`).toBeGreaterThanOrEqual(result.parentLeft - 1);
+  expect(result.right, `${label} extends outside its parent: ${JSON.stringify(result)}`).toBeLessThanOrEqual(result.parentRight + 1);
+  expect(result.right, `${label} extends outside the viewport: ${JSON.stringify(result)}`).toBeLessThanOrEqual(result.viewport + 1);
 }
 
 async function captureState(
@@ -106,19 +135,24 @@ test.describe("Coach mobile overflow release gate", () => {
         .getByText("Rich response support", { exact: true })
         .locator("xpath=ancestor::section");
       await captureState(page, testInfo, width, "rich-text", richText);
+      await expectContained(page, richText.locator("h2").last(), "rich heading");
 
       const table = richText.locator("table");
       await expect(table.getByText("Salmon bowl")).toBeVisible();
-      await captureState(page, testInfo, width, "table", table.locator("xpath=parent::div"));
+      const tableScroller = table.locator("xpath=parent::div");
+      await expectContained(page, tableScroller, "table scroller");
+      await captureState(page, testInfo, width, "table", tableScroller);
 
       const nestedList = richText.locator("ol").first();
       await expect(nestedList.locator("ul")).toBeVisible();
+      await expectContained(page, nestedList, "nested list");
       await captureState(page, testInfo, width, "nested-list", nestedList);
 
       const formula = richText.locator(".katex").first();
       await captureState(page, testInfo, width, "formula", formula);
 
       const media = richText.getByRole("img", { name: "FuelWell rich chat preview" });
+      await expectContained(page, media, "rich media");
       await captureState(page, testInfo, width, "media", media);
 
       const composer = page.getByLabel("Message Coach");

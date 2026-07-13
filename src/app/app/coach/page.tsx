@@ -309,7 +309,7 @@ export default function CoachPage() {
         </div>
       </div>
 
-      <main className="min-w-0 flex-1 overflow-y-auto px-3 py-5 sm:px-4 sm:py-6 md:px-8">
+      <main className="min-w-0 flex-1 overflow-x-hidden overflow-y-auto px-3 py-5 sm:px-4 sm:py-6 md:px-8">
         <div className="mx-auto w-full max-w-5xl min-w-0">
           <div className="min-w-0 space-y-5">
             {items.length === 0 && (
@@ -814,9 +814,9 @@ function RichTextPreview() {
   ];
 
   return (
-    <section className="rounded-[2rem] border border-primary-100/80 bg-white/88 p-5 shadow-[0_18px_48px_rgba(22,48,42,0.07)]">
-      <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
-        <div className="max-w-xl">
+    <section className="max-w-full min-w-0 overflow-hidden rounded-[2rem] border border-primary-100/80 bg-white/88 p-4 shadow-[0_18px_48px_rgba(22,48,42,0.07)] sm:p-5">
+      <div className="flex max-w-full min-w-0 flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+        <div className="max-w-full min-w-0 xl:max-w-xl">
           <p className="text-xs font-black uppercase tracking-[0.16em] text-primary-600">
             Rich response support
           </p>
@@ -825,15 +825,15 @@ function RichTextPreview() {
             The same chat bubble supports headers, nested lists, tables, formulas, links, and inline media when the coach replies.
           </p>
         </div>
-        <div className="grid gap-2 sm:grid-cols-2 xl:w-[30rem]">
+        <div className="grid max-w-full min-w-0 gap-2 sm:grid-cols-2 xl:w-[30rem]">
           {capabilities.map((item) => {
             const Icon = item.icon;
             return (
-              <div key={item.label} className="fw-soft-row flex gap-3 p-3">
+              <div key={item.label} className="fw-soft-row flex max-w-full min-w-0 gap-3 p-3">
                 <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-[0.95rem] ${item.tone}`}>
                   <Icon className="h-4 w-4" />
                 </span>
-                <div>
+                <div className="min-w-0">
                   <p className="text-sm font-black text-[#16302a]">{item.label}</p>
                   <p className="text-xs font-semibold leading-5 text-[#78928a]">{item.detail}</p>
                 </div>
@@ -843,14 +843,14 @@ function RichTextPreview() {
         </div>
       </div>
 
-      <div className="mt-5 grid gap-4 xl:grid-cols-[minmax(0,1fr)_18rem]">
-        <div className="flex gap-3">
+      <div className="mt-5 grid max-w-full min-w-0 gap-4 xl:grid-cols-[minmax(0,1fr)_18rem]">
+        <div className="flex max-w-full min-w-0 gap-2 sm:gap-3">
           <CoachAvatar />
           <div className="min-w-0 flex-1">
             <StreamingTextBubble text={richPreviewMarkdown} streaming={false} />
           </div>
         </div>
-        <div className="rounded-[1.5rem] border border-primary-100 bg-primary-50/80 p-4">
+        <div className="max-w-full min-w-0 rounded-[1.5rem] border border-primary-100 bg-primary-50/80 p-4">
           <div className="flex h-11 w-11 items-center justify-center rounded-[1rem] bg-white text-primary-700 shadow-sm">
             <Heading2 className="h-5 w-5" />
           </div>
