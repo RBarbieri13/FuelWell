@@ -425,7 +425,6 @@ export function DailyReviewSurface({
   const { workouts } = useWorkoutLog();
   const { meals, hydrateDayLog } = useDayLog();
   const [overviewExpanded, setOverviewExpanded] = useState(true);
-  const [ledgerExpanded, setLedgerExpanded] = useState(true);
   const [summaryExpanded, setSummaryExpanded] = useState(true);
   const [detailsExpanded, setDetailsExpanded] = useState(true);
   const [nutritionExpanded, setNutritionExpanded] = useState(true);
@@ -484,21 +483,13 @@ export function DailyReviewSurface({
           </div>
         </DailyReviewSection>
 
-        <DailyReviewSection
-          icon={Activity}
-          eyebrow="Energy ledger"
-          title="Intake and output"
-          description="Compare eating, base burn, movement, and daily balance in one bounded section."
-          expanded={ledgerExpanded}
-          onToggle={() => setLedgerExpanded((value) => !value)}
-          collapsedText="Energy ledger collapsed. Expand it when you want the intake and output chart."
-        >
+        <section aria-label="Energy ledger" className="min-w-0">
           <CalorieBalanceChart
             meals={meals}
             targets={targets}
             activityOutputSignals={activityOutputSignals}
           />
-        </DailyReviewSection>
+        </section>
 
         <DailyReviewSection
           icon={ShieldCheck}

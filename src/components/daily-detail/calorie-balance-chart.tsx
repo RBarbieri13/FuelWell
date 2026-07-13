@@ -232,7 +232,8 @@ export function CalorieBalanceChart({
   const [showBmr, setShowBmr] = useState(true);
   const [showSessions, setShowSessions] = useState(true);
   const [selectedBar, setSelectedBar] = useState<SelectedBar | null>(null);
-  const [expanded, setExpanded] = useState(false);
+  const [intakeExpanded, setIntakeExpanded] = useState(true);
+  const [outputExpanded, setOutputExpanded] = useState(true);
 
   const days = useMemo(
     () => buildSampleHistory(buildToday(meals, targets, activityOutputSignals)),
@@ -252,8 +253,12 @@ export function CalorieBalanceChart({
   }));
   const maxTotal = Math.max(
     1,
-    ...filteredDays.flatMap((day) => [totalCalories(day.intake), totalCalories(day.output)])
+    ...filteredDays.flatMap((day) => [
+      ...(intakeExpanded ? [totalCalories(day.intake)] : []),
+      ...(outputExpanded ? [totalCalories(day.output)] : []),
+    ])
   );
+  const hasExpandedSeries = intakeExpanded || outputExpanded;
   const windowLabel =
     range === 1 && clampedOffset === 0
       ? "Today only"
@@ -300,66 +305,83 @@ export function CalorieBalanceChart({
                 </button>
               ))}
             </div>
-            <div className="flex flex-wrap gap-2">
-              <FilterButton active={showBmr} onClick={() => setShowBmr((value) => !value)}>
-                Base burn
-              </FilterButton>
-              <FilterButton active={showSessions} onClick={() => setShowSessions((value) => !value)}>
-                Sessions
-              </FilterButton>
-              <button
-                type="button"
-                onClick={() => setExpanded((value) => !value)}
-                className="inline-flex items-center gap-2 rounded-full border border-primary-100 bg-white px-3.5 py-2 text-xs font-black text-primary-700 shadow-sm transition hover:bg-primary-50"
-                aria-expanded={expanded}
-              >
-                {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                {expanded ? "Collapse" : "Expand"}
-              </button>
-            </div>
           </div>
         </div>
 
-        <div className="mt-4 flex flex-col gap-3 rounded-[1.2rem] border border-primary-100 bg-[#f8fbf9] p-3 md:flex-row md:items-center md:justify-between">
-          <div className="flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-primary-700">
-              <CalendarRange className="h-5 w-5" />
-            </span>
-            <div>
-              <p className="text-sm font-black text-[#16302a]">{windowLabel}</p>
-              <p className="text-xs font-semibold text-[#7c968f]">
-                Hover any bar for an instant breakdown. Click to pin the detail open.
-              </p>
-            </div>
-          </div>
-          <div className="flex gap-2">
-            <Button
-              type="button"
-              variant="secondary"
-              size="sm"
-              onClick={() => setOffset((value) => Math.min(value + 1, maxOffset))}
-              disabled={clampedOffset >= maxOffset}
-              className="rounded-full"
-            >
-              <ChevronLeft className="h-4 w-4" />
-              Back
-            </Button>
-            <Button
-              type="button"
-              variant="secondary"
-              size="sm"
-              onClick={() => setOffset((value) => Math.max(value - 1, 0))}
-              disabled={clampedOffset === 0}
-              className="rounded-full"
-            >
-              Forward
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
+        <div
+          className="mt-4 grid gap-2"
+          aria-label="Energy ledger visibility"
+          data-testid="energy-ledger-controls"
+        >
+          <LedgerSeriesToggle
+            label="Intake"
+            detail="Protein, carbs, and fat"
+            expanded={intakeExpanded}
+            onClick={() => setIntakeExpanded((value) => !value)}
+            tone="intake"
+            controlsId={hasExpandedSeries ? "energy-ledger-content" : undefined}
+          />
+          <LedgerSeriesToggle
+            label="Output"
+            detail="Base burn and activity"
+            expanded={outputExpanded}
+            onClick={() => setOutputExpanded((value) => !value)}
+            tone="output"
+            controlsId={hasExpandedSeries ? "energy-ledger-content" : undefined}
+          />
         </div>
 
-        {expanded ? (
-          <>
+        {hasExpandedSeries && (
+          <div id="energy-ledger-content" data-testid="energy-ledger-content">
+            <div className="mt-4 flex flex-col gap-3 rounded-[1.2rem] border border-primary-100 bg-primary-50/45 p-3 md:flex-row md:items-center md:justify-between">
+              <div className="flex min-w-0 items-center gap-3">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-primary-700">
+                  <CalendarRange className="h-5 w-5" />
+                </span>
+                <div className="min-w-0">
+                  <p className="text-sm font-black text-primary-950">{windowLabel}</p>
+                  <p className="text-xs font-semibold text-primary-900/60">
+                    Hover any bar for an instant breakdown. Click to pin the detail open.
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => setOffset((value) => Math.min(value + 1, maxOffset))}
+                  disabled={clampedOffset >= maxOffset}
+                  className="min-w-0 flex-1 rounded-full md:flex-none"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                  Back
+                </Button>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => setOffset((value) => Math.max(value - 1, 0))}
+                  disabled={clampedOffset === 0}
+                  className="min-w-0 flex-1 rounded-full md:flex-none"
+                >
+                  Forward
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+
+            {outputExpanded && (
+              <div className="mt-3 flex flex-wrap gap-2">
+                <FilterButton active={showBmr} onClick={() => setShowBmr((value) => !value)}>
+                  Base burn
+                </FilterButton>
+                <FilterButton active={showSessions} onClick={() => setShowSessions((value) => !value)}>
+                  Sessions
+                </FilterButton>
+              </div>
+            )}
+
             <div className="mt-4 overflow-x-auto pb-2">
               <p className="mb-3 text-xs font-black uppercase tracking-[0.12em] text-[#91a7a0] md:hidden">
                 Swipe sideways to compare days
@@ -374,49 +396,59 @@ export function CalorieBalanceChart({
                     day={day}
                     maxTotal={maxTotal}
                     onSelect={setSelectedBar}
+                    showIntake={intakeExpanded}
+                    showOutput={outputExpanded}
                   />
                 ))}
               </div>
             </div>
 
-            {range === 30 && <AggregateThirtyDayCharts days={filteredDays} />}
+            {range === 30 && (
+              <AggregateThirtyDayCharts
+                days={filteredDays}
+                showIntake={intakeExpanded}
+                showOutput={outputExpanded}
+              />
+            )}
 
             <div className="mt-4 flex flex-wrap gap-3 border-t border-primary-100 pt-4 text-xs font-bold text-[#78928a]">
-              <LegendItem tone="protein" label="Protein" />
-              <LegendItem tone="carbs" label="Carbs" />
-              <LegendItem tone="fat" label="Fat" />
-              <LegendItem tone="bmr" label="Base burn" />
-              <LegendItem tone="steps" label="Steps" />
-              <LegendItem tone="training" label="Workout" />
-              <LegendItem tone="mobility" label="Mobility" />
+              {intakeExpanded && <LegendItem tone="protein" label="Protein" />}
+              {intakeExpanded && <LegendItem tone="carbs" label="Carbs" />}
+              {intakeExpanded && <LegendItem tone="fat" label="Fat" />}
+              {outputExpanded && <LegendItem tone="bmr" label="Base burn" />}
+              {outputExpanded && <LegendItem tone="steps" label="Steps" />}
+              {outputExpanded && <LegendItem tone="training" label="Workout" />}
+              {outputExpanded && <LegendItem tone="mobility" label="Mobility" />}
             </div>
 
-            <div className="mt-4 grid gap-3 md:grid-cols-3">
-              <TrendCard
-                icon={Flame}
-                label="Avg intake"
-                value={`${Math.round(average(filteredDays.map((day) => totalCalories(day.intake)))).toLocaleString()} kcal`}
-                detail="Macro calories over visible window"
-              />
-              <TrendCard
-                icon={Activity}
-                label="Avg output"
-                value={`${Math.round(average(filteredDays.map((day) => totalCalories(day.output)))).toLocaleString()} kcal`}
-                detail="Base burn plus visible movement filters"
-              />
-              <TrendCard
-                icon={Layers3}
-                label="Avg balance"
-                value={`${Math.round(
-                  average(filteredDays.map((day) => totalCalories(day.intake) - totalCalories(day.output)))
-                ).toLocaleString()} kcal`}
-                detail="Negative means output exceeded intake"
-              />
+            <div className={cn("mt-4 grid gap-3", intakeExpanded && outputExpanded ? "md:grid-cols-3" : "md:grid-cols-1")}>
+              {intakeExpanded && (
+                <TrendCard
+                  icon={Flame}
+                  label="Avg intake"
+                  value={`${Math.round(average(filteredDays.map((day) => totalCalories(day.intake)))).toLocaleString()} kcal`}
+                  detail="Macro calories over visible window"
+                />
+              )}
+              {outputExpanded && (
+                <TrendCard
+                  icon={Activity}
+                  label="Avg output"
+                  value={`${Math.round(average(filteredDays.map((day) => totalCalories(day.output)))).toLocaleString()} kcal`}
+                  detail="Base burn plus visible movement filters"
+                />
+              )}
+              {intakeExpanded && outputExpanded && (
+                <TrendCard
+                  icon={Layers3}
+                  label="Avg balance"
+                  value={`${Math.round(
+                    average(filteredDays.map((day) => totalCalories(day.intake) - totalCalories(day.output)))
+                  ).toLocaleString()} kcal`}
+                  detail="Negative means output exceeded intake"
+                />
+              )}
             </div>
-          </>
-        ) : (
-          <div className="mt-4 rounded-[1.2rem] border border-primary-100 bg-primary-50/70 px-4 py-3 text-sm font-bold text-primary-900/75">
-            Ledger collapsed. Expand it when you want to compare intake, output, and daily balance.
           </div>
         )}
       </Card>
@@ -428,14 +460,67 @@ export function CalorieBalanceChart({
   );
 }
 
+function LedgerSeriesToggle({
+  label,
+  detail,
+  expanded,
+  onClick,
+  tone,
+  controlsId,
+}: {
+  label: string;
+  detail: string;
+  expanded: boolean;
+  onClick: () => void;
+  tone: BarKind;
+  controlsId?: string;
+}) {
+  const isIntake = tone === "intake";
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        "flex min-h-12 w-full min-w-0 items-center justify-between gap-2 rounded-[1rem] border px-3 py-2 text-left shadow-sm transition",
+        expanded
+          ? isIntake
+            ? "border-primary-600 bg-primary-600 text-white hover:bg-primary-700"
+            : "border-sky-600 bg-sky-600 text-white hover:bg-sky-700"
+          : isIntake
+            ? "border-primary-200 bg-primary-50 text-primary-800 hover:bg-primary-100"
+            : "border-sky-200 bg-sky-100 text-sky-700 hover:bg-sky-200"
+      )}
+      aria-expanded={expanded}
+      aria-controls={controlsId}
+      aria-label={`${expanded ? "Collapse" : "Expand"} ${label.toLowerCase()} series`}
+      data-testid={`energy-ledger-${tone}-toggle`}
+    >
+      <span className="min-w-0">
+        <span className="block text-xs font-black sm:text-sm">
+          {expanded ? `Collapse ${label.toLowerCase()}` : `Expand ${label.toLowerCase()}`}
+        </span>
+        <span className={cn("hidden text-xs font-semibold sm:block", expanded ? "text-white/80" : "opacity-70")}>
+          {detail}
+        </span>
+      </span>
+      {expanded ? <ChevronUp className="h-5 w-5 shrink-0" /> : <ChevronDown className="h-5 w-5 shrink-0" />}
+    </button>
+  );
+}
+
 function DayColumn({
   day,
   maxTotal,
   onSelect,
+  showIntake,
+  showOutput,
 }: {
   day: BalanceDay;
   maxTotal: number;
   onSelect: (selected: SelectedBar) => void;
+  showIntake: boolean;
+  showOutput: boolean;
 }) {
   const intakeTotal = totalCalories(day.intake);
   const outputTotal = totalCalories(day.output);
@@ -444,20 +529,24 @@ function DayColumn({
   return (
     <div className="flex min-h-[16rem] flex-col justify-end gap-2 rounded-[1.1rem] border border-transparent p-2 transition hover:border-primary-100 hover:bg-white">
       <div className="flex flex-1 items-end justify-center gap-2">
-        <StackedBar
-          label="Intake"
-          total={intakeTotal}
-          segments={day.intake}
-          maxTotal={maxTotal}
-          onClick={() => onSelect({ day, kind: "intake" })}
-        />
-        <StackedBar
-          label="Output"
-          total={outputTotal}
-          segments={day.output}
-          maxTotal={maxTotal}
-          onClick={() => onSelect({ day, kind: "output" })}
-        />
+        {showIntake && (
+          <StackedBar
+            label="Intake"
+            total={intakeTotal}
+            segments={day.intake}
+            maxTotal={maxTotal}
+            onClick={() => onSelect({ day, kind: "intake" })}
+          />
+        )}
+        {showOutput && (
+          <StackedBar
+            label="Output"
+            total={outputTotal}
+            segments={day.output}
+            maxTotal={maxTotal}
+            onClick={() => onSelect({ day, kind: "output" })}
+          />
+        )}
       </div>
       <div className="text-center">
         <p className="text-sm font-black text-[#16302a]">{day.label}</p>
@@ -541,14 +630,26 @@ function StackedBar({
   );
 }
 
-function AggregateThirtyDayCharts({ days }: { days: BalanceDay[] }) {
+function AggregateThirtyDayCharts({
+  days,
+  showIntake,
+  showOutput,
+}: {
+  days: BalanceDay[];
+  showIntake: boolean;
+  showOutput: boolean;
+}) {
   const intake = aggregateSegments(days.flatMap((day) => day.intake));
   const output = aggregateSegments(days.flatMap((day) => day.output));
 
   return (
-    <div className="mt-6 grid gap-4 lg:grid-cols-2">
-      <AggregateChart title="30-day intake aggregate" detail="Protein, carbs, and fat across the full window." segments={intake} />
-      <AggregateChart title="30-day output aggregate" detail="Base burn and movement across the full window." segments={output} />
+    <div className={cn("mt-6 grid gap-4", showIntake && showOutput && "lg:grid-cols-2")}>
+      {showIntake && (
+        <AggregateChart title="30-day intake aggregate" detail="Protein, carbs, and fat across the full window." segments={intake} />
+      )}
+      {showOutput && (
+        <AggregateChart title="30-day output aggregate" detail="Base burn and movement across the full window." segments={output} />
+      )}
     </div>
   );
 }
