@@ -208,19 +208,19 @@ export default function GroceryListPage() {
   return (
     <div className="fw-app-surface">
       <header className="fw-page-header">
-        <div className="fw-page-inner flex flex-col gap-4 py-7 sm:flex-row sm:items-center sm:justify-between">
-          <div>
+        <div className="fw-page-inner flex min-w-0 flex-col gap-4 py-5 sm:flex-row sm:items-center sm:justify-between sm:py-7">
+          <div className="min-w-0">
             <h1 className="fw-heading text-3xl md:text-4xl">Grocery list</h1>
             <p className="fw-muted mt-1 text-base">
               Grouped from your planned meals — check off as you go.
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_minmax(0,1fr)_3rem] gap-2 sm:flex sm:items-center sm:gap-3">
             <Button
               type="button"
               size="lg"
               onClick={() => setGroceryItems(items.map((item) => ({ ...item, checked: true })))}
-              className="rounded-full"
+              className="min-w-0 whitespace-normal rounded-full px-3 text-center text-sm sm:px-5 sm:text-base"
             >
               <CheckCheck className="w-5 h-5" />
               Mark all shopped
@@ -231,23 +231,23 @@ export default function GroceryListPage() {
               variant="secondary"
               onClick={clearAndArchiveList}
               disabled={items.length === 0}
-              className="rounded-full"
+              className="min-w-0 whitespace-normal rounded-full px-3 text-center text-sm sm:px-5 sm:text-base"
             >
               <History className="w-5 h-5" />
               Clear list
             </Button>
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary-600 text-lg font-black text-white shadow-[0_16px_34px_rgba(21,145,108,0.24)]">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary-600 text-base font-black text-white shadow-[0_16px_34px_rgba(21,145,108,0.24)] sm:h-14 sm:w-14 sm:text-lg">
               M
             </div>
           </div>
         </div>
       </header>
 
-      <div className="fw-page-inner grid gap-5 lg:grid-cols-[minmax(0,1fr)_18rem] 2xl:grid-cols-[minmax(0,1fr)_20rem]">
-        <div className="space-y-4">
-          <Card className="fw-mint-panel rounded-[24px] border-primary-200/80 px-6 py-6 shadow-none">
+      <div className="fw-page-inner grid min-w-0 gap-5 lg:grid-cols-[minmax(0,1fr)_18rem] 2xl:grid-cols-[minmax(0,1fr)_20rem]">
+        <div className="min-w-0 space-y-4">
+          <Card className="fw-mint-panel min-w-0 rounded-[24px] border-primary-200/80 px-4 py-5 shadow-none sm:px-6 sm:py-6">
             <div className="grid gap-5 sm:grid-cols-[1fr_auto] sm:items-center">
-              <div>
+              <div className="min-w-0">
                 <div className="inline-flex items-center gap-2 rounded-full border border-primary-100 bg-white px-4 py-2 text-sm font-black text-primary-700">
                   <ShoppingBasket className="w-3.5 h-3.5" />
                   This week
@@ -263,7 +263,7 @@ export default function GroceryListPage() {
                     : "Protein and produce are the priority. Pantry items can wait if you are doing a quick store run."}
                 </p>
               </div>
-              <div className="rounded-[20px] bg-white px-8 py-6 text-center shadow-[0_8px_18px_rgba(20,90,75,0.08)]">
+              <div className="min-w-0 rounded-[20px] bg-white px-5 py-5 text-center shadow-[0_8px_18px_rgba(20,90,75,0.08)] sm:px-8 sm:py-6">
                 <p className="font-heading text-[42px] font-black leading-none tabular-nums text-primary-600">
                   {checkedCount}/{items.length}
                 </p>
@@ -273,8 +273,8 @@ export default function GroceryListPage() {
           </Card>
         </div>
 
-        <aside className="space-y-5">
-          <Card className="rounded-[22px] border-[#e6efeb] px-6 py-6 shadow-[0_8px_22px_rgba(20,90,75,0.06)]">
+        <aside className="min-w-0 space-y-5">
+          <Card className="min-w-0 rounded-[22px] border-[#e6efeb] px-4 py-5 shadow-[0_8px_22px_rgba(20,90,75,0.06)] sm:px-6 sm:py-6">
             <h2 className="flex items-center gap-3 font-heading text-lg font-black tracking-tight text-[#16302a]">
               <span className="fw-icon-chip h-10 w-10 rounded-full">
                 <ListPlus className="w-5 h-5" />
@@ -314,7 +314,7 @@ export default function GroceryListPage() {
           </Card>
         </aside>
 
-        <section className="order-3 grid gap-5 lg:col-span-2 lg:grid-cols-3">
+        <section className="order-3 grid min-w-0 gap-5 lg:col-span-2 lg:grid-cols-3">
           <Card className="fw-dark-panel rounded-[22px] px-6 py-6 shadow-[0_18px_38px_rgba(16,48,40,0.3)]">
             <span className="inline-flex h-10 w-10 items-center justify-center rounded-[13px] bg-gradient-to-br from-primary-500 to-[#1592a0] text-white">
               <Sparkles className="h-5 w-5" />
@@ -406,8 +406,8 @@ export default function GroceryListPage() {
           </Card>
         </section>
 
-        <section className="order-2 space-y-4 lg:col-span-2">
-          <Card className="rounded-[22px] border-primary-100 bg-white/88 px-4 py-4 shadow-[0_8px_22px_rgba(20,90,75,0.05)]">
+        <section className="order-2 min-w-0 space-y-4 lg:col-span-2">
+          <Card className="min-w-0 rounded-[22px] border-primary-100 bg-white/88 px-4 py-4 shadow-[0_8px_22px_rgba(20,90,75,0.05)]">
             <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
               <div>
                 <h2 className="font-heading text-lg font-black text-[#16302a]">
@@ -427,7 +427,42 @@ export default function GroceryListPage() {
                 </button>
               )}
             </div>
-            <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+            <div className="mt-3 sm:hidden">
+              <label htmlFor="mobile-recipe-filter" className="sr-only">
+                Add a recipe filter
+              </label>
+              <select
+                id="mobile-recipe-filter"
+                value=""
+                onChange={(event) => {
+                  if (event.target.value) toggleSource(event.target.value);
+                }}
+                className="min-h-12 w-full rounded-xl border border-primary-100 bg-[#f8fbf9] px-3 text-sm font-black text-[#16302a] outline-none focus:ring-2 focus:ring-primary-100"
+              >
+                <option value="">Filter by recipe</option>
+                {recipeOptions.map((option) => (
+                  <option key={option.source} value={option.source}>
+                    {option.source} ({option.count})
+                  </option>
+                ))}
+              </select>
+              {selectedSources.length > 0 && (
+                <div className="mt-2 flex min-w-0 flex-wrap gap-2" aria-label="Active recipe filters">
+                  {selectedSources.map((source) => (
+                    <button
+                      key={source}
+                      type="button"
+                      onClick={() => toggleSource(source)}
+                      className="min-h-11 max-w-full rounded-full border border-primary-500 bg-primary-600 px-3 py-2 text-left text-xs font-black text-white"
+                      aria-label={`Remove ${source} filter`}
+                    >
+                      <span className="block truncate">{source} ×</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="mt-3 hidden gap-2 overflow-x-auto pb-1 sm:flex">
               {recipeOptions.map((option) => {
                 const selected = selectedSources.includes(option.source);
                 return (
@@ -453,8 +488,119 @@ export default function GroceryListPage() {
             </div>
           </Card>
 
-          <Card padding="sm" className="overflow-hidden rounded-[22px] border-[#dcebe5] shadow-[0_10px_26px_rgba(20,90,75,0.06)]">
-            <div className="overflow-x-auto">
+          <Card padding="sm" className="min-w-0 overflow-hidden rounded-[22px] border-[#dcebe5] shadow-[0_10px_26px_rgba(20,90,75,0.06)]">
+            <div className="space-y-3 p-3 md:hidden" data-testid="mobile-grocery-list">
+              {filteredItems.map((item) => {
+                const details = inferGroceryDetails(item.name, item.amount, item.category);
+                const servingSize = item.servingSize ?? details.servingSize;
+                const classification = item.classification ?? details.classification;
+                const vitaminBenefit = item.vitaminBenefit ?? details.vitaminBenefit;
+                return (
+                  <article
+                    key={item.id}
+                    data-testid="mobile-grocery-item"
+                    className={cn(
+                      "min-w-0 rounded-[18px] border border-primary-100 p-3",
+                      item.checked ? "bg-primary-50/55" : "bg-white"
+                    )}
+                  >
+                    <div className="grid min-w-0 grid-cols-[2.75rem_minmax(0,1fr)_2.75rem] items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={() => toggleItem(item.id)}
+                        aria-label={item.checked ? `Uncheck ${item.name}` : `Check ${item.name}`}
+                        className={cn(
+                          "flex h-11 w-11 items-center justify-center rounded-full transition-colors",
+                          item.checked ? "text-primary-500" : "text-[#cfe0da] hover:text-primary-500"
+                        )}
+                      >
+                        {item.checked ? <CheckCircle2 className="h-6 w-6" /> : <Circle className="h-6 w-6" />}
+                      </button>
+                      <textarea
+                        value={item.name}
+                        onChange={(event) => updateItem(item.id, { name: event.target.value })}
+                        rows={2}
+                        className={cn(
+                          "min-w-0 w-full resize-none rounded-xl border border-transparent bg-transparent px-2 py-1.5 font-heading text-sm font-black leading-5 text-[#16302a] outline-none transition focus:border-primary-200 focus:bg-[#f8fbf9] focus:ring-2 focus:ring-primary-100 min-[360px]:text-base",
+                          item.checked && "text-[#9db0aa] line-through"
+                        )}
+                        aria-label={`Edit item name for ${item.name}`}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeItem(item.id)}
+                        aria-label={`Remove ${item.name}`}
+                        className="flex h-11 w-11 items-center justify-center rounded-xl text-[#c9d6d1] transition-colors hover:bg-red-50 hover:text-red-500"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+
+                    <div className="mt-2 min-w-0">
+                      <span className="text-[11px] font-black uppercase tracking-[0.1em] text-[#78928a]">Quantity</span>
+                      <div className="mt-1 grid min-w-0 grid-cols-[2.75rem_minmax(0,1fr)_2.75rem] items-center gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => adjustAmount(item, -1)}
+                          className="flex h-11 w-11 items-center justify-center rounded-full bg-[#f4f8f6] text-[#60776f] transition hover:bg-primary-50 hover:text-primary-700"
+                          aria-label={`Reduce quantity for ${item.name}`}
+                        >
+                          <Minus className="h-4 w-4" />
+                        </button>
+                        <input
+                          value={item.amount}
+                          onChange={(event) => updateItem(item.id, { amount: event.target.value })}
+                          className="min-h-11 min-w-0 w-full rounded-xl border border-primary-100 bg-[#f8fbf9] px-3 py-2 text-center text-sm font-black text-[#16302a] outline-none focus:ring-2 focus:ring-primary-100"
+                          aria-label={`Edit quantity for ${item.name}`}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => adjustAmount(item, 1)}
+                          className="flex h-11 w-11 items-center justify-center rounded-full bg-[#f4f8f6] text-[#60776f] transition hover:bg-primary-50 hover:text-primary-700"
+                          aria-label={`Increase quantity for ${item.name}`}
+                        >
+                          <Plus className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="mt-3 grid min-w-0 gap-3 min-[360px]:grid-cols-2">
+                      <label className="min-w-0 text-[11px] font-black uppercase tracking-[0.1em] text-[#78928a]">
+                        Serving
+                        <input
+                          value={servingSize}
+                          onChange={(event) => updateItem(item.id, { servingSize: event.target.value })}
+                          className="mt-1 min-h-11 min-w-0 w-full rounded-xl border border-primary-100 bg-[#f8fbf9] px-3 py-2 text-sm font-bold normal-case tracking-normal text-[#16302a] outline-none focus:ring-2 focus:ring-primary-100"
+                          aria-label={`Edit serving size for ${item.name}`}
+                        />
+                      </label>
+                      <label className="min-w-0 text-[11px] font-black uppercase tracking-[0.1em] text-[#78928a]">
+                        Category
+                        <select
+                          value={item.category}
+                          onChange={(event) => updateItem(item.id, { category: event.target.value as GroceryCategory })}
+                          className={cn("mt-1 min-h-11 min-w-0 w-full rounded-xl border px-3 py-2 text-sm font-black normal-case tracking-normal outline-none", categoryTone[item.category])}
+                          aria-label={`Edit category for ${item.name}`}
+                        >
+                          {(["Protein", "Produce", "Pantry", "Dairy", "Frozen", "Other"] as GroceryCategory[]).map((category) => (
+                            <option key={category} value={category}>{category}</option>
+                          ))}
+                        </select>
+                      </label>
+                    </div>
+
+                    <div className="mt-3 min-w-0 border-t border-primary-100/70 pt-3 text-xs font-bold text-[#60776f]">
+                      <p className="break-words"><span className="text-[#78928a]">Recipe:</span> {item.source}</p>
+                      <div className="mt-2 flex min-w-0 flex-wrap gap-1.5">
+                        <span className="max-w-full break-words rounded-full bg-[#f4f8f6] px-2.5 py-1 text-[11px] font-black text-[#54635d]">{classification}</span>
+                        <span className="max-w-full break-words rounded-full bg-primary-50 px-2.5 py-1 text-[11px] font-black text-primary-800">{vitaminBenefit}</span>
+                      </div>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+            <div className="hidden overflow-x-auto md:block">
               <table className="w-full min-w-[980px] border-separate border-spacing-0 text-left">
                 <thead>
                   <tr className="bg-[#f4f8f6] text-[11px] font-black uppercase tracking-[0.12em] text-[#78928a]">
