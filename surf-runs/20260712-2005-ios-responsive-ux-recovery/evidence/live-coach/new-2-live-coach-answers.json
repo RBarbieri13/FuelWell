@@ -1,0 +1,27 @@
+[
+  {
+    "id": "app-nutrition",
+    "prompt": "Using only my current FuelWell app data, state my exact calories and protein logged today and name every meal currently logged today. Do not estimate or omit any meal.",
+    "answer": "I'll pull your complete today's plate to give you the exact figures.\n\nToday's logged totals:\n\nCalories: 2519 (target 2250)\nProtein: 196g (target 175g)\n\nEvery meal logged today (6 total):\n\nMeal\tSlot\tCalories\tProtein\tCarbs\tFat\nGreek yogurt power bowl\tBreakfast\t330\t31g\t40g\t7g\nnew-2 breakfast (1 serving)\tBreakfast\t352\t27g\t42g\t12g\nChicken quinoa bowl\tLunch\t520\t42g\t48g\t18g\nnew-2 lunch (1 serving)\tLunch\t353\t28g\t43g\t13g\nnew-2 dinner (1 serving)\tDinner\t354\t29g\t44g\t14g\nSalmon rice plate\tDinner\t610\t39g\t58g\t24g"
+  },
+  {
+    "id": "app-workout",
+    "prompt": "Using only my current FuelWell app data, state the exact activity I logged today and its exact duration in minutes. Do not estimate.",
+    "answer": "Today's logged workout:\n\nActivity\tCategory\tDuration\nHiking\tCardio\t26 minutes\n\nThat is the only workout logged in your app data for today."
+  },
+  {
+    "id": "added-sugars",
+    "prompt": "Search online and use the 2020–2025 Dietary Guidelines for Americans added-sugars guidance to state what percentage of daily calories should come from added sugars. For a 2,000-calorie pattern, explicitly calculate and state both the calorie equivalent and gram equivalent, then name the source organization.",
+    "answer": "The 2020–2025 Dietary Guidelines for Americans recommends limiting added sugars to less than 10 percent of calories per day starting at age 2.\n\nFor a 2,000-calorie diet:\n\nCalorie equivalent: 200 calories (10% of 2,000)\nGram equivalent: 50 grams of added sugars\n\nSource organization: U.S. Department of Health and Human Services and U.S. Department of Agriculture"
+  },
+  {
+    "id": "activity-guideline",
+    "prompt": "Search online and use the current HHS Physical Activity Guidelines to give the full weekly moderate-intensity aerobic range and the weekly muscle-strengthening target for a healthy adult. Include both numeric targets and name HHS in the final answer.",
+    "answer": "For a healthy adult, HHS recommends 150 minutes to 300 minutes a week of moderate-intensity aerobic physical activity, or 75 minutes to 150 minutes a week of vigorous-intensity aerobic physical activity, or an equivalent combination of moderate- and vigorous-intensity activity. Adults should also do muscle-strengthening activities on 2 or more days a week.\n\nWeekly targets:\n\nModerate-intensity aerobic range: 150–300 minutes\nMuscle-strengthening: 2 or more days per week\n\nSource: The Department of Health and Human Services (HHS)"
+  },
+  {
+    "id": "sodium-limit",
+    "prompt": "Search online and use the 2020–2025 Dietary Guidelines for Americans to state the daily sodium limit for adults and teens age 14 and older. Include the amount, unit, age threshold, and source organization.",
+    "answer": "The 2020–2025 Dietary Guidelines for Americans recommends adults limit sodium intake to less than 2,300 mg per day. For children under age 14, recommended limits are even lower.\n\nSodium limit summary:\n\nAmount: Less than 2,300 mg\nUnit: Milligrams (mg)\nAge threshold: Adults and teens age 14 and older\nSource organization: U.S. Department of Health and Human Services and U.S. Department of Agriculture"
+  }
+]

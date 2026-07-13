@@ -1,0 +1,27 @@
+[
+  {
+    "id": "app-nutrition",
+    "prompt": "Using only my current FuelWell app data, state my exact calories and protein logged today and name every meal currently logged today. Do not estimate or omit any meal.",
+    "answer": "I have your current app data right here. Let me state the exact totals and every meal:\n\nToday's totals:\n\nCalories: 2519 kcal logged (target 2250)\nProtein: 196g logged (target 175g)\n\nEvery meal logged today (6 total):\n\nBreakfast: Greek yogurt power bowl — 330 kcal, 31g protein\nLunch: Chicken quinoa bowl — 520 kcal, 42g protein\nBreakfast: existing-2 breakfast (1 serving) — 352 kcal, 27g protein\nLunch: existing-2 lunch (1 serving) — 353 kcal, 28g protein\nDinner: existing-2 dinner (1 serving) — 354 kcal, 29g protein\nDinner: Salmon rice plate — 610 kcal, 39g protein\n\nVerification: 330 + 520 + 352 + 353 + 354 + 610 = 2519 kcal ✓\n\n31 + 42 + 27 + 28 + 29 + 39 = 196g protein ✓"
+  },
+  {
+    "id": "app-workout",
+    "prompt": "Using only my current FuelWell app data, state the exact activity I logged today and its exact duration in minutes. Do not estimate.",
+    "answer": "Today's logged activity:\n\nBiking (Cardio) — 26 minutes\n\nThat is the only workout logged in your app data for today."
+  },
+  {
+    "id": "activity-guideline",
+    "prompt": "Search online and use the current HHS Physical Activity Guidelines to give the full weekly moderate-intensity aerobic range and the weekly muscle-strengthening target for a healthy adult. Include both numeric targets and name HHS in the final answer.",
+    "answer": "For a healthy adult, the HHS Physical Activity Guidelines recommend at least 150 minutes to 300 minutes a week of moderate-intensity aerobic activity, or 75 minutes to 150 minutes a week of vigorous-intensity aerobic activity (or an equivalent combination). Adults should also do muscle-strengthening activities on 2 or more days a week."
+  },
+  {
+    "id": "sodium-limit",
+    "prompt": "Search online and use the 2020–2025 Dietary Guidelines for Americans to state the daily sodium limit for adults and teens age 14 and older. Include the amount, unit, age threshold, and source organization.",
+    "answer": "According to the 2020–2025 Dietary Guidelines for Americans, adults should limit sodium intake to less than 2,300 mg per day. For children under age 14, recommended limits are even lower. This recommendation is issued by the U.S. Department of Health and Human Services (HHS) and the U.S. Department of Agriculture (USDA)."
+  },
+  {
+    "id": "myplate",
+    "prompt": "Search online and use USDA MyPlate guidance to state how much of a plate should be fruits and vegetables. Name both food groups and the source organization.",
+    "answer": "According to USDA MyPlate guidance, vegetables and fruits together fill half the plate. Vegetables make up the largest section, followed by grains."
+  }
+]

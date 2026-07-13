@@ -1,4 +1,5 @@
 import { expect, test, type Page, type TestInfo } from "@playwright/test";
+import { writeFile } from "node:fs/promises";
 
 type Journey = {
   round: number;
@@ -7,12 +8,67 @@ type Journey = {
   activity: string;
 };
 
-const QUESTIONS = [
-  "What weekly aerobic and strength activity should a healthy adult target?",
-  "How much daily protein is commonly recommended for an athlete?",
-  "What does creatine monohydrate improve?",
-  "What rate of weight loss is considered gradual and sustainable?",
-  "What percentage of daily calories should come from added sugars?",
+const LIVE_COACH = process.env.FUELWELL_RUN_LIVE_COACH_BENCHMARK === "1";
+
+type GeneralQuestion = {
+  id: string;
+  prompt: string;
+  verify: (answer: string) => void;
+};
+
+const GENERAL_QUESTIONS: GeneralQuestion[] = [
+  {
+    id: "activity-guideline",
+    prompt:
+      "Search online and use the current HHS Physical Activity Guidelines to give the full weekly moderate-intensity aerobic range and the weekly muscle-strengthening target for a healthy adult. Include both numeric targets and name HHS in the final answer.",
+    verify(answer) {
+      expect(answer).toMatch(/150[\s\S]{0,100}300/i);
+      expect(answer).toMatch(/2(?:\s+or\s+more)?\s*(?:days?|times?)/i);
+      expect(answer).toMatch(/HHS|Health and Human Services|Physical Activity Guidelines/i);
+    },
+  },
+  {
+    id: "sodium-limit",
+    prompt:
+      "Search online and use the 2020–2025 Dietary Guidelines for Americans to state the daily sodium limit for adults and teens age 14 and older. Include the amount, unit, age threshold, and source organization.",
+    verify(answer) {
+      expect(answer).toMatch(/2[,]?300\s*(?:mg|milligrams?)/i);
+      expect(answer).toMatch(/14/i);
+      expect(answer).toMatch(/Dietary Guidelines|USDA|HHS|Health and Human Services/i);
+    },
+  },
+  {
+    id: "myplate",
+    prompt:
+      "Search online and use USDA MyPlate guidance to state how much of a plate should be fruits and vegetables. Name both food groups and the source organization.",
+    verify(answer) {
+      expect(answer).toMatch(/half|one[-\s]?half|50\s*%/i);
+      expect(answer).toMatch(/fruit/i);
+      expect(answer).toMatch(/vegetable/i);
+      expect(answer).toMatch(/MyPlate|USDA|Department of Agriculture/i);
+    },
+  },
+  {
+    id: "weight-loss-rate",
+    prompt:
+      "Search online and use the CDC healthy-weight guidance to state the weekly rate of weight loss described as gradual and sustainable. Name CDC in the final answer and avoid individualized medical advice.",
+    verify(answer) {
+      expect(answer).toMatch(/1[\s\S]{0,20}2\s*(?:lb|pounds?)/i);
+      expect(answer).toMatch(/week/i);
+      expect(answer).toMatch(/CDC|Centers for Disease Control/i);
+    },
+  },
+  {
+    id: "added-sugars",
+    prompt:
+      "Search online and use the 2020–2025 Dietary Guidelines for Americans added-sugars guidance to state what percentage of daily calories should come from added sugars. For a 2,000-calorie pattern, explicitly calculate and state both the calorie equivalent and gram equivalent, then name the source organization.",
+    verify(answer) {
+      expect(answer).toMatch(/(?:less than|under|below|<)\s*10\s*(?:%|percent)/i);
+      expect(answer).toMatch(/200\s*(?:kcal|calories)/i);
+      expect(answer).toMatch(/50\s*(?:g|grams?)/i);
+      expect(answer).toMatch(/Dietary Guidelines|USDA|HHS/i);
+    },
+  },
 ];
 
 const JOURNEYS: Journey[] = [
@@ -119,7 +175,7 @@ async function logMeal(page: Page, mealType: string, name: string, offset: numbe
 }
 
 async function runJourney(page: Page, journey: Journey, testInfo: TestInfo) {
-  test.setTimeout(180_000);
+  test.setTimeout(LIVE_COACH ? 720_000 : 180_000);
   await page.setViewportSize({ width: 375, height: 844 });
   const prefix = `${journey.kind}-${journey.round}`;
   const mealNames = [`${prefix} breakfast`, `${prefix} lunch`, `${prefix} dinner`];
@@ -144,7 +200,8 @@ async function runJourney(page: Page, journey: Journey, testInfo: TestInfo) {
   await page.getByRole("button", { name: "Log activity" }).click();
   const planner = page.locator("#custom-activity-planner");
   await planner.getByLabel("Activity type").selectOption({ label: journey.activity });
-  await planner.getByLabel("Minutes").fill(`${24 + journey.round}`);
+  const activityMinutes = 24 + journey.round;
+  await planner.getByLabel("Minutes").fill(`${activityMinutes}`);
   await planner.getByRole("button", { name: "Add activity" }).click();
   await expect(page.getByTestId("logged-workouts").getByText(journey.activity).first()).toBeVisible();
   await page.reload();
@@ -173,17 +230,100 @@ async function runJourney(page: Page, journey: Journey, testInfo: TestInfo) {
       body: JSON.stringify({ signedIn: false, conversationId: null, messages: [] }),
     })
   );
-  await page.route("**/api/coach/turn", async (route) => {
-    const body = route.request().postDataJSON() as { snapshot: Record<string, unknown> };
-    snapshots.push(body.snapshot);
-    const bodyText = coachResponse(responseIndex++);
-    await route.fulfill({ status: 200, contentType: "text/event-stream", body: bodyText });
-  });
+  if (LIVE_COACH) {
+    page.on("request", (request) => {
+      if (!request.url().includes("/api/coach/turn") || request.method() !== "POST") return;
+      try {
+        const body = request.postDataJSON() as { snapshot?: Record<string, unknown> };
+        if (body.snapshot) snapshots.push(body.snapshot);
+      } catch {
+        // The assertion below fails closed when no request snapshot is captured.
+      }
+    });
+  } else {
+    await page.route("**/api/coach/turn", async (route) => {
+      const body = route.request().postDataJSON() as { snapshot: Record<string, unknown> };
+      snapshots.push(body.snapshot);
+      const bodyText = coachResponse(responseIndex++);
+      await route.fulfill({ status: 200, contentType: "text/event-stream", body: bodyText });
+    });
+  }
   await page.goto("/app/coach");
-  for (let index = 0; index < QUESTIONS.length; index += 1) {
-    await page.getByLabel("Message Coach").fill(QUESTIONS[index]);
+  const generalOffset = (journey.round * 2 + (journey.kind === "existing" ? 1 : 0)) % GENERAL_QUESTIONS.length;
+  const selectedGeneral = Array.from({ length: 3 }, (_, index) =>
+    GENERAL_QUESTIONS[(generalOffset + index) % GENERAL_QUESTIONS.length]
+  );
+  const questions = [
+    {
+      id: "app-nutrition",
+      prompt:
+        "Using only my current FuelWell app data, state my exact calories and protein logged today and name every meal currently logged today. Do not estimate or omit any meal.",
+    },
+    {
+      id: "app-workout",
+      prompt:
+        "Using only my current FuelWell app data, state the exact activity I logged today and its exact duration in minutes. Do not estimate.",
+    },
+    ...selectedGeneral,
+  ];
+  const liveAnswers: Array<{ id: string; prompt: string; answer: string }> = [];
+
+  for (let index = 0; index < questions.length; index += 1) {
+    const beforeCount = await page.getByTestId("coach-assistant-message").count();
+    const turnResponsePromise = LIVE_COACH
+      ? page.waitForResponse(
+          (response) =>
+            response.url().includes("/api/coach/turn") &&
+            response.request().method() === "POST",
+          { timeout: 120_000 },
+        )
+      : null;
+    await page.getByLabel("Message Coach").fill(questions[index].prompt);
     await page.getByRole("button", { name: "Send" }).click();
-    await expect(page.getByText(`Verified journey response ${index + 1}.`)).toBeVisible();
+    if (!LIVE_COACH) {
+      await expect(page.getByText(`Verified journey response ${index + 1}.`)).toBeVisible();
+      continue;
+    }
+
+    const turnResponse = await turnResponsePromise!;
+    expect(turnResponse.ok(), `${prefix}: Coach returned HTTP ${turnResponse.status()}`).toBe(true);
+    const turnEvents = await turnResponse.text();
+    expect(turnEvents).toContain('"type":"turn_done"');
+    expect(turnEvents).not.toMatch(/deterministic-provider-fallback|Something broke|credit balance/i);
+
+    await expect(page.getByTestId("coach-assistant-message")).toHaveCount(beforeCount + 1, {
+      timeout: 120_000,
+    });
+    const answerNode = page.getByTestId("coach-assistant-message").last();
+    await expect
+      .poll(async () => (await answerNode.innerText()).trim().length, { timeout: 120_000 })
+      .toBeGreaterThan(20);
+    const answer = (await answerNode.innerText()).trim();
+    expect(answer).not.toMatch(/temporarily unavailable|provider fallback|Something broke|credit balance/i);
+    liveAnswers.push({ id: questions[index].id, prompt: questions[index].prompt, answer });
+
+    const snapshot = snapshots.at(-1) as {
+      totals?: { calories?: number; protein?: number };
+      workouts?: Array<{ name?: string; durationMin?: number }>;
+    } | undefined;
+    expect(snapshot, `${prefix}: Coach request snapshot was not captured`).toBeTruthy();
+    if (questions[index].id === "app-nutrition") {
+      const calories = snapshot?.totals?.calories;
+      const protein = snapshot?.totals?.protein;
+      expect(calories).toBeGreaterThan(0);
+      expect(protein).toBeGreaterThan(0);
+      expect(answer.replaceAll(",", "")).toContain(String(calories));
+      expect(answer).toMatch(new RegExp(`${protein}\\s*g`, "i"));
+      for (const meal of mealNames) expect(answer.toLowerCase()).toContain(meal.toLowerCase());
+      expect(answer.toLowerCase()).toContain("salmon rice plate");
+    } else if (questions[index].id === "app-workout") {
+      expect(answer.toLowerCase()).toContain(journey.activity.toLowerCase());
+      expect(answer).toMatch(new RegExp(`\\b${activityMinutes}\\s*(?:minutes?|min)\\b`, "i"));
+      const workout = snapshot?.workouts?.find((item) => item.name === journey.activity);
+      expect(workout?.durationMin).toBe(activityMinutes);
+    } else {
+      selectedGeneral.find((question) => question.id === questions[index].id)?.verify(answer);
+    }
   }
   expect(snapshots).toHaveLength(5);
   const snapshotText = JSON.stringify(snapshots.at(-1));
@@ -191,6 +331,20 @@ async function runJourney(page: Page, journey: Journey, testInfo: TestInfo) {
   expect(snapshotText).toContain(journey.activity);
   expect(snapshotText).toContain("Soy Ginger Glaze");
   await assertPhoneFit(page, `${prefix} coach`);
+  if (LIVE_COACH) {
+    await writeFile(
+      testInfo.outputPath(`${prefix}-live-coach-answers.json`),
+      JSON.stringify(liveAnswers, null, 2),
+    );
+    await testInfo.attach(`${prefix}-live-coach-answers`, {
+      body: JSON.stringify(liveAnswers, null, 2),
+      contentType: "application/json",
+    });
+    await page.screenshot({
+      path: testInfo.outputPath(`${prefix}-coach-live.png`),
+      fullPage: true,
+    });
+  }
 
   await page.goto("/app/daily-review");
   for (const meal of mealNames) await expect(page.getByText(meal).first()).toBeVisible();

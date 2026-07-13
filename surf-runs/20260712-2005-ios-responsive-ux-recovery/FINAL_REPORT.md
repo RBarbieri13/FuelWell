@@ -1,14 +1,14 @@
 # FuelWell iPhone responsive recovery report
 
-Date: 2026-07-12
+Date: 2026-07-13
 Branch: `surf/ios-responsive-ux-recovery`
 
 ## Verdict
 
-Local implementation verifier: **PASS**
+Local implementation and live-provider verifier: **PASS**
 
-Immutable Vercel candidate, authenticated live Coach, and TestFlight candidate
-verifier: **PENDING EXTERNAL RELEASE STEP**
+Immutable Vercel candidate and TestFlight candidate verifier:
+**PENDING EXTERNAL RELEASE STEP**
 
 No production deployment or TestFlight upload was performed in this campaign.
 
@@ -38,6 +38,14 @@ No production deployment or TestFlight upload was performed in this campaign.
   Daily Review, Workouts, Groceries, Recipes, and persistence journeys.
 - Added a serialized mobile WebKit pass and preserved the native WKWebView
   release-binding test.
+- Made anonymous local Coach preview independent of Supabase configuration.
+- Added a local-only paid-provider harness so real Coach answers can be tested
+  without changing production cost controls.
+- Made the Coach action drawer yield to the mobile composer when the user types
+  or sends, preventing the drawer from blocking the input and Send control.
+- Strengthened Coach source behavior so citation, fact-sheet, and named-source
+  questions use web search when it is available instead of prematurely claiming
+  that a source cannot be found.
 
 ## Journey evidence
 
@@ -48,21 +56,26 @@ existing user. Every journey completed:
 2. Body measurements and goal setup.
 3. Breakfast, lunch, and dinner logging.
 4. Manual activity logging.
-5. Five deterministic Coach turns whose request snapshot contained the same
-   meals, workout, and grocery values used by non-Coach pages.
+5. Five real-provider Coach turns. Two required exact app meal or activity
+   values; three required authoritative online health guidance.
 6. Recipe planning and measured grocery creation.
 7. Daily Review verification before and after reload.
 8. A whole-page width assertion at every major stop.
 
-Final screenshots are under `evidence/journeys/`.
+All six journeys passed against the live local Coach provider, producing 30
+answers. The app-context answers matched the same persisted meals and workouts
+shown on non-Coach pages. Screenshots and answer transcripts are under
+`evidence/live-coach/`; final Review screenshots are under
+`evidence/journeys/`.
 
 ## Verification
 
-- Focused Playwright: 39 passed.
-- Three-round journey gate: 6 passed.
+- Final Chromium candidate suite: 34 passed.
+- Mobile WebKit containment suite: 8 passed.
+- Live-provider journey gate: 6 passed, with 30 Coach answers.
 - Route containment, Chromium: 4 tests covering 84 route/width combinations.
 - Route containment, mobile WebKit: 4 tests covering the same 84 combinations.
-- Unit tests: 36 files, 269 tests passed.
+- Unit tests: 36 files, 271 tests passed.
 - TypeScript: passed.
 - ESLint: passed.
 - Next.js production build: passed; 797 static pages generated.
@@ -71,22 +84,25 @@ Final screenshots are under `evidence/journeys/`.
 
 ## Live Coach boundary
 
-Local preview intentionally uses a deterministic provider fallback. It proves
-the UI, shared snapshot, persistence, and responsive behavior, but it cannot
-prove live factual quality. `evidence/coach-factual-benchmark.md` records five
-first-party federal-source questions and a strict scoring rubric.
+The deterministic provider remains the default for ordinary preview runs. A
+local-only paid-provider switch was used for the final benchmark. It does not
+weaken production preview-mode or budget protections.
 
-The live verifier must run after an immutable candidate deploy with a dedicated
-authenticated account. It must fail on unsupported numbers, missing population
-qualifiers, medical overreach, missing links, or disagreement with non-Coach
-app values.
+Every new/existing-user journey asked two questions tied to the persisted app
+snapshot plus three questions rotated through a five-source federal benchmark.
+All 30 answers passed the automated value/source checks. The benchmark and
+scoring rules are in `evidence/coach-factual-benchmark.md`.
+
+This proves the local provider path and factual benchmark. The same checks must
+still be repeated after an immutable deployment to prove the deployed
+environment, credentials, and native binding.
 
 ## Candidate next step
 
 1. Commit and push this branch.
 2. Deploy an immutable Vercel preview.
 3. Run launch preflight and the expanded candidate UI gate.
-4. Run the five paid Coach benchmark questions against the authenticated
-   candidate and score them against the benchmark.
+4. Repeat the paid Coach benchmark against the authenticated immutable
+   candidate and compare it with the saved local transcripts.
 5. Only after all candidate checks pass, bind and upload the same immutable
    deployment to TestFlight.

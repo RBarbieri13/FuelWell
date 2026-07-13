@@ -12,3 +12,5 @@
 | W4 | P1 | Desktop columns are hidden without explanation | Visible more-columns/scroll affordance | Done |
 | W5 | P2 | Activity and pick-my-own paths are oversized | Compact side-by-side layout on supported widths | Done |
 | E1 | P0 | End-to-end data could fail to persist across routes | Three consecutive new/existing journey pairs pass | Done locally; repeat on immutable candidate |
+| C1 | P0 | Mobile Coach drawer can cover composer controls | Drawer yields when composer receives focus or submits | Done |
+| C2 | P0 | Live Coach quality and app-data reconciliation unproven | Six live journeys, 30 checked answers, exact app-value reconciliation | Done locally; repeat on immutable candidate |

@@ -1,0 +1,27 @@
+[
+  {
+    "id": "app-nutrition",
+    "prompt": "Using only my current FuelWell app data, state my exact calories and protein logged today and name every meal currently logged today. Do not estimate or omit any meal.",
+    "answer": "I'll retrieve your complete logged meals and macros for today.\n\nToday's logged totals:\n\nCalories: 2522 kcal\nProtein: 199 g\n\nAll 6 meals logged today:\n\nBreakfast: Greek yogurt power bowl — 330 kcal, 31g protein\nBreakfast: new-3 breakfast (1 serving) — 353 kcal, 28g protein\nLunch: Chicken quinoa bowl — 520 kcal, 42g protein\nLunch: new-3 lunch (1 serving) — 354 kcal, 29g protein\nDinner: new-3 dinner (1 serving) — 355 kcal, 30g protein\nDinner: Salmon rice plate — 610 kcal, 39g protein"
+  },
+  {
+    "id": "app-workout",
+    "prompt": "Using only my current FuelWell app data, state the exact activity I logged today and its exact duration in minutes. Do not estimate.",
+    "answer": "Activity logged today:\n\nSwimming (Cardio) — 27 minutes"
+  },
+  {
+    "id": "sodium-limit",
+    "prompt": "Search online and use the 2020–2025 Dietary Guidelines for Americans to state the daily sodium limit for adults and teens age 14 and older. Include the amount, unit, age threshold, and source organization.",
+    "answer": "According to the 2020–2025 Dietary Guidelines for Americans, individuals 14 years and older should limit their sodium consumption to 2,300 milligrams per day.\n\nSummary:\n\nAmount: 2,300 mg\nUnit: milligrams per day\nAge threshold: 14 years and older\nSource: U.S. Food and Drug Administration (FDA), citing the 2020–2025 Dietary Guidelines for Americans"
+  },
+  {
+    "id": "myplate",
+    "prompt": "Search online and use USDA MyPlate guidance to state how much of a plate should be fruits and vegetables. Name both food groups and the source organization.",
+    "answer": "According to USDA MyPlate guidance, fruits and vegetables fill half the plate while proteins and grains fill the other half.\n\nSummary:\n\nFood groups: Fruits and Vegetables\nPlate proportion: One-half (50%)\nSource organization: United States Department of Agriculture (USDA)"
+  },
+  {
+    "id": "weight-loss-rate",
+    "prompt": "Search online and use the CDC healthy-weight guidance to state the weekly rate of weight loss described as gradual and sustainable. Name CDC in the final answer and avoid individualized medical advice.",
+    "answer": "According to CDC guidance, people who lose weight at a gradual, steady pace of about 1 to 2 pounds a week are more likely to keep the weight off than people who lose weight quicker.\n\nSummary:\n\nWeekly rate: 1–2 pounds per week\nUnit: pounds per week\nDescriptor: Gradual and sustainable\nSource organization: CDC (Centers for Disease Control and Prevention)"
+  }
+]

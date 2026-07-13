@@ -1,7 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { z } from "zod";
 import { headers } from "next/headers";
-import { isPreviewHost, SAMPLE_USER } from "@/lib/preview-session";
+import { hasSupabaseConfig, isPreviewHost, SAMPLE_USER } from "@/lib/preview-session";
 import { createClient } from "@/lib/supabase/server";
 import { buildSystemPrompt } from "@/lib/coach/system-prompt";
 import {
@@ -360,18 +360,22 @@ export async function POST(request: Request) {
 
   // Auth: signed-in Supabase user, or preview-mode sample user (no auth gate).
   const host = (await headers()).get("host");
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const supabase = hasSupabaseConfig() ? await createClient() : null;
+  const user = supabase ? (await supabase.auth.getUser()).data.user : null;
   const isPreview = !user && isPreviewHost(host);
   if (!user && !isPreview) {
     return Response.json({ error: "Sign in to use Coach." }, { status: 401 });
   }
+  // Every call below is additionally guarded by `user`. A real user can only
+  // exist when this client was created from valid runtime configuration.
+  const storageClient = supabase!;
   const userId = user?.id ?? SAMPLE_USER.id;
   const providerAccess = evaluatePaidProviderAccess({
     authenticated: Boolean(user),
     anonymousPreview: isPreview,
+    allowPaidPreview:
+      process.env.NODE_ENV !== "production" &&
+      envFlag(process.env.COACH_ALLOW_PAID_PREVIEW) === true,
   });
 
   // Cost circuit breaker — fires BEFORE any model call (non-negotiable).
@@ -385,7 +389,7 @@ export async function POST(request: Request) {
     memoryAddCents(userId, day, Number(testSpendHeader) - memoryGetDayCents(userId, day));
   }
   const spentCents = user
-    ? await getSupabaseDayCents(supabase, userId, day)
+    ? await getSupabaseDayCents(storageClient, userId, day)
     : memoryGetDayCents(userId, day);
   const budget = evaluateBudget(spentCents);
   if (!budget.allowed) {
@@ -394,13 +398,13 @@ export async function POST(request: Request) {
 
   // Signed-in: pin the conversation row before streaming starts.
   const conversationId = user
-    ? await ensureConversation(supabase, userId, body.conversationId)
+    ? await ensureConversation(storageClient, userId, body.conversationId)
     : null;
   const turnAttachments = body.messages
     .flatMap((message) => (message.role === "user" ? message.attachments ?? [] : []))
     .filter((attachment) => attachment.data || attachment.text);
   if (user && conversationId && turnAttachments.length > 0) {
-    await saveCoachUploadedArtifacts(supabase, {
+    await saveCoachUploadedArtifacts(storageClient, {
       userId,
       conversationId,
       attachments: turnAttachments,
@@ -412,13 +416,13 @@ export async function POST(request: Request) {
     .slice()
     .reverse()
     .find((message) => message.role === "user")?.content ?? "";
-  const existingKnowledge = user ? await loadCoachKnowledge(supabase, userId) : null;
+  const existingKnowledge = user ? await loadCoachKnowledge(storageClient, userId) : null;
   let coachKnowledge = mergeCoachKnowledge(
     existingKnowledge,
     buildCoachKnowledgeBase(userId, snapshot),
   );
   if (user) {
-    await persistCoachKnowledge(supabase, coachKnowledge);
+    await persistCoachKnowledge(storageClient, coachKnowledge);
   }
   const retrievedKnowledge = formatKnowledgeForPrompt(
     retrieveCoachKnowledge(coachKnowledge, lastUserText),
@@ -469,7 +473,7 @@ export async function POST(request: Request) {
             incident,
             user
               ? async (safeIncident) => {
-                  await insertSupabaseAudit(supabase, {
+                  await insertSupabaseAudit(storageClient, {
                     userId,
                     tool: "provider_incident",
                     args: safeIncident,
@@ -484,7 +488,7 @@ export async function POST(request: Request) {
         emit({ type: "text_delta", text: assistantText });
         if (user && conversationId) {
           const lastUser = body.messages[body.messages.length - 1];
-          await saveMessages(supabase, conversationId, [
+          await saveMessages(storageClient, conversationId, [
             ...(lastUser?.role === "user"
               ? [{ role: "user" as const, content: lastUser.content }]
               : []),
@@ -513,7 +517,7 @@ export async function POST(request: Request) {
 
       const audit = async (tool: string, args: unknown, resultSummary: string) => {
         if (user) {
-          await insertSupabaseAudit(supabase, { userId, tool, args, resultSummary });
+          await insertSupabaseAudit(storageClient, { userId, tool, args, resultSummary });
         } else {
           await writeAudit({ userId, tool, args, resultSummary, isPreview });
         }
@@ -548,14 +552,14 @@ export async function POST(request: Request) {
 	          await audit(def.name, input, "direct-meal-log");
 
 	          if (user) {
-	            await persistCoachMutations(supabase, userId, turnMutations, snapshot.goalContext);
+	            await persistCoachMutations(storageClient, userId, turnMutations, snapshot.goalContext);
 	            coachKnowledge = mergeCoachKnowledge(
 	              coachKnowledge,
 	              buildCoachKnowledgeBase(userId, snapshot),
 	            );
-	            await persistCoachKnowledge(supabase, coachKnowledge);
+	            await persistCoachKnowledge(storageClient, coachKnowledge);
 	            if (conversationId) {
-	              await saveMessages(supabase, conversationId, [
+	              await saveMessages(storageClient, conversationId, [
 	                { role: "user" as const, content: lastUserText },
 	                {
 	                  role: "assistant" as const,
@@ -613,17 +617,17 @@ export async function POST(request: Request) {
 
           if (user) {
             if (Object.keys(turnPrefPatch).length > 0) {
-              await mergeProfilePreferences(supabase, userId, turnPrefPatch);
+              await mergeProfilePreferences(storageClient, userId, turnPrefPatch);
             }
-            await persistCoachMutations(supabase, userId, turnMutations, snapshot.goalContext);
+            await persistCoachMutations(storageClient, userId, turnMutations, snapshot.goalContext);
             coachKnowledge = mergeCoachKnowledge(
               coachKnowledge,
               buildCoachKnowledgeBase(userId, snapshot),
             );
-            await persistCoachKnowledge(supabase, coachKnowledge);
+            await persistCoachKnowledge(storageClient, coachKnowledge);
             if (conversationId) {
               const lastUser = body.messages[body.messages.length - 1];
-              await saveMessages(supabase, conversationId, [
+              await saveMessages(storageClient, conversationId, [
                 ...(lastUser?.role === "user"
                   ? [{ role: "user" as const, content: lastUser.content }]
                   : []),
@@ -812,15 +816,15 @@ export async function POST(request: Request) {
         const cents = costUsdCents(model, totalIn, totalOut);
         if (user) {
           if (Object.keys(turnPrefPatch).length > 0) {
-            await mergeProfilePreferences(supabase, userId, turnPrefPatch);
+            await mergeProfilePreferences(storageClient, userId, turnPrefPatch);
           }
-          await persistCoachMutations(supabase, userId, turnMutations, snapshot.goalContext);
+          await persistCoachMutations(storageClient, userId, turnMutations, snapshot.goalContext);
           coachKnowledge = mergeCoachKnowledge(
             coachKnowledge,
             buildCoachKnowledgeBase(userId, snapshot),
           );
-          await persistCoachKnowledge(supabase, coachKnowledge);
-          await insertSupabaseUsage(supabase, {
+          await persistCoachKnowledge(storageClient, coachKnowledge);
+          await insertSupabaseUsage(storageClient, {
             userId,
             day,
             inputTokens: totalIn,
@@ -830,7 +834,7 @@ export async function POST(request: Request) {
           });
           if (conversationId) {
             const lastUser = body.messages[body.messages.length - 1];
-            await saveMessages(supabase, conversationId, [
+            await saveMessages(storageClient, conversationId, [
               ...(lastUser?.role === "user"
                 ? [{ role: "user" as const, content: lastUser.content }]
                 : []),

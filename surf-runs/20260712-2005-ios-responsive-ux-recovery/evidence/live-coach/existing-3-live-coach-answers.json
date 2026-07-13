@@ -1,0 +1,27 @@
+[
+  {
+    "id": "app-nutrition",
+    "prompt": "Using only my current FuelWell app data, state my exact calories and protein logged today and name every meal currently logged today. Do not estimate or omit any meal.",
+    "answer": "I'll retrieve your complete logged meals for today.\n\nToday's logged totals:\n\nCalories: 2522 kcal\nProtein: 199 g\n\nAll meals logged today:\n\nBreakfast: Greek yogurt power bowl — 330 kcal, 31g protein\nBreakfast: existing-3 breakfast (1 serving) — 353 kcal, 28g protein\nLunch: Chicken quinoa bowl — 520 kcal, 42g protein\nLunch: existing-3 lunch (1 serving) — 354 kcal, 29g protein\nDinner: existing-3 dinner (1 serving) — 355 kcal, 30g protein\nDinner: Salmon rice plate — 610 kcal, 39g protein"
+  },
+  {
+    "id": "app-workout",
+    "prompt": "Using only my current FuelWell app data, state the exact activity I logged today and its exact duration in minutes. Do not estimate.",
+    "answer": "Today's logged workout:\n\nActivity: Rowing (Cardio)\nDuration: 27 minutes"
+  },
+  {
+    "id": "myplate",
+    "prompt": "Search online and use USDA MyPlate guidance to state how much of a plate should be fruits and vegetables. Name both food groups and the source organization.",
+    "answer": "According to USDA MyPlate guidance, fruits and vegetables together should fill half your plate, with vegetables covering a larger portion of that half than fruits.\n\nSource: MyPlate was developed by and is maintained by the Center for Nutrition Policy & Promotion (CNPP), in the United States Department of Agriculture (USDA)."
+  },
+  {
+    "id": "weight-loss-rate",
+    "prompt": "Search online and use the CDC healthy-weight guidance to state the weekly rate of weight loss described as gradual and sustainable. Name CDC in the final answer and avoid individualized medical advice.",
+    "answer": "According to CDC healthy-weight guidance, people who lose weight at a gradual, steady pace—about 1 to 2 pounds a week—are more likely to keep the weight off than people who lose weight quicker.\n\nThis is general guidance only. Individual factors affect weight loss outcomes, and for any personalized medical advice about your health, consult with a qualified healthcare provider."
+  },
+  {
+    "id": "added-sugars",
+    "prompt": "Search online and use the 2020–2025 Dietary Guidelines for Americans added-sugars guidance to state what percentage of daily calories should come from added sugars. For a 2,000-calorie pattern, explicitly calculate and state both the calorie equivalent and gram equivalent, then name the source organization.",
+    "answer": "The 2020–2025 Dietary Guidelines for Americans recommend limiting added sugars to less than 10 percent of calories per day starting at age 2.\n\nFor a 2,000-calorie diet:\n\nCalorie equivalent: 200 calories from added sugars (10% of 2,000)\nGram equivalent: 50 grams of added sugars\n\nSource organization: The Dietary Guidelines for Americans are published by the US Department of Health and Human Services and the US Department of Agriculture."
+  }
+]

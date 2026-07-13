@@ -248,6 +248,7 @@ export default function CoachPage() {
     event.preventDefault();
     const text = input.trim();
     if ((!text && attachments.length === 0) || busy) return;
+    if (actionDrawer) setCollapsedDrawerId(actionDrawer.id);
     setInput("");
     setAttachments([]);
     setUploadError(null);
@@ -398,7 +399,10 @@ export default function CoachPage() {
                     {item.text}
                   </div>
                 ) : (
-                  <div className="w-full max-w-full min-w-0 flex-1 space-y-3 sm:max-w-[85%]">
+                  <div
+                    className="w-full max-w-full min-w-0 flex-1 space-y-3 sm:max-w-[85%]"
+                    data-testid="coach-assistant-message"
+                  >
                     {(item.text || item.streaming) && (
                       <StreamingTextBubble text={item.text} streaming={!!item.streaming} />
                     )}
@@ -486,6 +490,9 @@ export default function CoachPage() {
               type="text"
               value={input}
               onChange={(event) => setInput(event.target.value)}
+              onFocus={() => {
+                if (actionDrawer) setCollapsedDrawerId(actionDrawer.id);
+              }}
               placeholder="Upload a food photo, email, label, workout image, or ask anything..."
               className="min-h-12 min-w-0 flex-1 rounded-[1.35rem] border border-primary-100 bg-primary-50/70 px-3 py-3 text-sm font-semibold text-[#16302a] placeholder:text-[#91a7a0] focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 sm:px-4"
               disabled={busy}

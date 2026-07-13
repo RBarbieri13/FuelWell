@@ -17,6 +17,16 @@ describe("evaluatePaidProviderAccess", () => {
     ).toEqual({ allowed: false, reason: "anonymous_preview" });
   });
 
+  it("allows an explicitly enabled local paid-preview evaluation", () => {
+    expect(
+      evaluatePaidProviderAccess({
+        authenticated: false,
+        anonymousPreview: true,
+        allowPaidPreview: true,
+      }),
+    ).toEqual({ allowed: true });
+  });
+
   it("allows authenticated requests", () => {
     expect(
       evaluatePaidProviderAccess({ authenticated: true, anonymousPreview: false }),

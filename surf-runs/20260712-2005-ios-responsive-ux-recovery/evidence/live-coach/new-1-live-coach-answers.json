@@ -1,0 +1,27 @@
+[
+  {
+    "id": "app-nutrition",
+    "prompt": "Using only my current FuelWell app data, state my exact calories and protein logged today and name every meal currently logged today. Do not estimate or omit any meal.",
+    "answer": "I'll pull your exact logged data for today.\n\nYour exact logged totals today:\n\nCalories: 2516\nProtein: 193 g\n\nAll 6 meals logged today:\n\nBreakfast: Greek yogurt power bowl — 330 kcal, 31g P\nBreakfast: new-1 breakfast (1 serving) — 351 kcal, 26g P\nLunch: Chicken quinoa bowl — 520 kcal, 42g P\nLunch: new-1 lunch (1 serving) — 352 kcal, 27g P\nDinner: new-1 dinner (1 serving) — 353 kcal, 28g P\nDinner: Salmon rice plate — 610 kcal, 39g P"
+  },
+  {
+    "id": "app-workout",
+    "prompt": "Using only my current FuelWell app data, state the exact activity I logged today and its exact duration in minutes. Do not estimate.",
+    "answer": "Your exact logged activity today:\n\nWalking (Cardio) — 25 minutes\n\nThis is the only workout logged in your app data for today."
+  },
+  {
+    "id": "myplate",
+    "prompt": "Search online and use USDA MyPlate guidance to state how much of a plate should be fruits and vegetables. Name both food groups and the source organization.",
+    "answer": "According to USDA MyPlate guidance, fruits and vegetables together fill half the plate. Vegetables make up the largest section (approximately 40%), followed by fruits, so on a MyPlate model, the two food groups combined occupy 50% of your plate.\n\nSource: USDA (U.S. Department of Agriculture)"
+  },
+  {
+    "id": "weight-loss-rate",
+    "prompt": "Search online and use the CDC healthy-weight guidance to state the weekly rate of weight loss described as gradual and sustainable. Name CDC in the final answer and avoid individualized medical advice.",
+    "answer": "According to CDC guidance, people who lose weight at a gradual, steady pace—about 1 to 2 pounds a week—are more likely to keep the weight off than people who lose weight quicker.\n\nIn metric terms, this equals approximately 0.5 to 1 kg per week. This general guideline applies to healthy adults and represents a sustainable rate for long-term success.\n\nSource: CDC (Centers for Disease Control and Prevention)"
+  },
+  {
+    "id": "added-sugars",
+    "prompt": "Search online and use the 2020–2025 Dietary Guidelines for Americans added-sugars guidance to state what percentage of daily calories should come from added sugars. For a 2,000-calorie pattern, explicitly calculate and state both the calorie equivalent and gram equivalent, then name the source organization.",
+    "answer": "The 2020–2025 Dietary Guidelines for Americans recommend limiting added sugars to less than 10% of total calories per day.\n\nFor a 2,000-calorie daily diet:\n\nCalorie equivalent: 200 calories\nGram equivalent: 50 grams\n\nSource: U.S. Department of Agriculture (USDA) and U.S. Department of Health and Human Services (HHS)"
+  }
+]

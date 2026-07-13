@@ -31,7 +31,8 @@ describe("buildSystemPrompt", () => {
     expect(prompt).toContain("FuelWell app data is context, not a ceiling");
     expect(prompt).toContain("If a recipe search returns no exact match");
     expect(prompt).toContain("synthesize a practical original recipe");
-    expect(prompt).toContain("For explicit current/live/web requests, use web search");
+    expect(prompt).toContain("For explicit current/live/web requests, citation requests, fact-sheet questions");
+    expect(prompt).toContain("Do not claim that you lack the requested source before searching");
   });
 
   it("handles partial defensive snapshots without throwing", () => {

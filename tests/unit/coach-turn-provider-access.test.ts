@@ -3,6 +3,7 @@ import { makeSnapshot } from "./helpers";
 
 const mocks = vi.hoisted(() => ({
   anthropicConstructor: vi.fn(),
+  createClient: vi.fn(),
   providerStream: vi.fn(),
   currentUser: null as { id: string } | null,
   insertedAudits: [] as unknown[],
@@ -23,9 +24,7 @@ vi.mock("next/headers", () => ({
 }));
 
 vi.mock("@/lib/supabase/server", () => ({
-  createClient: vi.fn(async () => ({
-    auth: { getUser: vi.fn(async () => ({ data: { user: mocks.currentUser } })) },
-  })),
+  createClient: mocks.createClient,
 }));
 
 vi.mock("@/lib/coach/persistence", () => ({
@@ -46,10 +45,37 @@ vi.mock("@/lib/coach/persistence", () => ({
 describe("Coach paid-provider access", () => {
   beforeEach(() => {
     mocks.anthropicConstructor.mockClear();
+    mocks.createClient.mockReset();
+    mocks.createClient.mockImplementation(async () => ({
+      auth: { getUser: vi.fn(async () => ({ data: { user: mocks.currentUser } })) },
+    }));
     mocks.providerStream.mockReset();
     mocks.currentUser = null;
     mocks.insertedAudits.length = 0;
     process.env.ANTHROPIC_API_KEY = "configured-for-test";
+    process.env.NEXT_PUBLIC_SUPABASE_URL = "https://fuelwell.test";
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "test-anon-key";
+  });
+
+  it("does not require Supabase configuration for an anonymous preview", async () => {
+    delete process.env.NEXT_PUBLIC_SUPABASE_URL;
+    delete process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    const { POST } = await import("@/app/api/coach/turn/route");
+    const response = await POST(
+      new Request("http://localhost:3000/api/coach/turn", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: [{ role: "user", content: "What should I eat tonight?" }],
+          snapshot: makeSnapshot(),
+        }),
+      }),
+    );
+
+    expect(response.status).toBe(200);
+    expect(await response.text()).toContain("deterministic-provider-fallback");
+    expect(mocks.createClient).not.toHaveBeenCalled();
   });
 
   it("uses deterministic fallback for anonymous preview with zero provider calls", async () => {

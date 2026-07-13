@@ -43,8 +43,12 @@ export type PaidProviderAccess =
 export function evaluatePaidProviderAccess(input: {
   authenticated: boolean;
   anonymousPreview: boolean;
+  allowPaidPreview?: boolean;
 }): PaidProviderAccess {
-  if (input.anonymousPreview) return { allowed: false, reason: "anonymous_preview" };
+  if (input.anonymousPreview && !input.allowPaidPreview) {
+    return { allowed: false, reason: "anonymous_preview" };
+  }
+  if (input.anonymousPreview && input.allowPaidPreview) return { allowed: true };
   if (!input.authenticated) return { allowed: false, reason: "unauthenticated" };
   return { allowed: true };
 }

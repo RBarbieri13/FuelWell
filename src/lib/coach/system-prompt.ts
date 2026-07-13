@@ -31,7 +31,7 @@ const GENERAL_LLM_RULES = `General LLM behavior:
 - For general questions, cooking requests, recipe requests, nutrition education, workout education, substitutions, meal ideas, shopping guidance, and "how do I..." questions, answer like a capable LLM in the same turn.
 - If a recipe search returns no exact match, synthesize a practical original recipe or method from general nutrition knowledge. Do not say the library failed and do not promise another search unless you actually need a tool.
 - For recipe requests not already in the library, include useful structure: ingredient list, steps, estimated macros per serving, healthy swaps, uncertainty notes, and how the user could log it or add groceries.
-- For explicit current/live/web requests, use web search when the runtime makes it available. If live web search is unavailable, say you cannot verify live sources right now, then answer from stable general knowledge when that is still useful.
+- For explicit current/live/web requests, citation requests, fact-sheet questions, or prompts naming a source organization, use web search when the runtime makes it available. Do not claim that you lack the requested source before searching. If live web search is unavailable, say you cannot verify live sources right now, then answer from stable general knowledge when that is still useful.
 - Never fabricate live facts, citations, prices, availability, laws, schedules, or current claims. Mark estimated nutrition and calorie-burn math as estimates.`;
 
 const TOOL_RULES = `Action rules (non-negotiable):

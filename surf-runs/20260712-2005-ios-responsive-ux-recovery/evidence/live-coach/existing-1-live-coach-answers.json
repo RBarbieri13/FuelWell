@@ -1,0 +1,27 @@
+[
+  {
+    "id": "app-nutrition",
+    "prompt": "Using only my current FuelWell app data, state my exact calories and protein logged today and name every meal currently logged today. Do not estimate or omit any meal.",
+    "answer": "I'll retrieve your complete food log for today.\n\nExact totals logged today:\n\nCalories: 2516 kcal\nProtein: 193 g\n\nAll meals logged today:\n\nMeal Slot\tMeal Name\tCalories\tProtein\nBreakfast\tGreek yogurt power bowl\t330\t31g\nBreakfast\texisting-1 breakfast (1 serving)\t351\t26g\nLunch\tChicken quinoa bowl\t520\t42g\nLunch\texisting-1 lunch (1 serving)\t352\t27g\nDinner\texisting-1 dinner (1 serving)\t353\t28g\nDinner\tSalmon rice plate\t610\t39g"
+  },
+  {
+    "id": "app-workout",
+    "prompt": "Using only my current FuelWell app data, state the exact activity I logged today and its exact duration in minutes. Do not estimate.",
+    "answer": "Activity logged today:\n\nRunning (Cardio) — 25 minutes"
+  },
+  {
+    "id": "weight-loss-rate",
+    "prompt": "Search online and use the CDC healthy-weight guidance to state the weekly rate of weight loss described as gradual and sustainable. Name CDC in the final answer and avoid individualized medical advice.",
+    "answer": "According to the CDC, people who lose weight at a gradual, steady pace—about 1 to 2 pounds a week—are more likely to keep the weight off than people who lose weight quicker."
+  },
+  {
+    "id": "added-sugars",
+    "prompt": "Search online and use the 2020–2025 Dietary Guidelines for Americans added-sugars guidance to state what percentage of daily calories should come from added sugars. For a 2,000-calorie pattern, explicitly calculate and state both the calorie equivalent and gram equivalent, then name the source organization.",
+    "answer": "The 2020–2025 Dietary Guidelines for Americans recommends limiting added sugars to less than 10 percent of calories per day starting at age 2.\n\nFor a 2,000-calorie pattern:\n\nCalorie equivalent: 200 calories (10% of 2,000)\nGram equivalent: 50 grams of added sugars\n\nSource: U.S. Department of Agriculture and U.S. Department of Health and Human Services, 2020–2025 Dietary Guidelines for Americans."
+  },
+  {
+    "id": "activity-guideline",
+    "prompt": "Search online and use the current HHS Physical Activity Guidelines to give the full weekly moderate-intensity aerobic range and the weekly muscle-strengthening target for a healthy adult. Include both numeric targets and name HHS in the final answer.",
+    "answer": "Adults should do at least 150 minutes to 300 minutes a week of moderate-intensity aerobic physical activity, or 75 minutes to 150 minutes a week of vigorous-intensity aerobic physical activity, or an equivalent combination of moderate- and vigorous-intensity aerobic activity. They should also do muscle-strengthening activities on 2 or more days a week.\n\nSource: U.S. Department of Health and Human Services (HHS), Physical Activity Guidelines for Americans, 2nd edition."
+  }
+]
