@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { persistCoachMutations } from "@/lib/coach/persistence";
 
 const repositories = vi.hoisted(() => ({
@@ -27,7 +27,13 @@ vi.mock("@/lib/body-log-repository", () => ({
 
 describe("Coach mutation persistence", () => {
   beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-07-12T18:00:00.000Z"));
     Object.values(repositories).forEach((mock) => mock.mockReset().mockResolvedValue([]));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it("writes meals, workouts, and normalized groceries to user-owned repositories", async () => {
