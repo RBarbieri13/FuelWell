@@ -23,7 +23,7 @@ export function QuickReplyChips({
           No options to choose from. Type your answer instead.
         </p>
       ) : (
-        <div className="mt-3 flex flex-wrap gap-2">
+        <div className="fw-artifact-actions mt-3 flex flex-wrap gap-2">
           {options.map((option, i) => (
             <button
               key={`${option}-${i}`}

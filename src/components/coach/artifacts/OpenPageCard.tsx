@@ -15,7 +15,7 @@ export function OpenPageCard({
   onAction,
 }: ArtifactCardProps<OpenPageArtifact>) {
   return (
-    <div className="flex max-w-full items-center justify-between gap-3 rounded-2xl border border-neutral-200 bg-white px-4 py-3 shadow-sm">
+    <div className="fw-artifact-mobile-stack flex max-w-full items-center justify-between gap-3 rounded-2xl border border-neutral-200 bg-white px-4 py-3 shadow-sm">
       <p className="min-w-0 text-sm font-medium leading-5 text-neutral-700">
         {artifact.reason || "There is a page for this."}
       </p>

@@ -13,9 +13,9 @@ export type StreamingTextBubbleProps = {
 
 export function StreamingTextBubble({ text, streaming }: StreamingTextBubbleProps) {
   return (
-    <div className="max-w-[95%] rounded-[1.5rem] rounded-bl-md border border-primary-100/80 bg-white/94 px-4 py-3 text-sm font-semibold leading-6 text-[#516b63] shadow-[0_18px_48px_rgba(22,48,42,0.08)] md:max-w-[85%]">
+    <div className="w-full max-w-full min-w-0 overflow-hidden rounded-[1.5rem] rounded-bl-md border border-primary-100/80 bg-white/94 px-3 py-3 text-sm font-semibold leading-6 text-[#516b63] shadow-[0_18px_48px_rgba(22,48,42,0.08)] sm:px-4 md:max-w-[85%]">
       {text ? (
-        <div className="min-w-0">
+        <div className="max-w-full min-w-0 break-words [overflow-wrap:anywhere]">
           <ReactMarkdown
             remarkPlugins={[remarkGfm, remarkMath]}
             rehypePlugins={[rehypeKatex]}
@@ -65,7 +65,7 @@ const markdownComponents = {
   ),
   a: ({ className, href, ...props }: React.ComponentProps<"a">) => (
     <a
-      className={cn("font-black text-primary-700 underline decoration-primary-300 underline-offset-4", className)}
+      className={cn("break-words font-black text-primary-700 underline decoration-primary-300 underline-offset-4 [overflow-wrap:anywhere]", className)}
       href={href}
       target="_blank"
       rel="noreferrer"
@@ -91,7 +91,7 @@ const markdownComponents = {
     <hr className={cn("my-4 border-primary-100", className)} {...props} />
   ),
   table: ({ className, ...props }: React.ComponentProps<"table">) => (
-    <div className="my-3 max-w-full overflow-x-auto rounded-[1.25rem] border border-primary-100 shadow-sm">
+    <div className="fw-rich-scroll my-3 w-full max-w-full min-w-0 overflow-x-auto rounded-[1.25rem] border border-primary-100 shadow-sm">
       <table className={cn("w-full min-w-[32rem] border-collapse text-left text-xs", className)} {...props} />
     </div>
   ),
@@ -110,8 +110,8 @@ const markdownComponents = {
       <code
         className={cn(
           isBlock
-            ? "block overflow-x-auto whitespace-pre rounded-[1.25rem] bg-[#0b251f] p-3 text-xs font-semibold leading-5 text-neutral-50"
-            : "rounded-md bg-primary-50 px-1.5 py-0.5 font-mono text-[0.85em] font-bold text-primary-800",
+            ? "block max-w-full overflow-x-auto whitespace-pre rounded-[1.25rem] bg-[#0b251f] p-3 text-xs font-semibold leading-5 text-neutral-50"
+            : "break-words rounded-md bg-primary-50 px-1.5 py-0.5 font-mono text-[0.85em] font-bold text-primary-800 [overflow-wrap:anywhere]",
           className
         )}
         {...props}
@@ -121,7 +121,7 @@ const markdownComponents = {
     );
   },
   pre: ({ className, ...props }: React.ComponentProps<"pre">) => (
-    <pre className={cn("my-3 overflow-x-auto rounded-[1.25rem] bg-[#0b251f] p-0", className)} {...props} />
+    <pre className={cn("fw-rich-scroll my-3 max-w-full overflow-x-auto rounded-[1.25rem] bg-[#0b251f] p-0", className)} {...props} />
   ),
   img: ({ className, alt, ...props }: React.ComponentProps<"img">) => (
     // Markdown media can point to arbitrary user-requested URLs; Next Image

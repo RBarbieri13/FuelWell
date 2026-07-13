@@ -17,7 +17,7 @@ export function ConfirmCard({ toolName, input, prompt, onAction }: ConfirmCardPr
         <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-lemon-600" />
         <p className="text-sm font-bold leading-5 text-lemon-700">{prompt}</p>
       </div>
-      <div className="mt-3 flex flex-wrap gap-2">
+      <div className="fw-artifact-actions mt-3 flex flex-wrap gap-2">
         <button
           type="button"
           aria-label={`Confirm ${toolName.replaceAll("_", " ")}`}

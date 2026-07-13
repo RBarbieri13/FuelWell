@@ -36,7 +36,7 @@ export function WorkoutSuggestionsCard({
             key={`${s.focus}-${i}`}
             className={i > 0 ? "border-t border-neutral-100" : undefined}
           >
-            <div className="flex items-center gap-3 p-2.5">
+            <div className="fw-artifact-mobile-stack flex items-center gap-3 p-2.5">
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-black capitalize text-neutral-900">
                   {s.focus.replace(/_/g, " ")}

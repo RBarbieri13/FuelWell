@@ -39,7 +39,7 @@ export function TargetChangeProposalCard({
         </ul>
       )}
 
-      <div className="mt-3 flex flex-wrap gap-2">
+      <div className="fw-artifact-actions mt-3 flex flex-wrap gap-2">
         <button
           type="button"
           onClick={() =>

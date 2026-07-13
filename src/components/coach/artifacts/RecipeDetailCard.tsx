@@ -109,7 +109,7 @@ export function RecipeDetailCard({
         </ol>
       )}
 
-      <div className="mt-4 flex flex-wrap gap-2">
+      <div className="fw-artifact-actions mt-4 flex flex-wrap gap-2">
         <button
           type="button"
           aria-label={`Log ${recipe.title} as a ${slot} meal`}

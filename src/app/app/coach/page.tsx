@@ -309,8 +309,8 @@ export default function CoachPage() {
         </div>
       </div>
 
-      <main className="flex-1 overflow-y-auto px-4 py-6 md:px-8">
-        <div className="mx-auto max-w-5xl">
+      <main className="min-w-0 flex-1 overflow-y-auto px-3 py-5 sm:px-4 sm:py-6 md:px-8">
+        <div className="mx-auto w-full max-w-5xl min-w-0">
           <div className="min-w-0 space-y-5">
             {items.length === 0 && (
             <div className="grid gap-4 xl:grid-cols-[1fr_0.72fr]">
@@ -382,30 +382,30 @@ export default function CoachPage() {
                 showActionDrawer && item.confirm && actionDrawer?.id === `${item.id}-confirm`;
 
               return (
-            <div key={item.id} className="space-y-3">
+            <div key={item.id} className="max-w-full min-w-0 space-y-3">
               <div
                 className={cn(
-                  "flex gap-3",
+                  "flex max-w-full min-w-0 gap-2 sm:gap-3",
                   item.role === "user" ? "justify-end" : "justify-start"
                 )}
               >
                 {item.role === "assistant" && <CoachAvatar />}
                 {item.role === "user" ? (
-                  <div className="max-w-[85%] rounded-3xl rounded-br-md bg-primary-700 px-4 py-3 text-sm font-semibold leading-6 text-white shadow-sm shadow-primary-900/15">
+                  <div className="max-w-full min-w-0 break-words rounded-3xl rounded-br-md bg-primary-700 px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm shadow-primary-900/15 [overflow-wrap:anywhere] sm:max-w-[85%] sm:px-4">
                     {item.attachments && item.attachments.length > 0 && (
                       <AttachmentSummary attachments={item.attachments} sent />
                     )}
                     {item.text}
                   </div>
                 ) : (
-                  <div className="max-w-[85%] min-w-0 flex-1 space-y-3">
+                  <div className="w-full max-w-full min-w-0 flex-1 space-y-3 sm:max-w-[85%]">
                     {(item.text || item.streaming) && (
                       <StreamingTextBubble text={item.text} streaming={!!item.streaming} />
                     )}
                     {visibleArtifacts.map((artifact) => (
                       <div
                         key={artifact.id}
-                        className="fw-artifact-scope"
+                        className="fw-artifact-scope w-full max-w-full min-w-0"
                         data-testid={`artifact-${artifact.type}`}
                       >
                         <ArtifactRenderer artifact={artifact} onAction={handleCardAction} />
@@ -463,9 +463,9 @@ export default function CoachPage() {
               {uploadError}
             </p>
           )}
-          <div className="flex items-center gap-2">
+          <div className="flex min-w-0 items-center gap-2">
             <label
-              className="flex min-h-12 w-12 cursor-pointer items-center justify-center rounded-[1.35rem] border border-primary-100 bg-primary-50/70 text-primary-700 transition hover:bg-primary-100"
+              className="flex h-12 w-12 shrink-0 cursor-pointer items-center justify-center rounded-[1.35rem] border border-primary-100 bg-primary-50/70 text-primary-700 transition hover:bg-primary-100"
               title="Attach screenshot, menu, photo, PDF, email, or text file"
             >
               <Paperclip className="h-4 w-4" />
@@ -487,11 +487,11 @@ export default function CoachPage() {
               value={input}
               onChange={(event) => setInput(event.target.value)}
               placeholder="Upload a food photo, email, label, workout image, or ask anything..."
-              className="min-h-12 flex-1 rounded-[1.35rem] border border-primary-100 bg-primary-50/70 px-4 py-3 text-sm font-semibold text-[#16302a] placeholder:text-[#91a7a0] focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="min-h-12 min-w-0 flex-1 rounded-[1.35rem] border border-primary-100 bg-primary-50/70 px-3 py-3 text-sm font-semibold text-[#16302a] placeholder:text-[#91a7a0] focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 sm:px-4"
               disabled={busy}
               aria-label="Message Coach"
             />
-            <Button type="submit" disabled={(!input.trim() && attachments.length === 0) || busy} aria-label="Send" className="min-h-12 px-4">
+            <Button type="submit" disabled={(!input.trim() && attachments.length === 0) || busy} aria-label="Send" className="h-12 w-12 shrink-0 px-0">
               <Send className="h-4 w-4" />
             </Button>
           </div>

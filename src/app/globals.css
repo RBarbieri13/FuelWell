@@ -292,13 +292,29 @@ html {
   }
 
   .fw-artifact-scope > :is(div, article, section, button) {
+    max-width: 100%;
+    min-width: 0;
     border-color: rgba(174, 226, 211, 0.82) !important;
     border-radius: 1.45rem !important;
     box-shadow: 0 18px 48px rgba(22, 48, 42, 0.08) !important;
   }
 
   .fw-artifact-scope :is(h1, h2, h3, h4, p, span, li) {
+    max-width: 100%;
     letter-spacing: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .fw-artifact-scope :is(img, video, canvas, svg) {
+    max-width: 100%;
+  }
+
+  .fw-rich-scroll,
+  .fw-artifact-scope :is(pre, .katex-display) {
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
   }
 
   .fw-artifact-scope :is(h1, h2, h3, .text-neutral-900, .text-neutral-950) {
@@ -321,6 +337,22 @@ html {
 @media (max-width: 768px) {
   .fw-page-inner {
     padding: 1rem;
+  }
+}
+
+@media (max-width: 430px) {
+  .fw-artifact-scope > :is(div, article, section, button) {
+    padding: 0.75rem !important;
+  }
+
+  .fw-artifact-scope :is(.fw-artifact-actions, .fw-artifact-mobile-stack) {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .fw-artifact-scope :is(.fw-artifact-actions, .fw-artifact-mobile-stack) > button {
+    justify-content: center;
+    width: 100%;
   }
 }
 

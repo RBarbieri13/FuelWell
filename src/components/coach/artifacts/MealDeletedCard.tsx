@@ -15,7 +15,7 @@ export function MealDeletedCard({
   onAction,
 }: ArtifactCardProps<MealDeletedArtifact>) {
   return (
-    <div className="flex max-w-full items-center justify-between gap-3 rounded-2xl border border-neutral-200 bg-white px-4 py-3 shadow-sm">
+    <div className="fw-artifact-mobile-stack flex max-w-full items-center justify-between gap-3 rounded-2xl border border-neutral-200 bg-white px-4 py-3 shadow-sm">
       <div className="flex min-w-0 items-center gap-2">
         <Trash2 className="h-4 w-4 shrink-0 text-neutral-400" />
         <p className="truncate text-sm font-medium text-neutral-700">

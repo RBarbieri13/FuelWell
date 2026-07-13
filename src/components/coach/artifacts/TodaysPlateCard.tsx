@@ -38,9 +38,9 @@ export function TodaysPlateCard({
           Nothing logged yet today.
         </p>
       ) : (
-        <ul className="-mx-1 mt-3 flex snap-x snap-mandatory gap-2 overflow-x-auto px-1 pb-1">
+        <ul className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
           {meals.map((meal) => (
-            <li key={meal.id} className="snap-start">
+            <li key={meal.id} className="min-w-0">
               <button
                 type="button"
                 aria-label={`Tell me about my ${meal.slot}: ${meal.name}`}
@@ -50,7 +50,7 @@ export function TodaysPlateCard({
                     text: `Tell me about my ${meal.slot}`,
                   })
                 }
-                className="flex min-h-10 w-36 flex-col items-start rounded-2xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-left transition hover:border-primary-300 hover:bg-primary-50/60"
+                className="flex min-h-10 w-full min-w-0 flex-col items-start rounded-2xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-left transition hover:border-primary-300 hover:bg-primary-50/60"
               >
                 <span className="text-[10px] font-black uppercase tracking-wide text-neutral-400">
                   {meal.slot}

@@ -42,7 +42,7 @@ export function MealSuggestionsCard({
               key={s.foodId}
               className="rounded-2xl border border-neutral-100 bg-neutral-50 p-3"
             >
-              <div className="flex items-start justify-between gap-2">
+              <div className="fw-artifact-mobile-stack flex items-start justify-between gap-2">
                 <div className="min-w-0">
                   <p className="truncate text-sm font-black text-neutral-900">
                     {s.name}

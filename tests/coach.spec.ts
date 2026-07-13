@@ -50,6 +50,111 @@ function expectArtifact(page: Page, type: string) {
   return expect(artifact(page, type)).toBeVisible({ timeout: ARTIFACT_TIMEOUT });
 }
 
+test("Coach contains rich responses and stacks artifacts from 320px through 430px", async ({ page }) => {
+  const text = [
+    "A long link must wrap: [nutrition details](https://example.com/nutrition/this-is-a-deliberately-long-unbroken-path-that-must-not-expand-the-message).",
+    "| Meal | Protein | Notes |\n| --- | ---: | --- |\n| Breakfast | 42g | Greek yogurt and berries |",
+    "`an_extremely_long_inline_code_value_that_must_wrap_without_expanding_the_page`",
+    "```text\nthis_block_is_intentionally_wider_than_the_mobile_message_and_scrolls_inside_its_wrapper\n```",
+    "$$\nprotein + carbohydrates + dietaryfat + fiber + hydration = daily\\ total\n$$",
+  ].join("\n\n");
+  const artifacts = [
+    {
+      id: "mobile-actions",
+      type: "quick_replies",
+      question: "Choose the next step",
+      options: ["Review breakfast", "Plan lunch", "Adjust targets"],
+    },
+    {
+      id: "mobile-plate",
+      type: "todays_plate",
+      meals: [
+        { id: "breakfast", slot: "breakfast", name: "Greek yogurt and berries", macros: { calories: 360, protein: 42, carbs: 35, fat: 8 } },
+        { id: "lunch", slot: "lunch", name: "Chicken grain bowl", macros: { calories: 620, protein: 48, carbs: 65, fat: 18 } },
+      ],
+      totals: { calories: 980, protein: 90, carbs: 100, fat: 26 },
+      targets: { calories: 2100, protein: 160, carbs: 220, fat: 70 },
+    },
+  ];
+  await page.route("**/api/coach/history", (route) => {
+    if (route.request().method() !== "GET") return route.continue();
+    return route.fulfill({
+      contentType: "application/json",
+      body: JSON.stringify({
+        signedIn: false,
+        conversationId: null,
+        messages: [],
+      }),
+    });
+  });
+  await page.setViewportSize({ width: 320, height: 812 });
+  await page.goto("/app/coach");
+  await page.evaluate(
+    ({ content, seededArtifacts }) => {
+      localStorage.setItem(
+        "fuelwell-coach-chat-v1",
+        JSON.stringify({
+          date: new Date().toISOString().split("T")[0],
+          items: [
+            {
+              id: "mobile-rich-response",
+              role: "assistant",
+              text: content,
+              artifacts: seededArtifacts,
+            },
+          ],
+        })
+      );
+    },
+    { content: text, seededArtifacts: artifacts }
+  );
+
+  for (const width of [320, 430]) {
+    await page.setViewportSize({ width, height: 812 });
+    await page.reload();
+    await page.getByRole("button", { name: "Close coach action panel" }).click();
+    await expect(page.getByTestId("artifact-todays_plate")).toBeVisible();
+
+    const layout = await page.evaluate(() => {
+      const composer = document.querySelector<HTMLInputElement>('[aria-label="Message Coach"]');
+      const attach = document.querySelector<HTMLElement>('[aria-label^="Attach screenshot"]')?.closest("label");
+      const send = document.querySelector<HTMLElement>('[aria-label="Send"]');
+      const mealCards = Array.from(
+        document.querySelectorAll<HTMLElement>('[data-testid="artifact-todays_plate"] li')
+      ).map((item) => item.getBoundingClientRect());
+      const actions = Array.from(
+        document.querySelectorAll<HTMLElement>('[data-testid="artifact-quick_replies"] button')
+      ).map((item) => item.getBoundingClientRect());
+      const richScrollers = Array.from(
+        document.querySelectorAll<HTMLElement>(".fw-rich-scroll, .katex-display")
+      );
+      const scrollerMetrics = richScrollers.map((item) => ({
+        className: item.className,
+        width: item.getBoundingClientRect().width,
+        parentWidth: item.parentElement?.getBoundingClientRect().width ?? 0,
+      }));
+
+      return {
+        documentFits: document.documentElement.scrollWidth <= window.innerWidth + 1,
+        controls: [attach, send].map((item) => item?.getBoundingClientRect().width ?? 0),
+        inputWidth: composer?.getBoundingClientRect().width ?? 0,
+        actionMetrics: actions.map((item) => ({ x: item.x, y: item.y, width: item.width })),
+        mealsStacked: mealCards.length === 2 && Math.abs(mealCards[0].x - mealCards[1].x) < 1 && mealCards[1].y > mealCards[0].y,
+        actionsStacked: actions.length === 3 && actions.every((item, index) => index === 0 || item.y > actions[index - 1].y),
+        scrollerMetrics,
+        scrollersContained: richScrollers.length >= 3 && scrollerMetrics.every((item) => item.width <= item.parentWidth + 1),
+      };
+    });
+
+    expect(layout.documentFits).toBe(true);
+    expect(layout.controls).toEqual([48, 48]);
+    expect(layout.inputWidth).toBeGreaterThan(100);
+    expect(layout.mealsStacked).toBe(true);
+    expect(layout.actionsStacked, `${width}px: ${JSON.stringify(layout.actionMetrics)}`).toBe(true);
+    expect(layout.scrollersContained, JSON.stringify(layout.scrollerMetrics)).toBe(true);
+  }
+});
+
 test.describe("agentic Coach", () => {
   test.describe.configure({ mode: "serial" });
   test.skip(!process.env.ANTHROPIC_API_KEY, "Live Coach E2E requires ANTHROPIC_API_KEY.");
