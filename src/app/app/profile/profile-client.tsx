@@ -149,8 +149,8 @@ export function ProfileClient({
           </Card>
         )}
 
-        <section className="grid gap-6 xl:grid-cols-[1.08fr_0.92fr]">
-          <Card className="fw-dark-panel px-8 py-8">
+        <section className="grid min-w-0 gap-6 xl:grid-cols-[1.08fr_0.92fr]">
+          <Card className="fw-dark-panel min-w-0 px-5 py-6 sm:px-8 sm:py-8">
             <div className="flex flex-col gap-6 md:flex-row md:items-center">
               <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-[2rem] bg-white/12 text-white shadow-inner shadow-white/10">
                 <User className="h-11 w-11" />
@@ -216,7 +216,7 @@ export function ProfileClient({
             </div>
           </Card>
 
-          <Card variant="elevated" className="space-y-5">
+          <Card variant="elevated" className="min-w-0 space-y-5">
             <div className="flex items-start gap-4">
               <span className="fw-icon-chip">
                 <Target className="h-6 w-6" />
@@ -254,8 +254,8 @@ export function ProfileClient({
           </Card>
         </section>
 
-        <section className="grid gap-4 xl:grid-cols-[1fr_0.85fr]">
-          <Card className="px-6 py-6">
+        <section className="grid min-w-0 gap-4 xl:grid-cols-[1fr_0.85fr]">
+          <Card className="min-w-0 px-5 py-6 sm:px-6">
             <div className="mb-3 flex items-center justify-between">
               <h2 className="text-2xl font-black text-neutral-900">Body context</h2>
               <span className="rounded-full bg-primary-50 px-3 py-1 text-xs font-black text-primary-700">
@@ -282,7 +282,7 @@ export function ProfileClient({
             </div>
           </Card>
 
-          <Card className="space-y-4">
+          <Card className="min-w-0 space-y-4">
             <div className="flex items-center gap-3">
               <span className="fw-icon-chip">
                 <Settings className="h-6 w-6" />

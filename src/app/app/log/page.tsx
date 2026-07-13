@@ -187,8 +187,8 @@ function LogContent() {
   const modeHelp = MODE_HELP[mode];
 
   return (
-    <div className="mx-auto max-w-6xl space-y-5 p-4 pb-28 md:p-8">
-      <Card variant="elevated" className="fw-dark-panel overflow-hidden text-white">
+    <div className="mx-auto w-full max-w-6xl min-w-0 space-y-5 p-4 pb-28 md:p-8">
+      <Card variant="elevated" className="fw-dark-panel min-w-0 overflow-hidden text-white">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-xs font-black uppercase tracking-[0.16em] text-primary-100">
@@ -211,16 +211,16 @@ function LogContent() {
         </div>
       </Card>
 
-      <div className="grid gap-5 lg:grid-cols-[1fr_0.72fr]">
-        <div className="space-y-5">
-          <div className="grid grid-cols-2 gap-2 rounded-[1.5rem] border border-primary-100/80 bg-white/86 p-2 shadow-[0_18px_48px_rgba(22,48,42,0.07)] sm:grid-cols-4">
+      <div className="grid min-w-0 gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.72fr)]">
+        <div className="min-w-0 space-y-5">
+          <div className="grid min-w-0 grid-cols-2 gap-2 rounded-[1.5rem] border border-primary-100/80 bg-white/86 p-2 shadow-[0_18px_48px_rgba(22,48,42,0.07)] sm:grid-cols-4">
             {modes.map((modeOption) => (
               <button
                 key={modeOption.key}
                 onClick={() => setMode(modeOption.key)}
                 aria-pressed={mode === modeOption.key}
                 className={cn(
-                  "flex min-h-12 items-center justify-center gap-2 rounded-[1.15rem] px-3 py-3 text-sm font-black transition-all duration-150",
+                  "flex min-h-12 min-w-0 items-center justify-center gap-1.5 rounded-[1.15rem] px-2 py-3 text-sm font-black transition-all duration-150 sm:gap-2 sm:px-3",
                   mode === modeOption.key
                     ? "bg-primary-600 text-white shadow-[0_14px_32px_rgba(21,145,108,0.22)]"
                     : "text-[#60776f] hover:bg-primary-50 hover:text-primary-800"
@@ -232,8 +232,8 @@ function LogContent() {
             ))}
           </div>
 
-          <Card className="flex flex-col gap-3 rounded-[1.35rem] border-primary-100 bg-primary-50/70 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
+          <Card className="flex min-w-0 flex-col gap-3 rounded-[1.35rem] border-primary-100 bg-primary-50/70 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
+            <div className="min-w-0">
               <p className="text-sm font-black text-primary-900">{modeHelp.title}</p>
               <p className="mt-1 text-sm font-semibold leading-6 text-primary-900/65">
                 {modeHelp.detail}
@@ -295,7 +295,7 @@ function LogContent() {
           />
         </div>
 
-        <div className="space-y-5">
+        <div className="min-w-0 space-y-5">
           <div className="hidden lg:block">
             <MealTypeSelector mealType={mealType} onSelect={setMealType} />
           </div>
@@ -440,7 +440,7 @@ function SessionIngredientDrawer({
     <aside
       className={cn(
         "fixed bottom-0 right-0 top-0 z-40 w-full max-w-md transform border-l border-primary-100 bg-white shadow-[0_24px_80px_rgba(22,48,42,0.22)] transition-transform duration-300 md:top-0",
-        open ? "translate-x-0" : "translate-x-full"
+        open ? "translate-x-0" : "hidden translate-x-full"
       )}
       aria-hidden={!open}
     >

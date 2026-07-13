@@ -537,8 +537,8 @@ export function SettingsClient({
           </Card>
         )}
 
-        <section className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
-          <Card className="fw-dark-panel px-8 py-8">
+        <section className="grid min-w-0 gap-6 xl:grid-cols-[0.95fr_1.05fr]">
+          <Card className="fw-dark-panel min-w-0 px-5 py-6 sm:px-8 sm:py-8">
             <p className="text-sm font-black uppercase tracking-[0.16em] text-primary-200">
               Account control center
             </p>
@@ -555,7 +555,7 @@ export function SettingsClient({
             </div>
           </Card>
 
-          <Card variant="elevated" className="space-y-5">
+          <Card variant="elevated" className="min-w-0 space-y-5">
             <div className="flex items-start justify-between gap-4">
               <div className="flex items-start gap-4">
                 <span className="fw-icon-chip">
@@ -614,7 +614,7 @@ export function SettingsClient({
           </Card>
         </section>
 
-        <section className="grid gap-4 xl:grid-cols-[0.9fr_1.1fr]">
+        <section className="grid min-w-0 gap-4 xl:grid-cols-[0.9fr_1.1fr]">
           <Section id="account" title="Account">
             <Card className="divide-y divide-primary-100/70 px-6 py-3">
               <Row icon={User} label="Display name">
