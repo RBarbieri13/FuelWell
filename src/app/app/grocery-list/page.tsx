@@ -25,6 +25,7 @@ import {
   useGroceryList,
   setGroceryItems,
   inferGroceryDetails,
+  inferGroceryCategory,
   type GroceryCategory,
   type RichGroceryItem,
 } from "@/lib/use-grocery-list";
@@ -103,13 +104,7 @@ export default function GroceryListPage() {
       : visibleItems.filter((item) => selectedSources.includes(item.source || "Added manually"));
 
   function inferCategory(name: string): GroceryCategory {
-    const lower = name.toLowerCase();
-    if (/chicken|turkey|salmon|beef|pork|shrimp|tuna|egg|tofu|tempeh|protein/.test(lower)) return "Protein";
-    if (/spinach|broccoli|berry|berries|apple|banana|greens|potato|tomato|pepper|lettuce|orange|carrot/.test(lower)) return "Produce";
-    if (/yogurt|milk|cheese|cottage|skyr|kefir/.test(lower)) return "Dairy";
-    if (/frozen|ice/.test(lower)) return "Frozen";
-    if (/rice|quinoa|oat|pasta|tortilla|bean|bread|granola|cereal/.test(lower)) return "Pantry";
-    return "Other";
+    return inferGroceryCategory(name);
   }
 
   function persistHistory(next: GroceryHistoryEntry[]) {

@@ -2,6 +2,7 @@ import { defineConfig, devices } from "@playwright/test";
 
 const candidateBaseURL = process.env.FUELWELL_PLAYWRIGHT_BASE_URL;
 const browserChannel = process.env.FUELWELL_PLAYWRIGHT_BROWSER_CHANNEL;
+const includeMobileWebKit = process.env.FUELWELL_PLAYWRIGHT_MOBILE_WEBKIT === "1";
 
 /**
  * Smoke-test config. Runs against the local dev server in preview mode
@@ -29,6 +30,16 @@ export default defineConfig({
         ...(browserChannel ? { channel: browserChannel } : {}),
       },
     },
+    ...(includeMobileWebKit
+      ? [
+          {
+            name: "mobile-webkit",
+            use: {
+              ...devices["iPhone 13"],
+            },
+          },
+        ]
+      : []),
   ],
   webServer: candidateBaseURL
     ? undefined

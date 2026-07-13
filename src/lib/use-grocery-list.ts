@@ -108,6 +108,16 @@ export function inferGroceryDetails(
   return { servingSize, classification, vitaminBenefit, quantity };
 }
 
+export function inferGroceryCategory(name: string): GroceryCategory {
+  const lower = name.toLowerCase();
+  if (/chicken|turkey|salmon|beef|pork|shrimp|tuna|egg|tofu|tempeh|protein/.test(lower)) return "Protein";
+  if (/spinach|broccoli|berry|berries|apple|banana|greens|potato|tomato|pepper|lettuce|orange|carrot|cucumber|avocado/.test(lower)) return "Produce";
+  if (/yogurt|milk|cheese|cottage|skyr|kefir/.test(lower)) return "Dairy";
+  if (/frozen|ice/.test(lower)) return "Frozen";
+  if (/rice|quinoa|oat|pasta|tortilla|bean|bread|granola|cereal|lentil|flour/.test(lower)) return "Pantry";
+  return "Other";
+}
+
 function enrichItem(item: RichGroceryItem): RichGroceryItem {
   const normalized = normalizeGroceryInput(item.name, item.quantity ?? item.amount);
   const amount = normalized.quantity ?? (item.amount.trim() || "1 item");

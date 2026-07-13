@@ -449,28 +449,29 @@ export default function OnboardingPage() {
     });
     const preferencesJson = buildOnboardingPreferences(data);
 
+    if (isNewUserPreview || isBrowserPreviewRuntime()) {
+      try {
+        window.localStorage.setItem(
+          PREVIEW_COMPLETED_STORAGE_KEY,
+          JSON.stringify({
+            completedAt: new Date().toISOString(),
+            data,
+            macros,
+          })
+        );
+        window.localStorage.setItem(PREVIEW_KIND_STORAGE_KEY, "new-user");
+      } catch {
+        // Local-only preview completion can still continue without storage.
+      }
+      clearProgress();
+      router.push("/app/dashboard?preview=new-user-complete");
+      return;
+    }
+
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
-      if (isNewUserPreview || isBrowserPreviewRuntime()) {
-        try {
-          window.localStorage.setItem(
-            PREVIEW_COMPLETED_STORAGE_KEY,
-            JSON.stringify({
-              completedAt: new Date().toISOString(),
-              data,
-              macros,
-            })
-          );
-          window.localStorage.setItem(PREVIEW_KIND_STORAGE_KEY, "new-user");
-        } catch {
-          // Local-only preview completion can still continue without storage.
-        }
-        clearProgress();
-        router.push("/app/dashboard?preview=new-user-complete");
-        return;
-      }
       setError("Not authenticated. Please log in again.");
       setSaving(false);
       return;

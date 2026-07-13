@@ -1,9 +1,19 @@
 "use client";
 
-import { Clock, Flame, Users, Wheat, Droplet, Dumbbell, X } from "lucide-react";
+import { useState } from "react";
+import { CheckCircle2, Clock, Flame, ListPlus, Users, Wheat, Droplet, Dumbbell, UtensilsCrossed, X } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { PreferenceToggle } from "@/components/food/preference-toggle";
 import type { Recipe } from "@/lib/recipes-data";
+import { useDayLog } from "@/lib/use-day-log";
+import {
+  inferGroceryCategory,
+  inferGroceryDetails,
+  setGroceryItems,
+  useGroceryList,
+} from "@/lib/use-grocery-list";
+import type { MealType } from "@/lib/fuelwell-data";
 
 /**
  * Recipe detail modal: full ingredient list with measurements, the steps, and
@@ -17,6 +27,10 @@ export function RecipeDetail({
   recipe: Recipe;
   onClose: () => void;
 }) {
+  const { addMeal } = useDayLog();
+  const { items } = useGroceryList();
+  const [confirmation, setConfirmation] = useState("");
+  const mealType = recipe.meal.toLowerCase() as MealType;
   const nutrition: { label: string; value: string; tone: string; icon: typeof Flame }[] = [
     { label: "Calories", value: `${recipe.perServing.calories}`, tone: "bg-primary-50 text-primary-700 border-primary-100", icon: Flame },
     { label: "Protein", value: `${recipe.perServing.protein}g`, tone: "bg-sky-50 text-sky-700 border-sky-100", icon: Dumbbell },
@@ -24,6 +38,46 @@ export function RecipeDetail({
     { label: "Fat", value: `${recipe.perServing.fat}g`, tone: "bg-accent-50 text-accent-700 border-accent-100", icon: Droplet },
     { label: "Fiber", value: `${recipe.perServing.fiber}g`, tone: "bg-primary-50 text-primary-700 border-primary-100", icon: Wheat },
   ];
+
+  function planMeal() {
+    addMeal({
+      mealType,
+      name: recipe.title,
+      items: [{
+        name: recipe.title,
+        servings: 1,
+        calories: recipe.perServing.calories,
+        protein: recipe.perServing.protein,
+        carbs: recipe.perServing.carbs,
+        fat: recipe.perServing.fat,
+      }],
+    });
+    setConfirmation(`${recipe.title} added to today's ${mealType}.`);
+  }
+
+  function addIngredients() {
+    const existing = new Set(items.map((item) => item.name.toLowerCase()));
+    const additions = recipe.ingredients
+      .filter((ingredient) => !existing.has(ingredient.item.toLowerCase()))
+      .map((ingredient, index) => {
+        const category = inferGroceryCategory(ingredient.item);
+        return {
+          id: `recipe-${recipe.id}-${index}`,
+          name: ingredient.item,
+          amount: ingredient.amount,
+          category,
+          source: recipe.title,
+          checked: false,
+          ...inferGroceryDetails(ingredient.item, ingredient.amount, category),
+        };
+      });
+    setGroceryItems([...additions, ...items]);
+    setConfirmation(
+      additions.length > 0
+        ? `${additions.length} ingredients added to Groceries.`
+        : "These ingredients are already in Groceries."
+    );
+  }
 
   return (
     <Dialog
@@ -70,7 +124,23 @@ export function RecipeDetail({
           </div>
         </div>
 
-        <div className="space-y-6 px-5 py-5">
+        <div className="space-y-6 px-4 py-5 sm:px-5">
+          <section className="grid min-w-0 gap-2 sm:grid-cols-2">
+            <Button type="button" onClick={planMeal} className="w-full min-w-0">
+              <UtensilsCrossed className="h-4 w-4" />
+              Plan this meal
+            </Button>
+            <Button type="button" variant="secondary" onClick={addIngredients} className="w-full min-w-0">
+              <ListPlus className="h-4 w-4" />
+              Add ingredients
+            </Button>
+            {confirmation && (
+              <p role="status" className="flex min-w-0 items-start gap-2 rounded-[1rem] border border-primary-100 bg-primary-50 px-3 py-2.5 text-sm font-bold leading-5 text-primary-800 sm:col-span-2">
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" />
+                <span className="min-w-0 break-words">{confirmation}</span>
+              </p>
+            )}
+          </section>
           <section>
             <h3 className="text-xs font-black uppercase tracking-[0.16em] text-[#91a7a0]">
               Per serving

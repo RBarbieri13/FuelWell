@@ -71,7 +71,7 @@ function WorkoutMiniLink({
   return (
     <Link
       href={workoutHref(workout.id)}
-      className="group flex items-center gap-3 rounded-[1.35rem] border border-[#e6efeb] bg-white p-3 shadow-sm transition hover:border-primary-200 hover:bg-primary-50/60"
+      className="group flex min-w-0 items-center gap-3 rounded-[1.35rem] border border-[#e6efeb] bg-white p-3 shadow-sm transition hover:border-primary-200 hover:bg-primary-50/60"
     >
       <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[0.95rem] bg-primary-100 text-primary-700">
         <Arrow className="h-4 w-4 transition group-hover:scale-110" />
@@ -97,7 +97,7 @@ function SimilarWorkoutLink({ workout }: { workout: WorkoutLibraryItem }) {
   return (
     <Link
       href={workoutHref(workout.id)}
-      className="group flex items-center gap-3 rounded-[1.25rem] border border-[#e6efeb] bg-[#f6faf8] p-3 transition hover:border-primary-200 hover:bg-white"
+      className="group flex min-w-0 items-center gap-3 rounded-[1.25rem] border border-[#e6efeb] bg-[#f6faf8] p-3 transition hover:border-primary-200 hover:bg-white"
     >
       <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[0.95rem] bg-white text-primary-700 shadow-sm">
         <Icon className="h-4 w-4" />
@@ -238,7 +238,7 @@ export default async function WorkoutDetailPage({
 
   return (
     <div className="fw-app-surface min-h-full">
-      <div className="fw-page-inner max-w-6xl space-y-6">
+      <div className="fw-page-inner min-w-0 max-w-6xl space-y-6">
         <Link
           href="/app/workouts"
           className="inline-flex items-center gap-2 rounded-full bg-white/75 px-4 py-2 text-sm font-black text-[#78928a] shadow-sm transition-colors hover:text-primary-700"
@@ -247,18 +247,18 @@ export default async function WorkoutDetailPage({
           Back to workouts
         </Link>
 
-        <section className="grid items-stretch gap-4 lg:grid-cols-[minmax(0,1fr)_22rem]">
-          <Card variant="elevated" className="fw-dark-panel overflow-hidden">
+        <section className="grid min-w-0 items-stretch gap-4 lg:grid-cols-[minmax(0,1fr)_22rem]">
+          <Card variant="elevated" className="fw-dark-panel min-w-0 overflow-hidden p-4 sm:p-6">
             <div className="relative">
               <div className="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full bg-primary-500/25 blur-3xl" />
               <div className="relative flex flex-col gap-6">
                 <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
-                  <div className="flex gap-4">
+                  <div className="flex min-w-0 gap-3 sm:gap-4">
                     <div className="flex h-16 w-16 shrink-0 flex-col items-center justify-center rounded-[1.35rem] bg-primary-400 text-primary-950 shadow-sm shadow-primary-950/25">
                       <span className="text-lg font-black tabular-nums">{exercisePlan.length}</span>
                       <span className="text-[10px] font-black uppercase tracking-[0.12em]">moves</span>
                     </div>
-                    <div>
+                    <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
                         <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-primary-100">
                           Preview before logging
@@ -316,7 +316,7 @@ export default async function WorkoutDetailPage({
             </div>
           </Card>
 
-          <Card className="space-y-4">
+          <Card className="min-w-0 space-y-4 p-4 sm:p-6">
             <div className="flex items-center gap-3">
               <span className="inline-flex h-10 w-10 items-center justify-center rounded-[1rem] bg-primary-100 text-primary-700">
                 <MapPinned className="h-5 w-5" />
@@ -347,9 +347,9 @@ export default async function WorkoutDetailPage({
           <Metric icon={Target} label="Goal" value={workout.goal} />
         </section>
 
-        <section className="grid items-start gap-5 lg:grid-cols-[minmax(0,1.2fr)_minmax(20rem,0.8fr)]">
-          <div className="space-y-5">
-            <Card variant="elevated" padding="sm">
+        <section className="grid min-w-0 items-start gap-5 lg:grid-cols-[minmax(0,1.2fr)_minmax(20rem,0.8fr)]">
+          <div className="min-w-0 space-y-5">
+            <Card variant="elevated" padding="sm" className="min-w-0">
               <div className="px-2 pb-3">
                 <h2 className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-primary-600">
                   <ListChecks className="h-4 w-4" />
@@ -378,7 +378,7 @@ export default async function WorkoutDetailPage({
               </div>
             </Card>
 
-            <Card variant="elevated" padding="sm">
+            <Card variant="elevated" padding="sm" className="min-w-0">
               <div className="px-2 pb-3">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <h2 className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-primary-600">
@@ -395,7 +395,7 @@ export default async function WorkoutDetailPage({
               </div>
             </Card>
 
-            <Card className="border-lemon-200 bg-lemon-50/80">
+            <Card className="min-w-0 border-lemon-200 bg-lemon-50/80 p-4 sm:p-6">
               <div className="flex gap-3">
                 <Info className="mt-0.5 h-5 w-5 shrink-0 text-lemon-600" />
                 <div>
@@ -410,8 +410,8 @@ export default async function WorkoutDetailPage({
             </Card>
           </div>
 
-          <div className="space-y-5">
-            <Card variant="elevated" className="space-y-4">
+          <div className="min-w-0 space-y-5">
+            <Card variant="elevated" className="min-w-0 space-y-4 p-4 sm:p-6">
               <div className="flex items-center gap-3">
                 <span className="inline-flex h-10 w-10 items-center justify-center rounded-[1rem] bg-primary-100 text-primary-700">
                   <Sparkles className="h-5 w-5" />
@@ -446,7 +446,7 @@ export default async function WorkoutDetailPage({
               </div>
             </Card>
 
-            <Card className="space-y-3 border-primary-100 bg-primary-50/80">
+            <Card className="min-w-0 space-y-3 border-primary-100 bg-primary-50/80 p-4 sm:p-6">
               <div className="flex gap-3">
                 <UtensilsCrossed className="mt-0.5 h-4 w-4 shrink-0 text-primary-600" />
                 <div>
@@ -458,7 +458,7 @@ export default async function WorkoutDetailPage({
               </div>
             </Card>
 
-            <Card variant="elevated" className="space-y-3">
+            <Card variant="elevated" className="min-w-0 space-y-3 p-4 sm:p-6">
               <div className="flex items-center justify-between gap-3">
                 <h2 className="font-heading text-lg font-black text-[#16302a]">
                   Close matches
