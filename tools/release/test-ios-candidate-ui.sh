@@ -8,6 +8,7 @@ expected_deployment_id="${FUELWELL_CANDIDATE_DEPLOYMENT_ID:-}"
 expected_environment="${FUELWELL_CANDIDATE_ENVIRONMENT:-}"
 device="${FUELWELL_RELEASE_TEST_DEVICE:-iPhone 15}"
 result_path="${FUELWELL_UI_TEST_RESULT_PATH:-${repo_root}/ios/build/reports/FuelWellCandidateUITests.xcresult}"
+overflow_result_path="${FUELWELL_MOBILE_OVERFLOW_RESULT_PATH:-${repo_root}/ios/build/reports/coach-mobile-overflow}"
 
 usage() {
   cat <<'EOF'
@@ -26,8 +27,9 @@ For an explicitly anonymous preview candidate only, replace the credentials with
   FUELWELL_UI_TEST_ALLOW_ANONYMOUS=1
 
 The script rejects the mutable fuelwell-preview.vercel.app alias, validates the
-candidate release manifest, generates an isolated Xcode project, and preserves
-screenshots and test results in ios/build/reports/FuelWellCandidateUITests.xcresult.
+candidate release manifest, verifies Coach overflow at release mobile widths,
+generates an isolated Xcode project, and preserves screenshots and test results
+under ios/build/reports.
 EOF
 }
 
@@ -79,16 +81,31 @@ environment="$(read_manifest '.environment' 'environment')"
 [[ "${package_version}" == "$(node -p "require('${repo_root}/package.json').version")" ]] || \
   fail "manifest package version does not match package.json"
 
-preflight_url="${candidate_origin}/api/launch-preflight"
+preflight_url="${candidate_origin}/api/launch-preflight?live=1"
 preflight="$(curl --fail --silent --show-error --max-time 20 \
   -H 'Accept: application/json' "${preflight_url}")" || fail "candidate launch preflight is unavailable"
-jq -e '.ready == true' <<<"${preflight}" >/dev/null || \
-  fail "candidate launch preflight is not ready: $(jq -c '{ready, checks}' <<<"${preflight}")"
+jq -e '.productionReady == true and .liveReady == true' <<<"${preflight}" >/dev/null || \
+  fail "candidate is not live production-ready for TestFlight: $(jq -c '{previewReady, productionReady, liveReady, checks}' <<<"${preflight}")"
 
 if [[ "${FUELWELL_UI_TEST_ALLOW_ANONYMOUS:-0}" != "1" ]]; then
   [[ -n "${FUELWELL_UI_TEST_EMAIL:-}" ]] || fail "FUELWELL_UI_TEST_EMAIL is required"
   [[ -n "${FUELWELL_UI_TEST_PASSWORD:-}" ]] || fail "FUELWELL_UI_TEST_PASSWORD is required"
 fi
+
+if [[ ! -x "${repo_root}/node_modules/.bin/playwright" ]]; then
+  echo "Installing locked web test dependencies"
+  npm --prefix "${repo_root}" ci --ignore-scripts
+fi
+
+rm -rf "${overflow_result_path}"
+echo "Testing Coach mobile overflow against immutable candidate ${candidate_origin}"
+FUELWELL_PLAYWRIGHT_BASE_URL="${candidate_origin}" \
+FUELWELL_PLAYWRIGHT_BROWSER_CHANNEL="${FUELWELL_PLAYWRIGHT_BROWSER_CHANNEL:-chrome}" \
+FUELWELL_PLAYWRIGHT_OUTPUT_DIR="${overflow_result_path}" \
+  "${repo_root}/node_modules/.bin/playwright" test \
+    "${repo_root}/tests/coach-mobile-overflow.spec.ts" \
+    --config="${repo_root}/playwright.config.ts" \
+    --project=chromium
 
 temporary_project="$(mktemp -d "${TMPDIR:-/tmp}/fuelwell-candidate-ui.XXXXXX")"
 trap 'rm -rf "${temporary_project}"' EXIT
@@ -124,3 +141,4 @@ DEVELOPER_DIR="${DEVELOPER_DIR:-/Applications/Xcode.app/Contents/Developer}" \
 
 echo "PASS: bound iOS candidate launched and all critical web routes remained live"
 echo "Evidence: ${result_path}"
+echo "Coach overflow evidence: ${overflow_result_path}"
