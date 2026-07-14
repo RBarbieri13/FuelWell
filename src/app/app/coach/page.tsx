@@ -33,6 +33,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils/cn";
 import { createClient } from "@/lib/supabase/client";
 import { hasSupabaseConfig, isPreviewHost, SAMPLE_USER } from "@/lib/preview-session";
+import { readPreviewOnboardingOverride } from "@/lib/preview-onboarding";
 import { remaining } from "@/lib/fuelwell-data";
 import { useDayLog } from "@/lib/use-day-log";
 import { useCoachChat, type CoachProfile } from "@/lib/coach/client-store";
@@ -182,11 +183,12 @@ export default function CoachPage() {
   useEffect(() => {
     async function loadProfile() {
       if (isPreviewHost(window.location.host) || !hasSupabaseConfig()) {
+        const override = readPreviewOnboardingOverride()?.data;
         setProfile({
-          displayName: SAMPLE_USER.displayName,
-          goal: SAMPLE_USER.goal,
-          activityLevel: SAMPLE_USER.activityLevel,
-          dietaryPreference: SAMPLE_USER.dietaryPreference,
+          displayName: override?.displayName?.trim() || SAMPLE_USER.displayName,
+          goal: override?.goal || SAMPLE_USER.goal,
+          activityLevel: override?.activityLevel || SAMPLE_USER.activityLevel,
+          dietaryPreference: override?.dietaryPreference || SAMPLE_USER.dietaryPreference,
           weightKg: SAMPLE_USER.weightKg,
           heightCm: SAMPLE_USER.heightCm,
         });

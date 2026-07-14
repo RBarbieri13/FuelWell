@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useSyncExternalStore, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import {
   Activity,
   ArrowRight,
@@ -23,6 +23,7 @@ import { QuickActions } from "@/components/dashboard/quick-actions";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import type { MacroTargets, MacroTotals, MealRecord } from "@/lib/fuelwell-data";
+import { usePreviewOnboardingOverride } from "@/lib/preview-onboarding";
 import {
   buildCoachVerdict,
   buildScoreContributors,
@@ -55,28 +56,6 @@ interface DashboardClientProps {
   allergies: string[];
 }
 
-type PreviewCompletedOnboarding = {
-  data?: {
-    displayName?: string;
-    goal?: string;
-    dietaryPreference?: string;
-    allergies?: string[];
-  };
-  macros?: Partial<MacroTargets>;
-};
-
-const PREVIEW_COMPLETED_STORAGE_KEY = "fuelwell:new-user-onboarding:v1";
-
-const subscribeToPreviewOverride = () => () => {};
-
-function getPreviewOverrideSnapshot() {
-  return window.localStorage.getItem(PREVIEW_COMPLETED_STORAGE_KEY);
-}
-
-function getServerPreviewOverrideSnapshot() {
-  return null;
-}
-
 export function DashboardClient({
   displayName,
   targets,
@@ -87,20 +66,25 @@ export function DashboardClient({
   dietaryPreference,
   allergies,
 }: DashboardClientProps) {
-  const previewOverrideRaw = useSyncExternalStore(
-    subscribeToPreviewOverride,
-    getPreviewOverrideSnapshot,
-    getServerPreviewOverrideSnapshot
-  );
-  const previewOverride = useMemo(() => {
-    try {
-      return previewOverrideRaw
-        ? (JSON.parse(previewOverrideRaw) as PreviewCompletedOnboarding)
-        : null;
-    } catch {
-      return null;
+  const previewOverride = usePreviewOnboardingOverride();
+  const [setupCompleteBanner, setSetupCompleteBanner] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("setup") !== "complete" && params.get("preview") !== "new-user-complete") {
+      return;
     }
-  }, [previewOverrideRaw]);
+    params.delete("setup");
+    params.delete("preview");
+    const query = params.toString();
+    window.history.replaceState(
+      null,
+      "",
+      window.location.pathname + (query ? `?${query}` : "")
+    );
+    const frame = requestAnimationFrame(() => setSetupCompleteBanner(true));
+    return () => cancelAnimationFrame(frame);
+  }, []);
 
   const effectiveDisplayName =
     previewOverride?.data?.displayName?.trim() || displayName;
@@ -156,19 +140,52 @@ export function DashboardClient({
       </header>
 
       <div className="fw-page-inner space-y-6">
+      {setupCompleteBanner && (
+        <Card className="border-primary-200 bg-primary-50/80">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-600 text-white">
+                <Sparkles className="h-4 w-4" />
+              </span>
+              <p className="text-sm font-black text-[#16302a]">
+                Setup complete — your plan and targets are live.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setSetupCompleteBanner(false)}
+              className="shrink-0 rounded-full px-3 py-1.5 text-sm font-black text-primary-700 transition hover:bg-primary-100"
+            >
+              Done
+            </button>
+          </div>
+        </Card>
+      )}
       {!effectiveOnboardingComplete && (
         <Link href="/app/onboarding" className="block group">
-          <Card className="border-accent-200/80 bg-accent-50/70 transition-colors group-hover:border-accent-300">
+          <Card
+            variant="elevated"
+            className="border-primary-200 bg-gradient-to-r from-primary-50/90 to-white transition-colors group-hover:border-primary-300"
+          >
             <div className="flex items-center justify-between gap-4">
-              <div>
-                <p className="text-sm font-bold text-accent-800">
-                  Finish your setup before trusting the scores
-                </p>
-                <p className="mt-0.5 text-xs font-medium text-accent-700">
-                  FuelWell needs your body, goal, and diet inputs to calculate useful targets.
-                </p>
+              <div className="flex items-center gap-4">
+                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-600 text-white shadow-[0_10px_24px_rgba(21,145,108,0.35)]">
+                  <Sparkles className="h-6 w-6" />
+                </span>
+                <div>
+                  <p className="text-base font-black text-[#16302a]">
+                    Take the 3-minute setup quiz
+                  </p>
+                  <p className="mt-0.5 text-sm font-semibold text-[#6f8981]">
+                    Targets, coach context, and meal suggestions all start here.
+                  </p>
+                </div>
               </div>
-              <ArrowRight className="h-5 w-5 shrink-0 text-accent-500 transition-transform group-hover:translate-x-0.5" />
+              <span className="hidden shrink-0 items-center gap-1 rounded-full bg-primary-600 px-4 py-2 text-sm font-black text-white transition group-hover:bg-primary-700 sm:inline-flex">
+                Start
+                <ArrowRight className="h-4 w-4" />
+              </span>
+              <ArrowRight className="h-5 w-5 shrink-0 text-primary-600 sm:hidden" />
             </div>
           </Card>
         </Link>

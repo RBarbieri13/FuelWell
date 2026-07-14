@@ -22,6 +22,11 @@ import {
 import Link from "next/link";
 import { clearPreferencesForUser } from "@/lib/use-preferences";
 import {
+  readPreviewOnboardingOverride,
+  usePreviewOnboardingOverride,
+  writePreviewOnboardingOverride,
+} from "@/lib/preview-onboarding";
+import {
   clearUserScopedIdentityCaches,
   normalizeDisplayName,
   updateProfileAndVerify,
@@ -64,12 +69,30 @@ export function ProfileClient({
   const [currentDisplayName, setCurrentDisplayName] = useState(displayName);
   const [savingName, setSavingName] = useState(false);
   const [nameError, setNameError] = useState<string | null>(null);
+
+  // In preview mode the completed intake quiz is the source of truth, so the
+  // quiz visibly takes effect here (name, goal, activity, targets).
+  const previewOverride = usePreviewOnboardingOverride();
+  const override = isPreview ? previewOverride : null;
+  const effectiveDisplayName = override?.data?.displayName?.trim() || currentDisplayName;
+  const effectiveGoal = override?.data?.goal || goal;
+  const effectiveActivityLevel = override?.data?.activityLevel || activityLevel;
+  const effectiveCalorieTarget = Number(override?.macros?.calories) || calorieTarget;
+  const effectiveProteinTarget = Number(override?.macros?.protein) || proteinTarget;
+  const effectiveCarbsTarget = Number(override?.macros?.carbs) || carbsTarget;
+  const effectiveFatTarget = Number(override?.macros?.fat) || fatTarget;
+
   const weightLb = weightKg ? Math.round(weightKg * 2.20462) : null;
   const heightIn = heightCm ? Math.round(heightCm / 2.54) : null;
 
   async function handleSaveName() {
     const normalizedName = normalizeDisplayName(nameValue);
     if (isPreview) {
+      const existing = readPreviewOnboardingOverride() ?? {};
+      writePreviewOnboardingOverride({
+        ...existing,
+        data: { ...existing.data, displayName: normalizedName ?? "" },
+      });
       setCurrentDisplayName(normalizedName ?? "");
       setNameValue(normalizedName ?? "");
       setNameError(null);
@@ -177,7 +200,7 @@ export function ProfileClient({
                         variant="secondary"
                         onClick={() => {
                           setEditingName(false);
-                          setNameValue(currentDisplayName);
+                          setNameValue(effectiveDisplayName);
                           setNameError(null);
                         }}
                         aria-label="Cancel name edit"
@@ -189,10 +212,13 @@ export function ProfileClient({
                 ) : (
                   <div className="mt-3 flex min-w-0 items-center gap-3">
                     <h2 className="truncate text-4xl font-black leading-tight text-white md:text-5xl">
-                      {currentDisplayName || "Set your name"}
+                      {effectiveDisplayName || "Set your name"}
                     </h2>
                     <button
-                      onClick={() => setEditingName(true)}
+                      onClick={() => {
+                        setNameValue(effectiveDisplayName);
+                        setEditingName(true);
+                      }}
                       className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10 text-white/75 transition hover:bg-white/15 hover:text-white"
                       aria-label="Edit name"
                     >
@@ -210,8 +236,8 @@ export function ProfileClient({
             </div>
 
             <div className="mt-8 grid gap-3 sm:grid-cols-3">
-              <HeroStat label="Goal" value={formatGoal(goal)} />
-              <HeroStat label="Activity" value={formatActivityShort(activityLevel)} />
+              <HeroStat label="Goal" value={formatGoal(effectiveGoal)} />
+              <HeroStat label="Activity" value={formatActivityShort(effectiveActivityLevel)} />
               <HeroStat label="Setup" value={onboardingComplete ? "Complete" : "Needs setup"} />
             </div>
           </Card>
@@ -231,10 +257,10 @@ export function ProfileClient({
 
             {onboardingComplete ? (
               <div className="grid grid-cols-2 gap-3">
-                <TargetCard label="Calories" value={`${calorieTarget}`} unit="kcal" color="bg-primary-50 text-primary-700" />
-                <TargetCard label="Protein" value={`${proteinTarget}`} unit="g" color="bg-sky-50 text-sky-700" />
-                <TargetCard label="Carbs" value={`${carbsTarget}`} unit="g" color="bg-lemon-50 text-lemon-700" />
-                <TargetCard label="Fat" value={`${fatTarget}`} unit="g" color="bg-accent-50 text-accent-700" />
+                <TargetCard label="Calories" value={`${effectiveCalorieTarget}`} unit="kcal" color="bg-primary-50 text-primary-700" />
+                <TargetCard label="Protein" value={`${effectiveProteinTarget}`} unit="g" color="bg-sky-50 text-sky-700" />
+                <TargetCard label="Carbs" value={`${effectiveCarbsTarget}`} unit="g" color="bg-lemon-50 text-lemon-700" />
+                <TargetCard label="Fat" value={`${effectiveFatTarget}`} unit="g" color="bg-accent-50 text-accent-700" />
               </div>
             ) : (
               <div className="rounded-[1.35rem] border border-dashed border-primary-200 bg-primary-50/60 p-5">
@@ -248,7 +274,7 @@ export function ProfileClient({
             <Link href="/app/onboarding">
               <Button variant="secondary" className="w-full">
                 <Settings className="h-4 w-4" />
-                Recalculate nutrition targets
+                Retake the setup quiz
               </Button>
             </Link>
           </Card>

@@ -18,6 +18,10 @@ import { useUnits, type UnitSystem } from "./use-units";
 import { CoachActivity } from "./coach-activity";
 import { useGoalContextStore } from "@/lib/use-goal-context";
 import {
+  readPreviewOnboardingOverride,
+  writePreviewOnboardingOverride,
+} from "@/lib/preview-onboarding";
+import {
   GOAL_AGGRESSIVENESS_OPTIONS,
   calculateAge,
   calculateMacroTargets,
@@ -333,6 +337,13 @@ export function SettingsClient({
       }
     }
 
+    // The completed intake quiz is the freshest identity source in preview:
+    // without this, the name chosen during onboarding never shows up here.
+    const onboardingName = readPreviewOnboardingOverride()?.data?.displayName?.trim();
+    if (onboardingName && typeof savedProfileInputs?.displayName !== "string") {
+      setDisplayNameValue(onboardingName);
+    }
+
     const savedIntakePreferences = readPreviewStorage<
       Partial<IntakePreferences> & { units?: unknown }
     >(PREVIEW_INTAKE_PREFERENCES_KEY);
@@ -410,6 +421,18 @@ export function SettingsClient({
       writePreviewStorage(PREVIEW_PROFILE_INPUTS_KEY, {
         ...profileInputs,
         displayName: displayNameValue,
+      });
+      const existingOverride = readPreviewOnboardingOverride() ?? {};
+      writePreviewOnboardingOverride({
+        ...existingOverride,
+        data: {
+          ...existingOverride.data,
+          displayName: normalizeDisplayName(displayNameValue) ?? "",
+          goal: profileInputs.goal,
+          activityLevel: profileInputs.activityLevel,
+          dietaryPreference: profileInputs.dietaryPreference,
+        },
+        macros: macroTargets,
       });
       mergePreferences({ allergies: allergyList });
       return;
