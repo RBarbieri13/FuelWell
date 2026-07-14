@@ -117,21 +117,16 @@ export default function SignupPage() {
     >
       <div className="space-y-6">
             {isNewUserPreview ? (
-              <div className="rounded-[1.5rem] border border-primary-100 bg-primary-50/80 p-4">
-                <div className="flex gap-3">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[1rem] bg-white text-primary-700">
-                    <ShieldCheck className="h-5 w-5" />
-                  </span>
-                  <div>
-                    <p className="text-sm font-black text-[#16302a]">
-                      New-user preview account
-                    </p>
-                    <p className="mt-1 text-sm font-semibold leading-6 text-[#6f8981]">
-                      This path uses a fake local account for review. No auth
-                      email is sent and no production user record is created.
-                    </p>
-                  </div>
-                </div>
+              <div className="flex items-center gap-3 rounded-[1.25rem] border border-primary-100 bg-primary-50/80 px-4 py-3">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-primary-700">
+                  <ShieldCheck className="h-4 w-4" />
+                </span>
+                <p className="text-xs font-semibold leading-5 text-[#6f8981]">
+                  <span className="font-black text-[#16302a]">
+                    New-user preview account.
+                  </span>{" "}
+                  Local review only — no auth email, no production record.
+                </p>
               </div>
             ) : (
               <OAuthButtons next="/app/onboarding" />
