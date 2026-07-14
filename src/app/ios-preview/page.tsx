@@ -45,15 +45,15 @@ export default function IOSPreviewPage() {
         </section>
 
         <section className="flex items-center justify-center">
-          <div className="relative">
-            <div className="absolute -inset-8 rounded-[4rem] bg-primary-400/20 blur-3xl" />
-            <div className="relative rounded-[3.25rem] border border-white/15 bg-neutral-900 p-3 shadow-2xl shadow-black/60">
+          <div className="relative max-w-full">
+            <div className="pointer-events-none absolute -inset-8 rounded-[4rem] bg-primary-400/20 blur-3xl" />
+            <div className="relative max-w-full rounded-[3.25rem] border border-white/15 bg-neutral-900 p-3 shadow-2xl shadow-black/60">
               <div className="pointer-events-none absolute left-1/2 top-5 z-10 h-6 w-28 -translate-x-1/2 rounded-full bg-neutral-950" />
-              <div className="overflow-hidden rounded-[2.65rem] border border-neutral-800 bg-[#f6f7f4]">
+              <div className="max-w-full overflow-hidden rounded-[2.65rem] border border-neutral-800 bg-[#f6f7f4]">
                 <iframe
                   title="FuelWell iOS app preview"
                   src="/app/dashboard"
-                  className="h-[812px] w-[375px] bg-[#f6f7f4]"
+                  className="h-[812px] w-[375px] max-w-full bg-[#f6f7f4]"
                 />
               </div>
             </div>
