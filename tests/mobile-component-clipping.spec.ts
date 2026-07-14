@@ -23,6 +23,9 @@ const WIDTHS = [320, 375, 390, 430] as const;
 const VIEWPORT_HEIGHT = 844;
 
 const ROUTES = [
+  "/preview",
+  "/preview/new-user",
+  "/ios-preview",
   "/signup",
   "/signup?preview=new-user",
   "/app/dashboard",
@@ -94,6 +97,7 @@ async function clippedComponents(page: Page): Promise<{
       "TEXTAREA",
       "VIDEO",
       "CANVAS",
+      "IFRAME",
     ]);
     const hasOwnText = (el: HTMLElement) =>
       Array.from(el.childNodes).some(
