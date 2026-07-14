@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist_Mono, Hanken_Grotesk, Quicksand } from "next/font/google";
 import "katex/dist/katex.min.css";
 import "./globals.css";
@@ -17,6 +17,15 @@ const geistMono = Geist_Mono({
   variable: "--font-fw-mono",
   subsets: ["latin"],
 });
+
+// viewport-fit=cover makes env(safe-area-inset-*) resolve to real insets in
+// the iOS WKWebView shell; without it the safe-area padding in the app layout
+// and mobile nav is always 0 on device.
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
 
 export const metadata: Metadata = {
   title: "FuelWell — AI Nutrition Coach",
