@@ -70,19 +70,24 @@ export function DashboardClient({
   const [setupCompleteBanner, setSetupCompleteBanner] = useState(false);
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("setup") !== "complete" && params.get("preview") !== "new-user-complete") {
-      return;
-    }
-    params.delete("setup");
-    params.delete("preview");
-    const query = params.toString();
-    window.history.replaceState(
-      null,
-      "",
-      window.location.pathname + (query ? `?${query}` : "")
-    );
-    const frame = requestAnimationFrame(() => setSetupCompleteBanner(true));
+    // Both the URL check and the cleanup live inside the frame callback so a
+    // StrictMode double-invoke (which cancels the first frame) still sees the
+    // completion param on the second run.
+    const frame = requestAnimationFrame(() => {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("setup") !== "complete" && params.get("preview") !== "new-user-complete") {
+        return;
+      }
+      setSetupCompleteBanner(true);
+      params.delete("setup");
+      params.delete("preview");
+      const query = params.toString();
+      window.history.replaceState(
+        null,
+        "",
+        window.location.pathname + (query ? `?${query}` : "")
+      );
+    });
     return () => cancelAnimationFrame(frame);
   }, []);
 
