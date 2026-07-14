@@ -121,7 +121,9 @@ async function completeOnboarding(page: Page, journey: Journey) {
   await page.getByRole("button", { name: "Start setup" }).click();
   await page.getByPlaceholder("Maya").fill(journey.name);
   await page.getByRole("button", { name: "Next" }).click();
-  await page.locator('input[type="date"]').fill("1990-05-15");
+  await page.getByLabel("Month").selectOption({ label: "May" });
+  await page.getByLabel("Day").selectOption("15");
+  await page.getByLabel("Year").selectOption("1990");
   await page.getByRole("button", { name: "Next" }).click();
   await page.getByRole("button", { name: /^Male/ }).click();
   await page.getByRole("button", { name: "Next" }).click();
@@ -140,6 +142,9 @@ async function completeOnboarding(page: Page, journey: Journey) {
   await page.getByRole("button", { name: "Next" }).click();
   await page.getByRole("button", { name: /^No preference/ }).click();
   await page.getByRole("button", { name: "Next" }).click();
+  await page.getByRole("button", { name: /^Mediterranean/ }).click();
+  await page.getByRole("button", { name: /^High-protein bowls/ }).click();
+  await page.getByRole("button", { name: "Next" }).click();
   await page.getByLabel("Foods you love").fill("salmon, berries, oats");
   await page.getByLabel("Foods you avoid or dislike").fill("mushrooms");
   await page.getByRole("button", { name: /^Moderate/ }).click();
@@ -150,13 +155,27 @@ async function completeOnboarding(page: Page, journey: Journey) {
   await page.getByRole("button", { name: /^Strength/ }).click();
   await page.getByRole("button", { name: /^Cardio/ }).click();
   await page.getByRole("button", { name: "Next" }).click();
+  await page.getByRole("button", { name: /^Weightlifting/ }).click();
+  await page.getByRole("button", { name: /^Hiking/ }).click();
+  await page.getByRole("button", { name: "Next" }).click();
   await page.getByRole("button", { name: /^Gym \+ home/ }).click();
   await page.getByRole("button", { name: /^Only when useful/ }).click();
   await page.getByRole("button", { name: /^Data first/ }).click();
   await page.getByRole("button", { name: "Next", exact: true }).click();
   await page.getByRole("button", { name: "Complete preview setup" }).click();
+  await expect(page.getByText(/You're (set|all set)/).first()).toBeVisible({ timeout: 30_000 });
+  await page.getByRole("button", { name: "Open your dashboard" }).click();
   await expect(page).toHaveURL(/\/app\/dashboard/, { timeout: 30_000 });
+  await expect(
+    page.getByText("Setup complete — your plan and targets are live.")
+  ).toBeVisible();
   await expect(page.getByText(journey.name).first()).toBeVisible();
+
+  // The quiz identity must propagate beyond the dashboard (regression: name
+  // previously stayed "Alex Preview" on profile).
+  await page.goto("/app/profile");
+  await expect(page.getByRole("heading", { name: journey.name }).first()).toBeVisible();
+  await page.goto("/app/dashboard");
 }
 
 async function logMeal(page: Page, mealType: string, name: string, offset: number) {
