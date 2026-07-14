@@ -12,12 +12,30 @@ import {
   type Recipe,
 } from "@/lib/recipes-data";
 import { usePreferences, rankByPreference } from "@/lib/use-preferences";
+import { useDayLog } from "@/lib/use-day-log";
+import { remaining, sumMeals } from "@/lib/fuelwell-data";
+import { usePreviewOnboardingOverride } from "@/lib/preview-onboarding";
 
 export default function RecipesPage() {
   const [query, setQuery] = useState("");
   const [mealFilter, setMealFilter] = useState<"All" | Recipe["meal"]>("All");
   const [openRecipe, setOpenRecipe] = useState<Recipe | null>(null);
   const { diets, allergies, likes, dislikes, toggleDiet } = usePreferences();
+  const { meals, targets } = useDayLog();
+  const previewOverride = usePreviewOnboardingOverride();
+  const todayTotals = sumMeals(meals);
+  const effectiveTargets = {
+    calories: Number(previewOverride?.macros?.calories) || targets.calories,
+    protein: Number(previewOverride?.macros?.protein) || targets.protein,
+    carbs: Number(previewOverride?.macros?.carbs) || targets.carbs,
+    fat: Number(previewOverride?.macros?.fat) || targets.fat,
+  };
+  const leftToday = {
+    calories: remaining(todayTotals.calories, effectiveTargets.calories),
+    protein: remaining(todayTotals.protein, effectiveTargets.protein),
+    carbs: remaining(todayTotals.carbs, effectiveTargets.carbs),
+    fat: remaining(todayTotals.fat, effectiveTargets.fat),
+  };
 
   const results = useMemo(() => {
     const searched = searchRecipes(query);
@@ -57,6 +75,25 @@ export default function RecipesPage() {
               Search meals, filter to your diet, and open a recipe for full
               ingredients, prep steps, and per-serving nutrition.
             </p>
+            <div className="mt-4 flex flex-wrap items-center gap-2">
+              <span className="text-[11px] font-black uppercase tracking-[0.14em] text-primary-200">
+                Left today
+              </span>
+              {[
+                { label: "kcal", value: leftToday.calories.toLocaleString() },
+                { label: "protein", value: `${leftToday.protein}g` },
+                { label: "carbs", value: `${leftToday.carbs}g` },
+                { label: "fat", value: `${leftToday.fat}g` },
+              ].map((chip) => (
+                <span
+                  key={chip.label}
+                  className="rounded-full border border-white/14 bg-white/10 px-3 py-1.5 text-xs font-black tabular-nums text-white"
+                >
+                  {chip.value}
+                  <span className="ml-1 font-bold text-white/60">{chip.label}</span>
+                </span>
+              ))}
+            </div>
           </div>
           <div className="grid grid-cols-3 gap-2 text-center">
             <div className="rounded-[1.15rem] border border-white/12 bg-white/10 px-4 py-3">

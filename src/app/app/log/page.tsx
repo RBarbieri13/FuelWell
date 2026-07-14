@@ -67,6 +67,16 @@ const MODE_HELP: Record<LogMode, { title: string; detail: string }> = {
   },
 };
 
+// Default the selector to the meal people are most likely logging right now;
+// it stays a starting point the user can switch freely.
+function defaultMealTypeForNow(now = new Date()): MealType {
+  const hour = now.getHours();
+  if (hour < 11) return "breakfast";
+  if (hour < 15) return "lunch";
+  if (hour < 17) return "snack";
+  return "dinner";
+}
+
 function LogContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -76,7 +86,7 @@ function LogContent() {
   const { goalPlan, integrationSummary } = useGoalContextStore();
 
   const [mode, setMode] = useState<LogMode>(initialMode);
-  const [mealType, setMealType] = useState<MealType>("breakfast");
+  const [mealType, setMealType] = useState<MealType>(() => defaultMealTypeForNow());
   const [selectedFood, setSelectedFood] = useState<FoodItem | null>(null);
   const [confirmation, setConfirmation] = useState("");
   const [goalImpact, setGoalImpact] = useState<MealGoalImpact | null>(null);
@@ -348,7 +358,7 @@ function LogContent() {
             {goalImpact && <GoalImpactCard impact={goalImpact} />}
           </Card>
 
-          <TotalsSummary totals={totals} targets={goalContext.targets} />
+          <TotalsSummary totals={totals} targets={goalContext.targets} meals={meals} />
         </div>
       </div>
 

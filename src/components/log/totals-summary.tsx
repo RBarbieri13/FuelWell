@@ -1,8 +1,17 @@
 "use client";
 
-import { Flame, Wheat, Droplet, Dumbbell } from "lucide-react";
+import { useState } from "react";
+import { ChevronDown, Flame, Wheat, Droplet, Dumbbell } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { percentOf, remaining, type MacroTargets, type MacroTotals } from "@/lib/fuelwell-data";
+import { cn } from "@/lib/utils/cn";
+import {
+  percentOf,
+  remaining,
+  sumMealItems,
+  type MacroTargets,
+  type MacroTotals,
+  type MealRecord,
+} from "@/lib/fuelwell-data";
 
 const MACROS: {
   key: keyof MacroTotals;
@@ -22,20 +31,26 @@ const MACROS: {
  * Live totals against targets. Reads from the shared day log via props so it
  * updates the instant a meal is added, edited, or removed. Framing stays
  * neutral and forward-looking ("left" / "logged"), never "missed" or "over".
+ * Each macro row expands to show which of today's meals contributed to it.
  */
 export function TotalsSummary({
   totals,
   targets,
+  meals = [],
 }: {
   totals: MacroTotals;
   targets: MacroTargets;
+  meals?: MealRecord[];
 }) {
+  const [expanded, setExpanded] = useState<keyof MacroTotals | null>(null);
+
   return (
     <Card className="space-y-5">
       <div>
         <h2 className="text-xl font-black text-[#16302a]">Today&apos;s totals</h2>
         <p className="mt-1 text-sm font-semibold text-[#78928a]">
-          Live macro math for the selected day.
+          Live macro math for the selected day. Tap a macro for the meal
+          breakdown.
         </p>
       </div>
       <div className="space-y-4">
@@ -45,9 +60,23 @@ export function TotalsSummary({
           const pct = Math.min(100, percentOf(current, target));
           const left = remaining(current, target);
           const Icon = macro.icon;
+          const isExpanded = expanded === macro.key;
+          const contributions = meals
+            .map((meal) => ({
+              id: meal.id,
+              name: meal.name,
+              amount: Math.round(sumMealItems(meal.items)[macro.key]),
+            }))
+            .filter((entry) => entry.amount > 0);
           return (
             <div key={macro.key} className="rounded-[1.2rem] bg-[#f7faf8] p-3">
-              <div className="flex items-center justify-between gap-3">
+              <button
+                type="button"
+                onClick={() => setExpanded(isExpanded ? null : macro.key)}
+                aria-expanded={isExpanded}
+                aria-label={`${macro.label} breakdown`}
+                className="flex w-full items-center justify-between gap-3 text-left"
+              >
                 <div className="flex items-center gap-3">
                   <span className={`flex h-9 w-9 items-center justify-center rounded-[0.9rem] ${macro.iconBg}`}>
                     <Icon className="h-4 w-4" />
@@ -55,6 +84,12 @@ export function TotalsSummary({
                   <p className="text-sm font-black text-[#516b63]">
                     {macro.label}
                   </p>
+                  <ChevronDown
+                    className={cn(
+                      "h-4 w-4 text-[#91a7a0] transition-transform",
+                      isExpanded && "rotate-180"
+                    )}
+                  />
                 </div>
                 <div className="text-right">
                   <p className="text-xl font-black tabular-nums text-[#16302a]">
@@ -71,13 +106,37 @@ export function TotalsSummary({
                     {macro.unit} left
                   </p>
                 </div>
-              </div>
+              </button>
               <div className="mt-3 h-2.5 overflow-hidden rounded-full bg-white">
                 <div
                   className="h-full rounded-full transition-all"
                   style={{ width: `${pct}%`, backgroundColor: macro.color }}
                 />
               </div>
+              {isExpanded && (
+                <div className="mt-3 space-y-1.5 border-t border-[#e8f0ec] pt-3">
+                  {contributions.length > 0 ? (
+                    contributions.map((entry) => (
+                      <div
+                        key={entry.id}
+                        className="flex items-center justify-between gap-3 rounded-[0.8rem] bg-white px-3 py-2"
+                      >
+                        <p className="min-w-0 truncate text-sm font-bold text-[#516b63]">
+                          {entry.name}
+                        </p>
+                        <p className="shrink-0 text-sm font-black tabular-nums text-[#16302a]">
+                          {entry.amount.toLocaleString()}
+                          {macro.unit}
+                        </p>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="px-1 text-sm font-semibold text-[#91a7a0]">
+                      Nothing logged toward {macro.label.toLowerCase()} yet.
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
           );
         })}
