@@ -192,7 +192,7 @@ export function DashboardClient({
                   </h2>
                 </div>
                 {hasLoggedToday && (
-                  <div className="flex gap-3">
+                  <div className="flex w-full flex-wrap gap-3 lg:w-auto lg:flex-nowrap">
                     <EnergyStat
                       label="Calories left"
                       value={remaining(totals.calories, effectiveTargets.calories).toLocaleString()}
@@ -483,7 +483,7 @@ function MealMakeupHover({
 
 function EnergyStat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="min-w-[9rem] flex-1 rounded-2xl border border-white/14 bg-white/10 px-4 py-3 text-left backdrop-blur">
+    <div className="min-w-[8rem] flex-1 rounded-2xl border border-white/14 bg-white/10 px-4 py-3 text-left backdrop-blur">
       <p className="text-[1.625rem] font-black leading-none tabular-nums text-white">{value}</p>
       <p className="mt-1.5 whitespace-nowrap text-[11px] font-bold uppercase tracking-[0.08em] text-white/60">
         {label}
