@@ -32,15 +32,15 @@ export function MobileHeader() {
     <header className="md:hidden sticky top-0 z-40 bg-white/92 backdrop-blur-xl border-b border-primary-100/80 px-4 py-3 shadow-sm shadow-primary-900/5">
       <div className="flex items-center justify-between">
         <Logo href="/app/dashboard" size="md" />
-        <div className="flex items-center gap-2">
-          <span className="max-w-[8rem] truncate rounded-full bg-primary-50 px-3 py-1 text-xs font-black text-primary-700">
+        <div className="flex min-w-0 items-center gap-2">
+          <span className="min-w-0 max-w-[8rem] truncate rounded-full bg-primary-50 px-3 py-1 text-xs font-black text-primary-700">
             {title}
           </span>
           {pathname !== "/app/daily-review" && (
             <Link
               href="/app/daily-review"
               aria-label="Open daily review"
-              className="-my-1.5 flex h-11 w-11 items-center justify-center rounded-full bg-white text-primary-700 shadow-sm shadow-primary-900/10"
+              className="-my-1.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-primary-700 shadow-sm shadow-primary-900/10"
             >
               <ClipboardList className="h-5 w-5" />
             </Link>

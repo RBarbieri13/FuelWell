@@ -54,7 +54,7 @@ export function UserMenu({ variant = "floating" }: { variant?: "floating" | "inl
   }, [open]);
 
   return (
-    <div className={cn(inline ? "relative" : "pointer-events-none fixed bottom-4 right-4 z-[70] hidden md:block")}>
+    <div className={cn(inline ? "relative shrink-0" : "pointer-events-none fixed bottom-4 right-4 z-[70] hidden md:block")}>
       <div ref={containerRef} className={cn(!inline && "pointer-events-auto relative")}>
         <button
           ref={buttonRef}
