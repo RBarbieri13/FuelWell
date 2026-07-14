@@ -157,22 +157,22 @@ private struct FuelWellWebView: UIViewRepresentable {
             _errorMessage = errorMessage
         }
 
-        func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+        func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation?) {
             isLoading = true
             errorMessage = nil
         }
 
-        func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        func webView(_ webView: WKWebView, didFinish navigation: WKNavigation?) {
             isLoading = false
             errorMessage = nil
         }
 
-        func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+        func webView(_ webView: WKWebView, didFail navigation: WKNavigation?, withError error: Error) {
             isLoading = false
             errorMessage = error.localizedDescription
         }
 
-        func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
+        func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation?, withError error: Error) {
             isLoading = false
             errorMessage = error.localizedDescription
         }
