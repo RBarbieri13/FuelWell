@@ -174,10 +174,14 @@ async function clippedComponents(page: Page): Promise<{
         }
       }
 
+      // Self-clip only applies to an element's own text: painted containers
+      // legitimately clip decorative (pointer-events-none) children, and any
+      // real child that gets cut is reported by the ancestor-clip check.
       const deliberateEllipsis =
         style.textOverflow === "ellipsis" ||
         style.webkitLineClamp !== "none";
       if (
+        hasOwnText(el) &&
         !deliberateEllipsis &&
         hiddenX(style.overflowX) &&
         el.scrollWidth > el.clientWidth + EPSILON
