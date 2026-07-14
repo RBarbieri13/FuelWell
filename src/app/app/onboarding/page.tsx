@@ -47,6 +47,10 @@ import { Logo } from "@/components/ui/logo";
 import { cn } from "@/lib/utils/cn";
 import type { CoachKnowledgeBase } from "@/lib/coach/knowledge";
 import {
+  readPreviewOnboardingOverride,
+  writePreviewOnboardingOverride,
+} from "@/lib/preview-onboarding";
+import {
   PREVIEW_IDENTITY_SCOPE,
   combineHeightParts,
   normalizeAllergies,
@@ -61,7 +65,6 @@ import {
 
 const LEGACY_STORAGE_KEY = "fuelwell:onboarding:v1";
 const PREVIEW_KIND_STORAGE_KEY = "fuelwell:preview-user-kind";
-const PREVIEW_COMPLETED_STORAGE_KEY = "fuelwell:new-user-onboarding:v1";
 
 interface PersistedProgress {
   step: number;
@@ -85,7 +88,9 @@ interface OnboardingData {
   groceryBudget: string;
   cookingHabits: string;
   allergies: string[];
+  dietTastes: string[];
   preferredWorkoutTypes: string[];
+  favoriteExerciseMethods: string[];
   workoutLocation: string;
   checkInPreference: string;
   coachStyle: string;
@@ -110,7 +115,9 @@ const INITIAL_DATA: OnboardingData = {
   groceryBudget: "moderate",
   cookingHabits: "mix",
   allergies: [],
+  dietTastes: [],
   preferredWorkoutTypes: [],
+  favoriteExerciseMethods: [],
   workoutLocation: "gym_home",
   checkInPreference: "event_driven",
   coachStyle: "direct_supportive",
@@ -131,22 +138,26 @@ const ALLERGY_OPTIONS = [
 ];
 
 const STEP_META = [
-  { title: "Welcome", short: "Start", icon: Sparkles },
-  { title: "Profile name", short: "Name", icon: UserRound },
-  { title: "Birthday", short: "Age", icon: CalendarDays },
-  { title: "Biology", short: "Sex", icon: HeartPulse },
-  { title: "Body context", short: "Body", icon: Ruler },
-  { title: "Activity", short: "Move", icon: Activity },
-  { title: "Goal", short: "Goal", icon: Target },
-  { title: "Goal pace", short: "Pace", icon: Clock3 },
-  { title: "Nutrition style", short: "Style", icon: SlidersHorizontal },
-  { title: "Food style", short: "Diet", icon: Leaf },
-  { title: "Food habits", short: "Food", icon: ChefHat },
-  { title: "Allergies", short: "Safety", icon: ShieldCheck },
-  { title: "Workouts", short: "Train", icon: Dumbbell },
-  { title: "Coach setup", short: "Coach", icon: MessageCircle },
-  { title: "Plan preview", short: "Plan", icon: BadgeCheck },
-] satisfies { title: string; short: string; icon: LucideIcon }[];
+  { id: "welcome", title: "Welcome", short: "Start", icon: Sparkles },
+  { id: "name", title: "Profile name", short: "Name", icon: UserRound },
+  { id: "birthday", title: "Birthday", short: "Age", icon: CalendarDays },
+  { id: "biology", title: "Biology", short: "Sex", icon: HeartPulse },
+  { id: "body", title: "Body context", short: "Body", icon: Ruler },
+  { id: "activity", title: "Activity", short: "Move", icon: Activity },
+  { id: "goal", title: "Goal", short: "Goal", icon: Target },
+  { id: "pace", title: "Goal pace", short: "Pace", icon: Clock3 },
+  { id: "style", title: "Nutrition style", short: "Style", icon: SlidersHorizontal },
+  { id: "diet", title: "Food style", short: "Diet", icon: Leaf },
+  { id: "tastes", title: "Diet tastes", short: "Tastes", icon: Salad },
+  { id: "food", title: "Food habits", short: "Food", icon: ChefHat },
+  { id: "allergies", title: "Allergies", short: "Safety", icon: ShieldCheck },
+  { id: "workouts", title: "Workouts", short: "Train", icon: Dumbbell },
+  { id: "methods", title: "Favorite methods", short: "Methods", icon: Flame },
+  { id: "coach", title: "Coach setup", short: "Coach", icon: MessageCircle },
+  { id: "plan", title: "Plan preview", short: "Plan", icon: BadgeCheck },
+] satisfies { id: string; title: string; short: string; icon: LucideIcon }[];
+
+type StepId = (typeof STEP_META)[number]["id"];
 
 const ACTIVITY_OPTIONS = [
   { value: "sedentary", label: "Sedentary", desc: "Mostly seated days", icon: UserRound },
@@ -211,6 +222,32 @@ const COOKING_OPTIONS = [
   { value: "cook_often", label: "Cook often", desc: "Recipes and groceries should lead", icon: Salad },
 ];
 
+const DIET_TASTE_OPTIONS = [
+  { value: "mediterranean", label: "Mediterranean", icon: Salad },
+  { value: "italian", label: "Italian", icon: ChefHat },
+  { value: "mexican", label: "Mexican", icon: Flame },
+  { value: "asian", label: "Asian", icon: Utensils },
+  { value: "indian", label: "Indian", icon: Sparkles },
+  { value: "middle_eastern", label: "Middle Eastern", icon: Leaf },
+  { value: "american_comfort", label: "American comfort", icon: HeartPulse },
+  { value: "high_protein_bowls", label: "High-protein bowls", icon: Dumbbell },
+  { value: "fresh_light", label: "Fresh & light", icon: Salad },
+  { value: "spicy", label: "Bold & spicy", icon: Flame },
+];
+
+const EXERCISE_METHOD_OPTIONS = [
+  { value: "walking", label: "Walking", icon: MapPin },
+  { value: "running", label: "Running", icon: Activity },
+  { value: "cycling", label: "Cycling", icon: Activity },
+  { value: "swimming", label: "Swimming", icon: HeartPulse },
+  { value: "weightlifting", label: "Weightlifting", icon: Dumbbell },
+  { value: "hiit", label: "HIIT circuits", icon: Flame },
+  { value: "yoga", label: "Yoga", icon: Leaf },
+  { value: "pilates", label: "Pilates", icon: Sparkles },
+  { value: "hiking", label: "Hiking", icon: MapPin },
+  { value: "team_sports", label: "Team sports", icon: UserRound },
+];
+
 const WORKOUT_TYPE_OPTIONS = [
   { value: "strength", label: "Strength", icon: Dumbbell },
   { value: "cardio", label: "Cardio", icon: Activity },
@@ -253,7 +290,11 @@ export default function OnboardingPage() {
   const totalSteps = STEP_META.length;
   const progress = ((step + 1) / totalSteps) * 100;
   const currentStep = STEP_META[step];
+  const stepId: StepId = currentStep.id;
   const CurrentStepIcon = currentStep.icon;
+  const [celebration, setCelebration] = useState<{
+    macros: { calories: number; protein: number; carbs: number; fat: number };
+  } | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -298,6 +339,17 @@ export default function OnboardingPage() {
             setStep(Math.min(Math.max(saved.step, 0), totalSteps - 1));
           }
           setResumed(true);
+        } else {
+          // Retakes start from the last completed intake instead of blanks so
+          // the saved name and answers are visibly carried forward.
+          const completed = readPreviewOnboardingOverride()?.data;
+          if (completed) {
+            setData((previous) => ({
+              ...previous,
+              ...(completed.displayName ? { displayName: completed.displayName } : {}),
+              ...(completed.dateOfBirth ? { dateOfBirth: completed.dateOfBirth } : {}),
+            }));
+          }
         }
         setDraftStorageKey(storageKey);
       } catch {
@@ -358,34 +410,36 @@ export default function OnboardingPage() {
     }));
   }
 
+  function toggleListValue(key: "dietTastes" | "favoriteExerciseMethods", value: string) {
+    setData((prev) => ({
+      ...prev,
+      [key]: prev[key].includes(value)
+        ? prev[key].filter((item) => item !== value)
+        : [...prev[key], value],
+    }));
+  }
+
   function canProceed(): boolean {
-    switch (step) {
-      case 0:
-      case 1:
-        return true;
-      case 2:
+    switch (stepId) {
+      case "birthday":
         return !!data.dateOfBirth;
-      case 3:
+      case "biology":
         return !!data.gender;
-      case 4:
+      case "body":
         return !!data.heightIn && !!data.weightLb && Number(data.heightIn) >= 36 && Number(data.weightLb) >= 60;
-      case 5:
+      case "activity":
         return !!data.activityLevel;
-      case 6:
+      case "goal":
         return !!data.goal;
-      case 7:
+      case "pace":
         return !!data.goalTimeline;
-      case 8:
+      case "style":
         return !!data.nutritionAggressiveness && !!data.dietFlexibility;
-      case 9:
-      case 10:
-      case 11:
-        return true;
-      case 12:
+      case "workouts":
         return data.preferredWorkoutTypes.length > 0;
-      case 13:
+      case "coach":
         return !!data.workoutLocation && !!data.checkInPreference && !!data.coachStyle;
-      case 14:
+      case "plan":
         return !!previewMacros;
       default:
         return true;
@@ -394,24 +448,24 @@ export default function OnboardingPage() {
 
   function proceedHint(): string | null {
     if (canProceed()) return null;
-    switch (step) {
-      case 2:
+    switch (stepId) {
+      case "birthday":
         return "Add your birthday to continue.";
-      case 3:
+      case "biology":
         return "Choose an option to continue.";
-      case 4:
+      case "body":
         return "Enter your height (3 ft or more) and weight (60 lb or more) to continue.";
-      case 5:
+      case "activity":
         return "Choose your activity level to continue.";
-      case 6:
+      case "goal":
         return "Pick a goal to continue.";
-      case 7:
+      case "pace":
         return "Pick a timeline to continue.";
-      case 8:
+      case "style":
         return "Answer both questions to continue.";
-      case 12:
+      case "workouts":
         return "Pick at least one workout type to continue.";
-      case 13:
+      case "coach":
         return "Answer all three questions to continue.";
       default:
         return null;
@@ -451,20 +505,18 @@ export default function OnboardingPage() {
 
     if (isNewUserPreview || isBrowserPreviewRuntime()) {
       try {
-        window.localStorage.setItem(
-          PREVIEW_COMPLETED_STORAGE_KEY,
-          JSON.stringify({
-            completedAt: new Date().toISOString(),
-            data,
-            macros,
-          })
-        );
+        writePreviewOnboardingOverride({
+          completedAt: new Date().toISOString(),
+          data,
+          macros,
+        });
         window.localStorage.setItem(PREVIEW_KIND_STORAGE_KEY, "new-user");
       } catch {
         // Local-only preview completion can still continue without storage.
       }
       clearProgress();
-      router.push("/app/dashboard?preview=new-user-complete");
+      setSaving(false);
+      setCelebration({ macros });
       return;
     }
 
@@ -525,7 +577,7 @@ export default function OnboardingPage() {
     }
 
     clearProgress();
-    router.push("/app/dashboard");
+    router.push("/app/dashboard?setup=complete");
     router.refresh();
   }
 
@@ -537,6 +589,48 @@ export default function OnboardingPage() {
     { label: "Food rules", done: !!data.dietaryPreference },
     { label: "Training", done: data.preferredWorkoutTypes.length > 0 },
   ];
+
+  if (celebration) {
+    return (
+      <main className="fw-app-surface min-h-full">
+        <div className="fw-page-inner flex min-h-full max-w-3xl flex-col items-stretch justify-center gap-5 py-10">
+          <section className="rounded-[2rem] border border-primary-100/80 bg-white/95 p-6 text-center shadow-[0_26px_70px_rgba(22,48,42,0.12)] md:p-10">
+            <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary-600 text-white shadow-[0_16px_36px_rgba(21,145,108,0.35)]">
+              <Check className="h-8 w-8" />
+            </span>
+            <h1 className="fw-heading mt-5 text-3xl md:text-4xl">
+              {data.displayName ? `You're set, ${data.displayName}.` : "You're all set."}
+            </h1>
+            <p className="mx-auto mt-3 max-w-md text-base font-semibold leading-7 text-[#6f8981]">
+              Your plan is live. The dashboard, coach, and meal suggestions now
+              use these targets.
+            </p>
+            <div className="fw-mint-panel mt-6 rounded-[1.75rem] border p-5">
+              <p className="text-sm font-black uppercase tracking-[0.16em] text-primary-700">
+                Daily calorie target
+              </p>
+              <p className="mt-2 text-5xl font-black tabular-nums text-[#16302a]">
+                {celebration.macros.calories}
+              </p>
+            </div>
+            <div className="mt-4 grid gap-3 sm:grid-cols-3">
+              <MacroTile color="protein" label="Protein" value={`${celebration.macros.protein}g`} />
+              <MacroTile color="carbs" label="Carbs" value={`${celebration.macros.carbs}g`} />
+              <MacroTile color="fat" label="Fat" value={`${celebration.macros.fat}g`} />
+            </div>
+            <Button
+              size="lg"
+              className="mt-8 w-full sm:w-auto"
+              onClick={() => router.push("/app/dashboard?setup=complete")}
+            >
+              Open your dashboard
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </section>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="fw-app-surface min-h-full">
@@ -665,8 +759,8 @@ export default function OnboardingPage() {
             </div>
 
             <div className="flex-1 p-4 md:p-8">
-              {step === 0 && <WelcomeStep />}
-              {step === 1 && (
+              {stepId === "welcome" && <WelcomeStep />}
+              {stepId === "name" && (
                 <StepWrapper
                   title="What should your coach call you?"
                   subtitle="This is optional, but it makes the app feel more personal."
@@ -682,22 +776,19 @@ export default function OnboardingPage() {
                   <InsightRow icon={UserRound} title="Coach tone" body="Your name only personalizes in-app guidance. You can change it later in Profile." />
                 </StepWrapper>
               )}
-              {step === 2 && (
+              {stepId === "birthday" && (
                 <StepWrapper
                   title="When were you born?"
                   subtitle="Age helps estimate your resting burn without asking you to do math."
                 >
-                  <Input
-                    type="date"
+                  <BirthdaySelector
                     value={data.dateOfBirth}
-                    onChange={(event) => update("dateOfBirth", event.target.value)}
-                    autoFocus
-                    className="h-14 text-base"
+                    onChange={(value) => update("dateOfBirth", value)}
                   />
                   <InsightRow icon={CalendarDays} title="Why it matters" body="This feeds the same metabolism estimate used for your dashboard targets." />
                 </StepWrapper>
               )}
-              {step === 3 && (
+              {stepId === "biology" && (
                 <StepWrapper
                   title="Which biology should targets use?"
                   subtitle="FuelWell uses this only for calorie math and keeps the plan adjustable."
@@ -715,7 +806,7 @@ export default function OnboardingPage() {
                   </div>
                 </StepWrapper>
               )}
-              {step === 4 && (
+              {stepId === "body" && (
                 <StepWrapper
                   title="Add body context"
                   subtitle="Height and weight set the baseline. Targets stay editable."
@@ -782,7 +873,7 @@ export default function OnboardingPage() {
                   </div>
                 </StepWrapper>
               )}
-              {step === 5 && (
+              {stepId === "activity" && (
                 <StepWrapper
                   title="How active is a normal week?"
                   subtitle="Choose the closest pattern. The coach can refine from logged behavior later."
@@ -801,7 +892,7 @@ export default function OnboardingPage() {
                   </div>
                 </StepWrapper>
               )}
-              {step === 6 && (
+              {stepId === "goal" && (
                 <StepWrapper
                   title="What is the main direction?"
                   subtitle="This changes the calorie target, not your ability to make flexible choices."
@@ -820,7 +911,7 @@ export default function OnboardingPage() {
                   </div>
                 </StepWrapper>
               )}
-              {step === 7 && (
+              {stepId === "pace" && (
                 <StepWrapper
                   title="How quickly would you like to reach it?"
                   subtitle="This sets the pace. The coach should always make clear that you can change it later."
@@ -839,7 +930,7 @@ export default function OnboardingPage() {
                   </div>
                 </StepWrapper>
               )}
-              {step === 8 && (
+              {stepId === "style" && (
                 <StepWrapper
                   title="How should nutrition feel?"
                   subtitle="Pick both the deficit intensity and how much flexibility should be preserved."
@@ -882,7 +973,7 @@ export default function OnboardingPage() {
                   </div>
                 </StepWrapper>
               )}
-              {step === 9 && (
+              {stepId === "diet" && (
                 <StepWrapper
                   title="Any food style to respect?"
                   subtitle="This tunes recipes and coach suggestions without hiding manual logging."
@@ -900,7 +991,30 @@ export default function OnboardingPage() {
                   </div>
                 </StepWrapper>
               )}
-              {step === 10 && (
+              {stepId === "tastes" && (
+                <StepWrapper
+                  title="What do you actually like eating?"
+                  subtitle="Pick every style that sounds good. Meal and recipe suggestions lead with these."
+                >
+                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                    {DIET_TASTE_OPTIONS.map((option) => (
+                      <OptionTile
+                        key={option.value}
+                        selected={data.dietTastes.includes(option.value)}
+                        onClick={() => toggleListValue("dietTastes", option.value)}
+                        icon={option.icon}
+                        title={option.label}
+                      />
+                    ))}
+                  </div>
+                  <InsightRow
+                    icon={Salad}
+                    title="Optional but powerful"
+                    body="Tastes steer suggestions toward food you want, without restricting what you can log."
+                  />
+                </StepWrapper>
+              )}
+              {stepId === "food" && (
                 <StepWrapper
                   title="What foods and habits should FuelWell remember?"
                   subtitle="These answers feed the coach and grocery/recipe suggestions without forcing strict meal plans."
@@ -961,7 +1075,7 @@ export default function OnboardingPage() {
                   </div>
                 </StepWrapper>
               )}
-              {step === 11 && (
+              {stepId === "allergies" && (
                 <StepWrapper
                   title="Any allergies to flag?"
                   subtitle="Select anything the coach should treat as a hard constraint."
@@ -980,7 +1094,7 @@ export default function OnboardingPage() {
                   </div>
                 </StepWrapper>
               )}
-              {step === 12 && (
+              {stepId === "workouts" && (
                 <StepWrapper
                   title="What types of workouts do you prefer?"
                   subtitle="Choose all that apply. This helps the coach recommend movement you will actually do."
@@ -998,7 +1112,30 @@ export default function OnboardingPage() {
                   </div>
                 </StepWrapper>
               )}
-              {step === 13 && (
+              {stepId === "methods" && (
+                <StepWrapper
+                  title="Which ways of moving do you enjoy most?"
+                  subtitle="Pick your favorites. Workout recommendations start from movement you already like."
+                >
+                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                    {EXERCISE_METHOD_OPTIONS.map((option) => (
+                      <OptionTile
+                        key={option.value}
+                        selected={data.favoriteExerciseMethods.includes(option.value)}
+                        onClick={() => toggleListValue("favoriteExerciseMethods", option.value)}
+                        icon={option.icon}
+                        title={option.label}
+                      />
+                    ))}
+                  </div>
+                  <InsightRow
+                    icon={Flame}
+                    title="Optional but powerful"
+                    body="Favorites shape the movement plan; the workout library stays fully open."
+                  />
+                </StepWrapper>
+              )}
+              {stepId === "coach" && (
                 <StepWrapper
                   title="Where and how should the coach check in?"
                   subtitle="Workout location, check-in cadence, and coach style stay editable in Settings."
@@ -1058,7 +1195,7 @@ export default function OnboardingPage() {
                   </div>
                 </StepWrapper>
               )}
-              {step === 14 && (
+              {stepId === "plan" && (
                 <StepWrapper
                   title="Review your starting plan"
                   subtitle="This is the first estimate. The dashboard and coach can tune it as real logs come in."
@@ -1145,6 +1282,129 @@ export default function OnboardingPage() {
         </section>
       </div>
     </main>
+  );
+}
+
+const BIRTHDAY_MONTHS = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
+function daysInMonth(year: number, monthIndex: number) {
+  return new Date(year, monthIndex + 1, 0).getDate();
+}
+
+function BirthdaySelector({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  const parsed = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  const year = parsed ? Number(parsed[1]) : "";
+  const monthIndex = parsed ? Number(parsed[2]) - 1 : "";
+  const day = parsed ? Number(parsed[3]) : "";
+
+  const latestYear = new Date().getFullYear() - 13;
+  const years: number[] = [];
+  for (let candidate = latestYear; candidate >= 1930; candidate -= 1) {
+    years.push(candidate);
+  }
+  const dayCount =
+    typeof year === "number" && typeof monthIndex === "number"
+      ? daysInMonth(year, monthIndex)
+      : 31;
+
+  function emit(nextYear: number | "", nextMonth: number | "", nextDay: number | "") {
+    if (nextYear === "" || nextMonth === "" || nextDay === "") {
+      onChange("");
+      return;
+    }
+    const clampedDay = Math.min(nextDay, daysInMonth(nextYear, nextMonth));
+    const month = String(nextMonth + 1).padStart(2, "0");
+    onChange(`${nextYear}-${month}-${String(clampedDay).padStart(2, "0")}`);
+  }
+
+  const selectClassName =
+    "h-14 w-full rounded-[1rem] border border-[#dce8e3] bg-white px-3 text-base font-bold text-[#16302a] outline-none transition focus:border-primary-400 focus:ring-2 focus:ring-primary-100";
+
+  return (
+    <div className="grid grid-cols-[1.4fr_0.8fr_1fr] gap-3">
+      <label className="block">
+        <span className="mb-1.5 block text-sm font-black text-[#516b63]">Month</span>
+        <select
+          className={selectClassName}
+          value={monthIndex === "" ? "" : monthIndex}
+          onChange={(event) =>
+            emit(
+              year === "" ? latestYear - 17 : year,
+              event.target.value === "" ? "" : Number(event.target.value),
+              day === "" ? 1 : day
+            )
+          }
+        >
+          <option value="">Month</option>
+          {BIRTHDAY_MONTHS.map((label, index) => (
+            <option key={label} value={index}>
+              {label}
+            </option>
+          ))}
+        </select>
+      </label>
+      <label className="block">
+        <span className="mb-1.5 block text-sm font-black text-[#516b63]">Day</span>
+        <select
+          className={selectClassName}
+          value={day === "" ? "" : day}
+          onChange={(event) =>
+            emit(
+              year === "" ? latestYear - 17 : year,
+              monthIndex === "" ? 0 : monthIndex,
+              event.target.value === "" ? "" : Number(event.target.value)
+            )
+          }
+        >
+          <option value="">Day</option>
+          {Array.from({ length: dayCount }, (_, index) => index + 1).map((candidate) => (
+            <option key={candidate} value={candidate}>
+              {candidate}
+            </option>
+          ))}
+        </select>
+      </label>
+      <label className="block">
+        <span className="mb-1.5 block text-sm font-black text-[#516b63]">Year</span>
+        <select
+          className={selectClassName}
+          value={year === "" ? "" : year}
+          onChange={(event) =>
+            emit(
+              event.target.value === "" ? "" : Number(event.target.value),
+              monthIndex === "" ? 0 : monthIndex,
+              day === "" ? 1 : day
+            )
+          }
+        >
+          <option value="">Year</option>
+          {years.map((candidate) => (
+            <option key={candidate} value={candidate}>
+              {candidate}
+            </option>
+          ))}
+        </select>
+      </label>
+    </div>
   );
 }
 
@@ -1429,7 +1689,9 @@ function buildOnboardingPreferences(data: OnboardingData) {
       foodsAvoid: parseCommaList(data.foodsAvoid),
       groceryBudget: data.groceryBudget,
       cookingHabits: data.cookingHabits,
+      dietTastes: data.dietTastes,
       preferredWorkoutTypes: data.preferredWorkoutTypes,
+      favoriteExerciseMethods: data.favoriteExerciseMethods,
       workoutLocation: data.workoutLocation,
       checkInPreference: data.checkInPreference,
       coachStyle: data.coachStyle,
@@ -1471,11 +1733,21 @@ function buildInitialOnboardingCoachKnowledge(
       data.dietFlexibility ? `Diet flexibility preference is ${data.dietFlexibility}.` : "",
       data.groceryBudget ? `Grocery budget preference is ${data.groceryBudget}.` : "",
       data.cookingHabits ? `Cooking habit preference is ${data.cookingHabits}.` : "",
+      data.dietTastes.length
+        ? `Preferred food styles: ${data.dietTastes
+            .map((taste) => formatOption(DIET_TASTE_OPTIONS, taste))
+            .join(", ")}.`
+        : "",
     ].filter(Boolean),
     workoutFacts: [
       data.experienceLevel ? `Training experience level is ${data.experienceLevel}.` : "",
       data.workoutLocation ? `Workout location preference is ${data.workoutLocation}.` : "",
       workoutTypes.length ? `Preferred workout types: ${workoutTypes.join(", ")}.` : "",
+      data.favoriteExerciseMethods.length
+        ? `Favorite exercise methods: ${data.favoriteExerciseMethods
+            .map((method) => formatOption(EXERCISE_METHOD_OPTIONS, method))
+            .join(", ")}.`
+        : "",
     ].filter(Boolean),
     preferenceFacts: [
       data.allergies.length ? `Allergies: ${data.allergies.join(", ")}.` : "No allergies recorded.",
