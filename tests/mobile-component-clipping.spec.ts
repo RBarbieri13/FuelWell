@@ -273,6 +273,51 @@ test.describe("dashboard decision metrics", () => {
   }
 });
 
+test.describe("keyboard-open states", () => {
+  // iOS resizes the WKWebView viewport when the keyboard opens. Approximate
+  // that by focusing the screen's primary input at a compressed viewport
+  // height and requiring the focused control to stay visible and the layout
+  // to stay contained.
+  const KEYBOARD_HEIGHT = 500;
+  const INPUT_ROUTES: Array<{ route: string; focus: string }> = [
+    { route: "/app/log", focus: "input[type='search'], input[placeholder*='Search']" },
+    { route: "/app/coach", focus: "textarea, input[placeholder*='photo']" },
+    { route: "/signup?preview=new-user", focus: "input[type='email']" },
+  ];
+  for (const width of [320, 390] as const) {
+    for (const { route, focus } of INPUT_ROUTES) {
+      test(`${width}px keeps the focused input usable on ${route}`, async ({ page }, testInfo) => {
+        const routePage = await openRoute(page, route, width);
+        const input = routePage.locator(focus).first();
+        await input.scrollIntoViewIfNeeded();
+        await input.focus();
+        await routePage.setViewportSize({ width, height: KEYBOARD_HEIGHT });
+        await routePage.waitForTimeout(300);
+        await input.scrollIntoViewIfNeeded();
+        await routePage.screenshot({
+          path: testInfo.outputPath(
+            `${width}-keyboard-${route.replaceAll("/", "-").replaceAll("?", "_").slice(1)}.png`
+          ),
+          fullPage: false,
+        });
+        const box = await input.boundingBox();
+        expect(box, `focused input missing on ${route}`).toBeTruthy();
+        expect(box!.y, "focused input scrolled above the viewport").toBeGreaterThanOrEqual(-1);
+        expect(
+          box!.y + box!.height,
+          "focused input hidden below the keyboard viewport"
+        ).toBeLessThanOrEqual(KEYBOARD_HEIGHT + 1);
+        const report = await clippedComponents(routePage);
+        expect(
+          report.documentWidth,
+          "keyboard state introduced horizontal scrolling"
+        ).toBeLessThanOrEqual(width);
+        await routePage.close();
+      });
+    }
+  }
+});
+
 test.describe("signup first viewport", () => {
   for (const width of WIDTHS) {
     test(`${width}px keeps the preview signup action in the first viewport`, async ({ page }, testInfo) => {
