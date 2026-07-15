@@ -85,6 +85,17 @@ jobs:
           brew list xcodegen >/dev/null 2>&1 || brew install xcodegen
           brew list swiftlint >/dev/null 2>&1 || brew install swiftlint
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install web dependencies
+        # The release-binding verifier and candidate gates run vitest and
+        # Playwright from the repo; without node_modules they fail at import.
+        run: npm ci
+
       - name: Install Ruby dependencies
         run: |
           bundle config set path vendor/bundle
