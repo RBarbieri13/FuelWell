@@ -68,7 +68,7 @@ export default function RecipesPage() {
               <BookOpen className="h-4 w-4" />
               Recipe library
             </p>
-            <h1 className="mt-4 text-3xl font-black leading-tight md:text-4xl">
+            <h1 className="mt-4 text-2xl font-black leading-tight md:text-4xl">
               Find food that fits today.
             </h1>
             <p className="mt-3 max-w-2xl text-sm font-semibold leading-6 text-white/70">

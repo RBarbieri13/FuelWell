@@ -205,7 +205,7 @@ function LogContent() {
               <Sparkles className="h-4 w-4" />
               Fast logging
             </p>
-            <h1 className="mt-4 text-3xl font-black leading-tight tracking-normal md:text-4xl">Log a meal</h1>
+            <h1 className="mt-4 text-2xl font-black leading-tight tracking-normal md:text-4xl">Log a meal</h1>
             <p className="mt-3 max-w-2xl text-sm font-semibold leading-6 text-white/70">
               Search updates as you type. Adding food updates Today&apos;s Plate,
               dashboard macros, and coach context.

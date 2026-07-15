@@ -229,8 +229,8 @@ export function FitnessDetailSurface() {
     <div className="fw-app-surface">
       <header className="fw-page-header">
         <div className="fw-page-inner py-5">
-          <h1 className="fw-heading text-3xl md:text-4xl">Fitness detail</h1>
-          <p className="fw-muted mt-1 text-base">
+          <h1 className="fw-heading text-2xl md:text-4xl">Fitness detail</h1>
+          <p className="fw-muted mt-1 text-sm md:text-base">
             Today&apos;s movement · what&apos;s counting toward your activity
           </p>
         </div>
@@ -320,8 +320,8 @@ export function NutritionDetailSurface({
     <div className="fw-app-surface">
       <header className="fw-page-header">
         <div className="fw-page-inner py-5">
-          <h1 className="fw-heading text-3xl md:text-4xl">Nutrition detail</h1>
-          <p className="fw-muted mt-1 text-base">
+          <h1 className="fw-heading text-2xl md:text-4xl">Nutrition detail</h1>
+          <p className="fw-muted mt-1 text-sm md:text-base">
             Today&apos;s plate · what&apos;s counting toward your score
           </p>
         </div>
@@ -447,8 +447,8 @@ export function DailyReviewSurface({
     <div className="fw-app-surface">
       <header className="fw-page-header">
         <div className="fw-page-inner py-5">
-          <h1 className="fw-heading text-3xl md:text-4xl">Daily detail</h1>
-          <p className="fw-muted mt-1 text-base">
+          <h1 className="fw-heading text-2xl md:text-4xl">Daily detail</h1>
+          <p className="fw-muted mt-1 text-sm md:text-base">
             Nutrition + fitness · the full health ledger for today
           </p>
         </div>

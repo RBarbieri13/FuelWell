@@ -598,7 +598,7 @@ export default function OnboardingPage() {
             <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary-600 text-white shadow-[0_16px_36px_rgba(21,145,108,0.35)]">
               <Check className="h-8 w-8" />
             </span>
-            <h1 className="fw-heading mt-5 text-3xl md:text-4xl">
+            <h1 className="fw-heading mt-5 text-2xl md:text-4xl">
               {data.displayName ? `You're set, ${data.displayName}.` : "You're all set."}
             </h1>
             <p className="mx-auto mt-3 max-w-md text-base font-semibold leading-7 text-[#6f8981]">
@@ -640,7 +640,7 @@ export default function OnboardingPage() {
             <div className="hidden md:block">
               <Logo href="/app/dashboard" size="lg" />
             </div>
-            <h1 className="fw-heading text-3xl md:hidden">Setup FuelWell</h1>
+            <h1 className="fw-heading text-2xl md:hidden">Setup FuelWell</h1>
             <p className="mt-1 text-sm font-semibold text-[#78928a]">
               Daily decision setup
             </p>
@@ -1445,7 +1445,7 @@ function StepWrapper({
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="fw-heading text-3xl md:text-4xl">{title}</h3>
+        <h3 className="fw-heading text-2xl md:text-4xl">{title}</h3>
         <p className="mt-2 max-w-2xl text-base font-semibold leading-7 text-[#6f8981]">
           {subtitle}
         </p>

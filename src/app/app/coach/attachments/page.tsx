@@ -58,13 +58,13 @@ export default function CoachAttachmentsReviewPage() {
   return (
     <div className="fw-app-surface">
       <header className="fw-page-header">
-        <div className="fw-page-inner flex flex-col gap-4 py-7 md:flex-row md:items-center md:justify-between">
+        <div className="fw-page-inner flex flex-col gap-4 py-5 md:py-7 md:flex-row md:items-center md:justify-between">
           <div>
             <p className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.14em] text-primary-600">
               <Paperclip className="h-4 w-4" />
               Coach attachment review
             </p>
-            <h1 className="fw-heading mt-2 text-3xl md:text-4xl">Upload anything useful</h1>
+            <h1 className="fw-heading mt-2 text-2xl md:text-4xl">Upload anything useful</h1>
             <p className="fw-muted mt-1 max-w-3xl text-base">
               Photos, menus, emails, labels, and training files can become a clearer nutrition or fitness decision.
             </p>

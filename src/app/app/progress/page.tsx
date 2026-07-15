@@ -312,10 +312,10 @@ export default function ProgressPage() {
   return (
     <div className="fw-app-surface">
       <header className="fw-page-header">
-        <div className="fw-page-inner flex flex-col gap-4 py-7 md:flex-row md:items-center md:justify-between">
+        <div className="fw-page-inner flex flex-col gap-4 py-5 md:py-7 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="fw-heading text-3xl md:text-4xl">Progress</h1>
-            <p className="fw-muted mt-1 text-base">
+            <h1 className="fw-heading text-2xl md:text-4xl">Progress</h1>
+            <p className="fw-muted mt-1 text-sm md:text-base">
               Trends and direction over time — no targets to fail.
             </p>
           </div>

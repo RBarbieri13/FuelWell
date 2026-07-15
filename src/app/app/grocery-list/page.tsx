@@ -205,8 +205,8 @@ export default function GroceryListPage() {
       <header className="fw-page-header">
         <div className="fw-page-inner flex min-w-0 flex-col gap-4 py-5 sm:flex-row sm:items-center sm:justify-between sm:py-7">
           <div className="min-w-0">
-            <h1 className="fw-heading text-3xl md:text-4xl">Grocery list</h1>
-            <p className="fw-muted mt-1 text-base">
+            <h1 className="fw-heading text-2xl md:text-4xl">Grocery list</h1>
+            <p className="fw-muted mt-1 text-sm md:text-base">
               Grouped from your planned meals — check off as you go.
             </p>
           </div>

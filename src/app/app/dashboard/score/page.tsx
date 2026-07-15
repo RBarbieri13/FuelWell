@@ -100,7 +100,7 @@ function ScoreDetail({
             </p>
           </div>
           <div>
-            <h1 className="text-3xl font-black tracking-tight">
+            <h1 className="text-2xl font-black tracking-tight md:text-3xl">
               FuelWell only scores what it can explain.
             </h1>
             <p className="mt-3 text-sm font-semibold leading-6 text-white/68">

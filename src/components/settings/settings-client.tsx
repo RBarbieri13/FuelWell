@@ -542,10 +542,10 @@ export function SettingsClient({
   return (
     <div className="fw-app-surface">
       <header className="fw-page-header">
-        <div className="fw-page-inner flex flex-col gap-4 py-7 md:flex-row md:items-center md:justify-between">
+        <div className="fw-page-inner flex flex-col gap-4 py-5 md:py-7 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="fw-heading text-3xl md:text-4xl">Settings</h1>
-            <p className="fw-muted mt-1 text-base">Account, preferences, integrations, and data controls</p>
+            <h1 className="fw-heading text-2xl md:text-4xl">Settings</h1>
+            <p className="fw-muted mt-1 text-sm md:text-base">Account, preferences, integrations, and data controls</p>
           </div>
           <Badge className="px-4 py-2 text-sm">v{appVersion}</Badge>
         </div>

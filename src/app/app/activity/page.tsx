@@ -90,10 +90,10 @@ export default function ActivityPage() {
   return (
     <div className="fw-app-surface">
       <header className="fw-page-header">
-        <div className="fw-page-inner flex flex-col gap-4 py-7 md:flex-row md:items-center md:justify-between">
+        <div className="fw-page-inner flex flex-col gap-4 py-5 md:py-7 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="fw-heading text-3xl md:text-4xl">Activity</h1>
-            <p className="fw-muted mt-1 text-base">{activitySummary.dateLabel} · movement and fuel timing</p>
+            <h1 className="fw-heading text-2xl md:text-4xl">Activity</h1>
+            <p className="fw-muted mt-1 text-sm md:text-base">{activitySummary.dateLabel} · movement and fuel timing</p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <div className="rounded-full bg-white p-1 shadow-[0_18px_44px_rgba(22,48,42,0.10)]">
