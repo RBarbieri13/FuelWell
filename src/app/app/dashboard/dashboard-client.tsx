@@ -507,7 +507,7 @@ function EnergyStat({ label, value }: { label: string; value: string }) {
   return (
     <div className="min-w-[7.5rem] flex-1 rounded-2xl border border-white/14 bg-white/10 px-4 py-2.5 text-left backdrop-blur">
       <p className="text-[1.45rem] font-black leading-none tabular-nums text-white">{value}</p>
-      <p className="mt-1.5 whitespace-nowrap text-[11px] font-bold uppercase tracking-[0.08em] text-white/60">
+      <p className="mt-1.5 whitespace-nowrap text-xs font-bold uppercase tracking-[0.06em] text-white/60">
         {label}
       </p>
     </div>
@@ -518,7 +518,7 @@ function MiniMetric({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-[0.9rem] bg-primary-50/80 p-2.5 text-center">
       <p className="text-base font-black tabular-nums text-neutral-900">{value}</p>
-      <p className="mt-0.5 whitespace-nowrap text-[10px] font-semibold text-neutral-500">{label}</p>
+      <p className="mt-0.5 whitespace-nowrap text-xs font-semibold text-neutral-500">{label}</p>
     </div>
   );
 }

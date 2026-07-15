@@ -119,7 +119,7 @@ export function LiveWorkoutSession({
       <div className="fw-page-inner max-w-6xl space-y-5 py-5">
         <Link
           href={`/app/workouts/${workout.id}`}
-          className="inline-flex items-center gap-2 rounded-full bg-white/75 px-4 py-2 text-sm font-black text-[#78928a] shadow-sm transition-colors hover:text-primary-700"
+          className="inline-flex min-h-11 items-center gap-2 rounded-full bg-white/75 px-4 py-2 text-sm font-black md:min-h-0 text-[#78928a] shadow-sm transition-colors hover:text-primary-700"
         >
           <ArrowLeft className="h-4 w-4" />
           Workout preview
