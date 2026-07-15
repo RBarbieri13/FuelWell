@@ -25,6 +25,9 @@ FROM base AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
+# Next standalone binds 127.0.0.1 unless HOSTNAME is set; Fly's proxy needs
+# the app on 0.0.0.0 or every edge request 503s while the app looks healthy.
+ENV HOSTNAME=0.0.0.0
 
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
