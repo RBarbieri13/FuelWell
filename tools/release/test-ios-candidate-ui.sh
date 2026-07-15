@@ -147,6 +147,7 @@ DEVELOPER_DIR="${DEVELOPER_DIR:-/Applications/Xcode.app/Contents/Developer}" \
     -resultBundlePath "${result_path}" \
     -only-testing:FuelWellUITests \
     CODE_SIGNING_ALLOWED=NO \
+    INFOPLIST_FILE="${repo_root}/ios/FuelWellApp/Info.plist" \
     FUELWELL_START_URL="${candidate_origin}/app/dashboard" \
     FUELWELL_EXPECTED_PACKAGE_VERSION="${package_version}" \
     FUELWELL_EXPECTED_GIT_SHA="${manifest_git_sha}" \

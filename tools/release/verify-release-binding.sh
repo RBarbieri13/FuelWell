@@ -48,6 +48,7 @@ DEVELOPER_DIR="${DEVELOPER_DIR:-/Applications/Xcode.app/Contents/Developer}" \
     -only-testing:FuelWellAppTests \
     test \
     CODE_SIGNING_ALLOWED=NO \
+    INFOPLIST_FILE="${repo_root}/ios/FuelWellApp/Info.plist" \
     -quiet
 
 echo "PASS: release manifest and immutable iOS binding verified"

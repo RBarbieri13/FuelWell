@@ -52,27 +52,44 @@ targets:
     dependencies:
       - package: DesignSystem
         product: DesignSystem
+    # Release-binding keys live in an explicit Info.plist because
+    # INFOPLIST_KEY_* build settings only cover Apple's known-key allowlist:
+    # custom keys (FuelWell*) are silently dropped from the generated plist,
+    # which left every build without its release binding. Explicit plist
+    # values DO substitute $(BUILD_SETTINGS) at process-Info.plist time.
+    info:
+      path: FuelWellApp/Info.plist
+      properties:
+        CFBundleIconName: AppIcon
+        FuelWellExpectedDeploymentID: "$(FUELWELL_EXPECTED_DEPLOYMENT_ID)"
+        FuelWellExpectedDeploymentURL: "$(FUELWELL_EXPECTED_DEPLOYMENT_URL)"
+        FuelWellExpectedEnvironment: "$(FUELWELL_EXPECTED_ENVIRONMENT)"
+        FuelWellExpectedGitSHA: "$(FUELWELL_EXPECTED_GIT_SHA)"
+        FuelWellExpectedPackageVersion: "$(FUELWELL_EXPECTED_PACKAGE_VERSION)"
+        FuelWellReleaseSchemaVersion: "$(FUELWELL_RELEASE_SCHEMA_VERSION)"
+        FuelWellStartURL: "$(FUELWELL_START_URL)"
+        NSCameraUsageDescription: FuelWell uses the camera to log meal photos for nutrition tracking.
+        NSHealthShareUsageDescription: FuelWell reads workouts, sleep, steps, energy, and body measurements to personalize coaching.
+        NSHealthUpdateUsageDescription: FuelWell does not write Health data in this phase.
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+        UIApplicationSupportsIndirectInputEvents: true
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.fuelwell.app
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
-        GENERATE_INFOPLIST_FILE: YES
-        INFOPLIST_KEY_CFBundleIconName: AppIcon
-        INFOPLIST_KEY_FuelWellExpectedDeploymentID: "$(FUELWELL_EXPECTED_DEPLOYMENT_ID)"
-        INFOPLIST_KEY_FuelWellExpectedDeploymentURL: "$(FUELWELL_EXPECTED_DEPLOYMENT_URL)"
-        INFOPLIST_KEY_FuelWellExpectedEnvironment: "$(FUELWELL_EXPECTED_ENVIRONMENT)"
-        INFOPLIST_KEY_FuelWellExpectedGitSHA: "$(FUELWELL_EXPECTED_GIT_SHA)"
-        INFOPLIST_KEY_FuelWellExpectedPackageVersion: "$(FUELWELL_EXPECTED_PACKAGE_VERSION)"
-        INFOPLIST_KEY_FuelWellReleaseSchemaVersion: "$(FUELWELL_RELEASE_SCHEMA_VERSION)"
-        INFOPLIST_KEY_FuelWellStartURL: "$(FUELWELL_START_URL)"
-        INFOPLIST_KEY_NSCameraUsageDescription: FuelWell uses the camera to log meal photos for nutrition tracking.
-        INFOPLIST_KEY_NSHealthShareUsageDescription: FuelWell reads workouts, sleep, steps, energy, and body measurements to personalize coaching.
-        INFOPLIST_KEY_NSHealthUpdateUsageDescription: FuelWell does not write Health data in this phase.
-        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
-        INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents: YES
-        INFOPLIST_KEY_UILaunchScreen_Generation: YES
-        INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight
-        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight
+        GENERATE_INFOPLIST_FILE: NO
         TARGETED_DEVICE_FAMILY: "1,2"
   FuelWellAppTests:
     type: bundle.unit-test

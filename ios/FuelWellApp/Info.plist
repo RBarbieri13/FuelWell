@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIconName</key>
+	<string>AppIcon</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>FuelWellExpectedDeploymentID</key>
+	<string>$(FUELWELL_EXPECTED_DEPLOYMENT_ID)</string>
+	<key>FuelWellExpectedDeploymentURL</key>
+	<string>$(FUELWELL_EXPECTED_DEPLOYMENT_URL)</string>
+	<key>FuelWellExpectedEnvironment</key>
+	<string>$(FUELWELL_EXPECTED_ENVIRONMENT)</string>
+	<key>FuelWellExpectedGitSHA</key>
+	<string>$(FUELWELL_EXPECTED_GIT_SHA)</string>
+	<key>FuelWellExpectedPackageVersion</key>
+	<string>$(FUELWELL_EXPECTED_PACKAGE_VERSION)</string>
+	<key>FuelWellReleaseSchemaVersion</key>
+	<string>$(FUELWELL_RELEASE_SCHEMA_VERSION)</string>
+	<key>FuelWellStartURL</key>
+	<string>$(FUELWELL_START_URL)</string>
+	<key>NSCameraUsageDescription</key>
+	<string>FuelWell uses the camera to log meal photos for nutrition tracking.</string>
+	<key>NSHealthShareUsageDescription</key>
+	<string>FuelWell reads workouts, sleep, steps, energy, and body measurements to personalize coaching.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>FuelWell does not write Health data in this phase.</string>
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+		<key>UIApplicationSupportsMultipleScenes</key>
+		<false/>
+	</dict>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	<key>UILaunchScreen</key>
+	<dict/>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+</dict>
+</plist>
