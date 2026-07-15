@@ -240,26 +240,26 @@ export default function GroceryListPage() {
 
       <div className="fw-page-inner grid min-w-0 gap-5 lg:grid-cols-[minmax(0,1fr)_18rem] 2xl:grid-cols-[minmax(0,1fr)_20rem]">
         <div className="min-w-0 space-y-4">
-          <Card className="fw-mint-panel min-w-0 rounded-[24px] border-primary-200/80 px-4 py-5 shadow-none sm:px-6 sm:py-6">
-            <div className="grid gap-5 sm:grid-cols-[1fr_auto] sm:items-center">
+          <Card className="fw-mint-panel min-w-0 rounded-[24px] border-primary-200/80 px-4 py-4 shadow-none sm:px-6 sm:py-6">
+            <div className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-center md:gap-5">
               <div className="min-w-0">
                 <div className="inline-flex items-center gap-2 rounded-full border border-primary-100 bg-white px-4 py-2 text-sm font-black text-primary-700">
                   <ShoppingBasket className="w-3.5 h-3.5" />
                   This week
                 </div>
-                <h2 className="mt-4 font-heading text-[22px] font-black tracking-tight text-[#16302a] md:text-2xl">
+                <h2 className="mt-3 font-heading text-[22px] font-black tracking-tight text-[#16302a] md:text-2xl">
                   {remainingCount === 0
                     ? "All shopped for this week."
                     : `${remainingCount} items left for 4 planned days`}
                 </h2>
-                <p className="mt-3 max-w-xl text-sm font-semibold leading-6 text-primary-900/75 md:text-[15px]">
+                <p className="mt-2 max-w-xl text-sm font-semibold leading-6 text-primary-900/75 md:text-[15px]">
                   {remainingCount === 0
                     ? "You're set — check back when new meals are planned."
                     : "Protein and produce are the priority. Pantry items can wait if you are doing a quick store run."}
                 </p>
               </div>
-              <div className="min-w-0 rounded-[20px] bg-white px-5 py-5 text-center shadow-[0_8px_18px_rgba(20,90,75,0.08)] sm:px-8 sm:py-6">
-                <p className="font-heading text-[42px] font-black leading-none tabular-nums text-primary-600">
+              <div className="min-w-0 rounded-[20px] bg-white px-4 py-3.5 text-center md:px-5 md:py-5 shadow-[0_8px_18px_rgba(20,90,75,0.08)] sm:px-8 sm:py-6">
+                <p className="font-heading text-[2rem] font-black leading-none tabular-nums md:text-[42px] text-primary-600">
                   {checkedCount}/{items.length}
                 </p>
                 <p className="mt-1 text-sm font-bold text-[#7c968f]">checked off</p>
