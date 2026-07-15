@@ -11,10 +11,13 @@ import Link from "next/link";
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowRight,
+  BarChart3,
   Calculator,
+  Camera,
   ChevronLeft,
   ChevronRight,
   CheckCircle2,
+  Dumbbell,
   ExternalLink,
   FileText,
   Heading2,
@@ -24,6 +27,7 @@ import {
   MessageCircle,
   Paperclip,
   Send,
+  ShoppingBasket,
   Sparkles,
   Table2,
   User,
@@ -316,37 +320,38 @@ export default function CoachPage() {
         <div className="mx-auto w-full max-w-5xl min-w-0">
           <div className="min-w-0 space-y-5">
             {items.length === 0 && (
+            <div className="space-y-4">
             <div className="grid gap-4 xl:grid-cols-[1fr_0.72fr]">
               <section className="fw-dark-panel rounded-[2rem] border p-6 md:p-8">
                 <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-xs font-black uppercase tracking-[0.16em] text-primary-100">
                   <MessageCircle className="h-4 w-4" />
                   Agentic coach
                 </div>
-                <h2 className="mt-5 max-w-2xl text-4xl font-black leading-tight text-white md:text-5xl">
+                <h2 className="mt-4 max-w-2xl text-3xl font-black leading-tight text-white md:text-5xl">
                   Ask for the next useful move.
                 </h2>
-                <p className="mt-4 max-w-2xl text-base font-semibold leading-7 text-white/70">
-                  I can log meals, generate tables, plan workouts, compare
-                  choices, render recipes, update groceries, and explain your
-                  numbers directly in chat.
+                <p className="mt-3 max-w-2xl text-sm font-semibold leading-6 text-white/70 md:text-base md:leading-7">
+                  One chat that reads your day and acts on it — meals logged,
+                  workouts planned, groceries updated, numbers explained.
                 </p>
-                <div className="mt-7 grid gap-3 sm:grid-cols-3">
-                  {[
-                    ["102g", "protein left"],
-                    ["4", "rich formats"],
-                    ["live", "tools"],
-                  ].map(([value, label]) => (
-                    <div
-                      key={label}
-                      className="rounded-[1.2rem] border border-white/12 bg-white/10 px-4 py-3 backdrop-blur"
-                    >
-                      <p className="text-2xl font-black tabular-nums text-white">{value}</p>
-                      <p className="mt-1 text-[11px] font-black uppercase tracking-[0.12em] text-white/58">
-                        {label}
-                      </p>
-                    </div>
-                  ))}
+                <div className="mt-5 flex flex-wrap gap-2">
+                  <span className="rounded-full border border-white/14 bg-white/10 px-3 py-1.5 text-xs font-black tabular-nums text-white">
+                    {remaining(totals.calories, targets.calories).toLocaleString()}
+                    <span className="ml-1 font-bold text-white/60">kcal left today</span>
+                  </span>
+                  <span className="rounded-full border border-white/14 bg-white/10 px-3 py-1.5 text-xs font-black tabular-nums text-white">
+                    {remaining(totals.protein, targets.protein)}g
+                    <span className="ml-1 font-bold text-white/60">protein left</span>
+                  </span>
                 </div>
+                <Button
+                  size="lg"
+                  className="mt-6 rounded-full px-6 py-3 text-sm"
+                  onClick={() => void sendMessage("What should I do right now?")}
+                >
+                  <Sparkles className="h-4 w-4" />
+                  Ask for today&apos;s plan
+                </Button>
               </section>
               <section className="rounded-[2rem] border border-primary-100/80 bg-white/90 p-5 shadow-[0_22px_60px_rgba(22,48,42,0.10)]">
                 <div className="flex items-start justify-between gap-3">
@@ -373,6 +378,87 @@ export default function CoachPage() {
                   ))}
                 </div>
               </section>
+            </div>
+            <div className="grid gap-4 xl:grid-cols-2">
+              <section className="rounded-[2rem] border border-primary-100/80 bg-white/90 p-5 shadow-[0_22px_60px_rgba(22,48,42,0.10)] md:p-6">
+                <p className="text-xs font-black uppercase tracking-[0.16em] text-primary-600">
+                  How a chat plays out
+                </p>
+                <h2 className="mt-2 text-2xl font-black text-[#16302a]">
+                  From question to logged in three moves
+                </h2>
+                <div className="mt-4 space-y-3">
+                  {[
+                    {
+                      title: "You ask",
+                      body: "“What fits my macros tonight?” — plain words, or a menu photo.",
+                    },
+                    {
+                      title: "The coach checks your actual day",
+                      body: "It reads today's totals, targets, and history, then proposes options that fit the gap.",
+                    },
+                    {
+                      title: "One tap makes it real",
+                      body: "Confirm and the meal is logged, groceries update, and the dashboard reflects it instantly.",
+                    },
+                  ].map((step, index) => (
+                    <div key={step.title} className="flex gap-3 rounded-[1.2rem] bg-[#f7faf8] p-3.5">
+                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-600 text-sm font-black text-white">
+                        {index + 1}
+                      </span>
+                      <div className="min-w-0">
+                        <p className="text-sm font-black text-[#16302a]">{step.title}</p>
+                        <p className="mt-0.5 text-sm font-semibold leading-6 text-[#6f8981]">
+                          {step.body}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+              <section className="rounded-[2rem] border border-primary-100/80 bg-white/90 p-5 shadow-[0_22px_60px_rgba(22,48,42,0.10)] md:p-6">
+                <p className="text-xs font-black uppercase tracking-[0.16em] text-primary-600">
+                  What it can do
+                </p>
+                <h2 className="mt-2 text-2xl font-black text-[#16302a]">
+                  A coach with hands, not just answers
+                </h2>
+                <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                  {[
+                    {
+                      icon: Camera,
+                      title: "Log meals",
+                      body: "Text, menus, or food photos become logged macros.",
+                    },
+                    {
+                      icon: Dumbbell,
+                      title: "Plan workouts",
+                      body: "Sessions sized to your recovery and schedule.",
+                    },
+                    {
+                      icon: ShoppingBasket,
+                      title: "Recipes to groceries",
+                      body: "Pick a meal and the grocery list updates itself.",
+                    },
+                    {
+                      icon: BarChart3,
+                      title: "Explain your numbers",
+                      body: "Honest readouts of targets, trends, and trade-offs.",
+                    },
+                  ].map((capability) => (
+                    <div key={capability.title} className="rounded-[1.2rem] border border-primary-100 bg-[#f7faf8] p-4">
+                      <span className="flex h-10 w-10 items-center justify-center rounded-[0.9rem] bg-primary-100 text-primary-700">
+                        <capability.icon className="h-5 w-5" />
+                      </span>
+                      <p className="mt-3 text-sm font-black text-[#16302a]">{capability.title}</p>
+                      <p className="mt-1 text-sm font-semibold leading-6 text-[#6f8981]">
+                        {capability.body}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            </div>
             </div>
             )}
 
