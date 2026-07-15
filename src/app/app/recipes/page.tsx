@@ -98,20 +98,20 @@ export default function RecipesPage() {
           <div className="grid grid-cols-3 gap-2 text-center">
             <div className="rounded-[1.15rem] border border-white/12 bg-white/10 px-4 py-3">
               <p className="text-2xl font-black tabular-nums">{results.length}</p>
-              <p className="text-[11px] font-black uppercase tracking-[0.12em] text-white/55">
+              <p className="text-[11px] font-black uppercase tracking-[0.12em] text-white/70">
                 Matches
               </p>
             </div>
             <div className="rounded-[1.15rem] border border-white/12 bg-white/10 px-4 py-3">
               <p className="text-2xl font-black tabular-nums">{quickCount}</p>
-              <p className="text-[11px] font-black uppercase tracking-[0.12em] text-white/55">
+              <p className="text-[11px] font-black uppercase tracking-[0.12em] text-white/70">
                 Quick
               </p>
             </div>
             <div className="rounded-[1.15rem] border border-white/12 bg-white/10 px-4 py-3">
               <p className="text-2xl font-black tabular-nums">{highProteinCount}</p>
-              <p className="text-[11px] font-black uppercase tracking-[0.12em] text-white/55">
-                30g+
+              <p className="text-[11px] font-black uppercase tracking-[0.12em] text-white/70">
+                30g+ protein
               </p>
             </div>
           </div>
@@ -125,8 +125,8 @@ export default function RecipesPage() {
             <input
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search title, ingredients, or tags"
-              aria-label="Search title, ingredients, or tags"
+              placeholder="Search recipes or ingredients"
+              aria-label="Search recipes or ingredients"
               className="w-full rounded-[1.3rem] border border-primary-100 bg-primary-50/55 py-4 pl-12 pr-4 text-sm font-semibold text-[#16302a] outline-none placeholder:text-[#91a7a0] transition focus:border-transparent focus:bg-white focus:ring-2 focus:ring-primary-500"
             />
           </div>

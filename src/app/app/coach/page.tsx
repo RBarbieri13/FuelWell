@@ -581,7 +581,7 @@ export default function CoachPage() {
               onFocus={() => {
                 if (actionDrawer) setCollapsedDrawerId(actionDrawer.id);
               }}
-              placeholder="Upload a food photo, email, label, workout image, or ask anything..."
+              placeholder="Ask anything, or attach a photo or menu..."
               className="min-h-12 min-w-0 flex-1 rounded-[1.35rem] border border-primary-100 bg-primary-50/70 px-3 py-3 text-sm font-semibold text-[#16302a] placeholder:text-[#91a7a0] focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 sm:px-4"
               disabled={busy}
               aria-label="Message Coach"
