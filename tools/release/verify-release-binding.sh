@@ -24,6 +24,10 @@ xcodegen generate \
   --quiet
 
 generated_project="${temporary_project}/FuelWellApp.xcodeproj/project.pbxproj"
+# The binding keys live in the explicit Info.plist (build settings only
+# support Apple's known-key allowlist); assert the plist template carries
+# every key and the generated project consumes an Info.plist file.
+release_plist="${repo_root}/ios/FuelWellApp/Info.plist"
 for key in \
   FuelWellStartURL \
   FuelWellExpectedPackageVersion \
@@ -32,8 +36,9 @@ for key in \
   FuelWellExpectedDeploymentURL \
   FuelWellExpectedEnvironment \
   FuelWellReleaseSchemaVersion; do
-  grep -q "${key}" "${generated_project}"
+  grep -q "${key}" "${release_plist}"
 done
+grep -q "INFOPLIST_FILE" "${generated_project}"
 
 if grep -q "fuelwell-preview.vercel.app" ios/FuelWellApp/Sources/FuelWellApp.swift; then
   echo "FAIL: mutable preview alias remains hardcoded in FuelWellApp.swift" >&2
