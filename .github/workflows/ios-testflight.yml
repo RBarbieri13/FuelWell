@@ -99,8 +99,12 @@ jobs:
 
       - name: Install web dependencies
         # The release-binding verifier and candidate gates run vitest and
-        # Playwright from the repo; without node_modules they fail at import.
-        run: npm ci
+        # Playwright (Chromium + mobile WebKit) from the repo root; npm ci
+        # alone does not fetch the browser binaries.
+        working-directory: .
+        run: |
+          npm ci
+          npx playwright install chromium webkit
 
       - name: Install Ruby dependencies
         run: |
