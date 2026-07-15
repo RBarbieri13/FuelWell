@@ -16,15 +16,17 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   useDayLog,
+  initializeDayLog,
+  getDayLogSnapshot,
   addMealRecord,
   replaceMeal,
   removeMeal as storeRemoveMeal,
 } from "@/lib/use-day-log";
 import { mergePreferences, usePreferences, type PreferenceState } from "@/lib/use-preferences";
-import { useWorkoutLog, addWorkout, removeWorkout } from "@/lib/use-workout-log";
-import { useGroceryList, applyCoachGrocery, toCoachGrocery } from "@/lib/use-grocery-list";
-import { useBodyLog, addBodyLogEntry } from "@/lib/use-body-log";
-import { todayIsoDate } from "@/lib/fuelwell-data";
+import { useWorkoutLog, initializeWorkoutLog, getWorkoutLogSnapshot, addWorkout, removeWorkout } from "@/lib/use-workout-log";
+import { useGroceryList, initializeGroceryList, getGrocerySnapshot, applyCoachGrocery, toCoachGrocery } from "@/lib/use-grocery-list";
+import { useBodyLog, initializeBodyLog, getBodyLogSnapshot, addBodyLogEntry } from "@/lib/use-body-log";
+import { sumMeals, todayIsoDate } from "@/lib/fuelwell-data";
 import { buildDailyGoalContext } from "@/lib/goal-context";
 import { normalizeGroceryInput } from "@/lib/grocery-normalization";
 import {
@@ -174,11 +176,11 @@ export function formatActionAsMessage(action: CoachCardAction): string | null {
 }
 
 export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], initialConversationId?: string) {
-  const { meals, totals, targets } = useDayLog();
+  const { targets } = useDayLog();
   const prefs = usePreferences();
-  const { workouts } = useWorkoutLog();
-  const { items: groceryItems } = useGroceryList();
-  const { entries: bodyLog } = useBodyLog();
+  useWorkoutLog();
+  useGroceryList();
+  useBodyLog();
   const { goalPlan, integrationSummary } = useGoalContextStore();
 
   // Start from the SSR-safe empty state and hydrate the stored chat after
@@ -262,10 +264,18 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
   }, [items, hydrated]);
 
   const buildSnapshot = useCallback((): CoachDaySnapshot => {
+    // Read the stores directly instead of render-closure values: a message
+    // sent right after page load must carry post-hydration data even before
+    // React re-renders (the closure would still hold the sample seed).
+    const liveMeals = getDayLogSnapshot().meals;
+    const liveTotals = sumMeals(liveMeals);
+    const liveWorkouts = getWorkoutLogSnapshot().workouts;
+    const liveGrocery = getGrocerySnapshot().items;
+    const liveBodyLog = getBodyLogSnapshot().entries;
     const goalContext = buildDailyGoalContext({
       date: todayIsoDate(),
-      meals,
-      totals,
+      meals: liveMeals,
+      totals: liveTotals,
       targets,
       profile,
       goalPlan,
@@ -273,12 +283,12 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
     });
     return {
       date: todayIsoDate(),
-      meals,
-      totals,
+      meals: liveMeals,
+      totals: liveTotals,
       targets: goalContext.targets,
-      workouts,
-      grocery: toCoachGrocery(groceryItems),
-      bodyLog,
+      workouts: liveWorkouts,
+      grocery: toCoachGrocery(liveGrocery),
+      bodyLog: liveBodyLog,
       preferences: {
         diets: prefs.diets,
         allergies: prefs.allergies,
@@ -290,7 +300,7 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
       integration: integrationSummary,
       goalContext,
     };
-  }, [meals, totals, targets, workouts, groceryItems, bodyLog, prefs, profile, goalPlan, integrationSummary]);
+  }, [targets, prefs, profile, goalPlan, integrationSummary]);
 
   const runTurn = useCallback(
     async (
@@ -298,6 +308,15 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
       attachments?: CoachAttachment[],
       confirmedTool?: { name: string; input: unknown }
     ): Promise<void> => {
+      // The snapshot must never carry the pre-hydration sample seed, so wait
+      // for every store to finish its initial load (idempotent, usually
+      // already resolved by the time a human can type).
+      await Promise.all([
+        initializeDayLog(),
+        initializeWorkoutLog(),
+        initializeGroceryList(),
+        initializeBodyLog(),
+      ]);
       // Taps that land mid-stream queue instead of vanishing (e.g. hitting
       // "Start workout" the moment the plan card renders).
       if (busyRef.current) {
