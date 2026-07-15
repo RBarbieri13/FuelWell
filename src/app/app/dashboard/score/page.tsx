@@ -90,9 +90,9 @@ function ScoreDetail({
         <p className="text-xs font-black uppercase tracking-[0.16em] text-primary-100">
           Health score detail
         </p>
-        <div className="mt-5 grid gap-6 md:grid-cols-[0.35fr_0.65fr] md:items-end">
+        <div className="mt-4 grid gap-4 md:mt-5 md:grid-cols-[0.35fr_0.65fr] md:items-end md:gap-6">
           <div>
-            <p className="text-7xl font-black tabular-nums">{healthScore ?? "--"}</p>
+            <p className="text-5xl font-black tabular-nums md:text-7xl">{healthScore ?? "--"}</p>
             <p className="mt-2 text-sm font-semibold text-white/65">
               {healthScore === null
                 ? "No score yet because no scored inputs exist."
@@ -128,7 +128,7 @@ function ScoreDetail({
                     <p className="mt-1 text-sm font-bold text-[#78928a]">
                       {contributor.status}
                     </p>
-                    <p className="mt-3 max-w-2xl text-sm font-semibold leading-6 text-[#516b63]">
+                    <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 text-[#516b63]">
                       {contributor.detail}
                     </p>
                     <p className="mt-2 text-sm font-bold text-primary-700">
@@ -138,7 +138,7 @@ function ScoreDetail({
                 </div>
                 <div className="flex items-center justify-between gap-4 md:block md:text-right">
                   <div>
-                    <p className="text-4xl font-black tabular-nums text-[#16302a]">
+                    <p className="text-3xl font-black tabular-nums text-[#16302a] md:text-4xl">
                       {contributor.score ?? "--"}
                     </p>
                     <p className="text-xs font-black uppercase tracking-[0.12em] text-[#91a7a0]">
