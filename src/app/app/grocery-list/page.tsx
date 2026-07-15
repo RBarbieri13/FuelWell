@@ -252,11 +252,11 @@ export default function GroceryListPage() {
                     ? "All shopped for this week."
                     : `${remainingCount} items left for 4 planned days`}
                 </h2>
-                <p className="mt-3 max-w-xl text-sm font-semibold leading-6 text-primary-900/75 md:text-[15px]">
-                  {remainingCount === 0
-                    ? "You're set — check back when new meals are planned."
-                    : "Protein and produce are the priority. Pantry items can wait if you are doing a quick store run."}
-                </p>
+                {remainingCount === 0 && (
+                  <p className="mt-3 max-w-xl text-sm font-semibold leading-6 text-primary-900/75 md:text-[15px]">
+                    You&apos;re set — check back when new meals are planned.
+                  </p>
+                )}
               </div>
               <div className="min-w-0 rounded-[20px] bg-white px-5 py-5 text-center shadow-[0_8px_18px_rgba(20,90,75,0.08)] sm:px-8 sm:py-6">
                 <p className="font-heading text-[42px] font-black leading-none tabular-nums text-primary-600">
@@ -266,9 +266,28 @@ export default function GroceryListPage() {
               </div>
             </div>
           </Card>
+
+          {remainingCount > 0 && (
+            <Card className="fw-dark-panel rounded-[22px] px-6 py-5 shadow-[0_18px_38px_rgba(16,48,40,0.3)]">
+              <div className="flex items-start gap-4">
+                <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[13px] bg-gradient-to-br from-primary-500 to-[#1592a0] text-white">
+                  <Sparkles className="h-5 w-5" />
+                </span>
+                <div>
+                  <h2 className="font-heading text-lg font-black tracking-tight text-white">
+                    Next best move
+                  </h2>
+                  <p className="mt-1 text-sm font-semibold leading-6 text-white/75">
+                    Shop protein first, then produce. If time is short, skip pantry
+                    items that are already marked as backup sides.
+                  </p>
+                </div>
+              </div>
+            </Card>
+          )}
         </div>
 
-        <aside className="min-w-0 space-y-5">
+        <aside className="min-w-0 space-y-5 max-lg:order-3">
           <Card className="min-w-0 rounded-[22px] border-[#e6efeb] px-4 py-5 shadow-[0_8px_22px_rgba(20,90,75,0.06)] sm:px-6 sm:py-6">
             <h2 className="flex items-center gap-3 font-heading text-lg font-black tracking-tight text-[#16302a]">
               <span className="fw-icon-chip h-10 w-10 rounded-full">
@@ -309,20 +328,7 @@ export default function GroceryListPage() {
           </Card>
         </aside>
 
-        <section className="order-3 grid min-w-0 gap-5 lg:col-span-2 lg:grid-cols-3">
-          <Card className="fw-dark-panel rounded-[22px] px-6 py-6 shadow-[0_18px_38px_rgba(16,48,40,0.3)]">
-            <span className="inline-flex h-10 w-10 items-center justify-center rounded-[13px] bg-gradient-to-br from-primary-500 to-[#1592a0] text-white">
-              <Sparkles className="h-5 w-5" />
-            </span>
-            <h2 className="mt-5 font-heading text-lg font-black tracking-tight text-white">
-              Next best move
-            </h2>
-            <p className="mt-3 text-base font-semibold leading-7 text-white/75">
-              Shop protein first, then produce. If time is short, skip pantry
-              items that are already marked as backup sides.
-            </p>
-          </Card>
-
+        <section className="order-3 grid min-w-0 gap-5 lg:col-span-2 lg:grid-cols-2">
           <Card className="rounded-[22px] border-[#e6efeb] px-6 py-6 shadow-[0_8px_22px_rgba(20,90,75,0.06)]">
             <h2 className="flex items-center gap-3 font-heading text-lg font-black tracking-tight text-[#16302a]">
               <span className="fw-icon-chip h-10 w-10 rounded-full">
