@@ -341,9 +341,6 @@ export default function ProgressPage() {
             </button>
           ))}
           </div>
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary-600 text-lg font-black text-white shadow-[0_16px_34px_rgba(21,145,108,0.24)]">
-            M
-          </div>
         </div>
       </header>
 

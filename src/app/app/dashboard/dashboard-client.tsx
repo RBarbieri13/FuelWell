@@ -12,7 +12,6 @@ import {
   HeartPulse,
   Info,
   Salad,
-  Bell,
   Search,
   Sparkles,
   UtensilsCrossed,
@@ -130,16 +129,20 @@ export function DashboardClient({
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <button className="flex h-11 w-11 items-center justify-center rounded-full border border-primary-100 bg-white text-neutral-700 shadow-[0_4px_12px_rgba(20,90,75,0.05)]" aria-label="Search">
+            <Link
+              href="/app/log"
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-primary-100 bg-white text-neutral-700 shadow-[0_4px_12px_rgba(20,90,75,0.05)] transition hover:bg-primary-50 hover:text-primary-700"
+              aria-label="Search foods to log"
+            >
               <Search className="h-5 w-5" />
-            </button>
-            <button className="relative flex h-11 w-11 items-center justify-center rounded-full border border-primary-100 bg-white text-neutral-700 shadow-[0_4px_12px_rgba(20,90,75,0.05)]" aria-label="Notifications">
-              <Bell className="h-5 w-5" />
-              <span className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full border-2 border-white bg-accent-500" />
-            </button>
-            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primary-600 text-base font-black text-white shadow-[0_8px_18px_rgba(30,174,132,0.3)]">
+            </Link>
+            <Link
+              href="/app/profile"
+              aria-label="Open profile"
+              className="flex h-11 w-11 items-center justify-center rounded-full bg-primary-600 text-base font-black text-white shadow-[0_8px_18px_rgba(30,174,132,0.3)] transition hover:bg-primary-700"
+            >
               {effectiveDisplayName.slice(0, 1).toUpperCase()}
-            </div>
+            </Link>
           </div>
         </div>
       </header>
