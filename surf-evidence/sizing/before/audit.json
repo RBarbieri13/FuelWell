@@ -1,0 +1,690 @@
+{
+  "/app/dashboard": {
+    "scrollHeight": 844,
+    "textChars": 351,
+    "textBandFraction": 0.53,
+    "bigType": [
+      {
+        "fs": 33.6,
+        "text": "You have room to make a clean next choic",
+        "tag": "H2",
+        "cls": "mt-4 max-w-[24rem] text-[2.1rem] font-black leading-[1.08] tracking-normal text-"
+      }
+    ],
+    "smallType": [],
+    "tallCards": [
+      {
+        "h": 483,
+        "hFrac": 0.57,
+        "cls": "bg-white border border-[#e6efeb] fw-dark-panel overflow-hidden rounded-[26px] p-0 shadow-[0_24px_50p"
+      },
+      {
+        "h": 367,
+        "hFrac": 0.43,
+        "cls": "bg-white border border-[#e6efeb] p-6 flex flex-col rounded-[26px] px-6 py-6 shadow-[0_12px_30px_rgba"
+      }
+    ]
+  },
+  "/app/daily-review": {
+    "scrollHeight": 844,
+    "textChars": 467,
+    "textBandFraction": 0.62,
+    "bigType": [
+      {
+        "fs": 30,
+        "text": "Daily detail",
+        "tag": "H1",
+        "cls": "fw-heading text-3xl md:text-4xl"
+      }
+    ],
+    "smallType": [],
+    "tallCards": [
+      {
+        "h": 1208,
+        "hFrac": 1.43,
+        "cls": "rounded-[2rem] border border-primary-200/90 bg-primary-50/35 p-3 shadow-[0_18px_48px_rgba(20,90,75,0"
+      },
+      {
+        "h": 338,
+        "hFrac": 0.4,
+        "cls": "border border-[#e6efeb] p-6 rounded-[1.35rem] bg-white px-6 py-5 shadow-[0_12px_30px_rgba(20,90,75,0"
+      },
+      {
+        "h": 222,
+        "hFrac": 0.26,
+        "cls": "rounded-[1.55rem] border border-white/85 bg-white/72 px-4 py-4 shadow-[inset_0_1px_0_rgba(255,255,25"
+      }
+    ]
+  },
+  "/app/log": {
+    "scrollHeight": 844,
+    "textChars": 310,
+    "textBandFraction": 0.43,
+    "bigType": [],
+    "smallType": [],
+    "tallCards": [
+      {
+        "h": 974,
+        "hFrac": 1.15,
+        "cls": "bg-white rounded-[24px] border border-[#e6efeb] shadow-[0_12px_30px_rgba(20,90,75,0.07)] p-6 space-y"
+      }
+    ]
+  },
+  "/app/coach": {
+    "scrollHeight": 844,
+    "textChars": 442,
+    "textBandFraction": 0.54,
+    "bigType": [
+      {
+        "fs": 30,
+        "text": "Ask for the next useful move.",
+        "tag": "H2",
+        "cls": "mt-4 max-w-2xl text-3xl font-black leading-tight text-white md:text-5xl"
+      }
+    ],
+    "smallType": [],
+    "tallCards": [
+      {
+        "h": 418,
+        "hFrac": 0.5,
+        "cls": "rounded-[2rem] border border-primary-100/80 bg-white/90 p-5 shadow-[0_22px_60px_rgba(22,48,42,0.10)]"
+      },
+      {
+        "h": 372,
+        "hFrac": 0.44,
+        "cls": "fw-dark-panel rounded-[2rem] border p-6 md:p-8"
+      }
+    ]
+  },
+  "/app/coach/attachments": {
+    "scrollHeight": 844,
+    "textChars": 481,
+    "textBandFraction": 0.58,
+    "bigType": [
+      {
+        "fs": 30,
+        "text": "Upload anything useful",
+        "tag": "H1",
+        "cls": "fw-heading mt-2 text-3xl md:text-4xl"
+      },
+      {
+        "fs": 30,
+        "text": "The coach can interpret the file, but yo",
+        "tag": "H2",
+        "cls": "mt-5 text-3xl font-black text-[#16302a]"
+      }
+    ],
+    "smallType": [],
+    "tallCards": [
+      {
+        "h": 648,
+        "hFrac": 0.77,
+        "cls": "border border-[#e6efeb] p-6 rounded-[1.5rem] bg-white px-7 py-7 shadow-[0_12px_30px_rgba(20,90,75,0."
+      },
+      {
+        "h": 234,
+        "hFrac": 0.28,
+        "cls": "rounded-[1.25rem] border border-primary-100 bg-primary-50/80 p-4"
+      }
+    ]
+  },
+  "/app/coach/menu-review": {
+    "scrollHeight": 844,
+    "textChars": 471,
+    "textBandFraction": 0.64,
+    "bigType": [
+      {
+        "fs": 30,
+        "text": "Pick the meal that fits today",
+        "tag": "H1",
+        "cls": "fw-heading mt-2 text-3xl md:text-4xl"
+      },
+      {
+        "fs": 30,
+        "text": "The coach should rank options, not just ",
+        "tag": "H2",
+        "cls": "mt-3 text-3xl font-black text-[#16302a]"
+      }
+    ],
+    "smallType": [],
+    "tallCards": [
+      {
+        "h": 568,
+        "hFrac": 0.67,
+        "cls": "border border-[#e6efeb] p-6 rounded-[1.5rem] bg-white px-7 py-7 shadow-[0_12px_30px_rgba(20,90,75,0."
+      }
+    ]
+  },
+  "/app/nutrition": {
+    "scrollHeight": 844,
+    "textChars": 352,
+    "textBandFraction": 0.55,
+    "bigType": [
+      {
+        "fs": 30,
+        "text": "Nutrition detail",
+        "tag": "H1",
+        "cls": "fw-heading text-3xl md:text-4xl"
+      },
+      {
+        "fs": 28,
+        "text": "850",
+        "tag": "P",
+        "cls": "text-[1.75rem] font-black leading-none tabular-nums text-[#16302a]"
+      },
+      {
+        "fs": 28,
+        "text": "73",
+        "tag": "P",
+        "cls": "text-[1.75rem] font-black leading-none tabular-nums text-[#16302a]"
+      }
+    ],
+    "smallType": [],
+    "tallCards": [
+      {
+        "h": 4268,
+        "hFrac": 5.06,
+        "cls": "space-y-4 rounded-[1.75rem] bg-white/68 p-3 shadow-[0_22px_58px_rgba(20,90,75,0.08)] md:p-4"
+      },
+      {
+        "h": 282,
+        "hFrac": 0.33,
+        "cls": "border border-[#e6efeb] p-6 rounded-[1.35rem] bg-white px-6 py-5 shadow-[0_12px_30px_rgba(20,90,75,0"
+      }
+    ]
+  },
+  "/app/workouts": {
+    "scrollHeight": 844,
+    "textChars": 419,
+    "textBandFraction": 0.49,
+    "bigType": [
+      {
+        "fs": 30,
+        "text": "Workouts",
+        "tag": "H1",
+        "cls": "fw-heading text-3xl md:text-4xl"
+      }
+    ],
+    "smallType": [],
+    "tallCards": [
+      {
+        "h": 326,
+        "hFrac": 0.39,
+        "cls": "bg-white border p-6 fw-dark-panel relative col-span-2 overflow-hidden rounded-[24px] border-primary-"
+      }
+    ]
+  },
+  "/app/workouts/low-impact-strength": {
+    "scrollHeight": 844,
+    "textChars": 316,
+    "textBandFraction": 0.58,
+    "bigType": [
+      {
+        "fs": 36,
+        "text": "Low-impact strength",
+        "tag": "H1",
+        "cls": "mt-3 font-heading text-4xl font-black tracking-tight text-white md:text-5xl"
+      }
+    ],
+    "smallType": [
+      {
+        "fs": 10,
+        "text": "moves",
+        "tag": "SPAN",
+        "cls": "text-[10px] font-black uppercase tracking-[0.12em]"
+      }
+    ],
+    "tallCards": [
+      {
+        "h": 744,
+        "hFrac": 0.88,
+        "cls": "bg-white rounded-[24px] border border-[#e6efeb] shadow-[0_16px_38px_rgba(20,90,75,0.09)] fw-dark-pan"
+      }
+    ]
+  },
+  "/app/workouts/low-impact-strength/live": {
+    "scrollHeight": 844,
+    "textChars": 488,
+    "textBandFraction": 0.52,
+    "bigType": [
+      {
+        "fs": 30,
+        "text": "Low-impact strength",
+        "tag": "H1",
+        "cls": "mt-4 font-heading text-3xl font-black tracking-tight text-white md:text-5xl"
+      },
+      {
+        "fs": 30,
+        "text": "0 %",
+        "tag": "P",
+        "cls": "text-3xl font-black text-white"
+      }
+    ],
+    "smallType": [],
+    "tallCards": [
+      {
+        "h": 548,
+        "hFrac": 0.65,
+        "cls": "bg-white border border-[#e6efeb] p-6 rounded-[1.35rem] px-4 py-4 shadow-[0_8px_22px_rgba(20,90,75,0."
+      },
+      {
+        "h": 351,
+        "hFrac": 0.42,
+        "cls": "bg-white rounded-[24px] border border-[#e6efeb] shadow-[0_12px_30px_rgba(20,90,75,0.07)] p-6 fw-dark"
+      },
+      {
+        "h": 258,
+        "hFrac": 0.31,
+        "cls": "rounded-[24px] border shadow-[0_12px_30px_rgba(20,90,75,0.07)] p-6 grid gap-4 border-primary-100 bg-"
+      }
+    ]
+  },
+  "/app/fitness": {
+    "scrollHeight": 844,
+    "textChars": 389,
+    "textBandFraction": 0.56,
+    "bigType": [
+      {
+        "fs": 30,
+        "text": "Fitness detail",
+        "tag": "H1",
+        "cls": "fw-heading text-3xl md:text-4xl"
+      },
+      {
+        "fs": 28,
+        "text": "483",
+        "tag": "P",
+        "cls": "text-[1.75rem] font-black leading-none tabular-nums text-[#16302a]"
+      },
+      {
+        "fs": 28,
+        "text": "84",
+        "tag": "P",
+        "cls": "text-[1.75rem] font-black leading-none tabular-nums text-[#16302a]"
+      }
+    ],
+    "smallType": [],
+    "tallCards": [
+      {
+        "h": 282,
+        "hFrac": 0.33,
+        "cls": "border border-[#e6efeb] p-6 rounded-[1.35rem] bg-white px-6 py-5 shadow-[0_12px_30px_rgba(20,90,75,0"
+      }
+    ]
+  },
+  "/app/grocery-list": {
+    "scrollHeight": 1084,
+    "textChars": 316,
+    "textBandFraction": 0.47,
+    "bigType": [
+      {
+        "fs": 30,
+        "text": "Grocery list",
+        "tag": "H1",
+        "cls": "fw-heading text-3xl md:text-4xl"
+      },
+      {
+        "fs": 42,
+        "text": "2 / 10",
+        "tag": "P",
+        "cls": "font-heading text-[42px] font-black leading-none tabular-nums text-primary-600"
+      }
+    ],
+    "smallType": [],
+    "tallCards": [
+      {
+        "h": 346,
+        "hFrac": 0.41,
+        "cls": "bg-white border p-6 min-w-0 rounded-[22px] border-[#e6efeb] px-4 py-5 shadow-[0_8px_22px_rgba(20,90,"
+      },
+      {
+        "h": 315,
+        "hFrac": 0.37,
+        "cls": "bg-white border p-6 fw-mint-panel min-w-0 rounded-[24px] border-primary-200/80 px-4 py-5 shadow-none"
+      }
+    ]
+  },
+  "/app/recipes": {
+    "scrollHeight": 844,
+    "textChars": 342,
+    "textBandFraction": 0.44,
+    "bigType": [
+      {
+        "fs": 30,
+        "text": "Find food that fits today.",
+        "tag": "H1",
+        "cls": "mt-4 text-3xl font-black leading-tight md:text-4xl"
+      }
+    ],
+    "smallType": [],
+    "tallCards": [
+      {
+        "h": 516,
+        "hFrac": 0.61,
+        "cls": "bg-white rounded-[24px] border border-[#e6efeb] shadow-[0_12px_30px_rgba(20,90,75,0.07)] p-6 space-y"
+      },
+      {
+        "h": 437,
+        "hFrac": 0.52,
+        "cls": "bg-white rounded-[24px] border border-[#e6efeb] shadow-[0_16px_38px_rgba(20,90,75,0.09)] p-6 fw-dark"
+      }
+    ]
+  },
+  "/app/meal-plan": {
+    "scrollHeight": 844,
+    "textChars": 399,
+    "textBandFraction": 0.59,
+    "bigType": [
+      {
+        "fs": 30,
+        "text": "Meal plan",
+        "tag": "H1",
+        "cls": "fw-heading text-3xl md:text-4xl"
+      },
+      {
+        "fs": 30,
+        "text": "13 of 16 meals are planned.",
+        "tag": "H2",
+        "cls": "mt-5 max-w-3xl font-heading text-3xl font-black leading-tight tracking-tight tex"
+      }
+    ],
+    "smallType": [
+      {
+        "fs": 10,
+        "text": "Avg kcal",
+        "tag": "P",
+        "cls": "mt-1 text-[10px] font-black uppercase tracking-[0.1em] text-white/58 sm:text-xs "
+      },
+      {
+        "fs": 10,
+        "text": "Avg protein",
+        "tag": "P",
+        "cls": "mt-1 text-[10px] font-black uppercase tracking-[0.1em] text-white/58 sm:text-xs "
+      },
+      {
+        "fs": 10,
+        "text": "Open slots",
+        "tag": "P",
+        "cls": "mt-1 text-[10px] font-black uppercase tracking-[0.1em] text-white/58 sm:text-xs "
+      }
+    ],
+    "tallCards": [
+      {
+        "h": 418,
+        "hFrac": 0.5,
+        "cls": "bg-white rounded-[24px] border border-[#e6efeb] shadow-[0_16px_38px_rgba(20,90,75,0.09)] p-6 h-fit s"
+      },
+      {
+        "h": 394,
+        "hFrac": 0.47,
+        "cls": "bg-white rounded-[24px] border border-[#e6efeb] shadow-[0_12px_30px_rgba(20,90,75,0.07)] p-6 fw-dark"
+      }
+    ]
+  },
+  "/app/progress": {
+    "scrollHeight": 844,
+    "textChars": 373,
+    "textBandFraction": 0.54,
+    "bigType": [
+      {
+        "fs": 30,
+        "text": "Progress",
+        "tag": "H1",
+        "cls": "fw-heading text-3xl md:text-4xl"
+      },
+      {
+        "fs": 28,
+        "text": "The trend is holding steady.",
+        "tag": "H2",
+        "cls": "mt-3 font-heading text-[28px] font-black tracking-tight text-[#16302a] md:text-3"
+      }
+    ],
+    "smallType": [],
+    "tallCards": [
+      {
+        "h": 474,
+        "hFrac": 0.56,
+        "cls": "bg-white border p-6 fw-mint-panel rounded-[24px] border-primary-200/80 px-6 py-6 shadow-none"
+      }
+    ]
+  },
+  "/app/recovery": {
+    "scrollHeight": 844,
+    "textChars": 392,
+    "textBandFraction": 0.56,
+    "bigType": [
+      {
+        "fs": 30,
+        "text": "Recovery",
+        "tag": "H1",
+        "cls": "fw-heading text-3xl md:text-4xl"
+      },
+      {
+        "fs": 30,
+        "text": "Train, but cap intensity",
+        "tag": "H2",
+        "cls": "mt-4 font-heading text-3xl font-black leading-tight tracking-tight text-neutral-"
+      },
+      {
+        "fs": 48,
+        "text": "72",
+        "tag": "SPAN",
+        "cls": "font-heading text-5xl font-black tabular-nums text-primary-700"
+      }
+    ],
+    "smallType": [],
+    "tallCards": [
+      {
+        "h": 586,
+        "hFrac": 0.69,
+        "cls": "bg-white rounded-[24px] border border-[#e6efeb] shadow-[0_12px_30px_rgba(20,90,75,0.07)] p-6 space-y"
+      },
+      {
+        "h": 430,
+        "hFrac": 0.51,
+        "cls": "bg-white rounded-[24px] border border-[#e6efeb] shadow-[0_16px_38px_rgba(20,90,75,0.09)] p-6 fw-mint"
+      }
+    ]
+  },
+  "/app/onboarding": {
+    "scrollHeight": 844,
+    "textChars": 352,
+    "textBandFraction": 0.55,
+    "bigType": [
+      {
+        "fs": 30,
+        "text": "Setup FuelWell",
+        "tag": "H1",
+        "cls": "fw-heading text-3xl md:hidden"
+      },
+      {
+        "fs": 28,
+        "text": "A few answers turn FuelWell into your da",
+        "tag": "H2",
+        "cls": "fw-heading max-w-2xl text-[1.75rem] leading-tight md:text-4xl"
+      }
+    ],
+    "smallType": [],
+    "tallCards": [
+      {
+        "h": 646,
+        "hFrac": 0.77,
+        "cls": "order-1 flex flex-col rounded-[2rem] border border-primary-100/80 bg-white/90 shadow-[0_26px_70px_rg"
+      },
+      {
+        "h": 370,
+        "hFrac": 0.44,
+        "cls": "fw-mint-panel rounded-[1.75rem] border p-5 md:p-8"
+      }
+    ]
+  },
+  "/app/profile": {
+    "scrollHeight": 844,
+    "textChars": 259,
+    "textBandFraction": 0.42,
+    "bigType": [
+      {
+        "fs": 30,
+        "text": "Profile",
+        "tag": "H1",
+        "cls": "fw-heading text-3xl md:text-4xl"
+      },
+      {
+        "fs": 36,
+        "text": "Alex Preview",
+        "tag": "H2",
+        "cls": "truncate text-4xl font-black leading-tight text-white md:text-5xl"
+      }
+    ],
+    "smallType": [],
+    "tallCards": [
+      {
+        "h": 585,
+        "hFrac": 0.69,
+        "cls": "bg-white rounded-[24px] border border-[#e6efeb] shadow-[0_12px_30px_rgba(20,90,75,0.07)] p-6 fw-dark"
+      }
+    ]
+  },
+  "/app/settings": {
+    "scrollHeight": 3784,
+    "textChars": 308,
+    "textBandFraction": 0.51,
+    "bigType": [
+      {
+        "fs": 30,
+        "text": "Settings",
+        "tag": "H1",
+        "cls": "fw-heading text-3xl md:text-4xl"
+      },
+      {
+        "fs": 36,
+        "text": "Alex Preview",
+        "tag": "H2",
+        "cls": "mt-4 text-4xl font-black leading-tight text-white md:text-5xl"
+      }
+    ],
+    "smallType": [],
+    "tallCards": [
+      {
+        "h": 469,
+        "hFrac": 0.56,
+        "cls": "bg-white rounded-[24px] border border-[#e6efeb] shadow-[0_12px_30px_rgba(20,90,75,0.07)] p-6 fw-dark"
+      }
+    ]
+  },
+  "/app/activity": {
+    "scrollHeight": 844,
+    "textChars": 431,
+    "textBandFraction": 0.56,
+    "bigType": [
+      {
+        "fs": 30,
+        "text": "Activity",
+        "tag": "H1",
+        "cls": "fw-heading text-3xl md:text-4xl"
+      },
+      {
+        "fs": 30,
+        "text": "Fuel normally, keep the session easy",
+        "tag": "H2",
+        "cls": "mt-5 max-w-3xl font-heading text-3xl font-black leading-tight tracking-tight tex"
+      }
+    ],
+    "smallType": [
+      {
+        "fs": 10,
+        "text": "Steps",
+        "tag": "P",
+        "cls": "mt-1 text-[10px] font-black uppercase tracking-[0.08em] text-white/58 md:text-xs"
+      },
+      {
+        "fs": 10,
+        "text": "Active calories",
+        "tag": "P",
+        "cls": "mt-1 text-[10px] font-black uppercase tracking-[0.08em] text-white/58 md:text-xs"
+      },
+      {
+        "fs": 10,
+        "text": "Sleep",
+        "tag": "P",
+        "cls": "mt-1 text-[10px] font-black uppercase tracking-[0.08em] text-white/58 md:text-xs"
+      }
+    ],
+    "tallCards": [
+      {
+        "h": 662,
+        "hFrac": 0.78,
+        "cls": "bg-white rounded-[24px] border border-[#e6efeb] shadow-[0_16px_38px_rgba(20,90,75,0.09)] p-6 space-y"
+      },
+      {
+        "h": 410,
+        "hFrac": 0.49,
+        "cls": "bg-white rounded-[24px] border border-[#e6efeb] shadow-[0_12px_30px_rgba(20,90,75,0.07)] fw-dark-pan"
+      }
+    ]
+  },
+  "/app/dashboard/score": {
+    "scrollHeight": 844,
+    "textChars": 479,
+    "textBandFraction": 0.66,
+    "bigType": [
+      {
+        "fs": 72,
+        "text": "39",
+        "tag": "P",
+        "cls": "text-7xl font-black tabular-nums"
+      },
+      {
+        "fs": 30,
+        "text": "FuelWell only scores what it can explain",
+        "tag": "H1",
+        "cls": "text-3xl font-black tracking-tight"
+      },
+      {
+        "fs": 36,
+        "text": "39",
+        "tag": "P",
+        "cls": "text-4xl font-black tabular-nums text-[#16302a]"
+      }
+    ],
+    "smallType": [],
+    "tallCards": [
+      {
+        "h": 366,
+        "hFrac": 0.43,
+        "cls": "bg-white rounded-[24px] border border-[#e6efeb] shadow-[0_16px_38px_rgba(20,90,75,0.09)] p-6 fw-dark"
+      },
+      {
+        "h": 274,
+        "hFrac": 0.32,
+        "cls": "bg-white rounded-[24px] border border-[#e6efeb] shadow-[0_16px_38px_rgba(20,90,75,0.09)] p-0"
+      },
+      {
+        "h": 250,
+        "hFrac": 0.3,
+        "cls": "bg-white rounded-[24px] border border-[#e6efeb] shadow-[0_16px_38px_rgba(20,90,75,0.09)] p-0"
+      }
+    ]
+  },
+  "/signup?preview=new-user": {
+    "scrollHeight": 844,
+    "textChars": 242,
+    "textBandFraction": 0.36,
+    "bigType": [
+      {
+        "fs": 30,
+        "text": "Create your account",
+        "tag": "H2",
+        "cls": "fw-heading mt-2 text-3xl"
+      }
+    ],
+    "smallType": [],
+    "tallCards": [
+      {
+        "h": 556,
+        "hFrac": 0.66,
+        "cls": "rounded-[2rem] border border-primary-100/80 bg-white/92 p-5 shadow-[0_26px_70px_rgba(22,48,42,0.12)]"
+      }
+    ]
+  }
+}

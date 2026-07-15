@@ -1,0 +1,479 @@
+{
+  "/app/dashboard": {
+    "scrollHeight": 844,
+    "textChars": 369,
+    "textBandFraction": 0.55,
+    "bigType": [
+      {
+        "fs": 33.6,
+        "text": "1,400",
+        "tag": "SPAN",
+        "cls": "text-[2.1rem] font-black leading-none text-neutral-900 tabular-nums"
+      }
+    ],
+    "smallType": [],
+    "tallCards": [
+      {
+        "h": 406,
+        "hFrac": 0.48,
+        "cls": "bg-white border border-[#e6efeb] md:p-6 fw-dark-panel overflow-hidden rounded-[26px] p-0 shadow-[0_2"
+      },
+      {
+        "h": 368,
+        "hFrac": 0.44,
+        "cls": "bg-white border border-[#e6efeb] p-5 md:p-6 flex flex-col rounded-[26px] px-6 py-6 shadow-[0_12px_30"
+      }
+    ]
+  },
+  "/app/daily-review": {
+    "scrollHeight": 844,
+    "textChars": 536,
+    "textBandFraction": 0.62,
+    "bigType": [],
+    "smallType": [],
+    "tallCards": [
+      {
+        "h": 834,
+        "hFrac": 0.99,
+        "cls": "rounded-[2rem] border border-primary-200/90 bg-primary-50/35 p-3 shadow-[0_18px_48px_rgba(20,90,75,0"
+      },
+      {
+        "h": 284,
+        "hFrac": 0.34,
+        "cls": "border border-[#e6efeb] p-5 md:p-6 rounded-[1.35rem] bg-white px-5 py-4 shadow-[0_12px_30px_rgba(20,"
+      }
+    ]
+  },
+  "/app/log": {
+    "scrollHeight": 844,
+    "textChars": 346,
+    "textBandFraction": 0.43,
+    "bigType": [],
+    "smallType": [],
+    "tallCards": [
+      {
+        "h": 942,
+        "hFrac": 1.12,
+        "cls": "bg-white rounded-[24px] border border-[#e6efeb] shadow-[0_12px_30px_rgba(20,90,75,0.07)] p-5 md:p-6 "
+      }
+    ]
+  },
+  "/app/coach": {
+    "scrollHeight": 844,
+    "textChars": 470,
+    "textBandFraction": 0.51,
+    "bigType": [],
+    "smallType": [],
+    "tallCards": [
+      {
+        "h": 382,
+        "hFrac": 0.45,
+        "cls": "rounded-[2rem] border border-primary-100/80 bg-white/90 p-5 shadow-[0_22px_60px_rgba(22,48,42,0.10)]"
+      },
+      {
+        "h": 341,
+        "hFrac": 0.4,
+        "cls": "fw-dark-panel rounded-[2rem] border p-5 md:p-8"
+      }
+    ]
+  },
+  "/app/coach/attachments": {
+    "scrollHeight": 844,
+    "textChars": 501,
+    "textBandFraction": 0.58,
+    "bigType": [],
+    "smallType": [],
+    "tallCards": [
+      {
+        "h": 580,
+        "hFrac": 0.69,
+        "cls": "border border-[#e6efeb] p-5 md:p-6 rounded-[1.5rem] bg-white px-5 py-5 shadow-[0_12px_30px_rgba(20,9"
+      },
+      {
+        "h": 234,
+        "hFrac": 0.28,
+        "cls": "rounded-[1.25rem] border border-primary-100 bg-primary-50/80 p-4"
+      }
+    ]
+  },
+  "/app/coach/menu-review": {
+    "scrollHeight": 844,
+    "textChars": 494,
+    "textBandFraction": 0.56,
+    "bigType": [],
+    "smallType": [],
+    "tallCards": [
+      {
+        "h": 508,
+        "hFrac": 0.6,
+        "cls": "border border-[#e6efeb] p-5 md:p-6 rounded-[1.5rem] bg-white px-5 py-5 shadow-[0_12px_30px_rgba(20,9"
+      },
+      {
+        "h": 387,
+        "hFrac": 0.46,
+        "cls": "bg-white border border-[#e6efeb] p-5 md:p-6 rounded-[1.5rem] px-5 py-5 shadow-[0_12px_30px_rgba(20,9"
+      }
+    ]
+  },
+  "/app/nutrition": {
+    "scrollHeight": 844,
+    "textChars": 451,
+    "textBandFraction": 0.51,
+    "bigType": [],
+    "smallType": [],
+    "tallCards": [
+      {
+        "h": 3834,
+        "hFrac": 4.54,
+        "cls": "space-y-4 rounded-[1.75rem] bg-white/68 p-3 shadow-[0_22px_58px_rgba(20,90,75,0.08)] md:p-4"
+      },
+      {
+        "h": 232,
+        "hFrac": 0.27,
+        "cls": "border border-[#e6efeb] p-5 md:p-6 rounded-[1.35rem] bg-white px-5 py-4 shadow-[0_12px_30px_rgba(20,"
+      }
+    ]
+  },
+  "/app/workouts": {
+    "scrollHeight": 844,
+    "textChars": 486,
+    "textBandFraction": 0.5,
+    "bigType": [],
+    "smallType": [],
+    "tallCards": [
+      {
+        "h": 326,
+        "hFrac": 0.39,
+        "cls": "bg-white border p-5 md:p-6 fw-dark-panel relative col-span-2 overflow-hidden rounded-[24px] border-p"
+      }
+    ]
+  },
+  "/app/workouts/low-impact-strength": {
+    "scrollHeight": 844,
+    "textChars": 323,
+    "textBandFraction": 0.59,
+    "bigType": [
+      {
+        "fs": 36,
+        "text": "Low-impact strength",
+        "tag": "H1",
+        "cls": "mt-3 font-heading text-4xl font-black tracking-tight text-white md:text-5xl"
+      }
+    ],
+    "smallType": [
+      {
+        "fs": 10,
+        "text": "moves",
+        "tag": "SPAN",
+        "cls": "text-[10px] font-black uppercase tracking-[0.12em]"
+      }
+    ],
+    "tallCards": [
+      {
+        "h": 744,
+        "hFrac": 0.88,
+        "cls": "bg-white rounded-[24px] border border-[#e6efeb] shadow-[0_16px_38px_rgba(20,90,75,0.09)] md:p-6 fw-d"
+      }
+    ]
+  },
+  "/app/workouts/low-impact-strength/live": {
+    "scrollHeight": 844,
+    "textChars": 503,
+    "textBandFraction": 0.58,
+    "bigType": [],
+    "smallType": [],
+    "tallCards": [
+      {
+        "h": 548,
+        "hFrac": 0.65,
+        "cls": "bg-white border border-[#e6efeb] p-5 md:p-6 rounded-[1.35rem] px-4 py-4 shadow-[0_8px_22px_rgba(20,9"
+      },
+      {
+        "h": 331,
+        "hFrac": 0.39,
+        "cls": "bg-white rounded-[24px] border border-[#e6efeb] shadow-[0_12px_30px_rgba(20,90,75,0.07)] p-5 md:p-6 "
+      },
+      {
+        "h": 250,
+        "hFrac": 0.3,
+        "cls": "rounded-[24px] border shadow-[0_12px_30px_rgba(20,90,75,0.07)] p-5 md:p-6 grid gap-4 border-primary-"
+      }
+    ]
+  },
+  "/app/fitness": {
+    "scrollHeight": 844,
+    "textChars": 520,
+    "textBandFraction": 0.58,
+    "bigType": [],
+    "smallType": [],
+    "tallCards": [
+      {
+        "h": 260,
+        "hFrac": 0.31,
+        "cls": "border border-[#e6efeb] p-5 md:p-6 rounded-[1.35rem] bg-white px-5 py-4 shadow-[0_12px_30px_rgba(20,"
+      },
+      {
+        "h": 230,
+        "hFrac": 0.27,
+        "cls": "border p-5 md:p-6 rounded-[1.5rem] border-primary-100 bg-white/85 px-6 py-5 shadow-[0_10px_26px_rgba"
+      }
+    ]
+  },
+  "/app/grocery-list": {
+    "scrollHeight": 1022,
+    "textChars": 316,
+    "textBandFraction": 0.45,
+    "bigType": [
+      {
+        "fs": 32,
+        "text": "2 / 10",
+        "tag": "P",
+        "cls": "font-heading text-[2rem] font-black leading-none tabular-nums md:text-[42px] tex"
+      }
+    ],
+    "smallType": [],
+    "tallCards": [
+      {
+        "h": 346,
+        "hFrac": 0.41,
+        "cls": "bg-white border p-5 md:p-6 min-w-0 rounded-[22px] border-[#e6efeb] px-4 py-5 shadow-[0_8px_22px_rgba"
+      },
+      {
+        "h": 273,
+        "hFrac": 0.32,
+        "cls": "bg-white border p-5 md:p-6 fw-mint-panel min-w-0 rounded-[24px] border-primary-200/80 px-4 py-4 shad"
+      }
+    ]
+  },
+  "/app/recipes": {
+    "scrollHeight": 844,
+    "textChars": 362,
+    "textBandFraction": 0.42,
+    "bigType": [],
+    "smallType": [],
+    "tallCards": [
+      {
+        "h": 516,
+        "hFrac": 0.61,
+        "cls": "bg-white rounded-[24px] border border-[#e6efeb] shadow-[0_12px_30px_rgba(20,90,75,0.07)] p-5 md:p-6 "
+      },
+      {
+        "h": 383,
+        "hFrac": 0.45,
+        "cls": "bg-white rounded-[24px] border border-[#e6efeb] shadow-[0_16px_38px_rgba(20,90,75,0.09)] p-5 md:p-6 "
+      }
+    ]
+  },
+  "/app/meal-plan": {
+    "scrollHeight": 844,
+    "textChars": 419,
+    "textBandFraction": 0.58,
+    "bigType": [],
+    "smallType": [],
+    "tallCards": [
+      {
+        "h": 402,
+        "hFrac": 0.48,
+        "cls": "bg-white rounded-[24px] border border-[#e6efeb] shadow-[0_16px_38px_rgba(20,90,75,0.09)] p-5 md:p-6 "
+      },
+      {
+        "h": 331,
+        "hFrac": 0.39,
+        "cls": "bg-white rounded-[24px] border border-[#e6efeb] shadow-[0_12px_30px_rgba(20,90,75,0.07)] p-5 md:p-6 "
+      }
+    ]
+  },
+  "/app/progress": {
+    "scrollHeight": 844,
+    "textChars": 440,
+    "textBandFraction": 0.51,
+    "bigType": [],
+    "smallType": [],
+    "tallCards": [
+      {
+        "h": 423,
+        "hFrac": 0.5,
+        "cls": "bg-white border p-5 md:p-6 fw-mint-panel rounded-[24px] border-primary-200/80 px-6 py-6 shadow-none"
+      }
+    ]
+  },
+  "/app/recovery": {
+    "scrollHeight": 844,
+    "textChars": 479,
+    "textBandFraction": 0.53,
+    "bigType": [
+      {
+        "fs": 36,
+        "text": "72",
+        "tag": "SPAN",
+        "cls": "font-heading text-4xl font-black tabular-nums text-primary-700 md:text-5xl"
+      }
+    ],
+    "smallType": [],
+    "tallCards": [
+      {
+        "h": 574,
+        "hFrac": 0.68,
+        "cls": "bg-white rounded-[24px] border border-[#e6efeb] shadow-[0_12px_30px_rgba(20,90,75,0.07)] p-5 md:p-6 "
+      },
+      {
+        "h": 301,
+        "hFrac": 0.36,
+        "cls": "bg-white rounded-[24px] border border-[#e6efeb] shadow-[0_16px_38px_rgba(20,90,75,0.09)] p-5 md:p-6 "
+      }
+    ]
+  },
+  "/app/onboarding": {
+    "scrollHeight": 844,
+    "textChars": 352,
+    "textBandFraction": 0.55,
+    "bigType": [
+      {
+        "fs": 28,
+        "text": "A few answers turn FuelWell into your da",
+        "tag": "H2",
+        "cls": "fw-heading max-w-2xl text-[1.75rem] leading-tight md:text-4xl"
+      }
+    ],
+    "smallType": [],
+    "tallCards": [
+      {
+        "h": 646,
+        "hFrac": 0.77,
+        "cls": "order-1 flex flex-col rounded-[2rem] border border-primary-100/80 bg-white/90 shadow-[0_26px_70px_rg"
+      },
+      {
+        "h": 370,
+        "hFrac": 0.44,
+        "cls": "fw-mint-panel rounded-[1.75rem] border p-5 md:p-8"
+      }
+    ]
+  },
+  "/app/profile": {
+    "scrollHeight": 844,
+    "textChars": 356,
+    "textBandFraction": 0.44,
+    "bigType": [],
+    "smallType": [],
+    "tallCards": [
+      {
+        "h": 420,
+        "hFrac": 0.5,
+        "cls": "bg-white rounded-[24px] border border-[#e6efeb] shadow-[0_16px_38px_rgba(20,90,75,0.09)] p-5 md:p-6 "
+      },
+      {
+        "h": 386,
+        "hFrac": 0.46,
+        "cls": "bg-white rounded-[24px] border border-[#e6efeb] shadow-[0_12px_30px_rgba(20,90,75,0.07)] p-5 md:p-6 "
+      }
+    ]
+  },
+  "/app/settings": {
+    "scrollHeight": 3503,
+    "textChars": 413,
+    "textBandFraction": 0.54,
+    "bigType": [],
+    "smallType": [],
+    "tallCards": [
+      {
+        "h": 388,
+        "hFrac": 0.46,
+        "cls": "bg-white rounded-[24px] border border-[#e6efeb] shadow-[0_16px_38px_rgba(20,90,75,0.09)] p-5 md:p-6 "
+      },
+      {
+        "h": 304,
+        "hFrac": 0.36,
+        "cls": "bg-white rounded-[24px] border border-[#e6efeb] shadow-[0_12px_30px_rgba(20,90,75,0.07)] p-5 md:p-6 "
+      }
+    ]
+  },
+  "/app/activity": {
+    "scrollHeight": 844,
+    "textChars": 475,
+    "textBandFraction": 0.55,
+    "bigType": [],
+    "smallType": [
+      {
+        "fs": 10,
+        "text": "Steps",
+        "tag": "P",
+        "cls": "mt-1 text-[10px] font-black uppercase tracking-[0.08em] text-white/58 md:text-xs"
+      },
+      {
+        "fs": 10,
+        "text": "Active calories",
+        "tag": "P",
+        "cls": "mt-1 text-[10px] font-black uppercase tracking-[0.08em] text-white/58 md:text-xs"
+      },
+      {
+        "fs": 10,
+        "text": "Sleep",
+        "tag": "P",
+        "cls": "mt-1 text-[10px] font-black uppercase tracking-[0.08em] text-white/58 md:text-xs"
+      }
+    ],
+    "tallCards": [
+      {
+        "h": 654,
+        "hFrac": 0.77,
+        "cls": "bg-white rounded-[24px] border border-[#e6efeb] shadow-[0_16px_38px_rgba(20,90,75,0.09)] p-5 md:p-6 "
+      },
+      {
+        "h": 391,
+        "hFrac": 0.46,
+        "cls": "bg-white rounded-[24px] border border-[#e6efeb] shadow-[0_12px_30px_rgba(20,90,75,0.07)] md:p-6 fw-d"
+      }
+    ]
+  },
+  "/app/dashboard/score": {
+    "scrollHeight": 844,
+    "textChars": 588,
+    "textBandFraction": 0.69,
+    "bigType": [
+      {
+        "fs": 48,
+        "text": "39",
+        "tag": "P",
+        "cls": "text-5xl font-black tabular-nums md:text-7xl"
+      },
+      {
+        "fs": 30,
+        "text": "39",
+        "tag": "P",
+        "cls": "text-3xl font-black tabular-nums text-[#16302a] md:text-4xl"
+      }
+    ],
+    "smallType": [],
+    "tallCards": [
+      {
+        "h": 314,
+        "hFrac": 0.37,
+        "cls": "bg-white rounded-[24px] border border-[#e6efeb] shadow-[0_16px_38px_rgba(20,90,75,0.09)] p-5 md:p-6 "
+      },
+      {
+        "h": 266,
+        "hFrac": 0.32,
+        "cls": "bg-white rounded-[24px] border border-[#e6efeb] shadow-[0_16px_38px_rgba(20,90,75,0.09)] md:p-6 p-0"
+      },
+      {
+        "h": 242,
+        "hFrac": 0.29,
+        "cls": "bg-white rounded-[24px] border border-[#e6efeb] shadow-[0_16px_38px_rgba(20,90,75,0.09)] md:p-6 p-0"
+      }
+    ]
+  },
+  "/signup?preview=new-user": {
+    "scrollHeight": 844,
+    "textChars": 242,
+    "textBandFraction": 0.35,
+    "bigType": [],
+    "smallType": [],
+    "tallCards": [
+      {
+        "h": 552,
+        "hFrac": 0.65,
+        "cls": "rounded-[2rem] border border-primary-100/80 bg-white/92 p-5 shadow-[0_26px_70px_rgba(22,48,42,0.12)]"
+      }
+    ]
+  }
+}
