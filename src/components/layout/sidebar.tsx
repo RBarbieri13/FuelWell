@@ -121,7 +121,7 @@ export function Sidebar() {
                   : "text-neutral-600 hover:bg-primary-50 hover:text-primary-800"
               )}
             >
-              <item.icon className={cn("h-6 w-6 shrink-0 stroke-[2.25]", isActive ? "text-white" : "text-neutral-400")} />
+              <item.icon className={cn("h-6 w-6 shrink-0 stroke-[2.25]", isActive ? "text-white" : "text-neutral-500")} />
               <span className={cn(collapsed && "sr-only")}>{item.label}</span>
             </Link>
           );

@@ -48,7 +48,7 @@ export function CalorieRing({ consumed, target, emphasis = "normal" }: CalorieRi
     requestAnimationFrame(tick);
   }, [remaining]);
 
-  const ringColor = isOver ? "#f0795b" : "#1eae84";
+  const ringColor = isOver ? "var(--color-accent-400)" : "var(--color-primary-500)";
   const percent = Math.round(progress * 100);
 
   return (
@@ -68,7 +68,7 @@ export function CalorieRing({ consumed, target, emphasis = "normal" }: CalorieRi
           cy={center}
           r={radius}
           fill="none"
-          stroke="#d6f0e8"
+          stroke="var(--color-primary-100)"
           strokeWidth={strokeWidth}
         />
         <circle
@@ -95,7 +95,7 @@ export function CalorieRing({ consumed, target, emphasis = "normal" }: CalorieRi
           {percent}% of target
         </span>
         <div className={`${compact ? "mt-1.5 bg-transparent px-0 py-0 shadow-none" : hero ? "mt-4 px-5 py-2.5" : "mt-3 px-4 py-2"} rounded-full bg-primary-50 shadow-sm shadow-primary-900/5`}>
-          <span className={`${compact ? "text-xs text-muted-foreground" : hero ? "text-base" : "text-sm"} font-black text-primary-700 tabular-nums`}>
+          <span className={`${compact ? "text-xs" : hero ? "text-base" : "text-sm"} font-black text-primary-700 tabular-nums`}>
             {consumed.toLocaleString()} / {target.toLocaleString()} kcal
           </span>
         </div>

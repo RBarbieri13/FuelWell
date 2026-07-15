@@ -292,10 +292,10 @@ export function DashboardClient({
               {percentOf(totals.calories, effectiveTargets.calories)}% calories
             </span>
           </div>
-          <MacroBar label="Calories" current={totals.calories} target={effectiveTargets.calories} unit="kcal" color="#1eae84" />
-          <MacroBar label="Protein" current={totals.protein} target={effectiveTargets.protein} color="#3e92c9" />
-          <MacroBar label="Carbs" current={totals.carbs} target={effectiveTargets.carbs} color="#c7a91e" />
-          <MacroBar label="Fat" current={totals.fat} target={effectiveTargets.fat} color="#f0795b" />
+          <MacroBar label="Calories" current={totals.calories} target={effectiveTargets.calories} unit="kcal" color="var(--color-macro-calories)" />
+          <MacroBar label="Protein" current={totals.protein} target={effectiveTargets.protein} color="var(--color-macro-protein)" />
+          <MacroBar label="Carbs" current={totals.carbs} target={effectiveTargets.carbs} color="var(--color-macro-carbs)" />
+          <MacroBar label="Fat" current={totals.fat} target={effectiveTargets.fat} color="var(--color-macro-fat)" />
           <Link href="/app/nutrition" className="block">
             <Button variant="secondary" className="w-full rounded-[0.9rem]">
               Open meal breakdown
