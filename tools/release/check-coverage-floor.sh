@@ -7,7 +7,7 @@ floor_percent="${FUELWELL_COVERAGE_FLOOR_PERCENT:-70}"
 
 required_targets=(
   "CoreTests.xctest"
-  "CoachTests.xctest"
+  "FuelWellAppTests.xctest"
   "NutritionDomainTests.xctest"
 )
 
