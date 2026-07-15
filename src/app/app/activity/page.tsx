@@ -122,7 +122,7 @@ export default function ActivityPage() {
         </div>
       </header>
 
-      <div className="fw-page-inner space-y-6">
+      <div className="fw-page-inner space-y-4 md:space-y-6">
         <section className="grid items-start gap-5 lg:grid-cols-[1.08fr_0.92fr]">
           <Card className="fw-dark-panel overflow-hidden p-0">
             <div className="relative p-6 md:p-7">

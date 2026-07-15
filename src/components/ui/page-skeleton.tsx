@@ -14,7 +14,7 @@ export function PageSkeleton({ cards = 3, hero = false }: { cards?: number; hero
           <Skeleton className="mt-2 h-4 w-72 max-w-full bg-primary-50" />
         </div>
       </div>
-      <div className="fw-page-inner space-y-6 pb-28 md:pb-8">
+      <div className="fw-page-inner space-y-4 md:space-y-6 pb-28 md:pb-8">
         {hero && <Skeleton className="h-44 rounded-[2rem] bg-[#123d32]/85" />}
         {Array.from({ length: hero ? cards - 1 : cards }, (_, i) => (
           <Skeleton key={i} className="h-44 rounded-[1.5rem] bg-white/80" />

@@ -551,7 +551,7 @@ export function SettingsClient({
         </div>
       </header>
 
-      <div className="fw-page-inner space-y-6">
+      <div className="fw-page-inner space-y-4 md:space-y-6">
         {isPreview && (
           <Card className="border-primary-100 bg-primary-50/80">
             <p className="text-sm font-black text-primary-900">

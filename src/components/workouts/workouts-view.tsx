@@ -464,7 +464,7 @@ export function WorkoutsView({
         </div>
       </header>
 
-      <div className="fw-page-inner space-y-6">
+      <div className="fw-page-inner space-y-4 md:space-y-6">
 
       <div className="grid min-w-0 grid-cols-2 items-stretch gap-3 sm:gap-5">
         {/* Path 1: Coach recommends */}

@@ -126,7 +126,7 @@ export default function RecoveryPage() {
         </div>
       </header>
 
-      <div className="fw-page-inner space-y-6">
+      <div className="fw-page-inner space-y-4 md:space-y-6">
         <section className="grid items-start gap-5 lg:grid-cols-[1.08fr_0.92fr]">
           <Card variant="elevated" className="fw-mint-panel overflow-hidden px-6 py-6">
             <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">

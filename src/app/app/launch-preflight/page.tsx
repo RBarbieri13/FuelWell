@@ -93,7 +93,7 @@ export default function LaunchPreflightPage() {
         </div>
       </header>
 
-      <main className="fw-page-inner space-y-6 pb-28 md:pb-8">
+      <main className="fw-page-inner space-y-4 md:space-y-6 pb-28 md:pb-8">
         <section className="grid gap-3 lg:grid-cols-3">
           <Card className="rounded-[1.5rem] px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
             <Eye className="h-5 w-5 text-primary-600" />

@@ -85,7 +85,7 @@ function ScoreDetail({
 }) {
   return (
     <div className="fw-app-surface min-h-full">
-      <div className="fw-page-inner max-w-5xl space-y-6">
+      <div className="fw-page-inner max-w-5xl space-y-4 md:space-y-6">
       <Card variant="elevated" className="fw-dark-panel">
         <p className="text-xs font-black uppercase tracking-[0.16em] text-primary-100">
           Health score detail

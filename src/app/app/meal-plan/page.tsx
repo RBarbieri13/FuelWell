@@ -170,7 +170,7 @@ export default function MealPlanPage() {
         </div>
       </header>
 
-      <div className="fw-page-inner space-y-6">
+      <div className="fw-page-inner space-y-4 md:space-y-6">
         <section className="grid items-start gap-5 lg:grid-cols-[1.05fr_0.95fr]">
           <Card className="fw-dark-panel px-7 py-7">
             <p className="inline-flex items-center gap-2 text-sm font-black uppercase tracking-[0.16em] text-primary-200">

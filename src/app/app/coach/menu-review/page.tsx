@@ -76,7 +76,7 @@ export default function MenuChoiceReviewPage() {
         </div>
       </header>
 
-      <main className="fw-page-inner space-y-6 pb-28 md:pb-8">
+      <main className="fw-page-inner space-y-4 md:space-y-6 pb-28 md:pb-8">
         <Card variant="elevated" className="rounded-[1.5rem] bg-white px-7 py-7 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
           <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_24rem]">
             <div>

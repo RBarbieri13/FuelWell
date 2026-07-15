@@ -238,7 +238,7 @@ export default async function WorkoutDetailPage({
 
   return (
     <div className="fw-app-surface min-h-full">
-      <div className="fw-page-inner min-w-0 max-w-6xl space-y-6">
+      <div className="fw-page-inner min-w-0 max-w-6xl space-y-4 md:space-y-6">
         <Link
           href="/app/workouts"
           className="inline-flex items-center gap-2 rounded-full bg-white/75 px-4 py-2 text-sm font-black text-[#78928a] shadow-sm transition-colors hover:text-primary-700"

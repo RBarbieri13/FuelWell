@@ -347,7 +347,7 @@ export default function ProgressPage() {
         </div>
       </header>
 
-      <div className="fw-page-inner max-w-[1120px] space-y-6">
+      <div className="fw-page-inner max-w-[1120px] space-y-4 md:space-y-6">
 
       <Card className="fw-mint-panel rounded-[24px] border-primary-200/80 px-6 py-6 shadow-none">
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">

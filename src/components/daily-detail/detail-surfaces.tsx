@@ -236,7 +236,7 @@ export function FitnessDetailSurface() {
         </div>
       </header>
 
-      <div className="fw-page-inner space-y-6 pb-28 md:pb-8">
+      <div className="fw-page-inner space-y-4 md:space-y-6 pb-28 md:pb-8">
         <DetailHero
           icon={Activity}
           label="Today's movement"
@@ -454,7 +454,7 @@ export function DailyReviewSurface({
         </div>
       </header>
 
-      <div className="fw-page-inner space-y-6 pb-28 md:pb-8">
+      <div className="fw-page-inner space-y-4 md:space-y-6 pb-28 md:pb-8">
         <DailyReviewSection
           icon={Sparkles}
           eyebrow="Overview"
