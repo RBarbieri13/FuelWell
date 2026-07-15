@@ -525,10 +525,10 @@ export default function ProgressPage() {
               Today&apos;s weight
             </span>
             <div
-              className={`mt-2 flex items-center gap-2 rounded-[1rem] border px-4 py-3 ${
+              className={`mt-2 flex items-center gap-2 rounded-[1rem] border px-4 py-3 transition focus-within:ring-2 ${
                 weightError
-                  ? "border-red-300 bg-red-50/40"
-                  : "border-primary-100 bg-primary-50/60"
+                  ? "border-red-300 bg-red-50/40 focus-within:ring-red-400"
+                  : "border-primary-100 bg-primary-50/60 focus-within:ring-primary-500"
               }`}
             >
               <input

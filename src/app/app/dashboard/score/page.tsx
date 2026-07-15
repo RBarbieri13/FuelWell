@@ -92,11 +92,16 @@ function ScoreDetail({
         </p>
         <div className="mt-5 grid gap-6 md:grid-cols-[0.35fr_0.65fr] md:items-end">
           <div>
-            <p className="text-7xl font-black tabular-nums">{healthScore ?? "--"}</p>
+            <p className="text-7xl font-black tabular-nums">
+              {healthScore ?? "--"}
+              {healthScore !== null && (
+                <span className="ml-1 text-2xl font-bold text-white/60">/100</span>
+              )}
+            </p>
             <p className="mt-2 text-sm font-semibold text-white/65">
               {healthScore === null
                 ? "No score yet because no scored inputs exist."
-                : "Average of available scored contributors."}
+                : "Average of the scored contributors below."}
             </p>
           </div>
           <div>
