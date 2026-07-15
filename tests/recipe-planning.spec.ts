@@ -4,7 +4,7 @@ for (const width of [320, 375]) {
   test(`recipe actions persist into meals and groceries at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 844 });
     await page.goto("/app/recipes");
-    await page.getByLabel("Search title, ingredients, or tags").fill("salmon rice plate");
+    await page.getByLabel("Search recipes").fill("salmon rice plate");
     await page.getByRole("button", { name: "Open recipe" }).first().click();
 
     const dialog = page.getByRole("dialog", { name: "Salmon rice plate" });
