@@ -248,6 +248,14 @@ export function FitnessDetailSurface() {
 
         <FitnessSummaryCards totals={fitnessTotals} />
 
+        <section className="space-y-4">
+          {activityLog.map((activity) => (
+            <ActivityLogCard key={activity.id} activity={activity} />
+          ))}
+        </section>
+
+        <FitnessWorkoutManager />
+
         <Card className="rounded-[1.5rem] border-primary-100 bg-white/85 px-6 py-5 shadow-[0_10px_26px_rgba(20,90,75,0.05)]">
           <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-center">
             <div className="flex gap-3">
@@ -274,14 +282,6 @@ export function FitnessDetailSurface() {
             </Link>
           </div>
         </Card>
-
-        <FitnessWorkoutManager />
-
-        <section className="space-y-4">
-          {activityLog.map((activity) => (
-            <ActivityLogCard key={activity.id} activity={activity} />
-          ))}
-        </section>
 
         <Card className="rounded-[1.5rem] border-lemon-200 bg-lemon-50/80 px-6 py-5 shadow-none">
           <div className="flex gap-3">
@@ -345,32 +345,6 @@ export function NutritionDetailSurface({
             <TargetTile label="Fat" current={totals.fat} target={targets.fat} unit="g" tone="accent" icon={Activity} />
           </section>
 
-          <section className="grid gap-3 md:grid-cols-3">
-            <DetailLinkCard
-              icon={Sparkles}
-              title="Full-day ledger"
-              detail="See nutrition beside fitness before asking the coach what to do next."
-              href="/app/daily-review"
-              action="Open daily detail"
-            />
-            <DetailLinkCard
-              icon={Activity}
-              title="Fitness detail"
-              detail="Compare food room against planned and logged activity."
-              href="/app/fitness"
-              action="Open fitness"
-            />
-            <DetailLinkCard
-              icon={UtensilsCrossed}
-              title="Add missing meal"
-              detail="Keep the score honest by filling in anything that is not counted yet."
-              href="/app/log"
-              action="Log food"
-            />
-          </section>
-
-          <NutritionEditPanel />
-
           {meals.length === 0 ? (
             <EmptyLedgerCard
               title="No nutrition inputs yet"
@@ -409,6 +383,32 @@ export function NutritionDetailSurface({
               )}
             </section>
           )}
+
+          <NutritionEditPanel />
+
+          <section className="grid gap-3 md:grid-cols-3">
+            <DetailLinkCard
+              icon={Sparkles}
+              title="Full-day ledger"
+              detail="See nutrition beside fitness before asking the coach what to do next."
+              href="/app/daily-review"
+              action="Open daily detail"
+            />
+            <DetailLinkCard
+              icon={Activity}
+              title="Fitness detail"
+              detail="Compare food room against planned and logged activity."
+              href="/app/fitness"
+              action="Open fitness"
+            />
+            <DetailLinkCard
+              icon={UtensilsCrossed}
+              title="Add missing meal"
+              detail="Keep the score honest by filling in anything that is not counted yet."
+              href="/app/log"
+              action="Log food"
+            />
+          </section>
         </div>
       </div>
     </div>
