@@ -128,23 +128,23 @@ export default function RecoveryPage() {
 
       <div className="fw-page-inner space-y-4 md:space-y-6">
         <section className="grid items-start gap-5 lg:grid-cols-[1.08fr_0.92fr]">
-          <Card variant="elevated" className="fw-mint-panel overflow-hidden px-6 py-6">
-            <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+          <Card variant="elevated" className="fw-mint-panel overflow-hidden px-5 py-5 md:px-6 md:py-6">
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between md:gap-6">
               <div>
                 <p className="inline-flex items-center gap-2 text-sm font-black uppercase tracking-[0.16em] text-primary-700">
                   <ShieldCheck className="h-4 w-4" />
                   Readiness estimate
                 </p>
-                <h2 className="mt-4 font-heading text-3xl font-black leading-tight tracking-tight text-neutral-900 md:text-4xl">
+                <h2 className="mt-3 font-heading text-2xl font-black leading-tight tracking-tight text-neutral-900 md:text-4xl">
                   {readiness.label}
                 </h2>
-                <p className="mt-4 max-w-3xl text-base font-semibold leading-7 text-primary-900/70">
+                <p className="mt-2 max-w-3xl text-sm font-semibold leading-6 text-primary-900/70 md:text-base md:leading-7">
                   {readiness.detail}
                 </p>
               </div>
-              <div className="flex h-28 w-28 shrink-0 flex-col items-center justify-center rounded-[20px] bg-white text-center shadow-[0_8px_18px_rgba(20,90,75,0.08)] md:h-32 md:w-32">
+              <div className="flex h-24 w-24 shrink-0 flex-col items-center justify-center rounded-[20px] bg-white text-center shadow-[0_8px_18px_rgba(20,90,75,0.08)] md:h-32 md:w-32">
                 <Gauge className="mb-1 h-6 w-6 text-primary-600" />
-                <span className="font-heading text-5xl font-black tabular-nums text-primary-700">{readiness.score}</span>
+                <span className="font-heading text-4xl font-black tabular-nums text-primary-700 md:text-5xl">{readiness.score}</span>
                 <span className="text-xs font-black uppercase tracking-[0.16em] text-neutral-400">score</span>
               </div>
             </div>
@@ -156,7 +156,7 @@ export default function RecoveryPage() {
                 <Sparkles className="h-6 w-6" />
               </span>
               <div>
-                <h2 className="text-2xl font-black text-neutral-900">Next actions</h2>
+                <h2 className="text-xl font-black text-neutral-900 md:text-2xl">Next actions</h2>
                 <p className="text-sm font-semibold text-neutral-500">Turn recovery data into tonight&apos;s plan.</p>
               </div>
             </div>
@@ -184,7 +184,7 @@ export default function RecoveryPage() {
 
         <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {recoverySignals.map((signal) => (
-            <Card key={signal.label} className="space-y-4 px-5 py-5">
+            <Card key={signal.label} className="space-y-3 px-4 py-4 md:space-y-4 md:px-5 md:py-5">
               <div className="flex items-start justify-between gap-3">
                 <div className={`flex h-12 w-12 items-center justify-center rounded-[1.15rem] ${toneMap[signal.tone]}`}>
                   <signal.icon className="h-5 w-5" />
@@ -192,8 +192,8 @@ export default function RecoveryPage() {
                 <SourceBadge>{signal.source}</SourceBadge>
               </div>
               <div>
-                <p className="text-3xl font-black tabular-nums text-neutral-900">{signal.value}</p>
-                <p className="mt-1 text-base font-black text-neutral-800">{signal.label}</p>
+                <p className="text-2xl font-black tabular-nums text-neutral-900 md:text-3xl">{signal.value}</p>
+                <p className="mt-1 text-sm font-black text-neutral-800 md:text-base">{signal.label}</p>
                 <p className="mt-1 text-sm font-semibold leading-6 text-neutral-500">{signal.status}</p>
               </div>
             </Card>
@@ -242,7 +242,7 @@ export default function RecoveryPage() {
               {bodyAreas.map((area) => (
                 <div key={area.label} className={`rounded-[1.25rem] border p-4 ${area.tone}`}>
                   <p className="text-sm font-black">{area.label}</p>
-                  <p className="mt-2 text-3xl font-black tabular-nums">{area.value}</p>
+                  <p className="mt-2 text-2xl font-black tabular-nums md:text-3xl">{area.value}</p>
                 </div>
               ))}
             </div>
