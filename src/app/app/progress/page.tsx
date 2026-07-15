@@ -375,6 +375,28 @@ export default function ProgressPage() {
         </div>
       </Card>
 
+      <Card variant="elevated" className="fw-dark-panel">
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-start gap-4">
+            <div className="p-3 bg-primary-500 rounded-[1rem] shrink-0">
+              <TrendingUp className="w-4 h-4 text-primary-300" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold">One next step</p>
+              <p className="text-sm text-white/70 mt-1 leading-relaxed">
+                {snapshot.nextAction.detail}
+              </p>
+            </div>
+          </div>
+          <Link href={snapshot.nextAction.href} className="shrink-0">
+            <Button className="w-full sm:w-auto bg-white text-neutral-950 hover:bg-neutral-100">
+              {snapshot.nextAction.label}
+              <ArrowRight className="w-4 h-4" />
+            </Button>
+          </Link>
+        </div>
+      </Card>
+
       <Link
         href="/app/fitness"
         aria-label="Open Fitness and Activity"
@@ -580,27 +602,6 @@ export default function ProgressPage() {
         </div>
       </Card>
 
-      <Card variant="elevated" className="fw-dark-panel">
-        <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-start gap-4">
-            <div className="p-3 bg-primary-500 rounded-[1rem] shrink-0">
-              <TrendingUp className="w-4 h-4 text-primary-300" />
-            </div>
-            <div>
-              <p className="text-sm font-semibold">One next step</p>
-              <p className="text-sm text-white/70 mt-1 leading-relaxed">
-                {snapshot.nextAction.detail}
-              </p>
-            </div>
-          </div>
-          <Link href={snapshot.nextAction.href} className="shrink-0">
-            <Button className="w-full sm:w-auto bg-white text-neutral-950 hover:bg-neutral-100">
-              {snapshot.nextAction.label}
-              <ArrowRight className="w-4 h-4" />
-            </Button>
-          </Link>
-        </div>
-      </Card>
       </div>
     </div>
   );
