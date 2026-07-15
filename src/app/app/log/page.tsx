@@ -197,7 +197,7 @@ function LogContent() {
   const modeHelp = MODE_HELP[mode];
 
   return (
-    <div className="mx-auto w-full max-w-6xl min-w-0 space-y-5 p-4 pb-28 md:p-8">
+    <div className="mx-auto w-full max-w-6xl min-w-0 space-y-4 p-4 pb-28 md:space-y-5 md:p-8">
       <Card variant="elevated" className="fw-dark-panel min-w-0 overflow-hidden text-white">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
@@ -205,8 +205,8 @@ function LogContent() {
               <Sparkles className="h-4 w-4" />
               Fast logging
             </p>
-            <h1 className="mt-4 text-2xl font-black leading-tight tracking-normal md:text-4xl">Log a meal</h1>
-            <p className="mt-3 max-w-2xl text-sm font-semibold leading-6 text-white/70">
+            <h1 className="mt-2 text-2xl font-black leading-tight tracking-normal md:mt-4 md:text-4xl">Log a meal</h1>
+            <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 text-white/70 md:mt-3">
               Search updates as you type. Adding food updates Today&apos;s Plate,
               dashboard macros, and coach context.
             </p>
@@ -242,7 +242,7 @@ function LogContent() {
             ))}
           </div>
 
-          <Card className="flex min-w-0 flex-col gap-3 rounded-[1.35rem] border-primary-100 bg-primary-50/70 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
+          <Card className="flex min-w-0 flex-col gap-3 rounded-[1.35rem] border-primary-100 bg-primary-50/70 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-5">
             <div className="min-w-0">
               <p className="text-sm font-black text-primary-900">{modeHelp.title}</p>
               <p className="mt-1 text-sm font-semibold leading-6 text-primary-900/65">
@@ -524,7 +524,7 @@ function MealTypeSelector({
   onSelect: (type: MealType) => void;
 }) {
   return (
-    <Card className="space-y-4">
+    <Card className="space-y-3 md:space-y-4">
       <h2 className="text-lg font-black text-[#16302a]">Logging for</h2>
       <div className="grid grid-cols-2 gap-2">
         {MEAL_TYPES.map((type) => (
