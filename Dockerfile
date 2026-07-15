@@ -28,6 +28,12 @@ ENV PORT=3000
 # Next standalone binds 127.0.0.1 unless HOSTNAME is set; Fly's proxy needs
 # the app on 0.0.0.0 or every edge request 503s while the app looks healthy.
 ENV HOSTNAME=0.0.0.0
+# ARGs are per-stage: without re-declaring here the middleware's runtime
+# hasSupabaseConfig() check sees empty env and fails closed with a 503.
+ARG NEXT_PUBLIC_SUPABASE_URL
+ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
+ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
+ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
 
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
