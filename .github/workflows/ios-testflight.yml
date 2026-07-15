@@ -32,6 +32,11 @@ on:
         options:
           - preview
           - production
+      allow_anonymous_candidate:
+        description: "Verify the candidate anonymously (preview-mode candidates without a dedicated test login)."
+        required: false
+        default: false
+        type: boolean
 
 concurrency:
   group: ios-testflight-${{ github.ref }}
@@ -43,6 +48,7 @@ defaults:
 
 env:
   FASTLANE_SKIP_UPDATE_CHECK: "1"
+  FUELWELL_UI_TEST_ALLOW_ANONYMOUS: ${{ inputs.allow_anonymous_candidate && '1' || '0' }}
   FUELWELL_APP_IDENTIFIER: ${{ secrets.FUELWELL_APP_IDENTIFIER }}
   FUELWELL_APPLE_ID: ${{ secrets.FUELWELL_APPLE_ID }}
   FUELWELL_APPLE_TEAM_ID: ${{ secrets.FUELWELL_APPLE_TEAM_ID }}
