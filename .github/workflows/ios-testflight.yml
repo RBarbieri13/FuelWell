@@ -108,6 +108,9 @@ jobs:
         run: scripts/check-theme-drift.sh
 
       - name: Run full test suite
+        # FuelWellUITests require candidate-bound build settings and are
+        # exercised with them by the dedicated "Verify candidate through the
+        # iOS shell" step below; running them here unbound fails by design.
         run: |
           rm -rf build/reports/FuelWellApp.xcresult
           xcodebuild test \
@@ -115,6 +118,7 @@ jobs:
             -destination "platform=iOS Simulator,name=iPhone 17" \
             -skipMacroValidation \
             -skipPackagePluginValidation \
+            -skip-testing:FuelWellUITests \
             -resultBundlePath build/reports/FuelWellApp.xcresult
 
       - name: Enforce coverage floor
