@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 const RECIPE_BATCH_SIZE = 12;
 import { BookOpen, ChefHat, Search, SlidersHorizontal, Sparkles, Timer } from "lucide-react";
@@ -50,11 +50,13 @@ export default function RecipesPage() {
   }, [query, mealFilter, diets, allergies, likes, dislikes]);
 
   // Batch the grid: rendering all 600+ tall cards at once makes the phone
-  // page hundreds of thousands of pixels long. Reset whenever filters change.
-  const [visibleCount, setVisibleCount] = useState(RECIPE_BATCH_SIZE);
-  useEffect(() => {
-    setVisibleCount(RECIPE_BATCH_SIZE);
-  }, [query, mealFilter, diets, allergies]);
+  // page hundreds of thousands of pixels long. The batch size resets whenever
+  // the filter key changes (render-time comparison, no effect needed).
+  const filterKey = JSON.stringify([query, mealFilter, diets, allergies]);
+  const [batch, setBatch] = useState({ key: filterKey, count: RECIPE_BATCH_SIZE });
+  const visibleCount = batch.key === filterKey ? batch.count : RECIPE_BATCH_SIZE;
+  const showMore = () =>
+    setBatch({ key: filterKey, count: visibleCount + RECIPE_BATCH_SIZE });
   const visibleResults = results.slice(0, visibleCount);
 
   const mealFilters: Array<"All" | Recipe["meal"]> = [
@@ -244,7 +246,7 @@ export default function RecipesPage() {
           {results.length > visibleCount && (
             <button
               type="button"
-              onClick={() => setVisibleCount((count) => count + RECIPE_BATCH_SIZE)}
+              onClick={showMore}
               className="mx-auto block rounded-full border border-primary-200 bg-white px-6 py-3 text-sm font-black text-primary-700 shadow-[0_8px_22px_rgba(20,90,75,0.06)] transition hover:bg-primary-50"
             >
               Show {Math.min(RECIPE_BATCH_SIZE, results.length - visibleCount)} more of{" "}
