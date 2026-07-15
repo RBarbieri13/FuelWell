@@ -14,6 +14,7 @@ import {
   X,
   type LucideIcon,
 } from "lucide-react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils/cn";
@@ -239,6 +240,7 @@ export function CalorieBalanceChart({
     () => buildSampleHistory(buildToday(meals, targets, activityOutputSignals)),
     [activityOutputSignals, meals, targets]
   );
+  const hasRealData = meals.length > 0 || activityOutputSignals.length > 0;
   const maxOffset = Math.max(0, days.length - range);
   const clampedOffset = Math.min(offset, maxOffset);
   const start = Math.max(0, days.length - range - clampedOffset);
@@ -265,6 +267,34 @@ export function CalorieBalanceChart({
       : clampedOffset === 0
       ? `Latest ${range}`
       : `${range} days · ${clampedOffset} window${clampedOffset === 1 ? "" : "s"} back`;
+
+  // Controls make no sense with nothing charted: without a single logged
+  // meal or activity signal the card explains itself and points at Log.
+  if (!hasRealData) {
+    return (
+      <Card className="rounded-[1.6rem] border-primary-100/90 px-5 py-5 shadow-[0_14px_34px_rgba(20,90,75,0.07)] md:px-6 md:py-6">
+        <p className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.14em] text-primary-600">
+          <BarChart3 className="h-4 w-4" />
+          Energy ledger
+        </p>
+        <h2 className="mt-2 font-heading text-2xl font-black text-[#16302a] md:text-3xl">
+          Intake and output by day
+        </h2>
+        <div className="mt-4 rounded-[1.35rem] border border-dashed border-primary-200 bg-primary-50/60 p-5">
+          <p className="font-black text-[#16302a]">No energy data yet today.</p>
+          <p className="mt-1 text-sm font-semibold leading-6 text-[#6f8981]">
+            Log a meal or a workout and this becomes a day-by-day comparison of
+            calories eaten against calories burned.
+          </p>
+          <Link href="/app/log" className="mt-4 inline-block">
+            <Button size="sm" className="rounded-full">
+              Log your first meal
+            </Button>
+          </Link>
+        </div>
+      </Card>
+    );
+  }
 
   return (
     <>
@@ -383,11 +413,15 @@ export function CalorieBalanceChart({
             )}
 
             <div className="mt-4 overflow-x-auto pb-2">
-              <p className="mb-3 text-xs font-black uppercase tracking-[0.12em] text-[#91a7a0] md:hidden">
-                Swipe sideways to compare days
-              </p>
+              {range >= 7 && (
+                <p className="mb-3 text-xs font-black uppercase tracking-[0.12em] text-[#91a7a0] md:hidden">
+                  Swipe sideways to compare days
+                </p>
+              )}
+              {/* Column minimums alone size the grid: narrow ranges fit the
+                  viewport (no phantom scroll area), wide ranges scroll. */}
               <div
-                className="grid min-w-[720px] items-end gap-2"
+                className="grid items-end gap-2"
                 style={{ gridTemplateColumns: `repeat(${filteredDays.length}, minmax(84px, 1fr))` }}
               >
                 {filteredDays.map((day) => (
