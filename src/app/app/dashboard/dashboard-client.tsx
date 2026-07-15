@@ -337,7 +337,7 @@ export function DashboardClient({
 
       <section className="grid gap-4 2xl:grid-cols-[0.9fr_1.1fr]">
         <div>
-          <h2 className="mb-3 text-xs font-bold uppercase tracking-wider text-neutral-400">
+          <h2 className="mb-3 text-xs font-bold uppercase tracking-wider text-neutral-500">
             Quick actions
           </h2>
           <QuickActions />
@@ -387,7 +387,7 @@ export function DashboardClient({
                       <p className="font-black tabular-nums text-neutral-900">
                         {mealTotals.calories.toLocaleString()} kcal
                       </p>
-                      <p className="text-xs font-bold text-neutral-400">
+                      <p className="text-xs font-bold text-neutral-500">
                         {mealTotals.protein}g protein
                       </p>
                     </div>
@@ -426,7 +426,7 @@ export function DashboardClient({
         />
       </section>
 
-      <p className="text-xs font-medium text-neutral-400">
+      <p className="text-xs font-medium text-neutral-500">
         Profile context: goal {effectiveGoal}, diet {effectiveDietaryPreference}
         {effectiveAllergies.length > 0 ? `, allergies ${effectiveAllergies.join(", ")}` : ""}.
       </p>
@@ -454,7 +454,7 @@ function MealMakeupHover({
           </span>
           <div>
             <p className="text-sm font-black text-neutral-900">Meal makeup</p>
-            <p className="text-xs font-semibold text-neutral-400">Breakfast, lunch, and dinner counted today</p>
+            <p className="text-xs font-semibold text-neutral-500">Breakfast, lunch, and dinner counted today</p>
           </div>
         </div>
 

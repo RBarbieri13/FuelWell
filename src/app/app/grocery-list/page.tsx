@@ -210,14 +210,14 @@ export default function GroceryListPage() {
               Grouped from your planned meals — check off as you go.
             </p>
           </div>
-          <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_minmax(0,1fr)_3rem] gap-2 sm:flex sm:items-center sm:gap-3">
+          <div className="grid min-w-0 grid-cols-2 gap-2 sm:flex sm:items-center sm:gap-3">
             <Button
               type="button"
               size="lg"
               onClick={() => setGroceryItems(items.map((item) => ({ ...item, checked: true })))}
-              className="min-w-0 whitespace-normal rounded-full px-3 text-center text-sm sm:px-5 sm:text-base"
+              className="min-w-0 whitespace-nowrap rounded-full px-3 text-center text-sm sm:px-5 sm:text-base"
             >
-              <CheckCheck className="w-5 h-5" />
+              <CheckCheck className="hidden w-5 h-5 sm:block" />
               Mark all shopped
             </Button>
             <Button
@@ -226,14 +226,11 @@ export default function GroceryListPage() {
               variant="secondary"
               onClick={clearAndArchiveList}
               disabled={items.length === 0}
-              className="min-w-0 whitespace-normal rounded-full px-3 text-center text-sm sm:px-5 sm:text-base"
+              className="min-w-0 whitespace-nowrap rounded-full px-3 text-center text-sm sm:px-5 sm:text-base"
             >
-              <History className="w-5 h-5" />
+              <History className="hidden w-5 h-5 sm:block" />
               Clear list
             </Button>
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary-600 text-base font-black text-white shadow-[0_16px_34px_rgba(21,145,108,0.24)] sm:h-14 sm:w-14 sm:text-lg">
-              M
-            </div>
           </div>
         </div>
       </header>
@@ -506,7 +503,7 @@ export default function GroceryListPage() {
                         aria-label={item.checked ? `Uncheck ${item.name}` : `Check ${item.name}`}
                         className={cn(
                           "flex h-11 w-11 items-center justify-center rounded-full transition-colors",
-                          item.checked ? "text-primary-500" : "text-[#cfe0da] hover:text-primary-500"
+                          item.checked ? "text-primary-500" : "text-primary-400 hover:text-primary-600"
                         )}
                       >
                         {item.checked ? <CheckCircle2 className="h-6 w-6" /> : <Circle className="h-6 w-6" />}
@@ -526,7 +523,7 @@ export default function GroceryListPage() {
                         type="button"
                         onClick={() => removeItem(item.id)}
                         aria-label={`Remove ${item.name}`}
-                        className="flex h-11 w-11 items-center justify-center rounded-xl text-[#c9d6d1] transition-colors hover:bg-red-50 hover:text-red-500"
+                        className="flex h-11 w-11 items-center justify-center rounded-xl text-neutral-400 transition-colors hover:bg-red-50 hover:text-red-500"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
@@ -631,7 +628,7 @@ export default function GroceryListPage() {
                             aria-label={item.checked ? `Uncheck ${item.name}` : `Check ${item.name}`}
                             className={cn(
                               "rounded-full p-1.5 transition-colors",
-                              item.checked ? "text-primary-500" : "text-[#cfe0da] hover:text-primary-500"
+                              item.checked ? "text-primary-500" : "text-primary-400 hover:text-primary-600"
                             )}
                           >
                             {item.checked ? (
@@ -720,7 +717,7 @@ export default function GroceryListPage() {
                             type="button"
                             onClick={() => removeItem(item.id)}
                             aria-label={`Remove ${item.name}`}
-                            className="rounded-xl p-2 text-[#c9d6d1] transition-colors hover:bg-red-50 hover:text-red-500"
+                            className="rounded-xl p-2 text-neutral-400 transition-colors hover:bg-red-50 hover:text-red-500"
                           >
                             <Trash2 className="h-4 w-4" />
                           </button>
