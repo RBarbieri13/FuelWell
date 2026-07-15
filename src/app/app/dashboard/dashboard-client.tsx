@@ -12,8 +12,6 @@ import {
   HeartPulse,
   Info,
   Salad,
-  Bell,
-  Search,
   Sparkles,
   UtensilsCrossed,
 } from "lucide-react";
@@ -130,13 +128,6 @@ export function DashboardClient({
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <button className="flex h-11 w-11 items-center justify-center rounded-full border border-primary-100 bg-white text-neutral-700 shadow-[0_4px_12px_rgba(20,90,75,0.05)]" aria-label="Search">
-              <Search className="h-5 w-5" />
-            </button>
-            <button className="relative flex h-11 w-11 items-center justify-center rounded-full border border-primary-100 bg-white text-neutral-700 shadow-[0_4px_12px_rgba(20,90,75,0.05)]" aria-label="Notifications">
-              <Bell className="h-5 w-5" />
-              <span className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full border-2 border-white bg-accent-500" />
-            </button>
             <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primary-600 text-base font-black text-white shadow-[0_8px_18px_rgba(30,174,132,0.3)]">
               {effectiveDisplayName.slice(0, 1).toUpperCase()}
             </div>
@@ -259,13 +250,13 @@ export function DashboardClient({
               <h2 className="text-base font-black text-neutral-900">
                 Today&apos;s plate
               </h2>
-              <p className="mt-1 max-w-[11rem] text-xs font-semibold leading-5 text-neutral-500">
-                Calculated from logged meals only.
+              <p className="mt-1 max-w-[14rem] text-xs font-semibold leading-5 text-neutral-500">
+                Calculated from {todaysMeals.length} logged {todaysMeals.length === 1 ? "meal" : "meals"} only.
               </p>
             </div>
-            <Link href="/app/nutrition" className="-m-3 p-3 text-sm font-black text-primary-700">
-              Details
-            </Link>
+            <span className="shrink-0 rounded-full bg-primary-50 px-3.5 py-1.5 text-xs font-black text-primary-700">
+              {percentOf(totals.calories, effectiveTargets.calories)}% calories
+            </span>
           </div>
 
           <div className="my-2 flex justify-center">
@@ -274,36 +265,28 @@ export function DashboardClient({
             </MealMakeupHover>
           </div>
 
-          <div className="mt-auto grid grid-cols-3 gap-2">
-            <MiniMetric label="Protein left" value={`${remaining(totals.protein, effectiveTargets.protein)}g`} />
-            <MiniMetric label="Calories left" value={remaining(totals.calories, effectiveTargets.calories).toLocaleString()} />
-            <MiniMetric label="Meals" value={`${todaysMeals.length}`} />
+          <div className="mt-auto space-y-4">
+            <MacroBar label="Protein" current={totals.protein} target={effectiveTargets.protein} color="#3e92c9" />
+            <MacroBar label="Carbs" current={totals.carbs} target={effectiveTargets.carbs} color="#c7a91e" />
+            <MacroBar label="Fat" current={totals.fat} target={effectiveTargets.fat} color="#f0795b" />
+            <Link href="/app/nutrition" className="block">
+              <Button variant="secondary" className="w-full rounded-[0.9rem]">
+                Open meal breakdown
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
           </div>
         </Card>
       </section>
 
-      <section className="grid gap-[18px] lg:grid-cols-2">
-        <Card variant="elevated" className="space-y-5 rounded-[1.5rem] px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <h2 className="text-base font-black text-neutral-900">Macros</h2>
-            </div>
-            <span className="shrink-0 rounded-full bg-primary-50 px-3.5 py-1.5 text-xs font-black text-primary-700">
-              {percentOf(totals.calories, effectiveTargets.calories)}% calories
-            </span>
-          </div>
-          <MacroBar label="Calories" current={totals.calories} target={effectiveTargets.calories} unit="kcal" color="#1eae84" />
-          <MacroBar label="Protein" current={totals.protein} target={effectiveTargets.protein} color="#3e92c9" />
-          <MacroBar label="Carbs" current={totals.carbs} target={effectiveTargets.carbs} color="#c7a91e" />
-          <MacroBar label="Fat" current={totals.fat} target={effectiveTargets.fat} color="#f0795b" />
-          <Link href="/app/nutrition" className="block">
-            <Button variant="secondary" className="w-full rounded-[0.9rem]">
-              Open meal breakdown
-              <ArrowRight className="h-4 w-4" />
-            </Button>
-          </Link>
-        </Card>
+      <section>
+        <h2 className="mb-3 text-xs font-bold uppercase tracking-wider text-neutral-400">
+          Quick actions
+        </h2>
+        <QuickActions />
+      </section>
 
+      <section className="grid gap-[18px] lg:grid-cols-2">
         <Card className="space-y-4 rounded-[1.5rem] px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-bold text-neutral-900">Today&apos;s focus</h2>
@@ -333,15 +316,6 @@ export function DashboardClient({
             ))}
           </div>
         </Card>
-      </section>
-
-      <section className="grid gap-4 2xl:grid-cols-[0.9fr_1.1fr]">
-        <div>
-          <h2 className="mb-3 text-xs font-bold uppercase tracking-wider text-neutral-400">
-            Quick actions
-          </h2>
-          <QuickActions />
-        </div>
 
         <Card className="space-y-4">
           <div className="flex items-center justify-between">
@@ -399,32 +373,35 @@ export function DashboardClient({
         </Card>
       </section>
 
-      <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <DeepLinkCard
-          href="/app/daily-review"
-          icon={<ClipboardList className="h-5 w-5" />}
-          title="Review the full day"
-          body="See nutrition, activity, and energy balance in one ledger."
-        />
-        <DeepLinkCard
-          href="/app/workouts"
-          icon={<Dumbbell className="h-5 w-5" />}
-          title="Plan movement"
-          body="Pick a workout that matches today's energy and recovery."
-        />
-        <DeepLinkCard
-          href="/app/recipes"
-          icon={<BookOpen className="h-5 w-5" />}
-          title="Find food that fits"
-          body="Use remaining macros to choose dinner or snacks."
-        />
-        <DeepLinkCard
-          href="/app/progress"
-          icon={<Activity className="h-5 w-5" />}
-          title="Check trajectory"
-          body="See what today changes about the weekly direction."
-        />
-      </section>
+      <Card className="space-y-4 rounded-[1.5rem] px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
+        <h2 className="text-lg font-bold text-neutral-900">Go deeper</h2>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <DeepLinkRow
+            href="/app/daily-review"
+            icon={<ClipboardList className="h-5 w-5" />}
+            title="Review the full day"
+            body="Nutrition, activity, and energy in one ledger."
+          />
+          <DeepLinkRow
+            href="/app/workouts"
+            icon={<Dumbbell className="h-5 w-5" />}
+            title="Plan movement"
+            body="Match a workout to today's energy."
+          />
+          <DeepLinkRow
+            href="/app/recipes"
+            icon={<BookOpen className="h-5 w-5" />}
+            title="Find food that fits"
+            body="Choose dinner from remaining macros."
+          />
+          <DeepLinkRow
+            href="/app/progress"
+            icon={<Activity className="h-5 w-5" />}
+            title="Check trajectory"
+            body="What today changes for the week."
+          />
+        </div>
+      </Card>
 
       <p className="text-xs font-medium text-neutral-400">
         Profile context: goal {effectiveGoal}, diet {effectiveDietaryPreference}
@@ -514,16 +491,7 @@ function EnergyStat({ label, value }: { label: string; value: string }) {
   );
 }
 
-function MiniMetric({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-[0.9rem] bg-primary-50/80 p-2.5 text-center">
-      <p className="text-base font-black tabular-nums text-neutral-900">{value}</p>
-      <p className="mt-0.5 whitespace-nowrap text-[10px] font-semibold text-neutral-500">{label}</p>
-    </div>
-  );
-}
-
-function DeepLinkCard({
+function DeepLinkRow({
   href,
   icon,
   title,
@@ -537,16 +505,19 @@ function DeepLinkCard({
   return (
     <Link
       href={href}
-      className="group rounded-[1.5rem] border border-primary-100/80 bg-white p-5 shadow-[0_18px_48px_rgba(22,48,42,0.07)] transition hover:-translate-y-0.5 hover:shadow-lg"
+      className="group fw-soft-row block p-4 transition hover:-translate-y-0.5 hover:border-primary-200 hover:bg-white hover:shadow-md hover:shadow-primary-900/10"
     >
-      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-[1.15rem] bg-primary-100 text-primary-700">
-        {icon}
-      </div>
-      <p className="font-black text-neutral-900">{title}</p>
-      <p className="mt-1 text-sm font-medium leading-5 text-neutral-500">{body}</p>
-      <div className="mt-4 flex items-center text-sm font-bold text-primary-700">
-        Open
-        <ArrowRight className="ml-1 h-4 w-4 transition group-hover:translate-x-0.5" />
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="shrink-0 rounded-[1rem] bg-primary-100 p-3 text-primary-700 group-hover:bg-primary-200 group-hover:text-primary-800">
+            {icon}
+          </div>
+          <div>
+            <p className="font-bold text-neutral-900">{title}</p>
+            <p className="text-sm font-medium text-neutral-500">{body}</p>
+          </div>
+        </div>
+        <ChevronRight className="h-5 w-5 shrink-0 text-neutral-300 transition group-hover:translate-x-0.5 group-hover:text-primary-500" />
       </div>
     </Link>
   );
