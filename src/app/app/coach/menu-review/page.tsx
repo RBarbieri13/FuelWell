@@ -56,13 +56,13 @@ export default function MenuChoiceReviewPage() {
   return (
     <div className="fw-app-surface">
       <header className="fw-page-header">
-        <div className="fw-page-inner flex flex-col gap-4 py-7 md:flex-row md:items-center md:justify-between">
+        <div className="fw-page-inner flex flex-col gap-4 py-5 md:py-7 md:flex-row md:items-center md:justify-between">
           <div>
             <p className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.14em] text-primary-600">
               <UtensilsCrossed className="h-4 w-4" />
               Menu choice review
             </p>
-            <h1 className="fw-heading mt-2 text-3xl md:text-4xl">Pick the meal that fits today</h1>
+            <h1 className="fw-heading mt-2 text-2xl md:text-4xl">Pick the meal that fits today</h1>
             <p className="fw-muted mt-1 max-w-3xl text-base">
               Upload a menu or screenshot in Coach, then use this decision shape to rank choices before logging.
             </p>
@@ -76,15 +76,15 @@ export default function MenuChoiceReviewPage() {
         </div>
       </header>
 
-      <main className="fw-page-inner space-y-6 pb-28 md:pb-8">
-        <Card variant="elevated" className="rounded-[1.5rem] bg-white px-7 py-7 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
+      <main className="fw-page-inner space-y-4 md:space-y-6 pb-28 md:pb-8">
+        <Card variant="elevated" className="rounded-[1.5rem] bg-white px-5 py-5 shadow-[0_12px_30px_rgba(20,90,75,0.07)] md:px-7 md:py-7">
           <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_24rem]">
             <div>
               <p className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.14em] text-primary-600">
                 <Sparkles className="h-4 w-4" />
                 Decision rules
               </p>
-              <h2 className="mt-3 text-3xl font-black text-[#16302a]">
+              <h2 className="mt-2 text-2xl font-black text-[#16302a] md:text-3xl">
                 The coach should rank options, not just identify food.
               </h2>
               <p className="mt-3 max-w-3xl text-base font-semibold leading-7 text-[#54635d]">

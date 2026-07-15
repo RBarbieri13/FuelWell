@@ -312,10 +312,10 @@ export default function ProgressPage() {
   return (
     <div className="fw-app-surface">
       <header className="fw-page-header">
-        <div className="fw-page-inner flex flex-col gap-4 py-7 md:flex-row md:items-center md:justify-between">
+        <div className="fw-page-inner flex flex-col gap-4 py-5 md:py-7 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="fw-heading text-3xl md:text-4xl">Progress</h1>
-            <p className="fw-muted mt-1 text-base">
+            <h1 className="fw-heading text-2xl md:text-4xl">Progress</h1>
+            <p className="fw-muted mt-1 text-sm md:text-base">
               Trends and direction over time — no targets to fail.
             </p>
           </div>
@@ -347,7 +347,7 @@ export default function ProgressPage() {
         </div>
       </header>
 
-      <div className="fw-page-inner max-w-[1120px] space-y-6">
+      <div className="fw-page-inner max-w-[1120px] space-y-4 md:space-y-6">
 
       <Card className="fw-mint-panel rounded-[24px] border-primary-200/80 px-6 py-6 shadow-none">
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
@@ -358,7 +358,7 @@ export default function ProgressPage() {
             </div>
             <div>
               <p className="text-sm font-black text-primary-800/75">{snapshot.title}</p>
-              <h2 className="mt-3 font-heading text-[28px] font-black tracking-tight text-[#16302a] md:text-3xl">
+              <h2 className="mt-3 font-heading text-[22px] font-black tracking-tight text-[#16302a] md:text-3xl">
                 {snapshot.verdict}
               </h2>
               <p className="mt-4 max-w-2xl text-base font-semibold leading-7 text-primary-900/70">

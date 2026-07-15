@@ -80,7 +80,7 @@ export default function RecipesPage() {
               <BookOpen className="h-4 w-4" />
               Recipe library
             </p>
-            <h1 className="mt-4 text-3xl font-black leading-tight md:text-4xl">
+            <h1 className="mt-4 text-2xl font-black leading-tight md:text-4xl">
               Find food that fits today.
             </h1>
             <p className="mt-3 max-w-2xl text-sm font-semibold leading-6 text-white/70">
@@ -88,7 +88,7 @@ export default function RecipesPage() {
               ingredients, prep steps, and per-serving nutrition.
             </p>
             <div className="mt-4 flex flex-wrap items-center gap-2">
-              <span className="text-[11px] font-black uppercase tracking-[0.14em] text-primary-200">
+              <span className="text-xs font-black uppercase tracking-[0.12em] text-primary-200">
                 Left today
               </span>
               {[
@@ -110,19 +110,19 @@ export default function RecipesPage() {
           <div className="grid grid-cols-3 gap-2 text-center">
             <div className="rounded-[1.15rem] border border-white/12 bg-white/10 px-4 py-3">
               <p className="text-2xl font-black tabular-nums">{results.length}</p>
-              <p className="text-[11px] font-black uppercase tracking-[0.12em] text-white/55">
+              <p className="text-xs font-black uppercase tracking-[0.1em] text-white/55">
                 Matches
               </p>
             </div>
             <div className="rounded-[1.15rem] border border-white/12 bg-white/10 px-4 py-3">
               <p className="text-2xl font-black tabular-nums">{quickCount}</p>
-              <p className="text-[11px] font-black uppercase tracking-[0.12em] text-white/55">
+              <p className="text-xs font-black uppercase tracking-[0.1em] text-white/55">
                 Quick
               </p>
             </div>
             <div className="rounded-[1.15rem] border border-white/12 bg-white/10 px-4 py-3">
               <p className="text-2xl font-black tabular-nums">{highProteinCount}</p>
-              <p className="text-[11px] font-black uppercase tracking-[0.12em] text-white/55">
+              <p className="text-xs font-black uppercase tracking-[0.1em] text-white/55">
                 30g+
               </p>
             </div>

@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 export default function DashboardLoading() {
   return (
     <div className="fw-app-surface min-h-full">
-      <div className="fw-page-inner max-w-6xl space-y-6">
+      <div className="fw-page-inner max-w-6xl space-y-4 md:space-y-6">
       <div className="grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
         <Skeleton className="h-72 rounded-[2rem] bg-[#123d32]/85" />
         <Card variant="elevated" className="space-y-5">

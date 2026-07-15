@@ -238,10 +238,10 @@ export default async function WorkoutDetailPage({
 
   return (
     <div className="fw-app-surface min-h-full">
-      <div className="fw-page-inner min-w-0 max-w-6xl space-y-6">
+      <div className="fw-page-inner min-w-0 max-w-6xl space-y-4 md:space-y-6">
         <Link
           href="/app/workouts"
-          className="inline-flex items-center gap-2 rounded-full bg-white/75 px-4 py-2 text-sm font-black text-[#78928a] shadow-sm transition-colors hover:text-primary-700"
+          className="inline-flex min-h-11 items-center gap-2 rounded-full bg-white/75 px-4 py-2 text-sm font-black md:min-h-0 text-[#78928a] shadow-sm transition-colors hover:text-primary-700"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to workouts
@@ -267,7 +267,7 @@ export default async function WorkoutDetailPage({
                           {workout.verdict}
                         </span>
                       </div>
-                      <h1 className="mt-3 font-heading text-4xl font-black tracking-tight text-white md:text-5xl">
+                      <h1 className="mt-2 font-heading text-[1.7rem] font-black tracking-tight text-white md:mt-3 md:text-5xl">
                         {workout.title}
                       </h1>
                       <p className="mt-4 max-w-3xl text-base font-semibold leading-7 text-white/72">

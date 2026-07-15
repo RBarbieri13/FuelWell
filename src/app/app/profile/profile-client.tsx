@@ -148,10 +148,10 @@ export function ProfileClient({
   return (
     <div className="fw-app-surface">
       <header className="fw-page-header">
-        <div className="fw-page-inner flex flex-col gap-4 py-7 md:flex-row md:items-center md:justify-between">
+        <div className="fw-page-inner flex flex-col gap-4 py-5 md:py-7 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="fw-heading text-3xl md:text-4xl">Profile</h1>
-            <p className="fw-muted mt-1 text-base">Account, body context, and daily macro targets</p>
+            <h1 className="fw-heading text-2xl md:text-4xl">Profile</h1>
+            <p className="fw-muted mt-1 text-sm md:text-base">Account, body context, and daily macro targets</p>
           </div>
           <Link
             href="/app/settings"
@@ -163,7 +163,7 @@ export function ProfileClient({
         </div>
       </header>
 
-      <div className="fw-page-inner space-y-6">
+      <div className="fw-page-inner space-y-4 md:space-y-6">
         {isPreview && (
           <Card className="border-primary-100 bg-primary-50/80">
             <p className="text-sm font-black text-primary-900">
@@ -173,10 +173,10 @@ export function ProfileClient({
         )}
 
         <section className="grid min-w-0 gap-6 xl:grid-cols-[1.08fr_0.92fr]">
-          <Card className="fw-dark-panel min-w-0 px-5 py-6 sm:px-8 sm:py-8">
-            <div className="flex flex-col gap-6 md:flex-row md:items-center">
-              <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-[2rem] bg-white/12 text-white shadow-inner shadow-white/10">
-                <User className="h-11 w-11" />
+          <Card className="fw-dark-panel min-w-0 px-5 py-5 sm:px-8 sm:py-8">
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:gap-6">
+              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[1.35rem] bg-white/12 md:h-24 md:w-24 md:rounded-[2rem] text-white shadow-inner shadow-white/10">
+                <User className="h-8 w-8 md:h-11 md:w-11" />
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-black uppercase tracking-[0.16em] text-primary-200">
@@ -210,8 +210,8 @@ export function ProfileClient({
                     </div>
                   </div>
                 ) : (
-                  <div className="mt-3 flex min-w-0 items-center gap-3">
-                    <h2 className="truncate text-4xl font-black leading-tight text-white md:text-5xl">
+                  <div className="mt-2 flex min-w-0 items-center gap-3 md:mt-3">
+                    <h2 className="truncate text-2xl font-black leading-tight text-white md:text-5xl">
                       {effectiveDisplayName || "Set your name"}
                     </h2>
                     <button
@@ -231,11 +231,11 @@ export function ProfileClient({
                     {nameError}
                   </p>
                 )}
-                <p className="mt-3 truncate text-base font-semibold text-white/66">{email}</p>
+                <p className="mt-2 truncate text-sm font-semibold text-white/66 md:mt-3 md:text-base">{email}</p>
               </div>
             </div>
 
-            <div className="mt-8 grid gap-3 sm:grid-cols-3">
+            <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3 md:mt-8 md:gap-3">
               <HeroStat label="Goal" value={formatGoal(effectiveGoal)} />
               <HeroStat label="Activity" value={formatActivityShort(effectiveActivityLevel)} />
               <HeroStat label="Setup" value={onboardingComplete ? "Complete" : "Needs setup"} />
@@ -349,8 +349,8 @@ export function ProfileClient({
 
 function HeroStat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-[1.25rem] border border-white/12 bg-white/10 px-4 py-4 backdrop-blur">
-      <p className="truncate text-lg font-black text-white">{value}</p>
+    <div className="rounded-[1.25rem] border border-white/12 bg-white/10 px-3 py-3 backdrop-blur md:px-4 md:py-4">
+      <p className="truncate text-base font-black text-white md:text-lg">{value}</p>
       <p className="mt-1 text-xs font-black uppercase tracking-[0.12em] text-white/58">{label}</p>
     </div>
   );

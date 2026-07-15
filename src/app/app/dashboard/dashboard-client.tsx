@@ -118,7 +118,7 @@ export function DashboardClient({
   return (
     <div className="fw-app-surface">
       <header className="fw-page-header">
-        <div className="fw-page-inner flex flex-col gap-4 py-6 md:flex-row md:items-center md:justify-between">
+        <div className="fw-page-inner flex flex-col gap-3 py-4 md:gap-4 md:py-6 md:flex-row md:items-center md:justify-between">
           <div>
             <h1 className="fw-heading text-2xl md:text-[1.7rem]" suppressHydrationWarning>
               {salutation}, {effectiveDisplayName}
@@ -135,7 +135,7 @@ export function DashboardClient({
         </div>
       </header>
 
-      <div className="fw-page-inner space-y-6">
+      <div className="fw-page-inner space-y-4 md:space-y-6">
       {setupCompleteBanner && (
         <Card className="border-primary-200 bg-primary-50/80">
           <div className="flex items-center justify-between gap-3">
@@ -192,15 +192,15 @@ export function DashboardClient({
           variant="elevated"
           className="fw-dark-panel overflow-hidden rounded-[26px] p-0 shadow-[0_24px_50px_rgba(16,48,40,0.34)]"
         >
-          <div className="relative p-6 md:p-[30px]">
+          <div className="relative p-5 md:p-[30px]">
             <div className="relative z-10">
-              <div className="mb-5 flex flex-wrap items-start justify-between gap-4">
+              <div className="mb-4 flex flex-wrap items-start justify-between gap-4">
                 <div>
                   <p className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.12em] text-primary-200">
                     <Sparkles className="h-4 w-4" />
                     Today&apos;s decision
                   </p>
-                  <h2 className="mt-4 max-w-[24rem] text-[2.1rem] font-black leading-[1.08] tracking-normal text-white md:text-[2.45rem]">
+                  <h2 className="mt-3 max-w-[24rem] text-[1.6rem] font-black leading-[1.15] md:leading-[1.08] tracking-normal text-white md:text-[2.45rem]">
                     {hasLoggedToday ? coachVerdict.title : `Hey, ${effectiveDisplayName}. Start with one real input.`}
                   </h2>
                 </div>
@@ -224,7 +224,7 @@ export function DashboardClient({
                   : "No meals, workouts, or recovery inputs are logged yet. FuelWell will show the missing pieces instead of inventing green progress."}
               </p>
 
-              <div className="mt-6 flex flex-wrap items-center gap-3">
+              <div className="mt-5 flex flex-wrap items-center gap-3">
                 <Link href={coachVerdict.href}>
                   <Button size="lg" className="rounded-full px-6 py-3 text-sm">
                     <Sparkles className="h-4 w-4" />
@@ -482,9 +482,9 @@ function MealMakeupHover({
 
 function EnergyStat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="min-w-[8rem] flex-1 rounded-2xl border border-white/14 bg-white/10 px-4 py-3 text-left backdrop-blur">
-      <p className="text-[1.625rem] font-black leading-none tabular-nums text-white">{value}</p>
-      <p className="mt-1.5 whitespace-nowrap text-[11px] font-bold uppercase tracking-[0.08em] text-white/60">
+    <div className="min-w-[7.5rem] flex-1 rounded-2xl border border-white/14 bg-white/10 px-4 py-2.5 text-left backdrop-blur">
+      <p className="text-[1.45rem] font-black leading-none tabular-nums text-white">{value}</p>
+      <p className="mt-1.5 whitespace-nowrap text-xs font-bold uppercase tracking-[0.06em] text-white/60">
         {label}
       </p>
     </div>

@@ -85,14 +85,14 @@ function ScoreDetail({
 }) {
   return (
     <div className="fw-app-surface min-h-full">
-      <div className="fw-page-inner max-w-5xl space-y-6">
+      <div className="fw-page-inner max-w-5xl space-y-4 md:space-y-6">
       <Card variant="elevated" className="fw-dark-panel">
         <p className="text-xs font-black uppercase tracking-[0.16em] text-primary-100">
           Health score detail
         </p>
-        <div className="mt-5 grid gap-6 md:grid-cols-[0.35fr_0.65fr] md:items-end">
+        <div className="mt-4 grid gap-4 md:mt-5 md:grid-cols-[0.35fr_0.65fr] md:items-end md:gap-6">
           <div>
-            <p className="text-7xl font-black tabular-nums">{healthScore ?? "--"}</p>
+            <p className="text-5xl font-black tabular-nums md:text-7xl">{healthScore ?? "--"}</p>
             <p className="mt-2 text-sm font-semibold text-white/65">
               {healthScore === null
                 ? "No score yet because no scored inputs exist."
@@ -100,7 +100,7 @@ function ScoreDetail({
             </p>
           </div>
           <div>
-            <h1 className="text-3xl font-black tracking-tight">
+            <h1 className="text-2xl font-black tracking-tight md:text-3xl">
               FuelWell only scores what it can explain.
             </h1>
             <p className="mt-3 text-sm font-semibold leading-6 text-white/68">
@@ -128,7 +128,7 @@ function ScoreDetail({
                     <p className="mt-1 text-sm font-bold text-[#78928a]">
                       {contributor.status}
                     </p>
-                    <p className="mt-3 max-w-2xl text-sm font-semibold leading-6 text-[#516b63]">
+                    <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 text-[#516b63]">
                       {contributor.detail}
                     </p>
                     <p className="mt-2 text-sm font-bold text-primary-700">
@@ -138,7 +138,7 @@ function ScoreDetail({
                 </div>
                 <div className="flex items-center justify-between gap-4 md:block md:text-right">
                   <div>
-                    <p className="text-4xl font-black tabular-nums text-[#16302a]">
+                    <p className="text-3xl font-black tabular-nums text-[#16302a] md:text-4xl">
                       {contributor.score ?? "--"}
                     </p>
                     <p className="text-xs font-black uppercase tracking-[0.12em] text-[#91a7a0]">

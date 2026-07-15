@@ -1,0 +1,206 @@
+[
+  {
+    "persona": "Maria (68, low vision, max readability)",
+    "width": 390,
+    "route": "/app/dashboard",
+    "facts": 7,
+    "textChars": 381,
+    "friction": []
+  },
+  {
+    "persona": "Maria (68, low vision, max readability)",
+    "width": 390,
+    "route": "/app/log",
+    "facts": 3,
+    "textChars": 359,
+    "friction": []
+  },
+  {
+    "persona": "Maria (68, low vision, max readability)",
+    "width": 390,
+    "route": "/app/nutrition",
+    "facts": 16,
+    "textChars": 496,
+    "friction": []
+  },
+  {
+    "persona": "Maria (68, low vision, max readability)",
+    "width": 390,
+    "route": "/app/daily-review",
+    "facts": 8,
+    "textChars": 544,
+    "friction": []
+  },
+  {
+    "persona": "Dev (data-dense power user)",
+    "width": 390,
+    "route": "/app/dashboard",
+    "facts": 7,
+    "textChars": 381,
+    "friction": []
+  },
+  {
+    "persona": "Dev (data-dense power user)",
+    "width": 390,
+    "route": "/app/nutrition",
+    "facts": 16,
+    "textChars": 496,
+    "friction": []
+  },
+  {
+    "persona": "Dev (data-dense power user)",
+    "width": 390,
+    "route": "/app/progress",
+    "facts": 7,
+    "textChars": 470,
+    "friction": []
+  },
+  {
+    "persona": "Dev (data-dense power user)",
+    "width": 390,
+    "route": "/app/activity",
+    "facts": 6,
+    "textChars": 509,
+    "friction": []
+  },
+  {
+    "persona": "Dev (data-dense power user)",
+    "width": 390,
+    "route": "/app/fitness",
+    "facts": 16,
+    "textChars": 616,
+    "friction": []
+  },
+  {
+    "persona": "Jess (one-handed, iPhone SE)",
+    "width": 320,
+    "route": "/app/dashboard",
+    "facts": 5,
+    "textChars": 312,
+    "friction": []
+  },
+  {
+    "persona": "Jess (one-handed, iPhone SE)",
+    "width": 320,
+    "route": "/app/log",
+    "facts": 3,
+    "textChars": 359,
+    "friction": []
+  },
+  {
+    "persona": "Jess (one-handed, iPhone SE)",
+    "width": 320,
+    "route": "/app/grocery-list",
+    "facts": 4,
+    "textChars": 318,
+    "friction": []
+  },
+  {
+    "persona": "Jess (one-handed, iPhone SE)",
+    "width": 320,
+    "route": "/app/meal-plan",
+    "facts": 6,
+    "textChars": 422,
+    "friction": []
+  },
+  {
+    "persona": "Tom (brand-new user)",
+    "width": 390,
+    "route": "/signup?preview=new-user",
+    "facts": 0,
+    "textChars": 242,
+    "friction": []
+  },
+  {
+    "persona": "Tom (brand-new user)",
+    "width": 390,
+    "route": "/app/onboarding",
+    "facts": 3,
+    "textChars": 390,
+    "friction": []
+  },
+  {
+    "persona": "Tom (brand-new user)",
+    "width": 390,
+    "route": "/app/dashboard",
+    "facts": 7,
+    "textChars": 381,
+    "friction": []
+  },
+  {
+    "persona": "Priya (athlete, mid-workout arm's length)",
+    "width": 390,
+    "route": "/app/workouts",
+    "facts": 0,
+    "textChars": 491,
+    "friction": []
+  },
+  {
+    "persona": "Priya (athlete, mid-workout arm's length)",
+    "width": 390,
+    "route": "/app/workouts/low-impact-strength",
+    "facts": 4,
+    "textChars": 326,
+    "friction": []
+  },
+  {
+    "persona": "Priya (athlete, mid-workout arm's length)",
+    "width": 390,
+    "route": "/app/workouts/low-impact-strength/live",
+    "facts": 10,
+    "textChars": 527,
+    "friction": []
+  },
+  {
+    "persona": "Sam (weekly meal planner, big phone)",
+    "width": 430,
+    "route": "/app/meal-plan",
+    "facts": 7,
+    "textChars": 436,
+    "friction": []
+  },
+  {
+    "persona": "Sam (weekly meal planner, big phone)",
+    "width": 430,
+    "route": "/app/recipes",
+    "facts": 8,
+    "textChars": 373,
+    "friction": []
+  },
+  {
+    "persona": "Sam (weekly meal planner, big phone)",
+    "width": 430,
+    "route": "/app/grocery-list",
+    "facts": 4,
+    "textChars": 326,
+    "friction": [
+      "only 4 numeric facts in first viewport"
+    ]
+  },
+  {
+    "persona": "Ravi (score-chaser reviewing his day)",
+    "width": 390,
+    "route": "/app/dashboard/score",
+    "facts": 6,
+    "textChars": 590,
+    "friction": []
+  },
+  {
+    "persona": "Ravi (score-chaser reviewing his day)",
+    "width": 390,
+    "route": "/app/recovery",
+    "facts": 5,
+    "textChars": 488,
+    "friction": [
+      "only 5 numeric facts in first viewport"
+    ]
+  },
+  {
+    "persona": "Ravi (score-chaser reviewing his day)",
+    "width": 390,
+    "route": "/app/daily-review",
+    "facts": 8,
+    "textChars": 544,
+    "friction": []
+  }
+]

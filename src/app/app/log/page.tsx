@@ -204,7 +204,7 @@ function LogContent() {
   const modeHelp = MODE_HELP[mode];
 
   return (
-    <div className="mx-auto w-full max-w-6xl min-w-0 space-y-5 p-4 pb-28 md:p-8">
+    <div className="mx-auto w-full max-w-6xl min-w-0 space-y-4 p-4 pb-28 md:space-y-5 md:p-8">
       <Card variant="elevated" className="fw-dark-panel min-w-0 overflow-hidden text-white">
         <div className="flex items-center justify-between gap-4">
           <div>
@@ -514,7 +514,7 @@ function MealTypeSelector({
   onSelect: (type: MealType) => void;
 }) {
   return (
-    <Card className="space-y-4">
+    <Card className="space-y-3 md:space-y-4">
       <h2 className="text-lg font-black text-[#16302a]">Logging for</h2>
       <div className="grid grid-cols-2 gap-2">
         {MEAL_TYPES.map((type) => (

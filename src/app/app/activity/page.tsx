@@ -90,10 +90,10 @@ export default function ActivityPage() {
   return (
     <div className="fw-app-surface">
       <header className="fw-page-header">
-        <div className="fw-page-inner flex flex-col gap-4 py-7 md:flex-row md:items-center md:justify-between">
+        <div className="fw-page-inner flex flex-col gap-4 py-5 md:py-7 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="fw-heading text-3xl md:text-4xl">Activity</h1>
-            <p className="fw-muted mt-1 text-base">{activitySummary.dateLabel} · movement and fuel timing</p>
+            <h1 className="fw-heading text-2xl md:text-4xl">Activity</h1>
+            <p className="fw-muted mt-1 text-sm md:text-base">{activitySummary.dateLabel} · movement and fuel timing</p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <div className="rounded-full bg-white p-1 shadow-[0_18px_44px_rgba(22,48,42,0.10)]">
@@ -122,7 +122,7 @@ export default function ActivityPage() {
         </div>
       </header>
 
-      <div className="fw-page-inner space-y-6">
+      <div className="fw-page-inner space-y-4 md:space-y-6">
         <section className="grid items-start gap-5 lg:grid-cols-[1.08fr_0.92fr]">
           <Card className="fw-dark-panel overflow-hidden p-0">
             <div className="relative p-6 md:p-7">
@@ -131,7 +131,7 @@ export default function ActivityPage() {
                   <ShieldCheck className="h-4 w-4" />
                   Today&apos;s activity verdict
                 </p>
-                <h2 className="mt-5 max-w-3xl font-heading text-3xl font-black leading-tight tracking-tight text-white md:text-4xl">
+                <h2 className="mt-4 max-w-3xl font-heading text-2xl font-black leading-tight tracking-tight text-white md:text-4xl">
                   {activitySummary.verdict}
                 </h2>
                 <p className="mt-4 max-w-3xl text-base font-semibold leading-7 text-white/74">
@@ -196,7 +196,7 @@ export default function ActivityPage() {
                 <SourceBadge>{metric.source}</SourceBadge>
               </div>
               <div>
-                <p className="text-3xl font-black tabular-nums text-neutral-900">{metric.value}</p>
+                <p className="text-2xl font-black tabular-nums text-neutral-900 md:text-3xl">{metric.value}</p>
                 <p className="mt-1 text-base font-black text-neutral-800">{metric.label}</p>
                 <p className="mt-1 text-sm font-semibold leading-6 text-neutral-500">{metric.detail}</p>
               </div>

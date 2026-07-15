@@ -542,16 +542,16 @@ export function SettingsClient({
   return (
     <div className="fw-app-surface">
       <header className="fw-page-header">
-        <div className="fw-page-inner flex flex-col gap-4 py-7 md:flex-row md:items-center md:justify-between">
+        <div className="fw-page-inner flex flex-col gap-4 py-5 md:py-7 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="fw-heading text-3xl md:text-4xl">Settings</h1>
-            <p className="fw-muted mt-1 text-base">Account, preferences, integrations, and data controls</p>
+            <h1 className="fw-heading text-2xl md:text-4xl">Settings</h1>
+            <p className="fw-muted mt-1 text-sm md:text-base">Account, preferences, integrations, and data controls</p>
           </div>
           <Badge className="px-4 py-2 text-sm">v{appVersion}</Badge>
         </div>
       </header>
 
-      <div className="fw-page-inner space-y-6">
+      <div className="fw-page-inner space-y-4 md:space-y-6">
         {isPreview && (
           <Card className="border-primary-100 bg-primary-50/80">
             <p className="text-sm font-black text-primary-900">
@@ -565,13 +565,13 @@ export function SettingsClient({
             <p className="text-sm font-black uppercase tracking-[0.16em] text-primary-200">
               Account control center
             </p>
-            <h2 className="mt-4 text-4xl font-black leading-tight text-white md:text-5xl">
+            <h2 className="mt-2 text-2xl font-black leading-tight text-white md:mt-4 md:text-5xl">
               {displayNameValue || "FuelWell preview account"}
             </h2>
-            <p className="mt-3 truncate text-base font-semibold text-white/66">
+            <p className="mt-2 truncate text-sm font-semibold text-white/66 md:mt-3 md:text-base">
               {email || "No email set"}
             </p>
-            <div className="mt-8 grid gap-3 sm:grid-cols-3">
+            <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3 md:mt-8 md:gap-3">
               <HeroStat label="Units" value={units} />
               <HeroStat label="Diets" value={`${dietLabels.length}`} />
               <HeroStat label="Garmin" value={formatIntegrationShort(integrationSummary.status)} />
@@ -585,7 +585,7 @@ export function SettingsClient({
                   <Watch className="h-6 w-6" />
                 </span>
                 <div>
-                  <h2 className="text-2xl font-black text-neutral-900">Garmin Connect</h2>
+                  <h2 className="text-xl font-black text-neutral-900 md:text-2xl">Garmin Connect</h2>
                   <p className="mt-1 text-sm font-semibold leading-6 text-neutral-500">
                     Top priority for active calories, steps, sleep, recovery, and planned workouts.
                   </p>
@@ -1104,8 +1104,8 @@ export function SettingsClient({
 
 function HeroStat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-[1.25rem] border border-white/12 bg-white/10 px-4 py-4 backdrop-blur">
-      <p className="truncate text-lg font-black capitalize text-white">{value}</p>
+    <div className="rounded-[1.25rem] border border-white/12 bg-white/10 px-3 py-3 backdrop-blur md:px-4 md:py-4">
+      <p className="truncate text-base font-black capitalize text-white md:text-lg">{value}</p>
       <p className="mt-1 text-xs font-black uppercase tracking-[0.12em] text-white/58">{label}</p>
     </div>
   );

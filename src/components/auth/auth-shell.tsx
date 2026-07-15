@@ -101,7 +101,7 @@ export function AuthShell({
                 <p className="text-xs font-black uppercase tracking-[0.16em] text-primary-600">
                   FuelWell
                 </p>
-                <h2 className="fw-heading mt-2 text-3xl">{title}</h2>
+                <h2 className="fw-heading mt-2 text-2xl">{title}</h2>
                 <p className="mt-2 text-sm font-semibold leading-6 text-[#78928a]">
                   {subtitle}
                 </p>

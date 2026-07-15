@@ -71,13 +71,13 @@ export default function LaunchPreflightPage() {
   return (
     <div className="fw-app-surface">
       <header className="fw-page-header">
-        <div className="fw-page-inner flex flex-col gap-4 py-7 md:flex-row md:items-center md:justify-between">
+        <div className="fw-page-inner flex flex-col gap-4 py-5 md:py-7 md:flex-row md:items-center md:justify-between">
           <div>
             <p className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.14em] text-primary-600">
               <Gauge className="h-4 w-4" />
               Launch preflight
             </p>
-            <h1 className="fw-heading mt-2 text-3xl md:text-4xl">
+            <h1 className="fw-heading mt-2 text-2xl md:text-4xl">
               Review readiness before Max opens the build
             </h1>
             <p className="fw-muted mt-1 max-w-3xl text-base">
@@ -93,11 +93,11 @@ export default function LaunchPreflightPage() {
         </div>
       </header>
 
-      <main className="fw-page-inner space-y-6 pb-28 md:pb-8">
+      <main className="fw-page-inner space-y-4 md:space-y-6 pb-28 md:pb-8">
         <section className="grid gap-3 lg:grid-cols-3">
           <Card className="rounded-[1.5rem] px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
             <Eye className="h-5 w-5 text-primary-600" />
-            <p className="mt-4 text-3xl font-black text-[#16302a]">
+            <p className="mt-3 text-2xl font-black text-[#16302a] md:text-3xl">
               {preflight.previewReady ? "Ready" : "Review"}
             </p>
             <p className="mt-1 text-sm font-black uppercase tracking-[0.12em] text-[#7c968f]">
@@ -106,7 +106,7 @@ export default function LaunchPreflightPage() {
           </Card>
           <Card className="rounded-[1.5rem] px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
             <ShieldCheck className="h-5 w-5 text-primary-600" />
-            <p className="mt-4 text-3xl font-black text-[#16302a]">
+            <p className="mt-3 text-2xl font-black text-[#16302a] md:text-3xl">
               {preflight.productionReady ? "Ready" : "Blocked"}
             </p>
             <p className="mt-1 text-sm font-black uppercase tracking-[0.12em] text-[#7c968f]">
@@ -115,7 +115,7 @@ export default function LaunchPreflightPage() {
           </Card>
           <Card className="rounded-[1.5rem] px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
             <Database className="h-5 w-5 text-primary-600" />
-            <p className="mt-4 text-3xl font-black text-[#16302a]">
+            <p className="mt-3 text-2xl font-black text-[#16302a] md:text-3xl">
               v{preflight.version}
             </p>
             <p className="mt-1 text-sm font-black uppercase tracking-[0.12em] text-[#7c968f]">

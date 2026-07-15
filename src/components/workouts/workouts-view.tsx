@@ -456,15 +456,15 @@ export function WorkoutsView({
   return (
     <div className="fw-app-surface">
       <header className="fw-page-header">
-        <div className="fw-page-inner py-7">
-          <h1 className="fw-heading text-3xl md:text-4xl">Workouts</h1>
-          <p className="fw-muted mt-1 text-base">
+        <div className="fw-page-inner py-5 md:py-7">
+          <h1 className="fw-heading text-2xl md:text-4xl">Workouts</h1>
+          <p className="fw-muted mt-1 text-sm md:text-base">
             Browse on your own, or let your coach pick today.
           </p>
         </div>
       </header>
 
-      <div className="fw-page-inner space-y-6">
+      <div className="fw-page-inner space-y-4 md:space-y-6">
 
       <div className="grid min-w-0 grid-cols-2 items-stretch gap-3 sm:gap-5">
         {/* Path 1: Coach recommends */}

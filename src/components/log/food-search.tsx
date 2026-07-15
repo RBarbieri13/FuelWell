@@ -77,7 +77,7 @@ export function FoodSearch({
   const tooShort = query.trim().length > 0 && query.trim().length < 2;
 
   return (
-    <Card className="space-y-4">
+    <Card className="space-y-3 md:space-y-4">
       <div className="relative">
         <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-primary-600" />
         <input
@@ -86,7 +86,7 @@ export function FoodSearch({
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Search 1,000+ foods by name"
           aria-label="Search 1,000+ foods by name"
-          className="w-full rounded-[1.35rem] border border-primary-100 bg-primary-50/55 py-4 pl-12 pr-4 text-base font-semibold text-[#16302a] placeholder:text-[#91a7a0] transition focus:border-transparent focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-500"
+          className="w-full rounded-[1.35rem] border border-primary-100 bg-primary-50/55 py-3 pl-12 pr-4 text-base font-semibold text-[#16302a] placeholder:text-[#91a7a0] transition focus:border-transparent focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-500"
           autoFocus
         />
       </div>
