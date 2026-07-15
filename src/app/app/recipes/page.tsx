@@ -1,6 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+
+const RECIPE_BATCH_SIZE = 12;
 import { BookOpen, ChefHat, Search, SlidersHorizontal, Sparkles, Timer } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { DietFilterChips } from "@/components/food/diet-filter-chips";
@@ -46,6 +48,14 @@ export default function RecipesPage() {
         : filtered.filter((recipe) => recipe.meal === mealFilter);
     return rankByPreference(byMeal, (r) => r.id, { likes, dislikes });
   }, [query, mealFilter, diets, allergies, likes, dislikes]);
+
+  // Batch the grid: rendering all 600+ tall cards at once makes the phone
+  // page hundreds of thousands of pixels long. Reset whenever filters change.
+  const [visibleCount, setVisibleCount] = useState(RECIPE_BATCH_SIZE);
+  useEffect(() => {
+    setVisibleCount(RECIPE_BATCH_SIZE);
+  }, [query, mealFilter, diets, allergies]);
+  const visibleResults = results.slice(0, visibleCount);
 
   const mealFilters: Array<"All" | Recipe["meal"]> = [
     "All",
@@ -223,7 +233,7 @@ export default function RecipesPage() {
             {results.length} {results.length === 1 ? "recipe" : "recipes"}
           </p>
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {results.map((recipe) => (
+            {visibleResults.map((recipe) => (
               <RecipeCard
                 key={recipe.id}
                 recipe={recipe}
@@ -231,6 +241,16 @@ export default function RecipesPage() {
               />
             ))}
           </div>
+          {results.length > visibleCount && (
+            <button
+              type="button"
+              onClick={() => setVisibleCount((count) => count + RECIPE_BATCH_SIZE)}
+              className="mx-auto block rounded-full border border-primary-200 bg-white px-6 py-3 text-sm font-black text-primary-700 shadow-[0_8px_22px_rgba(20,90,75,0.06)] transition hover:bg-primary-50"
+            >
+              Show {Math.min(RECIPE_BATCH_SIZE, results.length - visibleCount)} more of{" "}
+              {results.length - visibleCount} remaining
+            </button>
+          )}
         </>
       )}
 
