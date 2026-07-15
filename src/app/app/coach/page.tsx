@@ -322,19 +322,19 @@ export default function CoachPage() {
             {items.length === 0 && (
             <div className="space-y-4">
             <div className="grid gap-4 xl:grid-cols-[1fr_0.72fr]">
-              <section className="fw-dark-panel rounded-[2rem] border p-6 md:p-8">
+              <section className="fw-dark-panel rounded-[2rem] border p-5 md:p-8">
                 <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-xs font-black uppercase tracking-[0.16em] text-primary-100">
                   <MessageCircle className="h-4 w-4" />
                   Agentic coach
                 </div>
-                <h2 className="mt-4 max-w-2xl text-3xl font-black leading-tight text-white md:text-5xl">
+                <h2 className="mt-3 max-w-2xl text-2xl font-black leading-tight text-white md:mt-4 md:text-5xl">
                   Ask for the next useful move.
                 </h2>
                 <p className="mt-3 max-w-2xl text-sm font-semibold leading-6 text-white/70 md:text-base md:leading-7">
                   One chat that reads your day and acts on it — meals logged,
                   workouts planned, groceries updated, numbers explained.
                 </p>
-                <div className="mt-5 flex flex-wrap gap-2">
+                <div className="mt-4 flex flex-wrap gap-2 md:mt-5">
                   <span className="rounded-full border border-white/14 bg-white/10 px-3 py-1.5 text-xs font-black tabular-nums text-white">
                     {remaining(totals.calories, targets.calories).toLocaleString()}
                     <span className="ml-1 font-bold text-white/60">kcal left today</span>
@@ -359,7 +359,7 @@ export default function CoachPage() {
                     <p className="text-xs font-black uppercase tracking-[0.16em] text-primary-600">
                       Try asking
                     </p>
-                    <h2 className="mt-2 text-2xl font-black text-[#16302a]">Start with a useful question</h2>
+                    <h2 className="mt-2 text-xl font-black text-[#16302a] md:text-2xl">Start with a useful question</h2>
                   </div>
                   <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[1rem] bg-primary-100 text-primary-700">
                     <Sparkles className="h-5 w-5" />
