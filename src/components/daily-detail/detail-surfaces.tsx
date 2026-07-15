@@ -733,15 +733,17 @@ function TargetTile({
   const unitSuffix = unit === "g" || unit === "%" ? unit : ` ${unit}`;
 
   return (
-    <Card className="space-y-2 rounded-[1.2rem] px-4 py-3.5 shadow-[0_8px_22px_rgba(20,90,75,0.06)] md:space-y-2.5 md:px-5 md:py-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <span className={`flex h-[30px] w-[30px] items-center justify-center rounded-full ${styles.chip}`}>
+    <Card className="min-w-0 space-y-2 rounded-[1.2rem] px-4 py-3.5 shadow-[0_8px_22px_rgba(20,90,75,0.06)] md:space-y-2.5 md:px-5 md:py-4">
+      {/* The pill wraps under the label when data widens it (e.g. 3-digit
+          percentages); a fixed one-line row overflows 2-up tiles at 320px. */}
+      <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
+        <div className="flex min-w-0 items-center gap-3">
+          <span className={`flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full ${styles.chip}`}>
             <Icon className="h-[15px] w-[15px]" />
           </span>
-          <p className="text-sm font-black leading-tight text-[#54635d] md:text-base">{label}</p>
+          <p className="min-w-0 text-sm font-black leading-tight text-[#54635d] md:text-base">{label}</p>
         </div>
-        <p className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-black ${styles.pill}`}>
+        <p className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-xs font-black ${styles.pill}`}>
           {met ? (
             <>
               <Check className="h-3 w-3" />

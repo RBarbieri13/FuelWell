@@ -66,6 +66,15 @@ test.describe("FuelWell phone route containment", () => {
         }
         expect(new URL(routePage.url()).pathname).toBe(route);
         await expect(routePage.locator("main").first()).toBeVisible();
+        // Measure the settled page, not a mid-hydration frame: rich-content
+        // scrollers (e.g. demo tables) can transiently widen containers for a
+        // frame or two before their overflow wrappers apply.
+        await routePage.waitForLoadState("networkidle", { timeout: 20_000 }).catch(() => {});
+        await routePage
+          .waitForFunction(() => document.querySelectorAll(".animate-pulse").length === 0, undefined, {
+            timeout: 10_000,
+          })
+          .catch(() => {});
 
         const report = await overflowReport(routePage);
         expect(report.documentWidth, JSON.stringify(report)).toBeLessThanOrEqual(width);
