@@ -12,7 +12,6 @@ import {
   CheckCircle2,
   ChevronRight,
   Clock,
-  Dumbbell,
   Plus,
   ShoppingBasket,
   Sparkles,
@@ -181,7 +180,8 @@ export default function MealPlanPage() {
               {weekTotals.planned} of {days.length * 4} meals are planned.
             </h2>
             <p className="mt-4 max-w-2xl text-base font-semibold leading-7 text-white/74">
-              Your next step is to fill the open dinner and lunch slots, then send the week to groceries.
+              Next best move: fill Tuesday dinner with a lean protein recipe so
+              the week stays above 135g protein per day.
             </p>
             <div className="mt-6 grid grid-cols-3 gap-2 sm:gap-3">
               {[
@@ -423,34 +423,6 @@ export default function MealPlanPage() {
             </Card>
           )}
 
-          <div className="grid gap-3 md:grid-cols-2">
-            <Card className="bg-primary-50/80 border-primary-100">
-              <span className="flex h-12 w-12 items-center justify-center rounded-[1.15rem] bg-white text-primary-700">
-                <Dumbbell className="w-5 h-5" />
-              </span>
-              <h2 className="mt-4 text-xl font-black text-[#16302a]">Next best move</h2>
-              <p className="mt-2 text-base font-semibold leading-7 text-[#516b63]">
-                Fill Tuesday dinner with a lean protein recipe so the week stays
-                above 135g protein per day.
-              </p>
-            </Card>
-            <Card>
-              <span className="flex h-12 w-12 items-center justify-center rounded-[1.15rem] bg-accent-100 text-accent-700">
-                <ShoppingBasket className="w-5 h-5" />
-              </span>
-              <h2 className="mt-4 text-xl font-black text-[#16302a]">Ready for groceries</h2>
-              <p className="mt-2 text-base font-semibold leading-7 text-[#516b63]">
-                Your planned meals need 18 unique ingredients. Review grouped
-                items before shopping.
-              </p>
-              <Link href="/app/grocery-list" className="mt-4 inline-flex">
-                <Button type="button" size="sm">
-                  Build grocery list
-                  <ArrowRight className="w-4 h-4" />
-                </Button>
-              </Link>
-            </Card>
-          </div>
         </div>
       </div>
     </div>
