@@ -56,17 +56,20 @@ func generatedInfoPlistUsageStringsStayAppReviewReady() throws {
         encoding: .utf8
     )
 
+    // Usage strings moved from INFOPLIST_KEY_* build settings (which silently
+    // drop custom keys) into the explicit Info.plist properties block; the
+    // App-Review-ready copy must stay byte-identical either way.
     #expect(project.contains(
-        "INFOPLIST_KEY_NSCameraUsageDescription: FuelWell uses the camera to log meal photos for nutrition tracking."
+        "NSCameraUsageDescription: FuelWell uses the camera to log meal photos for nutrition tracking."
     ))
     let healthShareUsageDescription =
-        "INFOPLIST_KEY_NSHealthShareUsageDescription: FuelWell reads workouts, sleep, steps, energy, " +
+        "NSHealthShareUsageDescription: FuelWell reads workouts, sleep, steps, energy, " +
         "and body measurements to personalize coaching."
     #expect(project.contains(healthShareUsageDescription))
     #expect(project.contains(
-        "INFOPLIST_KEY_NSHealthUpdateUsageDescription: FuelWell does not write Health data in this phase."
+        "NSHealthUpdateUsageDescription: FuelWell does not write Health data in this phase."
     ))
-    #expect(!project.contains("INFOPLIST_KEY_NSPhotoLibraryUsageDescription"))
+    #expect(!project.contains("NSPhotoLibraryUsageDescription"))
 }
 
 @Test
