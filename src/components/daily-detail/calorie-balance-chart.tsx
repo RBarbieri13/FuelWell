@@ -277,7 +277,7 @@ export function CalorieBalanceChart({
           <BarChart3 className="h-4 w-4" />
           Energy ledger
         </p>
-        <h2 className="mt-2 font-heading text-2xl font-black text-[#16302a] md:text-3xl">
+        <h2 className="mt-1.5 font-heading text-xl font-black text-[#16302a] md:text-3xl">
           Intake and output by day
         </h2>
         <div className="mt-4 rounded-[1.35rem] border border-dashed border-primary-200 bg-primary-50/60 p-5">
@@ -305,7 +305,7 @@ export function CalorieBalanceChart({
               <BarChart3 className="h-4 w-4" />
               Energy ledger
             </p>
-            <h2 className="mt-2 font-heading text-2xl font-black text-[#16302a] md:text-3xl">
+            <h2 className="mt-1.5 font-heading text-xl font-black text-[#16302a] md:text-3xl">
               Intake and output by day
             </h2>
             <p className="mt-1 max-w-3xl text-sm font-semibold leading-6 text-[#6f8981] md:text-base">

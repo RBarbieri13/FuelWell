@@ -338,7 +338,7 @@ export function NutritionDetailSurface({
             action="Add food"
           />
 
-          <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
             <TargetTile label="Calories" current={totals.calories} target={targets.calories} unit="kcal" tone="primary" icon={Flame} />
             <TargetTile label="Protein" current={totals.protein} target={targets.protein} unit="g" tone="sky" icon={Beef} />
             <TargetTile label="Carbs" current={totals.carbs} target={targets.carbs} unit="g" tone="lemon" icon={Salad} />
@@ -474,7 +474,7 @@ export function DailyReviewSurface({
               action="Ask coach"
             />
 
-            <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
               <TargetTile label="Food in" current={totals.calories} target={targets.calories} unit="kcal" tone="primary" icon={Flame} />
               <TargetTile label="Active burn" current={fitnessTotals.calories} target={fitnessTargets.activeCalories} unit="kcal" tone="accent" icon={Dumbbell} />
               <SimpleSummaryCard label="Net calories" value={netCalories.toLocaleString()} detail={`${remaining(netCalories, targets.calories).toLocaleString()} kcal room after activity`} tone="sky" icon={Target} />
@@ -597,8 +597,8 @@ function DailyReviewSection({
 }) {
   return (
     <section className="rounded-[2rem] border border-primary-200/90 bg-primary-50/35 p-3 shadow-[0_18px_48px_rgba(20,90,75,0.08)] md:p-4">
-      <div className="rounded-[1.55rem] border border-white/85 bg-white/72 px-4 py-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] md:px-5">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+      <div className="rounded-[1.55rem] border border-white/85 bg-white/72 px-4 py-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] md:px-5">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between lg:gap-4">
           <div className="flex gap-3">
             <span className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-100 text-primary-700">
               <Icon className="h-5 w-5" />
@@ -607,7 +607,7 @@ function DailyReviewSection({
               <p className="text-xs font-black uppercase tracking-[0.16em] text-primary-600">
                 {eyebrow}
               </p>
-              <h2 className="mt-1 font-heading text-2xl font-black text-[#16302a] md:text-3xl">
+              <h2 className="mt-0.5 font-heading text-xl font-black text-[#16302a] md:text-3xl">
                 {title}
               </h2>
               <p className="mt-1 max-w-3xl text-sm font-semibold leading-6 text-[#6f8981] md:text-base">
@@ -628,7 +628,7 @@ function DailyReviewSection({
       </div>
 
       {expanded ? (
-        <div className="mt-4">{children}</div>
+        <div className="mt-3 md:mt-4">{children}</div>
       ) : (
         <div className="mt-4 rounded-[1.2rem] border border-primary-100 bg-white/78 px-4 py-3 text-sm font-bold text-primary-900/75 shadow-[inset_0_1px_0_rgba(255,255,255,0.75)]">
           {collapsedText}
@@ -654,14 +654,14 @@ function DetailHero({
   action: string;
 }) {
   return (
-    <Card variant="elevated" className="rounded-[1.35rem] bg-white px-6 py-5 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
-      <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+    <Card variant="elevated" className="rounded-[1.35rem] bg-white px-5 py-4 shadow-[0_12px_30px_rgba(20,90,75,0.07)] md:px-6 md:py-5">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <p className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.14em] text-primary-600">
             <Icon className="h-4 w-4" />
             {label}
           </p>
-          <h2 className="mt-2 text-2xl font-black tracking-normal text-[#16302a] md:text-3xl">
+          <h2 className="mt-1.5 text-xl font-black tracking-normal text-[#16302a] md:text-3xl">
             {title}
           </h2>
           <p className="mt-1 max-w-3xl text-sm font-semibold leading-6 text-[#54635d] md:text-base">
@@ -685,7 +685,7 @@ function FitnessSummaryCards({
   totals: { calories: number; minutes: number };
 }) {
   return (
-    <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
       <TargetTile label="Active calories" current={totals.calories} target={fitnessTargets.activeCalories} unit="kcal" tone="primary" icon={Flame} />
       <TargetTile label="Training minutes" current={totals.minutes} target={fitnessTargets.minutes} unit="min" tone="sky" icon={Timer} />
       <TargetTile label="Steps" current={estimatedSteps} target={fitnessTargets.steps} unit="steps" tone="lemon" icon={Footprints} />
@@ -712,21 +712,21 @@ function TargetTile({
   const styles = toneStyles[tone];
 
   return (
-    <Card className="space-y-2.5 rounded-[1.2rem] px-5 py-4 shadow-[0_8px_22px_rgba(20,90,75,0.06)]">
+    <Card className="space-y-2 rounded-[1.2rem] px-4 py-3.5 shadow-[0_8px_22px_rgba(20,90,75,0.06)] md:space-y-2.5 md:px-5 md:py-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <span className={`flex h-[30px] w-[30px] items-center justify-center rounded-full ${styles.chip}`}>
             <Icon className="h-[15px] w-[15px]" />
           </span>
-          <p className="text-base font-black leading-tight text-[#54635d] md:text-lg">{label}</p>
+          <p className="text-sm font-black leading-tight text-[#54635d] md:text-base">{label}</p>
         </div>
         <p className={`rounded-full px-2.5 py-1 text-xs font-black ${styles.pill}`}>
           {percentOf(current, target)}%
         </p>
       </div>
-      <p className="text-[1.75rem] font-black leading-none tabular-nums text-[#16302a]">
+      <p className="text-2xl font-black leading-none tabular-nums text-[#16302a] md:text-[1.75rem]">
         {current.toLocaleString()}
-        <span className="ml-1 text-[15px] font-bold text-[#a2b5b0]">{unit}</span>
+        <span className="ml-1 text-[13px] font-bold text-[#a2b5b0]">{unit}</span>
       </p>
       <p className="text-xs font-semibold text-[#7c968f]">
         {remaining(current, target).toLocaleString()}
@@ -759,14 +759,14 @@ function SimpleSummaryCard({
   const styles = toneStyles[tone];
 
   return (
-    <Card className="space-y-2.5 rounded-[1.2rem] px-5 py-4 shadow-[0_8px_22px_rgba(20,90,75,0.06)]">
+    <Card className="space-y-2 rounded-[1.2rem] px-4 py-3.5 shadow-[0_8px_22px_rgba(20,90,75,0.06)] md:space-y-2.5 md:px-5 md:py-4">
       <div className="flex items-center gap-3">
         <span className={`flex h-[30px] w-[30px] items-center justify-center rounded-full ${styles.chip}`}>
           <Icon className="h-[15px] w-[15px]" />
         </span>
-        <p className="text-base font-black leading-tight text-[#54635d] md:text-lg">{label}</p>
+        <p className="text-sm font-black leading-tight text-[#54635d] md:text-base">{label}</p>
       </div>
-      <p className="text-[1.75rem] font-black leading-none tabular-nums text-[#16302a]">
+      <p className="text-2xl font-black leading-none tabular-nums text-[#16302a] md:text-[1.75rem]">
         {value}
       </p>
       <p className="text-xs font-semibold leading-5 text-[#7c968f]">{detail}</p>
@@ -790,12 +790,12 @@ function DetailLinkCard({
   return (
     <Link
       href={href}
-      className="group rounded-[1.25rem] border border-primary-100 bg-white px-5 py-5 shadow-[0_8px_22px_rgba(20,90,75,0.06)] transition hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-[0_14px_32px_rgba(20,90,75,0.09)]"
+      className="group rounded-[1.25rem] border border-primary-100 bg-white px-4 py-4 shadow-[0_8px_22px_rgba(20,90,75,0.06)] transition md:px-5 md:py-5 hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-[0_14px_32px_rgba(20,90,75,0.09)]"
     >
       <span className="flex h-10 w-10 items-center justify-center rounded-[0.9rem] bg-primary-100 text-primary-700">
         <Icon className="h-5 w-5" />
       </span>
-      <h2 className="mt-4 font-heading text-lg font-black text-[#16302a]">{title}</h2>
+      <h2 className="mt-2.5 font-heading text-lg font-black text-[#16302a]">{title}</h2>
       <p className="mt-1 text-sm font-semibold leading-6 text-[#6e8981]">{detail}</p>
       <span className="mt-4 inline-flex items-center gap-2 text-sm font-black text-primary-700">
         {action}
