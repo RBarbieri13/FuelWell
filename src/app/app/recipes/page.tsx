@@ -151,13 +151,13 @@ export default function RecipesPage() {
 
         <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_18rem]">
           <div className="space-y-2">
-            <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-[#78928a]">
+            <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-muted-foreground">
               <SlidersHorizontal className="h-3.5 w-3.5" />
               Diet filters
             </div>
             <DietFilterChips active={diets} onToggle={toggleDiet} />
             {allergies.length > 0 && (
-              <p className="text-xs font-semibold text-[#78928a]">
+              <p className="text-xs font-semibold text-muted-foreground">
                 Hiding recipes with: {allergies.join(", ")}.
               </p>
             )}
@@ -213,13 +213,13 @@ export default function RecipesPage() {
           <p className="mt-3 text-sm font-black text-[#16302a]">
             No recipes match these filters yet.
           </p>
-          <p className="mt-1 text-sm font-semibold text-[#78928a]">
+          <p className="mt-1 text-sm font-semibold text-muted-foreground">
             Try a different search term or turn off a diet filter to see more.
           </p>
         </Card>
       ) : (
         <>
-          <p className="text-xs font-black uppercase tracking-[0.16em] text-[#91a7a0]">
+          <p className="text-xs font-black uppercase tracking-[0.16em] text-muted-foreground">
             {results.length} {results.length === 1 ? "recipe" : "recipes"}
           </p>
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">

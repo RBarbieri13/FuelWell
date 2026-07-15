@@ -641,7 +641,7 @@ export default function OnboardingPage() {
               <Logo href="/app/dashboard" size="lg" />
             </div>
             <h1 className="fw-heading text-3xl md:hidden">Setup FuelWell</h1>
-            <p className="mt-1 text-sm font-semibold text-[#78928a]">
+            <p className="mt-1 text-sm font-semibold text-muted-foreground">
               Daily decision setup
             </p>
           </div>
@@ -726,7 +726,7 @@ export default function OnboardingPage() {
 
               <div className="mt-4 h-3 overflow-hidden rounded-full bg-[#edf4f1] md:mt-5">
                 <div
-                  className="h-full rounded-full bg-gradient-to-r from-primary-500 to-[#159aa2] transition-all duration-500 ease-out"
+                  className="h-full rounded-full bg-gradient-to-r from-primary-500 to-teal-500 transition-all duration-500 ease-out"
                   style={{ width: `${progress}%` }}
                 />
               </div>
@@ -743,7 +743,7 @@ export default function OnboardingPage() {
                         ? "bg-primary-600 text-white shadow-[0_12px_26px_rgba(21,145,108,0.22)]"
                         : index < step
                           ? "bg-primary-50 text-primary-700"
-                          : "bg-[#f3f8f6] text-[#8da39c]"
+                          : "bg-[#f3f8f6] text-muted-foreground"
                     )}
                   >
                     {meta.short}
@@ -937,7 +937,7 @@ export default function OnboardingPage() {
                 >
                   <div className="space-y-5">
                     <div>
-                      <p className="mb-3 text-sm font-black uppercase tracking-[0.14em] text-[#91a7a0]">
+                      <p className="mb-3 text-sm font-black uppercase tracking-[0.14em] text-muted-foreground">
                         Goal aggressiveness
                       </p>
                       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
@@ -954,7 +954,7 @@ export default function OnboardingPage() {
                       </div>
                     </div>
                     <div>
-                      <p className="mb-3 text-sm font-black uppercase tracking-[0.14em] text-[#91a7a0]">
+                      <p className="mb-3 text-sm font-black uppercase tracking-[0.14em] text-muted-foreground">
                         Diet flexibility
                       </p>
                       <div className="grid gap-3 md:grid-cols-3">
@@ -1039,7 +1039,7 @@ export default function OnboardingPage() {
                   </div>
                   <div className="grid gap-5 xl:grid-cols-2">
                     <div>
-                      <p className="mb-3 text-sm font-black uppercase tracking-[0.14em] text-[#91a7a0]">
+                      <p className="mb-3 text-sm font-black uppercase tracking-[0.14em] text-muted-foreground">
                         Grocery budget habits
                       </p>
                       <div className="grid gap-3">
@@ -1056,7 +1056,7 @@ export default function OnboardingPage() {
                       </div>
                     </div>
                     <div>
-                      <p className="mb-3 text-sm font-black uppercase tracking-[0.14em] text-[#91a7a0]">
+                      <p className="mb-3 text-sm font-black uppercase tracking-[0.14em] text-muted-foreground">
                         Cooking habits
                       </p>
                       <div className="grid gap-3">
@@ -1142,7 +1142,7 @@ export default function OnboardingPage() {
                 >
                   <div className="space-y-5">
                     <div>
-                      <p className="mb-3 text-sm font-black uppercase tracking-[0.14em] text-[#91a7a0]">
+                      <p className="mb-3 text-sm font-black uppercase tracking-[0.14em] text-muted-foreground">
                         Workout location
                       </p>
                       <div className="grid gap-3 md:grid-cols-2">
@@ -1159,7 +1159,7 @@ export default function OnboardingPage() {
                       </div>
                     </div>
                     <div>
-                      <p className="mb-3 text-sm font-black uppercase tracking-[0.14em] text-[#91a7a0]">
+                      <p className="mb-3 text-sm font-black uppercase tracking-[0.14em] text-muted-foreground">
                         Check-in preference
                       </p>
                       <div className="grid gap-3 md:grid-cols-3">
@@ -1176,7 +1176,7 @@ export default function OnboardingPage() {
                       </div>
                     </div>
                     <div>
-                      <p className="mb-3 text-sm font-black uppercase tracking-[0.14em] text-[#91a7a0]">
+                      <p className="mb-3 text-sm font-black uppercase tracking-[0.14em] text-muted-foreground">
                         Coaching style
                       </p>
                       <div className="grid gap-3 md:grid-cols-3">
@@ -1210,7 +1210,7 @@ export default function OnboardingPage() {
                           <p className="text-5xl font-black tabular-nums text-[#16302a]">
                             {previewMacros.calories}
                           </p>
-                          <p className="pb-2 text-base font-black text-[#78928a]">kcal/day</p>
+                          <p className="pb-2 text-base font-black text-muted-foreground">kcal/day</p>
                         </div>
                       </div>
                       <div className="grid gap-3 md:grid-cols-3">
@@ -1229,7 +1229,7 @@ export default function OnboardingPage() {
                         <SummaryPill label="Diet" value={formatDiet(data.dietaryPreference)} />
                       </div>
                       {data.allergies.length > 0 && (
-                        <div className="fw-soft-row p-4 text-sm font-bold text-[#516b63]">
+                        <div className="fw-soft-row p-4 text-sm font-bold text-muted-foreground">
                           Allergies flagged: {data.allergies.join(", ")}
                         </div>
                       )}
@@ -1261,7 +1261,7 @@ export default function OnboardingPage() {
               {proceedHint() && (
                 <p
                   aria-live="polite"
-                  className="order-last w-full text-center text-sm font-semibold text-[#78928a] md:order-none md:w-auto md:text-right"
+                  className="order-last w-full text-center text-sm font-semibold text-muted-foreground md:order-none md:w-auto md:text-right"
                 >
                   {proceedHint()}
                 </p>
@@ -1337,12 +1337,12 @@ function BirthdaySelector({
   }
 
   const selectClassName =
-    "h-14 w-full rounded-[1rem] border border-[#dce8e3] bg-white px-3 text-base font-bold text-[#16302a] outline-none transition focus:border-primary-400 focus:ring-2 focus:ring-primary-100";
+    "h-14 w-full rounded-[1rem] border border-border bg-white px-3 text-base font-bold text-[#16302a] outline-none transition focus:border-primary-400 focus:ring-2 focus:ring-primary-100";
 
   return (
     <div className="grid grid-cols-[1.4fr_0.8fr_1fr] gap-3">
       <label className="block">
-        <span className="mb-1.5 block text-sm font-black text-[#516b63]">Month</span>
+        <span className="mb-1.5 block text-sm font-black text-muted-foreground">Month</span>
         <select
           className={selectClassName}
           value={monthIndex === "" ? "" : monthIndex}
@@ -1363,7 +1363,7 @@ function BirthdaySelector({
         </select>
       </label>
       <label className="block">
-        <span className="mb-1.5 block text-sm font-black text-[#516b63]">Day</span>
+        <span className="mb-1.5 block text-sm font-black text-muted-foreground">Day</span>
         <select
           className={selectClassName}
           value={day === "" ? "" : day}
@@ -1384,7 +1384,7 @@ function BirthdaySelector({
         </select>
       </label>
       <label className="block">
-        <span className="mb-1.5 block text-sm font-black text-[#516b63]">Year</span>
+        <span className="mb-1.5 block text-sm font-black text-muted-foreground">Year</span>
         <select
           className={selectClassName}
           value={year === "" ? "" : year}
@@ -1479,13 +1479,13 @@ function OptionTile({
         "group flex min-h-20 w-full items-center gap-4 rounded-[1.35rem] border p-4 text-left transition-all duration-150",
         selected
           ? selectedClassName || "border-primary-300 bg-primary-50 text-primary-800 shadow-[0_14px_28px_rgba(30,174,132,0.14)]"
-          : "border-[#d8e7e1] bg-[#f7faf8] text-[#516b63] hover:border-primary-200 hover:bg-white"
+          : "border-border bg-[#f7faf8] text-muted-foreground hover:border-primary-200 hover:bg-white"
       )}
     >
       <span
         className={cn(
           "flex h-11 w-11 shrink-0 items-center justify-center rounded-[1rem] transition",
-          selected ? "bg-white text-primary-700" : "bg-white text-[#9aaea7] group-hover:text-primary-600"
+          selected ? "bg-white text-primary-700" : "bg-white text-muted-foreground group-hover:text-primary-600"
         )}
       >
         <Icon className="h-5 w-5" />
@@ -1493,7 +1493,7 @@ function OptionTile({
       <span className="min-w-0 flex-1">
         <span className="block text-base font-black text-[#16302a]">{title}</span>
         {description && (
-          <span className="mt-0.5 block text-sm font-semibold text-[#78928a]">
+          <span className="mt-0.5 block text-sm font-semibold text-muted-foreground">
             {description}
           </span>
         )}
@@ -1581,7 +1581,7 @@ function InsightRow({ icon: Icon, title, body }: { icon: LucideIcon; title: stri
       </div>
       <div>
         <p className="font-black text-[#16302a]">{title}</p>
-        <p className="mt-1 text-sm font-semibold leading-6 text-[#78928a]">{body}</p>
+        <p className="mt-1 text-sm font-semibold leading-6 text-muted-foreground">{body}</p>
       </div>
     </div>
   );
@@ -1594,7 +1594,7 @@ function MiniMetric({ icon: Icon, label, value }: { icon: LucideIcon; label: str
         <Icon className="h-5 w-5" />
       </div>
       <div className="min-w-0">
-        <p className="text-xs font-black uppercase tracking-[0.14em] text-[#91a7a0]">{label}</p>
+        <p className="text-xs font-black uppercase tracking-[0.14em] text-muted-foreground">{label}</p>
         <p className="text-base font-black leading-tight text-[#16302a]">{value}</p>
       </div>
     </div>
@@ -1618,7 +1618,7 @@ function MacroTile({ color, label, value }: { color: "protein" | "carbs" | "fat"
 function SummaryPill({ label, value }: { label: string; value: string }) {
   return (
     <div className="fw-soft-row p-4">
-      <p className="text-xs font-black uppercase tracking-[0.14em] text-[#91a7a0]">{label}</p>
+      <p className="text-xs font-black uppercase tracking-[0.14em] text-muted-foreground">{label}</p>
       <p className="mt-1 text-base font-black capitalize text-[#16302a]">{value}</p>
     </div>
   );

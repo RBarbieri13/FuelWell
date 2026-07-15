@@ -17,10 +17,10 @@ export function GoalImpactCard({ impact }: { impact: MealGoalImpact }) {
           <p className="mt-1 text-sm font-black leading-5 text-[#16302a]">
             {impact.headline}
           </p>
-          <p className="mt-1 text-sm font-semibold leading-5 text-[#516b63]">
+          <p className="mt-1 text-sm font-semibold leading-5 text-muted-foreground">
             {impact.nextAction}
           </p>
-          <p className="mt-2 text-xs font-semibold leading-5 text-[#78928a]">
+          <p className="mt-2 text-xs font-semibold leading-5 text-muted-foreground">
             {impact.sourceNote}
           </p>
         </div>

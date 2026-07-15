@@ -48,7 +48,7 @@ export function LoggedMeals({
             <UtensilsCrossed className="h-5 w-5" />
           </div>
           <p className="mt-3 font-black text-[#16302a]">Nothing logged yet.</p>
-          <p className="mt-1 text-sm font-semibold text-[#78928a]">
+          <p className="mt-1 text-sm font-semibold text-muted-foreground">
             Add a food from search or your own meal. It will appear here, and
             totals update as you go.
           </p>
@@ -74,7 +74,7 @@ export function LoggedMeals({
                 type="button"
                 onClick={() => onRemoveMeal(meal.id)}
                 aria-label={`Remove ${meal.name}`}
-                className="flex min-h-11 shrink-0 items-center gap-1 rounded-[0.9rem] p-3 text-xs font-bold text-[#91a7a0] transition hover:bg-red-50 hover:text-red-600 md:min-h-0"
+                className="flex min-h-11 shrink-0 items-center gap-1 rounded-[0.9rem] p-3 text-xs font-bold text-muted-foreground transition hover:bg-red-50 hover:text-red-600 md:min-h-0"
               >
                 <Trash2 className="h-3.5 w-3.5" />
                 Remove
@@ -150,7 +150,7 @@ function LoggedItem({
       <div className="flex items-center justify-between gap-3 rounded-[1.15rem] border border-primary-100/70 bg-[#f7faf8] p-3">
         <div className="min-w-0">
           <p className="truncate font-black text-[#16302a]">{item.name}</p>
-          <p className="text-xs font-bold text-[#78928a]">
+          <p className="text-xs font-bold text-muted-foreground">
             {item.calories} kcal &middot; {item.protein}p &middot; {item.carbs}c
             &middot; {item.fat}f
           </p>
@@ -159,7 +159,7 @@ function LoggedItem({
           type="button"
           onClick={startEdit}
           aria-label={`Edit ${item.name}`}
-          className="-m-1.5 rounded-[0.9rem] p-3.5 text-[#91a7a0] transition hover:bg-white hover:text-primary-600 md:-m-0 md:p-3"
+          className="-m-1.5 rounded-[0.9rem] p-3.5 text-muted-foreground transition hover:bg-white hover:text-primary-600 md:-m-0 md:p-3"
         >
           <Pencil className="h-4 w-4" />
         </button>
@@ -181,7 +181,7 @@ function LoggedItem({
       <div className="grid grid-cols-4 gap-2">
         {MACRO_FIELDS.map((field) => (
           <div key={field.key}>
-            <label className="mb-1 block text-[10px] font-black uppercase tracking-[0.12em] text-[#78928a]">
+            <label className="mb-1 block text-[10px] font-black uppercase tracking-[0.12em] text-muted-foreground">
               {field.label}
             </label>
             <input

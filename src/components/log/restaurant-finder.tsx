@@ -304,7 +304,7 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
             </span>
             <h2 className="text-lg font-black text-[#16302a]">Restaurants nearby</h2>
           </div>
-          <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 text-[#78928a]">
+          <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 text-muted-foreground">
             Browse nearby restaurants and fast food, search menu items, and preview how each order fits today&apos;s macro plan.
           </p>
         </div>
@@ -470,7 +470,7 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
             <div className="absolute bottom-3 left-3 right-3 z-20 rounded-[1.25rem] bg-white/92 p-3 shadow-lg shadow-neutral-500/10 backdrop-blur">
               <div className="flex items-center justify-between gap-3">
                 <div>
-                  <p className="text-xs font-black uppercase tracking-[0.12em] text-[#91a7a0]">
+                  <p className="text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">
                     {locationStatus === "ready" ? "Local map" : "Preview map"}
                   </p>
                   <p className="text-sm font-black text-[#16302a]">
@@ -479,7 +479,7 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
                       : `${stats.restaurantCount} chains · ${stats.itemCount} menu items`}
                   </p>
                   {mapCenter && (
-                    <p className="mt-0.5 truncate text-xs font-semibold text-[#78928a]">
+                    <p className="mt-0.5 truncate text-xs font-semibold text-muted-foreground">
                       Centered on {mapCenter.label} · zoom {zoom}
                     </p>
                   )}
@@ -688,7 +688,7 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
             {results.length === 0 ? (
               <div className="rounded-[1.35rem] border border-dashed border-primary-200 bg-primary-50/60 p-5">
                 <p className="font-black text-[#16302a]">No menu matches yet.</p>
-                <p className="mt-1 text-sm font-semibold text-[#78928a]">
+                <p className="mt-1 text-sm font-semibold text-muted-foreground">
                   Try a restaurant name, item name, or a quick filter like chicken.
                 </p>
               </div>

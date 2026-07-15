@@ -58,7 +58,7 @@ const TONE_CLASSES: Record<SegmentTone, string> = {
   fat: "bg-accent-400",
   bmr: "bg-primary-700",
   steps: "bg-primary-400",
-  training: "bg-[#159aa2]",
+  training: "bg-teal-500",
   mobility: "bg-[#7dd3c7]",
 };
 
@@ -68,7 +68,7 @@ const TONE_DOTS: Record<SegmentTone, string> = {
   fat: "bg-accent-400",
   bmr: "bg-primary-700",
   steps: "bg-primary-400",
-  training: "bg-[#159aa2]",
+  training: "bg-teal-500",
   mobility: "bg-[#7dd3c7]",
 };
 
@@ -414,7 +414,7 @@ export function CalorieBalanceChart({
 
             <div className="mt-4 overflow-x-auto pb-2">
               {range >= 7 && (
-                <p className="mb-3 text-xs font-black uppercase tracking-[0.12em] text-[#91a7a0] md:hidden">
+                <p className="mb-3 text-xs font-black uppercase tracking-[0.12em] text-muted-foreground md:hidden">
                   Swipe sideways to compare days
                 </p>
               )}
@@ -445,7 +445,7 @@ export function CalorieBalanceChart({
               />
             )}
 
-            <div className="mt-4 flex flex-wrap gap-3 border-t border-primary-100 pt-4 text-xs font-bold text-[#78928a]">
+            <div className="mt-4 flex flex-wrap gap-3 border-t border-primary-100 pt-4 text-xs font-bold text-muted-foreground">
               {intakeExpanded && <LegendItem tone="protein" label="Protein" />}
               {intakeExpanded && <LegendItem tone="carbs" label="Carbs" />}
               {intakeExpanded && <LegendItem tone="fat" label="Fat" />}
@@ -654,7 +654,7 @@ function StackedBar({
           />
         ))}
       </span>
-      <span className="text-[10px] font-black uppercase tracking-[0.08em] text-[#9db0aa]">
+      <span className="text-[10px] font-black uppercase tracking-[0.08em] text-muted-foreground">
         {label}
       </span>
       <span className="rounded-full bg-primary-50 px-1.5 py-0.5 text-[8px] font-black uppercase tracking-[0.08em] text-primary-700 opacity-80">
@@ -714,7 +714,7 @@ function AggregateChart({
   return (
     <div className="rounded-[1.5rem] border border-primary-100 bg-[#f8fbf9] p-5">
       <h3 className="font-heading text-xl font-black text-[#16302a]">{title}</h3>
-      <p className="mt-1 text-sm font-semibold text-[#78928a]">{detail}</p>
+      <p className="mt-1 text-sm font-semibold text-muted-foreground">{detail}</p>
       <div className="mt-5 grid gap-4">
         {segments.map((segment) => (
           <div key={`${title}-${segment.label}`} className="grid gap-2">
@@ -757,7 +757,7 @@ function FilterButton({
         "min-h-11 rounded-full px-3.5 py-2 text-xs font-black transition md:min-h-0",
         active
           ? "bg-primary-100 text-primary-700"
-          : "bg-[#f4f8f6] text-[#9db0aa] line-through"
+          : "bg-[#f4f8f6] text-muted-foreground line-through"
       )}
     >
       {children}
@@ -811,7 +811,7 @@ function BarDetailModal({
             <p className="text-4xl font-black tabular-nums text-[#16302a]">
               {total.toLocaleString()}
             </p>
-            <p className="pb-1 text-sm font-black uppercase tracking-[0.08em] text-[#9db0aa]">
+            <p className="pb-1 text-sm font-black uppercase tracking-[0.08em] text-muted-foreground">
               calories in this {isIntake ? "intake" : "output"} bar
             </p>
           </div>
@@ -838,7 +838,7 @@ function BarDetailModal({
                   <p className="font-heading text-base font-black text-[#16302a]">
                     {segment.label}
                   </p>
-                  <p className="text-sm font-semibold text-[#7c968f]">{segment.detail}</p>
+                  <p className="text-sm font-semibold text-muted-foreground">{segment.detail}</p>
                 </div>
               </div>
               <p className="text-lg font-black tabular-nums text-[#16302a]">
@@ -887,12 +887,12 @@ function TrendCard({
         <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-primary-700">
           <Icon className="h-4.5 w-4.5" />
         </span>
-        <p className="text-xs font-black uppercase tracking-[0.12em] text-[#7c968f]">
+        <p className="text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">
           {label}
         </p>
       </div>
       <p className="mt-3 text-2xl font-black tabular-nums text-[#16302a]">{value}</p>
-      <p className="mt-1 text-xs font-semibold text-[#7c968f]">{detail}</p>
+      <p className="mt-1 text-xs font-semibold text-muted-foreground">{detail}</p>
     </div>
   );
 }

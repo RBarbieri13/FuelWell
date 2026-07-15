@@ -155,7 +155,7 @@ export default function CoachAttachmentsReviewPage() {
                 </span>
                 <h2 className="mt-4 text-xl font-black text-[#16302a]">{item.title}</h2>
                 <p className="mt-2 text-sm font-semibold leading-6 text-[#6e8981]">{item.detail}</p>
-                <p className="mt-4 rounded-[1rem] bg-[#f4f8f6] px-3 py-3 text-sm font-black leading-6 text-[#516b63]">
+                <p className="mt-4 rounded-[1rem] bg-[#f4f8f6] px-3 py-3 text-sm font-black leading-6 text-muted-foreground">
                   {item.output}
                 </p>
               </Card>
@@ -172,7 +172,7 @@ export default function CoachAttachmentsReviewPage() {
                   <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-sm font-black text-primary-700">
                     {index + 1}
                   </span>
-                  <p className="text-sm font-black leading-6 text-[#516b63]">{step}</p>
+                  <p className="text-sm font-black leading-6 text-muted-foreground">{step}</p>
                 </div>
               ))}
             </div>
@@ -192,7 +192,7 @@ export default function CoachAttachmentsReviewPage() {
                 <Link
                   key={prompt}
                   href={`/app/coach?prompt=${encodeURIComponent(prompt)}`}
-                  className="flex items-center justify-between gap-3 rounded-[1.1rem] bg-[#f4f8f6] px-4 py-3 text-sm font-black text-[#516b63] transition hover:bg-primary-50 hover:text-primary-700"
+                  className="flex items-center justify-between gap-3 rounded-[1.1rem] bg-[#f4f8f6] px-4 py-3 text-sm font-black text-muted-foreground transition hover:bg-primary-50 hover:text-primary-700"
                 >
                   {prompt}
                   <ArrowRight className="h-4 w-4" />

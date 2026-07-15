@@ -9,7 +9,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantStyles = {
   primary:
-    "bg-gradient-to-r from-primary-500 to-[#159aa2] text-white hover:from-primary-600 hover:to-[#138893] active:from-primary-700 active:to-primary-800 shadow-[0_16px_34px_rgba(21,145,108,0.24)] focus-visible:ring-primary-600",
+    "bg-gradient-to-r from-primary-500 to-teal-500 text-white hover:from-primary-600 hover:to-teal-600 active:from-primary-700 active:to-primary-800 shadow-[0_16px_34px_rgba(21,145,108,0.24)] focus-visible:ring-primary-600",
   secondary:
     "bg-white/92 text-primary-800 border border-primary-100 hover:border-primary-200 hover:bg-primary-50 active:bg-primary-100 shadow-sm shadow-primary-900/5 focus-visible:ring-primary-600",
   ghost:

@@ -394,7 +394,7 @@ export function NutritionDetailSurface({
                     <MealIcon mealType="dinner" muted />
                     <div>
                       <h2 className="text-xl font-black text-[#54635d]">Dinner</h2>
-                      <p className="text-sm font-semibold text-[#9db0aa]">
+                      <p className="text-sm font-semibold text-muted-foreground">
                         Not logged yet · {remaining(totals.calories, targets.calories).toLocaleString()} kcal of room left
                       </p>
                     </div>
@@ -726,9 +726,9 @@ function TargetTile({
       </div>
       <p className="text-[1.75rem] font-black leading-none tabular-nums text-[#16302a]">
         {current.toLocaleString()}
-        <span className="ml-1 text-[15px] font-bold text-[#a2b5b0]">{unit}</span>
+        <span className="ml-1 text-[15px] font-bold text-muted-foreground">{unit}</span>
       </p>
-      <p className="text-xs font-semibold text-[#7c968f]">
+      <p className="text-xs font-semibold text-muted-foreground">
         {remaining(current, target).toLocaleString()}
         {unit === "g" ? "g" : ` ${unit}`} left of {target.toLocaleString()}
         {unit === "g" ? "g" : ""}
@@ -769,7 +769,7 @@ function SimpleSummaryCard({
       <p className="text-[1.75rem] font-black leading-none tabular-nums text-[#16302a]">
         {value}
       </p>
-      <p className="text-xs font-semibold leading-5 text-[#7c968f]">{detail}</p>
+      <p className="text-xs font-semibold leading-5 text-muted-foreground">{detail}</p>
     </Card>
   );
 }
@@ -824,11 +824,11 @@ function ActivityLogCard({
           <div>
             <div className="flex flex-wrap items-center gap-2">
               <h2 className="text-xl font-black text-[#16302a]">{activity.title}</h2>
-              <span className="rounded-full bg-[#f4f8f6] px-2.5 py-1 text-xs font-black text-[#7c968f]">
+              <span className="rounded-full bg-[#f4f8f6] px-2.5 py-1 text-xs font-black text-muted-foreground">
                 {activity.source}
               </span>
             </div>
-            <p className="text-sm font-semibold text-[#7c968f]">
+            <p className="text-sm font-semibold text-muted-foreground">
               {activity.subtitle} · {activity.time}
             </p>
           </div>
@@ -891,7 +891,7 @@ function MealLogCard({
             <h2 className="text-xl font-black text-[#16302a]">
               {formatMealType(meal.mealType)}
             </h2>
-            <p className="text-sm font-semibold text-[#7c968f]">
+            <p className="text-sm font-semibold text-muted-foreground">
               {meal.name} · {meal.items.length} item{meal.items.length === 1 ? "" : "s"}
             </p>
           </div>
@@ -948,7 +948,7 @@ function MealLogCard({
           <div key={item.id} className="grid gap-4 border-t border-primary-100/70 py-4 md:grid-cols-[1fr_auto] md:items-center">
             <div>
               <p className="text-base font-black text-[#16302a]">{item.name}</p>
-              <p className="text-sm font-semibold text-[#9db0aa]">
+              <p className="text-sm font-semibold text-muted-foreground">
                 {item.servings} serving{item.servings === 1 ? "" : "s"}
               </p>
             </div>
@@ -968,7 +968,7 @@ function MealLogCard({
 function MealIcon({ mealType, muted = false }: { mealType: MealType; muted?: boolean }) {
   const config =
     muted
-      ? { styles: "bg-[#f4f8f6] text-[#a2b5b0]", Icon: Moon }
+      ? { styles: "bg-[#f4f8f6] text-muted-foreground", Icon: Moon }
       : mealType === "breakfast"
         ? { styles: "bg-lemon-50 text-lemon-600", Icon: Sun }
         : mealType === "lunch"
@@ -1032,7 +1032,7 @@ function CollapsibleLogPanel({
           </span>
           <div>
             <h2 className="font-heading text-xl font-black text-[#16302a]">{title}</h2>
-            <p className="text-sm font-semibold text-[#7c968f]">{detail}</p>
+            <p className="text-sm font-semibold text-muted-foreground">{detail}</p>
           </div>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -1073,7 +1073,7 @@ function EmptyLedgerCard({
   return (
     <Card className="rounded-[1.5rem] border-dashed border-primary-200 bg-white/75 px-6 py-8 text-center">
       <h2 className="text-xl font-black text-[#16302a]">{title}</h2>
-      <p className="mx-auto mt-2 max-w-md text-sm font-semibold leading-6 text-[#78928a]">
+      <p className="mx-auto mt-2 max-w-md text-sm font-semibold leading-6 text-muted-foreground">
         {detail}
       </p>
       <Link href={href} className="mt-5 inline-flex">

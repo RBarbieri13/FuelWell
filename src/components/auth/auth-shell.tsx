@@ -102,14 +102,14 @@ export function AuthShell({
                   FuelWell
                 </p>
                 <h2 className="fw-heading mt-2 text-3xl">{title}</h2>
-                <p className="mt-2 text-sm font-semibold leading-6 text-[#78928a]">
+                <p className="mt-2 text-sm font-semibold leading-6 text-muted-foreground">
                   {subtitle}
                 </p>
               </div>
               {children}
             </div>
 
-            {footer && <div className="mt-6 text-center text-sm font-semibold text-[#78928a]">{footer}</div>}
+            {footer && <div className="mt-6 text-center text-sm font-semibold text-muted-foreground">{footer}</div>}
           </div>
         </section>
       </div>

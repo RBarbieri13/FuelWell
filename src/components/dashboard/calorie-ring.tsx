@@ -95,7 +95,7 @@ export function CalorieRing({ consumed, target, emphasis = "normal" }: CalorieRi
           {percent}% of target
         </span>
         <div className={`${compact ? "mt-1.5 bg-transparent px-0 py-0 shadow-none" : hero ? "mt-4 px-5 py-2.5" : "mt-3 px-4 py-2"} rounded-full bg-primary-50 shadow-sm shadow-primary-900/5`}>
-          <span className={`${compact ? "text-xs text-[#7c968f]" : hero ? "text-base" : "text-sm"} font-black text-primary-700 tabular-nums`}>
+          <span className={`${compact ? "text-xs text-muted-foreground" : hero ? "text-base" : "text-sm"} font-black text-primary-700 tabular-nums`}>
             {consumed.toLocaleString()} / {target.toLocaleString()} kcal
           </span>
         </div>

@@ -262,14 +262,14 @@ export default function GroceryListPage() {
                 <p className="font-heading text-[42px] font-black leading-none tabular-nums text-primary-600">
                   {checkedCount}/{items.length}
                 </p>
-                <p className="mt-1 text-sm font-bold text-[#7c968f]">checked off</p>
+                <p className="mt-1 text-sm font-bold text-muted-foreground">checked off</p>
               </div>
             </div>
           </Card>
         </div>
 
         <aside className="min-w-0 space-y-5">
-          <Card className="min-w-0 rounded-[22px] border-[#e6efeb] px-4 py-5 shadow-[0_8px_22px_rgba(20,90,75,0.06)] sm:px-6 sm:py-6">
+          <Card className="min-w-0 rounded-[22px] border-border px-4 py-5 shadow-[0_8px_22px_rgba(20,90,75,0.06)] sm:px-6 sm:py-6">
             <h2 className="flex items-center gap-3 font-heading text-lg font-black tracking-tight text-[#16302a]">
               <span className="fw-icon-chip h-10 w-10 rounded-full">
                 <ListPlus className="w-5 h-5" />
@@ -278,7 +278,7 @@ export default function GroceryListPage() {
             </h2>
             <form onSubmit={addItem} className="mt-5 space-y-4">
               <div>
-                <label htmlFor="item-name" className="text-sm font-black text-[#7c968f]">
+                <label htmlFor="item-name" className="text-sm font-black text-muted-foreground">
                   Item
                 </label>
                 <input
@@ -286,11 +286,11 @@ export default function GroceryListPage() {
                   value={newItemName}
                   onChange={(event) => setNewItemName(event.target.value)}
                   placeholder="e.g. sparkling water"
-                  className="mt-2 w-full rounded-xl border border-[#e0ebe6] bg-[#f4f8f6] px-4 py-3 text-base font-semibold text-[#16302a] outline-none placeholder:text-[#7c7c7c] focus:border-transparent focus:ring-2 focus:ring-primary-500"
+                  className="mt-2 w-full rounded-xl border border-border bg-[#f4f8f6] px-4 py-3 text-base font-semibold text-[#16302a] outline-none placeholder:text-[#7c7c7c] focus:border-transparent focus:ring-2 focus:ring-primary-500"
                 />
               </div>
               <div>
-                <label htmlFor="item-amount" className="text-sm font-black text-[#7c968f]">
+                <label htmlFor="item-amount" className="text-sm font-black text-muted-foreground">
                   Amount
                 </label>
                 <input
@@ -298,7 +298,7 @@ export default function GroceryListPage() {
                   value={newItemAmount}
                   onChange={(event) => setNewItemAmount(event.target.value)}
                   placeholder="1 pack"
-                  className="mt-2 w-full rounded-xl border border-[#e0ebe6] bg-[#f4f8f6] px-4 py-3 text-base font-semibold text-[#16302a] outline-none placeholder:text-[#7c7c7c] focus:border-transparent focus:ring-2 focus:ring-primary-500"
+                  className="mt-2 w-full rounded-xl border border-border bg-[#f4f8f6] px-4 py-3 text-base font-semibold text-[#16302a] outline-none placeholder:text-[#7c7c7c] focus:border-transparent focus:ring-2 focus:ring-primary-500"
                 />
               </div>
               <Button type="submit" size="lg" className="w-full">
@@ -311,7 +311,7 @@ export default function GroceryListPage() {
 
         <section className="order-3 grid min-w-0 gap-5 lg:col-span-2 lg:grid-cols-3">
           <Card className="fw-dark-panel rounded-[22px] px-6 py-6 shadow-[0_18px_38px_rgba(16,48,40,0.3)]">
-            <span className="inline-flex h-10 w-10 items-center justify-center rounded-[13px] bg-gradient-to-br from-primary-500 to-[#1592a0] text-white">
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-[13px] bg-gradient-to-br from-primary-500 to-teal-500 text-white">
               <Sparkles className="h-5 w-5" />
             </span>
             <h2 className="mt-5 font-heading text-lg font-black tracking-tight text-white">
@@ -323,7 +323,7 @@ export default function GroceryListPage() {
             </p>
           </Card>
 
-          <Card className="rounded-[22px] border-[#e6efeb] px-6 py-6 shadow-[0_8px_22px_rgba(20,90,75,0.06)]">
+          <Card className="rounded-[22px] border-border px-6 py-6 shadow-[0_8px_22px_rgba(20,90,75,0.06)]">
             <h2 className="flex items-center gap-3 font-heading text-lg font-black tracking-tight text-[#16302a]">
               <span className="fw-icon-chip h-10 w-10 rounded-full">
                 <History className="w-5 h-5" />
@@ -332,7 +332,7 @@ export default function GroceryListPage() {
             </h2>
             <div className="mt-4 space-y-3">
               {history.length === 0 ? (
-                <p className="text-sm font-semibold leading-6 text-[#7c968f]">
+                <p className="text-sm font-semibold leading-6 text-muted-foreground">
                   Cleared lists will appear here so you can review or restore what you bought before.
                 </p>
               ) : (
@@ -346,7 +346,7 @@ export default function GroceryListPage() {
                     <span className="block text-sm font-black text-[#16302a]">
                       {entry.itemCount} items · {entry.checkedCount} shopped
                     </span>
-                    <span className="mt-1 block text-xs font-semibold text-[#7c968f]">
+                    <span className="mt-1 block text-xs font-semibold text-muted-foreground">
                       {new Date(entry.savedAt).toLocaleDateString([], {
                         month: "short",
                         day: "numeric",
@@ -360,7 +360,7 @@ export default function GroceryListPage() {
             </div>
           </Card>
 
-          <Card className="rounded-[22px] border-[#e6efeb] px-6 py-6 shadow-[0_8px_22px_rgba(20,90,75,0.06)]">
+          <Card className="rounded-[22px] border-border px-6 py-6 shadow-[0_8px_22px_rgba(20,90,75,0.06)]">
             <h2 className="font-heading text-lg font-black tracking-tight text-[#16302a]">
               Store mode
             </h2>
@@ -389,7 +389,7 @@ export default function GroceryListPage() {
                       "inline-flex h-8 w-8 items-center justify-center rounded-full border-2",
                       enabled
                         ? "border-primary-500 bg-primary-500 text-white"
-                        : "border-[#d6e2dd] text-transparent"
+                        : "border-border text-transparent"
                     )}
                   >
                     {enabled && <Check className="h-4 w-4" />}
@@ -408,7 +408,7 @@ export default function GroceryListPage() {
                 <h2 className="font-heading text-lg font-black text-[#16302a]">
                   Recipe filters
                 </h2>
-                <p className="text-sm font-semibold text-[#78928a]">
+                <p className="text-sm font-semibold text-muted-foreground">
                   Highlight a recipe source to show only the groceries needed for that meal.
                 </p>
               </div>
@@ -483,7 +483,7 @@ export default function GroceryListPage() {
             </div>
           </Card>
 
-          <Card padding="sm" className="min-w-0 overflow-hidden rounded-[22px] border-[#dcebe5] p-0 shadow-[0_10px_26px_rgba(20,90,75,0.06)] md:p-4">
+          <Card padding="sm" className="min-w-0 overflow-hidden rounded-[22px] border-border p-0 shadow-[0_10px_26px_rgba(20,90,75,0.06)] md:p-4">
             <div className="space-y-3 p-2 md:hidden" data-testid="mobile-grocery-list">
               {filteredItems.map((item) => {
                 const details = inferGroceryDetails(item.name, item.amount, item.category);
@@ -518,7 +518,7 @@ export default function GroceryListPage() {
                         data-testid="mobile-grocery-name"
                         className={cn(
                           "min-h-12 min-w-0 w-full resize-none overflow-hidden whitespace-pre-wrap break-words rounded-xl border border-transparent bg-transparent px-2 py-2 font-heading text-base font-black leading-6 text-[#16302a] outline-none transition focus:border-primary-200 focus:bg-[#f8fbf9] focus:ring-2 focus:ring-primary-100",
-                          item.checked && "text-[#9db0aa] line-through"
+                          item.checked && "text-muted-foreground line-through"
                         )}
                         aria-label={`Edit item name for ${item.name}`}
                       />
@@ -533,7 +533,7 @@ export default function GroceryListPage() {
                     </div>
 
                     <div className="mt-2 min-w-0">
-                      <span className="text-[11px] font-black uppercase tracking-[0.1em] text-[#78928a]">Quantity</span>
+                      <span className="text-[11px] font-black uppercase tracking-[0.1em] text-muted-foreground">Quantity</span>
                       <div className="mt-1 grid min-w-0 grid-cols-[2.75rem_minmax(0,1fr)_2.75rem] items-center gap-1.5">
                         <button
                           type="button"
@@ -561,7 +561,7 @@ export default function GroceryListPage() {
                     </div>
 
                     <div className="mt-3 grid min-w-0 gap-3 min-[360px]:grid-cols-2">
-                      <label className="min-w-0 text-[11px] font-black uppercase tracking-[0.1em] text-[#78928a]">
+                      <label className="min-w-0 text-[11px] font-black uppercase tracking-[0.1em] text-muted-foreground">
                         Serving
                         <input
                           value={servingSize}
@@ -570,7 +570,7 @@ export default function GroceryListPage() {
                           aria-label={`Edit serving size for ${item.name}`}
                         />
                       </label>
-                      <label className="min-w-0 text-[11px] font-black uppercase tracking-[0.1em] text-[#78928a]">
+                      <label className="min-w-0 text-[11px] font-black uppercase tracking-[0.1em] text-muted-foreground">
                         Category
                         <select
                           value={item.category}
@@ -586,7 +586,7 @@ export default function GroceryListPage() {
                     </div>
 
                     <div className="mt-3 min-w-0 border-t border-primary-100/70 pt-3 text-xs font-bold text-[#60776f]">
-                      <p className="break-words"><span className="text-[#78928a]">Recipe:</span> {item.source}</p>
+                      <p className="break-words"><span className="text-muted-foreground">Recipe:</span> {item.source}</p>
                       <div className="mt-2 flex min-w-0 flex-wrap gap-1.5">
                         <span className="max-w-full break-words rounded-full bg-[#f4f8f6] px-2.5 py-1 text-[11px] font-black text-[#54635d]">{classification}</span>
                         <span className="max-w-full break-words rounded-full bg-primary-50 px-2.5 py-1 text-[11px] font-black text-primary-800">{vitaminBenefit}</span>
@@ -599,7 +599,7 @@ export default function GroceryListPage() {
             <div className="hidden overflow-x-auto md:block">
               <table className="w-full min-w-[980px] border-separate border-spacing-0 text-left">
                 <thead>
-                  <tr className="bg-[#f4f8f6] text-[11px] font-black uppercase tracking-[0.12em] text-[#78928a]">
+                  <tr className="bg-[#f4f8f6] text-[11px] font-black uppercase tracking-[0.12em] text-muted-foreground">
                     <th className="w-12 px-3 py-3">Done</th>
                     <th className="px-3 py-3">Item</th>
                     <th className="px-3 py-3">Quantity</th>
@@ -647,7 +647,7 @@ export default function GroceryListPage() {
                             onChange={(event) => updateItem(item.id, { name: event.target.value })}
                             className={cn(
                               "w-full rounded-xl border border-transparent bg-transparent px-2 py-2 font-heading text-base font-black text-[#16302a] outline-none transition focus:border-primary-200 focus:bg-[#f8fbf9] focus:ring-2 focus:ring-primary-100",
-                              item.checked && "text-[#9db0aa] line-through"
+                              item.checked && "text-muted-foreground line-through"
                             )}
                             aria-label={`Edit item name for ${item.name}`}
                           />

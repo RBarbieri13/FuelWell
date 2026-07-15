@@ -49,7 +49,7 @@ export function PortionPicker({
           </span>
           <div>
             <p className="font-black text-[#16302a]">{food.name}</p>
-            <p className="text-sm font-semibold text-[#78928a]">
+            <p className="text-sm font-semibold text-muted-foreground">
           {food.categoryLabel} &middot; per 100{unit}: {food.per100.kcal} kcal,{" "}
           {food.per100.protein}g protein
             </p>
@@ -58,7 +58,7 @@ export function PortionPicker({
       </div>
 
       <div>
-        <p className="mb-2 text-xs font-black uppercase tracking-[0.16em] text-[#91a7a0]">
+        <p className="mb-2 text-xs font-black uppercase tracking-[0.16em] text-muted-foreground">
           One-tap portions
         </p>
         <div className="grid gap-2">
@@ -81,7 +81,7 @@ export function PortionPicker({
                   <p className="font-black text-[#16302a]">
                     {serving.label}
                   </p>
-                  <p className="text-xs font-bold text-[#78928a]">
+                  <p className="text-xs font-bold text-muted-foreground">
                     {totals.protein}g protein &middot; {totals.carbs}g carbs
                     &middot; {totals.fat}g fat
                   </p>
@@ -96,7 +96,7 @@ export function PortionPicker({
       </div>
 
       <div>
-        <p className="mb-2 text-xs font-black uppercase tracking-[0.16em] text-[#91a7a0]">
+        <p className="mb-2 text-xs font-black uppercase tracking-[0.16em] text-muted-foreground">
           Custom amount ({unit})
         </p>
         <div className="flex items-center gap-2">

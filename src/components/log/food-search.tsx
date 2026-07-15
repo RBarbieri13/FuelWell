@@ -153,7 +153,7 @@ export function FoodSearch({
                 className="min-h-11 text-left md:min-h-0"
               >
                 <p className="font-black text-[#16302a]">{food.name}</p>
-                <p className="mt-0.5 text-xs font-semibold text-[#78928a]">
+                <p className="mt-0.5 text-xs font-semibold text-muted-foreground">
                   {food.categoryLabel} &middot; {food.per100.kcal} kcal /100
                   {food.servingUnit} &middot; {food.per100.protein}g protein
                 </p>
@@ -187,7 +187,7 @@ function SearchState({ title, body }: { title: string; body: string }) {
         <SlidersHorizontal className="h-5 w-5" />
       </div>
       <p className="mt-3 text-center font-black text-[#16302a]">{title}</p>
-      <p className="mt-1 text-center text-sm font-semibold text-[#78928a]">{body}</p>
+      <p className="mt-1 text-center text-sm font-semibold text-muted-foreground">{body}</p>
     </div>
   );
 }

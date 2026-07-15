@@ -339,7 +339,7 @@ function LogContent() {
                   <CircleDot className="h-5 w-5" />
                 </div>
                 <p className="font-black text-[#16302a]">No food selected.</p>
-                <p className="mt-1 text-sm font-semibold text-[#78928a]">
+                <p className="mt-1 text-sm font-semibold text-muted-foreground">
                   Choose a result from Search. Its one-tap portions appear here.
                 </p>
               </div>
@@ -384,7 +384,7 @@ function RecentMeals({
     <Card className="space-y-3">
       <div>
         <h2 className="text-lg font-black text-[#16302a]">Recent meals</h2>
-        <p className="mt-1 text-sm font-semibold text-[#78928a]">
+        <p className="mt-1 text-sm font-semibold text-muted-foreground">
           One tap repeats a meal and updates today&apos;s goal math.
         </p>
       </div>
@@ -407,7 +407,7 @@ function RecentMeals({
               className="min-h-16 rounded-[1.2rem] border border-primary-100/80 bg-[#f7faf8] px-4 py-3 text-left transition hover:-translate-y-0.5 hover:border-primary-200 hover:bg-white hover:shadow-md hover:shadow-primary-900/10"
             >
               <p className="truncate text-sm font-black text-[#16302a]">{meal.name}</p>
-              <p className="mt-0.5 text-xs font-bold text-[#78928a]">
+              <p className="mt-0.5 text-xs font-bold text-muted-foreground">
                 {mealTotals.calories} kcal · {mealTotals.protein}g protein
               </p>
             </button>
@@ -463,14 +463,14 @@ function SessionIngredientDrawer({
             <h2 className="mt-1 font-heading text-2xl font-black text-[#16302a]">
               Ingredient drawer
             </h2>
-            <p className="mt-1 text-sm font-semibold text-[#78928a]">
+            <p className="mt-1 text-sm font-semibold text-muted-foreground">
               Same-session ingredients and macro totals.
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full bg-white p-3 text-[#78928a] shadow-sm transition hover:bg-primary-50 hover:text-primary-700"
+            className="rounded-full bg-white p-3 text-muted-foreground shadow-sm transition hover:bg-primary-50 hover:text-primary-700"
             aria-label="Close ingredient drawer"
           >
             <X className="h-5 w-5" />
@@ -486,7 +486,7 @@ function SessionIngredientDrawer({
           ].map(([label, value]) => (
             <div key={label} className="rounded-[1rem] bg-[#f4f8f6] px-3 py-3 text-center">
               <p className="text-lg font-black text-[#16302a]">{value}</p>
-              <p className="text-[10px] font-black uppercase tracking-[0.12em] text-[#91a7a0]">
+              <p className="text-[10px] font-black uppercase tracking-[0.12em] text-muted-foreground">
                 {label}
               </p>
             </div>
@@ -503,7 +503,7 @@ function SessionIngredientDrawer({
               {ingredients.map((ingredient) => (
                 <div key={ingredient.id} className="px-4 py-3">
                   <p className="text-sm font-black text-[#16302a]">{ingredient.name}</p>
-                  <p className="mt-1 text-xs font-semibold text-[#78928a]">
+                  <p className="mt-1 text-xs font-semibold text-muted-foreground">
                     {ingredient.totals.calories} kcal · {ingredient.totals.protein}g protein · {ingredient.totals.carbs}g carbs · {ingredient.totals.fat}g fat
                   </p>
                 </div>

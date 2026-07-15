@@ -213,7 +213,7 @@ function ManualActivityPlanner({
   const calories = estimateWorkoutCalories({ met: option.met, minutes: resolvedMinutes });
 
   return (
-    <Card className="space-y-4 rounded-[24px] border-[#e6efeb] px-5 py-5 shadow-[0_12px_30px_rgba(20,90,75,0.07)] sm:px-6 sm:py-6">
+    <Card className="space-y-4 rounded-[24px] border-border px-5 py-5 shadow-[0_12px_30px_rgba(20,90,75,0.07)] sm:px-6 sm:py-6">
       <div className="flex items-start gap-4">
         <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[13px] bg-sky-100 text-sky-700">
           <Activity className="h-5 w-5" />
@@ -230,13 +230,13 @@ function ManualActivityPlanner({
 
       <div className="grid gap-3">
         <label>
-          <span className="text-xs font-black uppercase tracking-[0.14em] text-[#9db0aa]">
+          <span className="text-xs font-black uppercase tracking-[0.14em] text-muted-foreground">
             Activity type
           </span>
           <select
             value={activityId}
             onChange={(event) => setActivityId(event.target.value)}
-            className="mt-2 w-full rounded-2xl border border-[#dce8e3] bg-[#f4f8f6] px-4 py-3 text-sm font-bold text-[#16302a] outline-none focus:border-primary-300 focus:ring-2 focus:ring-primary-200"
+            className="mt-2 w-full rounded-2xl border border-border bg-[#f4f8f6] px-4 py-3 text-sm font-bold text-[#16302a] outline-none focus:border-primary-300 focus:ring-2 focus:ring-primary-200"
           >
             {MANUAL_ACTIVITY_OPTIONS.map((activity) => (
               <option key={activity.id} value={activity.id}>
@@ -248,7 +248,7 @@ function ManualActivityPlanner({
 
         <div className="grid gap-3 sm:grid-cols-2">
           <label>
-            <span className="text-xs font-black uppercase tracking-[0.14em] text-[#9db0aa]">
+            <span className="text-xs font-black uppercase tracking-[0.14em] text-muted-foreground">
               Minutes
             </span>
             <input
@@ -256,11 +256,11 @@ function ManualActivityPlanner({
               min={1}
               value={minutes}
               onChange={(event) => setMinutes(Number(event.target.value))}
-              className="mt-2 w-full rounded-2xl border border-[#dce8e3] bg-[#f4f8f6] px-4 py-3 text-sm font-bold text-[#16302a] outline-none focus:border-primary-300 focus:ring-2 focus:ring-primary-200"
+              className="mt-2 w-full rounded-2xl border border-border bg-[#f4f8f6] px-4 py-3 text-sm font-bold text-[#16302a] outline-none focus:border-primary-300 focus:ring-2 focus:ring-primary-200"
             />
           </label>
           <label>
-            <span className="text-xs font-black uppercase tracking-[0.14em] text-[#9db0aa]">
+            <span className="text-xs font-black uppercase tracking-[0.14em] text-muted-foreground">
               Distance
             </span>
             <input
@@ -270,7 +270,7 @@ function ManualActivityPlanner({
               value={distance}
               onChange={(event) => setDistance(event.target.value)}
               placeholder="Optional mi"
-              className="mt-2 w-full rounded-2xl border border-[#dce8e3] bg-[#f4f8f6] px-4 py-3 text-sm font-bold text-[#16302a] outline-none placeholder:text-[#9db0aa] focus:border-primary-300 focus:ring-2 focus:ring-primary-200"
+              className="mt-2 w-full rounded-2xl border border-border bg-[#f4f8f6] px-4 py-3 text-sm font-bold text-[#16302a] outline-none placeholder:text-[#9db0aa] focus:border-primary-300 focus:ring-2 focus:ring-primary-200"
             />
           </label>
         </div>
@@ -472,7 +472,7 @@ export function WorkoutsView({
           <div className="pointer-events-none absolute -right-8 -top-10 h-40 w-40 rounded-full bg-primary-500/25 blur-2xl" />
           <div className="relative space-y-5">
           <div className="flex items-start gap-3">
-            <div className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[13px] bg-gradient-to-br from-primary-500 to-[#1592a0] text-white shadow-[0_8px_18px_rgba(30,174,132,0.4)]">
+            <div className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[13px] bg-gradient-to-br from-primary-500 to-teal-500 text-white shadow-[0_8px_18px_rgba(30,174,132,0.4)]">
               <Sparkles className="h-5 w-5" />
             </div>
             <div>
@@ -525,7 +525,7 @@ export function WorkoutsView({
               </div>
               <Link
                 href={workoutHref(recommended.id)}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-[1.15rem] bg-gradient-to-r from-primary-500 to-[#159aa2] px-4 py-3 text-sm font-bold text-white shadow-[0_16px_34px_rgba(21,145,108,0.24)] transition-colors hover:from-primary-600 hover:to-[#138893] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-[1.15rem] bg-gradient-to-r from-primary-500 to-teal-500 px-4 py-3 text-sm font-bold text-white shadow-[0_16px_34px_rgba(21,145,108,0.24)] transition-colors hover:from-primary-600 hover:to-teal-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
               >
                 Preview this workout
                 <ArrowRight className="h-4 w-4" />
@@ -543,7 +543,7 @@ export function WorkoutsView({
         </Card>
 
         {/* Path 2: Pick my own */}
-        <Card className="flex min-w-0 flex-col gap-3 rounded-[20px] border-[#e6efeb] px-3 py-4 shadow-[0_12px_30px_rgba(20,90,75,0.07)] sm:gap-4 sm:rounded-[24px] sm:px-6 sm:py-6">
+        <Card className="flex min-w-0 flex-col gap-3 rounded-[20px] border-border px-3 py-4 shadow-[0_12px_30px_rgba(20,90,75,0.07)] sm:gap-4 sm:rounded-[24px] sm:px-6 sm:py-6">
           <div className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:gap-4">
             <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[12px] bg-primary-100 text-primary-600 sm:h-10 sm:w-10 sm:rounded-[13px]">
               <ListFilter className="h-5 w-5" />
@@ -576,7 +576,7 @@ export function WorkoutsView({
           </Button>
         </Card>
 
-        <Card className="flex min-w-0 flex-col gap-3 rounded-[20px] border-[#e6efeb] px-3 py-4 shadow-[0_12px_30px_rgba(20,90,75,0.07)] sm:gap-4 sm:rounded-[24px] sm:px-6 sm:py-6">
+        <Card className="flex min-w-0 flex-col gap-3 rounded-[20px] border-border px-3 py-4 shadow-[0_12px_30px_rgba(20,90,75,0.07)] sm:gap-4 sm:rounded-[24px] sm:px-6 sm:py-6">
           <div className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:gap-4">
             <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[12px] bg-sky-100 text-sky-700 sm:h-10 sm:w-10 sm:rounded-[13px]">
               <Activity className="h-5 w-5" />
@@ -616,7 +616,7 @@ export function WorkoutsView({
       </div>
 
       {loggedWorkouts.length > 0 && (
-        <Card className="space-y-3 rounded-[22px] border-[#e6efeb] px-6 py-5 shadow-[0_8px_22px_rgba(20,90,75,0.06)]" data-testid="logged-workouts">
+        <Card className="space-y-3 rounded-[22px] border-border px-6 py-5 shadow-[0_8px_22px_rgba(20,90,75,0.06)]" data-testid="logged-workouts">
           <div className="flex items-center justify-between gap-3">
             <h2 className="font-heading text-lg font-black text-[#16302a]">Recent activity</h2>
             <span className="rounded-full bg-primary-50 px-3 py-1 text-xs font-black text-primary-700">
@@ -705,7 +705,7 @@ export function WorkoutsView({
       {showWorkoutLibrary && (
       <section ref={libraryRef} id="workout-library" className="min-w-0 scroll-mt-4 space-y-4">
         <div className="mt-1 flex items-center justify-between">
-          <h2 className="font-heading text-sm font-black uppercase tracking-[0.16em] text-[#9db0aa]">
+          <h2 className="font-heading text-sm font-black uppercase tracking-[0.16em] text-muted-foreground">
             Workout library
           </h2>
           <button
@@ -717,7 +717,7 @@ export function WorkoutsView({
           </button>
         </div>
 
-        <Card className="space-y-5 rounded-[24px] border-[#e6efeb] px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)] md:px-7 md:py-7">
+        <Card className="space-y-5 rounded-[24px] border-border px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)] md:px-7 md:py-7">
           <div className="space-y-5">
             <div className="flex flex-wrap items-end justify-between gap-3">
               <h2
@@ -759,10 +759,10 @@ export function WorkoutsView({
               )}
             </div>
 
-            <div className="space-y-3 rounded-[1.35rem] border border-[#e6efeb] bg-white px-4 py-4">
+            <div className="space-y-3 rounded-[1.35rem] border border-border bg-white px-4 py-4">
               <div className="grid gap-3 md:hidden">
                 <label>
-                  <span className="text-xs font-black uppercase tracking-[0.12em] text-[#7c968f]">Body part</span>
+                  <span className="text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">Body part</span>
                   <select
                     aria-label="Body part"
                     value={bodyPart}
@@ -770,14 +770,14 @@ export function WorkoutsView({
                       setCurrentPage(1);
                       setBodyPart(event.target.value as BodyPartFilter);
                     }}
-                    className="mt-1.5 w-full rounded-2xl border border-[#dce8e3] bg-[#f4f8f6] px-3 py-2.5 text-sm font-bold text-[#16302a]"
+                    className="mt-1.5 w-full rounded-2xl border border-border bg-[#f4f8f6] px-3 py-2.5 text-sm font-bold text-[#16302a]"
                   >
                     {bodyPartFilters.map((filterOption) => <option key={filterOption.id} value={filterOption.id}>{filterOption.label}</option>)}
                   </select>
                 </label>
                 <div className="grid grid-cols-2 gap-3">
                   <label className="min-w-0">
-                    <span className="text-xs font-black uppercase tracking-[0.12em] text-[#7c968f]">Length</span>
+                    <span className="text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">Length</span>
                     <select
                       aria-label="Workout length"
                       value={lengthFilter}
@@ -785,13 +785,13 @@ export function WorkoutsView({
                         setCurrentPage(1);
                         setLengthFilter(event.target.value as LengthFilter);
                       }}
-                      className="mt-1.5 w-full rounded-2xl border border-[#dce8e3] bg-[#f4f8f6] px-3 py-2.5 text-sm font-bold text-[#16302a]"
+                      className="mt-1.5 w-full rounded-2xl border border-border bg-[#f4f8f6] px-3 py-2.5 text-sm font-bold text-[#16302a]"
                     >
                       {lengthFilters.map((filterOption) => <option key={filterOption.id} value={filterOption.id}>{filterOption.label}</option>)}
                     </select>
                   </label>
                   <label className="min-w-0">
-                    <span className="text-xs font-black uppercase tracking-[0.12em] text-[#7c968f]">Intensity</span>
+                    <span className="text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">Intensity</span>
                     <select
                       aria-label="Intensity"
                       value={intensityFilter}
@@ -799,7 +799,7 @@ export function WorkoutsView({
                         setCurrentPage(1);
                         setIntensityFilter(event.target.value as IntensityFilter);
                       }}
-                      className="mt-1.5 w-full rounded-2xl border border-[#dce8e3] bg-[#f4f8f6] px-3 py-2.5 text-sm font-bold text-[#16302a]"
+                      className="mt-1.5 w-full rounded-2xl border border-border bg-[#f4f8f6] px-3 py-2.5 text-sm font-bold text-[#16302a]"
                     >
                       {intensityFilters.map((filterOption) => <option key={filterOption.id} value={filterOption.id}>{filterOption.label}</option>)}
                     </select>
@@ -807,7 +807,7 @@ export function WorkoutsView({
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <label className="min-w-0">
-                    <span className="text-xs font-black uppercase tracking-[0.12em] text-[#7c968f]">Type</span>
+                    <span className="text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">Type</span>
                     <select
                       aria-label="Workout type"
                       value={workoutType}
@@ -815,13 +815,13 @@ export function WorkoutsView({
                         setCurrentPage(1);
                         setWorkoutType(event.target.value as WorkoutTypeFilter);
                       }}
-                      className="mt-1.5 w-full rounded-2xl border border-[#dce8e3] bg-[#f4f8f6] px-3 py-2.5 text-sm font-bold text-[#16302a]"
+                      className="mt-1.5 w-full rounded-2xl border border-border bg-[#f4f8f6] px-3 py-2.5 text-sm font-bold text-[#16302a]"
                     >
                       {workoutTypeFilters.map((filterOption) => <option key={filterOption.id} value={filterOption.id}>{filterOption.label}</option>)}
                     </select>
                   </label>
                   <label className="min-w-0">
-                    <span className="text-xs font-black uppercase tracking-[0.12em] text-[#7c968f]">Smart filter</span>
+                    <span className="text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">Smart filter</span>
                     <select
                       aria-label="Smart filter"
                       value={activeQuickFilters[0] ?? "all"}
@@ -829,7 +829,7 @@ export function WorkoutsView({
                         setCurrentPage(1);
                         setActiveQuickFilters(event.target.value === "all" ? [] : [event.target.value as QuickFilter]);
                       }}
-                      className="mt-1.5 w-full rounded-2xl border border-[#dce8e3] bg-[#f4f8f6] px-3 py-2.5 text-sm font-bold text-[#16302a]"
+                      className="mt-1.5 w-full rounded-2xl border border-border bg-[#f4f8f6] px-3 py-2.5 text-sm font-bold text-[#16302a]"
                     >
                       <option value="all">All workouts</option>
                       {quickFilters.map((filterOption) => <option key={filterOption.id} value={filterOption.id}>{filterOption.label}</option>)}
@@ -941,11 +941,11 @@ export function WorkoutsView({
 
             <form action="/app/workouts" className="grid gap-3 lg:grid-cols-[minmax(14rem,1fr)_auto]">
               <label className="block">
-                <span className="text-xs font-black uppercase tracking-[0.14em] text-[#9db0aa]">
+                <span className="text-xs font-black uppercase tracking-[0.14em] text-muted-foreground">
                   Workout
                 </span>
-                <div className="mt-2 flex items-center gap-2 rounded-2xl border border-[#dce8e3] bg-[#f4f8f6] px-4 py-3">
-                  <Search className="h-4 w-4 text-[#9db0aa]" />
+                <div className="mt-2 flex items-center gap-2 rounded-2xl border border-border bg-[#f4f8f6] px-4 py-3">
+                  <Search className="h-4 w-4 text-muted-foreground" />
                   <input
                     name="q"
                     value={workoutQuery}
@@ -961,15 +961,15 @@ export function WorkoutsView({
 
               <button
                 type="submit"
-                className="self-end rounded-2xl bg-gradient-to-r from-primary-500 to-[#159aa0] px-5 py-3 text-sm font-black text-white shadow-[0_12px_24px_rgba(21,145,108,0.22)] transition hover:from-primary-600 hover:to-primary-600"
+                className="self-end rounded-2xl bg-gradient-to-r from-primary-500 to-teal-500 px-5 py-3 text-sm font-black text-white shadow-[0_12px_24px_rgba(21,145,108,0.22)] transition hover:from-primary-600 hover:to-teal-600"
               >
                 Apply
               </button>
             </form>
           </div>
 
-          <div className="min-w-0 overflow-hidden rounded-[22px] border border-[#dce8e3]">
-            <div className="flex items-center justify-between gap-3 border-b border-[#dce8e3] bg-primary-50/70 px-3 py-2.5 md:hidden">
+          <div className="min-w-0 overflow-hidden rounded-[22px] border border-border">
+            <div className="flex items-center justify-between gap-3 border-b border-border bg-primary-50/70 px-3 py-2.5 md:hidden">
               <p className="min-w-0 text-xs font-semibold text-primary-900/70">
                 {showAllMobileColumns ? "Swipe within the table for every detail." : "Tap a workout to preview it; time is shown."}
               </p>
@@ -995,7 +995,7 @@ export function WorkoutsView({
                   showAllMobileColumns ? "min-w-[72rem]" : "min-w-0 md:min-w-[72rem]"
                 )}
               >
-                <thead className="bg-[#f4f8f6] text-xs font-black uppercase tracking-[0.14em] text-[#7c968f]">
+                <thead className="bg-[#f4f8f6] text-xs font-black uppercase tracking-[0.14em] text-muted-foreground">
                   <tr>
                     <th className="px-4 py-3">Workout</th>
                     <th className={cn("whitespace-nowrap px-4 py-3", !showAllMobileColumns && "hidden md:table-cell")}>Body part</th>
@@ -1020,7 +1020,7 @@ export function WorkoutsView({
                         </span>
                         <div className="min-w-0">
                           <p className="break-words text-sm font-black leading-5 text-[#16302a]">{workout.title}</p>
-                          <p className="hidden text-xs font-semibold text-[#9db0aa] sm:block">{workout.focus}</p>
+                          <p className="hidden text-xs font-semibold text-muted-foreground sm:block">{workout.focus}</p>
                         </div>
                       </div>
                     );
@@ -1039,7 +1039,7 @@ export function WorkoutsView({
                           </span>
                         </td>
                         <td className={cn("whitespace-nowrap px-4 py-2.5 text-sm font-bold text-[#54635d]", !showAllMobileColumns && "hidden md:table-cell")}>{workout.workoutType}</td>
-                        <td className={cn("max-w-[12rem] px-4 py-2.5 text-xs font-semibold text-[#7c968f]", !showAllMobileColumns && "hidden md:table-cell")}>
+                        <td className={cn("max-w-[12rem] px-4 py-2.5 text-xs font-semibold text-muted-foreground", !showAllMobileColumns && "hidden md:table-cell")}>
                           {muscles.slice(0, 3).join(", ")}
                         </td>
                         <td className="whitespace-nowrap px-4 py-2.5 text-sm font-bold tabular-nums text-[#54635d]">{workout.duration}</td>
@@ -1048,8 +1048,8 @@ export function WorkoutsView({
                             {workout.intensity}
                           </span>
                         </td>
-                        <td className={cn("max-w-[11rem] px-4 py-2.5 text-xs font-semibold text-[#7c968f]", !showAllMobileColumns && "hidden md:table-cell")}>{workout.equipment}</td>
-                        <td className={cn("max-w-[12rem] px-4 py-2.5 text-xs font-semibold text-[#7c968f]", !showAllMobileColumns && "hidden md:table-cell")}>{workout.goal}</td>
+                        <td className={cn("max-w-[11rem] px-4 py-2.5 text-xs font-semibold text-muted-foreground", !showAllMobileColumns && "hidden md:table-cell")}>{workout.equipment}</td>
+                        <td className={cn("max-w-[12rem] px-4 py-2.5 text-xs font-semibold text-muted-foreground", !showAllMobileColumns && "hidden md:table-cell")}>{workout.goal}</td>
                         <td className={cn("px-3 py-2.5 text-right sm:px-4", !showAllMobileColumns && "hidden md:table-cell")}>
                           <Link
                             href={workoutHref(workout.id)}
@@ -1072,8 +1072,8 @@ export function WorkoutsView({
               </div>
             )}
             {visible.length > 0 && (
-              <div className="flex flex-col gap-3 border-t border-[#dce8e3] bg-white px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-                <p className="text-center text-xs font-bold text-[#7c968f] sm:text-left" aria-live="polite">
+              <div className="flex flex-col gap-3 border-t border-border bg-white px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-center text-xs font-bold text-muted-foreground sm:text-left" aria-live="polite">
                   Page {activePage} of {totalPages} · Showing {(activePage - 1) * WORKOUTS_PER_PAGE + 1}-{Math.min(activePage * WORKOUTS_PER_PAGE, visible.length)} of {visible.length}
                 </p>
                 <div className="grid grid-cols-2 gap-2">
