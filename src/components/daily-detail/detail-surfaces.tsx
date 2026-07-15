@@ -50,7 +50,7 @@ import {
 } from "@/lib/fuelwell-data";
 import type { WorkoutEntry } from "@/lib/coach/types";
 
-type Tone = "primary" | "sky" | "lemon" | "accent";
+type Tone = "primary" | "sky" | "lemon" | "accent" | "teal";
 
 type ActivityRecord = {
   id: string;
@@ -207,7 +207,7 @@ const toneStyles = {
     macro: "bg-sky-100 text-sky-700",
   },
   lemon: {
-    chip: "bg-lemon-50 text-lemon-600",
+    chip: "bg-lemon-50 text-lemon-700",
     pill: "bg-lemon-100 text-lemon-700",
     bar: "bg-lemon-500",
     macro: "bg-lemon-100 text-lemon-700",
@@ -217,6 +217,12 @@ const toneStyles = {
     pill: "bg-accent-100 text-accent-700",
     bar: "bg-accent-400",
     macro: "bg-accent-100 text-accent-700",
+  },
+  teal: {
+    chip: "bg-teal-500/12 text-teal-600",
+    pill: "bg-teal-500/12 text-teal-600",
+    bar: "bg-teal-500",
+    macro: "bg-teal-500/12 text-teal-600",
   },
 } as const;
 
@@ -459,7 +465,7 @@ export function DailyReviewSurface({
           icon={Sparkles}
           eyebrow="Overview"
           title="Today's whole picture"
-          description="The headline decision and top metrics stay together so the day reads before the details unfold."
+          description="Food in, active burn, net room, and protein — today's headline numbers."
           expanded={overviewExpanded}
           onToggle={() => setOverviewExpanded((value) => !value)}
           collapsedText="Overview collapsed. Expand it to review today's headline, calorie room, burn, and protein status."
@@ -467,9 +473,9 @@ export function DailyReviewSurface({
           <div className="space-y-4">
             <DetailHero
               icon={Sparkles}
-              label="Today's whole picture"
-              title="Review food and activity in one clean view"
-              copy="This combines the plate detail with the movement log so people can see what made up the day before asking the coach what to do next."
+              label="Today's ledger"
+              title="Food and activity, side by side"
+              copy="Everything you logged today in one ledger. If the day looks off, ask the coach for your next move."
               href="/app/coach"
               action="Ask coach"
             />
@@ -477,8 +483,8 @@ export function DailyReviewSurface({
             <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               <TargetTile label="Food in" current={totals.calories} target={targets.calories} unit="kcal" tone="primary" icon={Flame} />
               <TargetTile label="Active burn" current={fitnessTotals.calories} target={fitnessTargets.activeCalories} unit="kcal" tone="accent" icon={Dumbbell} />
-              <SimpleSummaryCard label="Net calories" value={netCalories.toLocaleString()} detail={`${remaining(netCalories, targets.calories).toLocaleString()} kcal room after activity`} tone="sky" icon={Target} />
-              <SimpleSummaryCard label="Protein" value={`${totals.protein}g`} detail={`${remaining(totals.protein, targets.protein)}g left of ${targets.protein}`} tone="lemon" icon={Beef} />
+              <SimpleSummaryCard label="Net calories" value={netCalories.toLocaleString()} detail={`${remaining(netCalories, targets.calories).toLocaleString()} kcal room after activity`} tone="teal" icon={Target} />
+              <SimpleSummaryCard label="Protein" value={`${totals.protein}g`} detail={`${remaining(totals.protein, targets.protein)}g left of ${targets.protein}g`} tone="sky" icon={Beef} />
             </section>
           </div>
         </DailyReviewSection>
@@ -504,21 +510,21 @@ export function DailyReviewSurface({
             <SimpleSummaryCard
               label="Logged meals"
               value={`${meals.length}`}
-              detail="Food entries included in the nutrition side of this ledger."
+              detail="Meals counted toward today's nutrition."
               tone="primary"
               icon={Salad}
             />
             <SimpleSummaryCard
               label="Activity entries"
               value={`${activityLog.length}`}
-              detail="Movement signals included in the fitness side of this ledger."
+              detail="Workouts and movement counted today."
               tone="accent"
               icon={Activity}
             />
             <SimpleSummaryCard
               label="Next best review"
               value={remaining(netCalories, targets.calories) > 0 ? "Dinner" : "Coach"}
-              detail="The next place to look based on calorie room and daily balance."
+              detail="Where to look next, based on the calorie room you have left."
               tone="sky"
               icon={Sparkles}
             />

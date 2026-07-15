@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, Flame, Wheat, Droplet, Dumbbell } from "lucide-react";
+import { ChevronDown, Flame, Wheat, Droplet, Beef } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils/cn";
 import {
@@ -22,7 +22,7 @@ const MACROS: {
   icon: typeof Flame;
 }[] = [
   { key: "calories", label: "Calories", unit: "", color: "var(--color-macro-calories)", iconBg: "bg-primary-100 text-primary-700", icon: Flame },
-  { key: "protein", label: "Protein", unit: "g", color: "var(--color-macro-protein)", iconBg: "bg-sky-100 text-sky-700", icon: Dumbbell },
+  { key: "protein", label: "Protein", unit: "g", color: "var(--color-macro-protein)", iconBg: "bg-sky-100 text-sky-700", icon: Beef },
   { key: "carbs", label: "Carbs", unit: "g", color: "var(--color-macro-carbs)", iconBg: "bg-lemon-100 text-lemon-700", icon: Wheat },
   { key: "fat", label: "Fat", unit: "g", color: "var(--color-macro-fat)", iconBg: "bg-accent-100 text-accent-700", icon: Droplet },
 ];
