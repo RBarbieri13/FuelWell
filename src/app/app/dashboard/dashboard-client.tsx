@@ -202,7 +202,7 @@ export function DashboardClient({
       <section className="grid gap-[18px] lg:grid-cols-[1.32fr_1fr]">
         <Card
           variant="elevated"
-          className="fw-dark-panel overflow-hidden rounded-[26px] p-0 shadow-[0_24px_50px_rgba(16,48,40,0.34)]"
+          className="fw-dark-panel overflow-hidden rounded-[24px] p-0 shadow-[0_24px_50px_rgba(16,48,40,0.34)]"
         >
           <div className="relative p-6 md:p-[30px]">
             <div className="relative z-10">
@@ -256,7 +256,7 @@ export function DashboardClient({
           </div>
         </Card>
 
-        <Card className="flex flex-col rounded-[26px] px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
+        <Card className="flex flex-col rounded-[24px] px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
           <div className="flex items-center justify-between gap-4">
             <div>
               <h2 className="text-base font-black text-neutral-900">

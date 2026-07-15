@@ -266,7 +266,7 @@ export default function GroceryListPage() {
         </div>
 
         <aside className="min-w-0 space-y-5">
-          <Card className="min-w-0 rounded-[22px] border-border px-4 py-5 shadow-[0_8px_22px_rgba(20,90,75,0.06)] sm:px-6 sm:py-6">
+          <Card className="min-w-0 rounded-[24px] border-border px-4 py-5 shadow-[0_8px_22px_rgba(20,90,75,0.06)] sm:px-6 sm:py-6">
             <h2 className="flex items-center gap-3 font-heading text-lg font-black tracking-tight text-[#16302a]">
               <span className="fw-icon-chip h-10 w-10 rounded-full">
                 <ListPlus className="w-5 h-5" />
@@ -307,7 +307,7 @@ export default function GroceryListPage() {
         </aside>
 
         <section className="order-3 grid min-w-0 gap-5 lg:col-span-2 lg:grid-cols-3">
-          <Card className="fw-dark-panel rounded-[22px] px-6 py-6 shadow-[0_18px_38px_rgba(16,48,40,0.3)]">
+          <Card className="fw-dark-panel rounded-[24px] px-6 py-6 shadow-[0_18px_38px_rgba(16,48,40,0.3)]">
             <span className="inline-flex h-10 w-10 items-center justify-center rounded-[13px] bg-gradient-to-br from-primary-500 to-teal-500 text-white">
               <Sparkles className="h-5 w-5" />
             </span>
@@ -320,7 +320,7 @@ export default function GroceryListPage() {
             </p>
           </Card>
 
-          <Card className="rounded-[22px] border-border px-6 py-6 shadow-[0_8px_22px_rgba(20,90,75,0.06)]">
+          <Card className="rounded-[24px] border-border px-6 py-6 shadow-[0_8px_22px_rgba(20,90,75,0.06)]">
             <h2 className="flex items-center gap-3 font-heading text-lg font-black tracking-tight text-[#16302a]">
               <span className="fw-icon-chip h-10 w-10 rounded-full">
                 <History className="w-5 h-5" />
@@ -357,7 +357,7 @@ export default function GroceryListPage() {
             </div>
           </Card>
 
-          <Card className="rounded-[22px] border-border px-6 py-6 shadow-[0_8px_22px_rgba(20,90,75,0.06)]">
+          <Card className="rounded-[24px] border-border px-6 py-6 shadow-[0_8px_22px_rgba(20,90,75,0.06)]">
             <h2 className="font-heading text-lg font-black tracking-tight text-[#16302a]">
               Store mode
             </h2>
@@ -399,7 +399,7 @@ export default function GroceryListPage() {
         </section>
 
         <section className="order-2 min-w-0 space-y-4 lg:col-span-2">
-          <Card className="min-w-0 rounded-[22px] border-primary-100 bg-white/88 px-4 py-4 shadow-[0_8px_22px_rgba(20,90,75,0.05)]">
+          <Card className="min-w-0 rounded-[24px] border-primary-100 bg-white/88 px-4 py-4 shadow-[0_8px_22px_rgba(20,90,75,0.05)]">
             <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
               <div>
                 <h2 className="font-heading text-lg font-black text-[#16302a]">
@@ -480,7 +480,7 @@ export default function GroceryListPage() {
             </div>
           </Card>
 
-          <Card padding="sm" className="min-w-0 overflow-hidden rounded-[22px] border-border p-0 shadow-[0_10px_26px_rgba(20,90,75,0.06)] md:p-4">
+          <Card padding="sm" className="min-w-0 overflow-hidden rounded-[24px] border-border p-0 shadow-[0_10px_26px_rgba(20,90,75,0.06)] md:p-4">
             <div className="space-y-3 p-2 md:hidden" data-testid="mobile-grocery-list">
               {filteredItems.map((item) => {
                 const details = inferGroceryDetails(item.name, item.amount, item.category);

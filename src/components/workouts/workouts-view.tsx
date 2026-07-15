@@ -616,7 +616,7 @@ export function WorkoutsView({
       </div>
 
       {loggedWorkouts.length > 0 && (
-        <Card className="space-y-3 rounded-[22px] border-border px-6 py-5 shadow-[0_8px_22px_rgba(20,90,75,0.06)]" data-testid="logged-workouts">
+        <Card className="space-y-3 rounded-[24px] border-border px-6 py-5 shadow-[0_8px_22px_rgba(20,90,75,0.06)]" data-testid="logged-workouts">
           <div className="flex items-center justify-between gap-3">
             <h2 className="font-heading text-lg font-black text-[#16302a]">Recent activity</h2>
             <span className="rounded-full bg-primary-50 px-3 py-1 text-xs font-black text-primary-700">
@@ -968,7 +968,7 @@ export function WorkoutsView({
             </form>
           </div>
 
-          <div className="min-w-0 overflow-hidden rounded-[22px] border border-border">
+          <div className="min-w-0 overflow-hidden rounded-[24px] border border-border">
             <div className="flex items-center justify-between gap-3 border-b border-border bg-primary-50/70 px-3 py-2.5 md:hidden">
               <p className="min-w-0 text-xs font-semibold text-primary-900/70">
                 {showAllMobileColumns ? "Swipe within the table for every detail." : "Tap a workout to preview it; time is shown."}

@@ -272,7 +272,7 @@ export function CalorieBalanceChart({
   // meal or activity signal the card explains itself and points at Log.
   if (!hasRealData) {
     return (
-      <Card className="rounded-[1.6rem] border-primary-100/90 px-5 py-5 shadow-[0_14px_34px_rgba(20,90,75,0.07)] md:px-6 md:py-6">
+      <Card className="rounded-[1.5rem] border-primary-100/90 px-5 py-5 shadow-[0_14px_34px_rgba(20,90,75,0.07)] md:px-6 md:py-6">
         <p className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.14em] text-primary-600">
           <BarChart3 className="h-4 w-4" />
           Energy ledger
@@ -298,7 +298,7 @@ export function CalorieBalanceChart({
 
   return (
     <>
-      <Card className="rounded-[1.6rem] border-primary-100/90 px-5 py-5 shadow-[0_14px_34px_rgba(20,90,75,0.07)] md:px-6 md:py-6">
+      <Card className="rounded-[1.5rem] border-primary-100/90 px-5 py-5 shadow-[0_14px_34px_rgba(20,90,75,0.07)] md:px-6 md:py-6">
         <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
           <div>
             <p className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.14em] text-primary-600">
