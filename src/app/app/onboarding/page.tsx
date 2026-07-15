@@ -16,6 +16,7 @@ import {
   Flame,
   HeartPulse,
   Leaf,
+  Lock,
   MapPin,
   MessageCircle,
   Ruler,
@@ -29,7 +30,6 @@ import {
   UserRound,
   Utensils,
   WheatOff,
-  X,
   type LucideIcon,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
@@ -582,12 +582,12 @@ export default function OnboardingPage() {
   }
 
   const completionItems = [
-    { label: "Basics", done: !!data.dateOfBirth && !!data.gender },
-    { label: "Body metrics", done: !!data.heightIn && !!data.weightLb },
-    { label: "Activity", done: !!data.activityLevel },
-    { label: "Goal pace", done: !!data.goal && !!data.goalTimeline },
-    { label: "Food rules", done: !!data.dietaryPreference },
-    { label: "Training", done: data.preferredWorkoutTypes.length > 0 },
+    { label: "Basics", icon: HeartPulse, done: !!data.dateOfBirth && !!data.gender },
+    { label: "Body metrics", icon: Ruler, done: !!data.heightIn && !!data.weightLb },
+    { label: "Activity", icon: Activity, done: !!data.activityLevel },
+    { label: "Goal pace", icon: Clock3, done: !!data.goal && !!data.goalTimeline },
+    { label: "Food rules", icon: Leaf, done: !!data.dietaryPreference },
+    { label: "Training", icon: Dumbbell, done: data.preferredWorkoutTypes.length > 0 },
   ];
 
   if (celebration) {
@@ -692,7 +692,7 @@ export default function OnboardingPage() {
                         item.done ? "bg-primary-300 text-primary-900" : "bg-white/10 text-white/45"
                       )}
                     >
-                      {item.done ? <Check className="h-5 w-5" /> : <span className="h-2.5 w-2.5 rounded-full bg-current" />}
+                      {item.done ? <Check className="h-5 w-5" /> : <item.icon className="h-4 w-4" />}
                     </span>
                     <span className={cn("text-sm font-black", item.done ? "text-white" : "text-white/55")}>
                       {item.label}
@@ -718,9 +718,6 @@ export default function OnboardingPage() {
                     </p>
                     <h2 className="fw-heading text-2xl md:text-3xl">{currentStep.title}</h2>
                   </div>
-                </div>
-                <div className="rounded-full bg-primary-50 px-4 py-2 text-sm font-black text-primary-700">
-                  {Math.round(progress)}% ready
                 </div>
               </div>
 
@@ -1525,8 +1522,13 @@ function PlanPreview({
             {macros ? `${macros.calories} kcal plan` : "Plan unlocks soon"}
           </h2>
         </div>
-        <div className="flex h-12 w-12 items-center justify-center rounded-[1rem] bg-primary-400 text-primary-950">
-          {macros ? <BadgeCheck className="h-6 w-6" /> : <X className="h-6 w-6" />}
+        <div
+          className={cn(
+            "flex h-12 w-12 items-center justify-center rounded-[1rem]",
+            macros ? "bg-primary-400 text-primary-950" : "bg-white/10 text-white/60"
+          )}
+        >
+          {macros ? <BadgeCheck className="h-6 w-6" /> : <Lock className="h-6 w-6" />}
         </div>
       </div>
 
@@ -1544,8 +1546,14 @@ function PlanPreview({
       )}
 
       <div className="mt-5 flex flex-wrap gap-2">
-        <SummaryChip label={data.goal ? `${data.goal} goal` : "Goal pending"} />
-        <SummaryChip label={data.activityLevel ? formatActivity(data.activityLevel) : "Activity pending"} />
+        <SummaryChip
+          label={data.goal ? formatOption(GOAL_OPTIONS, data.goal) : "Goal pending"}
+          pending={!data.goal}
+        />
+        <SummaryChip
+          label={data.activityLevel ? formatActivity(data.activityLevel) : "Activity pending"}
+          pending={!data.activityLevel}
+        />
         <SummaryChip label={formatOption(AGGRESSION_OPTIONS, data.nutritionAggressiveness)} />
         <SummaryChip label={formatOption(CHECK_IN_OPTIONS, data.checkInPreference)} />
       </div>
@@ -1565,9 +1573,16 @@ function PreviewRow({ label, value, color }: { label: string; value: string; col
   );
 }
 
-function SummaryChip({ label }: { label: string }) {
+function SummaryChip({ label, pending = false }: { label: string; pending?: boolean }) {
   return (
-    <span className="rounded-full bg-white/10 px-3 py-1.5 text-xs font-black text-white/70">
+    <span
+      className={cn(
+        "rounded-full px-3 py-1.5 text-xs font-black",
+        pending
+          ? "border border-dashed border-white/25 bg-transparent text-white/45"
+          : "bg-white/10 text-white/70"
+      )}
+    >
       {label}
     </span>
   );

@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { OAuthButtons } from "@/components/auth/oauth-buttons";
 import { AuthLink, AuthShell } from "@/components/auth/auth-shell";
-import { Brain, Leaf, ShieldCheck, Sparkles, Target } from "lucide-react";
+import { Brain, Leaf, ShieldCheck, Target, UserPlus } from "lucide-react";
 
 const ONBOARDING_STORAGE_KEY = "fuelwell:onboarding:v1";
 const PREVIEW_KIND_STORAGE_KEY = "fuelwell:preview-user-kind";
@@ -207,7 +207,7 @@ export default function SignupPage() {
               </div>
 
               <Button type="submit" size="lg" className="w-full" loading={loading}>
-                <Sparkles className="h-4 w-4" />
+                <UserPlus className="h-4 w-4" />
                 {isNewUserPreview ? "Create preview account" : "Create account"}
               </Button>
             </form>

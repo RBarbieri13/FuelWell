@@ -13,7 +13,6 @@ import {
   User,
   Dumbbell,
   HeartPulse,
-  Flame,
   Leaf,
   ShoppingBasket,
   Settings,
@@ -25,8 +24,8 @@ import { Logo } from "@/components/ui/logo";
 
 const navItems = [
   { href: "/app/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/app/daily-review", label: "Daily Review", icon: ClipboardList },
-  { href: "/app/log", label: "Log Meal", icon: UtensilsCrossed },
+  { href: "/app/daily-review", label: "Daily review", icon: ClipboardList },
+  { href: "/app/log", label: "Log meal", icon: UtensilsCrossed },
   { href: "/app/coach", label: "Coach", icon: MessageSquare },
   { href: "/app/workouts", label: "Workouts", icon: Dumbbell },
   { href: "/app/recipes", label: "Recipes", icon: BookOpen },
@@ -128,19 +127,6 @@ export function Sidebar() {
         })}
       </nav>
 
-      <div className={cn("px-5 pb-6", collapsed && "px-3")}>
-        <div className={cn("rounded-[1.5rem] bg-primary-100/75 p-5 shadow-sm shadow-primary-900/5", collapsed && "p-3")}>
-          <div className="flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-primary-600">
-              <Flame className="h-5 w-5" />
-            </span>
-            <p className={cn("text-base font-black text-primary-700", collapsed && "sr-only")}>6-day streak</p>
-          </div>
-          <p className={cn("mt-3 text-sm font-semibold leading-5 text-primary-800/75", collapsed && "sr-only")}>
-            Log dinner to keep it alive tonight.
-          </p>
-        </div>
-      </div>
       {!collapsed && (
         <div
           role="separator"

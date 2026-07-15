@@ -5,7 +5,6 @@ import {
   Activity,
   BarChart3,
   ChevronDown,
-  CalendarRange,
   ChevronLeft,
   ChevronRight,
   ChevronUp,
@@ -339,7 +338,7 @@ export function CalorieBalanceChart({
         </div>
 
         <div
-          className="mt-4 grid gap-2"
+          className="mt-4 grid gap-2 sm:grid-cols-2"
           aria-label="Energy ledger visibility"
           data-testid="energy-ledger-controls"
         >
@@ -363,29 +362,24 @@ export function CalorieBalanceChart({
 
         {hasExpandedSeries && (
           <div id="energy-ledger-content" data-testid="energy-ledger-content">
-            <div className="mt-4 flex flex-col gap-3 rounded-[1.2rem] border border-primary-100 bg-primary-50/45 p-3 md:flex-row md:items-center md:justify-between">
-              <div className="flex min-w-0 items-center gap-3">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-primary-700">
-                  <CalendarRange className="h-5 w-5" />
-                </span>
-                <div className="min-w-0">
-                  <p className="text-sm font-black text-primary-950">{windowLabel}</p>
-                  <p className="text-xs font-semibold text-primary-900/60">
-                    Hover any bar for an instant breakdown. Click to pin the detail open.
-                  </p>
-                </div>
+            <div className="mt-4 flex items-center justify-between gap-3">
+              <div className="min-w-0">
+                <p className="text-sm font-black text-primary-950">{windowLabel}</p>
+                <p className="text-xs font-semibold text-primary-900/60">
+                  Tap any bar to pin its full breakdown open.
+                </p>
               </div>
-              <div className="flex gap-2">
+              <div className="flex shrink-0 gap-2">
                 <Button
                   type="button"
                   variant="secondary"
                   size="sm"
                   onClick={() => setOffset((value) => Math.min(value + 1, maxOffset))}
                   disabled={clampedOffset >= maxOffset}
-                  className="min-w-0 flex-1 rounded-full md:flex-none"
+                  aria-label="Earlier days"
+                  className="h-11 w-11 rounded-full p-0"
                 >
                   <ChevronLeft className="h-4 w-4" />
-                  Back
                 </Button>
                 <Button
                   type="button"
@@ -393,9 +387,9 @@ export function CalorieBalanceChart({
                   size="sm"
                   onClick={() => setOffset((value) => Math.max(value - 1, 0))}
                   disabled={clampedOffset === 0}
-                  className="min-w-0 flex-1 rounded-full md:flex-none"
+                  aria-label="Later days"
+                  className="h-11 w-11 rounded-full p-0"
                 >
-                  Forward
                   <ChevronRight className="h-4 w-4" />
                 </Button>
               </div>
@@ -656,9 +650,6 @@ function StackedBar({
       </span>
       <span className="text-[10px] font-black uppercase tracking-[0.08em] text-muted-foreground">
         {label}
-      </span>
-      <span className="rounded-full bg-primary-50 px-1.5 py-0.5 text-[8px] font-black uppercase tracking-[0.08em] text-primary-700 opacity-80">
-        Hover
       </span>
     </button>
   );

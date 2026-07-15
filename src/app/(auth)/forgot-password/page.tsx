@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AuthShell } from "@/components/auth/auth-shell";
-import { ArrowLeft, Brain, Mail, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowLeft, Brain, Mail, Send, ShieldCheck } from "lucide-react";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -50,13 +50,15 @@ export default function ForgotPasswordPage() {
         { icon: Mail, text: "One link returns you to FuelWell" },
       ]}
       footer={
-        <Link
-          href="/login"
-          className="inline-flex items-center gap-1.5 text-primary-700 transition hover:text-primary-800"
-        >
-          <ArrowLeft className="h-3.5 w-3.5" />
-          Back to login
-        </Link>
+        sent ? undefined : (
+          <Link
+            href="/login"
+            className="inline-flex items-center gap-1.5 text-primary-700 transition hover:text-primary-800"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+            Back to login
+          </Link>
+        )
       }
     >
       {sent ? (
@@ -91,7 +93,7 @@ export default function ForgotPasswordPage() {
                 autoFocus
               />
               <Button type="submit" size="lg" className="w-full" loading={loading}>
-                <Sparkles className="h-4 w-4" />
+                <Send className="h-4 w-4" />
                 Send reset link
               </Button>
             </form>

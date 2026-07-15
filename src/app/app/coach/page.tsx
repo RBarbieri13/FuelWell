@@ -322,7 +322,7 @@ export default function CoachPage() {
             {items.length === 0 && (
             <div className="space-y-4">
             <div className="grid gap-4 xl:grid-cols-[1fr_0.72fr]">
-              <section className="fw-dark-panel rounded-[2rem] border p-5 md:p-8">
+              <section className="fw-dark-panel rounded-[2rem] border p-4 md:p-8">
                 <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-xs font-black uppercase tracking-[0.16em] text-primary-100">
                   <MessageCircle className="h-4 w-4" />
                   Agentic coach
@@ -330,7 +330,7 @@ export default function CoachPage() {
                 <h2 className="mt-3 max-w-2xl text-2xl font-black leading-tight text-white md:mt-4 md:text-5xl">
                   Ask for the next useful move.
                 </h2>
-                <p className="mt-3 max-w-2xl text-sm font-semibold leading-6 text-white/70 md:text-base md:leading-7">
+                <p className="mt-3 hidden max-w-2xl text-sm font-semibold leading-6 text-white/70 sm:block md:text-base md:leading-7">
                   One chat that reads your day and acts on it — meals logged,
                   workouts planned, groceries updated, numbers explained.
                 </p>
@@ -581,7 +581,7 @@ export default function CoachPage() {
               onFocus={() => {
                 if (actionDrawer) setCollapsedDrawerId(actionDrawer.id);
               }}
-              placeholder="Ask anything, or attach a photo or menu..."
+              placeholder="Ask, or attach a photo…"
               className="min-h-12 min-w-0 flex-1 rounded-[1.35rem] border border-primary-100 bg-primary-50/70 px-3 py-3 text-sm font-semibold text-[#16302a] placeholder:text-[#91a7a0] focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 sm:px-4"
               disabled={busy}
               aria-label="Message Coach"

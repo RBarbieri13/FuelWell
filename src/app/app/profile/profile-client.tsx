@@ -20,6 +20,7 @@ import {
   X,
 } from "lucide-react";
 import Link from "next/link";
+import { useUnits } from "@/components/settings/use-units";
 import { clearPreferencesForUser } from "@/lib/use-preferences";
 import {
   readPreviewOnboardingOverride,
@@ -63,6 +64,7 @@ export function ProfileClient({
   isPreview = false,
 }: ProfileClientProps) {
   const router = useRouter();
+  const { units } = useUnits();
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
   const [editingName, setEditingName] = useState(false);
   const [nameValue, setNameValue] = useState(displayName);
@@ -155,7 +157,7 @@ export function ProfileClient({
           </div>
           <Link
             href="/app/settings"
-            className="inline-flex items-center justify-center gap-2 rounded-full bg-primary-600 px-5 py-3 text-sm font-black text-white shadow-[0_16px_34px_rgba(21,145,108,0.24)] transition hover:bg-primary-700"
+            className="inline-flex min-h-11 items-center justify-center gap-2 self-start rounded-full border border-primary-100 bg-white px-5 py-3 text-sm font-black text-primary-700 transition hover:border-primary-200 hover:bg-primary-50 md:self-auto"
           >
             Settings
             <ChevronRight className="h-4 w-4" />
@@ -211,7 +213,7 @@ export function ProfileClient({
                   </div>
                 ) : (
                   <div className="mt-2 flex min-w-0 items-center gap-3 md:mt-3">
-                    <h2 className="truncate text-2xl font-black leading-tight text-white md:text-5xl">
+                    <h2 className="truncate text-2xl font-black leading-tight text-white md:text-3xl lg:text-4xl">
                       {effectiveDisplayName || "Set your name"}
                     </h2>
                     <button
@@ -236,7 +238,7 @@ export function ProfileClient({
             </div>
 
             <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3 md:mt-8 md:gap-3">
-              <HeroStat label="Goal" value={formatGoal(effectiveGoal)} />
+              <HeroStat label="Goal" value={formatGoalShort(effectiveGoal)} />
               <HeroStat label="Activity" value={formatActivityShort(effectiveActivityLevel)} />
               <HeroStat label="Setup" value={onboardingComplete ? "Complete" : "Needs setup"} />
             </div>
@@ -256,11 +258,18 @@ export function ProfileClient({
             </div>
 
             {onboardingComplete ? (
-              <div className="grid grid-cols-2 gap-3">
-                <TargetCard label="Calories" value={`${effectiveCalorieTarget}`} unit="kcal" color="bg-primary-50 text-primary-700" />
-                <TargetCard label="Protein" value={`${effectiveProteinTarget}`} unit="g" color="bg-sky-50 text-sky-700" />
-                <TargetCard label="Carbs" value={`${effectiveCarbsTarget}`} unit="g" color="bg-lemon-50 text-lemon-700" />
-                <TargetCard label="Fat" value={`${effectiveFatTarget}`} unit="g" color="bg-accent-50 text-accent-700" />
+              <div className="space-y-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <TargetCard label="Calories" value={`${effectiveCalorieTarget}`} unit="kcal" color="bg-primary-50 text-primary-700" />
+                  <TargetCard label="Protein" value={`${effectiveProteinTarget}`} unit="g" color="bg-sky-50 text-sky-700" />
+                  <TargetCard label="Carbs" value={`${effectiveCarbsTarget}`} unit="g" color="bg-lemon-50 text-lemon-700" />
+                  <TargetCard label="Fat" value={`${effectiveFatTarget}`} unit="g" color="bg-accent-50 text-accent-700" />
+                </div>
+                <MacroSplitBar
+                  protein={effectiveProteinTarget}
+                  carbs={effectiveCarbsTarget}
+                  fat={effectiveFatTarget}
+                />
               </div>
             ) : (
               <div className="rounded-[1.35rem] border border-dashed border-primary-200 bg-primary-50/60 p-5">
@@ -295,32 +304,43 @@ export function ProfileClient({
                 <InfoRow
                   icon={Scale}
                   label="Weight"
-                  value={weightLb ? `${weightLb} lb` : `${Math.round(weightKg * 2.20462)} lb`}
+                  value={
+                    units === "metric"
+                      ? `${Math.round(weightKg)} kg`
+                      : `${weightLb ?? Math.round(weightKg * 2.20462)} lb`
+                  }
                 />
               )}
               {heightCm && (
                 <InfoRow
                   icon={Ruler}
                   label="Height"
-                  value={heightIn ? `${heightIn} in` : `${Math.round(heightCm / 2.54)} in`}
+                  value={
+                    units === "metric"
+                      ? `${Math.round(heightCm)} cm`
+                      : `${heightIn ?? Math.round(heightCm / 2.54)} in`
+                  }
                 />
               )}
             </div>
           </Card>
 
-          <Card className="min-w-0 space-y-4">
-            <div className="flex items-center gap-3">
-              <span className="fw-icon-chip">
-                <Settings className="h-6 w-6" />
-              </span>
+          <Card className="min-w-0 self-start">
+            <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h2 className="text-2xl font-black text-neutral-900">Account actions</h2>
-                <p className="text-sm font-semibold text-neutral-500">Manage setup and session state.</p>
+                <h2 className="text-base font-black text-neutral-900">Account actions</h2>
+                <p className="mt-1 text-sm font-semibold text-neutral-500">Manage setup and session state.</p>
               </div>
+              {!showSignOutConfirm && (
+                <Button variant="danger" onClick={() => setShowSignOutConfirm(true)}>
+                  <LogOut className="h-4 w-4" />
+                  Sign out
+                </Button>
+              )}
             </div>
 
-            {showSignOutConfirm ? (
-              <div className="rounded-[1.35rem] border border-red-200 bg-red-50/70 p-4">
+            {showSignOutConfirm && (
+              <div className="mt-4 rounded-[1.35rem] border border-red-200 bg-red-50/70 p-4">
                 <p className="text-sm font-black text-neutral-900">
                   Are you sure you want to sign out?
                 </p>
@@ -334,11 +354,6 @@ export function ProfileClient({
                   </Button>
                 </div>
               </div>
-            ) : (
-              <Button variant="danger" onClick={() => setShowSignOutConfirm(true)}>
-                <LogOut className="h-4 w-4" />
-                Sign out
-              </Button>
             )}
           </Card>
         </section>
@@ -379,6 +394,35 @@ function TargetCard({
   );
 }
 
+function MacroSplitBar({
+  protein,
+  carbs,
+  fat,
+}: {
+  protein: number;
+  carbs: number;
+  fat: number;
+}) {
+  const proteinKcal = protein * 4;
+  const carbsKcal = carbs * 4;
+  const fatKcal = fat * 9;
+  const total = proteinKcal + carbsKcal + fatKcal;
+  if (total <= 0) return null;
+  const pct = (kcal: number) => Math.round((kcal / total) * 100);
+  return (
+    <div>
+      <div className="flex h-2 overflow-hidden rounded-full">
+        <div className="bg-sky-500" style={{ width: `${pct(proteinKcal)}%` }} />
+        <div className="bg-lemon-500" style={{ width: `${pct(carbsKcal)}%` }} />
+        <div className="bg-accent-500" style={{ width: `${pct(fatKcal)}%` }} />
+      </div>
+      <p className="mt-2 text-xs font-semibold text-neutral-500">
+        {pct(proteinKcal)}% protein · {pct(carbsKcal)}% carbs · {pct(fatKcal)}% fat of calories
+      </p>
+    </div>
+  );
+}
+
 function InfoRow({
   icon: Icon,
   label,
@@ -404,6 +448,15 @@ function formatGoal(goal: string): string {
     lose: "Lose weight",
     maintain: "Maintain weight",
     gain: "Gain weight",
+  };
+  return map[goal] || goal;
+}
+
+function formatGoalShort(goal: string): string {
+  const map: Record<string, string> = {
+    lose: "Lose fat",
+    maintain: "Maintain",
+    gain: "Gain muscle",
   };
   return map[goal] || goal;
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, ChefHat, Clock, Dumbbell, Flame, Wheat, Droplet } from "lucide-react";
+import { ArrowRight, Beef, ChefHat, Clock, Flame, Wheat, Droplet } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { PreferenceToggle } from "@/components/food/preference-toggle";
 import type { Recipe } from "@/lib/recipes-data";
@@ -27,7 +27,7 @@ export function RecipeCard({
       label: "Pro",
       value: `${recipe.perServing.protein}g`,
       className: "bg-sky-50 text-sky-700 border-sky-100",
-      icon: Dumbbell,
+      icon: Beef,
     },
     {
       label: "Carb",
@@ -71,16 +71,16 @@ export function RecipeCard({
       <button
         type="button"
         onClick={() => onOpen(recipe)}
-        className="grid grid-cols-2 gap-2 text-left sm:grid-cols-4"
+        className="grid grid-cols-4 gap-2 text-left"
       >
         {macroTiles.map((macro) => {
           const Icon = macro.icon;
           return (
             <div
               key={macro.label}
-              className={`rounded-[1rem] border px-3 py-3 ${macro.className}`}
+              className={`rounded-[1rem] border px-2 py-2 sm:px-3 sm:py-3 ${macro.className}`}
             >
-              <div className="flex items-center gap-1 text-[10px] font-black uppercase tracking-[0.1em]">
+              <div className="flex flex-wrap items-center gap-1 text-[10px] font-black uppercase tracking-[0.1em]">
                 <Icon className="h-3.5 w-3.5" />
                 {macro.label}
               </div>

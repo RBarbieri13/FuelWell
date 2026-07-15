@@ -92,13 +92,10 @@ export default function HomePage() {
               Daily decision system
             </div>
             <div>
-              <h1 className="fw-heading text-5xl leading-[1.02] sm:text-6xl lg:text-7xl">
-                FuelWell
-              </h1>
-              <p className="mt-5 max-w-xl text-xl font-bold leading-8 text-muted-foreground">
+              <h1 className="fw-heading max-w-xl text-4xl leading-[1.06] sm:text-5xl lg:text-6xl">
                 A nutrition coach for the next choice, not a spreadsheet for
                 the last mistake.
-              </p>
+              </h1>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row">
               <Link href="/signup">
@@ -113,7 +110,7 @@ export default function HomePage() {
                 </Button>
               </Link>
             </div>
-            <div className="grid gap-3 sm:grid-cols-3">
+            <div className="flex flex-wrap gap-2.5">
               <TrustPill>Free to start</TrustPill>
               <TrustPill>No credit card</TrustPill>
               <TrustPill>Works with any diet</TrustPill>
@@ -259,7 +256,32 @@ function AppPreview() {
             </div>
             <Leaf className="h-5 w-5 text-primary-600" />
           </div>
-          <div className="mx-auto mt-5 flex h-40 w-40 items-center justify-center rounded-full border-[14px] border-primary-100 border-t-primary-500">
+          <div className="relative mx-auto mt-5 flex h-40 w-40 items-center justify-center">
+            <svg
+              viewBox="0 0 160 160"
+              className="absolute inset-0 h-full w-full -rotate-90"
+              aria-hidden="true"
+            >
+              <circle
+                cx="80"
+                cy="80"
+                r="66"
+                fill="none"
+                stroke="var(--color-primary-100)"
+                strokeWidth="14"
+              />
+              <circle
+                cx="80"
+                cy="80"
+                r="66"
+                fill="none"
+                stroke="var(--color-primary-500)"
+                strokeWidth="14"
+                strokeLinecap="round"
+                strokeDasharray="414.69"
+                strokeDashoffset="176.24"
+              />
+            </svg>
             <div className="text-center">
               <p className="text-3xl font-black tabular-nums text-[#16302a]">1400</p>
               <p className="text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">
@@ -281,7 +303,7 @@ function AppPreview() {
 
 function TrustPill({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-flex items-center gap-2 rounded-full border border-primary-100 bg-white/70 px-3 py-2 text-sm font-black text-muted-foreground">
+    <span className="inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-primary-100 bg-white/70 px-3 py-2 text-sm font-black text-muted-foreground">
       <Check className="h-4 w-4 text-primary-600" />
       {children}
     </span>

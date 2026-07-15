@@ -38,7 +38,7 @@ export function CalorieRing({ consumed, target, emphasis = "normal" }: CalorieRi
 
     function tick(now: number) {
       const elapsed = now - start;
-      const t = Math.min(elapsed / duration, 1);
+      const t = Math.max(0, Math.min(elapsed / duration, 1));
       // ease-out cubic
       const eased = 1 - Math.pow(1 - t, 3);
       setDisplayRemaining(Math.round(eased * end));
@@ -46,6 +46,10 @@ export function CalorieRing({ consumed, target, emphasis = "normal" }: CalorieRi
     }
 
     requestAnimationFrame(tick);
+    // rAF can be throttled to a standstill (backgrounded tab, embedded webview);
+    // pin the terminal value so the headline number is never left mid-count.
+    const settle = setTimeout(() => setDisplayRemaining(end), duration + 150);
+    return () => clearTimeout(settle);
   }, [remaining]);
 
   const ringColor = isOver ? "var(--color-accent-400)" : "var(--color-primary-500)";
@@ -89,14 +93,16 @@ export function CalorieRing({ consumed, target, emphasis = "normal" }: CalorieRi
           {displayRemaining.toLocaleString()}
         </span>
         <span className={`${compact ? "mt-1.5 text-xs" : hero ? "mt-3 text-base" : "mt-2 text-sm"} font-black uppercase tracking-[0.14em] text-neutral-500`}>
-          {isOver ? "over" : "remaining"}
+          {isOver ? "kcal over" : "kcal remaining"}
         </span>
-        <span className={`${compact ? "mt-1 text-xs" : "mt-2 text-xs"} rounded-full bg-white/85 px-2.5 py-1 font-black text-neutral-500 shadow-sm shadow-primary-900/5`}>
-          {percent}% of target
-        </span>
+        {!compact && (
+          <span className="mt-2 rounded-full bg-white/85 px-2.5 py-1 text-xs font-black text-neutral-500 shadow-sm shadow-primary-900/5">
+            {percent}% of target
+          </span>
+        )}
         <div className={`${compact ? "mt-1.5 bg-transparent px-0 py-0 shadow-none" : hero ? "mt-4 px-5 py-2.5" : "mt-3 px-4 py-2"} rounded-full bg-primary-50 shadow-sm shadow-primary-900/5`}>
           <span className={`${compact ? "text-xs" : hero ? "text-base" : "text-sm"} font-black text-primary-700 tabular-nums`}>
-            {consumed.toLocaleString()} / {target.toLocaleString()} kcal
+            {consumed.toLocaleString()} of {target.toLocaleString()} kcal
           </span>
         </div>
       </div>

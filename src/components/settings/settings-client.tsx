@@ -571,9 +571,9 @@ export function SettingsClient({
             <p className="mt-2 truncate text-sm font-semibold text-white/66 md:mt-3 md:text-base">
               {email || "No email set"}
             </p>
-            <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3 md:mt-8 md:gap-3">
+            <div className="mt-5 grid grid-cols-3 gap-2 md:mt-8 md:gap-3">
               <HeroStat label="Units" value={units} />
-              <HeroStat label="Diets" value={`${dietLabels.length}`} />
+              <HeroStat label="Diets" value={dietLabels.length > 0 ? `${dietLabels.length}` : "None"} />
               <HeroStat label="Garmin" value={formatIntegrationShort(integrationSummary.status)} />
             </div>
           </Card>
@@ -585,7 +585,10 @@ export function SettingsClient({
                   <Watch className="h-6 w-6" />
                 </span>
                 <div>
-                  <h2 className="text-xl font-black text-neutral-900 md:text-2xl">Garmin Connect</h2>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h2 className="text-xl font-black text-neutral-900 md:text-2xl">Garmin Connect</h2>
+                    <Badge>Coming soon</Badge>
+                  </div>
                   <p className="mt-1 text-sm font-semibold leading-6 text-neutral-500">
                     Top priority for active calories, steps, sleep, recovery, and planned workouts.
                   </p>
@@ -620,9 +623,6 @@ export function SettingsClient({
               )}
             </div>
             <div className="flex flex-wrap gap-2">
-              <Button variant="secondary" size="sm" disabled>
-                Request Garmin access
-              </Button>
               {isPreview && integrationSummary.status !== "preview_sample" && (
                 <Button variant="secondary" size="sm" onClick={enablePreviewGarminSummary}>
                   Use preview sample
@@ -769,7 +769,7 @@ export function SettingsClient({
               >
                 <div className="grid grid-cols-2 gap-2">
                   <NumberField
-                    label="Height in feet"
+                    label="Feet"
                     suffix="ft"
                     value={splitHeightInches(profileInputs.heightIn).feet || 0}
                     onChange={(value) =>
@@ -780,7 +780,7 @@ export function SettingsClient({
                     }
                   />
                   <NumberField
-                    label="Remaining inches"
+                    label="Inches"
                     suffix="in"
                     value={Number(splitHeightInches(profileInputs.heightIn).inches)}
                     onChange={(value) =>
@@ -868,37 +868,9 @@ export function SettingsClient({
                   ])}
                 />
               </HealthProfileRow>
-              <HealthProfileRow
-                icon={Ruler}
-                label="Units"
-                detail="Display preference saved locally and with profile preferences."
-              >
-                <SegmentedField
-                  label="Unit preference"
-                  value={units}
-                  onChange={(value) => updateUnits(value as UnitSystem)}
-                  options={[
-                    ["imperial", "Imperial"],
-                    ["metric", "Metric"],
-                  ]}
-                />
-              </HealthProfileRow>
-              <HealthProfileRow
-                icon={Bell}
-                label="Notifications"
-                detail="Coach nudge cadence; push and email delivery are not enabled here."
-              >
-                <SelectField
-                  label="Notification preference"
-                  hideLabel
-                  value={intakePrefs.checkInPreference}
-                  onChange={(value) => updateIntakePreference("checkInPreference", value)}
-                  options={CHECK_IN_OPTIONS.map((option) => [option.value, option.label])}
-                />
-              </HealthProfileRow>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+            <div className="grid gap-4 rounded-[1.35rem] border border-primary-100 bg-muted/60 p-4 md:grid-cols-2 xl:grid-cols-5">
               <TextField
                 label="Date of birth"
                 type="date"
@@ -1030,10 +1002,6 @@ export function SettingsClient({
                 </div>
                 <Badge>Coming soon</Badge>
               </div>
-              <Button variant="secondary" size="sm" disabled className="opacity-50 cursor-not-allowed">
-                <Download className="h-3.5 w-3.5" />
-                Request export
-              </Button>
             </Card>
           </Section>
         </section>
@@ -1052,18 +1020,14 @@ export function SettingsClient({
           </Section>
 
           <Section id="support" title="Support">
-            <ActionCard icon={HelpCircle} title="Get help" detail="Contact support, report an issue, or request a coach-data review.">
-              <Button variant="secondary" size="sm" disabled>
-                Contact support
-              </Button>
+            <ActionCard icon={HelpCircle} title="Get help" detail="A support contact and coach-data review path arrive with the public release.">
+              <Badge>Coming soon</Badge>
             </ActionCard>
           </Section>
 
           <Section id="delete-account" title="Delete account">
             <ActionCard icon={Trash2} title="Delete account" detail="Permanently remove your account, logs, preferences, and coach history.">
-              <Button variant="danger" size="sm" disabled>
-                Delete
-              </Button>
+              <Badge>Coming soon</Badge>
             </ActionCard>
           </Section>
         </section>
@@ -1114,7 +1078,7 @@ function HeroStat({ label, value }: { label: string; value: string }) {
 function formatIntegrationShort(status: string) {
   if (status === "preview_sample") return "Preview";
   if (status === "connected") return "On";
-  return "Off";
+  return "Not linked";
 }
 
 function formatOptionLabel(options: Array<{ value: string; label: string }>, value: string) {

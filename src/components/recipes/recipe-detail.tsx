@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle2, Clock, Flame, ListPlus, Users, Wheat, Droplet, Dumbbell, UtensilsCrossed, X } from "lucide-react";
+import { Beef, CheckCircle2, Clock, Flame, Leaf, ListPlus, Users, Wheat, Droplet, UtensilsCrossed, X } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { PreferenceToggle } from "@/components/food/preference-toggle";
@@ -33,10 +33,10 @@ export function RecipeDetail({
   const mealType = recipe.meal.toLowerCase() as MealType;
   const nutrition: { label: string; value: string; tone: string; icon: typeof Flame }[] = [
     { label: "Calories", value: `${recipe.perServing.calories}`, tone: "bg-primary-50 text-primary-700 border-primary-100", icon: Flame },
-    { label: "Protein", value: `${recipe.perServing.protein}g`, tone: "bg-sky-50 text-sky-700 border-sky-100", icon: Dumbbell },
+    { label: "Protein", value: `${recipe.perServing.protein}g`, tone: "bg-sky-50 text-sky-700 border-sky-100", icon: Beef },
     { label: "Carbs", value: `${recipe.perServing.carbs}g`, tone: "bg-lemon-50 text-lemon-700 border-lemon-100", icon: Wheat },
     { label: "Fat", value: `${recipe.perServing.fat}g`, tone: "bg-accent-50 text-accent-700 border-accent-100", icon: Droplet },
-    { label: "Fiber", value: `${recipe.perServing.fiber}g`, tone: "bg-primary-50 text-primary-700 border-primary-100", icon: Wheat },
+    { label: "Fiber", value: `${recipe.perServing.fiber}g`, tone: "bg-primary-50 text-primary-700 border-primary-100", icon: Leaf },
   ];
 
   function planMeal() {

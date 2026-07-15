@@ -6,9 +6,9 @@ import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { cn } from "@/lib/utils/cn";
 import {
-  Check,
   CheckCheck,
   CheckCircle2,
+  ChevronDown,
   Circle,
   History,
   ListPlus,
@@ -69,6 +69,7 @@ export default function GroceryListPage() {
   const [newItemAmount, setNewItemAmount] = useState("");
   const [history, setHistory] = useState<GroceryHistoryEntry[]>(loadGroceryHistory);
   const [selectedSources, setSelectedSources] = useState<string[]>([]);
+  const [expandedItemId, setExpandedItemId] = useState<string | null>(null);
   const [storeMode, setStoreMode] = useState({
     hideChecked: false,
     keepAwake: false,
@@ -260,6 +261,12 @@ export default function GroceryListPage() {
                   {checkedCount}/{items.length}
                 </p>
                 <p className="mt-1 text-sm font-bold text-muted-foreground">checked off</p>
+                <div className="mt-2 h-2.5 overflow-hidden rounded-full bg-primary-100">
+                  <div
+                    className="h-full rounded-full bg-primary-500"
+                    style={{ width: `${items.length ? Math.round((checkedCount / items.length) * 100) : 0}%` }}
+                  />
+                </div>
               </div>
             </div>
           </Card>
@@ -378,24 +385,30 @@ export default function GroceryListPage() {
                 <button
                   key={key}
                   type="button"
+                  role="switch"
+                  aria-checked={enabled}
                   onClick={() =>
                     setStoreMode((current) => ({
                       ...current,
                       [settingKey]: !current[settingKey],
                     }))
                   }
-                  className="flex w-full items-center justify-between py-1.5 text-left"
+                  className="flex min-h-11 w-full items-center justify-between py-1.5 text-left"
                 >
                   <span className="text-base font-bold text-[#54635d]">{label}</span>
                   <span
+                    aria-hidden="true"
                     className={cn(
-                      "inline-flex h-8 w-8 items-center justify-center rounded-full border-2",
-                      enabled
-                        ? "border-primary-500 bg-primary-500 text-white"
-                        : "border-border text-transparent"
+                      "inline-flex h-7 w-12 shrink-0 items-center rounded-full transition-colors",
+                      enabled ? "bg-primary-500" : "bg-neutral-200"
                     )}
                   >
-                    {enabled && <Check className="h-4 w-4" />}
+                    <span
+                      className={cn(
+                        "h-5 w-5 rounded-full bg-white shadow-[0_2px_6px_rgba(22,48,42,0.18)] transition-transform",
+                        enabled ? "translate-x-6" : "translate-x-1"
+                      )}
+                    />
                   </span>
                 </button>
               );
@@ -493,6 +506,7 @@ export default function GroceryListPage() {
                 const servingSize = item.servingSize ?? details.servingSize;
                 const classification = item.classification ?? details.classification;
                 const vitaminBenefit = item.vitaminBenefit ?? details.vitaminBenefit;
+                const expanded = expandedItemId === item.id;
                 return (
                   <article
                     key={item.id}
@@ -563,48 +577,64 @@ export default function GroceryListPage() {
                       </div>
                     </div>
 
-                    <div className="mt-3 grid min-w-0 gap-3 min-[360px]:grid-cols-2">
-                      <label className="min-w-0 text-[11px] font-black uppercase tracking-[0.1em] text-muted-foreground">
-                        Serving
-                        <input
-                          value={servingSize}
-                          onChange={(event) => updateItem(item.id, { servingSize: event.target.value })}
-                          className="mt-1 min-h-11 min-w-0 w-full rounded-xl border border-primary-100 bg-[#f8fbf9] px-3 py-2 text-sm font-bold normal-case tracking-normal text-[#16302a] outline-none focus:ring-2 focus:ring-primary-100"
-                          aria-label={`Edit serving size for ${item.name}`}
-                        />
-                      </label>
-                      <label className="min-w-0 text-[11px] font-black uppercase tracking-[0.1em] text-muted-foreground">
-                        Category
-                        <select
-                          value={item.category}
-                          onChange={(event) => updateItem(item.id, { category: event.target.value as GroceryCategory })}
-                          className={cn("mt-1 min-h-11 min-w-0 w-full rounded-xl border px-3 py-2 text-sm font-black normal-case tracking-normal outline-none", categoryTone[item.category])}
-                          aria-label={`Edit category for ${item.name}`}
-                        >
-                          {(["Protein", "Produce", "Pantry", "Dairy", "Frozen", "Other"] as GroceryCategory[]).map((category) => (
-                            <option key={category} value={category}>{category}</option>
-                          ))}
-                        </select>
-                      </label>
+                    {/* Serving/category/benefit are planning-time edits — collapsed so
+                        in-store check-offs stay a short scroll. */}
+                    <div className="mt-2 flex min-w-0 items-center justify-between gap-2 border-t border-primary-100/70 pt-2 text-xs font-bold text-[#60776f]">
+                      <p className="min-w-0 break-words"><span className="text-muted-foreground">Recipe:</span> {item.source}</p>
+                      <button
+                        type="button"
+                        onClick={() => setExpandedItemId(expanded ? null : item.id)}
+                        aria-expanded={expanded}
+                        aria-label={`${expanded ? "Hide" : "Show"} details for ${item.name}`}
+                        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-primary-600 transition hover:bg-primary-50"
+                      >
+                        <ChevronDown className={cn("h-5 w-5 transition-transform", expanded && "rotate-180")} />
+                      </button>
                     </div>
 
-                    <div className="mt-3 min-w-0 border-t border-primary-100/70 pt-3 text-xs font-bold text-[#60776f]">
-                      <p className="break-words"><span className="text-muted-foreground">Recipe:</span> {item.source}</p>
-                      <div className="mt-2 flex min-w-0 flex-wrap gap-1.5">
-                        <span className="max-w-full break-words rounded-full bg-[#f4f8f6] px-2.5 py-1 text-[11px] font-black text-[#54635d]">{classification}</span>
-                        <span className="max-w-full break-words rounded-full bg-primary-50 px-2.5 py-1 text-[11px] font-black text-primary-800">{vitaminBenefit}</span>
-                      </div>
-                    </div>
+                    {expanded && (
+                      <>
+                        <div className="mt-1 grid min-w-0 gap-3 min-[360px]:grid-cols-2">
+                          <label className="min-w-0 text-[11px] font-black uppercase tracking-[0.1em] text-muted-foreground">
+                            Serving
+                            <input
+                              value={servingSize}
+                              onChange={(event) => updateItem(item.id, { servingSize: event.target.value })}
+                              className="mt-1 min-h-11 min-w-0 w-full rounded-xl border border-primary-100 bg-[#f8fbf9] px-3 py-2 text-sm font-bold normal-case tracking-normal text-[#16302a] outline-none focus:ring-2 focus:ring-primary-100"
+                              aria-label={`Edit serving size for ${item.name}`}
+                            />
+                          </label>
+                          <label className="min-w-0 text-[11px] font-black uppercase tracking-[0.1em] text-muted-foreground">
+                            Category
+                            <select
+                              value={item.category}
+                              onChange={(event) => updateItem(item.id, { category: event.target.value as GroceryCategory })}
+                              className={cn("mt-1 min-h-11 min-w-0 w-full rounded-xl border px-3 py-2 text-sm font-black normal-case tracking-normal outline-none", categoryTone[item.category])}
+                              aria-label={`Edit category for ${item.name}`}
+                            >
+                              {(["Protein", "Produce", "Pantry", "Dairy", "Frozen", "Other"] as GroceryCategory[]).map((category) => (
+                                <option key={category} value={category}>{category}</option>
+                              ))}
+                            </select>
+                          </label>
+                        </div>
+
+                        <div className="mt-3 flex min-w-0 flex-wrap gap-1.5">
+                          <span className="max-w-full break-words rounded-full bg-[#f4f8f6] px-2.5 py-1 text-[11px] font-black text-[#54635d]">{classification}</span>
+                          <span className="max-w-full break-words rounded-full bg-primary-50 px-2.5 py-1 text-[11px] font-black text-primary-800">{vitaminBenefit}</span>
+                        </div>
+                      </>
+                    )}
                   </article>
                 );
               })}
             </div>
             <div className="hidden overflow-x-auto md:block">
-              <table className="w-full min-w-[980px] border-separate border-spacing-0 text-left">
+              <table className="w-full min-w-[1080px] border-separate border-spacing-0 text-left">
                 <thead>
                   <tr className="bg-[#f4f8f6] text-[11px] font-black uppercase tracking-[0.12em] text-muted-foreground">
                     <th className="w-12 px-3 py-3">Done</th>
-                    <th className="px-3 py-3">Item</th>
+                    <th className="min-w-[11rem] px-3 py-3">Item</th>
                     <th className="px-3 py-3">Quantity</th>
                     <th className="px-3 py-3">Serving</th>
                     <th className="px-3 py-3">Category</th>
@@ -644,12 +674,12 @@ export default function GroceryListPage() {
                             )}
                           </button>
                         </td>
-                        <td className="border-t border-primary-100/70 px-3 py-2 align-middle">
+                        <td className="min-w-[11rem] border-t border-primary-100/70 px-3 py-2 align-middle">
                           <input
                             value={item.name}
                             onChange={(event) => updateItem(item.id, { name: event.target.value })}
                             className={cn(
-                              "w-full rounded-xl border border-transparent bg-transparent px-2 py-2 font-heading text-base font-black text-[#16302a] outline-none transition focus:border-primary-200 focus:bg-[#f8fbf9] focus:ring-2 focus:ring-primary-100",
+                              "w-full min-w-[11rem] rounded-xl border border-transparent bg-transparent px-2 py-2 font-heading text-base font-black text-[#16302a] outline-none transition focus:border-primary-200 focus:bg-[#f8fbf9] focus:ring-2 focus:ring-primary-100",
                               item.checked && "text-muted-foreground line-through"
                             )}
                             aria-label={`Edit item name for ${item.name}`}
@@ -710,10 +740,10 @@ export default function GroceryListPage() {
                         </td>
                         <td className="border-t border-primary-100/70 px-3 py-2 align-middle">
                           <div className="flex flex-col gap-1">
-                            <span className="rounded-full bg-[#f4f8f6] px-2.5 py-1 text-[11px] font-black text-[#54635d]">
+                            <span className="max-w-[9rem] truncate rounded-full bg-[#f4f8f6] px-2.5 py-1 text-[11px] font-black text-[#54635d]" title={classification}>
                               {classification}
                             </span>
-                            <span className="rounded-full bg-primary-50 px-2.5 py-1 text-[11px] font-black text-primary-800">
+                            <span className="max-w-[9rem] truncate rounded-full bg-primary-50 px-2.5 py-1 text-[11px] font-black text-primary-800" title={vitaminBenefit}>
                               {vitaminBenefit}
                             </span>
                           </div>

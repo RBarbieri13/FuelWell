@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { Activity, ArrowRight, HeartPulse, Salad } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   buildScoreContributors,
@@ -141,16 +142,28 @@ function ScoreDetail({
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center justify-between gap-4 md:block md:text-right">
-                  <div>
-                    <p className="text-3xl font-black tabular-nums text-[#16302a] md:text-4xl">
-                      {contributor.score ?? "--"}
-                    </p>
-                    <p className="text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">
+                <div className="flex items-center justify-between gap-4 md:flex-col md:items-end md:gap-3">
+                  <div className="md:text-right">
+                    {contributor.score !== null ? (
+                      <p className="text-3xl font-black tabular-nums text-[#16302a] md:text-4xl">
+                        {contributor.score}
+                      </p>
+                    ) : (
+                      <Badge>No inputs yet</Badge>
+                    )}
+                    <p className="mt-1 text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">
                       contributor score
                     </p>
+                    {contributor.score !== null && (
+                      <div className="mt-2 h-[7px] w-32 overflow-hidden rounded-full bg-primary-100 md:ml-auto">
+                        <div
+                          className="h-full rounded-full bg-primary-500"
+                          style={{ width: `${contributor.score}%` }}
+                        />
+                      </div>
+                    )}
                   </div>
-                  <ArrowRight className="h-5 w-5 text-primary-500" />
+                  <ArrowRight className="h-5 w-5 shrink-0 text-primary-500" />
                 </div>
               </div>
             </Link>

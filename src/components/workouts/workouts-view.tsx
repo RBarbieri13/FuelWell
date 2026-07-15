@@ -632,7 +632,8 @@ export function WorkoutsView({
                   <div className="min-w-0">
                     <p className="truncate text-sm font-semibold text-neutral-900">{w.name}</p>
                     <p className="text-xs text-neutral-500">
-                      {w.category} · {w.durationMin} min · {w.calories ?? 0} active kcal
+                      {w.category} · {w.durationMin} min ·{" "}
+                      {w.calories ? `${w.calories} active kcal` : "burn not estimated"}
                     </p>
                   </div>
                   {editingWorkoutId === w.id ? (

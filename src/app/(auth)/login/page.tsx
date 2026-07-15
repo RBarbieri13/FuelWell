@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { OAuthButtons } from "@/components/auth/oauth-buttons";
 import { AuthLink, AuthShell } from "@/components/auth/auth-shell";
-import { BarChart3, Brain, Sparkles, Utensils } from "lucide-react";
+import { BarChart3, Brain, LogIn, Utensils } from "lucide-react";
 
 function LoginForm() {
   const router = useRouter();
@@ -110,7 +110,7 @@ function LoginForm() {
                 <div className="mt-1.5 text-right">
                   <Link
                     href="/forgot-password"
-                    className="text-xs font-bold text-muted-foreground transition-colors hover:text-primary-700"
+                    className="-mx-2 -my-2.5 inline-block px-2 py-3.5 text-xs font-bold text-primary-700 transition-colors hover:text-primary-800"
                   >
                     Forgot password?
                   </Link>
@@ -118,7 +118,7 @@ function LoginForm() {
               </div>
 
               <Button type="submit" size="lg" className="w-full" loading={loading}>
-                <Sparkles className="h-4 w-4" />
+                <LogIn className="h-4 w-4" />
                 Sign in
               </Button>
             </form>

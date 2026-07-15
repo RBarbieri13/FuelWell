@@ -267,7 +267,7 @@ export function DashboardClient({
               </p>
             </div>
             <span className="shrink-0 rounded-full bg-primary-50 px-3.5 py-1.5 text-xs font-black text-primary-700">
-              {percentOf(totals.calories, effectiveTargets.calories)}% calories
+              {percentOf(totals.calories, effectiveTargets.calories)}% of calories eaten
             </span>
           </div>
 

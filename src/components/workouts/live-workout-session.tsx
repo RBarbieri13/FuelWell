@@ -343,7 +343,11 @@ export function LiveWorkoutSession({
                   {completedCount}/{totalSets} sets checked
                 </p>
                 <p className="text-xs font-semibold text-muted-foreground">
-                  Progress saves when you log the workout.
+                  {!started
+                    ? "Tap Begin to start checking off sets."
+                    : completedCount === 0
+                      ? "Check off at least one set to log this workout."
+                      : "Progress saves when you log the workout."}
                 </p>
               </div>
             </div>

@@ -22,7 +22,7 @@ const menuItems = [
   { label: "Data Export", href: "/app/settings#data", icon: Download },
   { label: "Subscription", href: "/app/settings#subscription", icon: CreditCard },
   { label: "Support", href: "/app/settings#support", icon: HelpCircle },
-  { label: "Login / Logout", href: "/login", icon: LogIn },
+  { label: "Sign in", href: "/login", icon: LogIn },
   { label: "Delete Account", href: "/app/settings#delete-account", icon: Trash2, danger: true },
 ];
 
@@ -54,7 +54,7 @@ export function UserMenu({ variant = "floating" }: { variant?: "floating" | "inl
   }, [open]);
 
   return (
-    <div className={cn(inline ? "relative shrink-0" : "pointer-events-none fixed bottom-4 right-4 z-[70] hidden md:block")}>
+    <div className={cn(inline ? "relative shrink-0" : "pointer-events-none fixed right-4 top-4 z-[70] hidden md:block")}>
       <div ref={containerRef} className={cn(!inline && "pointer-events-auto relative")}>
         <button
           ref={buttonRef}
@@ -77,7 +77,7 @@ export function UserMenu({ variant = "floating" }: { variant?: "floating" | "inl
           <div
             className={cn(
               "absolute right-0 w-64 overflow-hidden rounded-[1.25rem] border border-primary-100 bg-white p-2 shadow-[0_24px_50px_rgba(16,48,40,0.18)]",
-              inline ? "top-10" : "bottom-12"
+              inline ? "top-10" : "top-12"
             )}
           >
             <div className="px-3 py-2">

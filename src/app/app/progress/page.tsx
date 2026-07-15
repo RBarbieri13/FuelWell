@@ -484,8 +484,16 @@ export default function ProgressPage() {
                     <span className={cn("font-black", macroTextClass[macro.key])}>
                       {macro.label}
                     </span>
-                    <span className="font-semibold text-muted-foreground tabular-nums">
+                    <span
+                      className={cn(
+                        "tabular-nums",
+                        macro.consumed > macro.target
+                          ? "font-black text-accent-600"
+                          : "font-semibold text-muted-foreground"
+                      )}
+                    >
                       {macro.consumed.toLocaleString()}{macro.unit === "g" ? "g" : " kcal"} / {macro.target.toLocaleString()}{macro.unit === "g" ? "g" : " kcal"}
+                      {macro.consumed > macro.target ? " · over" : ""}
                     </span>
                   </div>
                   <div className="h-2.5 bg-[#f2f7f5] rounded-full overflow-hidden mt-2">
@@ -579,6 +587,22 @@ export default function ProgressPage() {
               <span className="font-semibold text-muted-foreground">Start</span>
               <span className="font-black text-[#16302a] tabular-nums">{formatPounds(snapshot.startingWeight)}</span>
             </div>
+            <div className="h-2.5 bg-[#f2f7f5] rounded-full overflow-hidden">
+              <div
+                className="h-full rounded-full bg-primary-500 transition-all duration-300"
+                style={{
+                  width: `${Math.min(
+                    100,
+                    Math.max(
+                      0,
+                      Math.round(
+                        (projectedDelta / (snapshot.startingWeight - snapshot.goalWeight)) * 100
+                      )
+                    )
+                  )}%`,
+                }}
+              />
+            </div>
             <div className="flex items-center justify-between text-sm">
               <span className="font-semibold text-muted-foreground">Goal</span>
               <span className="font-black text-[#16302a] tabular-nums">{formatPounds(snapshot.goalWeight)}</span>
@@ -586,7 +610,9 @@ export default function ProgressPage() {
             <div className="flex items-center justify-between text-sm">
               <span className="font-semibold text-muted-foreground">Preview change</span>
               <span className="font-black text-[#16302a] tabular-nums">
-                {projectedDelta >= 0 ? "-" : "+"}{Math.abs(projectedDelta).toFixed(1)} lb
+                {Math.abs(projectedDelta) < 0.05
+                  ? "No change yet"
+                  : `${projectedDelta >= 0 ? "-" : "+"}${Math.abs(projectedDelta).toFixed(1)} lb`}
               </span>
             </div>
             <div className="pt-2 border-t border-primary-100">

@@ -7,11 +7,10 @@ import {
   ChevronLeft,
   ChevronRight,
   Clock3,
-  Flame,
+  Image as ImageIcon,
   Info,
   ListChecks,
   MapPinned,
-  Search,
   ShieldCheck,
   Sparkles,
   Target,
@@ -189,13 +188,14 @@ function ExerciseDetailRow({ exercise }: { exercise: WorkoutExercise }) {
   return (
     <details className="group px-2 py-5">
       <summary className="cursor-pointer list-none">
-        <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-center">
+        <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_20rem] xl:items-center">
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-3">
               <p className="text-xl font-black text-[#16302a] md:text-2xl">{exercise.name}</p>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-50 px-3 py-1 text-xs font-black text-primary-700">
-                <Search className="h-3.5 w-3.5" />
-                View diagram
+                <ImageIcon className="h-3.5 w-3.5" />
+                <span className="group-open:hidden">View diagram</span>
+                <span className="hidden group-open:inline">Hide diagram</span>
               </span>
             </div>
             <p className="mt-2 text-base font-semibold leading-relaxed text-muted-foreground md:text-lg">
@@ -203,15 +203,18 @@ function ExerciseDetailRow({ exercise }: { exercise: WorkoutExercise }) {
             </p>
           </div>
           <div className="grid grid-cols-3 gap-2 text-center">
-            <span className="rounded-[1.05rem] bg-primary-50 px-3 py-3 text-sm font-black text-primary-800 md:text-base">
-              {exercise.sets} set{exercise.sets === 1 ? "" : "s"}
-            </span>
-            <span className="rounded-[1.05rem] bg-sky-100 px-3 py-3 text-sm font-black text-sky-800 md:text-base">
-              {exercise.reps}
-            </span>
-            <span className="rounded-[1.05rem] bg-lemon-50 px-3 py-3 text-sm font-black text-lemon-800 md:text-base">
-              {exercise.time}
-            </span>
+            <div className="rounded-[1.05rem] bg-primary-50 px-3 py-2.5">
+              <p className="text-sm font-black text-primary-800 md:text-base">{exercise.sets}</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.12em] text-primary-700/70">sets</p>
+            </div>
+            <div className="rounded-[1.05rem] bg-sky-100 px-3 py-2.5">
+              <p className="text-sm font-black text-sky-800 md:text-base">{exercise.reps}</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.12em] text-sky-700/70">reps</p>
+            </div>
+            <div className="rounded-[1.05rem] bg-lemon-50 px-3 py-2.5">
+              <p className="text-sm font-black text-lemon-800 md:text-base">{exercise.time}</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.12em] text-lemon-700/70">time</p>
+            </div>
           </div>
         </div>
       </summary>
@@ -252,7 +255,7 @@ export default async function WorkoutDetailPage({
             <div className="relative">
               <div className="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full bg-primary-500/25 blur-3xl" />
               <div className="relative flex flex-col gap-6">
-                <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
+                <div className="flex flex-col gap-5">
                   <div className="flex min-w-0 gap-3 sm:gap-4">
                     <div className="flex h-16 w-16 shrink-0 flex-col items-center justify-center rounded-[1.35rem] bg-primary-400 text-primary-950 shadow-sm shadow-primary-950/25">
                       <span className="text-lg font-black tabular-nums">{exercisePlan.length}</span>
@@ -267,7 +270,7 @@ export default async function WorkoutDetailPage({
                           {workout.verdict}
                         </span>
                       </div>
-                      <h1 className="mt-2 font-heading text-[1.7rem] font-black tracking-tight text-white md:mt-3 md:text-5xl">
+                      <h1 className="mt-2 font-heading text-[1.7rem] font-black tracking-tight text-white md:mt-3 md:text-4xl">
                         {workout.title}
                       </h1>
                       <p className="mt-4 max-w-3xl text-base font-semibold leading-7 text-white/72">
@@ -340,9 +343,7 @@ export default async function WorkoutDetailPage({
           </Card>
         </section>
 
-        <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <Metric icon={Clock3} label="Duration" value={workout.duration} />
-          <Metric icon={Flame} label="Intensity" value={workout.intensity} />
+        <section className="grid gap-3 sm:grid-cols-2">
           <Metric icon={ShieldCheck} label="Recovery cost" value={workout.recoveryCost} />
           <Metric icon={Target} label="Goal" value={workout.goal} />
         </section>

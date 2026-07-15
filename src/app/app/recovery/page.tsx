@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useState } from "react";
 import {
   ArrowRight,
-  Bed,
   CheckCircle2,
   Circle,
   Droplets,
@@ -17,6 +16,7 @@ import {
   Sparkles,
   UtensilsCrossed,
   Waves,
+  Zap,
   type LucideIcon,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
@@ -31,6 +31,12 @@ const readiness = {
 
 const windows = ["Today", "3 days", "7 days"];
 
+const windowEstimateCopy: Record<string, string> = {
+  Today: "Today’s readiness is",
+  "3 days": "Your 3-day readiness estimate is",
+  "7 days": "Your 7-day readiness estimate is",
+};
+
 const checklist = [
   { label: "Sleep entered", detail: "7h 10m, quality marked good", done: true, source: "User-entered" },
   { label: "Hydration check", detail: "2 of 3 bottles logged", done: true, source: "User-entered" },
@@ -40,9 +46,9 @@ const checklist = [
 
 const recoverySignals = [
   { label: "Sleep", value: "7h 10m", status: "Good", source: "User-entered", icon: Moon, tone: "sky" },
-  { label: "Hydration", value: "66%", status: "Needs one more bottle", source: "User-entered", icon: Droplets, tone: "primary" },
-  { label: "Soreness", value: "6/10", status: "High legs", source: "User-entered", icon: Dumbbell, tone: "accent" },
-  { label: "Readiness", value: "72", status: "Estimated from available inputs", source: "Estimated", icon: Bed, tone: "lemon" },
+  { label: "Hydration", value: "2/3", status: "Bottles — one more to go", source: "User-entered", icon: Droplets, tone: "primary" },
+  { label: "Soreness", value: "6/10", status: "High legs", source: "User-entered", icon: Zap, tone: "accent" },
+  { label: "Inputs used", value: "3/4", status: "Wearable missing", source: "Estimated", icon: Gauge, tone: "lemon" },
 ] as const;
 
 const nextActions = [
@@ -106,7 +112,7 @@ export default function RecoveryPage() {
                   key={window}
                   type="button"
                   onClick={() => setSelectedWindow(window)}
-                  className={`inline-flex rounded-full px-4 py-2 text-sm font-black ${
+                  className={`inline-flex min-h-11 items-center rounded-full px-4 py-2 text-sm font-black md:min-h-0 ${
                     selectedWindow === window ? "bg-primary-500 text-white" : "text-primary-900/60"
                   }`}
                   aria-pressed={selectedWindow === window}
@@ -219,9 +225,13 @@ export default function RecoveryPage() {
                     <span className="text-neutral-800">{item.label}</span>
                     <span className="text-neutral-500">{item.note}</span>
                   </div>
-                  <div className="h-3 overflow-hidden rounded-full bg-primary-50">
-                    <div className={`${item.color} h-full rounded-full`} style={{ width: `${item.value}%` }} />
-                  </div>
+                  {item.value === 0 && item.note === "Not connected" ? (
+                    <div className="h-3 rounded-full border border-dashed border-neutral-300" />
+                  ) : (
+                    <div className="h-3 overflow-hidden rounded-full bg-primary-50">
+                      <div className={`${item.color} h-full rounded-full`} style={{ width: `${item.value}%` }} />
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -238,7 +248,7 @@ export default function RecoveryPage() {
               </div>
               <span className="rounded-full bg-accent-50 px-3 py-1 text-xs font-black text-accent-700">legs high</span>
             </div>
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid grid-cols-2 gap-3">
               {bodyAreas.map((area) => (
                 <div key={area.label} className={`rounded-[1.25rem] border p-4 ${area.tone}`}>
                   <p className="text-sm font-black">{area.label}</p>
@@ -282,7 +292,7 @@ export default function RecoveryPage() {
                 <div>
                   <h2 className="text-xl font-black text-lemon-800">What is estimated?</h2>
                   <p className="mt-2 text-sm font-semibold leading-6 text-lemon-800/78">
-                  {selectedWindow} readiness is calculated from your logged sleep, hydration, and soreness above. HRV, resting heart rate, and workout load are not included yet.
+                  {windowEstimateCopy[selectedWindow]} calculated from your logged sleep, hydration, and soreness — the signals shown above are today&apos;s only. HRV, resting heart rate, and workout load are not included yet.
                   </p>
                 </div>
               </div>

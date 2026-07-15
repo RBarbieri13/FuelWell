@@ -69,7 +69,13 @@ export function MealLoggedCard({
       {artifact.goalImpact && (
         <div className="mt-3 rounded-2xl bg-primary-50 px-3 py-2">
           <p className="text-xs font-black uppercase tracking-wide text-primary-700">
-            Goal impact · {artifact.goalImpact.confidence}
+            Goal impact ·{" "}
+            {{
+              exact: "Exact match",
+              database: "Verified match",
+              estimate: "Estimate",
+              manual: "Manual entry",
+            }[artifact.goalImpact.confidence] ?? artifact.goalImpact.confidence}
           </p>
           <p className="mt-1 text-sm font-bold leading-5 text-neutral-800">
             {artifact.goalImpact.headline}

@@ -3,6 +3,13 @@
 import { Target } from "lucide-react";
 import type { MealGoalImpact } from "@/lib/goal-context";
 
+const CONFIDENCE_LABEL: Record<MealGoalImpact["confidence"], string> = {
+  exact: "Exact match",
+  database: "Verified match",
+  estimate: "Estimate",
+  manual: "Manual entry",
+};
+
 export function GoalImpactCard({ impact }: { impact: MealGoalImpact }) {
   return (
     <div className="rounded-[1.35rem] border border-primary-100 bg-primary-50/70 p-4 shadow-sm">
@@ -12,7 +19,7 @@ export function GoalImpactCard({ impact }: { impact: MealGoalImpact }) {
         </span>
         <div>
           <p className="text-xs font-black uppercase tracking-[0.14em] text-primary-700">
-            Goal impact · {impact.confidence}
+            Goal impact · {CONFIDENCE_LABEL[impact.confidence]}
           </p>
           <p className="mt-1 text-sm font-black leading-5 text-[#16302a]">
             {impact.headline}

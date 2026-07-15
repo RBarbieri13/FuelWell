@@ -53,7 +53,8 @@ export default function CoachAttachmentsReviewPage() {
   const preflight = getLaunchPreflight();
   const aiCheck = preflight.checks.find((check) => check.id === "anthropic");
   const storageCheck = preflight.checks.find((check) => check.id === "file-storage");
-  const AiIcon = aiCheck?.state === "pass" ? CheckCircle2 : AlertTriangle;
+  const aiPassing = aiCheck?.state === "pass";
+  const AiIcon = aiPassing ? CheckCircle2 : AlertTriangle;
 
   return (
     <div className="fw-app-surface">
@@ -69,8 +70,8 @@ export default function CoachAttachmentsReviewPage() {
               Photos, menus, emails, labels, and training files can become a clearer nutrition or fitness decision.
             </p>
           </div>
-          <Link href="/app/coach">
-            <Button size="lg" className="rounded-full px-6">
+          <Link href="/app/coach" className="shrink-0">
+            <Button size="lg" className="whitespace-nowrap rounded-full px-6">
               Open Coach
               <ArrowRight className="h-4 w-4" />
             </Button>
@@ -110,7 +111,11 @@ export default function CoachAttachmentsReviewPage() {
         <Card className="rounded-[1.5rem] border-primary-100 bg-white px-6 py-5 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
           <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] lg:items-center">
             <div className="flex gap-3">
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[1rem] bg-primary-100 text-primary-700">
+              <span
+                className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-[1rem] ${
+                  aiPassing ? "bg-primary-100 text-primary-700" : "bg-lemon-100 text-lemon-700"
+                }`}
+              >
                 <AiIcon className="h-5 w-5" />
               </span>
               <div>
@@ -119,7 +124,7 @@ export default function CoachAttachmentsReviewPage() {
                 </h2>
                 <p className="mt-1 text-sm font-semibold leading-6 text-[#6e8981]">
                   {aiCheck?.detail ??
-                    "FuelWell could not read the current AI readiness status."}
+                    "Status check hasn't run yet — open preflight to verify."}
                 </p>
               </div>
             </div>
@@ -131,7 +136,7 @@ export default function CoachAttachmentsReviewPage() {
                 <h3 className="text-base font-black text-[#16302a]">Artifact storage</h3>
                 <p className="mt-1 text-sm font-semibold leading-6 text-[#6e8981]">
                   {storageCheck?.detail ??
-                    "FuelWell could not read the current artifact storage status."}
+                    "Status check hasn't run yet — open preflight to verify."}
                 </p>
               </div>
             </div>

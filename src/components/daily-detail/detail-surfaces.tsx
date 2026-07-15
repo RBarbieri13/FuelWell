@@ -7,9 +7,11 @@ import {
   ArrowRight,
   Beef,
   Bike,
+  Check,
   ChevronDown,
   ChevronUp,
   Copy,
+  Droplet,
   Dumbbell,
   Flame,
   Footprints,
@@ -26,6 +28,7 @@ import {
   Timer,
   Trash2,
   UtensilsCrossed,
+  Wheat,
   type LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -50,7 +53,7 @@ import {
 } from "@/lib/fuelwell-data";
 import type { WorkoutEntry } from "@/lib/coach/types";
 
-type Tone = "primary" | "sky" | "lemon" | "accent" | "teal";
+type Tone = "primary" | "sky" | "lemon" | "accent" | "teal" | "neutral";
 
 type ActivityRecord = {
   id: string;
@@ -79,10 +82,10 @@ const baseActivityLog: ActivityRecord[] = [
     source: "Estimated",
     icon: Footprints,
     items: [
-      { label: "Steps", value: "2,850", tone: "primary" },
-      { label: "Pace", value: "Easy", tone: "sky" },
-      { label: "Zone", value: "1", tone: "lemon" },
-      { label: "Load", value: "Low", tone: "accent" },
+      { label: "Steps", value: "2,850", tone: "neutral" },
+      { label: "Pace", value: "Easy", tone: "neutral" },
+      { label: "Zone", value: "1", tone: "neutral" },
+      { label: "Load", value: "Low", tone: "neutral" },
     ],
   },
   {
@@ -97,9 +100,9 @@ const baseActivityLog: ActivityRecord[] = [
     source: "Planned",
     icon: Bike,
     items: [
-      { label: "Time", value: "42", tone: "primary" },
-      { label: "Burn", value: "310", tone: "accent" },
-      { label: "Effort", value: "4/10", tone: "sky" },
+      { label: "Time", value: "42 min", tone: "neutral" },
+      { label: "Burn", value: "310 kcal", tone: "neutral" },
+      { label: "Effort", value: "4/10", tone: "neutral" },
       { label: "Fuel", value: "Due", tone: "lemon" },
     ],
   },
@@ -115,10 +118,10 @@ const baseActivityLog: ActivityRecord[] = [
     source: "Planned",
     icon: HeartPulse,
     items: [
-      { label: "Range", value: "Hips", tone: "primary" },
-      { label: "Cost", value: "Low", tone: "sky" },
-      { label: "Sets", value: "3", tone: "lemon" },
-      { label: "Ready", value: "Yes", tone: "accent" },
+      { label: "Range", value: "Hips", tone: "neutral" },
+      { label: "Cost", value: "Low", tone: "neutral" },
+      { label: "Sets", value: "3", tone: "neutral" },
+      { label: "Ready", value: "Yes", tone: "neutral" },
     ],
   },
 ];
@@ -153,10 +156,14 @@ function activityFromWorkout(workout: WorkoutEntry): ActivityRecord {
     source: workout.source === "coach" ? "Logged" : workout.source === "database" ? "Logged" : "Estimated",
     icon: Icon,
     items: [
-      { label: "Time", value: String(workout.durationMin), tone: "primary" },
-      { label: "Burn", value: String(Math.round(workout.calories ?? 0)), tone: "accent" },
-      { label: workout.distanceMiles ? "Miles" : "Type", value: workout.distanceMiles ? workout.distanceMiles.toFixed(1) : workout.category, tone: "sky" },
-      { label: "Source", value: workout.source === "coach" ? "Coach" : workout.source === "database" ? "Plan" : "Manual", tone: "lemon" },
+      { label: "Time", value: `${workout.durationMin} min`, tone: "neutral" },
+      {
+        label: "Burn",
+        value: Math.round(workout.calories ?? 0) > 0 ? `${Math.round(workout.calories ?? 0)} kcal` : "—",
+        tone: "neutral",
+      },
+      { label: workout.distanceMiles ? "Miles" : "Type", value: workout.distanceMiles ? workout.distanceMiles.toFixed(1) : workout.category, tone: "neutral" },
+      { label: "Source", value: workout.source === "coach" ? "Coach" : workout.source === "database" ? "Plan" : "Manual", tone: "neutral" },
     ],
   };
 }
@@ -223,6 +230,12 @@ const toneStyles = {
     pill: "bg-teal-500/12 text-teal-600",
     bar: "bg-teal-500",
     macro: "bg-teal-500/12 text-teal-600",
+  },
+  neutral: {
+    chip: "bg-[#f4f8f6] text-[#54635d]",
+    pill: "bg-[#f4f8f6] text-[#54635d]",
+    bar: "bg-primary-300",
+    macro: "bg-[#f4f8f6] text-[#16302a]",
   },
 } as const;
 
@@ -347,8 +360,8 @@ export function NutritionDetailSurface({
           <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
             <TargetTile label="Calories" current={totals.calories} target={targets.calories} unit="kcal" tone="primary" icon={Flame} />
             <TargetTile label="Protein" current={totals.protein} target={targets.protein} unit="g" tone="sky" icon={Beef} />
-            <TargetTile label="Carbs" current={totals.carbs} target={targets.carbs} unit="g" tone="lemon" icon={Salad} />
-            <TargetTile label="Fat" current={totals.fat} target={targets.fat} unit="g" tone="accent" icon={Activity} />
+            <TargetTile label="Carbs" current={totals.carbs} target={targets.carbs} unit="g" tone="lemon" icon={Wheat} />
+            <TargetTile label="Fat" current={totals.fat} target={targets.fat} unit="g" tone="accent" icon={Droplet} />
           </section>
 
           {meals.length === 0 ? (
@@ -475,7 +488,7 @@ export function DailyReviewSurface({
               <TargetTile label="Food in" current={totals.calories} target={targets.calories} unit="kcal" tone="primary" icon={Flame} />
               <TargetTile label="Active burn" current={fitnessTotals.calories} target={fitnessTargets.activeCalories} unit="kcal" tone="accent" icon={Dumbbell} />
               <SimpleSummaryCard label="Net calories" value={netCalories.toLocaleString()} detail={`${remaining(netCalories, targets.calories).toLocaleString()} kcal room after activity`} tone="teal" icon={Target} />
-              <SimpleSummaryCard label="Protein" value={`${totals.protein}g`} detail={`${remaining(totals.protein, targets.protein)}g left of ${targets.protein}g`} tone="sky" icon={Beef} />
+              <TargetTile label="Protein" current={totals.protein} target={targets.protein} unit="g" tone="sky" icon={Beef} />
             </section>
           </div>
         </DailyReviewSection>
@@ -667,7 +680,7 @@ function DetailHero({
             <Icon className="h-4 w-4" />
             {label}
           </p>
-          <h2 className="mt-1.5 text-xl font-black tracking-normal text-[#16302a] md:text-3xl">
+          <h2 className="mt-1.5 text-lg font-black tracking-normal text-[#16302a] md:text-2xl">
             {title}
           </h2>
           <p className="mt-1 max-w-3xl text-sm font-semibold leading-6 text-[#54635d] md:text-base">
@@ -716,6 +729,8 @@ function TargetTile({
   icon: LucideIcon;
 }) {
   const styles = toneStyles[tone];
+  const met = target > 0 && current >= target;
+  const unitSuffix = unit === "g" || unit === "%" ? unit : ` ${unit}`;
 
   return (
     <Card className="space-y-2 rounded-[1.2rem] px-4 py-3.5 shadow-[0_8px_22px_rgba(20,90,75,0.06)] md:space-y-2.5 md:px-5 md:py-4">
@@ -726,8 +741,15 @@ function TargetTile({
           </span>
           <p className="text-sm font-black leading-tight text-[#54635d] md:text-base">{label}</p>
         </div>
-        <p className={`rounded-full px-2.5 py-1 text-xs font-black ${styles.pill}`}>
-          {percentOf(current, target)}%
+        <p className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-black ${styles.pill}`}>
+          {met ? (
+            <>
+              <Check className="h-3 w-3" />
+              Met
+            </>
+          ) : (
+            `${percentOf(current, target)}%`
+          )}
         </p>
       </div>
       <p className="text-2xl font-black leading-none tabular-nums text-[#16302a] md:text-[1.75rem]">
@@ -735,9 +757,9 @@ function TargetTile({
         <span className="ml-1 text-[13px] font-bold text-muted-foreground">{unit}</span>
       </p>
       <p className="text-xs font-semibold text-muted-foreground">
-        {remaining(current, target).toLocaleString()}
-        {unit === "g" ? "g" : ` ${unit}`} left of {target.toLocaleString()}
-        {unit === "g" ? "g" : ""}
+        {met
+          ? `+${Math.round(current - target).toLocaleString()}${unitSuffix} past the ${target.toLocaleString()}${unitSuffix} target`
+          : `${remaining(current, target).toLocaleString()}${unitSuffix} left of ${target.toLocaleString()}${unitSuffix}`}
       </p>
       <div className="h-[7px] overflow-hidden rounded-full bg-[#edf3f0]">
         <div
@@ -844,7 +866,7 @@ function ActivityLogCard({
             {activity.duration}
           </p>
           <p className="text-xs font-bold text-primary-600">
-            {activity.calories} active kcal
+            {activity.calories > 0 ? `${activity.calories} active kcal` : "burn not estimated"}
           </p>
         </div>
       </div>

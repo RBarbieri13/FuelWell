@@ -1,7 +1,6 @@
 import { Sidebar } from "@/components/layout/sidebar";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { MobileHeader } from "@/components/layout/mobile-header";
-import { UserMenu } from "@/components/layout/user-menu";
 import { PreferencesSync } from "@/lib/preferences-sync";
 import { ensureCoachKnowledgeForUser } from "@/lib/coach/persistence";
 import { createClient } from "@/lib/supabase/server";
@@ -27,7 +26,6 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     <div className="flex h-dvh overflow-hidden bg-background">
       <PreferencesSync />
       <Sidebar />
-      <UserMenu />
       <div className="flex-1 flex flex-col overflow-hidden">
         <MobileHeader />
         <main className="flex-1 overflow-y-auto pb-[calc(5rem+env(safe-area-inset-bottom,0px))] md:pb-0">

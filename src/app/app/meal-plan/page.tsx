@@ -132,6 +132,10 @@ export default function MealPlanPage() {
     { calories: 0, protein: 0, planned: 0 }
   );
   const weekPlannedPercent = Math.round((weekTotals.planned / (days.length * 4)) * 100);
+  const openSlotCount = days.length * 4 - weekTotals.planned;
+  const firstOpenSlot = days
+    .flatMap((day) => day.meals.map((meal) => ({ day, meal })))
+    .find(({ meal }) => meal.status === "open");
 
   function fillOpenSlot(slot: MealSlot) {
     const nextIdea = mealIdeas[(Object.keys(addedMeals).length + slot.length) % mealIdeas.length];
@@ -180,14 +184,15 @@ export default function MealPlanPage() {
               {weekTotals.planned} of {days.length * 4} meals are planned.
             </h2>
             <p className="mt-4 max-w-2xl text-base font-semibold leading-7 text-white/74">
-              Next best move: fill Tuesday dinner with a lean protein recipe so
-              the week stays above 135g protein per day.
+              {firstOpenSlot
+                ? `Next best move: fill ${firstOpenSlot.day.label} ${firstOpenSlot.meal.slot.toLowerCase()} with a lean protein recipe so the week stays above 135g protein per day.`
+                : "Every slot is planned — build the grocery list to lock in the week."}
             </p>
             <div className="mt-6 grid grid-cols-3 gap-2 sm:gap-3">
               {[
                 ["Avg kcal", Math.round(weekTotals.calories / days.length).toLocaleString()],
                 ["Avg protein", `${Math.round(weekTotals.protein / days.length)}g`],
-                ["Open slots", `${days.length * 4 - weekTotals.planned}`],
+                ["Open slots", `${openSlotCount}`],
               ].map(([label, value]) => (
                 <div key={label} className="rounded-[1.15rem] border border-white/12 bg-white/10 px-3 py-3 backdrop-blur sm:rounded-[1.25rem] sm:px-5 sm:py-4">
                   <p className="font-heading text-2xl font-black tabular-nums text-white">{value}</p>
@@ -215,7 +220,7 @@ export default function MealPlanPage() {
                 <p className="text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">unique ingredients</p>
               </div>
               <div className="fw-soft-row p-4">
-                <p className="text-2xl font-black text-[#16302a] md:text-3xl">2</p>
+                <p className="text-2xl font-black text-[#16302a] md:text-3xl">{openSlotCount}</p>
                 <p className="text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">slots to fill</p>
               </div>
             </div>
@@ -264,7 +269,21 @@ export default function MealPlanPage() {
                       <span className="font-black tabular-nums text-muted-foreground">
                         {totals.protein}g protein
                       </span>
-                      <span>{totals.planned}/4 meals</span>
+                      <span
+                        className="flex flex-1 items-center gap-1"
+                        role="img"
+                        aria-label={`${totals.planned} of 4 meals planned`}
+                      >
+                        {day.meals.map((meal) => (
+                          <span
+                            key={meal.slot}
+                            className={cn(
+                              "h-1.5 flex-1 rounded-full",
+                              meal.status === "open" ? "bg-primary-100" : "bg-primary-500"
+                            )}
+                          />
+                        ))}
+                      </span>
                     </div>
                   </button>
                 );

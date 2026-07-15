@@ -110,7 +110,14 @@ export function MacroStackedBars({
               }`}
             >
               {showCalories ? (
-                <span className="text-[10px] font-black text-primary-700 tabular-nums">
+                <span
+                  className={cn(
+                    "text-[10px] tabular-nums",
+                    day.source === "sample"
+                      ? "font-semibold text-muted-foreground/70"
+                      : "font-black text-primary-700"
+                  )}
+                >
                   {Math.round(totalKcal).toLocaleString()}
                 </span>
               ) : null}

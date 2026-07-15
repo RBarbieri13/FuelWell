@@ -30,8 +30,8 @@ export function SeriesToggle({
             className={cn(
               "inline-flex min-h-11 items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs font-black transition-colors md:min-h-9",
               isOn
-                ? "border-primary-100 bg-white text-muted-foreground shadow-sm"
-                : "border-primary-100 bg-primary-50/50 text-muted-foreground",
+                ? "border-primary-100 bg-white text-[#16302a] shadow-sm"
+                : "border-primary-100 bg-primary-50/50 text-muted-foreground opacity-70",
               isLast ? "cursor-not-allowed opacity-80" : "cursor-pointer"
             )}
           >

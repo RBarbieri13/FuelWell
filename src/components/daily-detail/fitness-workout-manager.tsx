@@ -161,7 +161,8 @@ export function FitnessWorkoutManager() {
               <div>
                 <p className="text-base font-black text-[#16302a]">{workout.name}</p>
                 <p className="text-sm font-semibold text-muted-foreground">
-                  {workout.category} · {workout.durationMin} min · {workout.calories ?? 0} active kcal
+                  {workout.category} · {workout.durationMin} min ·{" "}
+                  {workout.calories ? `${workout.calories} active kcal` : "burn not estimated"}
                 </p>
               </div>
               {editingId === workout.id ? (

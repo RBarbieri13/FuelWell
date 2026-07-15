@@ -10,19 +10,32 @@ import { useDayLog } from "@/lib/use-day-log";
 
 const mealTypes: MealType[] = ["breakfast", "lunch", "dinner", "snack"];
 
+/** Returns a number within [0, max], or null when the string is not valid. */
+function parseMacro(value: string, max: number): number | null {
+  if (value.trim() === "") return null;
+  const n = Number(value);
+  if (!Number.isFinite(n) || n < 0 || n > max) return null;
+  return n;
+}
+
 export function NutritionEditPanel() {
   const { meals, addMeal, duplicateMeal, updateMealItem, removeMeal } = useDayLog();
   const [mealType, setMealType] = useState<MealType>("dinner");
   const [mealName, setMealName] = useState("");
   const [itemName, setItemName] = useState("");
-  const [calories, setCalories] = useState(420);
-  const [protein, setProtein] = useState(30);
-  const [carbs, setCarbs] = useState(40);
-  const [fat, setFat] = useState(12);
+  const [calories, setCalories] = useState("");
+  const [protein, setProtein] = useState("");
+  const [carbs, setCarbs] = useState("");
+  const [fat, setFat] = useState("");
+  const [showLoggedItems, setShowLoggedItems] = useState(false);
   const [editingItem, setEditingItem] = useState<{ mealId: string; itemId: string } | null>(null);
-  const [editValues, setEditValues] = useState({ calories: 0, protein: 0, carbs: 0, fat: 0 });
+  const [editValues, setEditValues] = useState({ calories: "", protein: "", carbs: "", fat: "" });
+
+  const parsedCalories = parseMacro(calories, 10000);
+  const canSubmit = itemName.trim().length > 0 || parsedCalories !== null;
 
   function addQuickMeal() {
+    if (!canSubmit) return;
     const name = mealName.trim() || `${formatMealType(mealType)} entry`;
     const item = itemName.trim() || name;
     addMeal({
@@ -32,15 +45,19 @@ export function NutritionEditPanel() {
         {
           name: item,
           servings: 1,
-          calories: Math.max(0, calories),
-          protein: Math.max(0, protein),
-          carbs: Math.max(0, carbs),
-          fat: Math.max(0, fat),
+          calories: parsedCalories ?? 0,
+          protein: parseMacro(protein, 1000) ?? 0,
+          carbs: parseMacro(carbs, 1000) ?? 0,
+          fat: parseMacro(fat, 1000) ?? 0,
         },
       ],
     });
     setMealName("");
     setItemName("");
+    setCalories("");
+    setProtein("");
+    setCarbs("");
+    setFat("");
   }
 
   return (
@@ -101,95 +118,116 @@ export function NutritionEditPanel() {
         <MacroInput label="Protein g" value={protein} onChange={setProtein} />
         <MacroInput label="Carbs g" value={carbs} onChange={setCarbs} />
         <MacroInput label="Fat g" value={fat} onChange={setFat} />
-        <Button type="button" onClick={addQuickMeal} className="rounded-2xl">
+        <Button type="button" onClick={addQuickMeal} disabled={!canSubmit} className="rounded-2xl">
           <Plus className="h-4 w-4" />
           Add
         </Button>
       </div>
 
-      <div className="divide-y divide-primary-100/70 rounded-[1.25rem] border border-primary-100 bg-[#f8fbf9] px-4">
-        {meals.map((meal) => (
-          <div key={meal.id} className="py-4">
-            <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-              <div>
-                <p className="text-base font-black text-[#16302a]">{formatMealType(meal.mealType)}</p>
-                <p className="text-sm font-semibold text-muted-foreground">{meal.name}</p>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <button
-                  type="button"
-                  onClick={() => duplicateMeal(meal.id)}
-                  className="inline-flex items-center gap-2 rounded-full bg-white px-3.5 py-2 text-xs font-black text-primary-700 transition hover:bg-primary-50"
-                >
-                  <Copy className="h-3.5 w-3.5" />
-                  Duplicate
-                </button>
-                <button
-                  type="button"
-                  onClick={() => removeMeal(meal.id)}
-                  className="inline-flex items-center gap-2 rounded-full bg-white px-3.5 py-2 text-xs font-black text-accent-600 transition hover:bg-accent-100"
-                >
-                  <Trash2 className="h-3.5 w-3.5" />
-                  Delete meal
-                </button>
-              </div>
-            </div>
-            <div className="grid gap-2">
-              {meal.items.map((item) => {
-                const isEditing =
-                  editingItem?.mealId === meal.id && editingItem.itemId === item.id;
-                return (
-                  <div key={item.id} className="grid gap-2 rounded-[1rem] bg-white px-4 py-3 lg:grid-cols-[1fr_auto] lg:items-center">
+      {meals.length > 0 && (
+        <div className="space-y-3">
+          <Button
+            type="button"
+            variant="secondary"
+            aria-expanded={showLoggedItems}
+            onClick={() => setShowLoggedItems((open) => !open)}
+            className="min-h-12 w-full rounded-[1.2rem]"
+          >
+            <Pencil className="h-4 w-4" />
+            {showLoggedItems ? "Hide logged items" : "Edit logged items"}
+          </Button>
+          {showLoggedItems && (
+            <div className="divide-y divide-primary-100/70 rounded-[1.25rem] border border-primary-100 bg-[#f8fbf9] px-4">
+              {meals.map((meal) => (
+                <div key={meal.id} className="py-4">
+                  <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
                     <div>
-                      <p className="text-sm font-black text-[#16302a]">{item.name}</p>
-                      <p className="text-xs font-semibold text-muted-foreground">
-                        {item.calories} kcal · {item.protein}g protein · {item.carbs}g carbs · {item.fat}g fat
-                      </p>
+                      <p className="text-base font-black text-[#16302a]">{formatMealType(meal.mealType)}</p>
+                      <p className="text-sm font-semibold text-muted-foreground">{meal.name}</p>
                     </div>
-                    {isEditing ? (
-                      <div className="grid gap-2 sm:grid-cols-[5rem_5rem_5rem_5rem_auto]">
-                        <MacroInput label="Calories" value={editValues.calories} onChange={(value) => setEditValues((current) => ({ ...current, calories: value }))} compact />
-                        <MacroInput label="Protein g" value={editValues.protein} onChange={(value) => setEditValues((current) => ({ ...current, protein: value }))} compact />
-                        <MacroInput label="Carbs g" value={editValues.carbs} onChange={(value) => setEditValues((current) => ({ ...current, carbs: value }))} compact />
-                        <MacroInput label="Fat g" value={editValues.fat} onChange={(value) => setEditValues((current) => ({ ...current, fat: value }))} compact />
-                        <Button
-                          type="button"
-                          size="sm"
-                          onClick={() => {
-                            updateMealItem(meal.id, item.id, editValues);
-                            setEditingItem(null);
-                          }}
-                          className="rounded-full"
-                        >
-                          <Save className="h-4 w-4" />
-                          Save
-                        </Button>
-                      </div>
-                    ) : (
+                    <div className="flex flex-wrap gap-2">
                       <button
                         type="button"
-                        onClick={() => {
-                          setEditingItem({ mealId: meal.id, itemId: item.id });
-                          setEditValues({
-                            calories: item.calories,
-                            protein: item.protein,
-                            carbs: item.carbs,
-                            fat: item.fat,
-                          });
-                        }}
-                        className="inline-flex items-center justify-center gap-2 rounded-full bg-primary-50 px-3.5 py-2 text-xs font-black text-primary-700 transition hover:bg-primary-100"
+                        onClick={() => duplicateMeal(meal.id)}
+                        className="inline-flex items-center gap-2 rounded-full bg-white px-3.5 py-2 text-xs font-black text-primary-700 transition hover:bg-primary-50"
                       >
-                        <Pencil className="h-3.5 w-3.5" />
-                        Edit item
+                        <Copy className="h-3.5 w-3.5" />
+                        Duplicate
                       </button>
-                    )}
+                      <button
+                        type="button"
+                        onClick={() => removeMeal(meal.id)}
+                        className="inline-flex items-center gap-2 rounded-full bg-white px-3.5 py-2 text-xs font-black text-accent-600 transition hover:bg-accent-100"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                        Delete meal
+                      </button>
+                    </div>
                   </div>
-                );
-              })}
+                  <div className="grid gap-2">
+                    {meal.items.map((item) => {
+                      const isEditing =
+                        editingItem?.mealId === meal.id && editingItem.itemId === item.id;
+                      return (
+                        <div key={item.id} className="grid gap-2 rounded-[1rem] bg-white px-4 py-3 lg:grid-cols-[1fr_auto] lg:items-center">
+                          <div>
+                            <p className="text-sm font-black text-[#16302a]">{item.name}</p>
+                            <p className="text-xs font-semibold text-muted-foreground">
+                              {item.calories} kcal · {item.protein}g protein · {item.carbs}g carbs · {item.fat}g fat
+                            </p>
+                          </div>
+                          {isEditing ? (
+                            <div className="grid gap-2 sm:grid-cols-[5rem_5rem_5rem_5rem_auto]">
+                              <MacroInput label="Calories" value={editValues.calories} onChange={(value) => setEditValues((current) => ({ ...current, calories: value }))} compact />
+                              <MacroInput label="Protein g" value={editValues.protein} onChange={(value) => setEditValues((current) => ({ ...current, protein: value }))} compact />
+                              <MacroInput label="Carbs g" value={editValues.carbs} onChange={(value) => setEditValues((current) => ({ ...current, carbs: value }))} compact />
+                              <MacroInput label="Fat g" value={editValues.fat} onChange={(value) => setEditValues((current) => ({ ...current, fat: value }))} compact />
+                              <Button
+                                type="button"
+                                size="sm"
+                                onClick={() => {
+                                  updateMealItem(meal.id, item.id, {
+                                    calories: parseMacro(editValues.calories, 10000) ?? 0,
+                                    protein: parseMacro(editValues.protein, 1000) ?? 0,
+                                    carbs: parseMacro(editValues.carbs, 1000) ?? 0,
+                                    fat: parseMacro(editValues.fat, 1000) ?? 0,
+                                  });
+                                  setEditingItem(null);
+                                }}
+                                className="rounded-full"
+                              >
+                                <Save className="h-4 w-4" />
+                                Save
+                              </Button>
+                            </div>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setEditingItem({ mealId: meal.id, itemId: item.id });
+                                setEditValues({
+                                  calories: String(item.calories),
+                                  protein: String(item.protein),
+                                  carbs: String(item.carbs),
+                                  fat: String(item.fat),
+                                });
+                              }}
+                              className="inline-flex items-center justify-center gap-2 rounded-full bg-primary-50 px-3.5 py-2 text-xs font-black text-primary-700 transition hover:bg-primary-100"
+                            >
+                              <Pencil className="h-3.5 w-3.5" />
+                              Edit item
+                            </button>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
             </div>
-          </div>
-        ))}
-      </div>
+          )}
+        </div>
+      )}
     </Card>
   );
 }
@@ -201,8 +239,8 @@ function MacroInput({
   compact = false,
 }: {
   label: string;
-  value: number;
-  onChange: (value: number) => void;
+  value: string;
+  onChange: (value: string) => void;
   compact?: boolean;
 }) {
   return (
@@ -216,10 +254,11 @@ function MacroInput({
       </span>
       <input
         type="number"
+        inputMode="decimal"
         min={0}
         value={value}
-        onChange={(event) => onChange(Number(event.target.value))}
-        placeholder={label}
+        onChange={(event) => onChange(event.target.value)}
+        placeholder="0"
         className={`w-full rounded-2xl border border-border bg-[#f4f8f6] px-3 py-3 text-sm font-bold text-[#16302a] outline-none placeholder:text-[#9db0aa] focus:border-primary-300 focus:ring-2 focus:ring-primary-200 ${
           compact ? "py-2 text-xs" : ""
         }`}

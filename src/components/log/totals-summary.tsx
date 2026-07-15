@@ -21,7 +21,7 @@ const MACROS: {
   iconBg: string;
   icon: typeof Flame;
 }[] = [
-  { key: "calories", label: "Calories", unit: "", color: "var(--color-macro-calories)", iconBg: "bg-primary-100 text-primary-700", icon: Flame },
+  { key: "calories", label: "Calories", unit: " kcal", color: "var(--color-macro-calories)", iconBg: "bg-primary-100 text-primary-700", icon: Flame },
   { key: "protein", label: "Protein", unit: "g", color: "var(--color-macro-protein)", iconBg: "bg-sky-100 text-sky-700", icon: Beef },
   { key: "carbs", label: "Carbs", unit: "g", color: "var(--color-macro-carbs)", iconBg: "bg-lemon-100 text-lemon-700", icon: Wheat },
   { key: "fat", label: "Fat", unit: "g", color: "var(--color-macro-fat)", iconBg: "bg-accent-100 text-accent-700", icon: Droplet },
@@ -30,7 +30,7 @@ const MACROS: {
 /**
  * Live totals against targets. Reads from the shared day log via props so it
  * updates the instant a meal is added, edited, or removed. Framing stays
- * neutral and forward-looking ("left" / "logged"), never "missed" or "over".
+ * neutral and forward-looking ("left" / "over"), never "missed" or "failed".
  * Each macro row expands to show which of today's meals contributed to it.
  */
 export function TotalsSummary({
@@ -59,6 +59,7 @@ export function TotalsSummary({
           const target = targets[macro.key];
           const pct = Math.min(100, percentOf(current, target));
           const left = remaining(current, target);
+          const over = current > target ? current - target : 0;
           const Icon = macro.icon;
           const isExpanded = expanded === macro.key;
           const contributions = meals
@@ -101,10 +102,17 @@ export function TotalsSummary({
                       {macro.unit}
                     </span>
                   </p>
-                  <p className="text-xs font-black tabular-nums text-muted-foreground">
-                    {left.toLocaleString()}
-                    {macro.unit} left
-                  </p>
+                  {over > 0 ? (
+                    <p className="text-xs font-black tabular-nums text-accent-600">
+                      {over.toLocaleString()}
+                      {macro.unit} over
+                    </p>
+                  ) : (
+                    <p className="text-xs font-black tabular-nums text-muted-foreground">
+                      {left.toLocaleString()}
+                      {macro.unit} left
+                    </p>
+                  )}
                 </div>
               </button>
               <div className="mt-3 h-2.5 overflow-hidden rounded-full bg-white">

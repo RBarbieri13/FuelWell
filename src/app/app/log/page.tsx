@@ -7,8 +7,11 @@ import {
   Camera,
   CheckCircle2,
   MapPinned,
+  Moon,
+  Salad,
   Search,
   Sparkles,
+  Sun,
   UtensilsCrossed,
   X,
 } from "lucide-react";
@@ -46,6 +49,14 @@ type SessionIngredient = {
 };
 
 const MEAL_TYPES: MealType[] = ["breakfast", "lunch", "dinner", "snack"];
+
+// Meal-slot glyphs match the nutrition route's meal icons for cross-surface scanning.
+const MEAL_ICONS: Record<MealType, typeof Sun> = {
+  breakfast: Sun,
+  lunch: Salad,
+  dinner: Moon,
+  snack: UtensilsCrossed,
+};
 
 const MODE_HELP: Record<LogMode, { title: string; detail: string }> = {
   search: {
@@ -396,7 +407,7 @@ function RecentMeals({
               onClick={() => onLog(meal.name, mealTotals)}
               className="min-h-16 rounded-[1.2rem] border border-primary-100/80 bg-[#f7faf8] px-4 py-3 text-left transition hover:-translate-y-0.5 hover:border-primary-200 hover:bg-white hover:shadow-md hover:shadow-primary-900/10"
             >
-              <p className="truncate text-sm font-black text-[#16302a]">{meal.name}</p>
+              <p className="line-clamp-2 text-sm font-black text-[#16302a]">{meal.name}</p>
               <p className="mt-0.5 text-xs font-bold text-muted-foreground">
                 {mealTotals.calories} kcal · {mealTotals.protein}g protein
               </p>
@@ -517,21 +528,25 @@ function MealTypeSelector({
     <Card className="space-y-3 md:space-y-4">
       <h2 className="text-lg font-black text-[#16302a]">Logging for</h2>
       <div className="grid grid-cols-2 gap-2">
-        {MEAL_TYPES.map((type) => (
-          <button
-            key={type}
-            onClick={() => onSelect(type)}
-            aria-pressed={mealType === type}
-            className={cn(
-              "rounded-[1.15rem] border px-4 py-3 text-sm font-black transition",
-              mealType === type
-                ? "border-primary-300 bg-primary-50 text-primary-800 shadow-sm"
-                : "border-primary-100 bg-white text-[#60776f] hover:border-primary-200 hover:bg-primary-50/60"
-            )}
-          >
-            {formatMealType(type)}
-          </button>
-        ))}
+        {MEAL_TYPES.map((type) => {
+          const Icon = MEAL_ICONS[type];
+          return (
+            <button
+              key={type}
+              onClick={() => onSelect(type)}
+              aria-pressed={mealType === type}
+              className={cn(
+                "flex items-center justify-center gap-2 rounded-[1.15rem] border px-4 py-3 text-sm font-black transition",
+                mealType === type
+                  ? "border-primary-300 bg-primary-50 text-primary-800 shadow-sm"
+                  : "border-primary-100 bg-white text-[#60776f] hover:border-primary-200 hover:bg-primary-50/60"
+              )}
+            >
+              <Icon className="h-4 w-4 shrink-0" />
+              {formatMealType(type)}
+            </button>
+          );
+        })}
       </div>
     </Card>
   );

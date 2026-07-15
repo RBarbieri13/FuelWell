@@ -142,22 +142,29 @@ export default function RecipesPage() {
               className="w-full rounded-[1.3rem] border border-primary-100 bg-primary-50/55 py-4 pl-12 pr-4 text-sm font-semibold text-[#16302a] outline-none placeholder:text-[#91a7a0] transition focus:border-transparent focus:bg-white focus:ring-2 focus:ring-primary-500"
             />
           </div>
-          <div className="flex gap-2 overflow-x-auto rounded-[1.35rem] bg-[#f2f7f5] p-1">
-            {mealFilters.map((meal) => (
-              <button
-                key={meal}
-                type="button"
-                onClick={() => setMealFilter(meal)}
-                aria-pressed={mealFilter === meal}
-                className={`min-h-11 shrink-0 rounded-full px-4 py-2 text-sm font-black transition md:min-h-0 ${
-                  mealFilter === meal
-                    ? "bg-primary-500 text-white shadow-[0_12px_24px_rgba(21,145,108,0.18)]"
-                    : "text-neutral-600 hover:bg-white"
-                }`}
-              >
-                {meal}
-              </button>
-            ))}
+          <div className="relative min-w-0">
+            <div className="flex gap-2 overflow-x-auto rounded-[1.35rem] bg-[#f2f7f5] p-1">
+              {mealFilters.map((meal) => (
+                <button
+                  key={meal}
+                  type="button"
+                  onClick={() => setMealFilter(meal)}
+                  aria-pressed={mealFilter === meal}
+                  className={`min-h-11 shrink-0 rounded-full px-4 py-2 text-sm font-black transition md:min-h-0 ${
+                    mealFilter === meal
+                      ? "bg-primary-500 text-white shadow-[0_12px_24px_rgba(21,145,108,0.18)]"
+                      : "text-neutral-600 hover:bg-white"
+                  }`}
+                >
+                  {meal}
+                </button>
+              ))}
+            </div>
+            {/* Cue that the chip row scrolls — Snack sits off-screen at phone widths. */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-y-1 right-1 w-8 rounded-r-[1.35rem] bg-gradient-to-l from-[#f2f7f5] to-transparent sm:hidden"
+            />
           </div>
         </div>
 
@@ -176,7 +183,11 @@ export default function RecipesPage() {
           </div>
 
           {featured && (
-            <div className="rounded-[1.35rem] border border-primary-100 bg-primary-50/70 p-4">
+            <button
+              type="button"
+              onClick={() => setOpenRecipe(featured)}
+              className="w-full rounded-[1.35rem] border border-primary-100 bg-primary-50/70 p-4 text-left transition hover:border-primary-200"
+            >
               <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.14em] text-primary-700">
                 <Sparkles className="h-4 w-4" />
                 Best fit
@@ -192,16 +203,16 @@ export default function RecipesPage() {
                   {featured.minutes} min
                 </span>
               </div>
-            </div>
+            </button>
           )}
         </div>
-        <div className="flex flex-col gap-2 rounded-[1.15rem] border border-primary-100 bg-primary-50/70 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm font-semibold text-primary-900/70">
-            {results.length} match{results.length === 1 ? "" : "es"} visible
-            {mealFilter !== "All" ? ` for ${mealFilter.toLowerCase()}` : ""}.
-            {highProteinCount > 0 ? ` ${highProteinCount} are 30g+ protein.` : " Try loosening filters for more protein options."}
-          </p>
-          {hasRecipeFilters && (
+        {hasRecipeFilters && (
+          <div className="flex flex-col gap-2 rounded-[1.15rem] border border-primary-100 bg-primary-50/70 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm font-semibold text-primary-900/70">
+              {results.length} match{results.length === 1 ? "" : "es"} visible
+              {mealFilter !== "All" ? ` for ${mealFilter.toLowerCase()}` : ""}.
+              {highProteinCount > 0 ? ` ${highProteinCount} are 30g+ protein.` : " Try loosening filters for more protein options."}
+            </p>
             <button
               type="button"
               onClick={() => {
@@ -213,8 +224,8 @@ export default function RecipesPage() {
             >
               Clear filters
             </button>
-          )}
-        </div>
+          </div>
+        )}
       </Card>
 
       {results.length === 0 ? (

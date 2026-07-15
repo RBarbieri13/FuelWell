@@ -238,7 +238,7 @@ export default function ActivityPage() {
                   <CalendarClock className="h-5 w-5 text-primary-600" />
                   Fuel timing
                 </h2>
-                <p className="mt-1 text-sm font-semibold text-neutral-500">Hover-light detail for when logged food supports movement.</p>
+                <p className="mt-1 text-sm font-semibold text-neutral-500">When today&apos;s logged food supports your planned movement.</p>
               </div>
               <span className="rounded-full bg-lemon-50 px-3 py-1 text-xs font-black text-lemon-700">1 gap</span>
             </div>
@@ -279,16 +279,16 @@ export default function ActivityPage() {
             </div>
             <div className="divide-y divide-primary-100/70">
               {timeline.map((item) => (
-                <div key={`${item.time}-${item.title}`} className="grid gap-3 py-5 md:grid-cols-[6rem_1fr_auto] md:items-center">
+                <div key={`${item.time}-${item.title}`} className="grid gap-3 py-5 md:grid-cols-[6rem_1fr] md:items-center">
                   <div className="text-sm font-black tabular-nums text-neutral-500">{item.time}</div>
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
+                      <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${item.status === "watch" ? "bg-lemon-500" : item.status === "next" ? "bg-accent-500" : "bg-primary-500"}`} />
                       <p className="text-lg font-black text-neutral-900">{item.title}</p>
                       <SourceBadge>{item.source}</SourceBadge>
                     </div>
                     <p className="mt-1 text-sm font-semibold leading-6 text-neutral-500">{item.detail}</p>
                   </div>
-                  <span className={`hidden h-3 w-3 rounded-full md:block ${item.status === "watch" ? "bg-lemon-500" : item.status === "next" ? "bg-accent-500" : "bg-primary-500"}`} />
                 </div>
               ))}
             </div>

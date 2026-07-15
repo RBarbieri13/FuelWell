@@ -59,7 +59,7 @@ test("Log: barcode lookup saves through reviewed portion and shows goal impact",
   await page.getByRole("button", { name: "Choose portion" }).click();
   await page.getByRole("button", { name: /Standard \(140 g\)/i }).click();
   await expect(page.getByText(/Chicken breast, grilled \(Standard \(140 g\)\) added/i)).toBeVisible();
-  await expect(page.getByText("Goal impact · database")).toBeVisible();
+  await expect(page.getByText("Goal impact · Verified match")).toBeVisible();
   await expect(page.getByText(/Macro source: FuelWell food database/i)).toBeVisible();
 });
 
@@ -111,7 +111,7 @@ test("Log: restaurant menu search logs a goal-aware menu item", async ({ page })
   await expect(page.getByText(/Covers .*remaining protein/i).first()).toBeVisible();
   await page.getByRole("button", { name: /Log menu item/i }).first().click();
   await expect(page.getByText(/CAVA ·/i).first()).toBeVisible();
-  await expect(page.getByText("Goal impact · database")).toBeVisible();
+  await expect(page.getByText("Goal impact · Verified match")).toBeVisible();
 });
 
 test("Log: photo draft requires review before saving an estimate", async ({ page }) => {
@@ -121,7 +121,7 @@ test("Log: photo draft requires review before saving an estimate", async ({ page
   await page.getByRole("button", { name: /Estimate draft/i }).click();
   await expect(page.getByText(/Review is required before anything is saved/i)).toBeVisible();
   await page.getByRole("button", { name: /Save reviewed/i }).first().click();
-  await expect(page.getByText("Goal impact · estimate")).toBeVisible();
+  await expect(page.getByText("Goal impact · Estimate")).toBeVisible();
   await expect(page.getByText(/Macro source: estimate/i)).toBeVisible();
 });
 
@@ -132,7 +132,7 @@ test("Coach: agentic chat surface renders", async ({ page }) => {
   await expect(page.getByLabel("Message Coach")).toBeVisible();
   await expect(page.getByLabel("Attach screenshot, menu, photo, or file")).toBeAttached();
   await expect(
-    page.getByPlaceholder("Ask anything, or attach a photo or menu...")
+    page.getByPlaceholder("Ask, or attach a photo…")
   ).toBeVisible();
   await expect(page.getByRole("button", { name: "Send" })).toBeVisible();
   await expect(page.getByRole("button", { name: "New chat" })).toBeVisible();
