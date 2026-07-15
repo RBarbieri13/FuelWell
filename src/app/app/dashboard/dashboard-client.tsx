@@ -266,8 +266,12 @@ export function DashboardClient({
                 Calculated from logged meals only.
               </p>
             </div>
-            <Link href="/app/nutrition" className="-m-3 p-3 text-sm font-black text-primary-700">
+            <Link
+              href="/app/nutrition"
+              className="-m-3 inline-flex items-center gap-0.5 p-3 text-sm font-black text-primary-700 transition hover:text-primary-800"
+            >
               Details
+              <ChevronRight className="h-4 w-4" />
             </Link>
           </div>
 

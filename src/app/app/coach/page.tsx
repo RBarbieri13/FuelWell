@@ -337,7 +337,7 @@ export default function CoachPage() {
                 <div className="mt-5 flex flex-wrap gap-2">
                   <span className="rounded-full border border-white/14 bg-white/10 px-3 py-1.5 text-xs font-black tabular-nums text-white">
                     {remaining(totals.calories, targets.calories).toLocaleString()}
-                    <span className="ml-1 font-bold text-white/60">kcal left today</span>
+                    <span className="ml-1 font-bold text-white/60">kcal left</span>
                   </span>
                   <span className="rounded-full border border-white/14 bg-white/10 px-3 py-1.5 text-xs font-black tabular-nums text-white">
                     {remaining(totals.protein, targets.protein)}g

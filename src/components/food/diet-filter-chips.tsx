@@ -31,7 +31,7 @@ export function DietFilterChips({
               "min-h-11 md:min-h-0 rounded-full px-3.5 py-1.5 text-sm font-semibold transition",
               isOn
                 ? "bg-primary-600 text-white shadow-sm shadow-primary-600/25"
-                : "bg-white text-neutral-600 border border-neutral-200 hover:border-primary-300 hover:text-primary-700"
+                : "bg-primary-50 text-primary-800 hover:bg-primary-100"
             )}
           >
             {filter.label}

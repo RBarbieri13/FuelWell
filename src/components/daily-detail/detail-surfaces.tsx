@@ -465,7 +465,7 @@ export function DailyReviewSurface({
           icon={Sparkles}
           eyebrow="Overview"
           title="Today's whole picture"
-          description="Food in, active burn, net room, and protein — today's headline numbers."
+          description="Calories eaten, calories burned, the room left after activity, and protein — today's headline numbers."
           expanded={overviewExpanded}
           onToggle={() => setOverviewExpanded((value) => !value)}
           collapsedText="Overview collapsed. Expand it to review today's headline, calorie room, burn, and protein status."

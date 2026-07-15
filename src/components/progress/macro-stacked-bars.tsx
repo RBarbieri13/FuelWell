@@ -30,7 +30,7 @@ export const MACRO_META: Record<
   { label: string; barClass: string; swatchClass: string }
 > = {
   calories: { label: "Calories", barClass: "bg-primary-500", swatchClass: "bg-primary-500" },
-  protein: { label: "Protein", barClass: "bg-sky-500", swatchClass: "bg-sky-500" },
+  protein: { label: "Protein", barClass: "bg-macro-protein", swatchClass: "bg-macro-protein" },
   carbs: { label: "Carbs", barClass: "bg-macro-carbs", swatchClass: "bg-macro-carbs" },
   fat: { label: "Fat", barClass: "bg-macro-fat", swatchClass: "bg-macro-fat" },
 };

@@ -125,8 +125,8 @@ export default function RecipesPage() {
             <input
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search recipes or ingredients"
-              aria-label="Search recipes or ingredients"
+              placeholder="Search recipes"
+              aria-label="Search recipes"
               className="w-full rounded-[1.3rem] border border-primary-100 bg-primary-50/55 py-4 pl-12 pr-4 text-sm font-semibold text-[#16302a] outline-none placeholder:text-[#91a7a0] transition focus:border-transparent focus:bg-white focus:ring-2 focus:ring-primary-500"
             />
           </div>
