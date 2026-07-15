@@ -95,13 +95,13 @@ export function FitnessWorkoutManager() {
 
       <div className="grid gap-3 lg:grid-cols-[1.1fr_0.65fr_0.65fr_auto]">
         <label className="block">
-          <span className="text-xs font-black uppercase tracking-[0.14em] text-[#9db0aa]">
+          <span className="text-xs font-black uppercase tracking-[0.14em] text-muted-foreground">
             Activity
           </span>
           <select
             value={activityId}
             onChange={(event) => setActivityId(event.target.value)}
-            className="mt-2 w-full rounded-2xl border border-[#dce8e3] bg-[#f4f8f6] px-4 py-3 text-sm font-bold text-[#16302a] outline-none focus:border-primary-300 focus:ring-2 focus:ring-primary-200"
+            className="mt-2 w-full rounded-2xl border border-border bg-[#f4f8f6] px-4 py-3 text-sm font-bold text-[#16302a] outline-none focus:border-primary-300 focus:ring-2 focus:ring-primary-200"
           >
             {MANUAL_ACTIVITY_OPTIONS.map((activity) => (
               <option key={activity.id} value={activity.id}>
@@ -112,7 +112,7 @@ export function FitnessWorkoutManager() {
         </label>
 
         <label className="block">
-          <span className="text-xs font-black uppercase tracking-[0.14em] text-[#9db0aa]">
+          <span className="text-xs font-black uppercase tracking-[0.14em] text-muted-foreground">
             Minutes
           </span>
           <input
@@ -120,12 +120,12 @@ export function FitnessWorkoutManager() {
             min={1}
             value={minutes}
             onChange={(event) => setMinutes(Number(event.target.value))}
-            className="mt-2 w-full rounded-2xl border border-[#dce8e3] bg-[#f4f8f6] px-4 py-3 text-sm font-bold text-[#16302a] outline-none focus:border-primary-300 focus:ring-2 focus:ring-primary-200"
+            className="mt-2 w-full rounded-2xl border border-border bg-[#f4f8f6] px-4 py-3 text-sm font-bold text-[#16302a] outline-none focus:border-primary-300 focus:ring-2 focus:ring-primary-200"
           />
         </label>
 
         <label className="block">
-          <span className="text-xs font-black uppercase tracking-[0.14em] text-[#9db0aa]">
+          <span className="text-xs font-black uppercase tracking-[0.14em] text-muted-foreground">
             Distance
           </span>
           <input
@@ -135,7 +135,7 @@ export function FitnessWorkoutManager() {
             value={distance}
             onChange={(event) => setDistance(event.target.value)}
             placeholder="Optional mi"
-            className="mt-2 w-full rounded-2xl border border-[#dce8e3] bg-[#f4f8f6] px-4 py-3 text-sm font-bold text-[#16302a] outline-none placeholder:text-[#9db0aa] focus:border-primary-300 focus:ring-2 focus:ring-primary-200"
+            className="mt-2 w-full rounded-2xl border border-border bg-[#f4f8f6] px-4 py-3 text-sm font-bold text-[#16302a] outline-none placeholder:text-[#9db0aa] focus:border-primary-300 focus:ring-2 focus:ring-primary-200"
           />
         </label>
 
@@ -160,7 +160,7 @@ export function FitnessWorkoutManager() {
             <div key={workout.id} className="grid gap-3 py-4 lg:grid-cols-[1fr_auto] lg:items-center">
               <div>
                 <p className="text-base font-black text-[#16302a]">{workout.name}</p>
-                <p className="text-sm font-semibold text-[#7c968f]">
+                <p className="text-sm font-semibold text-muted-foreground">
                   {workout.category} · {workout.durationMin} min · {workout.calories ?? 0} active kcal
                 </p>
               </div>

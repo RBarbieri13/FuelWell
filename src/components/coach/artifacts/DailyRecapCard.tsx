@@ -16,10 +16,10 @@ type DailyRecapArtifact = ArtifactSpec & {
 };
 
 const BARS: Array<{ key: keyof Macros; label: string; color: string; unit: string }> = [
-  { key: "calories", label: "Calories", color: "#1eae84", unit: "kcal" },
-  { key: "protein", label: "Protein", color: "#1eae84", unit: "g" },
-  { key: "carbs", label: "Carbs", color: "#c7a91e", unit: "g" },
-  { key: "fat", label: "Fat", color: "#8e73bd", unit: "g" },
+  { key: "calories", label: "Calories", color: "var(--color-macro-calories)", unit: "kcal" },
+  { key: "protein", label: "Protein", color: "var(--color-macro-protein)", unit: "g" },
+  { key: "carbs", label: "Carbs", color: "var(--color-macro-carbs)", unit: "g" },
+  { key: "fat", label: "Fat", color: "var(--color-macro-fat)", unit: "g" },
 ];
 
 function formatValue(value: number, unit: string): string {

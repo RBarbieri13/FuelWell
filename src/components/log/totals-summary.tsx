@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, Flame, Wheat, Droplet, Dumbbell } from "lucide-react";
+import { ChevronDown, Flame, Wheat, Droplet, Beef } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils/cn";
 import {
@@ -21,10 +21,10 @@ const MACROS: {
   iconBg: string;
   icon: typeof Flame;
 }[] = [
-  { key: "calories", label: "Calories", unit: "", color: "#1eae84", iconBg: "bg-primary-100 text-primary-700", icon: Flame },
-  { key: "protein", label: "Protein", unit: "g", color: "#3e98cf", iconBg: "bg-sky-100 text-sky-700", icon: Dumbbell },
-  { key: "carbs", label: "Carbs", unit: "g", color: "#c7a91e", iconBg: "bg-lemon-100 text-lemon-700", icon: Wheat },
-  { key: "fat", label: "Fat", unit: "g", color: "#f0795b", iconBg: "bg-accent-100 text-accent-700", icon: Droplet },
+  { key: "calories", label: "Calories", unit: "", color: "var(--color-macro-calories)", iconBg: "bg-primary-100 text-primary-700", icon: Flame },
+  { key: "protein", label: "Protein", unit: "g", color: "var(--color-macro-protein)", iconBg: "bg-sky-100 text-sky-700", icon: Beef },
+  { key: "carbs", label: "Carbs", unit: "g", color: "var(--color-macro-carbs)", iconBg: "bg-lemon-100 text-lemon-700", icon: Wheat },
+  { key: "fat", label: "Fat", unit: "g", color: "var(--color-macro-fat)", iconBg: "bg-accent-100 text-accent-700", icon: Droplet },
 ];
 
 /**
@@ -48,7 +48,7 @@ export function TotalsSummary({
     <Card className="space-y-5">
       <div>
         <h2 className="text-xl font-black text-[#16302a]">Today&apos;s totals</h2>
-        <p className="mt-1 text-sm font-semibold text-[#78928a]">
+        <p className="mt-1 text-sm font-semibold text-muted-foreground">
           Live macro math for the selected day. Tap a macro for the meal
           breakdown.
         </p>
@@ -81,12 +81,12 @@ export function TotalsSummary({
                   <span className={`flex h-9 w-9 items-center justify-center rounded-[0.9rem] ${macro.iconBg}`}>
                     <Icon className="h-4 w-4" />
                   </span>
-                  <p className="text-sm font-black text-[#516b63]">
+                  <p className="text-sm font-black text-muted-foreground">
                     {macro.label}
                   </p>
                   <ChevronDown
                     className={cn(
-                      "h-4 w-4 text-[#91a7a0] transition-transform",
+                      "h-4 w-4 text-muted-foreground transition-transform",
                       isExpanded && "rotate-180"
                     )}
                   />
@@ -95,13 +95,13 @@ export function TotalsSummary({
                   <p className="text-xl font-black tabular-nums text-[#16302a]">
                     {current.toLocaleString()}
                     {macro.unit}
-                    <span className="mx-1 text-[#91a7a0]">/</span>
+                    <span className="mx-1 text-muted-foreground">/</span>
                     <span className="text-base text-[#60776f]">
                       {target.toLocaleString()}
                       {macro.unit}
                     </span>
                   </p>
-                  <p className="text-xs font-black tabular-nums text-[#91a7a0]">
+                  <p className="text-xs font-black tabular-nums text-muted-foreground">
                     {left.toLocaleString()}
                     {macro.unit} left
                   </p>
@@ -114,14 +114,14 @@ export function TotalsSummary({
                 />
               </div>
               {isExpanded && (
-                <div className="mt-3 space-y-1.5 border-t border-[#e8f0ec] pt-3">
+                <div className="mt-3 space-y-1.5 border-t border-border pt-3">
                   {contributions.length > 0 ? (
                     contributions.map((entry) => (
                       <div
                         key={entry.id}
                         className="flex items-center justify-between gap-3 rounded-[0.8rem] bg-white px-3 py-2"
                       >
-                        <p className="min-w-0 truncate text-sm font-bold text-[#516b63]">
+                        <p className="min-w-0 truncate text-sm font-bold text-muted-foreground">
                           {entry.name}
                         </p>
                         <p className="shrink-0 text-sm font-black tabular-nums text-[#16302a]">
@@ -131,7 +131,7 @@ export function TotalsSummary({
                       </div>
                     ))
                   ) : (
-                    <p className="px-1 text-sm font-semibold text-[#91a7a0]">
+                    <p className="px-1 text-sm font-semibold text-muted-foreground">
                       Nothing logged toward {macro.label.toLowerCase()} yet.
                     </p>
                   )}

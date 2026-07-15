@@ -334,15 +334,12 @@ export default function ProgressPage() {
                 "min-h-11 rounded-full px-5 py-2 text-sm font-bold transition-all duration-150 md:min-h-0",
                 selectedState === state
                   ? "bg-primary-500 text-white shadow-[0_6px_14px_rgba(30,174,132,0.24)]"
-                  : "text-[#78928a] hover:text-primary-800"
+                  : "text-muted-foreground hover:text-primary-800"
               )}
             >
               {snapshots[state].label}
             </button>
           ))}
-          </div>
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary-600 text-lg font-black text-white shadow-[0_16px_34px_rgba(21,145,108,0.24)]">
-            M
           </div>
         </div>
       </header>
@@ -410,7 +407,7 @@ export default function ProgressPage() {
             <h2 className="font-heading text-lg font-black text-[#16302a]">
               Fitness &amp; Activity
             </h2>
-            <p className="mt-1 text-sm font-semibold leading-6 text-[#78928a]">
+            <p className="mt-1 text-sm font-semibold leading-6 text-muted-foreground">
               Review workouts, active calories, steps, and readiness alongside your progress.
             </p>
           </div>
@@ -418,7 +415,7 @@ export default function ProgressPage() {
         <ArrowRight className="h-5 w-5 shrink-0 text-primary-600 transition-transform group-hover:translate-x-1" />
       </Link>
 
-      <Card className="space-y-6 rounded-[24px] border-[#e6efeb] px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
+      <Card className="space-y-6 rounded-[24px] border-border px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <SectionHeader
             icon={BarChart3}
@@ -436,7 +433,7 @@ export default function ProgressPage() {
                   "min-h-11 rounded-full px-5 py-2 text-sm font-bold transition-all duration-150 md:min-h-0",
                   windowKey === option.key
                     ? "bg-white text-[#16302a] shadow-[0_3px_8px_rgba(20,90,75,0.08)]"
-                    : "text-[#78928a] hover:text-primary-800"
+                    : "text-muted-foreground hover:text-primary-800"
                 )}
               >
                 {option.label}
@@ -450,7 +447,7 @@ export default function ProgressPage() {
         <MacroStackedBars days={series} active={activeMacros} />
 
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex flex-wrap items-center gap-3 text-xs font-semibold text-[#78928a]">
+          <div className="flex flex-wrap items-center gap-3 text-xs font-semibold text-muted-foreground">
             {ALL_MACROS.map((key) => (
               <span key={key} className="inline-flex items-center gap-1.5">
                 <span className={cn("h-2.5 w-2.5 rounded-[3px]", MACRO_META[key].swatchClass)} />
@@ -462,7 +459,7 @@ export default function ProgressPage() {
               Sample day
             </span>
           </div>
-          <p className="text-xs font-semibold text-[#91a7a0]">
+          <p className="text-xs font-semibold text-muted-foreground">
             {loggedInWindow > 0
               ? `${loggedInWindow} logged ${loggedInWindow === 1 ? "day" : "days"} in this window — older bars are sample history.`
               : "Sample history shown until you start logging. None of these bars are measured intake yet."}
@@ -471,7 +468,7 @@ export default function ProgressPage() {
       </Card>
 
       <div className="grid gap-5 lg:grid-cols-2">
-        <Card className="space-y-6 rounded-[24px] border-[#e6efeb] px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
+        <Card className="space-y-6 rounded-[24px] border-border px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
           <SectionHeader
             icon={CheckCircle2}
             label="Where calories and macros lean"
@@ -487,7 +484,7 @@ export default function ProgressPage() {
                     <span className={cn("font-black", macroTextClass[macro.key])}>
                       {macro.label}
                     </span>
-                    <span className="font-semibold text-[#78928a] tabular-nums">
+                    <span className="font-semibold text-muted-foreground tabular-nums">
                       {macro.consumed.toLocaleString()}{macro.unit === "g" ? "g" : " kcal"} / {macro.target.toLocaleString()}{macro.unit === "g" ? "g" : " kcal"}
                     </span>
                   </div>
@@ -503,7 +500,7 @@ export default function ProgressPage() {
           </div>
         </Card>
 
-        <Card className="space-y-6 rounded-[24px] border-[#e6efeb] px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
+        <Card className="space-y-6 rounded-[24px] border-border px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
           <SectionHeader
             icon={Utensils}
             label="Meal consistency"
@@ -527,9 +524,9 @@ export default function ProgressPage() {
                       meal.logged ? "bg-primary-500" : "bg-[#b8cac4]"
                     )}
                   />
-                  <p className="text-sm font-black text-[#516b63]">{meal.label}</p>
+                  <p className="text-sm font-black text-muted-foreground">{meal.label}</p>
                 </div>
-                <p className="text-xs font-semibold text-[#78928a] mt-2">
+                <p className="text-xs font-semibold text-muted-foreground mt-2">
                   {meal.logged ? "Logged" : "Not logged yet"}
                 </p>
               </div>
@@ -538,7 +535,7 @@ export default function ProgressPage() {
         </Card>
       </div>
 
-      <Card className="space-y-6 rounded-[24px] border-[#e6efeb] px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
+      <Card className="space-y-6 rounded-[24px] border-border px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
         <SectionHeader
           icon={Scale}
           label="Weight and goal projection"
@@ -546,14 +543,14 @@ export default function ProgressPage() {
         />
         <div className="grid gap-4 sm:grid-cols-[0.85fr_1.15fr]">
           <label className="block">
-            <span className="text-xs font-black text-[#91a7a0] uppercase tracking-[0.14em]">
+            <span className="text-xs font-black text-muted-foreground uppercase tracking-[0.14em]">
               Today&apos;s weight
             </span>
             <div
-              className={`mt-2 flex items-center gap-2 rounded-[1rem] border px-4 py-3 ${
+              className={`mt-2 flex items-center gap-2 rounded-[1rem] border px-4 py-3 transition focus-within:ring-2 ${
                 weightError
-                  ? "border-red-300 bg-red-50/40"
-                  : "border-primary-100 bg-primary-50/60"
+                  ? "border-red-300 bg-red-50/40 focus-within:ring-red-400"
+                  : "border-primary-100 bg-primary-50/60 focus-within:ring-primary-500"
               }`}
             >
               <input
@@ -564,14 +561,14 @@ export default function ProgressPage() {
                 aria-invalid={weightError ? "true" : undefined}
                 className="w-full bg-transparent text-lg font-black text-[#16302a] tabular-nums focus:outline-none"
               />
-              <span className="text-sm font-bold text-[#91a7a0]">lb</span>
+              <span className="text-sm font-bold text-muted-foreground">lb</span>
             </div>
             {weightError ? (
               <p className="mt-2 text-xs font-bold text-red-600" role="alert">
                 {weightError} The preview below uses your last logged weight.
               </p>
             ) : (
-              <p className="text-xs font-semibold text-[#78928a] mt-2">
+              <p className="text-xs font-semibold text-muted-foreground mt-2">
                 This updates the preview only; it is not saved.
               </p>
             )}
@@ -579,21 +576,21 @@ export default function ProgressPage() {
 
           <div className="space-y-3 rounded-[18px] border border-primary-100 bg-[#f7faf8] p-5">
             <div className="flex items-center justify-between text-sm">
-              <span className="font-semibold text-[#78928a]">Start</span>
+              <span className="font-semibold text-muted-foreground">Start</span>
               <span className="font-black text-[#16302a] tabular-nums">{formatPounds(snapshot.startingWeight)}</span>
             </div>
             <div className="flex items-center justify-between text-sm">
-              <span className="font-semibold text-[#78928a]">Goal</span>
+              <span className="font-semibold text-muted-foreground">Goal</span>
               <span className="font-black text-[#16302a] tabular-nums">{formatPounds(snapshot.goalWeight)}</span>
             </div>
             <div className="flex items-center justify-between text-sm">
-              <span className="font-semibold text-[#78928a]">Preview change</span>
+              <span className="font-semibold text-muted-foreground">Preview change</span>
               <span className="font-black text-[#16302a] tabular-nums">
                 {projectedDelta >= 0 ? "-" : "+"}{Math.abs(projectedDelta).toFixed(1)} lb
               </span>
             </div>
             <div className="pt-2 border-t border-primary-100">
-              <p className="text-xs font-semibold text-[#78928a]">Projected time to goal</p>
+              <p className="text-xs font-semibold text-muted-foreground">Projected time to goal</p>
               <p className="text-lg font-black text-[#16302a] mt-1">
                 {snapshot.weeklyPace > 0 ? `${snapshot.projectionWeeks} weeks` : "After 3 logged days"}
               </p>
@@ -623,7 +620,7 @@ function SectionHeader({
           <Icon className="h-5 w-5 text-primary-600" />
           {label}
         </h2>
-        <p className="mt-1 text-sm font-semibold text-[#78928a]">{detail}</p>
+        <p className="mt-1 text-sm font-semibold text-muted-foreground">{detail}</p>
       </div>
     </div>
   );
@@ -644,7 +641,7 @@ function StatTile({
         <Icon className="h-4 w-4" />
       </div>
       <p className="font-heading text-2xl font-black leading-none text-[#16302a] tabular-nums">{value}</p>
-      <p className="mt-1.5 text-[11px] font-semibold leading-tight text-[#78928a]">{label}</p>
+      <p className="mt-1.5 text-[11px] font-semibold leading-tight text-muted-foreground">{label}</p>
     </div>
   );
 }

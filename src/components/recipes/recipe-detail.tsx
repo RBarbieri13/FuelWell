@@ -93,7 +93,7 @@ export function RecipeDetail({
       >
         <div className="sticky top-0 z-10 flex items-start justify-between gap-3 border-b border-primary-100/80 bg-white/94 px-5 py-4 backdrop-blur">
           <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2 text-xs font-black text-[#78928a]">
+            <div className="flex flex-wrap items-center gap-2 text-xs font-black text-muted-foreground">
               <span className="rounded-full bg-primary-100 px-2.5 py-1 text-primary-800">
                 {recipe.meal}
               </span>
@@ -117,7 +117,7 @@ export function RecipeDetail({
               type="button"
               onClick={onClose}
               aria-label="Close recipe"
-              className="rounded-full p-2 text-[#91a7a0] transition hover:bg-primary-50 hover:text-primary-800"
+              className="rounded-full p-2 text-muted-foreground transition hover:bg-primary-50 hover:text-primary-800"
             >
               <X className="h-5 w-5" />
             </button>
@@ -142,7 +142,7 @@ export function RecipeDetail({
             )}
           </section>
           <section>
-            <h3 className="text-xs font-black uppercase tracking-[0.16em] text-[#91a7a0]">
+            <h3 className="text-xs font-black uppercase tracking-[0.16em] text-muted-foreground">
               Per serving
             </h3>
             <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-5">
@@ -167,7 +167,7 @@ export function RecipeDetail({
           </section>
 
           <section>
-            <h3 className="text-xs font-black uppercase tracking-[0.16em] text-[#91a7a0]">
+            <h3 className="text-xs font-black uppercase tracking-[0.16em] text-muted-foreground">
               Ingredients
             </h3>
             <ul className="mt-2 space-y-2">
@@ -176,7 +176,7 @@ export function RecipeDetail({
                   key={`${ing.item}-${i}`}
                   className="flex items-baseline justify-between gap-4 rounded-[1rem] bg-[#f7faf8] px-3 py-2.5 text-sm"
                 >
-                  <span className="font-semibold text-[#516b63]">{ing.item}</span>
+                  <span className="font-semibold text-muted-foreground">{ing.item}</span>
                   <span className="shrink-0 font-black tabular-nums text-[#16302a]">
                     {ing.amount}
                   </span>
@@ -186,7 +186,7 @@ export function RecipeDetail({
           </section>
 
           <section>
-            <h3 className="text-xs font-black uppercase tracking-[0.16em] text-[#91a7a0]">
+            <h3 className="text-xs font-black uppercase tracking-[0.16em] text-muted-foreground">
               Steps
             </h3>
             <ol className="mt-2 space-y-3">
@@ -195,7 +195,7 @@ export function RecipeDetail({
                   <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary-600 text-xs font-black text-white">
                     {i + 1}
                   </span>
-                  <span className="font-semibold text-[#516b63]">{step}</span>
+                  <span className="font-semibold text-muted-foreground">{step}</span>
                 </li>
               ))}
             </ol>

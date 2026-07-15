@@ -132,7 +132,7 @@ test("Coach: agentic chat surface renders", async ({ page }) => {
   await expect(page.getByLabel("Message Coach")).toBeVisible();
   await expect(page.getByLabel("Attach screenshot, menu, photo, or file")).toBeAttached();
   await expect(
-    page.getByPlaceholder("Upload a food photo, email, label, workout image, or ask anything...")
+    page.getByPlaceholder("Ask anything, or attach a photo or menu...")
   ).toBeVisible();
   await expect(page.getByRole("button", { name: "Send" })).toBeVisible();
   await expect(page.getByRole("button", { name: "New chat" })).toBeVisible();

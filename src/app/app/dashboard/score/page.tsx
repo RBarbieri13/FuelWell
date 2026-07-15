@@ -92,11 +92,16 @@ function ScoreDetail({
         </p>
         <div className="mt-4 grid gap-4 md:mt-5 md:grid-cols-[0.35fr_0.65fr] md:items-end md:gap-6">
           <div>
-            <p className="text-5xl font-black tabular-nums md:text-7xl">{healthScore ?? "--"}</p>
+            <p className="text-5xl font-black tabular-nums md:text-7xl">
+              {healthScore ?? "--"}
+              {healthScore !== null && (
+                <span className="ml-1 text-2xl font-bold text-white/60">/100</span>
+              )}
+            </p>
             <p className="mt-2 text-sm font-semibold text-white/65">
               {healthScore === null
                 ? "No score yet because no scored inputs exist."
-                : "Average of available scored contributors."}
+                : "Average of the scored contributors below."}
             </p>
           </div>
           <div>
@@ -125,10 +130,10 @@ function ScoreDetail({
                     <h2 className="text-xl font-black text-[#16302a]">
                       {contributor.label}
                     </h2>
-                    <p className="mt-1 text-sm font-bold text-[#78928a]">
+                    <p className="mt-1 text-sm font-bold text-muted-foreground">
                       {contributor.status}
                     </p>
-                    <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 text-[#516b63]">
+                    <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 text-muted-foreground">
                       {contributor.detail}
                     </p>
                     <p className="mt-2 text-sm font-bold text-primary-700">
@@ -141,7 +146,7 @@ function ScoreDetail({
                     <p className="text-3xl font-black tabular-nums text-[#16302a] md:text-4xl">
                       {contributor.score ?? "--"}
                     </p>
-                    <p className="text-xs font-black uppercase tracking-[0.12em] text-[#91a7a0]">
+                    <p className="text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">
                       contributor score
                     </p>
                   </div>

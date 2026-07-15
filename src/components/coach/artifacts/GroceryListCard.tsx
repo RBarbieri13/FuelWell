@@ -50,10 +50,10 @@ export function GroceryListCard({ artifact, onAction }: ArtifactCardProps<Grocer
       </div>
 
       {items.length === 0 ? (
-        <p className="mt-3 text-sm font-medium text-[#78928a]">Nothing on the list</p>
+        <p className="mt-3 text-sm font-medium text-muted-foreground">Nothing on the list</p>
       ) : (
         <div className="mt-3 min-w-0 max-w-full max-h-72 overflow-y-auto overflow-x-hidden rounded-[1.25rem] border border-primary-100">
-          <div className="grid min-w-0 grid-cols-[2.75rem_minmax(0,1fr)] bg-[#f4f8f6] px-2 py-2 text-[10px] font-black uppercase tracking-[0.12em] text-[#78928a] sm:grid-cols-[3.75rem_minmax(0,1fr)_7.25rem] sm:px-3">
+          <div className="grid min-w-0 grid-cols-[2.75rem_minmax(0,1fr)] bg-[#f4f8f6] px-2 py-2 text-[10px] font-black uppercase tracking-[0.12em] text-muted-foreground sm:grid-cols-[3.75rem_minmax(0,1fr)_7.25rem] sm:px-3">
             <span aria-hidden="true" />
             <span>Item</span>
             <span className="hidden sm:block">Quantity</span>
@@ -94,7 +94,7 @@ export function GroceryListCard({ artifact, onAction }: ArtifactCardProps<Grocer
                 <span
                   className={cn(
                     "block min-w-0 break-words text-sm font-black",
-                    item.checked ? "text-[#9db0aa] line-through" : "text-[#16302a]"
+                    item.checked ? "text-muted-foreground line-through" : "text-[#16302a]"
                   )}
                 >
                   {item.name}

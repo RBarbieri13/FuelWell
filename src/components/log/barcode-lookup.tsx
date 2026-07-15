@@ -51,7 +51,7 @@ export function BarcodeLookup({ onSelect }: { onSelect: (food: FoodItem) => void
           </span>
           <h2 className="text-lg font-black text-[#16302a]">Barcode lookup</h2>
         </div>
-        <p className="mt-2 text-sm font-semibold leading-6 text-[#78928a]">
+        <p className="mt-2 text-sm font-semibold leading-6 text-muted-foreground">
           Use the camera keyboard scanner or paste a barcode. FuelWell only saves a match after you review the portion.
         </p>
       </div>
@@ -80,7 +80,7 @@ export function BarcodeLookup({ onSelect }: { onSelect: (food: FoodItem) => void
       {result?.found === false && (
         <div className="rounded-[1.35rem] border border-dashed border-primary-200 bg-primary-50/60 p-5">
           <p className="font-black text-[#16302a]">No verified match.</p>
-          <p className="mt-1 text-sm font-semibold text-[#78928a]">{result.message}</p>
+          <p className="mt-1 text-sm font-semibold text-muted-foreground">{result.message}</p>
         </div>
       )}
 
@@ -94,7 +94,7 @@ export function BarcodeLookup({ onSelect }: { onSelect: (food: FoodItem) => void
           <p className="mt-1 text-sm font-semibold text-[#60776f]">
             {result.food.categoryLabel} · {result.food.per100.kcal} kcal /100{result.food.servingUnit}
           </p>
-          <p className="mt-2 text-xs font-semibold leading-5 text-[#78928a]">
+          <p className="mt-2 text-xs font-semibold leading-5 text-muted-foreground">
             {result.sourceNote}
           </p>
           <Button className="mt-3" onClick={() => onSelect(result.food)}>

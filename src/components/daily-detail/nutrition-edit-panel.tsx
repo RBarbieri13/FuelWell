@@ -70,13 +70,13 @@ export function NutritionEditPanel() {
 
       <div className="grid gap-3 xl:grid-cols-[0.8fr_1fr_repeat(4,0.52fr)_auto] xl:items-end">
         <label className="block">
-          <span className="mb-1.5 block text-[11px] font-black uppercase tracking-[0.12em] text-[#7c968f]">
+          <span className="mb-1.5 block text-[11px] font-black uppercase tracking-[0.12em] text-muted-foreground">
             Meal
           </span>
           <select
             value={mealType}
             onChange={(event) => setMealType(event.target.value as MealType)}
-            className="w-full rounded-2xl border border-[#dce8e3] bg-[#f4f8f6] px-4 py-3 text-sm font-bold text-[#16302a] outline-none focus:border-primary-300 focus:ring-2 focus:ring-primary-200"
+            className="w-full rounded-2xl border border-border bg-[#f4f8f6] px-4 py-3 text-sm font-bold text-[#16302a] outline-none focus:border-primary-300 focus:ring-2 focus:ring-primary-200"
             aria-label="Meal type"
           >
             {mealTypes.map((type) => (
@@ -87,14 +87,14 @@ export function NutritionEditPanel() {
           </select>
         </label>
         <label className="block">
-          <span className="mb-1.5 block text-[11px] font-black uppercase tracking-[0.12em] text-[#7c968f]">
+          <span className="mb-1.5 block text-[11px] font-black uppercase tracking-[0.12em] text-muted-foreground">
             Food
           </span>
           <input
             value={itemName}
             onChange={(event) => setItemName(event.target.value)}
             placeholder="Food or meal name"
-            className="w-full rounded-2xl border border-[#dce8e3] bg-[#f4f8f6] px-4 py-3 text-sm font-bold text-[#16302a] outline-none placeholder:text-[#9db0aa] focus:border-primary-300 focus:ring-2 focus:ring-primary-200"
+            className="w-full rounded-2xl border border-border bg-[#f4f8f6] px-4 py-3 text-sm font-bold text-[#16302a] outline-none placeholder:text-[#9db0aa] focus:border-primary-300 focus:ring-2 focus:ring-primary-200"
           />
         </label>
         <MacroInput label="Calories" value={calories} onChange={setCalories} />
@@ -113,7 +113,7 @@ export function NutritionEditPanel() {
             <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
               <div>
                 <p className="text-base font-black text-[#16302a]">{formatMealType(meal.mealType)}</p>
-                <p className="text-sm font-semibold text-[#7c968f]">{meal.name}</p>
+                <p className="text-sm font-semibold text-muted-foreground">{meal.name}</p>
               </div>
               <div className="flex flex-wrap gap-2">
                 <button
@@ -142,7 +142,7 @@ export function NutritionEditPanel() {
                   <div key={item.id} className="grid gap-2 rounded-[1rem] bg-white px-4 py-3 lg:grid-cols-[1fr_auto] lg:items-center">
                     <div>
                       <p className="text-sm font-black text-[#16302a]">{item.name}</p>
-                      <p className="text-xs font-semibold text-[#9db0aa]">
+                      <p className="text-xs font-semibold text-muted-foreground">
                         {item.calories} kcal · {item.protein}g protein · {item.carbs}g carbs · {item.fat}g fat
                       </p>
                     </div>
@@ -208,7 +208,7 @@ function MacroInput({
   return (
     <label className="block">
       <span
-        className={`mb-1 block font-black uppercase tracking-[0.12em] text-[#7c968f] ${
+        className={`mb-1 block font-black uppercase tracking-[0.12em] text-muted-foreground ${
           compact ? "text-[9px]" : "text-[11px]"
         }`}
       >
@@ -220,7 +220,7 @@ function MacroInput({
         value={value}
         onChange={(event) => onChange(Number(event.target.value))}
         placeholder={label}
-        className={`w-full rounded-2xl border border-[#dce8e3] bg-[#f4f8f6] px-3 py-3 text-sm font-bold text-[#16302a] outline-none placeholder:text-[#9db0aa] focus:border-primary-300 focus:ring-2 focus:ring-primary-200 ${
+        className={`w-full rounded-2xl border border-border bg-[#f4f8f6] px-3 py-3 text-sm font-bold text-[#16302a] outline-none placeholder:text-[#9db0aa] focus:border-primary-300 focus:ring-2 focus:ring-primary-200 ${
           compact ? "py-2 text-xs" : ""
         }`}
         aria-label={label}

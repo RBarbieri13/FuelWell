@@ -20,7 +20,11 @@ type MacroHistoryArtifact = ArtifactSpec & {
 };
 
 // Macro colors from the FW.zip Lagoon & Coral design system.
-const COLORS = { protein: "#1eae84", carbs: "#c7a91e", fat: "#8e73bd" } as const;
+const COLORS = {
+  protein: "var(--color-macro-protein)",
+  carbs: "var(--color-macro-carbs)",
+  fat: "var(--color-macro-fat)",
+} as const;
 
 const VIEW_W = 320;
 const VIEW_H = 120;

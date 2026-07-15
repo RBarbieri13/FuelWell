@@ -13,7 +13,7 @@ export type StreamingTextBubbleProps = {
 
 export function StreamingTextBubble({ text, streaming }: StreamingTextBubbleProps) {
   return (
-    <div className="w-full max-w-full min-w-0 overflow-hidden rounded-[1.5rem] rounded-bl-md border border-primary-100/80 bg-white/94 px-3 py-3 text-sm font-semibold leading-6 text-[#516b63] shadow-[0_18px_48px_rgba(22,48,42,0.08)] sm:px-4 md:max-w-[85%]">
+    <div className="w-full max-w-full min-w-0 overflow-hidden rounded-[1.5rem] rounded-bl-md border border-primary-100/80 bg-white/94 px-3 py-3 text-sm font-semibold leading-6 text-muted-foreground shadow-[0_18px_48px_rgba(22,48,42,0.08)] sm:px-4 md:max-w-[85%]">
       {text ? (
         <div className="max-w-full min-w-0 break-words [overflow-wrap:anywhere] [&>*]:max-w-full [&>*]:min-w-0">
           <ReactMarkdown
@@ -52,7 +52,7 @@ const markdownComponents = {
     <h3 className={cn("mb-1.5 mt-3 break-words text-base font-black leading-tight text-[#16302a] [overflow-wrap:anywhere]", className)} {...props} />
   ),
   h4: ({ className, ...props }: React.ComponentProps<"h4">) => (
-    <h4 className={cn("mb-1.5 mt-2 break-words text-sm font-black uppercase tracking-wide text-[#516b63] [overflow-wrap:anywhere]", className)} {...props} />
+    <h4 className={cn("mb-1.5 mt-2 break-words text-sm font-black uppercase tracking-wide text-muted-foreground [overflow-wrap:anywhere]", className)} {...props} />
   ),
   p: ({ className, ...props }: React.ComponentProps<"p">) => (
     <p className={cn("my-2 first:mt-0 last:mb-0 whitespace-pre-wrap break-words", className)} {...props} />
@@ -61,7 +61,7 @@ const markdownComponents = {
     <strong className={cn("font-black text-[#16302a]", className)} {...props} />
   ),
   em: ({ className, ...props }: React.ComponentProps<"em">) => (
-    <em className={cn("font-semibold text-[#516b63]", className)} {...props} />
+    <em className={cn("font-semibold text-muted-foreground", className)} {...props} />
   ),
   a: ({ className, href, ...props }: React.ComponentProps<"a">) => (
     <a
@@ -83,7 +83,7 @@ const markdownComponents = {
   ),
   blockquote: ({ className, ...props }: React.ComponentProps<"blockquote">) => (
     <blockquote
-      className={cn("my-3 rounded-r-[1rem] border-l-4 border-primary-300 bg-primary-50/70 py-2 pl-3 pr-2 text-[#516b63]", className)}
+      className={cn("my-3 rounded-r-[1rem] border-l-4 border-primary-300 bg-primary-50/70 py-2 pl-3 pr-2 text-muted-foreground", className)}
       {...props}
     />
   ),

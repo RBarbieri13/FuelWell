@@ -137,7 +137,7 @@ export default function SignupPage() {
                 <div className="w-full border-t border-primary-100" />
               </div>
               <div className="relative flex justify-center">
-                <span className="bg-white px-3 text-xs font-black uppercase tracking-[0.16em] text-[#91a7a0]">
+                <span className="bg-white px-3 text-xs font-black uppercase tracking-[0.16em] text-muted-foreground">
                   or email
                 </span>
               </div>

@@ -19,6 +19,10 @@ const pageTitles: Record<string, string> = {
   "/app/progress": "Progress",
   "/app/profile": "Profile",
   "/app/settings": "Settings",
+  "/app/meal-plan": "Meal plan",
+  "/app/recipes": "Recipes",
+  "/app/activity": "Activity",
+  "/app/onboarding": "Setup",
 };
 
 export function MobileHeader() {

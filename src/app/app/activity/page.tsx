@@ -221,7 +221,7 @@ export default function ActivityPage() {
                 <div key={load.label}>
                   <div className="mb-2 flex items-center justify-between text-sm font-black">
                     <span className="text-neutral-800">{load.label}</span>
-                    <span className="text-neutral-400">{load.detail}</span>
+                    <span className="text-neutral-500">{load.detail}</span>
                   </div>
                   <div className="h-3 overflow-hidden rounded-full bg-primary-50">
                     <div className={`${load.color} h-full rounded-full`} style={{ width: `${load.value}%` }} />
@@ -280,7 +280,7 @@ export default function ActivityPage() {
             <div className="divide-y divide-primary-100/70">
               {timeline.map((item) => (
                 <div key={`${item.time}-${item.title}`} className="grid gap-3 py-5 md:grid-cols-[6rem_1fr_auto] md:items-center">
-                  <div className="text-sm font-black tabular-nums text-neutral-400">{item.time}</div>
+                  <div className="text-sm font-black tabular-nums text-neutral-500">{item.time}</div>
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
                       <p className="text-lg font-black text-neutral-900">{item.title}</p>

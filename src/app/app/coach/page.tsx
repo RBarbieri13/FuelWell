@@ -290,7 +290,7 @@ export default function CoachPage() {
             </div>
             <div>
               <h1 className="fw-heading text-xl">Coach</h1>
-              <p className="text-xs font-bold text-[#78928a]">
+              <p className="text-xs font-bold text-muted-foreground">
                 {busy ? "Working..." : "Logs meals, plans workouts, answers — right here"}
               </p>
             </div>
@@ -305,7 +305,7 @@ export default function CoachPage() {
             <button
               type="button"
               onClick={newConversation}
-              className="min-h-11 whitespace-nowrap rounded-full bg-white/70 px-3 py-2 text-xs font-black text-[#78928a] shadow-sm transition hover:text-primary-700 md:min-h-0"
+              className="min-h-11 whitespace-nowrap rounded-full bg-white/70 px-3 py-2 text-xs font-black text-muted-foreground shadow-sm transition hover:text-primary-700 md:min-h-0"
             >
               New chat
             </button>
@@ -337,7 +337,7 @@ export default function CoachPage() {
                 <div className="mt-4 flex flex-wrap gap-2 md:mt-5">
                   <span className="rounded-full border border-white/14 bg-white/10 px-3 py-1.5 text-xs font-black tabular-nums text-white">
                     {remaining(totals.calories, targets.calories).toLocaleString()}
-                    <span className="ml-1 font-bold text-white/60">kcal left today</span>
+                    <span className="ml-1 font-bold text-white/60">kcal left</span>
                   </span>
                   <span className="rounded-full border border-white/14 bg-white/10 px-3 py-1.5 text-xs font-black tabular-nums text-white">
                     {remaining(totals.protein, targets.protein)}g
@@ -370,7 +370,7 @@ export default function CoachPage() {
                     <button
                       key={prompt}
                       onClick={() => void sendMessage(prompt)}
-                      className="group flex min-h-12 items-center justify-between gap-3 rounded-[1.2rem] border border-primary-100 bg-[#f7faf8] px-4 py-3 text-left text-sm font-black text-[#516b63] transition hover:border-primary-200 hover:bg-primary-50"
+                      className="group flex min-h-12 items-center justify-between gap-3 rounded-[1.2rem] border border-primary-100 bg-[#f7faf8] px-4 py-3 text-left text-sm font-black text-muted-foreground transition hover:border-primary-200 hover:bg-primary-50"
                     >
                       <span>{prompt}</span>
                       <ArrowRight className="h-4 w-4 shrink-0 text-primary-500 transition group-hover:translate-x-0.5" />
@@ -581,7 +581,7 @@ export default function CoachPage() {
               onFocus={() => {
                 if (actionDrawer) setCollapsedDrawerId(actionDrawer.id);
               }}
-              placeholder="Upload a food photo, email, label, workout image, or ask anything..."
+              placeholder="Ask anything, or attach a photo or menu..."
               className="min-h-12 min-w-0 flex-1 rounded-[1.35rem] border border-primary-100 bg-primary-50/70 px-3 py-3 text-sm font-semibold text-[#16302a] placeholder:text-[#91a7a0] focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 sm:px-4"
               disabled={busy}
               aria-label="Message Coach"
@@ -663,7 +663,7 @@ function CoachActionDrawer({
                 <h2 className="mt-1 text-lg font-black leading-tight text-[#16302a]">
                   {meta.title}
                 </h2>
-                <p className="mt-1 text-xs font-semibold leading-5 text-[#78928a]">
+                <p className="mt-1 text-xs font-semibold leading-5 text-muted-foreground">
                   {meta.detail}
                 </p>
               </div>
@@ -672,7 +672,7 @@ function CoachActionDrawer({
               <button
                 type="button"
                 onClick={onCollapse}
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-[#f4f8f6] text-[#78928a] transition hover:bg-primary-100 hover:text-primary-700"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-[#f4f8f6] text-muted-foreground transition hover:bg-primary-100 hover:text-primary-700"
                 aria-label="Collapse coach action panel"
               >
                 <ChevronRight className="h-4 w-4" />
@@ -680,7 +680,7 @@ function CoachActionDrawer({
               <button
                 type="button"
                 onClick={onClose}
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-[#f4f8f6] text-[#78928a] transition hover:bg-accent-100 hover:text-accent-700"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-[#f4f8f6] text-muted-foreground transition hover:bg-accent-100 hover:text-accent-700"
                 aria-label="Close coach action panel"
               >
                 <X className="h-4 w-4" />
@@ -836,14 +836,14 @@ function AttachmentTray({
           <AttachmentIcon attachment={attachment} />
           <div className="min-w-0 flex-1">
             <p className="truncate text-xs font-black text-[#16302a]">{attachment.name}</p>
-            <p className="text-[11px] font-bold text-[#7c968f]">
+            <p className="text-[11px] font-bold text-muted-foreground">
               {attachment.kind} · {formatAttachmentSize(attachment.size)}
             </p>
           </div>
           <button
             type="button"
             onClick={() => onRemove(attachment.id)}
-            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#f4f8f6] text-[#78928a] transition hover:bg-accent-100 hover:text-accent-700"
+            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#f4f8f6] text-muted-foreground transition hover:bg-accent-100 hover:text-accent-700"
             aria-label={`Remove ${attachment.name}`}
           >
             <X className="h-3.5 w-3.5" />
@@ -916,7 +916,7 @@ function RichTextPreview() {
             Rich response support
           </p>
           <h2 className="mt-2 text-2xl font-black text-[#16302a]">Coach answers can be structured, visual, and math-aware.</h2>
-          <p className="mt-2 text-sm font-semibold leading-6 text-[#78928a]">
+          <p className="mt-2 text-sm font-semibold leading-6 text-muted-foreground">
             The same chat bubble supports headers, nested lists, tables, formulas, links, and inline media when the coach replies.
           </p>
         </div>
@@ -930,7 +930,7 @@ function RichTextPreview() {
                 </span>
                 <div className="min-w-0">
                   <p className="text-sm font-black text-[#16302a]">{item.label}</p>
-                  <p className="text-xs font-semibold leading-5 text-[#78928a]">{item.detail}</p>
+                  <p className="text-xs font-semibold leading-5 text-muted-foreground">{item.detail}</p>
                 </div>
               </div>
             );
@@ -950,7 +950,7 @@ function RichTextPreview() {
             <Heading2 className="h-5 w-5" />
           </div>
           <h3 className="mt-4 text-lg font-black text-[#16302a]">Inline artifacts stay in the conversation.</h3>
-          <p className="mt-2 text-sm font-semibold leading-6 text-[#516b63]">
+          <p className="mt-2 text-sm font-semibold leading-6 text-muted-foreground">
             The coach can answer in prose, then attach action cards for logging meals, opening pages, or saving preferences.
           </p>
           <div className="mt-4 flex items-center gap-2 rounded-full bg-white px-3 py-2 text-xs font-black text-primary-800">

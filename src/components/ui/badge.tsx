@@ -9,7 +9,7 @@ interface BadgeProps {
 const variantStyles = {
   default: "bg-primary-50 text-primary-800",
   success: "bg-primary-50 text-primary-700",
-  warning: "bg-lemon-50 text-[#7a650d]",
+  warning: "bg-lemon-50 text-lemon-700",
   error: "bg-red-50 text-red-700",
   info: "bg-sky-50 text-sky-700",
 };

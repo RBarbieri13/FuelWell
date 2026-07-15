@@ -110,20 +110,20 @@ export default function RecipesPage() {
           <div className="grid grid-cols-3 gap-2 text-center">
             <div className="rounded-[1.15rem] border border-white/12 bg-white/10 px-4 py-3">
               <p className="text-2xl font-black tabular-nums">{results.length}</p>
-              <p className="text-xs font-black uppercase tracking-[0.1em] text-white/55">
+              <p className="text-xs font-black uppercase tracking-[0.12em] text-white/70">
                 Matches
               </p>
             </div>
             <div className="rounded-[1.15rem] border border-white/12 bg-white/10 px-4 py-3">
               <p className="text-2xl font-black tabular-nums">{quickCount}</p>
-              <p className="text-xs font-black uppercase tracking-[0.1em] text-white/55">
+              <p className="text-xs font-black uppercase tracking-[0.12em] text-white/70">
                 Quick
               </p>
             </div>
             <div className="rounded-[1.15rem] border border-white/12 bg-white/10 px-4 py-3">
               <p className="text-2xl font-black tabular-nums">{highProteinCount}</p>
-              <p className="text-xs font-black uppercase tracking-[0.1em] text-white/55">
-                30g+
+              <p className="text-xs font-black uppercase tracking-[0.12em] text-white/70">
+                30g+ protein
               </p>
             </div>
           </div>
@@ -137,8 +137,8 @@ export default function RecipesPage() {
             <input
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search title, ingredients, or tags"
-              aria-label="Search title, ingredients, or tags"
+              placeholder="Search recipes"
+              aria-label="Search recipes"
               className="w-full rounded-[1.3rem] border border-primary-100 bg-primary-50/55 py-4 pl-12 pr-4 text-sm font-semibold text-[#16302a] outline-none placeholder:text-[#91a7a0] transition focus:border-transparent focus:bg-white focus:ring-2 focus:ring-primary-500"
             />
           </div>
@@ -163,13 +163,13 @@ export default function RecipesPage() {
 
         <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_18rem]">
           <div className="space-y-2">
-            <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-[#78928a]">
+            <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-muted-foreground">
               <SlidersHorizontal className="h-3.5 w-3.5" />
               Diet filters
             </div>
             <DietFilterChips active={diets} onToggle={toggleDiet} />
             {allergies.length > 0 && (
-              <p className="text-xs font-semibold text-[#78928a]">
+              <p className="text-xs font-semibold text-muted-foreground">
                 Hiding recipes with: {allergies.join(", ")}.
               </p>
             )}
@@ -225,13 +225,13 @@ export default function RecipesPage() {
           <p className="mt-3 text-sm font-black text-[#16302a]">
             No recipes match these filters yet.
           </p>
-          <p className="mt-1 text-sm font-semibold text-[#78928a]">
+          <p className="mt-1 text-sm font-semibold text-muted-foreground">
             Try a different search term or turn off a diet filter to see more.
           </p>
         </Card>
       ) : (
         <>
-          <p className="text-xs font-black uppercase tracking-[0.16em] text-[#91a7a0]">
+          <p className="text-xs font-black uppercase tracking-[0.16em] text-muted-foreground">
             {results.length} {results.length === 1 ? "recipe" : "recipes"}
           </p>
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">

@@ -228,7 +228,7 @@ async function runJourney(page: Page, journey: Journey, testInfo: TestInfo) {
   await assertPhoneFit(page, `${prefix} workout`);
 
   await page.goto("/app/recipes");
-  await page.getByLabel("Search title, ingredients, or tags").fill("salmon rice plate");
+  await page.getByLabel("Search recipes").fill("salmon rice plate");
   await page.getByRole("button", { name: "Open recipe" }).first().click();
   const recipe = page.getByRole("dialog", { name: "Salmon rice plate" });
   await recipe.getByRole("button", { name: "Plan this meal" }).click();

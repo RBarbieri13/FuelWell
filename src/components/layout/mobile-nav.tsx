@@ -16,7 +16,7 @@ const mobileNavItems = [
   { href: "/app/dashboard", label: "Home", icon: LayoutDashboard, color: "text-primary-600" },
   { href: "/app/log", label: "Log", icon: PlusCircle, highlight: true, color: "text-accent-600" },
   { href: "/app/coach", label: "Coach", icon: MessageSquare, color: "text-sky-600" },
-  { href: "/app/workouts", label: "Move", icon: Dumbbell, color: "text-sky-600" },
+  { href: "/app/workouts", label: "Move", icon: Dumbbell, color: "text-teal-600" },
   { href: "/app/grocery-list", label: "Groceries", icon: ShoppingBasket, color: "text-primary-600" },
   { href: "/app/daily-review", label: "Review", icon: ClipboardList, color: "text-lemon-600" },
 ];
@@ -39,15 +39,18 @@ export function MobileNav() {
               href={item.href}
               aria-current={isActive ? "page" : undefined}
               className={cn(
-                "flex min-w-0 flex-1 flex-col items-center gap-0.5 px-1 py-1.5 text-xs font-semibold tracking-tight transition-colors",
-                isActive || item.highlight ? item.color : "text-neutral-400 hover:text-primary-700"
+                "flex min-w-0 flex-1 flex-col items-center gap-0.5 px-1 py-1.5 text-xs tracking-tight transition-colors",
+                isActive
+                  ? cn(item.color, "font-black")
+                  : "font-semibold text-neutral-500 hover:text-primary-700"
               )}
             >
               <item.icon
                 className={cn(
                   "w-5 h-5 transition-transform duration-150",
                   isActive && "scale-110",
-                  item.highlight && "w-6 h-6"
+                  item.highlight && "w-6 h-6",
+                  item.highlight && !isActive && "text-accent-500"
                 )}
               />
               <span className="leading-none">{item.label}</span>

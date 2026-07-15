@@ -119,7 +119,7 @@ export function LiveWorkoutSession({
       <div className="fw-page-inner max-w-6xl space-y-5 py-5">
         <Link
           href={`/app/workouts/${workout.id}`}
-          className="inline-flex min-h-11 items-center gap-2 rounded-full bg-white/75 px-4 py-2 text-sm font-black md:min-h-0 text-[#78928a] shadow-sm transition-colors hover:text-primary-700"
+          className="inline-flex min-h-11 items-center gap-2 rounded-full bg-white/75 px-4 py-2 text-sm font-black md:min-h-0 text-muted-foreground shadow-sm transition-colors hover:text-primary-700"
         >
           <ArrowLeft className="h-4 w-4" />
           Workout preview
@@ -153,7 +153,7 @@ export function LiveWorkoutSession({
               </div>
               <div className="mt-4 h-3 rounded-full bg-white/10">
                 <div
-                  className="h-full rounded-full bg-gradient-to-r from-primary-400 to-[#19a4ad] transition-all"
+                  className="h-full rounded-full bg-gradient-to-r from-primary-400 to-teal-400 transition-all"
                   style={{ width: `${progress}%` }}
                 />
               </div>
@@ -199,13 +199,13 @@ export function LiveWorkoutSession({
                   <div>
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div>
-                        <p className="text-xs font-black uppercase tracking-[0.14em] text-[#91a7a0]">
+                        <p className="text-xs font-black uppercase tracking-[0.14em] text-muted-foreground">
                           Exercise {exerciseIndex + 1}
                         </p>
                         <h2 className="mt-1 font-heading text-xl font-black text-[#16302a]">
                           {exercise.name}
                         </h2>
-                        <p className="mt-1 text-sm font-semibold leading-6 text-[#78928a]">
+                        <p className="mt-1 text-sm font-semibold leading-6 text-muted-foreground">
                           {exercise.target}
                         </p>
                       </div>
@@ -217,7 +217,7 @@ export function LiveWorkoutSession({
                     <div className="mt-4 grid grid-cols-3 gap-2 text-center sm:max-w-md">
                       <div className="rounded-[1rem] bg-[#f4f8f6] px-3 py-2">
                         <p className="text-sm font-black text-[#16302a]">{exercise.sets}</p>
-                        <p className="text-[10px] font-black uppercase tracking-[0.12em] text-[#91a7a0]">sets</p>
+                        <p className="text-[10px] font-black uppercase tracking-[0.12em] text-muted-foreground">sets</p>
                       </div>
                       <div className="rounded-[1rem] bg-sky-100 px-3 py-2">
                         <p className="text-sm font-black text-sky-800">{exercise.reps}</p>
@@ -257,10 +257,10 @@ export function LiveWorkoutSession({
                           </div>
                           <div>
                             <p className="text-sm font-black text-[#16302a]">{diagram.displayName}</p>
-                            <p className="mt-1 text-xs font-semibold leading-5 text-[#78928a]">
+                            <p className="mt-1 text-xs font-semibold leading-5 text-muted-foreground">
                               {diagram.primaryMuscles.join(", ")}
                             </p>
-                            <ul className="mt-2 grid gap-1 text-xs font-semibold leading-5 text-[#516b63]">
+                            <ul className="mt-2 grid gap-1 text-xs font-semibold leading-5 text-muted-foreground">
                               {diagram.cues.slice(0, 2).map((cue) => (
                                 <li key={cue}>- {cue}</li>
                               ))}
@@ -285,7 +285,7 @@ export function LiveWorkoutSession({
                               "flex items-center justify-between rounded-[1rem] border px-3 py-3 text-left text-sm font-black transition",
                               done
                                 ? "border-primary-200 bg-primary-100 text-primary-800"
-                                : "border-[#e6efeb] bg-white text-[#54635d] hover:border-primary-200",
+                                : "border-border bg-white text-[#54635d] hover:border-primary-200",
                               !started && "opacity-55"
                             )}
                           >
@@ -297,7 +297,7 @@ export function LiveWorkoutSession({
                     </div>
 
                     <label className="block">
-                      <span className="text-xs font-black uppercase tracking-[0.14em] text-[#91a7a0]">
+                      <span className="text-xs font-black uppercase tracking-[0.14em] text-muted-foreground">
                         Weight used
                       </span>
                       <input
@@ -307,12 +307,12 @@ export function LiveWorkoutSession({
                         }
                         inputMode="decimal"
                         placeholder="Optional lb"
-                        className="mt-2 w-full rounded-[1rem] border border-[#dce8e3] bg-[#f4f8f6] px-4 py-3 text-sm font-bold text-[#16302a] outline-none placeholder:text-[#9db0aa] focus:border-primary-300 focus:ring-2 focus:ring-primary-200"
+                        className="mt-2 w-full rounded-[1rem] border border-border bg-[#f4f8f6] px-4 py-3 text-sm font-bold text-[#16302a] outline-none placeholder:text-[#9db0aa] focus:border-primary-300 focus:ring-2 focus:ring-primary-200"
                       />
                     </label>
 
                     <label className="block">
-                      <span className="text-xs font-black uppercase tracking-[0.14em] text-[#91a7a0]">
+                      <span className="text-xs font-black uppercase tracking-[0.14em] text-muted-foreground">
                         Notes
                       </span>
                       <textarea
@@ -322,7 +322,7 @@ export function LiveWorkoutSession({
                         }
                         placeholder="Form, reps, substitutions..."
                         rows={2}
-                        className="mt-2 w-full resize-none rounded-[1rem] border border-[#dce8e3] bg-[#f4f8f6] px-4 py-3 text-sm font-bold text-[#16302a] outline-none placeholder:text-[#9db0aa] focus:border-primary-300 focus:ring-2 focus:ring-primary-200"
+                        className="mt-2 w-full resize-none rounded-[1rem] border border-border bg-[#f4f8f6] px-4 py-3 text-sm font-bold text-[#16302a] outline-none placeholder:text-[#9db0aa] focus:border-primary-300 focus:ring-2 focus:ring-primary-200"
                       />
                     </label>
                   </div>
@@ -342,7 +342,7 @@ export function LiveWorkoutSession({
                 <p className="text-sm font-black text-[#16302a]">
                   {completedCount}/{totalSets} sets checked
                 </p>
-                <p className="text-xs font-semibold text-[#78928a]">
+                <p className="text-xs font-semibold text-muted-foreground">
                   Progress saves when you log the workout.
                 </p>
               </div>

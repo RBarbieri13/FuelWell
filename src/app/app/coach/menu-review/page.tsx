@@ -99,7 +99,7 @@ export default function MenuChoiceReviewPage() {
                 ["Confidence", "Confirm sides", HelpCircle],
               ].map(([label, value, Icon]) => (
                 <div key={label as string} className="flex items-center justify-between rounded-[1rem] bg-white px-4 py-3">
-                  <span className="flex items-center gap-2 text-sm font-black text-[#516b63]">
+                  <span className="flex items-center gap-2 text-sm font-black text-muted-foreground">
                     <Icon className="h-4 w-4 text-primary-600" />
                     {label as string}
                   </span>
@@ -125,7 +125,7 @@ export default function MenuChoiceReviewPage() {
                 <Metric label="Calories" value={`${option.calories}`} tone="primary" />
                 <Metric label="Protein" value={`${option.protein}g`} tone="sky" />
               </div>
-              <p className="mt-4 rounded-[1rem] bg-[#f4f8f6] px-3 py-3 text-sm font-black leading-6 text-[#516b63]">
+              <p className="mt-4 rounded-[1rem] bg-[#f4f8f6] px-3 py-3 text-sm font-black leading-6 text-muted-foreground">
                 {option.reason}
               </p>
               <MenuSaveAction

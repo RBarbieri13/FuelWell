@@ -12,6 +12,7 @@ import {
   HeartPulse,
   Info,
   Salad,
+  Search,
   Sparkles,
   UtensilsCrossed,
 } from "lucide-react";
@@ -128,9 +129,20 @@ export function DashboardClient({
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primary-600 text-base font-black text-white shadow-[0_8px_18px_rgba(30,174,132,0.3)]">
+            <Link
+              href="/app/log"
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-primary-100 bg-white text-neutral-700 shadow-[0_4px_12px_rgba(20,90,75,0.05)] transition hover:bg-primary-50 hover:text-primary-700"
+              aria-label="Search foods to log"
+            >
+              <Search className="h-5 w-5" />
+            </Link>
+            <Link
+              href="/app/profile"
+              aria-label="Open profile"
+              className="flex h-11 w-11 items-center justify-center rounded-full bg-primary-600 text-base font-black text-white shadow-[0_8px_18px_rgba(30,174,132,0.3)] transition hover:bg-primary-700"
+            >
               {effectiveDisplayName.slice(0, 1).toUpperCase()}
-            </div>
+            </Link>
           </div>
         </div>
       </header>
@@ -190,7 +202,7 @@ export function DashboardClient({
       <section className="grid gap-[18px] lg:grid-cols-[1.32fr_1fr]">
         <Card
           variant="elevated"
-          className="fw-dark-panel overflow-hidden rounded-[26px] p-0 shadow-[0_24px_50px_rgba(16,48,40,0.34)]"
+          className="fw-dark-panel overflow-hidden rounded-[24px] p-0 shadow-[0_24px_50px_rgba(16,48,40,0.34)]"
         >
           <div className="relative p-5 md:p-[30px]">
             <div className="relative z-10">
@@ -244,7 +256,7 @@ export function DashboardClient({
           </div>
         </Card>
 
-        <Card className="flex flex-col rounded-[26px] px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
+        <Card className="flex flex-col rounded-[24px] px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
           <div className="flex items-center justify-between gap-4">
             <div>
               <h2 className="text-base font-black text-neutral-900">
@@ -266,9 +278,9 @@ export function DashboardClient({
           </div>
 
           <div className="mt-auto space-y-4">
-            <MacroBar label="Protein" current={totals.protein} target={effectiveTargets.protein} color="#3e92c9" />
-            <MacroBar label="Carbs" current={totals.carbs} target={effectiveTargets.carbs} color="#c7a91e" />
-            <MacroBar label="Fat" current={totals.fat} target={effectiveTargets.fat} color="#f0795b" />
+            <MacroBar label="Protein" current={totals.protein} target={effectiveTargets.protein} color="var(--color-macro-protein)" />
+            <MacroBar label="Carbs" current={totals.carbs} target={effectiveTargets.carbs} color="var(--color-macro-carbs)" />
+            <MacroBar label="Fat" current={totals.fat} target={effectiveTargets.fat} color="var(--color-macro-fat)" />
             <Link href="/app/nutrition" className="block">
               <Button variant="secondary" className="w-full rounded-[0.9rem]">
                 Open meal breakdown
@@ -361,7 +373,7 @@ export function DashboardClient({
                       <p className="font-black tabular-nums text-neutral-900">
                         {mealTotals.calories.toLocaleString()} kcal
                       </p>
-                      <p className="text-xs font-bold text-neutral-400">
+                      <p className="text-xs font-bold text-neutral-500">
                         {mealTotals.protein}g protein
                       </p>
                     </div>
@@ -403,7 +415,7 @@ export function DashboardClient({
         </div>
       </Card>
 
-      <p className="text-xs font-medium text-neutral-400">
+      <p className="text-xs font-medium text-neutral-500">
         Profile context: goal {effectiveGoal}, diet {effectiveDietaryPreference}
         {effectiveAllergies.length > 0 ? `, allergies ${effectiveAllergies.join(", ")}` : ""}.
       </p>
@@ -431,7 +443,7 @@ function MealMakeupHover({
           </span>
           <div>
             <p className="text-sm font-black text-neutral-900">Meal makeup</p>
-            <p className="text-xs font-semibold text-neutral-400">Breakfast, lunch, and dinner counted today</p>
+            <p className="text-xs font-semibold text-neutral-500">Breakfast, lunch, and dinner counted today</p>
           </div>
         </div>
 

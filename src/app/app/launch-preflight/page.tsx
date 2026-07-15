@@ -52,7 +52,7 @@ function CheckCard({ check }: { check: PreflightCheck }) {
           <Icon className="h-3.5 w-3.5" />
           {config.label}
         </span>
-        <span className="text-[11px] font-black uppercase tracking-[0.12em] text-[#9db0aa]">
+        <span className="text-[11px] font-black uppercase tracking-[0.12em] text-muted-foreground">
           {check.requiredForProduction ? "Production gate" : check.requiredForPreview ? "Preview gate" : "Review note"}
         </span>
       </div>
@@ -100,7 +100,7 @@ export default function LaunchPreflightPage() {
             <p className="mt-3 text-2xl font-black text-[#16302a] md:text-3xl">
               {preflight.previewReady ? "Ready" : "Review"}
             </p>
-            <p className="mt-1 text-sm font-black uppercase tracking-[0.12em] text-[#7c968f]">
+            <p className="mt-1 text-sm font-black uppercase tracking-[0.12em] text-muted-foreground">
               Preview status
             </p>
           </Card>
@@ -109,7 +109,7 @@ export default function LaunchPreflightPage() {
             <p className="mt-3 text-2xl font-black text-[#16302a] md:text-3xl">
               {preflight.productionReady ? "Ready" : "Blocked"}
             </p>
-            <p className="mt-1 text-sm font-black uppercase tracking-[0.12em] text-[#7c968f]">
+            <p className="mt-1 text-sm font-black uppercase tracking-[0.12em] text-muted-foreground">
               Production status
             </p>
           </Card>
@@ -118,7 +118,7 @@ export default function LaunchPreflightPage() {
             <p className="mt-3 text-2xl font-black text-[#16302a] md:text-3xl">
               v{preflight.version}
             </p>
-            <p className="mt-1 text-sm font-black uppercase tracking-[0.12em] text-[#7c968f]">
+            <p className="mt-1 text-sm font-black uppercase tracking-[0.12em] text-muted-foreground">
               App build
             </p>
           </Card>
@@ -162,7 +162,7 @@ export default function LaunchPreflightPage() {
                 <Link
                   key={route.path}
                   href={route.path}
-                  className="flex items-center justify-between gap-3 rounded-[1rem] bg-[#f4f8f6] px-4 py-3 text-sm font-black text-[#516b63] transition hover:bg-primary-50 hover:text-primary-700"
+                  className="flex items-center justify-between gap-3 rounded-[1rem] bg-[#f4f8f6] px-4 py-3 text-sm font-black text-muted-foreground transition hover:bg-primary-50 hover:text-primary-700"
                 >
                   <span>{route.label}</span>
                   <ArrowRight className="h-4 w-4" />

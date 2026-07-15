@@ -159,7 +159,7 @@ export default function MealPlanPage() {
                 onClick={() => setView(mode)}
                 className={cn(
                   "rounded-full px-6 py-3 text-sm font-black capitalize transition-all",
-                  view === mode ? "bg-primary-600 text-white shadow-[0_12px_24px_rgba(21,145,108,0.18)]" : "text-[#78928a] hover:text-primary-800"
+                  view === mode ? "bg-primary-600 text-white shadow-[0_12px_24px_rgba(21,145,108,0.18)]" : "text-muted-foreground hover:text-primary-800"
                 )}
               >
                 {mode}
@@ -204,7 +204,7 @@ export default function MealPlanPage() {
               </span>
               <div>
                 <h2 className="text-2xl font-black text-[#16302a]">Grocery readiness</h2>
-                <p className="mt-1 text-sm font-semibold leading-6 text-[#78928a]">
+                <p className="mt-1 text-sm font-semibold leading-6 text-muted-foreground">
                   Planned meals are grouped into the grocery list as soon as the open slots are filled.
                 </p>
               </div>
@@ -212,11 +212,11 @@ export default function MealPlanPage() {
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="fw-soft-row p-4">
                 <p className="text-2xl font-black text-[#16302a] md:text-3xl">18</p>
-                <p className="text-xs font-black uppercase tracking-[0.12em] text-[#91a7a0]">unique ingredients</p>
+                <p className="text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">unique ingredients</p>
               </div>
               <div className="fw-soft-row p-4">
                 <p className="text-2xl font-black text-[#16302a] md:text-3xl">2</p>
-                <p className="text-xs font-black uppercase tracking-[0.12em] text-[#91a7a0]">slots to fill</p>
+                <p className="text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">slots to fill</p>
               </div>
             </div>
             <Link href="/app/grocery-list" className="block">
@@ -256,12 +256,12 @@ export default function MealPlanPage() {
                         <p className="text-base font-black text-[#16302a]">
                           {day.label}, {day.date}
                         </p>
-                        <p className="text-xs font-semibold text-[#78928a] mt-0.5">{day.focus}</p>
+                        <p className="text-xs font-semibold text-muted-foreground mt-0.5">{day.focus}</p>
                       </div>
                       <ChevronRight className={cn("w-4 h-4", isSelected ? "text-primary-600" : "text-[#b8cac4]")} />
                     </div>
-                    <div className="mt-3 flex items-center gap-2 text-xs font-semibold text-[#78928a]">
-                      <span className="font-black tabular-nums text-[#516b63]">
+                    <div className="mt-3 flex items-center gap-2 text-xs font-semibold text-muted-foreground">
+                      <span className="font-black tabular-nums text-muted-foreground">
                         {totals.protein}g protein
                       </span>
                       <span>{totals.planned}/4 meals</span>
@@ -342,13 +342,13 @@ export default function MealPlanPage() {
                             )}
                           </div>
                           <div>
-                            <p className="text-xs font-black uppercase tracking-[0.14em] text-[#91a7a0]">
+                            <p className="text-xs font-black uppercase tracking-[0.14em] text-muted-foreground">
                               {meal.slot} · {tone.label}
                             </p>
                             <h3 className="mt-1 text-lg font-black text-[#16302a]">
                               {addedTitle ?? meal.title}
                             </h3>
-                            <div className="mt-2 flex flex-wrap items-center gap-2 text-xs font-bold text-[#78928a]">
+                            <div className="mt-2 flex flex-wrap items-center gap-2 text-xs font-bold text-muted-foreground">
                               <span className="tabular-nums">{meal.calories.toLocaleString()} kcal</span>
                               <span className="tabular-nums">{meal.protein}g protein</span>
                               <span className="inline-flex items-center gap-1">
@@ -396,7 +396,7 @@ export default function MealPlanPage() {
                           <p className="text-lg font-black text-[#16302a]">
                             {day.label}, {day.date}
                           </p>
-                          <p className="text-xs font-semibold text-[#78928a]">{day.focus}</p>
+                          <p className="text-xs font-semibold text-muted-foreground">{day.focus}</p>
                         </div>
                         <Badge variant={totals.planned === 4 ? "success" : "warning"}>
                           {totals.planned}/4
@@ -404,13 +404,13 @@ export default function MealPlanPage() {
                       </div>
                       <div className="mt-4 grid grid-cols-2 gap-2">
                         <div className="rounded-[1rem] bg-white px-4 py-3">
-                          <p className="text-xs font-black uppercase tracking-[0.1em] text-[#91a7a0]">Calories</p>
+                          <p className="text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">Calories</p>
                           <p className="text-xl font-black tabular-nums text-[#16302a]">
                             {totals.calories.toLocaleString()}
                           </p>
                         </div>
                         <div className="rounded-[1rem] bg-white px-4 py-3">
-                          <p className="text-xs font-black uppercase tracking-[0.1em] text-[#91a7a0]">Protein</p>
+                          <p className="text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">Protein</p>
                           <p className="text-xl font-black tabular-nums text-[#16302a]">
                             {totals.protein}g
                           </p>

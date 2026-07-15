@@ -49,7 +49,7 @@ function Metric({
     <div className="rounded-[1.5rem] border border-primary-100/80 bg-white p-4 shadow-[0_14px_36px_rgba(22,48,42,0.06)]">
       <Icon className="h-4 w-4 text-primary-600" />
       <p className="mt-3 text-lg font-black text-[#16302a]">{value}</p>
-      <p className="mt-1 text-xs font-black uppercase tracking-[0.12em] text-[#91a7a0]">
+      <p className="mt-1 text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">
         {label}
       </p>
     </div>
@@ -71,13 +71,13 @@ function WorkoutMiniLink({
   return (
     <Link
       href={workoutHref(workout.id)}
-      className="group flex min-w-0 items-center gap-3 rounded-[1.35rem] border border-[#e6efeb] bg-white p-3 shadow-sm transition hover:border-primary-200 hover:bg-primary-50/60"
+      className="group flex min-w-0 items-center gap-3 rounded-[1.35rem] border border-border bg-white p-3 shadow-sm transition hover:border-primary-200 hover:bg-primary-50/60"
     >
       <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[0.95rem] bg-primary-100 text-primary-700">
         <Arrow className="h-4 w-4 transition group-hover:scale-110" />
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block text-[11px] font-black uppercase tracking-[0.12em] text-[#91a7a0]">
+        <span className="block text-[11px] font-black uppercase tracking-[0.12em] text-muted-foreground">
           {label}
         </span>
         <span className="mt-0.5 flex items-center gap-2">
@@ -97,7 +97,7 @@ function SimilarWorkoutLink({ workout }: { workout: WorkoutLibraryItem }) {
   return (
     <Link
       href={workoutHref(workout.id)}
-      className="group flex min-w-0 items-center gap-3 rounded-[1.25rem] border border-[#e6efeb] bg-[#f6faf8] p-3 transition hover:border-primary-200 hover:bg-white"
+      className="group flex min-w-0 items-center gap-3 rounded-[1.25rem] border border-border bg-[#f6faf8] p-3 transition hover:border-primary-200 hover:bg-white"
     >
       <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[0.95rem] bg-white text-primary-700 shadow-sm">
         <Icon className="h-4 w-4" />
@@ -109,11 +109,11 @@ function SimilarWorkoutLink({ workout }: { workout: WorkoutLibraryItem }) {
             {workout.duration}
           </span>
         </span>
-        <span className="mt-1 block truncate text-xs font-semibold text-[#7c968f]">
+        <span className="mt-1 block truncate text-xs font-semibold text-muted-foreground">
           {workout.focus}
         </span>
       </span>
-      <ArrowRight className="h-4 w-4 shrink-0 text-[#9db0aa] transition group-hover:translate-x-0.5 group-hover:text-primary-700" />
+      <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:text-primary-700" />
     </Link>
   );
 }
@@ -166,7 +166,7 @@ function ExerciseDiagramCard({ diagram }: { diagram: ExerciseDiagram }) {
           <p className="mt-2 text-sm font-semibold leading-6 text-[#60776f]">
             {diagram.equipment ?? "As programmed"} · {diagram.primaryMuscles.join(", ")}
           </p>
-          <ul className="mt-3 grid gap-2 text-sm font-semibold leading-6 text-[#516b63]">
+          <ul className="mt-3 grid gap-2 text-sm font-semibold leading-6 text-muted-foreground">
             {diagram.cues.map((cue) => (
               <li key={cue} className="flex gap-2">
                 <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary-500" />
@@ -174,7 +174,7 @@ function ExerciseDiagramCard({ diagram }: { diagram: ExerciseDiagram }) {
               </li>
             ))}
           </ul>
-          <p className="mt-3 text-[11px] font-black uppercase tracking-[0.12em] text-[#91a7a0]">
+          <p className="mt-3 text-[11px] font-black uppercase tracking-[0.12em] text-muted-foreground">
             Source: {diagram.sourceLabel}
           </p>
         </div>
@@ -198,7 +198,7 @@ function ExerciseDetailRow({ exercise }: { exercise: WorkoutExercise }) {
                 View diagram
               </span>
             </div>
-            <p className="mt-2 text-base font-semibold leading-relaxed text-[#78928a] md:text-lg">
+            <p className="mt-2 text-base font-semibold leading-relaxed text-muted-foreground md:text-lg">
               {exercise.target}
             </p>
           </div>
@@ -241,7 +241,7 @@ export default async function WorkoutDetailPage({
       <div className="fw-page-inner min-w-0 max-w-6xl space-y-4 md:space-y-6">
         <Link
           href="/app/workouts"
-          className="inline-flex min-h-11 items-center gap-2 rounded-full bg-white/75 px-4 py-2 text-sm font-black md:min-h-0 text-[#78928a] shadow-sm transition-colors hover:text-primary-700"
+          className="inline-flex min-h-11 items-center gap-2 rounded-full bg-white/75 px-4 py-2 text-sm font-black md:min-h-0 text-muted-foreground shadow-sm transition-colors hover:text-primary-700"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to workouts
@@ -325,7 +325,7 @@ export default async function WorkoutDetailPage({
                 <h2 className="font-heading text-lg font-black text-[#16302a]">
                   Move around
                 </h2>
-                <p className="text-sm font-semibold text-[#7c968f]">
+                <p className="text-sm font-semibold text-muted-foreground">
                   Jump to the next workout or a close match.
                 </p>
               </div>
@@ -369,7 +369,7 @@ export default async function WorkoutDetailPage({
                           {block.time}
                         </span>
                       </div>
-                      <p className="mt-1 text-base font-semibold leading-relaxed text-[#78928a]">
+                      <p className="mt-1 text-base font-semibold leading-relaxed text-muted-foreground">
                         {block.detail}
                       </p>
                     </div>
@@ -420,7 +420,7 @@ export default async function WorkoutDetailPage({
                   <h2 className="font-heading text-lg font-black text-[#16302a]">
                     Summary
                   </h2>
-                  <p className="text-sm font-semibold text-[#7c968f]">
+                  <p className="text-sm font-semibold text-muted-foreground">
                     What you should know before logging it.
                   </p>
                 </div>
@@ -438,8 +438,8 @@ export default async function WorkoutDetailPage({
                 ))}
               </div>
 
-              <div className="rounded-[1.25rem] border border-[#e6efeb] bg-[#f6faf8] p-4">
-                <p className="text-xs font-black uppercase tracking-[0.12em] text-[#91a7a0]">
+              <div className="rounded-[1.25rem] border border-border bg-[#f6faf8] p-4">
+                <p className="text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">
                   Equipment
                 </p>
                 <p className="mt-1 text-sm font-black text-[#16302a]">{workout.equipment}</p>
@@ -451,7 +451,7 @@ export default async function WorkoutDetailPage({
                 <UtensilsCrossed className="mt-0.5 h-4 w-4 shrink-0 text-primary-600" />
                 <div>
                   <h2 className="text-sm font-black text-[#16302a]">Fuel guidance</h2>
-                  <p className="mt-1 text-sm font-semibold leading-relaxed text-[#516b63]">
+                  <p className="mt-1 text-sm font-semibold leading-relaxed text-muted-foreground">
                     {workout.fuel}
                   </p>
                 </div>

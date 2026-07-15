@@ -37,13 +37,16 @@
   --color-sky-500: #3e92c9;
   --color-sky-600: #2f7cad;
   --color-sky-700: #246389;
+  --color-teal-400: #19a4ad;
+  --color-teal-500: #159aa2;
+  --color-teal-600: #138893;
   --color-lemon-50: #fbf6d8;
   --color-lemon-100: #f3e9a8;
   --color-lemon-200: #e5d265;
   --color-lemon-500: #c7a91e;
   --color-lemon-600: #a98d18;
   --color-lemon-700: #7a650d;
-  --color-macro-protein: #1eae84;
+  --color-macro-protein: #3e92c9;
   --color-macro-carbs: #c7a91e;
   --color-macro-fat: #f0795b;
   --color-macro-calories: #1eae84;
@@ -144,11 +147,11 @@ html {
   --secondary: #d6f0e8;
   --secondary-foreground: #16302a;
   --muted: #f2f7f5;
-  --muted-foreground: #7c968f;
+  --muted-foreground: #516b63;
   --accent: #ffe0d8;
   --accent-foreground: #7d3828;
   --destructive: #ef4444;
-  --border: #d8e7e1;
+  --border: #e6efeb;
   --input: #dbece6;
   --ring: #1eae84;
   --chart-1: #1eae84;
@@ -248,7 +251,7 @@ html {
   }
 
   .fw-muted {
-    color: #78928a;
+    color: #516b63;
     font-weight: 600;
   }
 
@@ -322,7 +325,7 @@ html {
   }
 
   .fw-artifact-scope :is(.text-neutral-400, .text-neutral-500, .text-neutral-600, .text-neutral-700) {
-    color: #78928a !important;
+    color: #516b63 !important;
   }
 
   .fw-artifact-scope :is(.bg-neutral-50, .bg-neutral-100) {

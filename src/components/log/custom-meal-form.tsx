@@ -121,7 +121,7 @@ export function CustomMealForm({
             <h2 className="text-lg font-black text-[#16302a]">
               Add your own meal
             </h2>
-            <p className="text-sm font-semibold text-[#78928a]">Manual macros for anything not in search.</p>
+            <p className="text-sm font-semibold text-muted-foreground">Manual macros for anything not in search.</p>
           </div>
         </div>
         <button
@@ -130,7 +130,7 @@ export function CustomMealForm({
             reset();
             setOpen(false);
           }}
-          className="rounded-full px-3 py-2 text-sm font-bold text-[#78928a] hover:bg-primary-50 hover:text-primary-800"
+          className="rounded-full px-3 py-2 text-sm font-bold text-muted-foreground hover:bg-primary-50 hover:text-primary-800"
         >
           Cancel
         </button>
@@ -172,7 +172,7 @@ export function CustomMealForm({
           const invalid = touched && parsed[field.key] === null;
           return (
             <div key={field.key}>
-              <label className="mb-1 block text-xs font-black uppercase tracking-[0.12em] text-[#91a7a0]">
+              <label className="mb-1 block text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">
                 {field.label}
               </label>
               <input

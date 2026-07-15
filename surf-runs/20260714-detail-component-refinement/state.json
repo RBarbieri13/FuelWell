@@ -1,0 +1,1 @@
+{"phase": "done", "branch": "surf/parallel-detail", "base": "8feac69", "aspect": "component-level detail refinement", "gates": {"lint": "clean", "tsc": "clean", "unit": "271/271", "playwright_chromium": "71 passed / 12 skipped (auth-gated) / 0 failed"}, "updated": "2026-07-14"}

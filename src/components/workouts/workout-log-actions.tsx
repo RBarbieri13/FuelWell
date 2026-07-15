@@ -52,7 +52,7 @@ export function WorkoutLogAction({ workout }: { workout: LoggableWorkout }) {
         </Link>
         <Link
           href="/app/fitness"
-          className="inline-flex items-center justify-center gap-2 rounded-[1.15rem] bg-gradient-to-r from-primary-500 to-[#159aa2] px-5 py-3 text-sm font-black text-white shadow-[0_16px_34px_rgba(21,145,108,0.24)] transition hover:from-primary-600 hover:to-[#138893]"
+          className="inline-flex items-center justify-center gap-2 rounded-[1.15rem] bg-gradient-to-r from-primary-500 to-teal-500 px-5 py-3 text-sm font-black text-white shadow-[0_16px_34px_rgba(21,145,108,0.24)] transition hover:from-primary-600 hover:to-teal-600"
         >
           Review in fitness
           <ArrowRight className="h-4 w-4" />
@@ -77,7 +77,7 @@ export function WorkoutLogAction({ workout }: { workout: LoggableWorkout }) {
         });
         setLogged(true);
       }}
-      className="rounded-[1.15rem] bg-gradient-to-r from-primary-500 to-[#159aa2] px-5 py-3 text-sm font-black text-white shadow-[0_16px_34px_rgba(21,145,108,0.24)] transition hover:from-primary-600 hover:to-[#138893]"
+      className="rounded-[1.15rem] bg-gradient-to-r from-primary-500 to-teal-500 px-5 py-3 text-sm font-black text-white shadow-[0_16px_34px_rgba(21,145,108,0.24)] transition hover:from-primary-600 hover:to-teal-600"
       aria-label={`Log ${workout.title} for today`}
     >
       Log this workout

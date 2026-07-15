@@ -50,7 +50,7 @@ import {
 } from "@/lib/fuelwell-data";
 import type { WorkoutEntry } from "@/lib/coach/types";
 
-type Tone = "primary" | "sky" | "lemon" | "accent";
+type Tone = "primary" | "sky" | "lemon" | "accent" | "teal";
 
 type ActivityRecord = {
   id: string;
@@ -207,7 +207,7 @@ const toneStyles = {
     macro: "bg-sky-100 text-sky-700",
   },
   lemon: {
-    chip: "bg-lemon-50 text-lemon-600",
+    chip: "bg-lemon-50 text-lemon-700",
     pill: "bg-lemon-100 text-lemon-700",
     bar: "bg-lemon-500",
     macro: "bg-lemon-100 text-lemon-700",
@@ -217,6 +217,12 @@ const toneStyles = {
     pill: "bg-accent-100 text-accent-700",
     bar: "bg-accent-400",
     macro: "bg-accent-100 text-accent-700",
+  },
+  teal: {
+    chip: "bg-teal-500/12 text-teal-600",
+    pill: "bg-teal-500/12 text-teal-600",
+    bar: "bg-teal-500",
+    macro: "bg-teal-500/12 text-teal-600",
   },
 } as const;
 
@@ -368,7 +374,7 @@ export function NutritionDetailSurface({
                     <MealIcon mealType="dinner" muted />
                     <div>
                       <h2 className="text-xl font-black text-[#54635d]">Dinner</h2>
-                      <p className="text-sm font-semibold text-[#9db0aa]">
+                      <p className="text-sm font-semibold text-muted-foreground">
                         Not logged yet · {remaining(totals.calories, targets.calories).toLocaleString()} kcal of room left
                       </p>
                     </div>
@@ -459,7 +465,7 @@ export function DailyReviewSurface({
           icon={Sparkles}
           eyebrow="Overview"
           title="Today's whole picture"
-          description="The headline decision and top metrics stay together so the day reads before the details unfold."
+          description="Calories eaten, calories burned, the room left after activity, and protein — today's headline numbers."
           expanded={overviewExpanded}
           onToggle={() => setOverviewExpanded((value) => !value)}
           collapsedText="Overview collapsed. Expand it to review today's headline, calorie room, burn, and protein status."
@@ -468,8 +474,8 @@ export function DailyReviewSurface({
             <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
               <TargetTile label="Food in" current={totals.calories} target={targets.calories} unit="kcal" tone="primary" icon={Flame} />
               <TargetTile label="Active burn" current={fitnessTotals.calories} target={fitnessTargets.activeCalories} unit="kcal" tone="accent" icon={Dumbbell} />
-              <SimpleSummaryCard label="Net calories" value={netCalories.toLocaleString()} detail={`${remaining(netCalories, targets.calories).toLocaleString()} kcal room after activity`} tone="sky" icon={Target} />
-              <SimpleSummaryCard label="Protein" value={`${totals.protein}g`} detail={`${remaining(totals.protein, targets.protein)}g left of ${targets.protein}`} tone="lemon" icon={Beef} />
+              <SimpleSummaryCard label="Net calories" value={netCalories.toLocaleString()} detail={`${remaining(netCalories, targets.calories).toLocaleString()} kcal room after activity`} tone="teal" icon={Target} />
+              <SimpleSummaryCard label="Protein" value={`${totals.protein}g`} detail={`${remaining(totals.protein, targets.protein)}g left of ${targets.protein}g`} tone="sky" icon={Beef} />
             </section>
           </div>
         </DailyReviewSection>
@@ -488,21 +494,21 @@ export function DailyReviewSurface({
               <SimpleSummaryCard
                 label="Logged meals"
                 value={`${meals.length}`}
-                detail="Food entries included in the nutrition side of this ledger."
+                detail="Meals counted toward today's nutrition."
                 tone="primary"
                 icon={Salad}
               />
               <SimpleSummaryCard
                 label="Activity entries"
                 value={`${activityLog.length}`}
-                detail="Movement signals included in the fitness side of this ledger."
+                detail="Workouts and movement counted today."
                 tone="accent"
                 icon={Activity}
               />
               <SimpleSummaryCard
                 label="Next best review"
                 value={remaining(netCalories, targets.calories) > 0 ? "Dinner" : "Coach"}
-                detail="The next place to look based on calorie room and daily balance."
+                detail="Where to look next, based on the calorie room you have left."
                 tone="sky"
                 icon={Sparkles}
               />
@@ -597,7 +603,7 @@ function DailyReviewSection({
 }) {
   return (
     <section className="rounded-[2rem] border border-primary-200/90 bg-primary-50/35 p-3 shadow-[0_18px_48px_rgba(20,90,75,0.08)] md:p-4">
-      <div className="rounded-[1.55rem] border border-white/85 bg-white/72 px-4 py-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] md:px-5">
+      <div className="rounded-[1.5rem] border border-white/85 bg-white/72 px-4 py-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] md:px-5">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between lg:gap-4">
           <div className="flex gap-3">
             <span className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-100 text-primary-700">
@@ -726,9 +732,9 @@ function TargetTile({
       </div>
       <p className="text-2xl font-black leading-none tabular-nums text-[#16302a] md:text-[1.75rem]">
         {current.toLocaleString()}
-        <span className="ml-1 text-[13px] font-bold text-[#a2b5b0]">{unit}</span>
+        <span className="ml-1 text-[13px] font-bold text-muted-foreground">{unit}</span>
       </p>
-      <p className="text-xs font-semibold text-[#7c968f]">
+      <p className="text-xs font-semibold text-muted-foreground">
         {remaining(current, target).toLocaleString()}
         {unit === "g" ? "g" : ` ${unit}`} left of {target.toLocaleString()}
         {unit === "g" ? "g" : ""}
@@ -769,7 +775,7 @@ function SimpleSummaryCard({
       <p className="text-2xl font-black leading-none tabular-nums text-[#16302a] md:text-[1.75rem]">
         {value}
       </p>
-      <p className="text-xs font-semibold leading-5 text-[#7c968f]">{detail}</p>
+      <p className="text-xs font-semibold leading-5 text-muted-foreground">{detail}</p>
     </Card>
   );
 }
@@ -824,11 +830,11 @@ function ActivityLogCard({
           <div>
             <div className="flex flex-wrap items-center gap-2">
               <h2 className="text-xl font-black text-[#16302a]">{activity.title}</h2>
-              <span className="rounded-full bg-[#f4f8f6] px-2.5 py-1 text-xs font-black text-[#7c968f]">
+              <span className="rounded-full bg-[#f4f8f6] px-2.5 py-1 text-xs font-black text-muted-foreground">
                 {activity.source}
               </span>
             </div>
-            <p className="text-sm font-semibold text-[#7c968f]">
+            <p className="text-sm font-semibold text-muted-foreground">
               {activity.subtitle} · {activity.time}
             </p>
           </div>
@@ -891,7 +897,7 @@ function MealLogCard({
             <h2 className="text-xl font-black text-[#16302a]">
               {formatMealType(meal.mealType)}
             </h2>
-            <p className="text-sm font-semibold text-[#7c968f]">
+            <p className="text-sm font-semibold text-muted-foreground">
               {meal.name} · {meal.items.length} item{meal.items.length === 1 ? "" : "s"}
             </p>
           </div>
@@ -948,7 +954,7 @@ function MealLogCard({
           <div key={item.id} className="grid gap-4 border-t border-primary-100/70 py-4 md:grid-cols-[1fr_auto] md:items-center">
             <div>
               <p className="text-base font-black text-[#16302a]">{item.name}</p>
-              <p className="text-sm font-semibold text-[#9db0aa]">
+              <p className="text-sm font-semibold text-muted-foreground">
                 {item.servings} serving{item.servings === 1 ? "" : "s"}
               </p>
             </div>
@@ -968,7 +974,7 @@ function MealLogCard({
 function MealIcon({ mealType, muted = false }: { mealType: MealType; muted?: boolean }) {
   const config =
     muted
-      ? { styles: "bg-[#f4f8f6] text-[#a2b5b0]", Icon: Moon }
+      ? { styles: "bg-[#f4f8f6] text-muted-foreground", Icon: Moon }
       : mealType === "breakfast"
         ? { styles: "bg-lemon-50 text-lemon-600", Icon: Sun }
         : mealType === "lunch"
@@ -1032,7 +1038,7 @@ function CollapsibleLogPanel({
           </span>
           <div>
             <h2 className="font-heading text-xl font-black text-[#16302a]">{title}</h2>
-            <p className="text-sm font-semibold text-[#7c968f]">{detail}</p>
+            <p className="text-sm font-semibold text-muted-foreground">{detail}</p>
           </div>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -1073,7 +1079,7 @@ function EmptyLedgerCard({
   return (
     <Card className="rounded-[1.5rem] border-dashed border-primary-200 bg-white/75 px-6 py-8 text-center">
       <h2 className="text-xl font-black text-[#16302a]">{title}</h2>
-      <p className="mx-auto mt-2 max-w-md text-sm font-semibold leading-6 text-[#78928a]">
+      <p className="mx-auto mt-2 max-w-md text-sm font-semibold leading-6 text-muted-foreground">
         {detail}
       </p>
       <Link href={href} className="mt-5 inline-flex">

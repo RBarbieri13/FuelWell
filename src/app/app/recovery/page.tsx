@@ -145,7 +145,7 @@ export default function RecoveryPage() {
               <div className="flex h-24 w-24 shrink-0 flex-col items-center justify-center rounded-[20px] bg-white text-center shadow-[0_8px_18px_rgba(20,90,75,0.08)] md:h-32 md:w-32">
                 <Gauge className="mb-1 h-6 w-6 text-primary-600" />
                 <span className="font-heading text-4xl font-black tabular-nums text-primary-700 md:text-5xl">{readiness.score}</span>
-                <span className="text-xs font-black uppercase tracking-[0.16em] text-neutral-400">score</span>
+                <span className="text-xs font-black uppercase tracking-[0.16em] text-neutral-500">score</span>
               </div>
             </div>
           </Card>
@@ -217,7 +217,7 @@ export default function RecoveryPage() {
                 <div key={item.label}>
                   <div className="mb-2 flex items-center justify-between text-sm font-black">
                     <span className="text-neutral-800">{item.label}</span>
-                    <span className="text-neutral-400">{item.note}</span>
+                    <span className="text-neutral-500">{item.note}</span>
                   </div>
                   <div className="h-3 overflow-hidden rounded-full bg-primary-50">
                     <div className={`${item.color} h-full rounded-full`} style={{ width: `${item.value}%` }} />

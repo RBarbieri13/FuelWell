@@ -94,7 +94,7 @@ export function PhotoEstimateReview({
           </span>
           <h2 className="text-lg font-black text-[#16302a]">Photo review draft</h2>
         </div>
-        <p className="mt-2 text-sm font-semibold leading-6 text-[#78928a]">
+        <p className="mt-2 text-sm font-semibold leading-6 text-muted-foreground">
           Upload a meal photo and review candidates before saving. FuelWell never auto-logs a photo estimate.
         </p>
       </div>
@@ -152,7 +152,7 @@ export function PhotoEstimateReview({
           {result.candidates.length === 0 ? (
             <div className="rounded-[1.35rem] border border-dashed border-primary-200 bg-primary-50/60 p-5">
               <p className="font-black text-[#16302a]">No useful draft yet.</p>
-              <p className="mt-1 text-sm font-semibold text-[#78928a]">
+              <p className="mt-1 text-sm font-semibold text-muted-foreground">
                 Add a short description or use Search so macros stay truthful.
               </p>
             </div>
@@ -172,7 +172,7 @@ export function PhotoEstimateReview({
                         {candidate.portionLabel} · {candidate.totals.calories} kcal ·{" "}
                         {candidate.totals.protein}g protein
                       </p>
-                      <p className="mt-1 text-xs font-semibold leading-5 text-[#78928a]">
+                      <p className="mt-1 text-xs font-semibold leading-5 text-muted-foreground">
                         {candidate.sourceNote}
                       </p>
                     </div>

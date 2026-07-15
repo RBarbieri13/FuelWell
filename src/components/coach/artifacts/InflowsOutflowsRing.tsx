@@ -30,7 +30,7 @@ function Ring({ fraction, color, label, kcal }: { fraction: number; color: strin
         role="img"
         aria-label={`${label}: ${Math.round(kcal)} kcal`}
       >
-        <circle cx="32" cy="32" r={R} fill="none" stroke="#f5f5f5" strokeWidth="7" />
+        <circle cx="32" cy="32" r={R} fill="none" stroke="var(--muted)" strokeWidth="7" />
         <circle
           cx="32"
           cy="32"
@@ -73,8 +73,8 @@ export function InflowsOutflowsRing({ artifact }: ArtifactCardProps<InflowsOutfl
       </div>
 
       <div className="mt-3 flex items-center justify-center gap-6">
-        <Ring fraction={inflow / max} color="#1eae84" label="In" kcal={inflow} />
-        <Ring fraction={outflow / max} color="#f97316" label="Out" kcal={outflow} />
+        <Ring fraction={inflow / max} color="var(--color-primary-500)" label="In" kcal={inflow} />
+        <Ring fraction={outflow / max} color="var(--color-accent-500)" label="Out" kcal={outflow} />
       </div>
 
       <p className="mt-3 text-center text-sm font-bold text-neutral-700">
