@@ -358,7 +358,7 @@ export default function ProgressPage() {
             </div>
             <div>
               <p className="text-sm font-black text-primary-800/75">{snapshot.title}</p>
-              <h2 className="mt-3 font-heading text-[28px] font-black tracking-tight text-[#16302a] md:text-3xl">
+              <h2 className="mt-3 font-heading text-[22px] font-black tracking-tight text-[#16302a] md:text-3xl">
                 {snapshot.verdict}
               </h2>
               <p className="mt-4 max-w-2xl text-base font-semibold leading-7 text-primary-900/70">

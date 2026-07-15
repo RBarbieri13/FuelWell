@@ -77,14 +77,14 @@ export default function MenuChoiceReviewPage() {
       </header>
 
       <main className="fw-page-inner space-y-4 md:space-y-6 pb-28 md:pb-8">
-        <Card variant="elevated" className="rounded-[1.5rem] bg-white px-7 py-7 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
+        <Card variant="elevated" className="rounded-[1.5rem] bg-white px-5 py-5 shadow-[0_12px_30px_rgba(20,90,75,0.07)] md:px-7 md:py-7">
           <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_24rem]">
             <div>
               <p className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.14em] text-primary-600">
                 <Sparkles className="h-4 w-4" />
                 Decision rules
               </p>
-              <h2 className="mt-3 text-3xl font-black text-[#16302a]">
+              <h2 className="mt-2 text-2xl font-black text-[#16302a] md:text-3xl">
                 The coach should rank options, not just identify food.
               </h2>
               <p className="mt-3 max-w-3xl text-base font-semibold leading-7 text-[#54635d]">

@@ -172,12 +172,12 @@ export default function MealPlanPage() {
 
       <div className="fw-page-inner space-y-4 md:space-y-6">
         <section className="grid items-start gap-5 lg:grid-cols-[1.05fr_0.95fr]">
-          <Card className="fw-dark-panel px-7 py-7">
+          <Card className="fw-dark-panel px-5 py-5 md:px-7 md:py-7">
             <p className="inline-flex items-center gap-2 text-sm font-black uppercase tracking-[0.16em] text-primary-200">
               <Sparkles className="h-4 w-4" />
               Plan quality
             </p>
-            <h2 className="mt-5 max-w-3xl font-heading text-3xl font-black leading-tight tracking-tight text-white md:text-4xl">
+            <h2 className="mt-4 max-w-3xl font-heading text-2xl font-black leading-tight tracking-tight text-white md:text-4xl">
               {weekTotals.planned} of {days.length * 4} meals are planned.
             </h2>
             <p className="mt-4 max-w-2xl text-base font-semibold leading-7 text-white/74">
@@ -211,11 +211,11 @@ export default function MealPlanPage() {
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="fw-soft-row p-4">
-                <p className="text-3xl font-black text-[#16302a]">18</p>
+                <p className="text-2xl font-black text-[#16302a] md:text-3xl">18</p>
                 <p className="text-xs font-black uppercase tracking-[0.12em] text-[#91a7a0]">unique ingredients</p>
               </div>
               <div className="fw-soft-row p-4">
-                <p className="text-3xl font-black text-[#16302a]">2</p>
+                <p className="text-2xl font-black text-[#16302a] md:text-3xl">2</p>
                 <p className="text-xs font-black uppercase tracking-[0.12em] text-[#91a7a0]">slots to fill</p>
               </div>
             </div>
@@ -280,7 +280,7 @@ export default function MealPlanPage() {
                   <p className="text-xs font-black uppercase tracking-[0.16em] text-primary-700">
                     {selectedDay.focus}
                   </p>
-                  <h2 className="mt-1 text-3xl font-black text-[#16302a]">
+                  <h2 className="mt-1 text-2xl font-black text-[#16302a] md:text-3xl">
                     {selectedDay.label}, {selectedDay.date}
                   </h2>
                 </div>

@@ -1609,7 +1609,7 @@ function MacroTile({ color, label, value }: { color: "protein" | "carbs" | "fat"
   };
   return (
     <div className={cn("rounded-[1.35rem] border p-4", styles[color])}>
-      <p className="text-3xl font-black tabular-nums">{value}</p>
+      <p className="text-2xl font-black tabular-nums md:text-3xl">{value}</p>
       <p className="mt-1 text-sm font-black">{label}</p>
     </div>
   );

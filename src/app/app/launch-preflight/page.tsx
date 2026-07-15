@@ -97,7 +97,7 @@ export default function LaunchPreflightPage() {
         <section className="grid gap-3 lg:grid-cols-3">
           <Card className="rounded-[1.5rem] px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
             <Eye className="h-5 w-5 text-primary-600" />
-            <p className="mt-4 text-3xl font-black text-[#16302a]">
+            <p className="mt-3 text-2xl font-black text-[#16302a] md:text-3xl">
               {preflight.previewReady ? "Ready" : "Review"}
             </p>
             <p className="mt-1 text-sm font-black uppercase tracking-[0.12em] text-[#7c968f]">
@@ -106,7 +106,7 @@ export default function LaunchPreflightPage() {
           </Card>
           <Card className="rounded-[1.5rem] px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
             <ShieldCheck className="h-5 w-5 text-primary-600" />
-            <p className="mt-4 text-3xl font-black text-[#16302a]">
+            <p className="mt-3 text-2xl font-black text-[#16302a] md:text-3xl">
               {preflight.productionReady ? "Ready" : "Blocked"}
             </p>
             <p className="mt-1 text-sm font-black uppercase tracking-[0.12em] text-[#7c968f]">
@@ -115,7 +115,7 @@ export default function LaunchPreflightPage() {
           </Card>
           <Card className="rounded-[1.5rem] px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
             <Database className="h-5 w-5 text-primary-600" />
-            <p className="mt-4 text-3xl font-black text-[#16302a]">
+            <p className="mt-3 text-2xl font-black text-[#16302a] md:text-3xl">
               v{preflight.version}
             </p>
             <p className="mt-1 text-sm font-black uppercase tracking-[0.12em] text-[#7c968f]">
