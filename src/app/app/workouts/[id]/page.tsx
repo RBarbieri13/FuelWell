@@ -267,7 +267,7 @@ export default async function WorkoutDetailPage({
                           {workout.verdict}
                         </span>
                       </div>
-                      <h1 className="mt-3 font-heading text-4xl font-black tracking-tight text-white md:text-5xl">
+                      <h1 className="mt-2 font-heading text-[1.7rem] font-black tracking-tight text-white md:mt-3 md:text-5xl">
                         {workout.title}
                       </h1>
                       <p className="mt-4 max-w-3xl text-base font-semibold leading-7 text-white/72">
