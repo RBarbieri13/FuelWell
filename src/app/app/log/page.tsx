@@ -1,12 +1,11 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   Barcode,
   Camera,
   CheckCircle2,
-  CircleDot,
   MapPinned,
   Search,
   Sparkles,
@@ -93,6 +92,14 @@ function LogContent() {
   const [sessionIngredients, setSessionIngredients] = useState<SessionIngredient[]>([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [recentlyAddedFoodId, setRecentlyAddedFoodId] = useState<string | null>(null);
+  const addToPlateRef = useRef<HTMLDivElement | null>(null);
+
+  // Selecting a food from a long results list must reveal the portion picker;
+  // on phones the card can otherwise land outside the visible viewport.
+  useEffect(() => {
+    if (!selectedFood) return;
+    addToPlateRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }, [selectedFood]);
 
   const mealTypeLabel = formatMealType(mealType);
   const goalContext = buildDailyGoalContext({
@@ -199,21 +206,17 @@ function LogContent() {
   return (
     <div className="mx-auto w-full max-w-6xl min-w-0 space-y-5 p-4 pb-28 md:p-8">
       <Card variant="elevated" className="fw-dark-panel min-w-0 overflow-hidden text-white">
-        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div className="flex items-center justify-between gap-4">
           <div>
-            <p className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-xs font-black uppercase tracking-[0.16em] text-primary-100">
+            <p className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-primary-100">
               <Sparkles className="h-4 w-4" />
               Fast logging
             </p>
-            <h1 className="mt-4 text-3xl font-black leading-tight tracking-normal md:text-4xl">Log a meal</h1>
-            <p className="mt-3 max-w-2xl text-sm font-semibold leading-6 text-white/70">
-              Search updates as you type. Adding food updates Today&apos;s Plate,
-              dashboard macros, and coach context.
-            </p>
+            <h1 className="mt-2 text-2xl font-black leading-tight tracking-normal md:text-3xl">Log a meal</h1>
           </div>
           <Button
             variant="secondary"
-            className="border-white/15 bg-white/10 text-white shadow-none hover:bg-white/15"
+            className="shrink-0 border-white/15 bg-white/10 text-white shadow-none hover:bg-white/15"
             onClick={() => router.push("/app/nutrition")}
           >
             View today&apos;s plate
@@ -242,17 +245,10 @@ function LogContent() {
             ))}
           </div>
 
-          <Card className="flex min-w-0 flex-col gap-3 rounded-[1.35rem] border-primary-100 bg-primary-50/70 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
-            <div className="min-w-0">
-              <p className="text-sm font-black text-primary-900">{modeHelp.title}</p>
-              <p className="mt-1 text-sm font-semibold leading-6 text-primary-900/65">
-                {modeHelp.detail}
-              </p>
-            </div>
-            <span className="inline-flex self-start rounded-full bg-white px-3 py-1 text-xs font-black text-primary-700 sm:self-center">
-              {mealTypeLabel}
-            </span>
-          </Card>
+          <p className="px-1 text-sm font-semibold leading-6 text-primary-900/65">
+            <span className="font-black text-primary-900">{modeHelp.title}.</span>{" "}
+            {modeHelp.detail}
+          </p>
 
           <div className="lg:hidden">
             <MealTypeSelector mealType={mealType} onSelect={setMealType} />
@@ -291,6 +287,48 @@ function LogContent() {
             />
           )}
 
+          {(selectedFood || confirmation || goalImpact) && (
+            <div ref={addToPlateRef}>
+            <Card variant="elevated" className="space-y-5">
+              <div className="flex items-center gap-3">
+                <div className="rounded-2xl bg-primary-50 p-3 text-primary-700">
+                  <UtensilsCrossed className="h-6 w-6" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-black text-neutral-900">
+                    Add to Today&apos;s Plate
+                  </h2>
+                  <p className="text-sm font-medium text-neutral-500">
+                    {selectedFood
+                      ? "Tap a portion or enter a custom amount."
+                      : "Saved. Keep logging or review the day."}
+                  </p>
+                </div>
+              </div>
+
+              {selectedFood && (
+                <PortionPicker
+                  food={selectedFood}
+                  mealTypeLabel={mealTypeLabel}
+                  onAdd={handleAddPortion}
+                />
+              )}
+
+              {confirmation && (
+                <div
+                  role="status"
+                  className="flex items-start gap-2 rounded-[1.25rem] border border-primary-100 bg-primary-50 px-4 py-3 text-sm font-black text-primary-800"
+                >
+                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" />
+                  <span>{confirmation}</span>
+                </div>
+              )}
+
+              {goalImpact && <GoalImpactCard impact={goalImpact} />}
+            </Card>
+            </div>
+          )}
+
           <RecentMeals meals={meals} onLog={logRecentMeal} />
 
           <CustomMealForm
@@ -309,54 +347,6 @@ function LogContent() {
           <div className="hidden lg:block">
             <MealTypeSelector mealType={mealType} onSelect={setMealType} />
           </div>
-
-          <Card variant="elevated" className="space-y-5">
-            <div className="flex items-center gap-3">
-              <div className="rounded-2xl bg-primary-50 p-3 text-primary-700">
-                <UtensilsCrossed className="h-6 w-6" />
-              </div>
-              <div>
-                <h2 className="text-lg font-black text-neutral-900">
-                  Add to Today&apos;s Plate
-                </h2>
-                <p className="text-sm font-medium text-neutral-500">
-                  {selectedFood
-                    ? "Tap a portion or enter a custom amount."
-                    : "Pick a food from search to choose a portion."}
-                </p>
-              </div>
-            </div>
-
-            {selectedFood ? (
-              <PortionPicker
-                food={selectedFood}
-                mealTypeLabel={mealTypeLabel}
-                onAdd={handleAddPortion}
-              />
-            ) : (
-              <div className="rounded-[1.35rem] border border-dashed border-primary-200 bg-primary-50/70 p-5">
-                <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-[1rem] bg-white text-primary-700 shadow-sm">
-                  <CircleDot className="h-5 w-5" />
-                </div>
-                <p className="font-black text-[#16302a]">No food selected.</p>
-                <p className="mt-1 text-sm font-semibold text-[#78928a]">
-                  Choose a result from Search. Its one-tap portions appear here.
-                </p>
-              </div>
-            )}
-
-            {confirmation && (
-              <div
-                role="status"
-                className="flex items-start gap-2 rounded-[1.25rem] border border-primary-100 bg-primary-50 px-4 py-3 text-sm font-black text-primary-800"
-              >
-                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" />
-                <span>{confirmation}</span>
-              </div>
-            )}
-
-            {goalImpact && <GoalImpactCard impact={goalImpact} />}
-          </Card>
 
           <TotalsSummary totals={totals} targets={goalContext.targets} meals={meals} />
         </div>
