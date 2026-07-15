@@ -465,15 +465,6 @@ export function DailyReviewSurface({
           collapsedText="Overview collapsed. Expand it to review today's headline, calorie room, burn, and protein status."
         >
           <div className="space-y-4">
-            <DetailHero
-              icon={Sparkles}
-              label="Today's whole picture"
-              title="Review food and activity in one clean view"
-              copy="This combines the plate detail with the movement log so people can see what made up the day before asking the coach what to do next."
-              href="/app/coach"
-              action="Ask coach"
-            />
-
             <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               <TargetTile label="Food in" current={totals.calories} target={targets.calories} unit="kcal" tone="primary" icon={Flame} />
               <TargetTile label="Active burn" current={fitnessTotals.calories} target={fitnessTargets.activeCalories} unit="kcal" tone="accent" icon={Dumbbell} />
@@ -482,14 +473,6 @@ export function DailyReviewSurface({
             </section>
           </div>
         </DailyReviewSection>
-
-        <section aria-label="Energy ledger" className="min-w-0">
-          <CalorieBalanceChart
-            meals={meals}
-            targets={targets}
-            activityOutputSignals={activityOutputSignals}
-          />
-        </section>
 
         <DailyReviewSection
           icon={ShieldCheck}
@@ -500,30 +483,47 @@ export function DailyReviewSurface({
           onToggle={() => setSummaryExpanded((value) => !value)}
           collapsedText="Daily summary collapsed. Expand it to see the meal count, activity count, and next best review."
         >
-          <section className="grid gap-3 md:grid-cols-3">
-            <SimpleSummaryCard
-              label="Logged meals"
-              value={`${meals.length}`}
-              detail="Food entries included in the nutrition side of this ledger."
-              tone="primary"
-              icon={Salad}
-            />
-            <SimpleSummaryCard
-              label="Activity entries"
-              value={`${activityLog.length}`}
-              detail="Movement signals included in the fitness side of this ledger."
-              tone="accent"
-              icon={Activity}
-            />
-            <SimpleSummaryCard
-              label="Next best review"
-              value={remaining(netCalories, targets.calories) > 0 ? "Dinner" : "Coach"}
-              detail="The next place to look based on calorie room and daily balance."
-              tone="sky"
-              icon={Sparkles}
-            />
-          </section>
+          <div className="space-y-4">
+            <section className="grid gap-3 md:grid-cols-3">
+              <SimpleSummaryCard
+                label="Logged meals"
+                value={`${meals.length}`}
+                detail="Food entries included in the nutrition side of this ledger."
+                tone="primary"
+                icon={Salad}
+              />
+              <SimpleSummaryCard
+                label="Activity entries"
+                value={`${activityLog.length}`}
+                detail="Movement signals included in the fitness side of this ledger."
+                tone="accent"
+                icon={Activity}
+              />
+              <SimpleSummaryCard
+                label="Next best review"
+                value={remaining(netCalories, targets.calories) > 0 ? "Dinner" : "Coach"}
+                detail="The next place to look based on calorie room and daily balance."
+                tone="sky"
+                icon={Sparkles}
+              />
+            </section>
+            <Link
+              href="/app/coach"
+              className="inline-flex min-h-11 items-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-sm font-black text-primary-700 transition hover:bg-primary-100 md:min-h-0"
+            >
+              <Sparkles className="h-4 w-4" />
+              Ask coach what to do next
+            </Link>
+          </div>
         </DailyReviewSection>
+
+        <section aria-label="Energy ledger" className="min-w-0">
+          <CalorieBalanceChart
+            meals={meals}
+            targets={targets}
+            activityOutputSignals={activityOutputSignals}
+          />
+        </section>
 
         <DailyReviewSection
           icon={Salad}
