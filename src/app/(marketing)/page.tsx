@@ -148,7 +148,7 @@ export default function HomePage() {
                 <p className="text-sm font-black text-[#16302a]">
                   The point is not perfect tracking.
                 </p>
-                <p className="mt-2 text-sm font-semibold leading-6 text-muted-foreground">
+                <p className="mt-2 text-xl font-semibold leading-8 text-muted-foreground">
                   The point is making the next clean choice obvious enough to
                   act on when your day is already moving.
                 </p>
@@ -303,7 +303,7 @@ function AppPreview() {
 
 function TrustPill({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-primary-100 bg-white/70 px-3 py-2 text-sm font-black text-muted-foreground">
+    <span className="inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-primary-100 bg-white/70 px-4 py-2.5 text-xl font-black text-muted-foreground">
       <Check className="h-4 w-4 text-primary-600" />
       {children}
     </span>
@@ -327,7 +327,7 @@ function SectionHeading({
         {kicker}
       </p>
       <h2 className="fw-heading mt-3 text-3xl sm:text-4xl">{title}</h2>
-      <p className="mt-3 text-base font-semibold leading-7 text-muted-foreground">{copy}</p>
+      <p className="mt-3 text-2xl font-semibold leading-9 text-muted-foreground">{copy}</p>
     </div>
   );
 }
@@ -339,7 +339,7 @@ function FeatureCard({ icon: Icon, title, copy }: { icon: LucideIcon; title: str
         <Icon className="h-6 w-6" />
       </div>
       <h3 className="mt-5 text-xl font-black text-[#16302a]">{title}</h3>
-      <p className="mt-2 text-sm font-semibold leading-6 text-muted-foreground">{copy}</p>
+      <p className="mt-2 text-xl font-semibold leading-8 text-muted-foreground">{copy}</p>
     </article>
   );
 }
@@ -352,7 +352,7 @@ function FeatureRow({ icon: Icon, title, detail }: { icon: LucideIcon; title: st
       </div>
       <div>
         <h3 className="font-black text-[#16302a]">{title}</h3>
-        <p className="mt-1 text-sm font-semibold leading-6 text-muted-foreground">{detail}</p>
+        <p className="mt-1 text-xl font-semibold leading-8 text-muted-foreground">{detail}</p>
       </div>
     </article>
   );
@@ -365,7 +365,7 @@ function CoachExample({ question, answer }: { question: string; answer: string }
         <p className="text-sm font-black leading-6 text-[#16302a]">{question}</p>
       </div>
       <div className="mt-3 rounded-[1.25rem] bg-primary-50 p-4">
-        <p className="text-sm font-semibold leading-6 text-muted-foreground">{answer}</p>
+        <p className="text-xl font-semibold leading-8 text-muted-foreground">{answer}</p>
       </div>
     </article>
   );
@@ -388,7 +388,7 @@ function MiniSurface({ icon: Icon, title, detail }: { icon: LucideIcon; title: s
       </div>
       <div>
         <p className="font-black text-[#16302a]">{title}</p>
-        <p className="text-sm font-semibold text-muted-foreground">{detail}</p>
+        <p className="text-xl font-semibold text-muted-foreground">{detail}</p>
       </div>
     </div>
   );
