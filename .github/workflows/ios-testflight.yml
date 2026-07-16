@@ -72,7 +72,7 @@ env:
 jobs:
   testflight:
     name: Build and Upload TestFlight
-    runs-on: macos-15
+    runs-on: macos-26
     # A signing or upload hang must fail fast, not burn the 6-hour job limit
     # (attempt 9 hung 5.5h at codesign before setup_ci was added).
     timeout-minutes: 75
@@ -81,12 +81,17 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Select Xcode
+        # App Store Connect requires the iOS 26 SDK; versioned installs are
+        # named Xcode_26.x.app, so glob and fail loudly rather than silently
+        # falling back to an old default that Apple will reject at upload.
         run: |
-          if [ -d /Applications/Xcode_26.app ]; then
-            sudo xcode-select -s /Applications/Xcode_26.app
-          else
-            sudo xcode-select -s /Applications/Xcode.app
+          xcode_path="$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1)"
+          if [ -z "${xcode_path}" ]; then
+            echo "No Xcode 26.x found on this runner image" >&2
+            ls -d /Applications/Xcode*.app >&2
+            exit 1
           fi
+          sudo xcode-select -s "${xcode_path}"
           xcodebuild -version
 
       - name: Install tools
