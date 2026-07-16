@@ -73,6 +73,9 @@ jobs:
   testflight:
     name: Build and Upload TestFlight
     runs-on: macos-15
+    # A signing or upload hang must fail fast, not burn the 6-hour job limit
+    # (attempt 9 hung 5.5h at codesign before setup_ci was added).
+    timeout-minutes: 75
     steps:
       - name: Checkout
         uses: actions/checkout@v4

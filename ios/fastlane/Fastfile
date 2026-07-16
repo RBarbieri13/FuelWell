@@ -27,6 +27,9 @@ platform :ios do
 
   desc "Build and upload a TestFlight candidate"
   lane :beta do
+    # On CI, codesign hangs forever unless the signing identity lives in an
+    # unlocked keychain with the right partition list; setup_ci provides one.
+    setup_ci if ENV["CI"]
     release_settings = testflight_release_settings
     sh("cd #{repo_root}/ios && xcodegen generate --spec project.yml")
     ensure_testflight_ready!
