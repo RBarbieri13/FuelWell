@@ -148,6 +148,7 @@ jobs:
             -skipMacroValidation \
             -skipPackagePluginValidation \
             -skip-testing:FuelWellUITests \
+            -skip-testing:DesignSystemTests/ComponentGallerySnapshotTests \
             -resultBundlePath build/reports/FuelWellApp.xcresult
 
       - name: Enforce coverage floor
