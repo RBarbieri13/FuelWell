@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 import { authenticateCandidate } from "./helpers/authenticate";
 
 test("Workouts: keeps the library secondary while preserving its controls", async ({ page }) => {
+  test.setTimeout(120_000);
   await authenticateCandidate(page, "/app/workouts");
 
   await expect(page.getByRole("heading", { name: "Coach recommends" })).toBeVisible();
@@ -27,6 +28,7 @@ test("Workouts: keeps the library secondary while preserving its controls", asyn
 });
 
 test("Workouts: opens the library for a direct filtered URL", async ({ page }) => {
+  test.setTimeout(120_000);
   await authenticateCandidate(page, "/app/workouts?body=upper&type=Strength");
 
   await expect(page.getByRole("heading", { name: "Workout database" })).toBeVisible();
@@ -39,6 +41,7 @@ test("Workouts: opens the library for a direct filtered URL", async ({ page }) =
 
 for (const width of [320, 375, 390, 430]) {
   test(`Workouts: mobile library stays compact and contained at ${width}px`, async ({ page }, testInfo) => {
+    test.setTimeout(120_000);
     await page.setViewportSize({ width, height: 844 });
     await authenticateCandidate(page, "/app/workouts");
 

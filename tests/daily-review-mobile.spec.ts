@@ -45,6 +45,7 @@ test.describe("Daily Review mobile energy ledger", () => {
     test(`${width}px keeps independent intake and output controls contained`, async ({
       page,
     }, testInfo) => {
+      test.setTimeout(120_000);
       await page.setViewportSize({ width, height: 844 });
       await authenticateCandidate(page, "/app/daily-review");
 

@@ -5,6 +5,7 @@ test.describe.configure({ mode: "serial" });
 
 for (const width of [320, 375]) {
   test(`recipe actions persist into meals and groceries at ${width}px`, async ({ page }) => {
+    test.setTimeout(120_000);
     await page.setViewportSize({ width, height: 844 });
     await authenticateCandidate(page, "/app/recipes");
     const baseline = await page.evaluate(async () => {

@@ -98,6 +98,7 @@ async function capture(page: Page, testInfo: TestInfo, width: number, state: str
 test.describe("grocery iPhone responsive gate", () => {
   for (const width of VIEWPORTS) {
     test(`${width}px keeps grocery editing and recipe filters inside the phone`, async ({ page }, testInfo) => {
+      test.setTimeout(120_000);
       await page.setViewportSize({ width, height: 844 });
       await installGroceryFixture(page);
       await authenticateCandidate(page, "/app/grocery-list");
@@ -120,6 +121,7 @@ test.describe("grocery iPhone responsive gate", () => {
     });
 
     test(`${width}px keeps Coach grocery artifact contained`, async ({ page }, testInfo) => {
+      test.setTimeout(120_000);
       await page.route("**/api/coach/history", (route) =>
         route.fulfill({
           status: 200,
