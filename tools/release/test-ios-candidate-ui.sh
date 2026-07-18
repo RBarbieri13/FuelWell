@@ -106,6 +106,16 @@ FUELWELL_PLAYWRIGHT_OUTPUT_DIR="${overflow_result_path}-live-coach" \
     --project=chromium \
     --workers=1
 
+echo "Proving authenticated user data survives a fresh sign-in"
+FUELWELL_PLAYWRIGHT_BASE_URL="${candidate_origin}" \
+FUELWELL_PLAYWRIGHT_BROWSER_CHANNEL="${FUELWELL_PLAYWRIGHT_BROWSER_CHANNEL:-chrome}" \
+FUELWELL_PLAYWRIGHT_OUTPUT_DIR="${overflow_result_path}-authenticated-persistence" \
+  "${repo_root}/node_modules/.bin/playwright" test \
+    "${repo_root}/tests/testflight-authenticated-persistence.spec.ts" \
+    --config="${repo_root}/playwright.config.ts" \
+    --project=chromium \
+    --workers=1
+
 echo "Testing FuelWell phone workflows against immutable candidate ${candidate_origin}"
 FUELWELL_PLAYWRIGHT_BASE_URL="${candidate_origin}" \
 FUELWELL_PLAYWRIGHT_BROWSER_CHANNEL="${FUELWELL_PLAYWRIGHT_BROWSER_CHANNEL:-chrome}" \

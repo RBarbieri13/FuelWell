@@ -163,9 +163,13 @@ async function addGroceryThroughUI(page: Page, name: string, amount: string) {
   return { original, grocery: saved! };
 }
 
-async function waitForCompleteCoachAnswer(page: Page) {
+async function waitForCompleteCoachAnswer(page: Page, previousAssistantCount: number) {
   const composer = page.getByLabel("Message Coach");
-  const assistant = page.getByTestId("coach-assistant-message").last();
+  const assistants = page.getByTestId("coach-assistant-message");
+  await expect(assistants).toHaveCount(previousAssistantCount + 1, {
+    timeout: PERSISTENCE_TIMEOUT,
+  });
+  const assistant = assistants.nth(previousAssistantCount);
   await expect(assistant).toBeVisible({ timeout: PERSISTENCE_TIMEOUT });
   await expect(composer).toBeEnabled({ timeout: PERSISTENCE_TIMEOUT });
   await expect
@@ -242,9 +246,23 @@ test.describe("TestFlight authenticated persistence release gate", () => {
       groceryId = groceryResult.grocery.id;
       await assertPhoneFit(firstPage, "grocery list after write");
 
+      const initialHistoryPromise = firstPage.waitForResponse(
+        (response) => response.url().includes("/api/coach/history") && response.request().method() === "GET",
+        { timeout: PERSISTENCE_TIMEOUT },
+      );
       await firstPage.goto("/app/coach");
+      const initialHistoryResponse = await initialHistoryPromise;
+      const initialHistory = (await initialHistoryResponse.json()) as {
+        messages: Array<{ role: "user" | "assistant" }>;
+      };
       const composer = firstPage.getByLabel("Message Coach");
       await expect(composer).toBeEnabled({ timeout: PERSISTENCE_TIMEOUT });
+      const previousAssistantCount = initialHistory.messages.filter(
+        (message) => message.role === "assistant",
+      ).length;
+      await expect(firstPage.getByTestId("coach-assistant-message")).toHaveCount(previousAssistantCount, {
+        timeout: PERSISTENCE_TIMEOUT,
+      });
       await composer.fill(question);
       const responsePromise = firstPage.waitForResponse(
         (response) => response.url().includes("/api/coach/turn") && response.request().method() === "POST",
@@ -254,7 +272,7 @@ test.describe("TestFlight authenticated persistence release gate", () => {
       const coachResponse = await responsePromise;
       expect(coachResponse.status(), `Coach returned HTTP ${coachResponse.status()}`).toBe(200);
       await coachResponse.finished();
-      const coachAnswer = await waitForCompleteCoachAnswer(firstPage);
+      const coachAnswer = await waitForCompleteCoachAnswer(firstPage, previousAssistantCount);
       expect(coachAnswer).not.toMatch(/temporarily unavailable|provider fallback|credit balance|Something broke/i);
       for (const mealName of mealNames) expect(coachAnswer.toLowerCase()).toContain(mealName.toLowerCase());
       expect(coachAnswer).toMatch(new RegExp(`\\b${workoutMinutes}\\s*(?:minutes?|min)\\b`, "i"));
