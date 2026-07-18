@@ -41,6 +41,7 @@ export function RecipeDetail({
   ];
 
   async function planMeal() {
+    setConfirmation("");
     setPendingAction("meal");
     const result = await addMeal({
       mealType,
@@ -63,6 +64,7 @@ export function RecipeDetail({
   }
 
   async function addIngredients() {
+    setConfirmation("");
     const existing = new Set(items.map((item) => item.name.toLowerCase()));
     const additions = recipe.ingredients
       .filter((ingredient) => !existing.has(ingredient.item.toLowerCase()))

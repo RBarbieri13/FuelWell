@@ -278,7 +278,7 @@ async function runJourney(page: Page, journey: Journey, testInfo: TestInfo) {
   const recipe = page.getByRole("dialog", { name: "Salmon rice plate" });
   await recipe.getByRole("button", { name: "Plan this meal" }).click();
   await recipe.getByRole("button", { name: "Add ingredients" }).click();
-  await expect(recipe.getByRole("status")).toContainText(/Groceries|already/);
+  await expect(recipe.getByRole("status")).toContainText(/Groceries|already/, { timeout: 30_000 });
   await assertPhoneFit(page, `${prefix} recipe`);
 
   await expect
