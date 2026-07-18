@@ -61,6 +61,7 @@ export function buildSystemPrompt(snapshot: CoachDaySnapshot, retrievedKnowledge
   const totals = snapshot.totals ?? { calories: 0, protein: 0, carbs: 0, fat: 0 };
   const meals = snapshot.meals ?? [];
   const workouts = snapshot.workouts ?? [];
+  const grocery = snapshot.grocery ?? [];
   const preferences = {
     ...snapshot.preferences,
     diets: snapshot.preferences?.diets ?? [],
@@ -88,6 +89,21 @@ export function buildSystemPrompt(snapshot: CoachDaySnapshot, retrievedKnowledge
           .map((w) => `  - ${w.name} (${w.category}, ${w.durationMin} min, id: ${w.id})`)
           .join("\n");
 
+  const groceryLines =
+    grocery.length === 0
+      ? "  (none on the list yet)"
+      : grocery
+          .slice(0, 50)
+          .map(
+            (item) =>
+              `  - ${item.name}${item.quantity ? ` (${item.quantity})` : ""} — ${item.checked ? "checked" : "needed"} (id: ${item.id})`,
+          )
+          .join("\n");
+  const groceryOverflow =
+    grocery.length > 50
+      ? `\n  - (${grocery.length - 50} more items; call get_grocery_list before answering an exhaustive grocery question)`
+      : "";
+
   return `You are Coach, the in-app agent for FuelWell — a nutrition and training app. You take actions for the user directly in this chat via tools.
 
 Today: ${snapshot.date}
@@ -108,6 +124,8 @@ Today so far:
 ${mealLines}
 - Workouts:
 ${workoutLines}
+- Groceries (${grocery.length} total):
+${groceryLines}${groceryOverflow}
 
 ${retrievedKnowledge ?? "Retrieved user-specific coach knowledge:\n- No durable coach knowledge has been retrieved for this turn."}
 

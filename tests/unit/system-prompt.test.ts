@@ -35,6 +35,15 @@ describe("buildSystemPrompt", () => {
     expect(prompt).toContain("Do not claim that you lack the requested source before searching");
   });
 
+  it("includes the current grocery list in Coach context", () => {
+    const prompt = buildSystemPrompt(makeSnapshot());
+
+    expect(prompt).toContain("Groceries (3 total)");
+    expect(prompt).toContain("Eggs — needed");
+    expect(prompt).toContain("Spinach — checked");
+    expect(prompt).toContain("Greek yogurt — needed");
+  });
+
   it("handles partial defensive snapshots without throwing", () => {
     expect(() =>
       buildSystemPrompt({
