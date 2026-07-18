@@ -1,7 +1,8 @@
 import { expect, test } from "@playwright/test";
+import { authenticateCandidate } from "./helpers/authenticate";
 
 test("Workouts: keeps the library secondary while preserving its controls", async ({ page }) => {
-  await page.goto("/app/workouts");
+  await authenticateCandidate(page, "/app/workouts");
 
   await expect(page.getByRole("heading", { name: "Coach recommends" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Pick my own" })).toBeVisible();
@@ -26,7 +27,7 @@ test("Workouts: keeps the library secondary while preserving its controls", asyn
 });
 
 test("Workouts: opens the library for a direct filtered URL", async ({ page }) => {
-  await page.goto("/app/workouts?body=upper&type=Strength");
+  await authenticateCandidate(page, "/app/workouts?body=upper&type=Strength");
 
   await expect(page.getByRole("heading", { name: "Workout database" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Hide workout library" })).toHaveAttribute(
@@ -39,7 +40,7 @@ test("Workouts: opens the library for a direct filtered URL", async ({ page }) =
 for (const width of [320, 375, 390, 430]) {
   test(`Workouts: mobile library stays compact and contained at ${width}px`, async ({ page }, testInfo) => {
     await page.setViewportSize({ width, height: 844 });
-    await page.goto("/app/workouts");
+    await authenticateCandidate(page, "/app/workouts");
 
     const pickCard = page.getByRole("heading", { name: "Pick my own" });
     const activityCard = page.getByRole("heading", { name: "Activity", exact: true });

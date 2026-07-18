@@ -1,5 +1,6 @@
 import { expect, test, type Page, type TestInfo } from "@playwright/test";
 import { writeFile } from "node:fs/promises";
+import { authenticateCandidate } from "./helpers/authenticate";
 
 const VIEWPORTS = [320, 375, 390, 430] as const;
 
@@ -45,7 +46,7 @@ test.describe("Daily Review mobile energy ledger", () => {
       page,
     }, testInfo) => {
       await page.setViewportSize({ width, height: 844 });
-      await page.goto("/app/daily-review");
+      await authenticateCandidate(page, "/app/daily-review");
 
       await expect(
         page.getByRole("heading", { name: "Intake and output by day" })

@@ -1,8 +1,58 @@
 import { expect, test, type Page, type TestInfo } from "@playwright/test";
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
+import { authenticateCandidate } from "./helpers/authenticate";
 
 const VIEWPORTS = [320, 375, 390, 430] as const;
+const GROCERY_FIXTURE = [
+  {
+    id: "11111111-1111-4111-8111-111111111111",
+    name: "Salmon fillet",
+    amount: "2 portions",
+    category: "Protein",
+    source: "Salmon rice plate",
+    checked: false,
+    servingSize: "4-6 oz cooked",
+    classification: "protein anchor",
+    vitaminBenefit: "omega-3, B vitamins",
+    quantity: "2 portions",
+  },
+  {
+    id: "22222222-2222-4222-8222-222222222222",
+    name: "Baby spinach",
+    amount: "1 large box",
+    category: "Produce",
+    source: "Salmon rice plate",
+    checked: false,
+    servingSize: "1 cup",
+    classification: "produce + micronutrients",
+    vitaminBenefit: "vitamin K, folate",
+    quantity: "1 large box",
+  },
+] as const;
+
+async function installGroceryFixture(page: Page) {
+  await page.route("**/api/grocery-list?*", async (route) => {
+    if (route.request().method() === "PUT") {
+      const payload = route.request().postDataJSON() as { date: string; items: unknown[] };
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ signedIn: true, date: payload.date, items: payload.items }),
+      });
+      return;
+    }
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        signedIn: true,
+        date: new Date().toISOString().slice(0, 10),
+        items: GROCERY_FIXTURE,
+      }),
+    });
+  });
+}
 
 async function assertContained(page: Page, label: string) {
   const metrics = await page.evaluate(() => {
@@ -49,7 +99,8 @@ test.describe("grocery iPhone responsive gate", () => {
   for (const width of VIEWPORTS) {
     test(`${width}px keeps grocery editing and recipe filters inside the phone`, async ({ page }, testInfo) => {
       await page.setViewportSize({ width, height: 844 });
-      await page.goto("/app/grocery-list");
+      await installGroceryFixture(page);
+      await authenticateCandidate(page, "/app/grocery-list");
       await expect(page.getByTestId("mobile-grocery-list")).toBeVisible();
       await expect(page.getByTestId("mobile-grocery-item").first()).toBeVisible();
       await expect(page.getByLabel("Add a recipe filter")).toBeVisible();
@@ -103,7 +154,7 @@ test.describe("grocery iPhone responsive gate", () => {
           })
         );
       });
-      await page.goto("/app/coach");
+      await authenticateCandidate(page, "/app/coach");
       const artifact = page.locator("aside").filter({ hasText: "Grocery list updated" });
       await expect(artifact).toBeVisible();
       await page.waitForTimeout(500);

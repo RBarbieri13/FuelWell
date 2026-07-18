@@ -3,6 +3,7 @@ import { expect, type Page } from "@playwright/test";
 const AUTH_TIMEOUT = 45_000;
 
 export async function authenticateCandidate(page: Page, destination = "/app/dashboard") {
+  const expected = new URL(destination, "https://fuelwell.test");
   await page.goto(destination, { waitUntil: "domcontentloaded" });
 
   if (new URL(page.url()).pathname !== "/login") {
@@ -21,12 +22,16 @@ export async function authenticateCandidate(page: Page, destination = "/app/dash
     page.getByRole("button", { name: "Sign in" }).click(),
   ]);
 
-  if (new URL(page.url()).pathname !== destination) {
+  const current = new URL(page.url());
+  if (current.pathname !== expected.pathname || current.search !== expected.search) {
     await page.goto(destination, { waitUntil: "domcontentloaded" });
   }
-  await expect(page).toHaveURL(new RegExp(`${destination.replaceAll("/", "\\/")}(?:\\?.*)?$`), {
-    timeout: AUTH_TIMEOUT,
-  });
+  await expect
+    .poll(() => {
+      const url = new URL(page.url());
+      return `${url.pathname}${url.search}`;
+    }, { timeout: AUTH_TIMEOUT })
+    .toBe(`${expected.pathname}${expected.search}`);
   await page.waitForLoadState("networkidle", { timeout: AUTH_TIMEOUT }).catch(() => {});
   await expect(page.locator("main").first()).toBeVisible({ timeout: AUTH_TIMEOUT });
 }

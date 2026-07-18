@@ -1356,7 +1356,7 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <div id={id}>
+    <div id={id} className="min-w-0">
       <h2 className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-neutral-400">
         {title}
       </h2>

@@ -1,5 +1,6 @@
 import { expect, test, type Page, type TestInfo } from "@playwright/test";
 import { writeFile } from "node:fs/promises";
+import { authenticateCandidate } from "./helpers/authenticate";
 
 type Journey = {
   round: number;
@@ -108,15 +109,7 @@ async function assertPhoneFit(page: Page, state: string) {
 }
 
 async function completeOnboarding(page: Page, journey: Journey) {
-  await page.goto("/signup?preview=new-user");
-  const email = page.getByLabel("Email");
-  const password = page.getByLabel("Password");
-  await expect(email).toHaveValue("newuser@fuelwell.preview");
-  await expect(password).toHaveValue("PreviewPass123!");
-  await email.fill(`fuelwell-${journey.round}-${journey.kind}@example.test`);
-  await password.fill("PreviewPass123!");
-  await page.getByRole("button", { name: "Create preview account" }).click();
-  await expect(page).toHaveURL(/\/app\/onboarding/, { timeout: 15_000 });
+  await authenticateCandidate(page, "/app/onboarding?reset=1");
 
   await page.getByRole("button", { name: "Start setup" }).click();
   await page.getByPlaceholder("Maya").fill(journey.name);
@@ -162,9 +155,15 @@ async function completeOnboarding(page: Page, journey: Journey) {
   await page.getByRole("button", { name: /^Only when useful/ }).click();
   await page.getByRole("button", { name: /^Data first/ }).click();
   await page.getByRole("button", { name: "Next", exact: true }).click();
-  await page.getByRole("button", { name: "Complete preview setup" }).click();
-  await expect(page.getByText(/You're (set|all set)/).first()).toBeVisible({ timeout: 30_000 });
-  await page.getByRole("button", { name: "Open your dashboard" }).click();
+  await page.getByRole("button", { name: /^Complete (?:preview )?setup$/ }).click();
+  await Promise.race([
+    page.waitForURL(/\/app\/dashboard/, { timeout: 30_000 }),
+    page.getByText(/You're (set|all set)/).first().waitFor({ timeout: 30_000 }),
+  ]);
+  if (new URL(page.url()).pathname === "/app/onboarding") {
+    await expect(page.getByText(/You're (set|all set)/).first()).toBeVisible({ timeout: 30_000 });
+    await page.getByRole("button", { name: "Open your dashboard" }).click();
+  }
   await expect(page).toHaveURL(/\/app\/dashboard/, { timeout: 30_000 });
   await expect(
     page.getByText("Setup complete — your plan and targets are live.")
@@ -188,7 +187,15 @@ async function logMeal(page: Page, mealType: string, name: string, offset: numbe
   await macros.nth(1).fill(`${25 + offset}`);
   await macros.nth(2).fill(`${40 + offset}`);
   await macros.nth(3).fill(`${10 + offset}`);
+  const saveResponse = page.waitForResponse(
+    (response) => response.url().includes("/api/day-log") && response.request().method() === "POST",
+    { timeout: 60_000 },
+  );
   await page.getByRole("button", { name: `Add to ${mealType}` }).click();
+  const response = await saveResponse;
+  expect(response.status(), `${name} save returned HTTP ${response.status()}`).toBe(200);
+  const payload = (await response.json()) as { meals?: Array<{ name?: string }> };
+  expect(payload.meals?.some((meal) => meal.name?.startsWith(name))).toBe(true);
   await expect(page.getByText(name).first()).toBeVisible();
   await page.getByRole("button", { name: "Close ingredient drawer" }).click();
 }
@@ -202,7 +209,7 @@ async function runJourney(page: Page, journey: Journey, testInfo: TestInfo) {
   if (journey.kind === "new") {
     await completeOnboarding(page, journey);
   } else {
-    await page.goto("/app/dashboard");
+    await authenticateCandidate(page, "/app/dashboard");
     await expect(page.getByText("Today's decision")).toBeVisible();
   }
   await assertPhoneFit(page, `${prefix} dashboard`);
@@ -380,6 +387,51 @@ async function runJourney(page: Page, journey: Journey, testInfo: TestInfo) {
 
 test.describe("three consecutive FuelWell phone journeys", () => {
   test.describe.configure({ mode: "serial" });
+  test.afterEach(async ({ page }) => {
+    if (page.isClosed()) return;
+    await authenticateCandidate(page, "/app/dashboard").catch(() => null);
+    const date = new Date().toISOString().slice(0, 10);
+    const dayLog = await page.request.get(`/api/day-log?date=${date}`).then((response) => response.json()).catch(() => null) as
+      | { meals?: Array<{ id: string; name: string }> }
+      | null;
+    for (const meal of dayLog?.meals ?? []) {
+      if (!/^(?:new|existing)-\d (?:breakfast|lunch|dinner)|^Salmon rice plate/i.test(meal.name)) continue;
+      await page.request.delete("/api/day-log", { data: { date, mealId: meal.id } }).catch(() => null);
+    }
+
+    const workoutLog = await page.request.get(`/api/workout-log?date=${date}`).then((response) => response.json()).catch(() => null) as
+      | { workouts?: Array<{ id: string; name: string }> }
+      | null;
+    const journeyActivities = new Set(JOURNEYS.map((journey) => journey.activity));
+    for (const workout of workoutLog?.workouts ?? []) {
+      if (!journeyActivities.has(workout.name)) continue;
+      await page.request.delete("/api/workout-log", {
+        data: { date, workoutId: workout.id },
+      }).catch(() => null);
+    }
+
+    const groceryLog = await page.request.get(`/api/grocery-list?date=${date}`).then((response) => response.json()).catch(() => null) as
+      | { items?: Array<{ source?: string }> }
+      | null;
+    if (groceryLog?.items) {
+      await page.request.put("/api/grocery-list", {
+        data: {
+          date,
+          items: groceryLog.items.filter((item) => item.source !== "Salmon rice plate"),
+        },
+      }).catch(() => null);
+    }
+
+    await page.goto("/app/profile");
+    if ((await page.getByRole("heading", { name: "Release Tester" }).count()) === 0) {
+      await page.getByRole("button", { name: "Edit name" }).click();
+      await page.getByPlaceholder("Your name").fill("Release Tester");
+      await page.getByRole("button", { name: "Save name" }).click();
+      await expect(page.getByRole("heading", { name: "Release Tester" }).first()).toBeVisible({
+        timeout: 30_000,
+      });
+    }
+  });
   for (const journey of JOURNEYS) {
     test(`round ${journey.round} ${journey.kind} user persists through Review`, async ({ page }, testInfo) => {
       await runJourney(page, journey, testInfo);
