@@ -27,4 +27,6 @@ export async function authenticateCandidate(page: Page, destination = "/app/dash
   await expect(page).toHaveURL(new RegExp(`${destination.replaceAll("/", "\\/")}(?:\\?.*)?$`), {
     timeout: AUTH_TIMEOUT,
   });
+  await page.waitForLoadState("networkidle", { timeout: AUTH_TIMEOUT }).catch(() => {});
+  await expect(page.locator("main").first()).toBeVisible({ timeout: AUTH_TIMEOUT });
 }
