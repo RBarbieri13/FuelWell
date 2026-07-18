@@ -25,6 +25,14 @@ function configured(value: string | undefined) {
 export function resolveCoachProviderConfig(
   env: Record<string, string | undefined> = process.env,
 ): CoachProviderConfig | null {
+  const allowDirect =
+    env.VERCEL_ENV !== "production" || /^(1|true|yes)$/i.test(env.COACH_ALLOW_DIRECT_ANTHROPIC ?? "");
+  const anthropicCredential = allowDirect ? configured(env.ANTHROPIC_API_KEY) : null;
+  const preferDirect = /^(1|true|yes)$/i.test(env.COACH_PREFER_DIRECT_ANTHROPIC ?? "");
+  if (preferDirect && anthropicCredential) {
+    return { provider: "anthropic", credential: anthropicCredential };
+  }
+
   const gatewayCredential =
     configured(env.AI_GATEWAY_API_KEY) ?? configured(env.VERCEL_OIDC_TOKEN);
   if (gatewayCredential) {
@@ -35,9 +43,6 @@ export function resolveCoachProviderConfig(
     };
   }
 
-  const allowDirect =
-    env.VERCEL_ENV !== "production" || /^(1|true|yes)$/i.test(env.COACH_ALLOW_DIRECT_ANTHROPIC ?? "");
-  const anthropicCredential = allowDirect ? configured(env.ANTHROPIC_API_KEY) : null;
   return anthropicCredential
     ? { provider: "anthropic", credential: anthropicCredential }
     : null;

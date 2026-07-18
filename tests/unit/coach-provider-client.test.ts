@@ -31,6 +31,19 @@ describe("Coach provider routing", () => {
     })?.credential).toBe("operator-key");
   });
 
+  it("can explicitly prefer the funded direct provider when Gateway billing is unavailable", () => {
+    expect(resolveCoachProviderConfig({
+      VERCEL_ENV: "production",
+      COACH_ALLOW_DIRECT_ANTHROPIC: "true",
+      COACH_PREFER_DIRECT_ANTHROPIC: "true",
+      AI_GATEWAY_API_KEY: "gateway-key",
+      ANTHROPIC_API_KEY: "anthropic-key",
+    })).toMatchObject({
+      provider: "anthropic",
+      credential: "anthropic-key",
+    });
+  });
+
   it("falls back to direct Anthropic and reports missing configuration", () => {
     expect(resolveCoachProviderConfig({ ANTHROPIC_API_KEY: "direct-key" }))
       .toMatchObject({ provider: "anthropic", credential: "direct-key" });
