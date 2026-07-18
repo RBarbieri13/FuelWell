@@ -21,6 +21,18 @@ function requireValue(environment: ReleaseEnvironment, key: string): string {
   return value;
 }
 
+function releaseGitSha(environment: ReleaseEnvironment): string {
+  const value =
+    environment.VERCEL_GIT_COMMIT_SHA?.trim() ||
+    environment.FUELWELL_RELEASE_GIT_SHA?.trim();
+  if (!value) {
+    throw new Error(
+      "Release manifest requires VERCEL_GIT_COMMIT_SHA or FUELWELL_RELEASE_GIT_SHA",
+    );
+  }
+  return value;
+}
+
 function deploymentUrl(value: string): string {
   const candidate = value.includes("://") ? value : `https://${value}`;
   const url = new URL(candidate);
@@ -41,7 +53,7 @@ export function createReleaseManifest(
   return {
     schemaVersion: RELEASE_MANIFEST_SCHEMA_VERSION,
     packageVersion: packageMetadata.version,
-    gitSha: requireValue(environment, "VERCEL_GIT_COMMIT_SHA"),
+    gitSha: releaseGitSha(environment),
     vercelDeploymentId: requireValue(environment, "VERCEL_DEPLOYMENT_ID"),
     deploymentUrl: deploymentUrl(requireValue(environment, "VERCEL_URL")),
     environment: requireValue(environment, "VERCEL_ENV"),

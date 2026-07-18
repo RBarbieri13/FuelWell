@@ -1,5 +1,6 @@
 import { expect, test, type Locator, type Page, type TestInfo } from "@playwright/test";
 import { writeFile } from "node:fs/promises";
+import { authenticateCandidate } from "./helpers/authenticate";
 
 const VIEWPORTS = [320, 375, 390, 430] as const;
 
@@ -16,24 +17,8 @@ async function openCoach(page: Page) {
     })
   );
 
-  await page.goto("/app/coach");
+  await authenticateCandidate(page, "/app/coach");
   const composer = page.getByLabel("Message Coach");
-  const login = page.getByText("Welcome back", { exact: true });
-  const coachIsReady = await Promise.race([
-    composer.waitFor({ state: "visible", timeout: 30_000 }).then(() => true),
-    login.waitFor({ state: "visible", timeout: 30_000 }).then(() => false),
-  ]);
-  if (!coachIsReady) {
-    await expect(login).toBeVisible();
-    const email = process.env.FUELWELL_UI_TEST_EMAIL;
-    const password = process.env.FUELWELL_UI_TEST_PASSWORD;
-    expect(email, "FUELWELL_UI_TEST_EMAIL is required when the candidate redirects to sign-in.").toBeTruthy();
-    expect(password, "FUELWELL_UI_TEST_PASSWORD is required when the candidate redirects to sign-in.").toBeTruthy();
-    await page.getByLabel("Email").fill(email!);
-    await page.getByLabel("Password").fill(password!);
-    await page.getByRole("button", { name: "Sign in" }).click();
-  }
-
   await expect(composer).toBeVisible({ timeout: 30_000 });
   await expect(page.getByText("Rich response support", { exact: true })).toBeVisible();
 }

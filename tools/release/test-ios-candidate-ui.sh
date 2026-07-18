@@ -23,11 +23,9 @@ Required release gate:
   FUELWELL_UI_TEST_PASSWORD=<dedicated-test-password> \
   tools/release/test-ios-candidate-ui.sh
 
-For an explicitly anonymous preview candidate only, replace the credentials with:
-  FUELWELL_UI_TEST_ALLOW_ANONYMOUS=1
-
 The script rejects the mutable fuelwell-preview.vercel.app alias, validates the
-candidate release manifest, verifies Coach overflow at release mobile widths,
+candidate release manifest, requires authenticated live Coach inference,
+verifies Coach overflow at release mobile widths,
 generates an isolated Xcode project, and preserves screenshots and test results
 under ios/build/reports.
 EOF
@@ -87,10 +85,10 @@ preflight="$(curl --fail --silent --show-error --max-time 20 \
 jq -e '.productionReady == true and .liveReady == true' <<<"${preflight}" >/dev/null || \
   fail "candidate is not live production-ready for TestFlight: $(jq -c '{previewReady, productionReady, liveReady, checks}' <<<"${preflight}")"
 
-if [[ "${FUELWELL_UI_TEST_ALLOW_ANONYMOUS:-0}" != "1" ]]; then
-  [[ -n "${FUELWELL_UI_TEST_EMAIL:-}" ]] || fail "FUELWELL_UI_TEST_EMAIL is required"
-  [[ -n "${FUELWELL_UI_TEST_PASSWORD:-}" ]] || fail "FUELWELL_UI_TEST_PASSWORD is required"
-fi
+[[ "${FUELWELL_UI_TEST_ALLOW_ANONYMOUS:-0}" != "1" ]] || \
+  fail "anonymous candidates cannot be uploaded to TestFlight"
+[[ -n "${FUELWELL_UI_TEST_EMAIL:-}" ]] || fail "FUELWELL_UI_TEST_EMAIL is required"
+[[ -n "${FUELWELL_UI_TEST_PASSWORD:-}" ]] || fail "FUELWELL_UI_TEST_PASSWORD is required"
 
 if [[ ! -x "${repo_root}/node_modules/.bin/playwright" ]]; then
   echo "Installing locked web test dependencies"
@@ -98,6 +96,16 @@ if [[ ! -x "${repo_root}/node_modules/.bin/playwright" ]]; then
 fi
 
 rm -rf "${overflow_result_path}"
+echo "Proving authenticated Coach live inference against immutable candidate ${candidate_origin}"
+FUELWELL_PLAYWRIGHT_BASE_URL="${candidate_origin}" \
+FUELWELL_PLAYWRIGHT_BROWSER_CHANNEL="${FUELWELL_PLAYWRIGHT_BROWSER_CHANNEL:-chrome}" \
+FUELWELL_PLAYWRIGHT_OUTPUT_DIR="${overflow_result_path}-live-coach" \
+  "${repo_root}/node_modules/.bin/playwright" test \
+    "${repo_root}/tests/testflight-live-coach.spec.ts" \
+    --config="${repo_root}/playwright.config.ts" \
+    --project=chromium \
+    --workers=1
+
 echo "Testing FuelWell phone workflows against immutable candidate ${candidate_origin}"
 FUELWELL_PLAYWRIGHT_BASE_URL="${candidate_origin}" \
 FUELWELL_PLAYWRIGHT_BROWSER_CHANNEL="${FUELWELL_PLAYWRIGHT_BROWSER_CHANNEL:-chrome}" \

@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { authenticateCandidate } from "./helpers/authenticate";
 
 const WIDTHS = [320, 375, 390, 430] as const;
 const ROUTES = [
@@ -53,17 +54,7 @@ test.describe("FuelWell phone route containment", () => {
       for (const route of ROUTES) {
         const routePage = await page.context().newPage();
         await routePage.setViewportSize({ width, height: 844 });
-        await routePage.goto(route, { waitUntil: "domcontentloaded" });
-        if (new URL(routePage.url()).pathname === "/login") {
-          const email = process.env.FUELWELL_UI_TEST_EMAIL;
-          const password = process.env.FUELWELL_UI_TEST_PASSWORD;
-          expect(email, "FUELWELL_UI_TEST_EMAIL is required for an authenticated candidate.").toBeTruthy();
-          expect(password, "FUELWELL_UI_TEST_PASSWORD is required for an authenticated candidate.").toBeTruthy();
-          await routePage.getByLabel("Email").fill(email!);
-          await routePage.getByLabel("Password").fill(password!);
-          await routePage.getByRole("button", { name: "Sign in" }).click();
-          await routePage.goto(route, { waitUntil: "domcontentloaded" });
-        }
+        await authenticateCandidate(routePage, route);
         expect(new URL(routePage.url()).pathname).toBe(route);
         await expect(routePage.locator("main").first()).toBeVisible();
         // Measure the settled page, not a mid-hydration frame: rich-content

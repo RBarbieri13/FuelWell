@@ -99,6 +99,9 @@ jobs:
         run: xcodegen generate --spec project.yml
 
       - name: Run full test suite
+        # FuelWellUITests enforce an immutable Vercel release binding. The
+        # TestFlight workflow supplies and verifies that binding; ordinary CI
+        # intentionally runs the native/unit suite without a release candidate.
         run: |
           rm -rf build/reports/FuelWellApp.xcresult
           xcodebuild test \
@@ -106,6 +109,7 @@ jobs:
             -destination "${IOS_CI_DESTINATION}" \
             -skipMacroValidation \
             -skipPackagePluginValidation \
+            -skip-testing:FuelWellUITests \
             -resultBundlePath build/reports/FuelWellApp.xcresult
 
       - name: Enforce coverage floor

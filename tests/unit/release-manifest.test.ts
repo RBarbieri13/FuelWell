@@ -30,15 +30,35 @@ describe("createReleaseManifest", () => {
     });
   });
 
-  it.each([
-    "VERCEL_GIT_COMMIT_SHA",
-    "VERCEL_DEPLOYMENT_ID",
-    "VERCEL_URL",
-    "VERCEL_ENV",
-  ])("fails closed when %s is absent", (key) => {
+  it("accepts explicit immutable Git provenance for CLI release candidates", () => {
+    const cliDeployment = {
+      ...deployment,
+      VERCEL_GIT_COMMIT_SHA: "",
+      FUELWELL_RELEASE_GIT_SHA: deployment.VERCEL_GIT_COMMIT_SHA,
+    };
+
+    expect(createReleaseManifest(cliDeployment).gitSha).toBe(
+      deployment.VERCEL_GIT_COMMIT_SHA,
+    );
+  });
+
+  it.each(["VERCEL_DEPLOYMENT_ID", "VERCEL_URL", "VERCEL_ENV"])(
+    "fails closed when %s is absent",
+    (key) => {
     expect(() =>
       createReleaseManifest({ ...deployment, [key]: "" }),
     ).toThrow(key);
+    },
+  );
+
+  it("fails closed without system or explicit Git provenance", () => {
+    expect(() =>
+      createReleaseManifest({
+        ...deployment,
+        VERCEL_GIT_COMMIT_SHA: "",
+        FUELWELL_RELEASE_GIT_SHA: "",
+      }),
+    ).toThrow(/VERCEL_GIT_COMMIT_SHA or FUELWELL_RELEASE_GIT_SHA/);
   });
 
   it("rejects non-HTTPS deployment URLs", () => {

@@ -77,8 +77,7 @@ test.describe("grocery iPhone responsive gate", () => {
         })
       );
       await page.setViewportSize({ width, height: 844 });
-      await page.goto("/app/coach");
-      await page.evaluate(() => {
+      await page.addInitScript(() => {
         localStorage.setItem(
           "fuelwell-coach-chat-v1",
           JSON.stringify({
@@ -104,7 +103,7 @@ test.describe("grocery iPhone responsive gate", () => {
           })
         );
       });
-      await page.reload();
+      await page.goto("/app/coach");
       const artifact = page.locator("aside").filter({ hasText: "Grocery list updated" });
       await expect(artifact).toBeVisible();
       await page.waitForTimeout(500);

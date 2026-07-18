@@ -4,6 +4,7 @@ import XCTest
 final class FuelWellCriticalPathUITests: XCTestCase {
     private let launchTimeout: TimeInterval = 45
     private let routeTimeout: TimeInterval = 20
+    private let liveInferenceTimeout: TimeInterval = 90
 
     override func setUp() {
         super.setUp()
@@ -44,19 +45,45 @@ final class FuelWellCriticalPathUITests: XCTestCase {
         }
     }
 
-    func testCoachSurfaceIsPresentWithoutInvokingPaidInference() {
+    func testCoachAnswersThroughTheBoundWKWebView() {
         let app = launchBoundRelease()
         defer { app.terminate() }
 
         tap(label: "Coach", in: app)
 
-        XCTAssertTrue(element(in: app, label: "Message Coach").waitForExistence(timeout: routeTimeout))
+        let composer = element(in: app, label: "Message Coach")
+        XCTAssertTrue(composer.waitForExistence(timeout: routeTimeout))
         XCTAssertTrue(element(in: app, label: "Send").exists)
         XCTAssertTrue(element(in: app, label: "Attach screenshot, menu, photo, or file").exists)
-        let billingError = NSPredicate(format: "label CONTAINS[c] 'credit balance'")
-        XCTAssertFalse(app.staticTexts.matching(billingError).firstMatch.exists)
+
+        composer.tap()
+        composer.typeText("What is Neptune? Answer in one short sentence.")
+        tap(label: "Send", in: app)
+
+        let factualAnswer = NSPredicate(
+            format: "label CONTAINS[c] 'Neptune' AND "
+                + "(label CONTAINS[c] 'planet' OR label CONTAINS[c] 'ice giant' "
+                + "OR label CONTAINS[c] 'solar system')"
+        )
+        XCTAssertTrue(
+            app.staticTexts.matching(factualAnswer).firstMatch.waitForExistence(timeout: liveInferenceTimeout),
+            "Coach did not return a factual live answer inside the bound WKWebView."
+        )
+        let rejectedTexts = [
+            "credit balance",
+            "local fallback",
+            "temporarily unavailable",
+            "Something broke mid-thought"
+        ]
+        for rejectedText in rejectedTexts {
+            let rejected = NSPredicate(format: "label CONTAINS[c] %@", rejectedText)
+            XCTAssertFalse(
+                app.staticTexts.matching(rejected).firstMatch.exists,
+                "Coach displayed rejected fallback text: \(rejectedText)"
+            )
+        }
         assertNoLoadFailure(in: app)
-        capture("coach-ready", in: app)
+        capture("coach-live-answer", in: app)
     }
 
     private func launchBoundRelease() -> XCUIApplication {
