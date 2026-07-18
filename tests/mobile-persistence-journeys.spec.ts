@@ -218,8 +218,27 @@ async function runJourney(page: Page, journey: Journey, testInfo: TestInfo) {
   await logMeal(page, "Breakfast", mealNames[0], journey.round);
   await logMeal(page, "Lunch", mealNames[1], journey.round + 1);
   await logMeal(page, "Dinner", mealNames[2], journey.round + 2);
+  const date = new Date().toISOString().slice(0, 10);
+  await expect
+    .poll(
+      async () => {
+        const response = await page.request.get(`/api/day-log?date=${date}`);
+        expect(response.status(), `day-log read returned HTTP ${response.status()}`).toBe(200);
+        const payload = (await response.json()) as { meals?: Array<{ name?: string }> };
+        return mealNames.every((name) =>
+          payload.meals?.some((meal) => meal.name?.startsWith(name)),
+        );
+      },
+      {
+        message: `Expected all ${journey.kind} round ${journey.round} meals in the authenticated day log`,
+        timeout: 30_000,
+      },
+    )
+    .toBe(true);
   await page.reload();
-  for (const meal of mealNames) await expect(page.getByText(meal).first()).toBeVisible();
+  for (const meal of mealNames) {
+    await expect(page.getByText(meal).first()).toBeVisible({ timeout: 30_000 });
+  }
   await assertPhoneFit(page, `${prefix} meals`);
 
   await page.goto("/app/workouts");
@@ -243,9 +262,29 @@ async function runJourney(page: Page, journey: Journey, testInfo: TestInfo) {
   await expect(recipe.getByRole("status")).toContainText(/Groceries|already/);
   await assertPhoneFit(page, `${prefix} recipe`);
 
+  await expect
+    .poll(
+      async () => {
+        const response = await page.request.get(`/api/grocery-list?date=${date}`);
+        expect(response.status(), `grocery-list read returned HTTP ${response.status()}`).toBe(200);
+        const payload = (await response.json()) as {
+          items?: Array<{ name?: string; source?: string }>;
+        };
+        return payload.items?.filter((item) => item.source === "Salmon rice plate").length ?? 0;
+      },
+      {
+        message: "Expected the Salmon rice plate ingredients in the authenticated grocery list",
+        timeout: 30_000,
+      },
+    )
+    .toBeGreaterThanOrEqual(5);
   await page.goto("/app/grocery-list");
-  await expect(page.getByLabel("Edit item name for Soy Ginger Glaze").first()).toBeVisible();
-  await expect(page.getByText("Recipe: Salmon rice plate").first()).toBeVisible();
+  await expect(page.getByLabel(/Edit item name for Soy.?ginger glaze/i).first()).toBeVisible({
+    timeout: 30_000,
+  });
+  await expect(page.getByText("Recipe: Salmon rice plate").first()).toBeVisible({
+    timeout: 30_000,
+  });
   await assertPhoneFit(page, `${prefix} groceries`);
 
   const snapshots: Array<Record<string, unknown>> = [];

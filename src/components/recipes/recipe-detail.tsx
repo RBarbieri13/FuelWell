@@ -30,6 +30,7 @@ export function RecipeDetail({
   const { addMeal } = useDayLog();
   const { items } = useGroceryList();
   const [confirmation, setConfirmation] = useState("");
+  const [pendingAction, setPendingAction] = useState<"meal" | "groceries" | null>(null);
   const mealType = recipe.meal.toLowerCase() as MealType;
   const nutrition: { label: string; value: string; tone: string; icon: typeof Flame }[] = [
     { label: "Calories", value: `${recipe.perServing.calories}`, tone: "bg-primary-50 text-primary-700 border-primary-100", icon: Flame },
@@ -39,8 +40,9 @@ export function RecipeDetail({
     { label: "Fiber", value: `${recipe.perServing.fiber}g`, tone: "bg-primary-50 text-primary-700 border-primary-100", icon: Leaf },
   ];
 
-  function planMeal() {
-    addMeal({
+  async function planMeal() {
+    setPendingAction("meal");
+    const result = await addMeal({
       mealType,
       name: recipe.title,
       items: [{
@@ -52,10 +54,15 @@ export function RecipeDetail({
         fat: recipe.perServing.fat,
       }],
     });
-    setConfirmation(`${recipe.title} added to today's ${mealType}.`);
+    setConfirmation(
+      result.ok
+        ? `${recipe.title} added to today's ${mealType}.`
+        : `Meal was not saved: ${result.error}`,
+    );
+    setPendingAction(null);
   }
 
-  function addIngredients() {
+  async function addIngredients() {
     const existing = new Set(items.map((item) => item.name.toLowerCase()));
     const additions = recipe.ingredients
       .filter((ingredient) => !existing.has(ingredient.item.toLowerCase()))
@@ -71,12 +78,16 @@ export function RecipeDetail({
           ...inferGroceryDetails(ingredient.item, ingredient.amount, category),
         };
       });
-    setGroceryItems([...additions, ...items]);
+    setPendingAction("groceries");
+    const result = await setGroceryItems([...additions, ...items]);
     setConfirmation(
-      additions.length > 0
+      !result.ok
+        ? `Groceries were not saved: ${result.error}`
+        : additions.length > 0
         ? `${additions.length} ingredients added to Groceries.`
         : "These ingredients are already in Groceries."
     );
+    setPendingAction(null);
   }
 
   return (
@@ -126,13 +137,13 @@ export function RecipeDetail({
 
         <div className="space-y-6 px-4 py-5 sm:px-5">
           <section className="grid min-w-0 gap-2 sm:grid-cols-2">
-            <Button type="button" onClick={planMeal} className="w-full min-w-0">
+            <Button type="button" onClick={planMeal} disabled={pendingAction !== null} className="w-full min-w-0">
               <UtensilsCrossed className="h-4 w-4" />
-              Plan this meal
+              {pendingAction === "meal" ? "Saving meal..." : "Plan this meal"}
             </Button>
-            <Button type="button" variant="secondary" onClick={addIngredients} className="w-full min-w-0">
+            <Button type="button" variant="secondary" onClick={addIngredients} disabled={pendingAction !== null} className="w-full min-w-0">
               <ListPlus className="h-4 w-4" />
-              Add ingredients
+              {pendingAction === "groceries" ? "Saving groceries..." : "Add ingredients"}
             </Button>
             {confirmation && (
               <p role="status" className="flex min-w-0 items-start gap-2 rounded-[1rem] border border-primary-100 bg-primary-50 px-3 py-2.5 text-sm font-bold leading-5 text-primary-800 sm:col-span-2">
