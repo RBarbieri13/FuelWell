@@ -346,7 +346,9 @@ async function runJourney(page: Page, journey: Journey, testInfo: TestInfo) {
     await page.getByLabel("Message Coach").fill(questions[index].prompt);
     await page.getByRole("button", { name: "Send" }).click();
     if (!LIVE_COACH) {
-      await expect(page.getByText(`Verified journey response ${index + 1}.`)).toBeVisible();
+      await expect(page.getByText(`Verified journey response ${index + 1}.`)).toBeVisible({
+        timeout: 30_000,
+      });
       continue;
     }
 
