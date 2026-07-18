@@ -434,10 +434,12 @@ async function runJourney(page: Page, journey: Journey, testInfo: TestInfo) {
 
   await page.goto("/app/daily-review");
   for (const meal of mealNames) await expect(page.getByText(meal).first()).toBeVisible();
-  await expect(page.getByText(journey.activity).last()).toBeVisible();
+  await expect(page.getByTestId("workout-log-ready")).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByText(journey.activity).last()).toBeVisible({ timeout: 30_000 });
   await page.reload();
   for (const meal of mealNames) await expect(page.getByText(meal).first()).toBeVisible();
-  await expect(page.getByText(journey.activity).last()).toBeVisible();
+  await expect(page.getByTestId("workout-log-ready")).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByText(journey.activity).last()).toBeVisible({ timeout: 30_000 });
   await assertPhoneFit(page, `${prefix} review`);
   await page.screenshot({
     path: testInfo.outputPath(`${prefix}-review.png`),

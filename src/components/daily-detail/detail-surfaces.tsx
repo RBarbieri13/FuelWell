@@ -441,7 +441,7 @@ export function DailyReviewSurface({
   meals: MealRecord[];
   targets: MacroTargets;
 }) {
-  const { workouts } = useWorkoutLog();
+  const { workouts, persistence: workoutPersistence } = useWorkoutLog();
   const { meals, hydrateDayLog } = useDayLog();
   const [overviewExpanded, setOverviewExpanded] = useState(true);
   const [summaryExpanded, setSummaryExpanded] = useState(true);
@@ -584,9 +584,33 @@ export function DailyReviewSurface({
                 expanded={fitnessExpanded}
                 onToggle={() => setFitnessExpanded((value) => !value)}
               >
-                {activityLog.map((activity) => (
-                  <ActivityLogCard key={activity.id} activity={activity} compact />
-                ))}
+                {workoutPersistence.mode === "unknown" || workoutPersistence.status === "loading" ? (
+                  <Card
+                    role="status"
+                    className="rounded-[1.25rem] border-primary-100 bg-primary-50/55 px-5 py-4 shadow-none"
+                  >
+                    <p className="text-sm font-black text-primary-800">Loading your activity log...</p>
+                    <p className="mt-1 text-xs font-semibold text-primary-900/65">
+                      FuelWell is checking your saved workouts before showing today&apos;s review.
+                    </p>
+                  </Card>
+                ) : workoutPersistence.status === "error" ? (
+                  <Card
+                    role="alert"
+                    className="rounded-[1.25rem] border-accent-200 bg-accent-100/55 px-5 py-4 shadow-none"
+                  >
+                    <p className="text-sm font-black text-accent-800">Activity log could not load</p>
+                    <p className="mt-1 text-xs font-semibold text-accent-900/70">
+                      {workoutPersistence.error || "Refresh to try the saved workout check again."}
+                    </p>
+                  </Card>
+                ) : (
+                  <div data-testid="workout-log-ready" className="contents">
+                    {activityLog.map((activity) => (
+                      <ActivityLogCard key={activity.id} activity={activity} compact />
+                    ))}
+                  </div>
+                )}
               </CollapsibleLogPanel>
             </section>
         </DailyReviewSection>
