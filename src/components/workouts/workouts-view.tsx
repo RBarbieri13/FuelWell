@@ -204,6 +204,8 @@ function ManualActivityPlanner({
   const [activityId, setActivityId] = useState(MANUAL_ACTIVITY_OPTIONS[0].id);
   const [minutes, setMinutes] = useState(30);
   const [distance, setDistance] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const option =
     MANUAL_ACTIVITY_OPTIONS.find((activity) => activity.id === activityId) ??
     MANUAL_ACTIVITY_OPTIONS[0];
@@ -287,9 +289,12 @@ function ManualActivityPlanner({
 
       <Button
         type="button"
-        onClick={() => {
-          if (resolvedMinutes <= 0) return;
-          onAdd(
+        disabled={isSaving}
+        onClick={async () => {
+          if (resolvedMinutes <= 0 || isSaving) return;
+          setIsSaving(true);
+          setSaveError(null);
+          const result = await onAdd(
             buildManualWorkoutEntry({
               option,
               minutes: resolvedMinutes,
@@ -298,14 +303,24 @@ function ManualActivityPlanner({
               calories,
             })
           );
+          setIsSaving(false);
+          if (!result.ok) {
+            setSaveError(result.error);
+            return;
+          }
           setMinutes(30);
           setDistance("");
         }}
         className="w-full"
       >
         <Plus className="h-4 w-4" />
-        Add activity
+        {isSaving ? "Saving activity..." : "Add activity"}
       </Button>
+      {saveError && (
+        <p role="alert" className="text-sm font-semibold text-accent-700">
+          {saveError}
+        </p>
+      )}
     </Card>
   );
 }

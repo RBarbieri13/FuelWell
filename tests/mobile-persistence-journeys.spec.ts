@@ -248,9 +248,28 @@ async function runJourney(page: Page, journey: Journey, testInfo: TestInfo) {
   const activityMinutes = 24 + journey.round;
   await planner.getByLabel("Minutes").fill(`${activityMinutes}`);
   await planner.getByRole("button", { name: "Add activity" }).click();
-  await expect(page.getByTestId("logged-workouts").getByText(journey.activity).first()).toBeVisible();
+  await expect(planner.getByRole("button", { name: "Add activity" })).toBeEnabled({ timeout: 30_000 });
+  await expect
+    .poll(
+      async () => {
+        const response = await page.request.get(`/api/workout-log?date=${date}`);
+        expect(response.status(), `workout-log read returned HTTP ${response.status()}`).toBe(200);
+        const payload = (await response.json()) as { workouts?: Array<{ name?: string }> };
+        return payload.workouts?.some((workout) => workout.name === journey.activity) ?? false;
+      },
+      {
+        message: `Expected ${journey.activity} in the authenticated workout log before reload`,
+        timeout: 30_000,
+      },
+    )
+    .toBe(true);
+  await expect(page.getByTestId("logged-workouts").getByText(journey.activity).first()).toBeVisible({
+    timeout: 30_000,
+  });
   await page.reload();
-  await expect(page.getByTestId("logged-workouts").getByText(journey.activity).first()).toBeVisible();
+  await expect(page.getByTestId("logged-workouts").getByText(journey.activity).first()).toBeVisible({
+    timeout: 30_000,
+  });
   await assertPhoneFit(page, `${prefix} workout`);
 
   await page.goto("/app/recipes");
