@@ -9,3 +9,4 @@ ios/
 docs/
 surf-runs/
 tsconfig.tsbuildinfo
+pulled*.env
