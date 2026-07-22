@@ -56,7 +56,7 @@
         "src/app/app/daily-review"
       ],
       "deps": [],
-      "status": "failing"
+      "status": "pass"
     },
     {
       "id": "audit-identity",
