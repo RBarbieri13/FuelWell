@@ -42,7 +42,7 @@
         "src/lib/coach/system-prompt.ts"
       ],
       "deps": [],
-      "status": "failing"
+      "status": "pass"
     },
     {
       "id": "ui-baseline",
