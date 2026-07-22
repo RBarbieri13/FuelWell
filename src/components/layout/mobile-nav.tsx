@@ -16,10 +16,19 @@ const mobileNavItems = [
   { href: "/app/dashboard", label: "Home", icon: LayoutDashboard, color: "text-primary-600" },
   { href: "/app/log", label: "Log", icon: PlusCircle, highlight: true, color: "text-accent-600" },
   { href: "/app/coach", label: "Coach", icon: MessageSquare, color: "text-sky-600" },
-  { href: "/app/workouts", label: "Move", icon: Dumbbell, color: "text-teal-600" },
+  { href: "/app/workouts", label: "Workouts", icon: Dumbbell, color: "text-teal-600" },
   { href: "/app/grocery-list", label: "Groceries", icon: ShoppingBasket, color: "text-primary-600" },
   { href: "/app/daily-review", label: "Review", icon: ClipboardList, color: "text-lemon-600" },
 ];
+
+// Movement-cluster subpages without their own tab highlight the Workouts tab
+// so deep routes still show a location (F7).
+const activeAliases: Record<string, string> = {
+  "/app/fitness": "/app/workouts",
+  "/app/activity": "/app/workouts",
+  "/app/progress": "/app/workouts",
+  "/app/nutrition": "/app/log",
+};
 
 export function MobileNav() {
   const pathname = usePathname();
@@ -32,7 +41,10 @@ export function MobileNav() {
     >
       <div className="flex items-center justify-around pt-2 pb-1">
         {mobileNavItems.map((item) => {
-          const isActive = pathname.startsWith(item.href);
+          const aliasTarget = Object.entries(activeAliases).find(([alias]) =>
+            pathname.startsWith(alias)
+          )?.[1];
+          const isActive = pathname.startsWith(item.href) || aliasTarget === item.href;
           return (
             <Link
               key={item.href}

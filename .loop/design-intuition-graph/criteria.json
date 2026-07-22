@@ -82,7 +82,7 @@
         "audit-shell",
         "design-ruleset"
       ],
-      "status": "failing"
+      "status": "pass"
     },
     {
       "id": "fix-nutrition",
