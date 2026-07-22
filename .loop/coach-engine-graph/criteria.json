@@ -109,7 +109,7 @@
       "deps": [
         "ctx-retrieval"
       ],
-      "status": "failing"
+      "status": "pass"
     },
     {
       "id": "chat-process",
