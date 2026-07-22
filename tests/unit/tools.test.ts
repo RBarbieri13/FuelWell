@@ -254,6 +254,94 @@ describe("edge cases", () => {
     expect((result.modelResult as { error: string }).error).toMatch(/ghost-meal/);
   });
 
+  it("log_meal resolves a fuzzy food name (typo) to the right database food", async () => {
+    const result = await runTool("log_meal", {
+      food_id: "chiken breast",
+      portion: 140,
+      meal_slot: "dinner",
+    });
+    expect(result.persisted).toBe(true);
+    const m = result.mutations![0];
+    expect(m.kind).toBe("add_meal");
+    if (m.kind === "add_meal") {
+      expect(m.meal.name).toMatch(/^Chicken breast/);
+    }
+  });
+
+  it("edit_meal retargets a meal referenced by name to another slot", async () => {
+    const result = await runTool("edit_meal", {
+      meal_id: "chicken rice bowl",
+      patch: { meal_slot: "dinner" },
+    });
+    expect(result.persisted).toBe(true);
+    const m = result.mutations![0];
+    expect(m.kind).toBe("update_meal");
+    if (m.kind === "update_meal") {
+      expect(m.mealId).toBe("sample-lunch");
+      expect(m.meal.mealType).toBe("dinner");
+    }
+  });
+
+  it("edit_meal resolves 'last' to the most recently logged meal", async () => {
+    const { ctx } = makeCtx();
+    const latest = ctx.snapshot.meals.reduce((best, m) =>
+      best.loggedAt > m.loggedAt ? best : m,
+    );
+    const tool = getTool("edit_meal")!;
+    const result = await tool.run(
+      tool.schema.parse({ meal_id: "last", patch: { meal_slot: "snack" } }),
+      ctx,
+    );
+    expect(result.persisted).toBe(true);
+    const m = result.mutations![0];
+    if (m.kind === "update_meal") {
+      expect(m.mealId).toBe(latest.id);
+    }
+  });
+
+  it("delete_meal resolves a meal by name", async () => {
+    const result = await runTool("delete_meal", { meal_id: "greek yogurt bowl" });
+    expect(result.persisted).toBe(true);
+    const m = result.mutations![0];
+    expect(m.kind).toBe("remove_meal");
+    if (m.kind === "remove_meal") {
+      expect(m.mealId).toBe("sample-breakfast");
+    }
+  });
+
+  it("delete_meal stays destructive so the route requires confirmation", () => {
+    expect(getTool("delete_meal")!.destructive).toBe(true);
+    expect(getTool("clear_grocery_list")!.destructive).toBe(true);
+  });
+
+  it("log_recipe_as_meal resolves a recipe by title instead of id", async () => {
+    const title = RECIPES[0].title;
+    const result = await runTool("log_recipe_as_meal", {
+      recipe_id: title,
+      meal_slot: "dinner",
+    });
+    expect(result.persisted).toBe(true);
+    const m = result.mutations![0];
+    expect(m.kind).toBe("add_meal");
+    if (m.kind === "add_meal") {
+      expect(m.meal.name).toBe(title);
+    }
+  });
+
+  it("add_recipe_to_grocery_list resolves a recipe by title instead of id", async () => {
+    const result = await runTool("add_recipe_to_grocery_list", {
+      recipe_id: RECIPES[0].title,
+    });
+    expect(result.persisted).toBe(true);
+    expect(result.mutations![0].kind).toBe("set_grocery");
+  });
+
+  it("get_recipe_detail with an unresolvable title returns an error-shaped result", async () => {
+    const result = await runTool("get_recipe_detail", { recipe_id: "zzz-not-a-recipe" });
+    expect(result.persisted).toBe(false);
+    expect((result.modelResult as { error: string }).error).toMatch(/zzz-not-a-recipe/);
+  });
+
   it("check_grocery_item with no match returns an error-shaped result", async () => {
     const result = await runTool("check_grocery_item", { item: "plutonium" });
     expect(result.persisted).toBe(false);

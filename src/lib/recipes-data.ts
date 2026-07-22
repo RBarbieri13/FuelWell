@@ -6,7 +6,7 @@
  */
 
 import type { DietFilter } from "@/lib/use-preferences";
-import { rankedSearch } from "@/lib/search-utils";
+import { isConfidentMatch, rankedSearch } from "@/lib/search-utils";
 
 export type RecipeIngredient = { item: string; amount: string };
 
@@ -649,6 +649,23 @@ export function searchRecipes(query: string): Recipe[] {
       ...recipe.ingredients.map((ingredient) => ingredient.item),
     ],
   );
+}
+
+/**
+ * Resolve a recipe id OR a free-text recipe title (case differences,
+ * partials, minor typos) to exactly one recipe. Returns undefined when
+ * nothing matches confidently — callers should fall back to search_recipes.
+ */
+export function resolveRecipe(ref: string): Recipe | undefined {
+  const trimmed = ref.trim();
+  if (!trimmed) return undefined;
+  const byId = RECIPES.find((r) => r.id === trimmed);
+  if (byId) return byId;
+  const top = searchRecipes(trimmed)[0];
+  if (!top) return undefined;
+  return isConfidentMatch(trimmed, [top.title, top.meal, ...top.tags])
+    ? top
+    : undefined;
 }
 
 /**

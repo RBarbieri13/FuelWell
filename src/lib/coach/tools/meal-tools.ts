@@ -15,9 +15,11 @@ import {
   FOOD_DATABASE,
   filterFoods,
   macrosForPortion,
+  resolveFood,
   searchFoods,
   type FoodItem,
 } from "@/lib/food-database";
+import { isConfidentMatch, rankedSearch } from "@/lib/search-utils";
 
 /** Preserves per-tool input inference; registerTools takes the widened CoachToolDef. */
 function tool<S extends z.ZodTypeAny>(def: CoachToolDef<S>): CoachToolDef {
@@ -27,6 +29,33 @@ function tool<S extends z.ZodTypeAny>(def: CoachToolDef<S>): CoachToolDef {
 const mealSlot = z
   .enum(["breakfast", "lunch", "dinner", "snack"])
   .describe("Which meal slot this belongs to.");
+
+/**
+ * Resolve a logged-meal reference the way a voice assistant would: exact id
+ * first, then "last"/"that" for the most recent meal, then meal name
+ * (case-insensitive, minor typos tolerated). Ties on name go to the most
+ * recently logged meal.
+ */
+function resolveLoggedMeal(meals: MealRecord[], ref: string): MealRecord | undefined {
+  const trimmed = ref.trim();
+  if (!trimmed) return undefined;
+  const byId = meals.find((m) => m.id === trimmed);
+  if (byId) return byId;
+  const latest = meals.reduce<MealRecord | undefined>(
+    (best, m) => (best && best.loggedAt > m.loggedAt ? best : m),
+    undefined,
+  );
+  if (/^(that( meal| one)?|it|last( meal| one)?|latest( meal)?)$/i.test(trimmed)) {
+    return latest;
+  }
+  const q = trimmed.toLowerCase();
+  const exact = meals.filter((m) => m.name.trim().toLowerCase() === q);
+  if (exact.length > 0) {
+    return exact.reduce((best, m) => (best.loggedAt > m.loggedAt ? best : m));
+  }
+  const top = rankedSearch(meals, trimmed, (m) => [m.name], 1)[0];
+  return top && isConfidentMatch(trimmed, [top.name]) ? top : undefined;
+}
 
 function remainingAfter(
   ctx: { snapshot: { totals: { calories: number; protein: number }; targets: { calories: number; protein: number } } },
@@ -177,7 +206,11 @@ registerTools([
     description:
       "Log a food from the database to today's plate. portion is in grams (or ml for beverages, per the food's servingUnit). Get food_id from search_foods first.",
     schema: z.object({
-      food_id: z.string().describe("Food id from search_foods results."),
+      food_id: z
+        .string()
+        .describe(
+          "Food id from search_foods results, or a food name to match directly (typos and partial names are tolerated), e.g. 'chicken breast'.",
+        ),
       portion: z
         .number()
         .min(1)
@@ -187,11 +220,11 @@ registerTools([
       note: z.string().optional().describe("Optional short note about the meal."),
     }),
     run: (input, ctx) => {
-      const food = FOOD_DATABASE.find((f) => f.id === input.food_id);
+      const food = resolveFood(input.food_id);
       if (!food) {
         return {
           persisted: false,
-          modelResult: { error: `No food with id "${input.food_id}". Use search_foods to find a valid id.` },
+          modelResult: { error: `No food matching "${input.food_id}". Use search_foods to find a valid id.` },
         };
       }
       const macros = macrosForPortion(food, input.portion);
@@ -265,7 +298,11 @@ registerTools([
     description:
       "Edit an already-logged meal: rename it, move it to another slot, or correct its macros. Only provide the fields that change.",
     schema: z.object({
-      meal_id: z.string().describe("Id of the logged meal to edit (from get_todays_plate)."),
+      meal_id: z
+        .string()
+        .describe(
+          "The logged meal to edit: its id (from get_todays_plate), its name (e.g. 'chicken rice bowl'), or 'last' for the most recently logged meal.",
+        ),
       patch: z
         .object({
           name: z.string().optional().describe("New meal name."),
@@ -278,11 +315,11 @@ registerTools([
         .describe("Fields to change; omit anything that stays the same."),
     }),
     run: (input, ctx) => {
-      const original = ctx.snapshot.meals.find((m) => m.id === input.meal_id);
+      const original = resolveLoggedMeal(ctx.snapshot.meals, input.meal_id);
       if (!original) {
         return {
           persisted: false,
-          modelResult: { error: `No logged meal with id "${input.meal_id}".` },
+          modelResult: { error: `No logged meal matching "${input.meal_id}".` },
         };
       }
       const p = input.patch;
@@ -334,14 +371,18 @@ registerTools([
       "Delete a logged meal from today's plate. Destructive — the user must confirm before this runs.",
     destructive: true,
     schema: z.object({
-      meal_id: z.string().describe("Id of the logged meal to delete (from get_todays_plate)."),
+      meal_id: z
+        .string()
+        .describe(
+          "The logged meal to delete: its id (from get_todays_plate), its name, or 'last' for the most recently logged meal.",
+        ),
     }),
     run: (input, ctx) => {
-      const original = ctx.snapshot.meals.find((m) => m.id === input.meal_id);
+      const original = resolveLoggedMeal(ctx.snapshot.meals, input.meal_id);
       if (!original) {
         return {
           persisted: false,
-          modelResult: { error: `No logged meal with id "${input.meal_id}".` },
+          modelResult: { error: `No logged meal matching "${input.meal_id}".` },
         };
       }
       recordAction(ctx.userId, `Deleted ${original.name}`, [

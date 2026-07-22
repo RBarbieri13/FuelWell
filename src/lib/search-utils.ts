@@ -26,6 +26,37 @@ function levenshteinWithin(a: string, b: string, maxDistance: number): number {
   return prev[b.length];
 }
 
+/**
+ * True when `query` plausibly refers to the entity described by `fields`:
+ * at least half of its meaningful terms (length >= 3) match a field word by
+ * substring (either direction) or a single-edit typo. Used to accept or
+ * reject the TOP hit of a ranked search when resolving a free-text
+ * reference to exactly one entity — rankedSearch alone returns weak
+ * last-resort matches that are fine for a picker list but wrong to act on.
+ */
+export function isConfidentMatch(
+  query: string,
+  fields: Array<string | undefined>,
+): boolean {
+  const terms = normalizeSearchText(query)
+    .split(/\s+/)
+    .filter((t) => t.length >= 3);
+  if (terms.length === 0) return false;
+  const words = fields
+    .filter((f): f is string => Boolean(f))
+    .flatMap((f) => normalizeSearchText(f).split(/\s+/))
+    .filter(Boolean);
+  const hits = terms.filter((term) =>
+    words.some(
+      (word) =>
+        word.includes(term) ||
+        (term.includes(word) && word.length >= 3) ||
+        levenshteinWithin(word, term, 1) <= 1,
+    ),
+  );
+  return hits.length >= Math.ceil(terms.length / 2);
+}
+
 function isOrderedSubsequence(needle: string, haystack: string): boolean {
   let index = 0;
   for (const char of haystack) {

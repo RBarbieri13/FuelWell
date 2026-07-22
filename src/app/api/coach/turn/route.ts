@@ -44,6 +44,7 @@ import type {
   ToolContext,
 } from "@/lib/coach/types";
 import { applySnapshotMutation } from "@/lib/coach/apply-mutation";
+import { parseDirectMealLog } from "@/lib/coach/direct-meal-log";
 import { enforceVoice, redactPii } from "@/lib/coach/voice-filter";
 import { writeAudit } from "@/lib/coach/audit";
 import { normalizeGroceryInput } from "@/lib/grocery-normalization";
@@ -72,7 +73,6 @@ export const maxDuration = 120;
 const HAIKU = "claude-haiku-4-5";
 const SONNET = "claude-sonnet-4-6";
 const MAX_TOOL_ROUNDS = 5; // E5: per-turn tool-call circuit breaker
-const MEAL_SLOTS = ["breakfast", "lunch", "dinner", "snack"] as const;
 const WEB_SEARCH_REQUEST =
   /\b(current|latest|today|recent|new|news|online|web|internet|search|look up|lookup|source|sources|cite|citation|price|available|availability|menu near|near me)\b/i;
 
@@ -162,44 +162,6 @@ function buildProviderFallbackReply(userText: string, snapshot: CoachDaySnapshot
   ].join("\n");
 }
 
-function parseDirectMealLog(text: string):
-  | {
-      name: string;
-      kcal: number;
-      protein: number;
-      carbs: number;
-      fat: number;
-      meal_slot: (typeof MEAL_SLOTS)[number];
-    }
-  | null {
-  const normalized = text.trim();
-  if (!/\b(i ate|i had|log|add)\b/i.test(normalized)) return null;
-  const calorieMatch = normalized.match(/\b(\d{2,4})\s*(?:kcal|cal(?:orie)?s?)\b/i);
-  if (!calorieMatch) return null;
-  const slot = MEAL_SLOTS.find((candidate) => new RegExp(`\\b${candidate}\\b`, "i").test(normalized));
-  if (!slot) return null;
-
-  const kcal = Number(calorieMatch[1]);
-  if (!Number.isFinite(kcal) || kcal <= 0) return null;
-
-  const name = normalized
-    .replace(/\b(i ate|i had|please log|log|add)\b/i, "")
-    .replace(/\b(for|at|to)\s+(breakfast|lunch|dinner|snack)\b/gi, "")
-    .replace(/\b\d{2,4}\s*(?:kcal|cal(?:orie)?s?)\b/gi, "")
-    .replace(/\b(a|an|the)\b/gi, " ")
-    .replace(/[,.;:]+/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-
-  if (name.length < 2 || name.length > 80) return null;
-
-  const protein = Math.max(1, Math.round((kcal * 0.25) / 4));
-  const carbs = Math.max(0, Math.round((kcal * 0.45) / 4));
-  const fat = Math.max(0, Math.round((kcal * 0.3) / 9));
-
-  return { name, kcal, protein, carbs, fat, meal_slot: slot };
-}
-
 function asRecord(value: unknown): Record<string, unknown> {
   return value && typeof value === "object" && !Array.isArray(value)
     ? (value as Record<string, unknown>)
@@ -226,6 +188,15 @@ function summarizeConfirmedTool(toolName: string, modelResult: unknown, input: u
     }
     case "add_recipe_to_grocery_list":
       return "Done. I added the recipe ingredients to your grocery list.";
+    case "delete_meal": {
+      const deleted = asRecord(result.deleted);
+      return `Done. I deleted ${String(deleted.name ?? "that meal")} from today's log.`;
+    }
+    case "log_recipe_as_meal": {
+      const name = result.name ?? "that recipe";
+      const slot = result.slot ?? args.meal_slot;
+      return `Done. I logged ${String(name)}${slot ? ` as ${String(slot)}` : ""} and updated today's totals.`;
+    }
     case "start_workout_session":
       return "Workout started. I opened the active workout context so you can track sets as you go.";
     case "log_custom_meal":
@@ -534,14 +505,14 @@ export async function POST(request: Request) {
 	      try {
 	        const directMealLog = body.confirmedTool ? null : parseDirectMealLog(lastUserText);
 	        if (directMealLog) {
-	          const def = getTool("log_custom_meal");
+	          const def = getTool(directMealLog.tool);
 	          if (!def) throw new Error("Meal logging tool is unavailable.");
-	          const input = def.schema.parse(directMealLog);
+	          const input = def.schema.parse(directMealLog.input);
 	          const result = await def.run(input, toolCtx);
 	          result.mutations?.forEach(toolCtx.applyMutation);
 	          turnMutations.push(...(result.mutations ?? []));
 	          collectPrefPatch(result.mutations);
-	          assistantText = `Logged ${directMealLog.name} as an additional ${directMealLog.meal_slot}.`;
+	          assistantText = directMealLog.reply;
 	          emit({ type: "text_delta", text: assistantText });
 	          if (result.artifact) {
 	            turnArtifacts.push(result.artifact);

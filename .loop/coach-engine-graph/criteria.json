@@ -67,7 +67,7 @@
         "iso-user",
         "audit-log"
       ],
-      "status": "failing"
+      "status": "pass"
     },
     {
       "id": "act-fitness",

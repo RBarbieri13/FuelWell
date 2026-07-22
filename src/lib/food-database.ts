@@ -18,7 +18,7 @@
  * safe. Keep entries generic ("Cheddar cheese") over branded.
  */
 
-import { rankedSearch } from "@/lib/search-utils";
+import { isConfidentMatch, rankedSearch } from "@/lib/search-utils";
 
 export type FoodTuple = readonly [
   name: string,
@@ -849,6 +849,23 @@ export function searchFoods(query: string, limit = 12): FoodItem[] {
     (item) => [item.name, item.categoryLabel, item.category, ...item.tags],
     limit,
   );
+}
+
+/**
+ * Resolve a food id OR a free-text food name (case differences, partials,
+ * minor typos) to exactly one food. Returns undefined when nothing matches
+ * confidently — callers should fall back to search_foods for a picker.
+ */
+export function resolveFood(ref: string): FoodItem | undefined {
+  const trimmed = ref.trim();
+  if (!trimmed) return undefined;
+  const byId = FOOD_DATABASE.find((f) => f.id === trimmed);
+  if (byId) return byId;
+  const top = searchFoods(trimmed, 1)[0];
+  if (!top) return undefined;
+  return isConfidentMatch(trimmed, [top.name, top.categoryLabel, ...top.tags])
+    ? top
+    : undefined;
 }
 
 /** Filter helpers for the preference/diet chips (meeting decision). */

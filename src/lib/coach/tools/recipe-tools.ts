@@ -8,6 +8,7 @@ import { remaining, sumMeals, type MealRecord } from "@/lib/fuelwell-data";
 import {
   RECIPES,
   applyRecipeFilters,
+  resolveRecipe,
   searchRecipes,
   type Recipe,
 } from "@/lib/recipes-data";
@@ -92,14 +93,18 @@ registerTools([
     description:
       "Get the full detail for one recipe by id: per-serving nutrition, measured ingredients, and steps. Use after search_recipes when the user wants to cook or inspect a recipe.",
     schema: z.object({
-      recipe_id: z.string().describe("Recipe id from search_recipes results."),
+      recipe_id: z
+        .string()
+        .describe(
+          "Recipe id from search_recipes results, or the recipe title to match directly (typos and partial titles are tolerated).",
+        ),
     }),
     run: (input, ctx) => {
-      const recipe = RECIPES.find((r) => r.id === input.recipe_id);
+      const recipe = resolveRecipe(input.recipe_id);
       if (!recipe) {
         return {
           persisted: false,
-          modelResult: { error: `No recipe with id "${input.recipe_id}".` },
+          modelResult: { error: `No recipe matching "${input.recipe_id}".` },
         };
       }
       return {
@@ -135,7 +140,9 @@ registerTools([
     description:
       "Log a recipe to today's food log as a meal in the given slot, scaled by servings eaten. Updates today's macro totals. Use when the user says they made/ate a recipe.",
     schema: z.object({
-      recipe_id: z.string().describe("Recipe id to log."),
+      recipe_id: z
+        .string()
+        .describe("Recipe id to log, or the recipe title to match directly (typos and partial titles are tolerated)."),
       servings: z
         .number()
         .min(0.25)
@@ -147,11 +154,11 @@ registerTools([
         .describe("Which meal slot to log this under."),
     }),
     run: (input, ctx) => {
-      const recipe = RECIPES.find((r) => r.id === input.recipe_id);
+      const recipe = resolveRecipe(input.recipe_id);
       if (!recipe) {
         return {
           persisted: false,
-          modelResult: { error: `No recipe with id "${input.recipe_id}".` },
+          modelResult: { error: `No recipe matching "${input.recipe_id}".` },
         };
       }
       const servings = input.servings ?? 1;
@@ -210,14 +217,18 @@ registerTools([
     description:
       "Add a recipe's ingredients to the user's grocery list, skipping items already on it. Use when the user wants to shop for or plan to cook a recipe.",
     schema: z.object({
-      recipe_id: z.string().describe("Recipe id whose ingredients should be added."),
+      recipe_id: z
+        .string()
+        .describe(
+          "Recipe id whose ingredients should be added, or the recipe title to match directly (typos and partial titles are tolerated).",
+        ),
     }),
     run: (input, ctx) => {
-      const recipe = RECIPES.find((r) => r.id === input.recipe_id);
+      const recipe = resolveRecipe(input.recipe_id);
       if (!recipe) {
         return {
           persisted: false,
-          modelResult: { error: `No recipe with id "${input.recipe_id}".` },
+          modelResult: { error: `No recipe matching "${input.recipe_id}".` },
         };
       }
       const oldList = ctx.snapshot.grocery;
