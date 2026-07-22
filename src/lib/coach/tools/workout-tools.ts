@@ -3,6 +3,12 @@ import { registerTools } from "../registry";
 import { newEntityId } from "../ids";
 import { recordAction } from "../last-action";
 import type { CoachToolDef, WorkoutEntry } from "../types";
+import {
+  getWorkoutExercisePlan,
+  resolveWorkout,
+  type WorkoutLibraryItem,
+} from "@/lib/workout-library";
+import { isConfidentMatch, rankedSearch } from "@/lib/search-utils";
 
 /** Preserve per-tool schema inference inside the heterogeneous registerTools array. */
 function tool<S extends z.ZodTypeAny>(def: CoachToolDef<S>): CoachToolDef {
@@ -70,6 +76,8 @@ type WorkoutPlan = {
   focus: Focus;
   durationMin: number;
   exercises: PlanExercise[];
+  /** Library workout title when the plan came from the workout catalog. */
+  title?: string;
 };
 
 const plansById = new Map<string, WorkoutPlan>();
@@ -120,13 +128,76 @@ function buildPlan(focus: Focus, durationMin: number, equipment: string): Workou
   };
 }
 
+const LIBRARY_FOCUS: Record<WorkoutLibraryItem["category"], Focus> = {
+  upper: "upper",
+  lower: "lower",
+  full: "full_body",
+  core: "core",
+  mobility: "core",
+  cardio: "cardio",
+};
+
+/** Convert a catalog workout's exercise plan into a live-session plan. */
+function buildPlanFromLibrary(item: WorkoutLibraryItem, durationMin?: number): WorkoutPlan {
+  const firstNumber = (value: string, fallback: number) => {
+    const match = value.match(/(\d+)/);
+    return match ? Number(match[1]) : fallback;
+  };
+  return {
+    planId: newEntityId("coach-plan"),
+    focus: LIBRARY_FOCUS[item.category],
+    durationMin: durationMin ?? firstNumber(item.duration, 30),
+    title: item.title,
+    exercises: getWorkoutExercisePlan(item).map((e) => ({
+      name: e.name,
+      sets: e.sets,
+      reps: firstNumber(e.reps, 1),
+      restSec: /min/i.test(e.rest) ? firstNumber(e.rest, 1) * 60 : firstNumber(e.rest, 60),
+    })),
+  };
+}
+
+/**
+ * Resolve a logged-workout reference like a voice assistant: exact id first,
+ * then "last"/"that" for the most recent entry, then name (case-insensitive,
+ * minor typos tolerated via the isConfidentMatch gate). Ties on name go to
+ * the most recently logged workout.
+ */
+function resolveLoggedWorkout(
+  workoutLog: WorkoutEntry[],
+  ref: string,
+): WorkoutEntry | undefined {
+  const trimmed = ref.trim();
+  if (!trimmed) return undefined;
+  const byId = workoutLog.find((w) => w.id === trimmed);
+  if (byId) return byId;
+  const latest = workoutLog.reduce<WorkoutEntry | undefined>(
+    (best, w) => (best && best.loggedAt > w.loggedAt ? best : w),
+    undefined,
+  );
+  if (/^(that( workout| one)?|it|last( workout| one)?|latest( workout)?)$/i.test(trimmed)) {
+    return latest;
+  }
+  const q = trimmed.toLowerCase();
+  const exact = workoutLog.filter((w) => w.name.trim().toLowerCase() === q);
+  if (exact.length > 0) {
+    return exact.reduce((best, w) => (best.loggedAt > w.loggedAt ? best : w));
+  }
+  const top = rankedSearch(workoutLog, trimmed, (w) => [w.name, w.category], 1)[0];
+  return top && isConfidentMatch(trimmed, [top.name, top.category]) ? top : undefined;
+}
+
 registerTools([
   tool({
     name: "log_workout",
     description:
       "Log a completed workout for today. Use when the user says they finished a workout. Duration in minutes; users usually speak in lb, but exercise weights must be converted to kg for storage.",
     schema: z.object({
-      name: z.string().describe("Short workout name, e.g. 'Morning run' or 'Push day'"),
+      name: z
+        .string()
+        .describe(
+          "Short workout name, e.g. 'Morning run' or 'Push day'. Library workout titles are matched (typos and partial names tolerated) to link catalog metadata.",
+        ),
       duration_min: z.number().min(1).max(600).describe("Total workout duration in minutes (1-600)"),
       category: z
         .enum(["strength", "cardio", "mobility", "sport", "other"])
@@ -145,9 +216,15 @@ registerTools([
       notes: z.string().optional().describe("Free-text notes about the workout"),
     }),
     run: (input, ctx) => {
+      // Link to the workout catalog when the name confidently matches; only
+      // adopt the catalog title when it also covers the user's phrasing, so
+      // generic names like "upper body" are kept as said.
+      const library = resolveWorkout(input.name);
+      const canonicalName =
+        library && isConfidentMatch(library.title, [input.name]) ? library.title : input.name;
       const workout: WorkoutEntry = {
         id: newEntityId("coach-workout"),
-        name: input.name,
+        name: canonicalName,
         category: input.category,
         durationMin: input.duration_min,
         loggedAt: new Date().toISOString(),
@@ -164,6 +241,9 @@ registerTools([
       recordAction(ctx.userId, `Logged workout "${workout.name}"`, [
         { kind: "remove_workout", workoutId: workout.id },
       ]);
+      const libraryLink = library
+        ? { id: library.id, title: library.title, estimatedBurn: library.estimatedBurn }
+        : undefined;
       return {
         persisted: true,
         mutations: [mutation],
@@ -172,12 +252,50 @@ registerTools([
           id: workout.id,
           name: workout.name,
           durationMin: workout.durationMin,
+          ...(libraryLink ? { library: libraryLink } : {}),
         },
         artifact: {
           id: ctx.newArtifactId(),
           type: "workout_logged",
           workout,
           undoable: true,
+          ...(libraryLink ? { library: libraryLink } : {}),
+        },
+      };
+    },
+  }),
+  tool({
+    name: "delete_workout",
+    description:
+      "Delete a logged workout from today's log. Destructive — the user must confirm before this runs.",
+    destructive: true,
+    schema: z.object({
+      workout_id: z
+        .string()
+        .describe(
+          "The logged workout to delete: its id, its name (typos tolerated), or 'last' for the most recently logged workout.",
+        ),
+    }),
+    run: (input, ctx) => {
+      const original = resolveLoggedWorkout(ctx.snapshot.workouts, input.workout_id);
+      if (!original) {
+        return {
+          persisted: false,
+          modelResult: { error: `No logged workout matching "${input.workout_id}".` },
+        };
+      }
+      recordAction(ctx.userId, `Deleted workout "${original.name}"`, [
+        { kind: "add_workout", workout: original },
+      ]);
+      return {
+        persisted: true,
+        modelResult: { deleted: { id: original.id, name: original.name } },
+        mutations: [{ kind: "remove_workout", workoutId: original.id }],
+        artifact: {
+          id: ctx.newArtifactId(),
+          type: "workout_deleted",
+          workoutId: original.id,
+          name: original.name,
         },
       };
     },
@@ -221,16 +339,37 @@ registerTools([
   tool({
     name: "start_workout_session",
     description:
-      "Start a live workout session from a plan created by plan_workout. Use when the user wants to begin the workout and log sets as they go.",
-    schema: z.object({
-      plan_id: z.string().describe("planId returned by plan_workout"),
-    }),
+      "Start a live workout session from a plan created by plan_workout, or directly from a library workout referenced by name/id. Use when the user wants to begin a workout and log sets as they go.",
+    schema: z
+      .object({
+        plan_id: z.string().optional().describe("planId returned by plan_workout"),
+        workout: z
+          .string()
+          .optional()
+          .describe(
+            "Library workout to start, by id or title (typos and partial names tolerated), e.g. 'zone 2 ride'. Use when no plan_id exists.",
+          ),
+      })
+      .refine((v) => Boolean(v.plan_id || v.workout), {
+        message: "Provide plan_id or workout.",
+      }),
     run: (input, ctx) => {
-      const plan = plansById.get(input.plan_id);
+      let plan = input.plan_id ? plansById.get(input.plan_id) : undefined;
+      if (!plan && input.workout) {
+        const library = resolveWorkout(input.workout);
+        if (library) {
+          plan = buildPlanFromLibrary(library);
+          plansById.set(plan.planId, plan);
+        }
+      }
       if (!plan) {
         return {
           persisted: false,
-          modelResult: { error: `Unknown plan id: ${input.plan_id}. Call plan_workout first.` },
+          modelResult: {
+            error: input.plan_id
+              ? `Unknown plan id: ${input.plan_id}. Call plan_workout first.`
+              : `No library workout matching "${input.workout}". Call plan_workout or pick a workout from the library.`,
+          },
         };
       }
       const session: WorkoutSession = {
@@ -242,7 +381,12 @@ registerTools([
       sessionsByUser.set(ctx.userId, session);
       return {
         persisted: false,
-        modelResult: { sessionId: session.sessionId, started: true, focus: plan.focus },
+        modelResult: {
+          sessionId: session.sessionId,
+          started: true,
+          focus: plan.focus,
+          ...(plan.title ? { workout: plan.title } : {}),
+        },
         artifact: {
           id: ctx.newArtifactId(),
           type: "workout_session",
@@ -327,7 +471,7 @@ registerTools([
       }
       const workout: WorkoutEntry = {
         id: newEntityId("coach-workout"),
-        name: plan ? `${plan.focus.replace("_", " ")} workout` : "Workout session",
+        name: plan ? plan.title ?? `${plan.focus.replace("_", " ")} workout` : "Workout session",
         category: "strength",
         durationMin,
         loggedAt: now.toISOString(),

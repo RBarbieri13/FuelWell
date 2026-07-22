@@ -4,7 +4,7 @@ import {
   Waves,
   type LucideIcon,
 } from "lucide-react";
-import { rankedSearch } from "@/lib/search-utils";
+import { isConfidentMatch, rankedSearch } from "@/lib/search-utils";
 
 export type WorkoutCategory =
   | "upper"
@@ -1040,6 +1040,23 @@ export function getSimilarWorkouts(id: string, limit = 3) {
     .sort((a, b) => b.score - a.score || a.workout.title.localeCompare(b.workout.title))
     .slice(0, limit)
     .map(({ workout }) => workout);
+}
+
+/**
+ * Resolve a free-text workout reference to exactly one library workout the
+ * way resolveFood/resolveRecipe do: exact id first, then the top ranked
+ * search hit gated by isConfidentMatch so weak last-resort hits are refused.
+ */
+export function resolveWorkout(ref: string): WorkoutLibraryItem | undefined {
+  const trimmed = ref.trim();
+  if (!trimmed) return undefined;
+  const byId = getWorkoutById(trimmed);
+  if (byId) return byId;
+  const top = searchWorkouts(trimmed, 1)[0];
+  if (!top) return undefined;
+  return isConfidentMatch(trimmed, [top.title, top.categoryLabel, top.focus, top.workoutType])
+    ? top
+    : undefined;
 }
 
 export function searchWorkouts(query: string, limit = workouts.length): WorkoutLibraryItem[] {

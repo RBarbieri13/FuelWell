@@ -84,6 +84,7 @@ const SCHEMA_CASES: Record<string, { valid: unknown; invalid: unknown }> = {
     invalid: { focus: "arms", duration_min: 40 },
   },
   start_workout_session: { valid: { plan_id: "some-plan" }, invalid: {} },
+  delete_workout: { valid: { workout_id: "sample-workout" }, invalid: {} },
   log_set: { valid: { exercise: "Push-Up", weight_kg: 0, reps: 12 }, invalid: { exercise: "Push-Up", weight_kg: 0 } },
   end_workout_session: { valid: {}, invalid: 42 },
   suggest_workout: { valid: {}, invalid: 42 },
@@ -452,6 +453,91 @@ describe("edge cases", () => {
     const result = await runTool("start_workout_session", { plan_id: "ghost-plan" });
     expect(result.persisted).toBe(false);
     expect((result.modelResult as { error: string }).error).toMatch(/ghost-plan/);
+  });
+
+  it("start_workout_session starts directly from a library workout name and ends with its title", async () => {
+    const { ctx } = makeCtx();
+    const started = (await getTool("start_workout_session")!.run(
+      { workout: "recovery walk" },
+      ctx,
+    )) as ToolRunResult;
+    expect((started.modelResult as { started: boolean }).started).toBe(true);
+    expect((started.modelResult as { workout: string }).workout).toBe("Recovery walk");
+
+    const ended = (await getTool("end_workout_session")!.run({}, ctx)) as ToolRunResult;
+    expect(ended.persisted).toBe(true);
+    const mutation = ended.mutations![0];
+    expect(mutation.kind).toBe("add_workout");
+    if (mutation.kind === "add_workout") {
+      expect(mutation.workout.name).toBe("Recovery walk");
+    }
+  });
+
+  it("start_workout_session with an unresolvable workout name returns an error-shaped result", async () => {
+    const result = await runTool("start_workout_session", { workout: "no such thing xyz" });
+    expect(result.persisted).toBe(false);
+    expect((result.modelResult as { error: string }).error).toMatch(/no such thing xyz/i);
+  });
+
+  it("log_workout canonicalizes a typo'd library title and links catalog metadata", async () => {
+    const result = await runTool("log_workout", {
+      name: "zone 2 rdie",
+      duration_min: 40,
+      category: "cardio",
+    });
+    expect(result.persisted).toBe(true);
+    const model = result.modelResult as { name: string; library?: { id: string } };
+    expect(model.name).toBe("Zone 2 ride");
+    expect(model.library?.id).toBe("zone-2-ride");
+  });
+
+  it("log_workout keeps a generic name as said instead of renaming to a library title", async () => {
+    const result = await runTool("log_workout", {
+      name: "Upper body",
+      duration_min: 30,
+      category: "strength",
+    });
+    expect(result.persisted).toBe(true);
+    expect((result.modelResult as { name: string }).name).toBe("Upper body");
+  });
+
+  it("delete_workout resolves a workout by fuzzy name and emits remove_workout", async () => {
+    const { ctx } = makeCtx();
+    const result = (await getTool("delete_workout")!.run(
+      { workout_id: "morning runn" },
+      ctx,
+    )) as ToolRunResult;
+    expect(result.persisted).toBe(true);
+    expect(result.modelResult).toEqual({
+      deleted: { id: "sample-workout", name: "Morning run" },
+    });
+    expect(result.mutations).toEqual([{ kind: "remove_workout", workoutId: "sample-workout" }]);
+  });
+
+  it("delete_workout resolves 'last' to the most recently logged workout", async () => {
+    const { ctx } = makeCtx();
+    ctx.snapshot.workouts = [
+      ...ctx.snapshot.workouts,
+      {
+        id: "w-late",
+        name: "Evening lift",
+        category: "strength",
+        durationMin: 40,
+        loggedAt: new Date(Date.now() + 60_000).toISOString(),
+      },
+    ];
+    const result = (await getTool("delete_workout")!.run({ workout_id: "last" }, ctx)) as ToolRunResult;
+    expect((result.modelResult as { deleted: { id: string } }).deleted.id).toBe("w-late");
+  });
+
+  it("delete_workout with an unknown reference returns an error-shaped result", async () => {
+    const result = await runTool("delete_workout", { workout_id: "spelunking" });
+    expect(result.persisted).toBe(false);
+    expect((result.modelResult as { error: string }).error).toMatch(/spelunking/);
+  });
+
+  it("delete_workout stays destructive so the route requires confirmation", () => {
+    expect(getTool("delete_workout")!.destructive).toBe(true);
   });
 
   it("log_set with no active session returns an error-shaped result", async () => {

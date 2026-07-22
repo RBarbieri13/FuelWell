@@ -81,7 +81,7 @@
         "iso-user",
         "audit-log"
       ],
-      "status": "failing"
+      "status": "pass"
     },
     {
       "id": "intent-router",

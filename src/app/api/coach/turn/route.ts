@@ -45,6 +45,7 @@ import type {
 } from "@/lib/coach/types";
 import { applySnapshotMutation } from "@/lib/coach/apply-mutation";
 import { parseDirectMealLog } from "@/lib/coach/direct-meal-log";
+import { parseDirectWorkoutLog } from "@/lib/coach/direct-workout-log";
 import { enforceVoice, redactPii } from "@/lib/coach/voice-filter";
 import { writeAudit } from "@/lib/coach/audit";
 import { normalizeGroceryInput } from "@/lib/grocery-normalization";
@@ -199,6 +200,14 @@ function summarizeConfirmedTool(toolName: string, modelResult: unknown, input: u
     }
     case "start_workout_session":
       return "Workout started. I opened the active workout context so you can track sets as you go.";
+    case "log_workout": {
+      const name = result.name ?? args.name;
+      return `Done. I logged ${String(name ?? "that workout")} and updated today's activity.`;
+    }
+    case "delete_workout": {
+      const deleted = asRecord(result.deleted);
+      return `Done. I removed ${String(deleted.name ?? "that workout")} from today's log.`;
+    }
     case "log_custom_meal":
       return "Done. I logged that meal and updated today's nutrition totals.";
     default:
@@ -504,15 +513,20 @@ export async function POST(request: Request) {
 
 	      try {
 	        const directMealLog = body.confirmedTool ? null : parseDirectMealLog(lastUserText);
-	        if (directMealLog) {
-	          const def = getTool(directMealLog.tool);
-	          if (!def) throw new Error("Meal logging tool is unavailable.");
-	          const input = def.schema.parse(directMealLog.input);
+	        const directWorkoutLog =
+	          body.confirmedTool || directMealLog ? null : parseDirectWorkoutLog(lastUserText);
+	        const directLog = directMealLog ?? directWorkoutLog;
+	        const directAudit = directMealLog ? "direct-meal-log" : "direct-workout-log";
+	        const directModel = directMealLog ? "deterministic-meal-log" : "deterministic-workout-log";
+	        if (directLog) {
+	          const def = getTool(directLog.tool);
+	          if (!def) throw new Error("Direct logging tool is unavailable.");
+	          const input = def.schema.parse(directLog.input);
 	          const result = await def.run(input, toolCtx);
 	          result.mutations?.forEach(toolCtx.applyMutation);
 	          turnMutations.push(...(result.mutations ?? []));
 	          collectPrefPatch(result.mutations);
-	          assistantText = directMealLog.reply;
+	          assistantText = directLog.reply;
 	          emit({ type: "text_delta", text: assistantText });
 	          if (result.artifact) {
 	            turnArtifacts.push(result.artifact);
@@ -520,7 +534,7 @@ export async function POST(request: Request) {
 	          }
 	          if (result.mutations?.length) emit({ type: "mutation", mutations: result.mutations });
 	          turnToolCalls.push({ name: def.name, input });
-	          await audit(def.name, input, "direct-meal-log");
+	          await audit(def.name, input, directAudit);
 
 	          if (user) {
 	            await persistCoachMutations(storageClient, userId, turnMutations, snapshot.goalContext);
@@ -537,7 +551,7 @@ export async function POST(request: Request) {
 	                  content: assistantText,
 	                  toolCalls: turnToolCalls,
 	                  artifacts: turnArtifacts,
-	                  model: "deterministic-meal-log",
+	                  model: directModel,
 	                  tokensIn: 0,
 	                  tokensOut: 0,
 	                },
@@ -547,7 +561,7 @@ export async function POST(request: Request) {
 
 	          emit({
 	            type: "turn_done",
-	            usage: { inputTokens: 0, outputTokens: 0, costUsdCents: 0, model: "deterministic-meal-log" },
+	            usage: { inputTokens: 0, outputTokens: 0, costUsdCents: 0, model: directModel },
 	            conversationId: conversationId ?? undefined,
 	          });
 	          return;
