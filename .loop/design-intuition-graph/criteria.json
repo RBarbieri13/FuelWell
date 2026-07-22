@@ -5,15 +5,21 @@
       "id": "design-ruleset",
       "desc": "Extract the de-facto FuelWell design system from globals.css, tailwind usage, and src/components/ui: tokens, spacing scale, radii, card shapes, typography, shadow/border conventions, empty-state and loading patterns. Output a written ruleset every fix node must follow, including the 3-5 dominant conventions and known violations to avoid creating.",
       "verify": "ruleset file .loop/design-intuition-graph/evidence/design-ruleset.md exists, cites file:line for every rule, and names measurable checks (token-only colors, spacing steps, radius values)",
-      "files": ["src/app/globals.css", "src/components/ui"],
+      "files": [
+        "src/app/globals.css",
+        "src/components/ui"
+      ],
       "deps": [],
-      "status": "failing"
+      "status": "pass"
     },
     {
       "id": "audit-shell",
       "desc": "User-walkthrough audit of the app shell: sidebar, header, mobile tab bar, src/app/app/layout.tsx. Every route reachable and labeled intuitively? Anything out of place, dead, or missing (e.g. routes that exist but appear nowhere in nav: activity, fitness, meal-plan, nutrition, launch-preflight)? Screenshot desktop+mobile; defect/opportunity list.",
       "verify": "evidence/audit-shell.md numbered findings with screenshots; every app route accounted for as nav-visible, intentionally hidden, or flagged",
-      "files": ["src/app/app/layout.tsx", "src/components/layout"],
+      "files": [
+        "src/app/app/layout.tsx",
+        "src/components/layout"
+      ],
       "deps": [],
       "status": "failing"
     },
@@ -21,7 +27,11 @@
       "id": "audit-nutrition",
       "desc": "User-walkthrough audit (both viewports, as a real user with seeded data): /app/log, /app/nutrition, /app/meal-plan, /app/recipes, /app/grocery-list. Per page: does every component serve its purpose, misplaced/dead controls, missing subpages or links (recipe detail -> grocery? log -> nutrition detail?), border/shading/hierarchy problems, intuitiveness gaps. Defect+opportunity list with severity.",
       "verify": "evidence/audit-nutrition.md with per-page numbered findings, screenshots, severity, and concrete fix definitions",
-      "files": ["src/app/app/log", "src/app/app/recipes", "src/app/app/grocery-list"],
+      "files": [
+        "src/app/app/log",
+        "src/app/app/recipes",
+        "src/app/app/grocery-list"
+      ],
       "deps": [],
       "status": "failing"
     },
@@ -29,7 +39,10 @@
       "id": "audit-fitness",
       "desc": "Same walkthrough audit for /app/workouts, /app/fitness, /app/recovery, /app/activity: purpose, placement, missing links/subpages (workout -> progress? recovery -> workout plan?), visual hierarchy, intuitiveness.",
       "verify": "evidence/audit-fitness.md with per-page numbered findings, screenshots, severity, fix definitions",
-      "files": ["src/app/app/workouts", "src/app/app/recovery"],
+      "files": [
+        "src/app/app/workouts",
+        "src/app/app/recovery"
+      ],
       "deps": [],
       "status": "failing"
     },
@@ -37,7 +50,11 @@
       "id": "audit-insight",
       "desc": "Same walkthrough audit for /app/dashboard, /app/progress, /app/daily-review: do charts/tiles answer real user questions, is the information hierarchy right, missing drill-downs or cross-links (dashboard tile -> detail page), border/shading, intuitiveness.",
       "verify": "evidence/audit-insight.md with per-page numbered findings, screenshots, severity, fix definitions",
-      "files": ["src/app/app/dashboard", "src/app/app/progress", "src/app/app/daily-review"],
+      "files": [
+        "src/app/app/dashboard",
+        "src/app/app/progress",
+        "src/app/app/daily-review"
+      ],
       "deps": [],
       "status": "failing"
     },
@@ -45,7 +62,11 @@
       "id": "audit-identity",
       "desc": "Same walkthrough audit for /app/onboarding, /app/profile, /app/settings, the (auth) flow, and /app/launch-preflight: first-run intuitiveness, form clarity, section organization, dead ends, missing affordances.",
       "verify": "evidence/audit-identity.md with per-page numbered findings, screenshots, severity, fix definitions",
-      "files": ["src/app/app/profile", "src/app/app/settings", "src/app/app/onboarding"],
+      "files": [
+        "src/app/app/profile",
+        "src/app/app/settings",
+        "src/app/app/onboarding"
+      ],
       "deps": [],
       "status": "failing"
     },
@@ -53,56 +74,105 @@
       "id": "fix-shell",
       "desc": "Implement audit-shell findings: nav completeness/labeling, shared layout polish. OWNS all shared surfaces: src/components/layout, src/components/ui, app shell layout.tsx. Lands before page-group fixes so no other node edits shared components.",
       "verify": "pnpm lint && pnpm exec tsc --noEmit; playwright deterministic suites green; before/after screenshots; every audit-shell blocker/major resolved or explicitly deferred with reason",
-      "files": ["src/components/layout", "src/app/app/layout.tsx"],
-      "deps": ["audit-shell", "design-ruleset"],
+      "files": [
+        "src/components/layout",
+        "src/app/app/layout.tsx"
+      ],
+      "deps": [
+        "audit-shell",
+        "design-ruleset"
+      ],
       "status": "failing"
     },
     {
       "id": "fix-nutrition",
-      "desc": "Implement audit-nutrition findings across log/nutrition/meal-plan/recipes/grocery-list pages: component purpose, placement, links/subpages, hierarchy, ruleset conformance. May NOT edit src/components/ui or layout (fix-shell owns them) — document needs instead.",
+      "desc": "Implement audit-nutrition findings across log/nutrition/meal-plan/recipes/grocery-list pages: component purpose, placement, links/subpages, hierarchy, ruleset conformance. May NOT edit src/components/ui or layout (fix-shell owns them) \u2014 document needs instead.",
       "verify": "pnpm lint && pnpm exec tsc --noEmit; per-page before/after screenshots both viewports; all audit blockers/majors resolved or deferred with reason; pilot-UI blocker list stays zero",
-      "files": ["src/app/app/log", "src/app/app/recipes", "src/app/app/grocery-list"],
-      "deps": ["audit-nutrition", "design-ruleset", "fix-shell"],
+      "files": [
+        "src/app/app/log",
+        "src/app/app/recipes",
+        "src/app/app/grocery-list"
+      ],
+      "deps": [
+        "audit-nutrition",
+        "design-ruleset",
+        "fix-shell"
+      ],
       "status": "failing"
     },
     {
       "id": "fix-fitness",
       "desc": "Implement audit-fitness findings across workouts/fitness/recovery/activity pages. Same ownership rules as fix-nutrition.",
       "verify": "pnpm lint && pnpm exec tsc --noEmit; per-page before/after screenshots; blockers/majors resolved or deferred; pilot-UI list zero",
-      "files": ["src/app/app/workouts", "src/app/app/recovery"],
-      "deps": ["audit-fitness", "design-ruleset", "fix-shell"],
+      "files": [
+        "src/app/app/workouts",
+        "src/app/app/recovery"
+      ],
+      "deps": [
+        "audit-fitness",
+        "design-ruleset",
+        "fix-shell"
+      ],
       "status": "failing"
     },
     {
       "id": "fix-insight",
       "desc": "Implement audit-insight findings across dashboard/progress/daily-review. Same ownership rules.",
       "verify": "pnpm lint && pnpm exec tsc --noEmit; per-page before/after screenshots; blockers/majors resolved or deferred; pilot-UI list zero",
-      "files": ["src/app/app/dashboard", "src/app/app/progress", "src/app/app/daily-review"],
-      "deps": ["audit-insight", "design-ruleset", "fix-shell"],
+      "files": [
+        "src/app/app/dashboard",
+        "src/app/app/progress",
+        "src/app/app/daily-review"
+      ],
+      "deps": [
+        "audit-insight",
+        "design-ruleset",
+        "fix-shell"
+      ],
       "status": "failing"
     },
     {
       "id": "fix-identity",
       "desc": "Implement audit-identity findings across onboarding/profile/settings/auth/launch-preflight. Same ownership rules.",
       "verify": "pnpm lint && pnpm exec tsc --noEmit; per-page before/after screenshots; blockers/majors resolved or deferred; pilot-UI list zero",
-      "files": ["src/app/app/profile", "src/app/app/settings", "src/app/app/onboarding"],
-      "deps": ["audit-identity", "design-ruleset", "fix-shell"],
+      "files": [
+        "src/app/app/profile",
+        "src/app/app/settings",
+        "src/app/app/onboarding"
+      ],
+      "deps": [
+        "audit-identity",
+        "design-ruleset",
+        "fix-shell"
+      ],
       "status": "failing"
     },
     {
       "id": "coherence",
       "desc": "Cross-page pass after all groups land: implement cross-cutting link/subpage opportunities the audits surfaced (recipe->grocery, workout->progress, dashboard tile->detail), verify visual consistency page-to-page against the ruleset, and reconcile any needs the fix nodes documented for shared components.",
       "verify": "evidence/coherence-report.md: each cross-link implemented+screenshotted or rejected with reason; consistency sweep table page x ruleset-rule; lint+tsc green",
-      "files": ["src/app/app"],
-      "deps": ["fix-nutrition", "fix-fitness", "fix-insight", "fix-identity"],
+      "files": [
+        "src/app/app"
+      ],
+      "deps": [
+        "fix-nutrition",
+        "fix-fitness",
+        "fix-insight",
+        "fix-identity"
+      ],
       "status": "failing"
     },
     {
       "id": "design-gate",
-      "desc": "FINAL GATE (fresh-context verifier): full-app screenshot QA — every app route at 1280x800 and 390x844, zero pilot-UI blockers anywhere, zero console errors; pnpm lint; pnpm exec tsc --noEmit; pnpm build (AGENTS.md UI-commit requirement); pnpm vitest run; deterministic playwright suites; graph DAG valid.",
+      "desc": "FINAL GATE (fresh-context verifier): full-app screenshot QA \u2014 every app route at 1280x800 and 390x844, zero pilot-UI blockers anywhere, zero console errors; pnpm lint; pnpm exec tsc --noEmit; pnpm build (AGENTS.md UI-commit requirement); pnpm vitest run; deterministic playwright suites; graph DAG valid.",
       "verify": "node .loop/design-intuition-graph/validate-graph.mjs && pnpm lint && pnpm build && pnpm vitest run && pnpm playwright test tests/coach.spec.ts tests/coach-rich-inline.spec.ts; screenshot matrix archived",
-      "files": ["scripts/verify-coach-engine.mjs"],
-      "deps": ["coherence", "design-ruleset"],
+      "files": [
+        "scripts/verify-coach-engine.mjs"
+      ],
+      "deps": [
+        "coherence",
+        "design-ruleset"
+      ],
       "status": "failing"
     }
   ]

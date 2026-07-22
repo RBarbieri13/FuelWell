@@ -5,3 +5,4 @@
 - Package validated: 13 nodes, DAG OK. Frontier: design-ruleset + 5 audits (read-only, parallel, shared dev server :3000).
 - 6 root subagents dispatched. Fix wave gated behind fix-shell (shared-surface owner) per coach-graph worktree lesson.
 - GRAPH CRITIQUE (start): fitness/workouts split and profile/settings split are audit questions, not presumed nodes; coherence node reconciles cross-group needs; accepted. No amendments.
+- design-ruleset: PASS (verified — 4/4 citation spot-checks, 3/3 baseline re-runs exact: hex 427, radii 32, fw-page-inner 38). C1-C5 conventions are law for fix nodes. WATCH: a stray root-level evidence/ dir + PNG appeared — some auditor may be writing to the wrong path; reconcile at collection.
