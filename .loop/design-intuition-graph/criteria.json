@@ -68,7 +68,7 @@
         "src/app/app/onboarding"
       ],
       "deps": [],
-      "status": "failing"
+      "status": "pass"
     },
     {
       "id": "fix-shell",
