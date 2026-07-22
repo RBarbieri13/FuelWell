@@ -152,7 +152,7 @@
         "iso-user",
         "audit-log"
       ],
-      "status": "failing"
+      "status": "pass"
     }
   ]
 }
