@@ -123,7 +123,7 @@
       "deps": [
         "ui-baseline"
       ],
-      "status": "failing"
+      "status": "pass"
     },
     {
       "id": "ui-final",

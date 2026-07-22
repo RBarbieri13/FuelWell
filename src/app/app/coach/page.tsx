@@ -26,6 +26,7 @@ import {
   ListTree,
   MessageCircle,
   Paperclip,
+  RotateCcw,
   Send,
   ShoppingBasket,
   Sparkles,
@@ -173,7 +174,17 @@ function latestActionDrawer(
 export default function CoachPage() {
   const { totals, targets } = useDayLog();
   const [profile, setProfile] = useState<CoachProfile>(INITIAL_PROFILE);
-  const { items, busy, sendMessage, handleCardAction, newConversation } = useCoachChat(profile);
+  const {
+    items,
+    busy,
+    sendMessage,
+    handleCardAction,
+    newConversation,
+    retryLastTurn,
+    hasEarlier,
+    loadEarlier,
+    loadingEarlier,
+  } = useCoachChat(profile);
   const [input, setInput] = useState(() => {
     if (typeof window === "undefined") return "";
     return new URLSearchParams(window.location.search).get("prompt") ?? "";
@@ -221,11 +232,20 @@ export default function CoachPage() {
     void loadProfile();
   }, []);
 
+  // Follow the newest message only. Keying on the LAST item's signature (not
+  // the whole array) keeps "show earlier" prepends from yanking the viewport
+  // to the bottom, and instant scrolling during streaming avoids restarting a
+  // smooth scroll on every token batch.
+  const lastItem = items.at(-1);
+  const lastItemSignature = lastItem
+    ? `${lastItem.id}:${lastItem.text.length}:${lastItem.artifacts.length}:${lastItem.streaming ? 1 : 0}`
+    : "";
   useEffect(() => {
     if (items.length > 0 || busy) {
-      endRef.current?.scrollIntoView({ behavior: "smooth" });
+      endRef.current?.scrollIntoView({ behavior: busy ? "auto" : "smooth" });
     }
-  }, [items, busy]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lastItemSignature, busy]);
 
   const quickPrompts = useMemo(() => {
     if (totals.calories === 0) {
@@ -462,7 +482,20 @@ export default function CoachPage() {
             </div>
             )}
 
-            {items.map((item) => {
+            {hasEarlier && (
+              <div className="flex justify-center">
+                <button
+                  type="button"
+                  onClick={() => void loadEarlier()}
+                  disabled={loadingEarlier}
+                  className="min-h-10 rounded-full bg-white/80 px-4 py-2 text-xs font-black text-primary-700 shadow-sm transition hover:bg-primary-50 disabled:opacity-60"
+                >
+                  {loadingEarlier ? "Loading earlier messages…" : "Show earlier messages"}
+                </button>
+              </div>
+            )}
+
+            {items.map((item, index) => {
               const hiddenArtifactId = showActionDrawer ? actionDrawer?.artifact?.id : undefined;
               const visibleArtifacts = hiddenArtifactId
                 ? item.artifacts.filter((artifact) => artifact.id !== hiddenArtifactId)
@@ -510,6 +543,16 @@ export default function CoachPage() {
                         prompt={item.confirm.prompt}
                         onAction={handleCardAction}
                       />
+                    )}
+                    {item.error && index === items.length - 1 && !busy && (
+                      <button
+                        type="button"
+                        onClick={retryLastTurn}
+                        className="inline-flex min-h-10 items-center gap-2 rounded-full bg-accent-100 px-4 py-2 text-xs font-black text-accent-700 transition hover:bg-accent-200"
+                      >
+                        <RotateCcw className="h-3.5 w-3.5" />
+                        Try again
+                      </button>
                     )}
                   </div>
                 )}

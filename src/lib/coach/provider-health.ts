@@ -187,3 +187,34 @@ export function getProviderHealth(
 export function providerErrorStatus(error: unknown): number | undefined {
   return errorSignals(error).status;
 }
+
+/**
+ * Human-readable degradation notice for the chat UI. Returns null when the
+ * provider is healthy (or simply unverified) so callers only surface a line
+ * when there is something actionable to say.
+ */
+export function describeProviderHealthForUser(health: {
+  state: "missing_config" | "unverified" | "healthy" | "degraded";
+  lastFailureClass: ProviderFailureClass | null;
+}): string | null {
+  if (health.state === "missing_config") {
+    return "Coach's AI provider isn't configured, so answers fall back to FuelWell's built-in guidance.";
+  }
+  if (health.state !== "degraded") return null;
+
+  switch (health.lastFailureClass) {
+    case "rate_limit":
+      return "The AI provider is rate-limiting requests right now. Wait a minute, then try again.";
+    case "timeout":
+      return "The AI provider is responding slowly right now. Try again in a moment.";
+    case "billing_credit":
+      return "The AI provider account is out of credit, so live answers are paused.";
+    case "auth":
+    case "permission_model":
+      return "The AI provider rejected FuelWell's credentials, so live answers are paused.";
+    case "missing_config":
+      return "Coach's AI provider isn't configured, so answers fall back to FuelWell's built-in guidance.";
+    default:
+      return "The AI provider is temporarily unavailable. Your data is safe — try again shortly.";
+  }
+}

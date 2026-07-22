@@ -6,8 +6,10 @@ import { hasSupabaseConfig } from "@/lib/preview-session";
  * GET /api/coach/history — replay the signed-in user's latest coach
  * conversation from Supabase (RLS-scoped). Preview/signed-out users get
  * { signedIn: false } and the client falls back to localStorage replay.
+ * Supports cursor pagination: ?before=<created_at ISO> returns the page of
+ * messages older than the cursor; hasMore/nextBefore drive "show earlier".
  */
-export async function GET() {
+export async function GET(request: Request) {
   if (!hasSupabaseConfig()) {
     return Response.json({ signedIn: false, conversationId: null, messages: [] });
   }
@@ -19,8 +21,17 @@ export async function GET() {
     return Response.json({ signedIn: false, conversationId: null, messages: [] });
   }
 
-  const { conversationId, messages } = await loadRecentMessages(supabase, user.id);
-  return Response.json({ signedIn: true, conversationId, messages });
+  const url = new URL(request.url);
+  const before = url.searchParams.get("before") ?? undefined;
+  const limitParam = Number(url.searchParams.get("limit"));
+  const limit = Number.isFinite(limitParam) && limitParam > 0 ? limitParam : undefined;
+
+  const { conversationId, messages, hasMore, nextBefore } = await loadRecentMessages(
+    supabase,
+    user.id,
+    { before, limit }
+  );
+  return Response.json({ signedIn: true, conversationId, messages, hasMore, nextBefore });
 }
 
 /**

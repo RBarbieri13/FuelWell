@@ -25,7 +25,7 @@ function makeSupabase(responses: Record<string, Resp[]>, calls: Array<{ table: s
       return queue.shift() ?? { data: null, error: null };
     };
     const c: Record<string, unknown> = {};
-    for (const m of ["select", "eq", "is", "order", "limit", "insert", "update", "upsert"]) {
+    for (const m of ["select", "eq", "is", "lt", "order", "limit", "insert", "update", "upsert"]) {
       c[m] = (...args: unknown[]) => {
         if (m === "insert" || m === "update" || m === "upsert" || m === "select") op = m === "select" ? op : m;
         calls.push({ table, op: m, args });
@@ -200,7 +200,7 @@ describe("loadRecentMessages", () => {
     const calls: Array<{ table: string; op: string; args: unknown }> = [];
     const supabase = makeSupabase({}, calls);
     const out = await loadRecentMessages(supabase, "user-1");
-    expect(out).toEqual({ conversationId: null, messages: [] });
+    expect(out).toEqual({ conversationId: null, messages: [], hasMore: false, nextBefore: null });
   });
 
   it("returns the latest conversation's messages oldest-first", async () => {
@@ -225,5 +225,70 @@ describe("loadRecentMessages", () => {
     const out = await loadRecentMessages(supabase, "user-1");
     expect(out.conversationId).toBe("conv-1");
     expect(out.messages.map((m) => m.content)).toEqual(["hi", "hi back"]);
+    expect(out.hasMore).toBe(false);
+    expect(out.nextBefore).toBeNull();
+  });
+
+  it("caps the page at limit and reports hasMore with the oldest row as cursor", async () => {
+    const calls: Array<{ table: string; op: string; args: unknown }> = [];
+    const supabase = makeSupabase(
+      {
+        "coach_conversations.select": [{ data: { id: "conv-1" }, error: null }],
+        "coach_messages.select": [
+          {
+            // limit+1 rows returned (newest-first) => one more page exists.
+            data: [
+              { role: "assistant", content_jsonb: { text: "third" }, artifacts_jsonb: [], created_at: "2026-07-22T10:03:00Z" },
+              { role: "user", content_jsonb: { text: "second" }, artifacts_jsonb: [], created_at: "2026-07-22T10:02:00Z" },
+              { role: "assistant", content_jsonb: { text: "first" }, artifacts_jsonb: [], created_at: "2026-07-22T10:01:00Z" },
+            ],
+            error: null,
+          },
+        ],
+      },
+      calls
+    );
+
+    const out = await loadRecentMessages(supabase, "user-1", { limit: 2 });
+    expect(out.messages.map((m) => m.content)).toEqual(["second", "third"]);
+    expect(out.hasMore).toBe(true);
+    expect(out.nextBefore).toBe("2026-07-22T10:02:00Z");
+    // limit+1 requested so hasMore is observed, not guessed.
+    expect(calls).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ table: "coach_messages", op: "limit", args: [3] }),
+      ])
+    );
+  });
+
+  it("filters to rows older than the before cursor", async () => {
+    const calls: Array<{ table: string; op: string; args: unknown }> = [];
+    const supabase = makeSupabase(
+      {
+        "coach_conversations.select": [{ data: { id: "conv-1" }, error: null }],
+        "coach_messages.select": [
+          {
+            data: [
+              { role: "user", content_jsonb: { text: "older" }, artifacts_jsonb: [], created_at: "2026-07-22T09:00:00Z" },
+            ],
+            error: null,
+          },
+        ],
+      },
+      calls
+    );
+
+    const out = await loadRecentMessages(supabase, "user-1", { before: "2026-07-22T10:00:00Z" });
+    expect(out.messages.map((m) => m.content)).toEqual(["older"]);
+    expect(out.hasMore).toBe(false);
+    expect(calls).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          table: "coach_messages",
+          op: "lt",
+          args: ["created_at", "2026-07-22T10:00:00Z"],
+        }),
+      ])
+    );
   });
 });

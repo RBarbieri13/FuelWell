@@ -155,6 +155,66 @@ test("Coach contains rich responses and stacks artifacts from 320px through 430p
   }
 });
 
+test("failed turn shows a readable provider state and Try again recovers", async ({ page }) => {
+  await page.route("**/api/coach/history*", (route) => {
+    if (route.request().method() !== "GET") return route.continue();
+    return route.fulfill({
+      contentType: "application/json",
+      body: JSON.stringify({ signedIn: false, conversationId: null, messages: [] }),
+    });
+  });
+  await page.route("**/api/coach/provider-health", (route) =>
+    route.fulfill({
+      contentType: "application/json",
+      body: JSON.stringify({
+        state: "degraded",
+        healthy: false,
+        configured: true,
+        lastSuccessAt: null,
+        lastFailureClass: "rate_limit",
+      }),
+    })
+  );
+  let turnCalls = 0;
+  await page.route("**/api/coach/turn", (route) => {
+    turnCalls += 1;
+    if (turnCalls === 1) {
+      return route.fulfill({
+        status: 503,
+        contentType: "application/json",
+        body: JSON.stringify({ error: "Coach is unavailable right now. Try again in a moment." }),
+      });
+    }
+    const events = [
+      { type: "text_delta", text: "Recovered fine." },
+      {
+        type: "turn_done",
+        usage: { inputTokens: 0, outputTokens: 0, costUsdCents: 0, model: "playwright-deterministic-fixture" },
+      },
+    ];
+    return route.fulfill({
+      status: 200,
+      contentType: "text/event-stream",
+      body: events.map((event) => `data: ${JSON.stringify(event)}\n\n`).join(""),
+    });
+  });
+
+  await page.goto("/app/coach");
+  await send(page, "Log a banana");
+
+  // Human-readable degradation notice instead of a dead spinner.
+  await expect(page.getByText(/rate-limiting/)).toBeVisible();
+  const retry = page.getByRole("button", { name: "Try again" });
+  await expect(retry).toBeVisible();
+  await expect(page.getByLabel("Message Coach")).toBeEnabled();
+
+  await retry.click();
+  await expect(page.getByText("Recovered fine.")).toBeVisible();
+  // The failed pair is replaced, not duplicated, and the retry affordance clears.
+  await expect(page.getByText("Log a banana")).toHaveCount(1);
+  await expect(page.getByRole("button", { name: "Try again" })).toHaveCount(0);
+});
+
 test.describe("agentic Coach", () => {
   test.describe.configure({ mode: "serial" });
   test.skip(!process.env.ANTHROPIC_API_KEY, "Live Coach E2E requires ANTHROPIC_API_KEY.");

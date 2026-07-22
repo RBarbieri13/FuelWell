@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   classifyProviderError,
   createSanitizedProviderIncident,
+  describeProviderHealthForUser,
   getProviderHealth,
   recordProviderIncident,
 } from "@/lib/coach/provider-health";
@@ -76,5 +77,33 @@ describe("provider health", () => {
 
     expect(warn).toHaveBeenCalledWith("coach provider incident", incident);
     expect(JSON.stringify(warn.mock.calls)).not.toContain("database response");
+  });
+});
+
+describe("describeProviderHealthForUser", () => {
+  it("stays silent when the provider is healthy or merely unverified", () => {
+    expect(describeProviderHealthForUser({ state: "healthy", lastFailureClass: null })).toBeNull();
+    expect(
+      describeProviderHealthForUser({ state: "unverified", lastFailureClass: null })
+    ).toBeNull();
+  });
+
+  it("explains a missing configuration", () => {
+    expect(
+      describeProviderHealthForUser({ state: "missing_config", lastFailureClass: null })
+    ).toMatch(/isn't configured/);
+  });
+
+  it.each([
+    ["rate_limit", /rate-limiting/],
+    ["timeout", /responding slowly/],
+    ["billing_credit", /out of credit/],
+    ["auth", /rejected FuelWell's credentials/],
+    ["permission_model", /rejected FuelWell's credentials/],
+    ["unavailable", /temporarily unavailable/],
+  ] as const)("maps a degraded %s failure to readable copy", (failureClass, expected) => {
+    expect(
+      describeProviderHealthForUser({ state: "degraded", lastFailureClass: failureClass })
+    ).toMatch(expected);
   });
 });

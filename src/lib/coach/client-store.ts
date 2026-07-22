@@ -43,6 +43,7 @@ import type {
   CoachTurnMessage,
 } from "@/lib/coach/types";
 import type { CoachCardAction } from "@/components/coach/artifacts/contract";
+import { describeProviderHealthForUser } from "@/lib/coach/provider-health";
 
 export type ChatItem = {
   id: string;
@@ -66,7 +67,36 @@ export type CoachProfile = {
 
 const CHAT_KEY = "fuelwell-coach-chat-v1";
 
+// Abort a turn when the SSE stream goes silent for this long. The server's
+// maxDuration is 120s; a stalled reader would otherwise leave the composer
+// disabled and the typing indicator spinning forever.
+const STREAM_IDLE_TIMEOUT_MS = 90_000;
+
 type StoredChat = { date: string; items: ChatItem[]; conversationId?: string };
+
+type HistoryResponse = {
+  signedIn: boolean;
+  conversationId: string | null;
+  messages: Array<{ role: "user" | "assistant"; content: string; artifacts: ArtifactSpec[] }>;
+  hasMore?: boolean;
+  nextBefore?: string | null;
+};
+
+/**
+ * Fetch the current provider-health state and translate it into a one-line,
+ * human-readable notice. Best-effort: any failure returns null so error
+ * bubbles never block on this.
+ */
+async function fetchProviderHealthNotice(): Promise<string | null> {
+  try {
+    const res = await fetch("/api/coach/provider-health");
+    if (!res.ok) return null;
+    const health = (await res.json()) as Parameters<typeof describeProviderHealthForUser>[0];
+    return describeProviderHealthForUser(health);
+  } catch {
+    return null;
+  }
+}
 
 let itemIdCounter = 0;
 function nextItemId() {
@@ -189,12 +219,24 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
   const [items, setItems] = useState<ChatItem[]>(initialItems ?? []);
   const [busy, setBusy] = useState(false);
   const [hydrated, setHydrated] = useState(false);
+  const [hasEarlier, setHasEarlier] = useState(false);
+  const [loadingEarlier, setLoadingEarlier] = useState(false);
+  const historyCursorRef = useRef<string | null>(null);
   const conversationIdRef = useRef<string | undefined>(initialConversationId);
   const busyRef = useRef(false);
   const queuedTurnRef = useRef<{
     userText: string;
     attachments?: CoachAttachment[];
     confirmedTool?: { name: string; input: unknown };
+  } | null>(null);
+  // The most recent turn request plus the transcript items it created, so a
+  // failed turn can be retried without duplicating the user message.
+  const lastTurnRef = useRef<{
+    userText: string;
+    attachments?: CoachAttachment[];
+    confirmedTool?: { name: string; input: unknown };
+    userItemId: string;
+    assistantItemId: string;
   } | null>(null);
 
   useEffect(() => {
@@ -208,11 +250,7 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
       try {
         const res = await fetch("/api/coach/history");
         if (res.ok) {
-          const data = (await res.json()) as {
-            signedIn: boolean;
-            conversationId: string | null;
-            messages: Array<{ role: "user" | "assistant"; content: string; artifacts: ArtifactSpec[] }>;
-          };
+          const data = (await res.json()) as HistoryResponse;
           if (!cancelled && data.signedIn && data.messages.length > 0) {
             setItems(
               data.messages.map((m) => ({
@@ -224,6 +262,8 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
               }))
             );
             if (data.conversationId) conversationIdRef.current = data.conversationId;
+            historyCursorRef.current = data.nextBefore ?? null;
+            setHasEarlier(Boolean(data.hasMore && data.nextBefore));
             hydratedFromServer = true;
           }
         }
@@ -306,7 +346,8 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
     async (
       userText: string,
       attachments?: CoachAttachment[],
-      confirmedTool?: { name: string; input: unknown }
+      confirmedTool?: { name: string; input: unknown },
+      replaceIds?: string[]
     ): Promise<void> => {
       // The snapshot must never carry the pre-hydration sample seed, so wait
       // for every store to finish its initial load (idempotent, usually
@@ -346,11 +387,25 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
         artifacts: [],
         streaming: true,
       };
-      setItems((prev) => [...prev.map((i) => ({ ...i, confirm: null })), userItem, assistantItem]);
+      lastTurnRef.current = {
+        userText,
+        attachments,
+        confirmedTool,
+        userItemId: userItem.id,
+        assistantItemId: assistantItem.id,
+      };
+      const replaced = new Set(replaceIds ?? []);
+      setItems((prev) => [
+        ...prev.filter((i) => !replaced.has(i.id)).map((i) => ({ ...i, confirm: null })),
+        userItem,
+        assistantItem,
+      ]);
 
       const history: CoachTurnMessage[] = [
         ...items
-          .filter((i) => i.text.trim().length > 0)
+          // Failed/retried turns stay out of the provider transcript: error
+          // bubbles are UI state, not conversation content.
+          .filter((i) => i.text.trim().length > 0 && !i.error && !replaced.has(i.id))
           .slice(-20)
           .map((i) => ({ role: i.role, content: i.text })),
         { role: "user" as const, content: userText, attachments },
@@ -364,10 +419,22 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
         );
       };
 
+      // Idle watchdog: if the SSE stream (or the initial response) goes
+      // silent, abort so the user gets a readable error + retry instead of a
+      // permanently disabled composer.
+      const controller = new AbortController();
+      let idleTimer: ReturnType<typeof setTimeout> | undefined;
+      const armIdleTimeout = () => {
+        clearTimeout(idleTimer);
+        idleTimer = setTimeout(() => controller.abort(), STREAM_IDLE_TIMEOUT_MS);
+      };
+
       try {
+        armIdleTimeout();
         const res = await fetch("/api/coach/turn", {
           method: "POST",
           headers: { "content-type": "application/json" },
+          signal: controller.signal,
           body: JSON.stringify({
             conversationId: conversationIdRef.current,
             messages: history,
@@ -378,10 +445,17 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
 
         if (!res.ok || !res.body) {
           const err = await res.json().catch(() => null);
+          const healthNotice = err?.budgetExceeded ? null : await fetchProviderHealthNotice();
           patchAssistant({
             streaming: false,
             error: !err?.budgetExceeded,
-            text: err?.error ?? "Coach is unavailable right now. Try again in a moment.",
+            confirm: null,
+            text: [
+              err?.error ?? "Coach is unavailable right now. Try again in a moment.",
+              healthNotice,
+            ]
+              .filter(Boolean)
+              .join("\n\n"),
           });
           busyRef.current = false;
           setBusy(false);
@@ -394,6 +468,7 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
 
         while (true) {
           const { done, value } = await reader.read();
+          armIdleTimeout();
           if (done) break;
           buffer += decoder.decode(value, { stream: true });
           const frames = buffer.split("\n\n");
@@ -433,6 +508,9 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
               case "error":
                 patchAssistant((cur) => ({
                   error: true,
+                  // A confirm chip from a failed turn must not stay actionable
+                  // next to "try again" copy.
+                  confirm: null,
                   text:
                     cur.text ||
                     event.message ||
@@ -443,7 +521,24 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
           }
         }
       } catch {
-        patchAssistant({ streaming: false, error: true, text: "Connection dropped. Send that again." });
+        const timedOut = controller.signal.aborted;
+        const healthNotice = await fetchProviderHealthNotice();
+        patchAssistant((cur) => ({
+          streaming: false,
+          error: true,
+          confirm: null,
+          text: [
+            cur.text ||
+              (timedOut
+                ? "Coach took too long to respond, so this turn was stopped."
+                : "Connection dropped before Coach could finish."),
+            healthNotice,
+          ]
+            .filter(Boolean)
+            .join("\n\n"),
+        }));
+      } finally {
+        clearTimeout(idleTimer);
       }
 
       patchAssistant({ streaming: false });
@@ -452,6 +547,53 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
     },
     [items, buildSnapshot]
   );
+
+  /**
+   * Re-run the last turn after a failure. Removes the failed user/assistant
+   * pair from the transcript so the retried message doesn't duplicate.
+   */
+  const retryLastTurn = useCallback(() => {
+    const last = lastTurnRef.current;
+    if (!last || busyRef.current) return;
+    void runTurn(last.userText, last.attachments, last.confirmedTool, [
+      last.userItemId,
+      last.assistantItemId,
+    ]);
+  }, [runTurn]);
+
+  /**
+   * Load the previous page of the signed-in conversation and prepend it.
+   * No-op for preview users (their whole replay is already local).
+   */
+  const loadEarlier = useCallback(async () => {
+    const cursor = historyCursorRef.current;
+    if (!cursor || loadingEarlier) return;
+    setLoadingEarlier(true);
+    try {
+      const res = await fetch(`/api/coach/history?before=${encodeURIComponent(cursor)}`);
+      if (!res.ok) return;
+      const data = (await res.json()) as HistoryResponse;
+      if (!data.signedIn) return;
+      if (data.messages.length > 0) {
+        setItems((prev) => [
+          ...data.messages.map((m) => ({
+            id: nextItemId(),
+            role: m.role,
+            text: m.content,
+            artifacts: m.artifacts ?? [],
+            streaming: false,
+          })),
+          ...prev,
+        ]);
+      }
+      historyCursorRef.current = data.nextBefore ?? null;
+      setHasEarlier(Boolean(data.hasMore && data.nextBefore));
+    } catch {
+      // keep the button; the user can try again
+    } finally {
+      setLoadingEarlier(false);
+    }
+  }, [loadingEarlier]);
 
   // Drain a queued mid-stream tap once the current turn settles.
   useEffect(() => {
@@ -500,6 +642,9 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
 
   const newConversation = useCallback(() => {
     conversationIdRef.current = undefined;
+    lastTurnRef.current = null;
+    historyCursorRef.current = null;
+    setHasEarlier(false);
     setItems([]);
     try {
       window.localStorage.removeItem(CHAT_KEY);
@@ -511,5 +656,15 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
     void fetch("/api/coach/history", { method: "DELETE" }).catch(() => {});
   }, []);
 
-  return { items, busy, sendMessage, handleCardAction, newConversation };
+  return {
+    items,
+    busy,
+    sendMessage,
+    handleCardAction,
+    newConversation,
+    retryLastTurn,
+    hasEarlier,
+    loadEarlier,
+    loadingEarlier,
+  };
 }

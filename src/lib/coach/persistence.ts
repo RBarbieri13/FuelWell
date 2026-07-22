@@ -76,11 +76,15 @@ export async function saveMessages(
 
 export async function loadRecentMessages(
   supabase: SupabaseClient,
-  userId: string
+  userId: string,
+  options?: { limit?: number; before?: string }
 ): Promise<{
   conversationId: string | null;
   messages: Array<{ role: "user" | "assistant"; content: string; artifacts: ArtifactSpec[] }>;
+  hasMore: boolean;
+  nextBefore: string | null;
 }> {
+  const limit = Math.min(Math.max(Math.trunc(options?.limit ?? 30), 1), 100);
   const { data: convo } = await supabase
     .from("coach_conversations")
     .select("id")
@@ -89,18 +93,25 @@ export async function loadRecentMessages(
     .order("started_at", { ascending: false })
     .limit(1)
     .maybeSingle();
-  if (!convo) return { conversationId: null, messages: [] };
+  if (!convo) return { conversationId: null, messages: [], hasMore: false, nextBefore: null };
 
-  const { data: rows } = await supabase
+  let query = supabase
     .from("coach_messages")
-    .select("role, content_jsonb, artifacts_jsonb")
-    .eq("conversation_id", convo.id)
-    .order("created_at", { ascending: false })
-    .limit(30);
+    .select("role, content_jsonb, artifacts_jsonb, created_at")
+    .eq("conversation_id", convo.id);
+  if (options?.before) query = query.lt("created_at", options.before);
+  // Fetch one extra row so hasMore reflects reality, not a guess.
+  const { data: rows } = await query.order("created_at", { ascending: false }).limit(limit + 1);
+
+  const hasMore = (rows ?? []).length > limit;
+  const page = (rows ?? []).slice(0, limit);
+  const nextBefore = hasMore ? ((page[page.length - 1]?.created_at as string | undefined) ?? null) : null;
 
   return {
     conversationId: convo.id,
-    messages: (rows ?? [])
+    hasMore,
+    nextBefore,
+    messages: page
       .reverse()
       .map((r) => ({
         role: r.role as "user" | "assistant",

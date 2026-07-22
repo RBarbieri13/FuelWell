@@ -79,7 +79,7 @@ export function WeightTrendSpark({ artifact }: ArtifactCardProps<WeightTrendArti
         <polyline
           points={points}
           fill="none"
-          stroke="#1eae84"
+          stroke="var(--color-primary-500)"
           strokeWidth="2"
           strokeLinejoin="round"
           strokeLinecap="round"
