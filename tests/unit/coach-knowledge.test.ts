@@ -81,6 +81,44 @@ describe("coach knowledge", () => {
     expect(endurancePrompt).not.toEqual(strengthPrompt);
   });
 
+  it("covers recipe and grocery domains in built and retrieved knowledge", () => {
+    const snapshot = makeSnapshot({
+      preferences: {
+        diets: [],
+        allergies: [],
+        likes: ["greek-yogurt-power-bowl"],
+        dislikes: [],
+        units: "metric",
+      },
+    });
+    const knowledge = buildCoachKnowledgeBase("user-1", snapshot);
+
+    expect(knowledge.groceryFacts?.join(" ")).toContain("Grocery list has 3 items; 2 still needed.");
+    expect(knowledge.groceryFacts?.join(" ")).toContain("Eggs");
+    expect(knowledge.recipeFacts?.join(" ")).toContain("Greek yogurt power bowl");
+
+    const prompt = formatKnowledgeForPrompt(
+      retrieveCoachKnowledge(knowledge, "What groceries do I still need for a recipe?")
+    );
+    expect(prompt).toContain("Grocery list state");
+    expect(prompt).toContain("Eggs");
+    expect(prompt).toContain("Recipe engagement");
+    expect(prompt).toContain("Greek yogurt power bowl");
+  });
+
+  it("retrieves recipe and grocery facts from legacy knowledge rows without those fields", () => {
+    const legacy = buildCoachKnowledgeBase("user-1", makeSnapshot());
+    delete legacy.recipeFacts;
+    delete legacy.groceryFacts;
+
+    const merged = mergeCoachKnowledge(legacy, buildCoachKnowledgeBase("user-1", makeSnapshot()));
+    expect(merged.groceryFacts?.length).toBeGreaterThan(0);
+
+    const retrieved = retrieveCoachKnowledge(legacy, "Plan my meals.");
+    expect(retrieved.recipeFacts).toEqual([]);
+    expect(retrieved.groceryFacts).toEqual([]);
+  });
+
   it("does not merge knowledge across users", () => {
     const a = buildCoachKnowledgeBase("user-a", makeSnapshot({ profile: { displayName: "A", goal: "lose" } }));
     const b = buildCoachKnowledgeBase("user-b", makeSnapshot({ profile: { displayName: "B", goal: "gain" } }));

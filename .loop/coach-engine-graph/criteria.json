@@ -10,7 +10,7 @@
         "tests/unit/coach-knowledge.test.ts"
       ],
       "deps": [],
-      "status": "failing"
+      "status": "pass"
     },
     {
       "id": "iso-user",

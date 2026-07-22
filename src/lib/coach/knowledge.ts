@@ -1,4 +1,5 @@
 import { formatMealType, remaining, sumMealItems } from "@/lib/fuelwell-data";
+import { RECIPES } from "@/lib/recipes-data";
 import type { CoachDaySnapshot } from "@/lib/coach/types";
 
 export type CoachKnowledgeBase = {
@@ -11,6 +12,9 @@ export type CoachKnowledgeBase = {
   bodyFacts: string[];
   progressFacts: string[];
   inferredPatterns: string[];
+  // Optional: absent on knowledge rows persisted before these domains existed.
+  recipeFacts?: string[];
+  groceryFacts?: string[];
 };
 
 export type CoachProfileKnowledgeInput = {
@@ -93,6 +97,13 @@ export function buildCoachKnowledgeFromProfile(
     progressFacts: unique([
       "Coach knowledge was bootstrapped from the user's profile and onboarding settings.",
     ]),
+    recipeFacts: unique([
+      likes.length ? `Liked foods and recipes: ${likes.join(", ")}.` : "",
+      dislikes.length ? `Disliked foods and recipes: ${dislikes.join(", ")}.` : "",
+    ]),
+    groceryFacts: unique([
+      typeof onboarding.groceryBudget === "string" ? `Grocery budget preference is ${onboarding.groceryBudget}.` : "",
+    ]),
     inferredPatterns: [
       "Profile-derived coach knowledge should be refined from logged meals, workouts, body logs, app behavior, and explicit user corrections.",
     ],
@@ -103,6 +114,7 @@ export function buildCoachKnowledgeBase(userId: string, snapshot: CoachDaySnapsh
   const meals = snapshot.meals ?? [];
   const workouts = snapshot.workouts ?? [];
   const bodyLog = snapshot.bodyLog ?? [];
+  const grocery = snapshot.grocery ?? [];
   const preferences = {
     ...snapshot.preferences,
     diets: snapshot.preferences?.diets ?? [],
@@ -124,6 +136,9 @@ export function buildCoachKnowledgeBase(userId: string, snapshot: CoachDaySnapsh
   );
 
   const latestBody = bodyLog.at(-1);
+  const neededGrocery = grocery.filter((item) => !item.checked);
+  const likedRecipes = RECIPES.filter((recipe) => preferences.likes.includes(recipe.id));
+  const dislikedRecipes = RECIPES.filter((recipe) => preferences.dislikes.includes(recipe.id));
   const remainingCalories = remaining(totals.calories, targets.calories);
   const remainingProtein = remaining(totals.protein, targets.protein);
 
@@ -161,7 +176,7 @@ export function buildCoachKnowledgeBase(userId: string, snapshot: CoachDaySnapsh
       latestBody?.waterMl ? `Latest body log water is ${latestBody.waterMl} ml.` : "",
     ]),
     progressFacts: unique([
-      `${meals.length} meals and ${workouts.length} workouts are visible in today's app state.`,
+      `${meals.length} meals, ${workouts.length} workouts, ${grocery.length} grocery items, and ${bodyLog.length} body log entries are visible in today's app state.`,
       `Protein progress is about ${proteinProgress}% of target.`,
       snapshot.goalPlan ? `Active goal plan is ${snapshot.goalPlan.primaryGoal} with ${snapshot.goalPlan.trainingPriority} priority.` : "",
       snapshot.integration ? `${snapshot.integration.sourceLabel} integration status is ${snapshot.integration.status}.` : "",
@@ -171,6 +186,25 @@ export function buildCoachKnowledgeBase(userId: string, snapshot: CoachDaySnapsh
       proteinProgress < 50 ? "Protein is behind pace today." : "Protein is on track or ahead today.",
       workouts.length === 0 ? "No workout has been logged today." : "",
       preferences.allergies.length ? "Food recommendations must filter allergy conflicts first." : "",
+    ]),
+    recipeFacts: unique([
+      likedRecipes.length ? `Liked recipes: ${likedRecipes.slice(0, 12).map((recipe) => recipe.title).join(", ")}.` : "",
+      dislikedRecipes.length
+        ? `Disliked recipes: ${dislikedRecipes.slice(0, 12).map((recipe) => recipe.title).join(", ")}.`
+        : "",
+      preferences.diets.length ? `Recipe suggestions must respect diet filters: ${preferences.diets.join(", ")}.` : "",
+      preferences.allergies.length
+        ? `Recipe suggestions must exclude allergens: ${preferences.allergies.join(", ")}.`
+        : "",
+    ]),
+    groceryFacts: unique([
+      `Grocery list has ${grocery.length} items; ${neededGrocery.length} still needed.`,
+      neededGrocery.length
+        ? `Needed grocery items: ${neededGrocery
+            .slice(0, 12)
+            .map((item) => (item.quantity ? `${item.name} (${item.quantity})` : item.name))
+            .join(", ")}.`
+        : "",
     ]),
   };
 }
@@ -190,6 +224,8 @@ export function mergeCoachKnowledge(
     bodyFacts: unique([...existing.bodyFacts, ...next.bodyFacts]).slice(-60),
     progressFacts: unique([...existing.progressFacts, ...next.progressFacts]).slice(-60),
     inferredPatterns: unique([...existing.inferredPatterns, ...next.inferredPatterns]).slice(-60),
+    recipeFacts: unique([...(existing.recipeFacts ?? []), ...(next.recipeFacts ?? [])]).slice(-40),
+    groceryFacts: unique([...(existing.groceryFacts ?? []), ...(next.groceryFacts ?? [])]).slice(-40),
   };
 }
 
@@ -198,12 +234,20 @@ export function retrieveCoachKnowledge(
   userText: string,
 ): Pick<
   CoachKnowledgeBase,
-  "profileFacts" | "nutritionFacts" | "workoutFacts" | "preferenceFacts" | "bodyFacts" | "progressFacts" | "inferredPatterns"
-> {
+  | "profileFacts"
+  | "nutritionFacts"
+  | "workoutFacts"
+  | "preferenceFacts"
+  | "bodyFacts"
+  | "progressFacts"
+  | "inferredPatterns"
+> & { recipeFacts: string[]; groceryFacts: string[] } {
   const text = userText.toLowerCase();
   const wantsNutrition = /meal|food|eat|calorie|protein|carb|fat|recipe|grocery|menu|restaurant/.test(text);
   const wantsWorkout = /workout|exercise|run|walk|lift|training|fitness|move|cardio|strength/.test(text);
   const wantsBody = /weight|body|composition|goal|progress|scale|fat|muscle/.test(text);
+  const recipeFacts = knowledge.recipeFacts ?? [];
+  const groceryFacts = knowledge.groceryFacts ?? [];
 
   return {
     profileFacts: knowledge.profileFacts.slice(-10),
@@ -213,6 +257,8 @@ export function retrieveCoachKnowledge(
     bodyFacts: wantsBody ? knowledge.bodyFacts.slice(-10) : knowledge.bodyFacts.slice(-4),
     progressFacts: knowledge.progressFacts.slice(-10),
     inferredPatterns: knowledge.inferredPatterns.slice(-10),
+    recipeFacts: wantsNutrition ? recipeFacts.slice(-10) : recipeFacts.slice(-4),
+    groceryFacts: wantsNutrition ? groceryFacts.slice(-10) : groceryFacts.slice(-4),
   };
 }
 
@@ -226,6 +272,8 @@ export function formatKnowledgeForPrompt(
     "Retrieved user-specific coach knowledge:",
     section("Confirmed profile facts", knowledge.profileFacts),
     section("Nutrition history and current state", knowledge.nutritionFacts),
+    section("Recipe engagement", knowledge.recipeFacts),
+    section("Grocery list state", knowledge.groceryFacts),
     section("Workout history and current state", knowledge.workoutFacts),
     section("Preferences and restrictions", knowledge.preferenceFacts),
     section("Body composition and body logs", knowledge.bodyFacts),
