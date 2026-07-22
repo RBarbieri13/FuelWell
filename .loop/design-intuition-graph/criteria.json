@@ -33,7 +33,7 @@
         "src/app/app/grocery-list"
       ],
       "deps": [],
-      "status": "failing"
+      "status": "pass"
     },
     {
       "id": "audit-fitness",
