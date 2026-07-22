@@ -19,6 +19,11 @@ function LoginForm() {
   const [loading, setLoading] = useState(false);
 
   const redirectTo = searchParams.get("redirect") || "/app/dashboard";
+  // Only genuine credential mistakes belong on the password field; outages,
+  // rate limits, and other server errors render at the form level instead.
+  const isCredentialError = Boolean(
+    error && /credential|password|email/i.test(error)
+  );
   const authError =
     searchParams.get("error") === "auth_failed"
       ? "Sign-in could not be completed. Please try again."
@@ -87,6 +92,14 @@ function LoginForm() {
             </div>
 
             <form onSubmit={handleEmailLogin} className="space-y-4">
+              {error && !isCredentialError && (
+                <p
+                  className="rounded-[1rem] bg-red-50 px-3.5 py-2.5 text-sm font-bold text-red-600"
+                  role="alert"
+                >
+                  {error}
+                </p>
+              )}
               <Input
                 label="Email"
                 type="email"
@@ -105,7 +118,7 @@ function LoginForm() {
                   required
                   placeholder="Your password"
                   autoComplete="current-password"
-                  error={error || undefined}
+                  error={isCredentialError ? error || undefined : undefined}
                 />
                 <div className="mt-1.5 text-right">
                   <Link

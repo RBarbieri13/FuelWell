@@ -53,7 +53,7 @@ export default function ForgotPasswordPage() {
         sent ? undefined : (
           <Link
             href="/login"
-            className="inline-flex items-center gap-1.5 text-primary-700 transition hover:text-primary-800"
+            className="-mx-1 -my-2.5 inline-flex items-center gap-1.5 px-1 py-2.5 text-primary-700 transition hover:text-primary-800"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
             Back to login

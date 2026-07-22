@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { headers } from "next/headers";
+import { notFound } from "next/navigation";
 import {
   AlertTriangle,
   ArrowRight,
@@ -15,6 +17,7 @@ import {
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { getLaunchPreflight, type PreflightCheck, type PreflightState } from "@/lib/launch-preflight";
+import { isPreviewHost } from "@/lib/preview-session";
 import { cn } from "@/lib/utils/cn";
 
 const stateConfig: Record<
@@ -62,7 +65,12 @@ function CheckCard({ check }: { check: PreflightCheck }) {
   );
 }
 
-export default function LaunchPreflightPage() {
+export default async function LaunchPreflightPage() {
+  // Internal release tooling: only preview contexts (localhost or deployments
+  // that opt in with FUELWELL_PREVIEW_MODE) may render it; production users 404.
+  const host = (await headers()).get("host");
+  if (!isPreviewHost(host)) notFound();
+
   const preflight = getLaunchPreflight();
   const productionFailures = preflight.checks.filter(
     (check) => check.requiredForProduction && check.state !== "pass"
@@ -131,7 +139,7 @@ export default function LaunchPreflightPage() {
               <div>
                 <h2 className="text-lg font-black text-lemon-800">Production launch is intentionally blocked</h2>
                 <p className="mt-1 text-sm font-semibold leading-6 text-lemon-800/80">
-                  {productionFailures.length} production gate{productionFailures.length === 1 ? "" : "s"} still need proof or setup. Preview review can continue if preview gates are green.
+                  {productionFailures.length} production gate{productionFailures.length === 1 ? " still needs" : "s still need"} proof or setup. Preview review can continue if preview gates are green.
                 </p>
               </div>
             </div>

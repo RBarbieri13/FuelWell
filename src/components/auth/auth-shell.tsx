@@ -1,6 +1,10 @@
+"use client";
+
+import { useSyncExternalStore } from "react";
 import Link from "next/link";
 import { ArrowRight, BadgeCheck, Leaf, Sparkles, type LucideIcon } from "lucide-react";
 import { Logo } from "@/components/ui/logo";
+import { isPreviewHost } from "@/lib/preview-session";
 import { cn } from "@/lib/utils/cn";
 
 interface AuthShellProps {
@@ -24,6 +28,16 @@ export function AuthShell({
   footer,
   className,
 }: AuthShellProps) {
+  // Preview jargon stays off the production front door: the card only renders
+  // once the client confirms a genuine preview context (same isPreviewHost
+  // signal the app shell uses — localhost or FUELWELL_PREVIEW_MODE deploys).
+  // Server snapshot is false so production HTML never contains the card.
+  const showPreviewCard = useSyncExternalStore(
+    subscribeNever,
+    () => isPreviewHost(window.location.host),
+    () => false
+  );
+
   return (
     <main className="fw-app-surface min-h-screen">
       <div className="grid min-h-screen lg:grid-cols-[0.88fr_1fr]">
@@ -65,21 +79,23 @@ export function AuthShell({
             ))}
           </div>
 
-          <div className="relative z-10 rounded-[1.75rem] border border-white/10 bg-white/[0.08] p-5">
-            <div className="flex items-center justify-between gap-4">
-              <div>
-                <p className="text-xs font-black uppercase tracking-[0.16em] text-primary-100">
-                  Preview mode
-                </p>
-                <p className="mt-1 text-lg font-black text-white">
-                  Setup takes a few minutes
-                </p>
+          {showPreviewCard && (
+            <div className="relative z-10 rounded-[1.75rem] border border-white/10 bg-white/[0.08] p-5">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <p className="text-xs font-black uppercase tracking-[0.16em] text-primary-100">
+                    Preview mode
+                  </p>
+                  <p className="mt-1 text-lg font-black text-white">
+                    Setup takes a few minutes
+                  </p>
+                </div>
+                <span className="flex h-12 w-12 items-center justify-center rounded-[1rem] bg-primary-400 text-primary-950">
+                  <BadgeCheck className="h-6 w-6" />
+                </span>
               </div>
-              <span className="flex h-12 w-12 items-center justify-center rounded-[1rem] bg-primary-400 text-primary-950">
-                <BadgeCheck className="h-6 w-6" />
-              </span>
             </div>
-          </div>
+          )}
         </aside>
 
         <section className="flex min-h-screen items-center justify-center px-4 py-8 sm:px-8 lg:py-12">
@@ -117,6 +133,11 @@ export function AuthShell({
   );
 }
 
+// The preview-host signal never changes within a page lifetime.
+function subscribeNever() {
+  return () => {};
+}
+
 export function AuthLink({
   href,
   children,
@@ -127,7 +148,7 @@ export function AuthLink({
   return (
     <Link
       href={href}
-      className="inline-flex items-center gap-1 text-primary-700 transition hover:text-primary-800"
+      className="-mx-1 -my-2.5 inline-flex items-center gap-1 px-1 py-2.5 text-primary-700 transition hover:text-primary-800"
     >
       {children}
       <ArrowRight className="h-3.5 w-3.5" />

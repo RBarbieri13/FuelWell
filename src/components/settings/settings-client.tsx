@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils/cn";
 import {
   DIET_FILTERS,
   clearPreferencesForUser,
+  getPreferences,
   mergePreferences,
   usePreferences,
 } from "@/lib/use-preferences";
@@ -63,6 +64,7 @@ import {
   normalizeDisplayName,
   normalizeGoalTimeline,
   splitHeightInches,
+  toggleAllergySelection,
   updateProfileAndVerify,
   type ProfileUpdateClient,
 } from "@/lib/profile-preferences";
@@ -129,6 +131,19 @@ const DEFAULT_PROFILE_INPUTS: ProfileInputs = {
   mealsPerDay: 3,
   experienceLevel: "intermediate",
 };
+
+// Mirrors the onboarding allergy step so both surfaces speak the same language.
+const ALLERGY_CHIP_OPTIONS = [
+  "None",
+  "Dairy",
+  "Gluten",
+  "Nuts",
+  "Soy",
+  "Eggs",
+  "Shellfish",
+  "Fish",
+  "Wheat",
+];
 
 const CHECK_IN_OPTIONS = [
   { value: "event_driven", label: "Only when useful" },
@@ -250,8 +265,16 @@ function lbToKg(value: number) {
   return Math.round((value / 2.20462) * 10) / 10;
 }
 
+function kgToLb(value: number) {
+  return Math.round(value * 2.20462 * 10) / 10;
+}
+
 function inchesToCm(value: number) {
   return Math.round(value * 2.54);
+}
+
+function cmToInches(value: number) {
+  return Math.round((value / 2.54) * 10) / 10;
 }
 
 function parseCommaList(value: string) {
@@ -353,6 +376,26 @@ export function SettingsClient({
       if (isUnitSystem(savedUnits)) setUnits(savedUnits);
     }
   }, [isPreview, setUnits]);
+
+  // First-load reconciliation: the Preferences card reads the local preference
+  // store while the health profile shows the saved profile. Saving already
+  // merges the two (see persistProfileInputs); do the same on initial read so
+  // "No allergies recorded" never renders beside a profile restriction.
+  useEffect(() => {
+    const savedPreview = isPreview
+      ? readPreviewStorage<Partial<ProfileInputs>>(PREVIEW_PROFILE_INPUTS_KEY)?.allergies
+      : undefined;
+    const source =
+      typeof savedPreview === "string" ? savedPreview : initialProfileInputs?.allergies ?? "";
+    const profileAllergies = normalizeAllergies(parseCommaList(source));
+    if (profileAllergies.length === 0) return;
+
+    const storedAllergies = getPreferences().allergies;
+    const merged = normalizeAllergies([...storedAllergies, ...profileAllergies]);
+    if (merged.length !== storedAllergies.length) {
+      mergePreferences({ allergies: merged });
+    }
+  }, [isPreview, initialProfileInputs]);
 
   // Known filters get their display label; free-form diets set via Coach
   // (e.g. "vegetarian") render as-is so they don't silently disappear.
@@ -546,6 +589,27 @@ export function SettingsClient({
           <div>
             <h1 className="fw-heading text-2xl md:text-4xl">Settings</h1>
             <p className="fw-muted mt-1 text-sm md:text-base">Account, preferences, integrations, and data controls</p>
+            <nav
+              aria-label="Settings sections"
+              className="-mx-1 mt-3 flex gap-2 overflow-x-auto px-1 pb-1 md:hidden"
+            >
+              {[
+                ["#account", "Account"],
+                ["#preferences", "Preferences"],
+                ["#health-profile", "Health"],
+                ["#coach-preferences", "Intake"],
+                ["#data", "Data"],
+                ["#session", "Session"],
+              ].map(([href, label]) => (
+                <a
+                  key={href}
+                  href={href}
+                  className="inline-flex min-h-11 shrink-0 items-center rounded-full border border-primary-100 bg-white/80 px-3.5 py-1.5 text-xs font-black text-primary-700 transition hover:bg-primary-50"
+                >
+                  {label}
+                </a>
+              ))}
+            </nav>
           </div>
           <Badge className="px-4 py-2 text-sm">v{appVersion}</Badge>
         </div>
@@ -658,7 +722,7 @@ export function SettingsClient({
             )}
           </Section>
 
-          <Section title="Preferences">
+          <Section id="preferences" title="Preferences">
             <Card className="space-y-5 px-6 py-6">
               <div>
                 <div className="mb-3 flex items-center gap-2">
@@ -754,43 +818,63 @@ export function SettingsClient({
                 label="Weight"
                 detail="Used for energy targets and workout burn estimates."
               >
-                <NumberField
-                  label="Weight in pounds"
-                  hideLabel
-                  suffix="lb"
-                  value={profileInputs.weightLb}
-                  onChange={(value) => updateProfileInput("weightLb", value)}
-                />
+                {units === "metric" ? (
+                  <NumberField
+                    label="Weight in kilograms"
+                    hideLabel
+                    suffix="kg"
+                    value={lbToKg(profileInputs.weightLb)}
+                    onChange={(value) => updateProfileInput("weightLb", kgToLb(value))}
+                  />
+                ) : (
+                  <NumberField
+                    label="Weight in pounds"
+                    hideLabel
+                    suffix="lb"
+                    value={profileInputs.weightLb}
+                    onChange={(value) => updateProfileInput("weightLb", value)}
+                  />
+                )}
               </HealthProfileRow>
               <HealthProfileRow
                 icon={Ruler}
                 label="Height"
                 detail="Used with weight, age, activity, and goal to calculate targets."
               >
-                <div className="grid grid-cols-2 gap-2">
+                {units === "metric" ? (
                   <NumberField
-                    label="Feet"
-                    suffix="ft"
-                    value={splitHeightInches(profileInputs.heightIn).feet || 0}
-                    onChange={(value) =>
-                      updateProfileInput(
-                        "heightIn",
-                        Number(combineHeightParts(value, splitHeightInches(profileInputs.heightIn).inches))
-                      )
-                    }
+                    label="Height in centimeters"
+                    hideLabel
+                    suffix="cm"
+                    value={inchesToCm(profileInputs.heightIn)}
+                    onChange={(value) => updateProfileInput("heightIn", cmToInches(value))}
                   />
-                  <NumberField
-                    label="Inches"
-                    suffix="in"
-                    value={Number(splitHeightInches(profileInputs.heightIn).inches)}
-                    onChange={(value) =>
-                      updateProfileInput(
-                        "heightIn",
-                        Number(combineHeightParts(splitHeightInches(profileInputs.heightIn).feet, value))
-                      )
-                    }
-                  />
-                </div>
+                ) : (
+                  <div className="grid grid-cols-2 gap-2">
+                    <NumberField
+                      label="Feet"
+                      suffix="ft"
+                      value={splitHeightInches(profileInputs.heightIn).feet || 0}
+                      onChange={(value) =>
+                        updateProfileInput(
+                          "heightIn",
+                          Number(combineHeightParts(value, splitHeightInches(profileInputs.heightIn).inches))
+                        )
+                      }
+                    />
+                    <NumberField
+                      label="Inches"
+                      suffix="in"
+                      value={Number(splitHeightInches(profileInputs.heightIn).inches)}
+                      onChange={(value) =>
+                        updateProfileInput(
+                          "heightIn",
+                          Number(combineHeightParts(splitHeightInches(profileInputs.heightIn).feet, value))
+                        )
+                      }
+                    />
+                  </div>
+                )}
               </HealthProfileRow>
               <HealthProfileRow
                 icon={Target}
@@ -814,24 +898,47 @@ export function SettingsClient({
                 label="Restrictions"
                 detail="Allergies or foods FuelWell should avoid in suggestions."
               >
-                <TextField
-                  label="Food restrictions and allergies"
-                  hideLabel
-                  value={profileInputs.allergies}
-                  onChange={(value) => updateProfileInput("allergies", value)}
-                  placeholder="Separate restrictions with commas"
-                />
-                <label className="mt-2 flex min-h-11 cursor-pointer items-center gap-2 text-sm font-bold text-neutral-600">
-                  <input
-                    type="checkbox"
-                    checked={normalizeAllergies(parseCommaList(profileInputs.allergies)).length === 0}
-                    onChange={(event) => {
-                      if (event.target.checked) updateProfileInput("allergies", "");
-                    }}
-                    className="h-4 w-4 accent-primary-600"
+                <div className="flex flex-wrap gap-2">
+                  {ALLERGY_CHIP_OPTIONS.map((option) => {
+                    const currentList = normalizeAllergies(parseCommaList(profileInputs.allergies));
+                    const selected =
+                      option === "None"
+                        ? currentList.length === 0
+                        : currentList.some(
+                            (allergy) => allergy.toLocaleLowerCase() === option.toLocaleLowerCase()
+                          );
+                    return (
+                      <button
+                        key={option}
+                        type="button"
+                        aria-pressed={selected}
+                        onClick={() =>
+                          updateProfileInput(
+                            "allergies",
+                            toggleAllergySelection(currentList, option).join(", ")
+                          )
+                        }
+                        className={cn(
+                          "min-h-11 rounded-full px-3.5 py-2 text-xs font-black transition md:min-h-0",
+                          selected
+                            ? "bg-primary-600 text-white shadow-sm shadow-primary-900/10"
+                            : "bg-white text-neutral-500 hover:bg-primary-50 hover:text-primary-700"
+                        )}
+                      >
+                        {option}
+                      </button>
+                    );
+                  })}
+                </div>
+                <div className="mt-2">
+                  <TextField
+                    label="Food restrictions and allergies"
+                    hideLabel
+                    value={profileInputs.allergies}
+                    onChange={(value) => updateProfileInput("allergies", value)}
+                    placeholder="Add others, separated by commas"
                   />
-                  None
-                </label>
+                </div>
               </HealthProfileRow>
               <HealthProfileRow
                 icon={Activity}
@@ -925,6 +1032,15 @@ export function SettingsClient({
                 </p>
               </div>
             </div>
+
+            <Button
+              onClick={saveHealthProfile}
+              loading={savingHealth}
+              className="w-full rounded-full md:hidden"
+            >
+              <Save className="h-4 w-4" />
+              {savedHealth ? "Saved" : "Save health profile"}
+            </Button>
           </Card>
         </Section>
 
@@ -957,7 +1073,7 @@ export function SettingsClient({
                 href="/app/onboarding"
                 className="inline-flex min-h-11 items-center self-start rounded-full bg-white px-3 py-1.5 text-xs font-black text-primary-700 transition hover:bg-primary-100 sm:self-center md:min-h-0"
               >
-                Re-run intake
+                Retake the setup quiz
               </Link>
             </div>
             <div className="grid gap-4 lg:grid-cols-2">
@@ -970,74 +1086,61 @@ export function SettingsClient({
                 />
               ))}
             </div>
+
+            <Button
+              onClick={saveIntakePreferences}
+              loading={savingIntake}
+              className="w-full rounded-full md:hidden"
+            >
+              <Save className="h-4 w-4" />
+              {savedIntake ? "Saved" : "Save changes"}
+            </Button>
           </Card>
         </Section>
 
-        <section className="grid gap-4 xl:grid-cols-[1fr_1fr]">
-          <Section title="Notifications">
-            <ActionCard
-              icon={Bell}
-              title="Coach nudge preference"
-              detail={`Current cadence: ${formatOptionLabel(CHECK_IN_OPTIONS, intakePrefs.checkInPreference)}. This saves preference context only.`}
-            >
-              <Badge variant={savedIntake ? "success" : undefined}>
-                {savedIntake ? "Saved" : "Editable"}
-              </Badge>
-            </ActionCard>
-          </Section>
+        <Section title="Notifications">
+          <ActionCard
+            icon={Bell}
+            title="Coach nudge preference"
+            detail={`Current cadence: ${formatOptionLabel(CHECK_IN_OPTIONS, intakePrefs.checkInPreference)}. This saves preference context only.`}
+          >
+            <Badge variant={savedIntake ? "success" : undefined}>
+              {savedIntake ? "Saved" : "Editable"}
+            </Badge>
+          </ActionCard>
+        </Section>
 
-          <Section id="data" title="Data">
-            <Card className="space-y-4">
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex items-start gap-3">
-                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[1rem] bg-primary-100 text-primary-700">
-                    <Download className="h-4 w-4" />
-                  </span>
-                  <div>
-                    <p className="text-base font-black text-neutral-900">Export your data</p>
-                    <p className="mt-1 text-sm font-semibold leading-6 text-neutral-500">
-                      Download your logs and preferences as a file.
-                    </p>
-                  </div>
-                </div>
+        <Section title="Coming with public release">
+          <div className="grid gap-4 xl:grid-cols-2">
+            <div id="data" className="min-w-0 scroll-mt-24">
+              <ActionCard icon={Download} title="Export your data" detail="Download your logs and preferences as a file.">
                 <Badge>Coming soon</Badge>
-              </div>
-            </Card>
-          </Section>
-        </section>
-
-        <section className="grid gap-4 xl:grid-cols-2">
-          <Section id="privacy" title="Privacy">
-            <ActionCard icon={Shield} title="Privacy controls" detail="Review what Coach can remember, what files are attached, and what data is used for guidance.">
-              <Badge>Preview</Badge>
-            </ActionCard>
-          </Section>
-
-          <Section id="subscription" title="Subscription">
-            <ActionCard icon={CreditCard} title="Plan and billing" detail="Manage your FuelWell plan, invoices, and subscription status.">
-              <Badge>Coming soon</Badge>
-            </ActionCard>
-          </Section>
-
-          <Section id="support" title="Support">
-            <ActionCard icon={HelpCircle} title="Get help" detail="A support contact and coach-data review path arrive with the public release.">
-              <Badge>Coming soon</Badge>
-            </ActionCard>
-          </Section>
-
-          <Section id="delete-account" title="Delete account">
-            <ActionCard icon={Trash2} title="Delete account" detail="Permanently remove your account, logs, preferences, and coach history.">
-              <Badge>Coming soon</Badge>
-            </ActionCard>
-          </Section>
-        </section>
+              </ActionCard>
+            </div>
+            <div id="privacy" className="min-w-0 scroll-mt-24">
+              <ActionCard icon={Shield} title="Privacy controls" detail="Review what Coach can remember, what files are attached, and what data is used for guidance.">
+                <Badge>Preview</Badge>
+              </ActionCard>
+            </div>
+            <div id="subscription" className="min-w-0 scroll-mt-24">
+              <ActionCard icon={CreditCard} title="Plan and billing" detail="Manage your FuelWell plan, invoices, and subscription status.">
+                <Badge>Coming soon</Badge>
+              </ActionCard>
+            </div>
+            <div id="support" className="min-w-0 scroll-mt-24">
+              <ActionCard icon={HelpCircle} title="Get help" detail="A support contact and coach-data review path arrive with the public release.">
+                <Badge>Coming soon</Badge>
+              </ActionCard>
+            </div>
+          </div>
+        </Section>
 
         <Section title="Coach activity">
           <CoachActivity />
         </Section>
 
         <section className="grid gap-4 xl:grid-cols-[0.8fr_1.2fr]">
-          <Section title="Session">
+          <Section id="session" title="Session">
             <Card>
               <Button variant="danger" onClick={handleSignOut} loading={signingOut}>
                 <LogOut className="h-4 w-4" />
@@ -1061,6 +1164,27 @@ export function SettingsClient({
             </Card>
           </Section>
         </section>
+
+        <Section id="delete-account" title="Danger zone">
+          <Card className="border-red-200">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-start gap-3">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[1rem] bg-red-50 text-red-600">
+                  <Trash2 className="h-4 w-4" />
+                </span>
+                <div>
+                  <p className="text-base font-black text-red-700">Delete account</p>
+                  <p className="mt-1 text-sm font-semibold leading-6 text-neutral-500">
+                    Permanently removes your account, logs, preferences, and coach history.
+                    Self-serve deletion and the support contact to request it arrive with the
+                    public release.
+                  </p>
+                </div>
+              </div>
+              <Badge variant="error">Coming soon</Badge>
+            </div>
+          </Card>
+        </Section>
       </div>
     </div>
   );
@@ -1078,7 +1202,7 @@ function HeroStat({ label, value }: { label: string; value: string }) {
 function formatIntegrationShort(status: string) {
   if (status === "preview_sample") return "Preview";
   if (status === "connected") return "On";
-  return "Not linked";
+  return "None";
 }
 
 function formatOptionLabel(options: Array<{ value: string; label: string }>, value: string) {
@@ -1356,7 +1480,7 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <div id={id} className="min-w-0">
+    <div id={id} className="min-w-0 scroll-mt-24">
       <h2 className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-neutral-400">
         {title}
       </h2>

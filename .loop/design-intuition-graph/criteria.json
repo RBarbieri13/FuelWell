@@ -145,7 +145,7 @@
         "design-ruleset",
         "fix-shell"
       ],
-      "status": "failing"
+      "status": "pass"
     },
     {
       "id": "coherence",

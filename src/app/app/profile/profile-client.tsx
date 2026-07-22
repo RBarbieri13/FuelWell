@@ -280,12 +280,20 @@ export function ProfileClient({
               </div>
             )}
 
-            <Link href="/app/onboarding">
-              <Button variant="secondary" className="w-full">
-                <Settings className="h-4 w-4" />
-                Retake the setup quiz
-              </Button>
-            </Link>
+            <div className="space-y-2">
+              <Link href="/app/settings#health-profile" className="block">
+                <Button variant="secondary" className="w-full">
+                  <Pencil className="h-4 w-4" />
+                  Edit targets in Settings
+                </Button>
+              </Link>
+              <Link href="/app/onboarding" className="block">
+                <Button variant="ghost" className="w-full">
+                  <Settings className="h-4 w-4" />
+                  Retake the setup quiz
+                </Button>
+              </Link>
+            </div>
           </Card>
         </section>
 
@@ -293,9 +301,13 @@ export function ProfileClient({
           <Card className="min-w-0 px-5 py-6 sm:px-6">
             <div className="mb-3 flex items-center justify-between">
               <h2 className="text-2xl font-black text-neutral-900">Body context</h2>
-              <span className="rounded-full bg-primary-50 px-3 py-1 text-xs font-black text-primary-700">
-                Profile inputs
-              </span>
+              <Link
+                href="/app/settings#health-profile"
+                className="inline-flex min-h-11 items-center gap-1 rounded-full bg-primary-50 px-3 py-1 text-xs font-black text-primary-700 transition hover:bg-primary-100"
+              >
+                Edit in Settings
+                <ChevronRight className="h-3.5 w-3.5" />
+              </Link>
             </div>
             <div className="divide-y divide-primary-100/70">
               <InfoRow icon={Target} label="Goal" value={formatGoal(goal)} />

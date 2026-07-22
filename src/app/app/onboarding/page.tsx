@@ -279,6 +279,7 @@ const COACH_STYLE_OPTIONS = [
 export default function OnboardingPage() {
   const router = useRouter();
   const [step, setStep] = useState(0);
+  const [maxStepReached, setMaxStepReached] = useState(0);
   const [data, setData] = useState<OnboardingData>(INITIAL_DATA);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -336,7 +337,9 @@ export default function OnboardingPage() {
             });
           }
           if (typeof saved.step === "number") {
-            setStep(Math.min(Math.max(saved.step, 0), totalSteps - 1));
+            const restoredStep = Math.min(Math.max(saved.step, 0), totalSteps - 1);
+            setStep(restoredStep);
+            setMaxStepReached((reached) => Math.max(reached, restoredStep));
           }
           setResumed(true);
         } else {
@@ -473,7 +476,10 @@ export default function OnboardingPage() {
   }
 
   function next() {
-    if (step < totalSteps - 1 && canProceed()) setStep(step + 1);
+    if (step < totalSteps - 1 && canProceed()) {
+      setStep(step + 1);
+      setMaxStepReached((reached) => Math.max(reached, step + 1));
+    }
   }
 
   function back() {
@@ -581,13 +587,18 @@ export default function OnboardingPage() {
     router.refresh();
   }
 
+  // A checklist item is done only once its step has actually been visited —
+  // defaults alone (e.g. dietaryPreference "none") must not pre-check items.
+  const stepReached = (id: StepId) =>
+    maxStepReached >= STEP_META.findIndex((meta) => meta.id === id);
+
   const completionItems = [
-    { label: "Basics", icon: HeartPulse, done: !!data.dateOfBirth && !!data.gender },
-    { label: "Body metrics", icon: Ruler, done: !!data.heightIn && !!data.weightLb },
-    { label: "Activity", icon: Activity, done: !!data.activityLevel },
-    { label: "Goal pace", icon: Clock3, done: !!data.goal && !!data.goalTimeline },
-    { label: "Food rules", icon: Leaf, done: !!data.dietaryPreference },
-    { label: "Training", icon: Dumbbell, done: data.preferredWorkoutTypes.length > 0 },
+    { label: "Basics", icon: HeartPulse, done: stepReached("biology") && !!data.dateOfBirth && !!data.gender },
+    { label: "Body metrics", icon: Ruler, done: stepReached("body") && !!data.heightIn && !!data.weightLb },
+    { label: "Activity", icon: Activity, done: stepReached("activity") && !!data.activityLevel },
+    { label: "Goal pace", icon: Clock3, done: stepReached("pace") && !!data.goal && !!data.goalTimeline },
+    { label: "Food rules", icon: Leaf, done: stepReached("diet") && !!data.dietaryPreference },
+    { label: "Training", icon: Dumbbell, done: stepReached("workouts") && data.preferredWorkoutTypes.length > 0 },
   ];
 
   if (celebration) {
@@ -648,7 +659,7 @@ export default function OnboardingPage() {
           <button
             type="button"
             onClick={handleSkip}
-            className="rounded-full border border-primary-100 bg-white/80 px-4 py-2 text-sm font-bold text-[#6f8981] shadow-sm transition hover:border-primary-200 hover:text-[#16302a]"
+            className="min-h-11 rounded-full border border-primary-100 bg-white/80 px-4 py-2 text-sm font-bold text-[#6f8981] shadow-sm transition hover:border-primary-200 hover:text-[#16302a]"
           >
             Skip for now
           </button>
@@ -734,13 +745,14 @@ export default function OnboardingPage() {
                     key={meta.short}
                     type="button"
                     onClick={() => setStep(index)}
+                    disabled={index > maxStepReached}
                     className={cn(
                       "rounded-full px-2.5 py-2 text-[11px] font-black transition",
                       index === step
                         ? "bg-primary-600 text-white shadow-[0_12px_26px_rgba(21,145,108,0.22)]"
-                        : index < step
+                        : index <= maxStepReached
                           ? "bg-primary-50 text-primary-700"
-                          : "bg-[#f3f8f6] text-muted-foreground"
+                          : "cursor-default bg-[#f3f8f6] text-muted-foreground/70"
                     )}
                   >
                     {meta.short}
@@ -937,7 +949,7 @@ export default function OnboardingPage() {
                       <p className="mb-3 text-sm font-black uppercase tracking-[0.14em] text-muted-foreground">
                         Goal aggressiveness
                       </p>
-                      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+                      <div className="grid gap-3 md:grid-cols-2">
                         {AGGRESSION_OPTIONS.map((option) => (
                           <OptionTile
                             key={option.value}
@@ -954,7 +966,7 @@ export default function OnboardingPage() {
                       <p className="mb-3 text-sm font-black uppercase tracking-[0.14em] text-muted-foreground">
                         Diet flexibility
                       </p>
-                      <div className="grid gap-3 md:grid-cols-3">
+                      <div className="grid gap-3 md:grid-cols-2">
                         {FLEXIBILITY_OPTIONS.map((option) => (
                           <OptionTile
                             key={option.value}
@@ -1077,7 +1089,7 @@ export default function OnboardingPage() {
                   title="Any allergies to flag?"
                   subtitle="Select anything the coach should treat as a hard constraint."
                 >
-                  <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-4">
+                  <div className="grid gap-3 sm:grid-cols-2">
                     {ALLERGY_OPTIONS.map((allergy) => (
                       <OptionTile
                         key={allergy}
@@ -1473,7 +1485,7 @@ function OptionTile({
       onClick={onClick}
       aria-pressed={selected}
       className={cn(
-        "group flex min-h-20 w-full items-center gap-4 rounded-[1.35rem] border p-4 text-left transition-all duration-150",
+        "group flex min-h-20 w-full min-w-0 items-center gap-3 rounded-[1.35rem] border p-4 text-left transition-all duration-150",
         selected
           ? selectedClassName || "border-primary-300 bg-primary-50 text-primary-800 shadow-[0_14px_28px_rgba(30,174,132,0.14)]"
           : "border-border bg-[#f7faf8] text-muted-foreground hover:border-primary-200 hover:bg-white"
