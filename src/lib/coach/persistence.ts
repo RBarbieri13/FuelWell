@@ -30,6 +30,7 @@ export async function ensureConversation(
       .from("coach_conversations")
       .select("id")
       .eq("id", conversationId)
+      .eq("user_id", userId)
       .maybeSingle();
     if (data) return data.id;
   }

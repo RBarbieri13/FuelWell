@@ -1,0 +1,158 @@
+{
+  "mission": "coach-engine-graph",
+  "nodes": [
+    {
+      "id": "ctx-retrieval",
+      "desc": "Coach context retrieval covers EVERY user-data domain: profile, goals, meals/food log, recipes, groceries, workouts, progress/body-comp, settings, app activity, and coach memory. src/lib/coach/knowledge.ts assembles all of them for the authenticated user before any turn.",
+      "verify": "pnpm vitest run tests/unit/coach-knowledge.test.ts; grep coverage of each domain in knowledge.ts; a dev-login turn transcript shows domain data referenced",
+      "files": [
+        "src/lib/coach/knowledge.ts",
+        "tests/unit/coach-knowledge.test.ts"
+      ],
+      "deps": [],
+      "status": "failing"
+    },
+    {
+      "id": "iso-user",
+      "desc": "Per-user isolation: every retrieval and mutation path filters by authenticated user_id; two different profiles produce materially different coach context; preview/sample user never leaks into authed sessions.",
+      "verify": "pnpm vitest run tests/unit/coach-turn-provider-access.test.ts tests/unit/coach-knowledge.test.ts; RLS check on coach tables in supabase/migrations",
+      "files": [
+        "src/app/api/coach/turn",
+        "supabase/migrations/20260620170000_coach_knowledge_bases.sql"
+      ],
+      "deps": [],
+      "status": "pass"
+    },
+    {
+      "id": "audit-log",
+      "desc": "Every coach-initiated state change is audit logged with actor, tool, payload summary, and timestamp; audit route surfaces it.",
+      "verify": "pnpm vitest run tests/unit/coach-apply-mutation.test.ts; GET /api/coach/audit shows entries after a mutation turn",
+      "files": [
+        "src/lib/coach/audit.ts",
+        "src/app/api/coach/audit"
+      ],
+      "deps": [],
+      "status": "pass"
+    },
+    {
+      "id": "safety-boundaries",
+      "desc": "Health boundaries hold under pressure: no diagnosis, no emergency guidance, no invented medical facts, professional-care referral on medical concerns. Red-team transcript of >=10 adversarial prompts archived as evidence.",
+      "verify": "red-team transcript in .loop/coach-engine-graph/evidence/ with all 10 prompts handled correctly; system-prompt.ts contains the boundary contract",
+      "files": [
+        "src/lib/coach/system-prompt.ts"
+      ],
+      "deps": [],
+      "status": "failing"
+    },
+    {
+      "id": "ui-baseline",
+      "desc": "Baseline screenshot audit of the coach page (desktop + iOS viewport) against docs/ui-loop baselines; list of concrete interface defects to fix (clipped text, touch targets, scroll traps, streaming jank).",
+      "verify": "before-screenshots captured to .loop/coach-engine-graph/evidence/ and defect list written",
+      "files": [
+        "src/app/app/coach/page.tsx",
+        "docs/ui-loop/baseline/app-coach--mobile.png"
+      ],
+      "deps": [],
+      "status": "failing"
+    },
+    {
+      "id": "act-nutrition",
+      "desc": "Coach actions for the nutrition domain: log a meal, edit a logged meal, save/modify a recipe, add to groceries \u2014 via explicit tool paths in src/lib/coach/tools with confirmation chips for destructive edits.",
+      "verify": "pnpm vitest run tests/unit/coach-apply-mutation.test.ts tests/unit/coach-mutation-persistence.test.ts; e2e: natural-language 'log 2 eggs for breakfast' lands in the food log",
+      "files": [
+        "src/lib/coach/tools",
+        "src/lib/coach/apply-mutation.ts"
+      ],
+      "deps": [
+        "iso-user",
+        "audit-log"
+      ],
+      "status": "failing"
+    },
+    {
+      "id": "act-fitness",
+      "desc": "Coach actions for workouts and plans: log a workout, schedule/adjust a plan, mark complete \u2014 same tool-path, confirmation, and audit rules as nutrition.",
+      "verify": "unit tests pass; e2e: 'I did 30 min upper body' creates the workout entry",
+      "files": [
+        "src/lib/coach/tools",
+        "src/lib/coach/apply-mutation.ts"
+      ],
+      "deps": [
+        "iso-user",
+        "audit-log"
+      ],
+      "status": "failing"
+    },
+    {
+      "id": "intent-router",
+      "desc": "Siri/Alexa-grade intent handling: one utterance router that classifies read vs act vs advise across ALL domains, handles partials/typos/aliases, and answers app-navigation questions ('where do I change my goal weight?'). 25-utterance intent suite passes.",
+      "verify": "intent suite file .loop/coach-engine-graph/intent-suite.md: 25 utterances, each with expected behavior, all passing in a dev-login session",
+      "files": [
+        "src/lib/coach/system-prompt.ts",
+        "src/lib/coach/registry.ts"
+      ],
+      "deps": [
+        "ctx-retrieval",
+        "act-nutrition",
+        "act-fitness"
+      ],
+      "status": "failing"
+    },
+    {
+      "id": "rich-inline",
+      "desc": "Inline graphics in chat: coach answers render structured artifacts \u2014 progress/weight/macro charts, recipe cards, workout cards, day-summary tiles \u2014 as components in the transcript, not ASCII or markdown tables. Theme-consistent (FuelWell tokens), both viewports.",
+      "verify": "e2e: 'show my weight trend' renders a chart component in-transcript; screenshots archived; no console errors",
+      "files": [
+        "src/components/coach/artifacts",
+        "src/app/api/coach/artifacts"
+      ],
+      "deps": [
+        "ctx-retrieval"
+      ],
+      "status": "failing"
+    },
+    {
+      "id": "chat-process",
+      "desc": "Chat process polish: streaming tokens render smoothly, history loads and paginates, retry/regenerate works, stale action chips cleared, provider-health degradation shows a human-readable state instead of a dead spinner.",
+      "verify": "pnpm playwright test tests/coach.spec.ts tests/coach-mobile-overflow.spec.ts",
+      "files": [
+        "src/app/api/coach/history",
+        "src/lib/coach/provider-health.ts",
+        "src/components/coach/log-confirm-chip.tsx"
+      ],
+      "deps": [
+        "ui-baseline"
+      ],
+      "status": "failing"
+    },
+    {
+      "id": "ui-final",
+      "desc": "Coach interface finalized on desktop + iOS viewports: every defect from ui-baseline resolved, rich artifacts lay out correctly, touch targets and keyboard behavior pass the pilot-UI blocker list.",
+      "verify": "after-screenshots archived and diffed against baseline; zero blockers from AGENTS.md pilot-UI list",
+      "files": [
+        "src/app/app/coach/page.tsx"
+      ],
+      "deps": [
+        "chat-process",
+        "rich-inline"
+      ],
+      "status": "failing"
+    },
+    {
+      "id": "verify-gate",
+      "desc": "FINAL GATE (fresh-context verifier subagent, not self-review): scripts/verify-coach-engine.mjs passes (seed gates >=500/150/100, search behavior, isolation, differentiated contexts, safe actions), plus pnpm lint, pnpm build, full unit + e2e suites, and the intent suite re-run from scratch.",
+      "verify": "node scripts/verify-coach-engine.mjs && pnpm lint && pnpm build && pnpm vitest run && pnpm playwright test tests/coach.spec.ts",
+      "files": [
+        "scripts/verify-coach-engine.mjs"
+      ],
+      "deps": [
+        "intent-router",
+        "ui-final",
+        "safety-boundaries",
+        "iso-user",
+        "audit-log"
+      ],
+      "status": "failing"
+    }
+  ]
+}
