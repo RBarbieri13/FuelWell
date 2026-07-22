@@ -43,13 +43,13 @@ export function StreamingTextBubble({ text, streaming }: StreamingTextBubbleProp
 
 const markdownComponents = {
   h1: ({ className, ...props }: React.ComponentProps<"h1">) => (
-    <h1 className={cn("mb-2 mt-1 break-words text-xl font-black leading-tight text-[#16302a] [overflow-wrap:anywhere]", className)} {...props} />
+    <h1 className={cn("mb-2 mt-1 break-words text-xl font-black leading-tight text-foreground [overflow-wrap:anywhere]", className)} {...props} />
   ),
   h2: ({ className, ...props }: React.ComponentProps<"h2">) => (
-    <h2 className={cn("mb-2 mt-3 break-words text-lg font-black leading-tight text-[#16302a] [overflow-wrap:anywhere]", className)} {...props} />
+    <h2 className={cn("mb-2 mt-3 break-words text-lg font-black leading-tight text-foreground [overflow-wrap:anywhere]", className)} {...props} />
   ),
   h3: ({ className, ...props }: React.ComponentProps<"h3">) => (
-    <h3 className={cn("mb-1.5 mt-3 break-words text-base font-black leading-tight text-[#16302a] [overflow-wrap:anywhere]", className)} {...props} />
+    <h3 className={cn("mb-1.5 mt-3 break-words text-base font-black leading-tight text-foreground [overflow-wrap:anywhere]", className)} {...props} />
   ),
   h4: ({ className, ...props }: React.ComponentProps<"h4">) => (
     <h4 className={cn("mb-1.5 mt-2 break-words text-sm font-black uppercase tracking-wide text-muted-foreground [overflow-wrap:anywhere]", className)} {...props} />
@@ -58,14 +58,16 @@ const markdownComponents = {
     <p className={cn("my-2 first:mt-0 last:mb-0 whitespace-pre-wrap break-words", className)} {...props} />
   ),
   strong: ({ className, ...props }: React.ComponentProps<"strong">) => (
-    <strong className={cn("font-black text-[#16302a]", className)} {...props} />
+    <strong className={cn("font-black text-foreground", className)} {...props} />
   ),
   em: ({ className, ...props }: React.ComponentProps<"em">) => (
     <em className={cn("font-semibold text-muted-foreground", className)} {...props} />
   ),
   a: ({ className, href, ...props }: React.ComponentProps<"a">) => (
     <a
-      className={cn("break-words font-black text-primary-700 underline decoration-primary-300 underline-offset-4 [overflow-wrap:anywhere]", className)}
+      // py-3.5 pads the tap target to >=44px without shifting inline layout
+      // (vertical padding on inline elements grows the hit area only).
+      className={cn("break-words py-3.5 font-black text-primary-700 underline decoration-primary-300 underline-offset-4 [overflow-wrap:anywhere]", className)}
       href={href}
       target="_blank"
       rel="noreferrer"
@@ -110,7 +112,7 @@ const markdownComponents = {
       <code
         className={cn(
           isBlock
-            ? "block max-w-full overflow-x-auto whitespace-pre rounded-[1.25rem] bg-[#0b251f] p-3 text-xs font-semibold leading-5 text-neutral-50"
+            ? "block max-w-full overflow-x-auto whitespace-pre rounded-[1.25rem] bg-primary-950 p-3 text-xs font-semibold leading-5 text-neutral-50"
             : "break-words rounded-md bg-primary-50 px-1.5 py-0.5 font-mono text-[0.85em] font-bold text-primary-800 [overflow-wrap:anywhere]",
           className
         )}
@@ -121,7 +123,7 @@ const markdownComponents = {
     );
   },
   pre: ({ className, ...props }: React.ComponentProps<"pre">) => (
-    <pre className={cn("fw-rich-scroll my-3 max-w-full overflow-x-auto rounded-[1.25rem] bg-[#0b251f] p-0", className)} {...props} />
+    <pre className={cn("fw-rich-scroll my-3 max-w-full overflow-x-auto rounded-[1.25rem] bg-primary-950 p-0", className)} {...props} />
   ),
   img: ({ className, alt, ...props }: React.ComponentProps<"img">) => (
     // Markdown media can point to arbitrary user-requested URLs; Next Image

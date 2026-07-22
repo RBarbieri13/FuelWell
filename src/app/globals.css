@@ -21,6 +21,7 @@
   --color-primary-700: #117558;
   --color-primary-800: #0e5d48;
   --color-primary-900: #0a4436;
+  --color-primary-950: #0b251f;
 
   --color-accent-50: #fff1ed;
   --color-accent-100: #ffe0d8;
@@ -46,6 +47,9 @@
   --color-lemon-500: #c7a91e;
   --color-lemon-600: #a98d18;
   --color-lemon-700: #7a650d;
+  --color-sage-50: #f8fbf9;
+  --color-sage-100: #f4f8f6;
+  --color-sage-400: #91a7a0;
   --color-macro-protein: #3e92c9;
   --color-macro-carbs: #c7a91e;
   --color-macro-fat: #f0795b;
@@ -292,6 +296,13 @@ html {
     background:
       linear-gradient(180deg, rgba(232, 246, 242, 0.96), rgba(224, 241, 236, 0.98)),
       radial-gradient(circle at 85% 4%, rgba(30, 174, 132, 0.12), transparent 22rem);
+  }
+
+  /* Fades scroll content out above the composer so rows are never sliced
+     mid-glyph at the scroll container's hard bottom edge. */
+  .fw-chat-bottom-fade {
+    -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 2.5rem), transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 calc(100% - 2.5rem), transparent 100%);
   }
 
   .fw-artifact-scope > :is(div, article, section, button) {

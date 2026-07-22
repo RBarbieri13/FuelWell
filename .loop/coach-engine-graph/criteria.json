@@ -136,7 +136,7 @@
         "chat-process",
         "rich-inline"
       ],
-      "status": "failing"
+      "status": "pass"
     },
     {
       "id": "verify-gate",

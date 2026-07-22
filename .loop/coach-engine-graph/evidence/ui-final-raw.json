@@ -1,0 +1,292 @@
+{
+  "desktop": {
+    "console": [],
+    "pageErrors": [],
+    "audit": {
+      "overflowX": 0,
+      "vertScroll": 0,
+      "smallTargets": [
+        {
+          "tag": "div",
+          "label": "Resize menu",
+          "w": 12,
+          "h": 800,
+          "cls": "absolute right-[-6px] top-0 hidden h-full w-3 cursor-col-resize items-center jus"
+        },
+        {
+          "tag": "button",
+          "label": "New chat",
+          "w": 75.4,
+          "h": 32,
+          "cls": "min-h-11 whitespace-nowrap rounded-full bg-white/70 px-3 py-2 text-xs font-black"
+        },
+        {
+          "tag": "input",
+          "label": "Attach screenshot, menu, photo, or file",
+          "w": 1,
+          "h": 1,
+          "cls": "sr-only"
+        }
+      ],
+      "wide": [],
+      "clipped": [],
+      "title": "FuelWell — AI Nutrition Coach"
+    },
+    "defects": {
+      "d1_nutritionLink": {
+        "w": 133.7,
+        "h": 46,
+        "x": 450,
+        "y": 1331
+      },
+      "d2_mainMaskImage": "linear-gradient(rgb(0, 0, 0) calc(100% - 40px), rgba(0, 0, 0, 0) 100%)",
+      "d2_mainBottom": 727,
+      "d2_suggestions": [
+        {
+          "text": "What should I do right now?",
+          "w": 319.7,
+          "h": 48,
+          "x": 907,
+          "y": 230
+        },
+        {
+          "text": "Give me my daily recap",
+          "w": 319.7,
+          "h": 48,
+          "x": 907,
+          "y": 342
+        },
+        {
+          "text": "Analyze a menu or food photo",
+          "w": 319.7,
+          "h": 48,
+          "x": 907,
+          "y": 398
+        },
+        {
+          "text": "Plan a workout for today",
+          "w": 319.7,
+          "h": 48,
+          "x": 907,
+          "y": 454
+        }
+      ],
+      "d2_suggestionsIntersectingMainBottom": [],
+      "d3_collapseMenu": {
+        "w": 44,
+        "h": 44,
+        "x": 261,
+        "y": 52
+      },
+      "d4_headerLinks": [
+        {
+          "label": "Attachments",
+          "w": 82.4,
+          "h": 44,
+          "x": 891,
+          "y": 18
+        },
+        {
+          "label": "Menu review",
+          "w": 81.9,
+          "h": 44,
+          "x": 990,
+          "y": 18
+        },
+        {
+          "label": "Dashboard",
+          "w": 69.1,
+          "h": 44,
+          "x": 1179,
+          "y": 18
+        }
+      ],
+      "d5_mainScrollHeight": 1387,
+      "d5_mainClientHeight": 646,
+      "d5_demoImg": {
+        "w": 64,
+        "h": 64,
+        "x": 450,
+        "y": 1266
+      },
+      "d5_tourExpanded": false
+    },
+    "url": "http://localhost:3100/app/coach"
+  },
+  "mobile": {
+    "console": [],
+    "pageErrors": [],
+    "audit": {
+      "overflowX": 0,
+      "vertScroll": 0,
+      "smallTargets": [
+        {
+          "tag": "input",
+          "label": "Attach screenshot, menu, photo, or file",
+          "w": 1,
+          "h": 1,
+          "cls": "sr-only"
+        }
+      ],
+      "wide": [
+        {
+          "tag": "table",
+          "cls": "w-full min-w-[32rem] border-collapse text-left text-xs",
+          "left": 83,
+          "right": 595
+        },
+        {
+          "tag": "thead",
+          "cls": "bg-primary-700 text-white",
+          "left": 83,
+          "right": 595
+        },
+        {
+          "tag": "tr",
+          "cls": "",
+          "left": 83,
+          "right": 595
+        },
+        {
+          "tag": "th",
+          "cls": "border-b border-primary-200 px-3 py-2 font-black",
+          "left": 362,
+          "right": 595
+        },
+        {
+          "tag": "tbody",
+          "cls": "",
+          "left": 83,
+          "right": 595
+        },
+        {
+          "tag": "tr",
+          "cls": "",
+          "left": 83,
+          "right": 595
+        },
+        {
+          "tag": "td",
+          "cls": "border-b border-primary-100 px-3 py-2 align-top",
+          "left": 362,
+          "right": 595
+        },
+        {
+          "tag": "tr",
+          "cls": "",
+          "left": 83,
+          "right": 595
+        },
+        {
+          "tag": "td",
+          "cls": "border-b border-primary-100 px-3 py-2 align-top",
+          "left": 362,
+          "right": 595
+        }
+      ],
+      "clipped": [],
+      "title": "FuelWell — AI Nutrition Coach"
+    },
+    "defects": {
+      "d1_nutritionLink": {
+        "w": 133.7,
+        "h": 46,
+        "x": 82,
+        "y": 1554
+      },
+      "d2_mainMaskImage": "linear-gradient(rgb(0, 0, 0) calc(100% - 40px), rgba(0, 0, 0, 0) 100%)",
+      "d2_mainBottom": 511,
+      "d2_suggestions": [
+        {
+          "text": "What should I do right now?",
+          "w": 324,
+          "h": 48,
+          "x": 33,
+          "y": 498
+        },
+        {
+          "text": "Give me my daily recap",
+          "w": 324,
+          "h": 48,
+          "x": 33,
+          "y": 610
+        },
+        {
+          "text": "Analyze a menu or food photo",
+          "w": 324,
+          "h": 48,
+          "x": 33,
+          "y": 666
+        },
+        {
+          "text": "Plan a workout for today",
+          "w": 324,
+          "h": 48,
+          "x": 33,
+          "y": 722
+        }
+      ],
+      "d2_suggestionsIntersectingMainBottom": [
+        {
+          "text": "What should I do right now?",
+          "w": 324,
+          "h": 48,
+          "x": 33,
+          "y": 498
+        }
+      ],
+      "d3_collapseMenu": {
+        "w": 0,
+        "h": 0,
+        "x": 0,
+        "y": 0
+      },
+      "d4_headerLinks": [
+        {
+          "label": "Attachments",
+          "w": 0,
+          "h": 0,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "label": "Menu review",
+          "w": 0,
+          "h": 0,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "label": "Dashboard",
+          "w": 0,
+          "h": 0,
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "d5_mainScrollHeight": 1533,
+      "d5_mainClientHeight": 357,
+      "d5_demoImg": {
+        "w": 64,
+        "h": 64,
+        "x": 82,
+        "y": 1489
+      },
+      "d5_tourExpanded": false
+    },
+    "bottomState": {
+      "scrollTop": 1176,
+      "scrollHeight": 1533,
+      "clientHeight": 357
+    },
+    "focusedOk": true,
+    "overflowFocused": 0,
+    "url": "http://localhost:3100/app/coach"
+  },
+  "mobileTourExpanded": {
+    "mainScrollHeight": 2867,
+    "howAChatPlaysOutVisible": true,
+    "whatItCanDoVisible": true,
+    "overflowX": 0
+  }
+}

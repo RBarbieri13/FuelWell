@@ -14,6 +14,7 @@ import {
   BarChart3,
   Calculator,
   Camera,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
   CheckCircle2,
@@ -193,6 +194,7 @@ export default function CoachPage() {
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [dismissedDrawerId, setDismissedDrawerId] = useState<string | null>(null);
   const [collapsedDrawerId, setCollapsedDrawerId] = useState<string | null>(null);
+  const [showTour, setShowTour] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -316,10 +318,10 @@ export default function CoachPage() {
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <Link href="/app/coach/attachments" className="hidden text-sm font-black text-primary-700 sm:inline">
+            <Link href="/app/coach/attachments" className="hidden min-h-11 items-center text-sm font-black text-primary-700 sm:inline-flex">
               Attachments
             </Link>
-            <Link href="/app/coach/menu-review" className="hidden text-sm font-black text-primary-700 sm:inline">
+            <Link href="/app/coach/menu-review" className="hidden min-h-11 items-center text-sm font-black text-primary-700 sm:inline-flex">
               Menu review
             </Link>
             <button
@@ -329,14 +331,19 @@ export default function CoachPage() {
             >
               New chat
             </button>
-            <Link href="/app/dashboard" className="hidden text-sm font-black text-primary-700 sm:inline">
+            <Link href="/app/dashboard" className="hidden min-h-11 items-center text-sm font-black text-primary-700 sm:inline-flex">
               Dashboard
             </Link>
           </div>
         </div>
       </div>
 
-      <main className="min-w-0 flex-1 overflow-x-hidden overflow-y-auto px-3 py-5 sm:px-4 sm:py-6 md:px-8">
+      <main
+        className={cn(
+          "min-w-0 flex-1 overflow-x-hidden overflow-y-auto px-3 pt-5 sm:px-4 sm:pt-6 md:px-8",
+          items.length === 0 ? "fw-chat-bottom-fade pb-12" : "pb-5 sm:pb-6"
+        )}
+      >
         <div className="mx-auto w-full max-w-5xl min-w-0">
           <div className="min-w-0 space-y-5">
             {items.length === 0 && (
@@ -399,6 +406,16 @@ export default function CoachPage() {
                 </div>
               </section>
             </div>
+            <button
+              type="button"
+              onClick={() => setShowTour((value) => !value)}
+              aria-expanded={showTour}
+              className="flex min-h-12 w-full items-center justify-between gap-3 rounded-[1.35rem] border border-primary-100 bg-white/80 px-4 py-3 text-left text-sm font-black text-primary-700 shadow-sm transition hover:bg-primary-50"
+            >
+              <span>How Coach works and what it can do</span>
+              <ChevronDown className={cn("h-4 w-4 shrink-0 transition", showTour && "rotate-180")} />
+            </button>
+            {showTour && (
             <div className="grid gap-4 xl:grid-cols-2">
               <section className="rounded-[2rem] border border-primary-100/80 bg-white/90 p-5 shadow-[0_22px_60px_rgba(22,48,42,0.10)] md:p-6">
                 <p className="text-xs font-black uppercase tracking-[0.16em] text-primary-600">
@@ -479,6 +496,7 @@ export default function CoachPage() {
                 </div>
               </section>
             </div>
+            )}
             </div>
             )}
 
@@ -963,7 +981,7 @@ function RichTextPreview() {
             The same chat bubble supports headers, nested lists, tables, formulas, links, and inline media when the coach replies.
           </p>
         </div>
-        <div className="grid max-w-full min-w-0 gap-2 sm:grid-cols-2 xl:w-[30rem]">
+        <div className="hidden max-w-full min-w-0 gap-2 sm:grid sm:grid-cols-2 xl:w-[30rem]">
           {capabilities.map((item) => {
             const Icon = item.icon;
             return (
@@ -984,11 +1002,13 @@ function RichTextPreview() {
       <div className="mt-5 grid max-w-full min-w-0 gap-4 xl:grid-cols-[minmax(0,1fr)_18rem]">
         <div className="flex max-w-full min-w-0 gap-2 sm:gap-3">
           <CoachAvatar />
-          <div className="min-w-0 flex-1">
+          {/* The demo app icon renders as a compact media chip here, not at the
+              full-width size real coach photos get. */}
+          <div className="min-w-0 flex-1 [&_img]:h-16 [&_img]:w-16 [&_img]:rounded-[1.05rem] [&_img]:object-contain">
             <StreamingTextBubble text={richPreviewMarkdown} streaming={false} />
           </div>
         </div>
-        <div className="max-w-full min-w-0 rounded-[1.5rem] border border-primary-100 bg-primary-50/80 p-4">
+        <div className="hidden max-w-full min-w-0 rounded-[1.5rem] border border-primary-100 bg-primary-50/80 p-4 xl:block">
           <div className="flex h-11 w-11 items-center justify-center rounded-[1rem] bg-white text-primary-700 shadow-sm">
             <Heading2 className="h-5 w-5" />
           </div>

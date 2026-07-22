@@ -92,7 +92,7 @@ export function Sidebar() {
             onClick={() => setCollapsed((value) => !value)}
             aria-label={collapsed ? "Expand menu" : "Collapse menu"}
             className={cn(
-              "inline-flex h-10 w-10 items-center justify-center rounded-full border border-primary-200 bg-white text-primary-700 shadow-[0_8px_18px_rgba(20,90,75,0.1)] transition hover:bg-primary-50",
+              "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-primary-200 bg-white text-primary-700 shadow-[0_8px_18px_rgba(20,90,75,0.1)] transition hover:bg-primary-50",
               collapsed && "absolute left-[4.5rem] top-6 z-10"
             )}
           >
