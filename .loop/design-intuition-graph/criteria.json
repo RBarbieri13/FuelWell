@@ -44,7 +44,7 @@
         "src/app/app/recovery"
       ],
       "deps": [],
-      "status": "failing"
+      "status": "pass"
     },
     {
       "id": "audit-insight",
