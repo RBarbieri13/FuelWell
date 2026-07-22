@@ -96,7 +96,7 @@
         "act-nutrition",
         "act-fitness"
       ],
-      "status": "failing"
+      "status": "pass"
     },
     {
       "id": "rich-inline",

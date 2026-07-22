@@ -243,7 +243,9 @@ export function retrieveCoachKnowledge(
   | "inferredPatterns"
 > & { recipeFacts: string[]; groceryFacts: string[] } {
   const text = userText.toLowerCase();
-  const wantsNutrition = /meal|food|eat|calorie|protein|carb|fat|recipe|grocery|menu|restaurant/.test(text);
+  // "grocer" covers grocery/groceries; "shop" covers shop/shopping.
+  const wantsNutrition =
+    /meal|food|eat|calorie|protein|carb|fat|recipe|grocer|menu|restaurant|cook|dinner|shop|buy/.test(text);
   const wantsWorkout = /workout|exercise|run|walk|lift|training|fitness|move|cardio|strength/.test(text);
   const wantsBody = /weight|body|composition|goal|progress|scale|fat|muscle/.test(text);
   const recipeFacts = knowledge.recipeFacts ?? [];

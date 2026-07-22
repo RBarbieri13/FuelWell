@@ -64,6 +64,45 @@ describe("buildSystemPrompt", () => {
     expect(prompt).toContain("Greek yogurt — needed");
   });
 
+  it("includes intent-routing steering for act vs read vs advise", () => {
+    const prompt = buildSystemPrompt(makeSnapshot());
+
+    expect(prompt).toContain("Intent routing");
+    expect(prompt).toContain("ACT (log/edit/delete/add/update something)");
+    expect(prompt).toContain("READ (what did I eat, show me, how much is left)");
+    expect(prompt).toContain("ADVISE (what should I eat/train, help me plan)");
+    expect(prompt).toContain("Tolerate typos, partial names, and aliases");
+    expect(prompt).toContain('For "undo that" or "remove the last one", use undo_last_action');
+  });
+
+  it("includes the static app navigation map", () => {
+    const prompt = buildSystemPrompt(makeSnapshot());
+
+    expect(prompt).toContain("App navigation map");
+    // Every sidebar route the map promises.
+    for (const route of [
+      "/app/dashboard",
+      "/app/daily-review",
+      "/app/log",
+      "/app/coach",
+      "/app/workouts",
+      "/app/recipes",
+      "/app/grocery-list",
+      "/app/recovery",
+      "/app/progress",
+      "/app/profile",
+      "/app/settings",
+    ]) {
+      expect(prompt).toContain(route);
+    }
+    expect(prompt).toContain("Goal weight and macro targets live in the goal plan, not a Settings form");
+    expect(prompt).toContain("update_goal_plan");
+    expect(prompt).toContain("Settings → Preferences → Units");
+    expect(prompt).toContain("Account deletion CANNOT be done in chat");
+    expect(prompt).toContain("Delete account");
+    expect(prompt).toContain("use open_page only for genuinely page-only tasks");
+  });
+
   it("handles partial defensive snapshots without throwing", () => {
     expect(() =>
       buildSystemPrompt({

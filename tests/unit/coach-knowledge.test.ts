@@ -119,6 +119,34 @@ describe("coach knowledge", () => {
     expect(retrieved.groceryFacts).toEqual([]);
   });
 
+  it("retrieves deep nutrition, recipe, and grocery slices for cook/dinner/shopping/buy/groceries utterances", () => {
+    const knowledge = {
+      ...buildCoachKnowledgeBase("user-1", makeSnapshot()),
+      nutritionFacts: Array.from({ length: 20 }, (_, i) => `Nutrition fact ${i}.`),
+      recipeFacts: Array.from({ length: 12 }, (_, i) => `Recipe fact ${i}.`),
+      groceryFacts: Array.from({ length: 12 }, (_, i) => `Grocery fact ${i}.`),
+    };
+
+    for (const utterance of [
+      "What should I cook tonight?",
+      "Help me figure out dinner",
+      "Plan my meals for the week",
+      "I'm going shopping later today",
+      "What should I buy this week?",
+      "What groceries do I still need?",
+    ]) {
+      const retrieved = retrieveCoachKnowledge(knowledge, utterance);
+      expect(retrieved.nutritionFacts.length, utterance).toBe(14);
+      expect(retrieved.recipeFacts.length, utterance).toBe(10);
+      expect(retrieved.groceryFacts.length, utterance).toBe(10);
+    }
+
+    // A pure workout utterance still gets the shallow nutrition slices.
+    const workoutRetrieved = retrieveCoachKnowledge(knowledge, "How was my training this week?");
+    expect(workoutRetrieved.recipeFacts.length).toBe(4);
+    expect(workoutRetrieved.groceryFacts.length).toBe(4);
+  });
+
   it("does not merge knowledge across users", () => {
     const a = buildCoachKnowledgeBase("user-a", makeSnapshot({ profile: { displayName: "A", goal: "lose" } }));
     const b = buildCoachKnowledgeBase("user-b", makeSnapshot({ profile: { displayName: "B", goal: "gain" } }));
