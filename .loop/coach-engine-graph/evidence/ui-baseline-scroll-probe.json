@@ -1,0 +1,96 @@
+{
+  "info": {
+    "scrollers": [
+      {
+        "tag": "main",
+        "cls": "min-w-0 flex-1 overflow-x-hidden overflow-y-auto px-3 py-5 sm:px-4 sm:py-6 md:px-8",
+        "scrollH": 3575,
+        "clientH": 537
+      }
+    ],
+    "tableWrap": {
+      "tag": "div",
+      "cls": "fw-rich-scroll my-3 w-full max-w-full min-w-0 overflow-x-auto rounded-[1.25rem] border border-primary-100 shadow-sm",
+      "scrollW": 512,
+      "clientW": 264,
+      "canScroll": true
+    },
+    "linkInfo": {
+      "rect": {
+        "x": 82,
+        "y": 3344,
+        "width": 133.6875,
+        "height": 18,
+        "top": 3344,
+        "right": 215.6875,
+        "bottom": 3362,
+        "left": 82
+      },
+      "href": "/app/nutrition",
+      "context": "max-w-full min-w-0 break-words [overflow-wrap:anywhere] [&>*]:max-w-full [&>*]:min-w-0"
+    },
+    "sugg": [
+      {
+        "text": "Analyze a menu or food photo",
+        "rect": {
+          "x": 33,
+          "y": 666,
+          "width": 324,
+          "height": 48,
+          "top": 666,
+          "right": 357,
+          "bottom": 714,
+          "left": 33
+        }
+      },
+      {
+        "text": "Plan a workout for today",
+        "rect": {
+          "x": 33,
+          "y": 722,
+          "width": 324,
+          "height": 48,
+          "top": 722,
+          "right": 357,
+          "bottom": 770,
+          "left": 33
+        }
+      }
+    ],
+    "innerH": 844
+  },
+  "scrolled": {
+    "scrolledTo": 3038,
+    "of": 3038
+  },
+  "after": {
+    "items": [
+      {
+        "text": "Plan a workout for today",
+        "rect": {
+          "x": 33,
+          "y": -2316,
+          "width": 324,
+          "height": 48,
+          "top": -2316,
+          "right": 357,
+          "bottom": -2268,
+          "left": 33
+        }
+      },
+      {
+        "text": "Open nutrition detail",
+        "rect": {
+          "x": 82,
+          "y": 306,
+          "width": 133.6875,
+          "height": 18,
+          "top": 306,
+          "right": 215.6875,
+          "bottom": 324,
+          "left": 82
+        }
+      }
+    ]
+  }
+}

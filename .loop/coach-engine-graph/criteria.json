@@ -53,7 +53,7 @@
         "docs/ui-loop/baseline/app-coach--mobile.png"
       ],
       "deps": [],
-      "status": "failing"
+      "status": "pass"
     },
     {
       "id": "act-nutrition",

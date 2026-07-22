@@ -1,0 +1,252 @@
+{
+  "desktop": {
+    "console": [],
+    "pageErrors": [],
+    "audit": {
+      "overflowX": 0,
+      "vertScroll": 0,
+      "smallTargets": [
+        {
+          "tag": "button",
+          "label": "Collapse menu",
+          "w": 39,
+          "h": 40,
+          "cls": "inline-flex h-10 w-10 items-center justify-center rounded-full border border-pri"
+        },
+        {
+          "tag": "div",
+          "label": "Resize menu",
+          "w": 12,
+          "h": 800,
+          "cls": "absolute right-[-6px] top-0 hidden h-full w-3 cursor-col-resize items-center jus"
+        },
+        {
+          "tag": "a",
+          "label": "Attachments",
+          "w": 82,
+          "h": 20,
+          "cls": "hidden text-sm font-black text-primary-700 sm:inline"
+        },
+        {
+          "tag": "a",
+          "label": "Menu review",
+          "w": 82,
+          "h": 20,
+          "cls": "hidden text-sm font-black text-primary-700 sm:inline"
+        },
+        {
+          "tag": "button",
+          "label": "New chat",
+          "w": 75,
+          "h": 32,
+          "cls": "min-h-11 whitespace-nowrap rounded-full bg-white/70 px-3 py-2 text-xs font-black"
+        },
+        {
+          "tag": "a",
+          "label": "Dashboard",
+          "w": 69,
+          "h": 20,
+          "cls": "hidden text-sm font-black text-primary-700 sm:inline"
+        },
+        {
+          "tag": "a",
+          "label": "Open nutrition detail",
+          "w": 134,
+          "h": 18,
+          "cls": "break-words font-black text-primary-700 underline decoration-primary-300 underli"
+        },
+        {
+          "tag": "input",
+          "label": "Attach screenshot, menu, photo, or file",
+          "w": 1,
+          "h": 1,
+          "cls": "sr-only"
+        }
+      ],
+      "wide": [],
+      "clipped": [],
+      "title": "FuelWell — AI Nutrition Coach"
+    },
+    "url": "http://localhost:3100/app/coach"
+  },
+  "mobile": {
+    "console": [],
+    "pageErrors": [],
+    "audit": {
+      "overflowX": 0,
+      "vertScroll": 0,
+      "smallTargets": [
+        {
+          "tag": "a",
+          "label": "Open nutrition detail",
+          "w": 134,
+          "h": 18,
+          "cls": "break-words font-black text-primary-700 underline decoration-primary-300 underli"
+        },
+        {
+          "tag": "input",
+          "label": "Attach screenshot, menu, photo, or file",
+          "w": 1,
+          "h": 1,
+          "cls": "sr-only"
+        }
+      ],
+      "wide": [
+        {
+          "tag": "table",
+          "cls": "w-full min-w-[32rem] border-collapse text-left text-xs",
+          "left": 83,
+          "right": 595
+        },
+        {
+          "tag": "thead",
+          "cls": "bg-primary-700 text-white",
+          "left": 83,
+          "right": 595
+        },
+        {
+          "tag": "tr",
+          "cls": "",
+          "left": 83,
+          "right": 595
+        },
+        {
+          "tag": "th",
+          "cls": "border-b border-primary-200 px-3 py-2 font-black",
+          "left": 362,
+          "right": 595
+        },
+        {
+          "tag": "tbody",
+          "cls": "",
+          "left": 83,
+          "right": 595
+        },
+        {
+          "tag": "tr",
+          "cls": "",
+          "left": 83,
+          "right": 595
+        },
+        {
+          "tag": "td",
+          "cls": "border-b border-primary-100 px-3 py-2 align-top",
+          "left": 362,
+          "right": 595
+        },
+        {
+          "tag": "tr",
+          "cls": "",
+          "left": 83,
+          "right": 595
+        },
+        {
+          "tag": "td",
+          "cls": "border-b border-primary-100 px-3 py-2 align-top",
+          "left": 362,
+          "right": 595
+        }
+      ],
+      "clipped": [],
+      "title": "FuelWell — AI Nutrition Coach"
+    },
+    "url": "http://localhost:3100/app/coach",
+    "scrollable": false,
+    "inputFound": true,
+    "inputFocused": {
+      "tag": "input",
+      "label": "Message Coach"
+    },
+    "inputBox": {
+      "x": 72,
+      "y": 704,
+      "width": 246,
+      "height": 48
+    },
+    "sendCount": 1,
+    "sendBox": {
+      "x": 326,
+      "y": 704,
+      "width": 48,
+      "height": 48
+    },
+    "postFocusAudit": {
+      "overflowX": 0,
+      "vertScroll": 0,
+      "smallTargets": [
+        {
+          "tag": "a",
+          "label": "Open nutrition detail",
+          "w": 134,
+          "h": 18,
+          "cls": "break-words font-black text-primary-700 underline decoration-primary-300 underli"
+        },
+        {
+          "tag": "input",
+          "label": "Attach screenshot, menu, photo, or file",
+          "w": 1,
+          "h": 1,
+          "cls": "sr-only"
+        }
+      ],
+      "wide": [
+        {
+          "tag": "table",
+          "cls": "w-full min-w-[32rem] border-collapse text-left text-xs",
+          "left": 83,
+          "right": 595
+        },
+        {
+          "tag": "thead",
+          "cls": "bg-primary-700 text-white",
+          "left": 83,
+          "right": 595
+        },
+        {
+          "tag": "tr",
+          "cls": "",
+          "left": 83,
+          "right": 595
+        },
+        {
+          "tag": "th",
+          "cls": "border-b border-primary-200 px-3 py-2 font-black",
+          "left": 362,
+          "right": 595
+        },
+        {
+          "tag": "tbody",
+          "cls": "",
+          "left": 83,
+          "right": 595
+        },
+        {
+          "tag": "tr",
+          "cls": "",
+          "left": 83,
+          "right": 595
+        },
+        {
+          "tag": "td",
+          "cls": "border-b border-primary-100 px-3 py-2 align-top",
+          "left": 362,
+          "right": 595
+        },
+        {
+          "tag": "tr",
+          "cls": "",
+          "left": 83,
+          "right": 595
+        },
+        {
+          "tag": "td",
+          "cls": "border-b border-primary-100 px-3 py-2 align-top",
+          "left": 362,
+          "right": 595
+        }
+      ],
+      "clipped": [],
+      "title": "FuelWell — AI Nutrition Coach"
+    }
+  }
+}
