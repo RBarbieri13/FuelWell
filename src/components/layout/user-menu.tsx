@@ -90,7 +90,7 @@ export function UserMenu({ session = "anonymous" }: { session?: UserMenuSession 
         </button>
 
         {open && (
-          <div className="absolute right-0 top-10 w-64 overflow-hidden rounded-[1.25rem] border border-primary-100 bg-white p-2 shadow-[0_24px_50px_rgba(16,48,40,0.18)]">
+          <div role="menu" className="absolute right-0 top-10 w-64 overflow-hidden rounded-[1.25rem] border border-primary-100 bg-white p-2 shadow-[0_24px_50px_rgba(16,48,40,0.18)]">
             <div className="px-3 py-2">
               <p className="text-xs font-black uppercase tracking-[0.14em] text-primary-700">
                 User Settings
@@ -103,6 +103,7 @@ export function UserMenu({ session = "anonymous" }: { session?: UserMenuSession 
                   <Link
                     key={item.label}
                     href={item.href}
+                    role="menuitem"
                     onClick={() => setOpen(false)}
                     className="flex items-center gap-3 rounded-[0.95rem] px-3 py-2.5 text-sm font-black text-foreground transition hover:bg-primary-50"
                   >

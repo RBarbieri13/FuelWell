@@ -11,9 +11,11 @@ import {
   Sparkles,
   Table2,
 } from "lucide-react";
+import { headers } from "next/headers";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { getLaunchPreflight } from "@/lib/launch-preflight";
+import { isPreviewHost } from "@/lib/preview-session";
 
 const attachmentTypes = [
   {
@@ -49,7 +51,9 @@ const reviewSteps = [
   "You choose whether to log, edit, save, or ignore the result.",
 ];
 
-export default function CoachAttachmentsReviewPage() {
+export default async function CoachAttachmentsReviewPage() {
+  // The preflight page 404s outside preview hosts, so only link to it there.
+  const showPreflightLink = isPreviewHost((await headers()).get("host"));
   const preflight = getLaunchPreflight();
   const aiCheck = preflight.checks.find((check) => check.id === "anthropic");
   const storageCheck = preflight.checks.find((check) => check.id === "file-storage");
@@ -140,13 +144,15 @@ export default function CoachAttachmentsReviewPage() {
                 </p>
               </div>
             </div>
-            <Link
-              href="/app/launch-preflight"
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-sm font-black text-primary-700 transition hover:bg-primary-100"
-            >
-              Open preflight
-              <ArrowRight className="h-4 w-4" />
-            </Link>
+            {showPreflightLink && (
+              <Link
+                href="/app/launch-preflight"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-sm font-black text-primary-700 transition hover:bg-primary-100"
+              >
+                Open preflight
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            )}
           </div>
         </Card>
 

@@ -160,7 +160,7 @@
         "fix-insight",
         "fix-identity"
       ],
-      "status": "failing"
+      "status": "pass"
     },
     {
       "id": "design-gate",
