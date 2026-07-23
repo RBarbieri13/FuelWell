@@ -98,7 +98,7 @@
         "design-ruleset",
         "fix-shell"
       ],
-      "status": "failing"
+      "status": "pass"
     },
     {
       "id": "fix-fitness",
@@ -113,7 +113,7 @@
         "design-ruleset",
         "fix-shell"
       ],
-      "status": "failing"
+      "status": "pass"
     },
     {
       "id": "fix-insight",
@@ -129,7 +129,7 @@
         "design-ruleset",
         "fix-shell"
       ],
-      "status": "failing"
+      "status": "pass"
     },
     {
       "id": "fix-identity",

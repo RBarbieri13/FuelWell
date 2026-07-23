@@ -136,7 +136,14 @@ export function FoodSearch({
           }
         />
       ) : (
-        <div className="grid max-h-[34rem] gap-1.5 overflow-y-auto pr-1">
+        <div
+          className={cn(
+            "grid gap-1.5 overflow-y-auto pr-1",
+            // With a selection active the list shrinks so the portion card
+            // below stays in view instead of a long spatial jump (audit L2).
+            selectedId ? "max-h-56" : "max-h-[34rem]"
+          )}
+        >
           {results.map((food) => (
             <div
               key={food.id}

@@ -20,11 +20,9 @@ function portionTotals(food: FoodItem, amount: number): MacroTotals {
  */
 export function PortionPicker({
   food,
-  mealTypeLabel,
   onAdd,
 }: {
   food: FoodItem;
-  mealTypeLabel: string;
   onAdd: (input: {
     amount: number;
     label: string;
@@ -59,7 +57,7 @@ export function PortionPicker({
 
       <div>
         <p className="mb-2 text-xs font-black uppercase tracking-[0.16em] text-muted-foreground">
-          One-tap portions
+          One-tap portions — tapping logs instantly
         </p>
         <div className="grid gap-2">
           {food.commonServings.map((serving) => {
@@ -86,9 +84,14 @@ export function PortionPicker({
                     &middot; {totals.fat}g fat
                   </p>
                 </div>
-                <p className="font-black tabular-nums text-[#16302a]">
-                  {totals.calories} kcal
-                </p>
+                <div className="text-right">
+                  <p className="font-black tabular-nums text-[#16302a]">
+                    {totals.calories} kcal
+                  </p>
+                  <p className="mt-0.5 text-[10px] font-black uppercase tracking-[0.1em] text-primary-600">
+                    Tap to log
+                  </p>
+                </div>
               </button>
             );
           })}
@@ -132,7 +135,7 @@ export function PortionPicker({
             }}
           >
             <Check className="h-4 w-4" />
-            Add to {mealTypeLabel}
+            Log custom amount
           </Button>
         </div>
         {customAmount.trim() !== "" && !customValid && (

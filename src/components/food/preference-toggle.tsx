@@ -27,6 +27,7 @@ export function PreferenceToggle({
         type="button"
         aria-pressed={isLiked(id)}
         aria-label="Like this"
+        title="Like — ranks this higher in your lists"
         onClick={(e) => {
           e.preventDefault();
           toggleLike(id);
@@ -45,6 +46,7 @@ export function PreferenceToggle({
         type="button"
         aria-pressed={isDisliked(id)}
         aria-label="Not for me"
+        title="Not for me — ranks this lower in your lists"
         onClick={(e) => {
           e.preventDefault();
           toggleDislike(id);

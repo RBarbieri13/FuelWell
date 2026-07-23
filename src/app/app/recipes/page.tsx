@@ -1,20 +1,23 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 
 const RECIPE_BATCH_SIZE = 12;
-import { BookOpen, ChefHat, Search, SlidersHorizontal, Sparkles, Timer } from "lucide-react";
+import { ArrowRight, BookOpen, CalendarDays, ChefHat, Search, SlidersHorizontal, Sparkles, Timer } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { DietFilterChips } from "@/components/food/diet-filter-chips";
-import { RecipeCard } from "@/components/recipes/recipe-card";
+import { RecipeCard, type RecipePlanStatus } from "@/components/recipes/recipe-card";
 import { RecipeDetail } from "@/components/recipes/recipe-detail";
 import {
+  RECIPES,
   searchRecipes,
   applyRecipeFilters,
   type Recipe,
 } from "@/lib/recipes-data";
 import { usePreferences, rankByPreference } from "@/lib/use-preferences";
 import { useDayLog } from "@/lib/use-day-log";
+import { useMealPlan } from "@/lib/use-meal-plan";
 import { remaining, sumMeals } from "@/lib/fuelwell-data";
 import { usePreviewOnboardingOverride } from "@/lib/preview-onboarding";
 
@@ -24,6 +27,56 @@ export default function RecipesPage() {
   const [openRecipe, setOpenRecipe] = useState<Recipe | null>(null);
   const { diets, allergies, likes, dislikes, toggleDiet } = usePreferences();
   const { meals, targets } = useDayLog();
+  const { days } = useMealPlan();
+
+  // Deep-link support: /app/recipes?recipe=<id> opens that recipe's detail,
+  // so other surfaces (grocery rows, plan slots) can link to a recipe.
+  useEffect(() => {
+    const requested = new URLSearchParams(window.location.search).get("recipe");
+    if (!requested) return;
+    const match = RECIPES.find((candidate) => candidate.id === requested);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time URL read on mount, same pattern as signup/page.tsx
+    if (match) setOpenRecipe(match);
+  }, []);
+
+  function openRecipeDialog(recipe: Recipe) {
+    setOpenRecipe(recipe);
+    window.history.replaceState(null, "", `/app/recipes?recipe=${recipe.id}`);
+  }
+
+  function closeRecipeDialog() {
+    setOpenRecipe(null);
+    window.history.replaceState(null, "", "/app/recipes");
+  }
+
+  // "Already planned / logged today" signals for recipe cards (audit R5).
+  const planStatusByTitle = useMemo(() => {
+    const map = new Map<string, RecipePlanStatus>();
+    for (const day of days) {
+      for (const meal of day.meals) {
+        if (meal.status === "open") continue;
+        const key = meal.title.toLowerCase();
+        if (!map.has(key)) {
+          map.set(key, { label: `In plan · ${day.label}`, href: "/app/meal-plan" });
+        }
+      }
+    }
+    return map;
+  }, [days]);
+  const loggedTitles = useMemo(() => {
+    const names = new Set<string>();
+    for (const meal of meals) {
+      names.add(meal.name.toLowerCase());
+      meal.items.forEach((item) => names.add(item.name.toLowerCase()));
+    }
+    return names;
+  }, [meals]);
+
+  function planStatusFor(recipe: Recipe): RecipePlanStatus | null {
+    const key = recipe.title.toLowerCase();
+    if (loggedTitles.has(key)) return { label: "Logged today", href: "/app/nutrition" };
+    return planStatusByTitle.get(key) ?? null;
+  }
   const previewOverride = usePreviewOnboardingOverride();
   const todayTotals = sumMeals(meals);
   const effectiveTargets = {
@@ -87,6 +140,14 @@ export default function RecipesPage() {
               Search meals, filter to your diet, and open a recipe for full
               ingredients, prep steps, and per-serving nutrition.
             </p>
+            <Link
+              href="/app/meal-plan"
+              className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-full border border-white/14 bg-white/10 px-4 py-2 text-sm font-black text-white transition hover:bg-white/15"
+            >
+              <CalendarDays className="h-4 w-4" />
+              Open meal plan
+              <ArrowRight className="h-4 w-4" />
+            </Link>
             <div className="mt-4 flex flex-wrap items-center gap-2">
               <span className="text-xs font-black uppercase tracking-[0.12em] text-primary-200">
                 Left today
@@ -180,12 +241,18 @@ export default function RecipesPage() {
                 Hiding recipes with: {allergies.join(", ")}.
               </p>
             )}
+            {(likes.length > 0 || dislikes.length > 0) && (
+              <p className="text-xs font-semibold text-muted-foreground">
+                Your thumbs tune this list — liked recipes rank first, &ldquo;Not for
+                me&rdquo; sinks to the end.
+              </p>
+            )}
           </div>
 
           {featured && (
             <button
               type="button"
-              onClick={() => setOpenRecipe(featured)}
+              onClick={() => openRecipeDialog(featured)}
               className="w-full rounded-[1.35rem] border border-primary-100 bg-primary-50/70 p-4 text-left transition hover:border-primary-200"
             >
               <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.14em] text-primary-700">
@@ -250,7 +317,8 @@ export default function RecipesPage() {
               <RecipeCard
                 key={recipe.id}
                 recipe={recipe}
-                onOpen={setOpenRecipe}
+                onOpen={openRecipeDialog}
+                planStatus={planStatusFor(recipe)}
               />
             ))}
           </div>
@@ -270,7 +338,7 @@ export default function RecipesPage() {
       {openRecipe && (
         <RecipeDetail
           recipe={openRecipe}
-          onClose={() => setOpenRecipe(null)}
+          onClose={closeRecipeDialog}
         />
       )}
     </div>

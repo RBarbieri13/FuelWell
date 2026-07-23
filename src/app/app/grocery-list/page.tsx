@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { cn } from "@/lib/utils/cn";
+import Link from "next/link";
 import {
   CheckCheck,
   CheckCircle2,
@@ -14,12 +15,14 @@ import {
   ListPlus,
   Minus,
   Plus,
+  RotateCcw,
   ShoppingBasket,
   Sparkles,
   Trash2,
 } from "lucide-react";
 import { RECIPES } from "@/lib/recipes-data";
 import { usePreferences } from "@/lib/use-preferences";
+import { useMealPlan } from "@/lib/use-meal-plan";
 
 import {
   useGroceryList,
@@ -74,6 +77,14 @@ export default function GroceryListPage() {
     hideChecked: false,
     keepAwake: false,
   });
+  // Bulk actions ask before firing (audit G1/G3/G5); one pending action at a time.
+  const [confirmAction, setConfirmAction] = useState<
+    | { type: "clear" }
+    | { type: "markAll" }
+    | { type: "restore"; entry: GroceryHistoryEntry }
+    | null
+  >(null);
+  const { days: planDays } = useMealPlan();
 
   const checkedCount = items.filter((item) => item.checked).length;
   const remainingCount = items.length - checkedCount;
@@ -96,6 +107,22 @@ export default function GroceryListPage() {
       }))
       .sort((a, b) => Number(b.liked) - Number(a.liked) || Number(a.manual) - Number(b.manual) || a.source.localeCompare(b.source));
   }, [items, likes]);
+  // Exact-title matches only — fuzzy links to the wrong recipe are worse
+  // than no link (audit G6).
+  const recipeHrefBySource = useMemo(() => {
+    const map = new Map<string, string>();
+    const byTitle = new Map<string, string>();
+    for (const recipe of RECIPES) {
+      const key = recipe.title.toLowerCase();
+      if (!byTitle.has(key)) byTitle.set(key, recipe.id);
+    }
+    items.forEach((item) => {
+      if (!item.source) return;
+      const id = byTitle.get(item.source.toLowerCase());
+      if (id) map.set(item.source, `/app/recipes?recipe=${id}`);
+    });
+    return map;
+  }, [items]);
   const visibleItems = storeMode.hideChecked
     ? items.filter((item) => !item.checked)
     : items;
@@ -201,6 +228,49 @@ export default function GroceryListPage() {
     setGroceryItems(entry.items);
   }
 
+  function requestRestore(entry: GroceryHistoryEntry) {
+    // Restoring over a non-empty list replaces it — that needs a confirm.
+    if (items.length === 0) {
+      restoreList(entry);
+      return;
+    }
+    setConfirmAction({ type: "restore", entry });
+  }
+
+  function runConfirmedAction() {
+    if (!confirmAction) return;
+    if (confirmAction.type === "clear") clearAndArchiveList();
+    if (confirmAction.type === "markAll") {
+      setGroceryItems(items.map((item) => ({ ...item, checked: true })));
+    }
+    if (confirmAction.type === "restore") restoreList(confirmAction.entry);
+    setConfirmAction(null);
+  }
+
+  const confirmCopy =
+    confirmAction?.type === "clear"
+      ? {
+          title: `Clear all ${items.length} items?`,
+          detail: "The list is saved to Past lists below, so you can restore it any time.",
+          cta: "Yes, clear list",
+          destructive: true,
+        }
+      : confirmAction?.type === "markAll"
+        ? {
+            title: `Mark all ${remainingCount} remaining items as shopped?`,
+            detail: "You can uncheck individual items afterwards.",
+            cta: "Mark all shopped",
+            destructive: false,
+          }
+        : confirmAction?.type === "restore"
+          ? {
+              title: `Restore this past list (${confirmAction.entry.itemCount} items)?`,
+              detail: `It replaces the ${items.length} items currently on your list.`,
+              cta: "Restore list",
+              destructive: false,
+            }
+          : null;
+
   return (
     <div className="fw-app-surface">
       <header className="fw-page-header">
@@ -215,7 +285,8 @@ export default function GroceryListPage() {
             <Button
               type="button"
               size="lg"
-              onClick={() => setGroceryItems(items.map((item) => ({ ...item, checked: true })))}
+              onClick={() => setConfirmAction({ type: "markAll" })}
+              disabled={items.length === 0 || remainingCount === 0}
               className="min-w-0 whitespace-nowrap rounded-full px-3 text-center text-sm sm:px-5 sm:text-base"
             >
               <CheckCheck className="hidden w-5 h-5 sm:block" />
@@ -225,7 +296,7 @@ export default function GroceryListPage() {
               type="button"
               size="lg"
               variant="secondary"
-              onClick={clearAndArchiveList}
+              onClick={() => setConfirmAction({ type: "clear" })}
               disabled={items.length === 0}
               className="min-w-0 whitespace-nowrap rounded-full px-3 text-center text-sm sm:px-5 sm:text-base"
             >
@@ -237,6 +308,31 @@ export default function GroceryListPage() {
       </header>
 
       <div className="fw-page-inner grid min-w-0 gap-5 lg:grid-cols-[minmax(0,1fr)_18rem] 2xl:grid-cols-[minmax(0,1fr)_20rem]">
+        {confirmAction && confirmCopy && (
+          <div
+            className={cn(
+              "min-w-0 rounded-[1.35rem] border p-4 lg:col-span-2",
+              confirmCopy.destructive
+                ? "border-red-200 bg-red-50/70"
+                : "border-primary-200 bg-primary-50/70"
+            )}
+          >
+            <p className="text-sm font-black text-neutral-900">{confirmCopy.title}</p>
+            <p className="mt-1 text-sm font-semibold text-muted-foreground">{confirmCopy.detail}</p>
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <Button
+                variant={confirmCopy.destructive ? "danger" : "primary"}
+                size="sm"
+                onClick={runConfirmedAction}
+              >
+                {confirmCopy.cta}
+              </Button>
+              <Button variant="ghost" size="sm" onClick={() => setConfirmAction(null)}>
+                Cancel
+              </Button>
+            </div>
+          </div>
+        )}
         <div className="min-w-0 space-y-4">
           <Card className="fw-mint-panel min-w-0 rounded-[24px] border-primary-200/80 px-4 py-4 shadow-none sm:px-6 sm:py-6">
             <div className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-center md:gap-5">
@@ -246,21 +342,29 @@ export default function GroceryListPage() {
                   This week
                 </div>
                 <h2 className="mt-3 font-heading text-[22px] font-black tracking-tight text-[#16302a] md:text-2xl">
-                  {remainingCount === 0
-                    ? "All shopped for this week."
-                    : `${remainingCount} items left for 4 planned days`}
+                  {items.length === 0
+                    ? "List cleared."
+                    : remainingCount === 0
+                      ? "All shopped for this week."
+                      : `${remainingCount} items left for ${planDays.length} planned days`}
                 </h2>
-                {remainingCount === 0 && (
+                {items.length === 0 ? (
+                  <p className="mt-3 max-w-xl text-sm font-semibold leading-6 text-primary-900/75 md:text-[15px]">
+                    Restore a past list below, or add items manually.
+                  </p>
+                ) : remainingCount === 0 ? (
                   <p className="mt-3 max-w-xl text-sm font-semibold leading-6 text-primary-900/75 md:text-[15px]">
                     You&apos;re set — check back when new meals are planned.
                   </p>
-                )}
+                ) : null}
               </div>
               <div className="min-w-0 rounded-[20px] bg-white px-4 py-3.5 text-center md:px-5 md:py-5 shadow-[0_8px_18px_rgba(20,90,75,0.08)] sm:px-8 sm:py-6">
                 <p className="font-heading text-[2rem] font-black leading-none tabular-nums md:text-[42px] text-primary-600">
-                  {checkedCount}/{items.length}
+                  {items.length === 0 ? "—" : `${checkedCount}/${items.length}`}
                 </p>
-                <p className="mt-1 text-sm font-bold text-muted-foreground">checked off</p>
+                <p className="mt-1 text-sm font-bold text-muted-foreground">
+                  {items.length === 0 ? "no items yet" : "checked off"}
+                </p>
                 <div className="mt-2 h-2.5 overflow-hidden rounded-full bg-primary-100">
                   <div
                     className="h-full rounded-full bg-primary-500"
@@ -347,24 +451,34 @@ export default function GroceryListPage() {
                 </p>
               ) : (
                 history.map((entry) => (
-                  <button
+                  <div
                     key={entry.id}
-                    type="button"
-                    onClick={() => restoreList(entry)}
-                    className="w-full rounded-[1rem] border border-primary-100 bg-[#f8fbf9] px-4 py-3 text-left transition hover:bg-primary-50"
+                    className="flex items-center justify-between gap-3 rounded-[1rem] border border-primary-100 bg-[#f8fbf9] px-4 py-3"
                   >
-                    <span className="block text-sm font-black text-[#16302a]">
-                      {entry.itemCount} items · {entry.checkedCount} shopped
-                    </span>
-                    <span className="mt-1 block text-xs font-semibold text-muted-foreground">
-                      {new Date(entry.savedAt).toLocaleDateString([], {
-                        month: "short",
-                        day: "numeric",
-                        hour: "numeric",
-                        minute: "2-digit",
-                      })}
-                    </span>
-                  </button>
+                    <div className="min-w-0">
+                      <span className="block text-sm font-black text-[#16302a]">
+                        {entry.itemCount} items · {entry.checkedCount} shopped
+                      </span>
+                      <span className="mt-1 block text-xs font-semibold text-muted-foreground">
+                        {new Date(entry.savedAt).toLocaleDateString([], {
+                          month: "short",
+                          day: "numeric",
+                          hour: "numeric",
+                          minute: "2-digit",
+                        })}
+                      </span>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => requestRestore(entry)}
+                      aria-label={`Restore list of ${entry.itemCount} items`}
+                    >
+                      <RotateCcw className="h-3.5 w-3.5" />
+                      Restore
+                    </Button>
+                  </div>
                 ))
               )}
             </div>
@@ -580,7 +694,19 @@ export default function GroceryListPage() {
                     {/* Serving/category/benefit are planning-time edits — collapsed so
                         in-store check-offs stay a short scroll. */}
                     <div className="mt-2 flex min-w-0 items-center justify-between gap-2 border-t border-primary-100/70 pt-2 text-xs font-bold text-[#60776f]">
-                      <p className="min-w-0 break-words"><span className="text-muted-foreground">Recipe:</span> {item.source}</p>
+                      <p className="min-w-0 break-words">
+                        <span className="text-muted-foreground">Recipe:</span>{" "}
+                        {recipeHrefBySource.has(item.source) ? (
+                          <Link
+                            href={recipeHrefBySource.get(item.source)!}
+                            className="font-black text-primary-700 underline decoration-primary-300 underline-offset-2 transition hover:text-primary-800"
+                          >
+                            {item.source}
+                          </Link>
+                        ) : (
+                          item.source
+                        )}
+                      </p>
                       <button
                         type="button"
                         onClick={() => setExpandedItemId(expanded ? null : item.id)}
@@ -734,9 +860,18 @@ export default function GroceryListPage() {
                           </select>
                         </td>
                         <td className="border-t border-primary-100/70 px-3 py-2 align-middle">
-                          <span className="rounded-full bg-[#f4f8f6] px-2.5 py-1 text-xs font-black text-[#60776f]">
-                            {item.source}
-                          </span>
+                          {recipeHrefBySource.has(item.source) ? (
+                            <Link
+                              href={recipeHrefBySource.get(item.source)!}
+                              className="rounded-full bg-primary-50 px-2.5 py-1 text-xs font-black text-primary-700 transition hover:bg-primary-100"
+                            >
+                              {item.source}
+                            </Link>
+                          ) : (
+                            <span className="rounded-full bg-[#f4f8f6] px-2.5 py-1 text-xs font-black text-[#60776f]">
+                              {item.source}
+                            </span>
+                          )}
                         </td>
                         <td className="border-t border-primary-100/70 px-3 py-2 align-middle">
                           <div className="flex flex-col gap-1">

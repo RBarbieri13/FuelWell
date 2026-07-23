@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Beef, CheckCircle2, Clock, Flame, Leaf, ListPlus, Users, Wheat, Droplet, UtensilsCrossed, X } from "lucide-react";
+import { Beef, CalendarDays, CheckCircle2, Clock, Flame, Leaf, ListPlus, Users, Wheat, Droplet, UtensilsCrossed, X } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { PreferenceToggle } from "@/components/food/preference-toggle";
+import { cn } from "@/lib/utils/cn";
 import type { Recipe } from "@/lib/recipes-data";
 import { useDayLog } from "@/lib/use-day-log";
 import {
@@ -13,7 +14,15 @@ import {
   setGroceryItems,
   useGroceryList,
 } from "@/lib/use-grocery-list";
-import type { MealType } from "@/lib/fuelwell-data";
+import {
+  PLAN_SLOTS,
+  plannedMealFromRecipe,
+  useMealPlan,
+  type PlanSlot,
+} from "@/lib/use-meal-plan";
+import { formatMealType, type MealType } from "@/lib/fuelwell-data";
+
+const MEAL_TYPES: MealType[] = ["breakfast", "lunch", "dinner", "snack"];
 
 /**
  * Recipe detail modal: full ingredient list with measurements, the steps, and
@@ -29,9 +38,19 @@ export function RecipeDetail({
 }) {
   const { addMeal } = useDayLog();
   const { items } = useGroceryList();
+  const { days, setPlanMeal } = useMealPlan();
   const [confirmation, setConfirmation] = useState("");
   const [pendingAction, setPendingAction] = useState<"meal" | "groceries" | null>(null);
+  const [openPicker, setOpenPicker] = useState<"log" | "plan" | null>(null);
   const mealType = recipe.meal.toLowerCase() as MealType;
+  const [logSlot, setLogSlot] = useState<MealType>(mealType);
+  const [planSlot, setPlanSlot] = useState<PlanSlot>(recipe.meal);
+  const [planDayId, setPlanDayId] = useState(
+    () =>
+      days.find((day) =>
+        day.meals.some((meal) => meal.slot === recipe.meal && meal.status === "open")
+      )?.id ?? days[0]?.id
+  );
   const nutrition: { label: string; value: string; tone: string; icon: typeof Flame }[] = [
     { label: "Calories", value: `${recipe.perServing.calories}`, tone: "bg-primary-50 text-primary-700 border-primary-100", icon: Flame },
     { label: "Protein", value: `${recipe.perServing.protein}g`, tone: "bg-sky-50 text-sky-700 border-sky-100", icon: Beef },
@@ -40,11 +59,11 @@ export function RecipeDetail({
     { label: "Fiber", value: `${recipe.perServing.fiber}g`, tone: "bg-primary-50 text-primary-700 border-primary-100", icon: Leaf },
   ];
 
-  async function planMeal() {
+  async function logToToday() {
     setConfirmation("");
     setPendingAction("meal");
     const result = await addMeal({
-      mealType,
+      mealType: logSlot,
       name: recipe.title,
       items: [{
         name: recipe.title,
@@ -57,10 +76,20 @@ export function RecipeDetail({
     });
     setConfirmation(
       result.ok
-        ? `${recipe.title} added to today's ${mealType}.`
+        ? `${recipe.title} added to today's ${logSlot}.`
         : `Meal was not saved: ${result.error}`,
     );
     setPendingAction(null);
+    setOpenPicker(null);
+  }
+
+  function addToPlan() {
+    const day = days.find((candidate) => candidate.id === planDayId) ?? days[0];
+    if (!day) return;
+    setConfirmation("");
+    setPlanMeal(day.id, planSlot, plannedMealFromRecipe(planSlot, recipe, "added"));
+    setConfirmation(`${recipe.title} planned for ${day.label} ${planSlot.toLowerCase()}.`);
+    setOpenPicker(null);
   }
 
   async function addIngredients() {
@@ -138,17 +167,125 @@ export function RecipeDetail({
         </div>
 
         <div className="space-y-6 px-4 py-5 sm:px-5">
-          <section className="grid min-w-0 gap-2 sm:grid-cols-2">
-            <Button type="button" onClick={planMeal} disabled={pendingAction !== null} className="w-full min-w-0">
-              <UtensilsCrossed className="h-4 w-4" />
-              {pendingAction === "meal" ? "Saving meal..." : "Plan this meal"}
-            </Button>
-            <Button type="button" variant="secondary" onClick={addIngredients} disabled={pendingAction !== null} className="w-full min-w-0">
-              <ListPlus className="h-4 w-4" />
-              {pendingAction === "groceries" ? "Saving groceries..." : "Add ingredients"}
-            </Button>
+          <section className="min-w-0 space-y-2">
+            <div className="grid min-w-0 gap-2 sm:grid-cols-3">
+              <Button
+                type="button"
+                onClick={() => setOpenPicker(openPicker === "log" ? null : "log")}
+                disabled={pendingAction !== null}
+                aria-expanded={openPicker === "log"}
+                className="w-full min-w-0"
+              >
+                <UtensilsCrossed className="h-4 w-4" />
+                {pendingAction === "meal" ? "Saving meal..." : "Log to today"}
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => setOpenPicker(openPicker === "plan" ? null : "plan")}
+                aria-expanded={openPicker === "plan"}
+                className="w-full min-w-0"
+              >
+                <CalendarDays className="h-4 w-4" />
+                Add to plan
+              </Button>
+              <Button type="button" variant="secondary" onClick={addIngredients} disabled={pendingAction !== null} className="w-full min-w-0">
+                <ListPlus className="h-4 w-4" />
+                {pendingAction === "groceries" ? "Saving groceries..." : "Add ingredients"}
+              </Button>
+            </div>
+
+            {openPicker === "log" && (
+              <div className="min-w-0 space-y-3 rounded-[1.15rem] border border-primary-100 bg-primary-50/60 p-3.5">
+                <p className="text-xs font-black uppercase tracking-[0.14em] text-muted-foreground">
+                  Log to which meal today?
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {MEAL_TYPES.map((slot) => (
+                    <button
+                      key={slot}
+                      type="button"
+                      onClick={() => setLogSlot(slot)}
+                      aria-pressed={logSlot === slot}
+                      className={cn(
+                        "min-h-11 rounded-full px-3.5 py-1.5 text-xs font-black transition sm:min-h-0",
+                        logSlot === slot
+                          ? "bg-primary-600 text-white"
+                          : "bg-white text-primary-800 hover:bg-primary-100"
+                      )}
+                    >
+                      {formatMealType(slot)}
+                    </button>
+                  ))}
+                </div>
+                <Button type="button" size="sm" onClick={logToToday} disabled={pendingAction !== null}>
+                  <CheckCircle2 className="h-4 w-4" />
+                  Add to {formatMealType(logSlot).toLowerCase()}
+                </Button>
+              </div>
+            )}
+
+            {openPicker === "plan" && (
+              <div className="min-w-0 space-y-3 rounded-[1.15rem] border border-primary-100 bg-primary-50/60 p-3.5">
+                <p className="text-xs font-black uppercase tracking-[0.14em] text-muted-foreground">
+                  Plan for which day and slot?
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {days.map((day) => (
+                    <button
+                      key={day.id}
+                      type="button"
+                      onClick={() => setPlanDayId(day.id)}
+                      aria-pressed={planDayId === day.id}
+                      className={cn(
+                        "min-h-11 rounded-full px-3.5 py-1.5 text-xs font-black transition sm:min-h-0",
+                        planDayId === day.id
+                          ? "bg-primary-600 text-white"
+                          : "bg-white text-primary-800 hover:bg-primary-100"
+                      )}
+                    >
+                      {day.label}, {day.date}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {PLAN_SLOTS.map((slot) => (
+                    <button
+                      key={slot}
+                      type="button"
+                      onClick={() => setPlanSlot(slot)}
+                      aria-pressed={planSlot === slot}
+                      className={cn(
+                        "min-h-11 rounded-full px-3.5 py-1.5 text-xs font-black transition sm:min-h-0",
+                        planSlot === slot
+                          ? "bg-primary-600 text-white"
+                          : "bg-white text-primary-800 hover:bg-primary-100"
+                      )}
+                    >
+                      {slot}
+                    </button>
+                  ))}
+                </div>
+                {(() => {
+                  const day = days.find((candidate) => candidate.id === planDayId);
+                  const occupant = day?.meals.find(
+                    (meal) => meal.slot === planSlot && meal.status !== "open"
+                  );
+                  return occupant && occupant.title !== recipe.title ? (
+                    <p className="text-xs font-semibold text-muted-foreground">
+                      Replaces {occupant.title} in that slot.
+                    </p>
+                  ) : null;
+                })()}
+                <Button type="button" size="sm" onClick={addToPlan}>
+                  <CheckCircle2 className="h-4 w-4" />
+                  Plan this slot
+                </Button>
+              </div>
+            )}
+
             {confirmation && (
-              <p role="status" className="flex min-w-0 items-start gap-2 rounded-[1rem] border border-primary-100 bg-primary-50 px-3 py-2.5 text-sm font-bold leading-5 text-primary-800 sm:col-span-2">
+              <p role="status" className="flex min-w-0 items-start gap-2 rounded-[1rem] border border-primary-100 bg-primary-50 px-3 py-2.5 text-sm font-bold leading-5 text-primary-800">
                 <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" />
                 <span className="min-w-0 break-words">{confirmation}</span>
               </p>

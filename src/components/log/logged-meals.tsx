@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Pencil, Trash2, UtensilsCrossed, X } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, Check, Pencil, Trash2, UtensilsCrossed, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils/cn";
@@ -59,7 +60,16 @@ export function LoggedMeals({
 
   return (
     <Card className="space-y-4">
-      <h2 className="text-lg font-black text-[#16302a]">Logged today</h2>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h2 className="text-lg font-black text-[#16302a]">Logged today</h2>
+        <Link
+          href="/app/nutrition"
+          className="inline-flex min-h-11 items-center gap-1 rounded-full bg-primary-50 px-3.5 py-1.5 text-xs font-black text-primary-700 transition hover:bg-primary-100 md:min-h-0"
+        >
+          Nutrition detail
+          <ArrowRight className="h-3.5 w-3.5" />
+        </Link>
+      </div>
       <div className="space-y-4">
         {meals.map((meal) => (
           <div key={meal.id} className="rounded-[1.35rem] border border-primary-100/80 bg-white/70 p-3 shadow-sm">

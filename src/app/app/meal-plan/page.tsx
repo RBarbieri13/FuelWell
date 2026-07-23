@@ -1,101 +1,38 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { RecipeDetail } from "@/components/recipes/recipe-detail";
 import { cn } from "@/lib/utils/cn";
 import {
   ArrowRight,
+  BookOpen,
   CalendarDays,
   CheckCircle2,
   ChevronRight,
   Clock,
   Plus,
+  RefreshCcw,
   ShoppingBasket,
   Sparkles,
   UtensilsCrossed,
 } from "lucide-react";
+import { RECIPES, type Recipe } from "@/lib/recipes-data";
+import { todayIsoDate, type MealType } from "@/lib/fuelwell-data";
+import { useDayLog } from "@/lib/use-day-log";
+import {
+  plannedMealFromRecipe,
+  suggestRecipeForSlot,
+  useMealPlan,
+  type PlanDay,
+  type PlanSlot,
+  type PlannedMeal,
+} from "@/lib/use-meal-plan";
 
-type MealSlot = "Breakfast" | "Lunch" | "Dinner" | "Snack";
-
-type PlannedMeal = {
-  slot: MealSlot;
-  title: string;
-  calories: number;
-  protein: number;
-  prep: string;
-  status: "planned" | "logged" | "open";
-};
-
-type PlanDay = {
-  id: string;
-  label: string;
-  date: string;
-  focus: string;
-  meals: PlannedMeal[];
-};
-
-const days: PlanDay[] = [
-  {
-    id: "mon",
-    label: "Mon",
-    date: "Jun 8",
-    focus: "Training day",
-    meals: [
-      { slot: "Breakfast", title: "Egg White Feta Wrap", calories: 360, protein: 31, prep: "12 min", status: "logged" },
-      { slot: "Lunch", title: "Turkey Quinoa Power Bowl", calories: 520, protein: 43, prep: "22 min", status: "planned" },
-      { slot: "Dinner", title: "Salmon, Sweet Potato, Greens", calories: 610, protein: 46, prep: "28 min", status: "planned" },
-      { slot: "Snack", title: "Greek Yogurt Berry Crunch", calories: 240, protein: 24, prep: "5 min", status: "planned" },
-    ],
-  },
-  {
-    id: "tue",
-    label: "Tue",
-    date: "Jun 9",
-    focus: "Light carbs",
-    meals: [
-      { slot: "Breakfast", title: "Protein Overnight Oats", calories: 410, protein: 34, prep: "Prep tonight", status: "planned" },
-      { slot: "Lunch", title: "Chicken Cobb Salad", calories: 485, protein: 42, prep: "15 min", status: "planned" },
-      { slot: "Dinner", title: "Turkey Lettuce Cups", calories: 450, protein: 39, prep: "20 min", status: "open" },
-      { slot: "Snack", title: "Cottage Cheese and Peaches", calories: 210, protein: 23, prep: "3 min", status: "planned" },
-    ],
-  },
-  {
-    id: "wed",
-    label: "Wed",
-    date: "Jun 10",
-    focus: "Busy day",
-    meals: [
-      { slot: "Breakfast", title: "Spinach Egg Bites", calories: 310, protein: 26, prep: "Batch ready", status: "planned" },
-      { slot: "Lunch", title: "Chicken Pesto Protein Pasta", calories: 690, protein: 51, prep: "24 min", status: "planned" },
-      { slot: "Dinner", title: "Shrimp Stir Fry Rice Bowl", calories: 560, protein: 44, prep: "18 min", status: "planned" },
-      { slot: "Snack", title: "Apple with Peanut Butter", calories: 220, protein: 8, prep: "2 min", status: "open" },
-    ],
-  },
-  {
-    id: "thu",
-    label: "Thu",
-    date: "Jun 11",
-    focus: "Recovery",
-    meals: [
-      { slot: "Breakfast", title: "Greek Yogurt Berry Crunch", calories: 240, protein: 24, prep: "5 min", status: "planned" },
-      { slot: "Lunch", title: "Black Bean Avocado Tacos", calories: 480, protein: 22, prep: "18 min", status: "open" },
-      { slot: "Dinner", title: "Sheet Pan Chicken Fajitas", calories: 590, protein: 49, prep: "30 min", status: "planned" },
-      { slot: "Snack", title: "Protein Shake", calories: 190, protein: 30, prep: "2 min", status: "planned" },
-    ],
-  },
-];
-
-const mealIdeas = [
-  "Turkey Quinoa Power Bowl",
-  "Salmon, Sweet Potato, Greens",
-  "Chicken Cobb Salad",
-  "Protein Overnight Oats",
-];
-
-const slotTone: Record<MealSlot, { bg: string; text: string; label: string }> = {
+const slotTone: Record<PlanSlot, { bg: string; text: string; label: string }> = {
   Breakfast: { bg: "bg-lemon-100", text: "text-lemon-700", label: "Morning" },
   Lunch: { bg: "bg-primary-100", text: "text-primary-700", label: "Midday" },
   Dinner: { bg: "bg-accent-100", text: "text-accent-700", label: "Evening" },
@@ -113,10 +50,21 @@ function dayTotals(day: PlanDay) {
   );
 }
 
+function recipeForMeal(meal: PlannedMeal): Recipe | undefined {
+  return meal.recipeId ? RECIPES.find((recipe) => recipe.id === meal.recipeId) : undefined;
+}
+
 export default function MealPlanPage() {
-  const [selectedDayId, setSelectedDayId] = useState(days[0].id);
+  const { days, setPlanMeal } = useMealPlan();
+  const { addMeal } = useDayLog();
+  const today = todayIsoDate();
+  const [selectedDayId, setSelectedDayId] = useState(
+    () => days.find((day) => day.iso === today)?.id ?? days[0].id
+  );
   const [view, setView] = useState<"day" | "week">("day");
-  const [addedMeals, setAddedMeals] = useState<Record<string, string>>({});
+  const [openRecipe, setOpenRecipe] = useState<Recipe | null>(null);
+  const [swapCount, setSwapCount] = useState(0);
+  const [actionNote, setActionNote] = useState("");
 
   const selectedDay = days.find((day) => day.id === selectedDayId) ?? days[0];
   const selectedTotals = dayTotals(selectedDay);
@@ -131,18 +79,75 @@ export default function MealPlanPage() {
     },
     { calories: 0, protein: 0, planned: 0 }
   );
-  const weekPlannedPercent = Math.round((weekTotals.planned / (days.length * 4)) * 100);
-  const openSlotCount = days.length * 4 - weekTotals.planned;
+  const slotCount = days.reduce((count, day) => count + day.meals.length, 0);
+  const weekPlannedPercent = Math.round((weekTotals.planned / slotCount) * 100);
+  const openSlotCount = slotCount - weekTotals.planned;
   const firstOpenSlot = days
     .flatMap((day) => day.meals.map((meal) => ({ day, meal })))
     .find(({ meal }) => meal.status === "open");
+  // Grocery-readiness derives from what is actually planned, not a constant.
+  const uniqueIngredientCount = useMemo(() => {
+    const names = new Set<string>();
+    for (const day of days) {
+      for (const meal of day.meals) {
+        if (meal.status === "open") continue;
+        const recipe = recipeForMeal(meal);
+        recipe?.ingredients.forEach((ingredient) => names.add(ingredient.item.toLowerCase()));
+      }
+    }
+    return names.size;
+  }, [days]);
 
-  function fillOpenSlot(slot: MealSlot) {
-    const nextIdea = mealIdeas[(Object.keys(addedMeals).length + slot.length) % mealIdeas.length];
-    setAddedMeals((current) => ({
-      ...current,
-      [`${selectedDay.id}-${slot}`]: nextIdea,
-    }));
+  function fillOpenSlot(day: PlanDay, meal: PlannedMeal) {
+    const sameDayTitles = day.meals
+      .filter((candidate) => candidate.slot !== meal.slot && candidate.status !== "open")
+      .map((candidate) => candidate.title);
+    const duplicate = sameDayTitles.some(
+      (title) => title.toLowerCase() === meal.title.toLowerCase()
+    );
+    if (!duplicate) {
+      setPlanMeal(day.id, meal.slot, { ...meal, status: "added" });
+      setActionNote(`${meal.title} planned for ${day.label} ${meal.slot.toLowerCase()}.`);
+      return;
+    }
+    const replacement = suggestRecipeForSlot(meal.slot, [...sameDayTitles, meal.title], swapCount);
+    if (!replacement) return;
+    setSwapCount((count) => count + 1);
+    setPlanMeal(day.id, meal.slot, plannedMealFromRecipe(meal.slot, replacement, "added"));
+    setActionNote(`${replacement.title} planned for ${day.label} ${meal.slot.toLowerCase()}.`);
+  }
+
+  function swapMeal(day: PlanDay, meal: PlannedMeal) {
+    const excluded = day.meals.map((candidate) => candidate.title);
+    const replacement = suggestRecipeForSlot(meal.slot, excluded, swapCount);
+    if (!replacement) return;
+    setSwapCount((count) => count + 1);
+    setPlanMeal(day.id, meal.slot, plannedMealFromRecipe(meal.slot, replacement, "added"));
+    setActionNote(`Swapped ${day.label} ${meal.slot.toLowerCase()} to ${replacement.title}.`);
+  }
+
+  async function logMealToToday(day: PlanDay, meal: PlannedMeal) {
+    const recipe = recipeForMeal(meal);
+    const result = await addMeal({
+      mealType: meal.slot.toLowerCase() as MealType,
+      name: meal.title,
+      items: [
+        {
+          name: meal.title,
+          servings: 1,
+          calories: recipe?.perServing.calories ?? meal.calories,
+          protein: recipe?.perServing.protein ?? meal.protein,
+          carbs: recipe?.perServing.carbs ?? 0,
+          fat: recipe?.perServing.fat ?? 0,
+        },
+      ],
+    });
+    if (result.ok) {
+      setPlanMeal(day.id, meal.slot, { ...meal, status: "logged" });
+      setActionNote(`${meal.title} logged to today's ${meal.slot.toLowerCase()}.`);
+    } else {
+      setActionNote(`Meal was not logged: ${result.error}`);
+    }
   }
 
   return (
@@ -181,13 +186,28 @@ export default function MealPlanPage() {
               Plan quality
             </p>
             <h2 className="mt-4 max-w-3xl font-heading text-2xl font-black leading-tight tracking-tight text-white md:text-4xl">
-              {weekTotals.planned} of {days.length * 4} meals are planned.
+              {weekTotals.planned} of {slotCount} meals are planned.
             </h2>
             <p className="mt-4 max-w-2xl text-base font-semibold leading-7 text-white/74">
               {firstOpenSlot
                 ? `Next best move: fill ${firstOpenSlot.day.label} ${firstOpenSlot.meal.slot.toLowerCase()} with a lean protein recipe so the week stays above 135g protein per day.`
                 : "Every slot is planned — build the grocery list to lock in the week."}
             </p>
+            {firstOpenSlot && (
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                className="mt-4 border-white/15 bg-white/10 text-white shadow-none hover:bg-white/15"
+                onClick={() => {
+                  setSelectedDayId(firstOpenSlot.day.id);
+                  setView("day");
+                }}
+              >
+                Go to {firstOpenSlot.day.label} {firstOpenSlot.meal.slot.toLowerCase()}
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            )}
             <div className="mt-6 grid grid-cols-3 gap-2 sm:gap-3">
               {[
                 ["Avg kcal", Math.round(weekTotals.calories / days.length).toLocaleString()],
@@ -216,7 +236,7 @@ export default function MealPlanPage() {
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="fw-soft-row p-4">
-                <p className="text-2xl font-black text-[#16302a] md:text-3xl">18</p>
+                <p className="text-2xl font-black text-[#16302a] md:text-3xl">{uniqueIngredientCount}</p>
                 <p className="text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">unique ingredients</p>
               </div>
               <div className="fw-soft-row p-4">
@@ -229,6 +249,16 @@ export default function MealPlanPage() {
                 Build grocery list
                 <ArrowRight className="h-4 w-4" />
               </Button>
+            </Link>
+            <Link
+              href="/app/recipes"
+              className="flex min-h-11 items-center justify-between rounded-[1.1rem] bg-[#f7faf8] px-4 py-3 text-sm font-black text-primary-800 transition hover:bg-primary-50"
+            >
+              <span className="inline-flex items-center gap-2">
+                <BookOpen className="h-4 w-4" />
+                Browse the recipe library
+              </span>
+              <ArrowRight className="h-4 w-4" />
             </Link>
           </Card>
         </section>
@@ -260,6 +290,11 @@ export default function MealPlanPage() {
                       <div>
                         <p className="text-base font-black text-[#16302a]">
                           {day.label}, {day.date}
+                          {day.iso === today && (
+                            <span className="ml-2 rounded-full bg-primary-600 px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.08em] text-white">
+                              Today
+                            </span>
+                          )}
                         </p>
                         <p className="text-xs font-semibold text-muted-foreground mt-0.5">{day.focus}</p>
                       </div>
@@ -272,7 +307,7 @@ export default function MealPlanPage() {
                       <span
                         className="flex flex-1 items-center gap-1"
                         role="img"
-                        aria-label={`${totals.planned} of 4 meals planned`}
+                        aria-label={`${totals.planned} of ${day.meals.length} meals planned`}
                       >
                         {day.meals.map((meal) => (
                           <span
@@ -328,11 +363,21 @@ export default function MealPlanPage() {
                 </div>
               </div>
 
+              {actionNote && (
+                <div
+                  role="status"
+                  className="mt-4 flex items-start gap-2 rounded-[1.15rem] border border-primary-100 bg-primary-50 px-4 py-3 text-sm font-black text-primary-800"
+                >
+                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" />
+                  <span>{actionNote}</span>
+                </div>
+              )}
+
               <div className="mt-5 space-y-3">
                 {selectedDay.meals.map((meal) => {
-                  const addedTitle = addedMeals[`${selectedDay.id}-${meal.slot}`];
-                  const isOpen = meal.status === "open" && !addedTitle;
+                  const isOpen = meal.status === "open";
                   const tone = slotTone[meal.slot];
+                  const recipe = recipeForMeal(meal);
 
                   return (
                     <div
@@ -363,9 +408,10 @@ export default function MealPlanPage() {
                           <div>
                             <p className="text-xs font-black uppercase tracking-[0.14em] text-muted-foreground">
                               {meal.slot} · {tone.label}
+                              {isOpen ? " · Suggested" : ""}
                             </p>
                             <h3 className="mt-1 text-lg font-black text-[#16302a]">
-                              {addedTitle ?? meal.title}
+                              {meal.title}
                             </h3>
                             <div className="mt-2 flex flex-wrap items-center gap-2 text-xs font-bold text-muted-foreground">
                               <span className="tabular-nums">{meal.calories.toLocaleString()} kcal</span>
@@ -378,16 +424,50 @@ export default function MealPlanPage() {
                           </div>
                         </div>
                         {isOpen ? (
-                          <Button type="button" variant="secondary" size="sm" onClick={() => fillOpenSlot(meal.slot)}>
+                          <Button type="button" variant="secondary" size="sm" onClick={() => fillOpenSlot(selectedDay, meal)}>
                             <Plus className="w-4 h-4" />
                             Fill slot
                           </Button>
                         ) : (
                           <Badge variant={meal.status === "logged" ? "success" : "default"}>
-                            {meal.status === "logged" ? "Logged" : addedTitle ? "Added" : "Planned"}
+                            {meal.status === "logged" ? "Logged" : meal.status === "added" ? "Added" : "Planned"}
                           </Badge>
                         )}
                       </div>
+                      {!isOpen && (
+                        <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-primary-100/70 pt-3">
+                          {recipe && (
+                            <button
+                              type="button"
+                              onClick={() => setOpenRecipe(recipe)}
+                              className="inline-flex min-h-11 items-center gap-1.5 rounded-full bg-white px-3.5 py-1.5 text-xs font-black text-primary-700 transition hover:bg-primary-50 md:min-h-0"
+                            >
+                              <BookOpen className="h-3.5 w-3.5" />
+                              Open recipe
+                            </button>
+                          )}
+                          {meal.status !== "logged" && (
+                            <>
+                              <button
+                                type="button"
+                                onClick={() => void logMealToToday(selectedDay, meal)}
+                                className="inline-flex min-h-11 items-center gap-1.5 rounded-full bg-white px-3.5 py-1.5 text-xs font-black text-primary-700 transition hover:bg-primary-50 md:min-h-0"
+                              >
+                                <UtensilsCrossed className="h-3.5 w-3.5" />
+                                Log to today
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => swapMeal(selectedDay, meal)}
+                                className="inline-flex min-h-11 items-center gap-1.5 rounded-full bg-white px-3.5 py-1.5 text-xs font-black text-primary-700 transition hover:bg-primary-50 md:min-h-0"
+                              >
+                                <RefreshCcw className="h-3.5 w-3.5" />
+                                Swap
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      )}
                     </div>
                   );
                 })}
@@ -417,8 +497,8 @@ export default function MealPlanPage() {
                           </p>
                           <p className="text-xs font-semibold text-muted-foreground">{day.focus}</p>
                         </div>
-                        <Badge variant={totals.planned === 4 ? "success" : "warning"}>
-                          {totals.planned}/4
+                        <Badge variant={totals.planned === day.meals.length ? "success" : "warning"}>
+                          {totals.planned}/{day.meals.length}
                         </Badge>
                       </div>
                       <div className="mt-4 grid grid-cols-2 gap-2">
@@ -445,6 +525,13 @@ export default function MealPlanPage() {
         </div>
       </div>
     </div>
+
+      {openRecipe && (
+        <RecipeDetail
+          recipe={openRecipe}
+          onClose={() => setOpenRecipe(null)}
+        />
+      )}
     </div>
   );
 }

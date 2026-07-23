@@ -1,9 +1,13 @@
 "use client";
 
-import { ArrowRight, Beef, ChefHat, Clock, Flame, Wheat, Droplet } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, Beef, CheckCircle2, ChefHat, Clock, Flame, Wheat, Droplet } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { PreferenceToggle } from "@/components/food/preference-toggle";
 import type { Recipe } from "@/lib/recipes-data";
+
+/** "Already planned / logged today" badge data — links to the owning surface. */
+export type RecipePlanStatus = { label: string; href: string };
 
 /**
  * Recipe summary card: title, meal, time, per-serving calories + protein,
@@ -12,9 +16,11 @@ import type { Recipe } from "@/lib/recipes-data";
 export function RecipeCard({
   recipe,
   onOpen,
+  planStatus,
 }: {
   recipe: Recipe;
   onOpen: (recipe: Recipe) => void;
+  planStatus?: RecipePlanStatus | null;
 }) {
   const macroTiles = [
     {
@@ -45,6 +51,17 @@ export function RecipeCard({
 
   return (
     <Card className="group flex min-h-full flex-col gap-4 p-5 transition hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-[0_22px_60px_rgba(22,48,42,0.12)]">
+      {planStatus && (
+        <div className="text-xs font-black">
+          <Link
+            href={planStatus.href}
+            className="inline-flex items-center gap-1 rounded-full bg-sky-50 px-2.5 py-1 text-sky-700 transition hover:bg-sky-100"
+          >
+            <CheckCircle2 className="h-3.5 w-3.5" />
+            {planStatus.label}
+          </Link>
+        </div>
+      )}
       <div className="flex items-start justify-between gap-3">
         <button
           type="button"

@@ -103,6 +103,7 @@ function LogContent() {
   const [sessionIngredients, setSessionIngredients] = useState<SessionIngredient[]>([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [recentlyAddedFoodId, setRecentlyAddedFoodId] = useState<string | null>(null);
+  const [lastLogged, setLastLogged] = useState<{ mealId: string; label: string } | null>(null);
   const addToPlateRef = useRef<HTMLDivElement | null>(null);
 
   // Selecting a food from a long results list must reveal the portion picker;
@@ -132,10 +133,13 @@ function LogContent() {
     },
     foodId?: string
   ) {
-    addMeal({
+    void addMeal({
       mealType,
       name,
       items: [{ name, servings, ...totalsToAdd }],
+    }).then((result) => {
+      // Keep a handle on the saved meal so the confirmation can offer Undo.
+      if (result.ok) setLastLogged({ mealId: result.value.id, label: name });
     });
     setSessionIngredients((current) => [
       {
@@ -147,7 +151,6 @@ function LogContent() {
       },
       ...current,
     ]);
-    setDrawerOpen(true);
     setRecentlyAddedFoodId(foodId ?? null);
     setConfirmation(`${name} added to ${mealTypeLabel.toLowerCase()}.`);
     setGoalImpact(
@@ -164,6 +167,20 @@ function LogContent() {
         integration: integrationSummary,
       })
     );
+  }
+
+  async function undoLastLog() {
+    if (!lastLogged) return;
+    const target = lastLogged;
+    setLastLogged(null);
+    const result = await removeMeal(target.mealId);
+    if (!result.ok) {
+      setConfirmation(`Could not undo: ${result.error}`);
+      return;
+    }
+    setSessionIngredients((current) => current.slice(1));
+    setConfirmation(`Removed ${target.label}.`);
+    setGoalImpact(null);
   }
 
   function handleAddPortion(input: {
@@ -317,10 +334,33 @@ function LogContent() {
                 </div>
               </div>
 
+              {/* The active meal slot repeats here so a save never lands in an
+                  unseen slot picked far away in the right rail (audit L7). */}
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className="text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">
+                  Adding to
+                </span>
+                {MEAL_TYPES.map((type) => (
+                  <button
+                    key={type}
+                    type="button"
+                    onClick={() => setMealType(type)}
+                    aria-pressed={mealType === type}
+                    className={cn(
+                      "min-h-11 rounded-full px-3 py-1.5 text-xs font-black transition md:min-h-0",
+                      mealType === type
+                        ? "bg-primary-600 text-white"
+                        : "bg-primary-50 text-primary-800 hover:bg-primary-100"
+                    )}
+                  >
+                    {formatMealType(type)}
+                  </button>
+                ))}
+              </div>
+
               {selectedFood && (
                 <PortionPicker
                   food={selectedFood}
-                  mealTypeLabel={mealTypeLabel}
                   onAdd={handleAddPortion}
                 />
               )}
@@ -328,10 +368,28 @@ function LogContent() {
               {confirmation && (
                 <div
                   role="status"
-                  className="flex items-start gap-2 rounded-[1.25rem] border border-primary-100 bg-primary-50 px-4 py-3 text-sm font-black text-primary-800"
+                  className="flex flex-wrap items-center gap-2 rounded-[1.25rem] border border-primary-100 bg-primary-50 px-4 py-3 text-sm font-black text-primary-800"
                 >
-                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" />
-                  <span>{confirmation}</span>
+                  <CheckCircle2 className="h-4 w-4 shrink-0" />
+                  <span className="min-w-0 flex-1">{confirmation}</span>
+                  {lastLogged && (
+                    <button
+                      type="button"
+                      onClick={() => void undoLastLog()}
+                      className="min-h-11 rounded-full bg-white px-3.5 py-1.5 text-xs font-black text-primary-700 transition hover:bg-primary-100 md:min-h-0"
+                    >
+                      Undo
+                    </button>
+                  )}
+                  {sessionIngredients.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setDrawerOpen(true)}
+                      className="min-h-11 rounded-full bg-white px-3.5 py-1.5 text-xs font-black text-primary-700 transition hover:bg-primary-100 md:min-h-0"
+                    >
+                      Current meal ({sessionIngredients.length})
+                    </button>
+                  )}
                 </div>
               )}
 
@@ -379,7 +437,17 @@ function RecentMeals({
   meals: ReturnType<typeof useDayLog>["meals"];
   onLog: (name: string, totals: MacroTotals) => void;
 }) {
-  const recent = meals.slice(-3).reverse();
+  // Dedupe by meal name (most-recent-first) so re-logging a meal does not
+  // render it twice in the row (audit L4).
+  const recent: typeof meals = [];
+  const seen = new Set<string>();
+  for (const meal of [...meals].reverse()) {
+    const key = meal.name.trim().toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    recent.push(meal);
+    if (recent.length === 3) break;
+  }
   if (recent.length === 0) return null;
   return (
     <Card className="space-y-3">
