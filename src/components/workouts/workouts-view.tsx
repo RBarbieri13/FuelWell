@@ -976,7 +976,16 @@ export function WorkoutsView({
               </div>
             </div>
 
-            <form action="/app/workouts" className="grid gap-3 lg:grid-cols-[minmax(14rem,1fr)_auto]">
+            {/* Filtering is fully client-side; submitting must never navigate
+                (a GET to /app/workouts reloads the page and wipes every
+                selected filter). Enter/Apply just re-confirm the live results. */}
+            <form
+              onSubmit={(event) => {
+                event.preventDefault();
+                setCurrentPage(1);
+              }}
+              className="grid gap-3 lg:grid-cols-[minmax(14rem,1fr)_auto]"
+            >
               <label className="block">
                 <span className="text-xs font-black uppercase tracking-[0.14em] text-muted-foreground">
                   Workout
@@ -1103,8 +1112,30 @@ export function WorkoutsView({
             </div>
 
             {visible.length === 0 && (
-              <div className="bg-white px-5 py-8 text-center text-sm font-semibold text-neutral-500">
-                No workouts match those filters yet.
+              <div role="status" aria-live="polite" className="bg-white px-5 py-8">
+                <div className="mx-auto max-w-md rounded-[1.35rem] border-2 border-accent-500/60 bg-accent-50 px-5 py-5 text-center">
+                  <p className="text-base font-black text-accent-700">Found 0 workouts</p>
+                  <p className="mt-1 text-sm font-semibold leading-6 text-[#54635d]">
+                    Nothing in the library matches
+                    {workoutQuery.trim() ? ` "${workoutQuery.trim()}" with` : ""} the
+                    filters you selected. Try removing a filter or broadening the search.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCurrentPage(1);
+                      setBodyPart("all");
+                      setWorkoutType("all");
+                      setLengthFilter("all");
+                      setIntensityFilter("all");
+                      setActiveQuickFilters([]);
+                      setWorkoutQuery("");
+                    }}
+                    className="mt-3 inline-flex min-h-11 items-center justify-center rounded-full bg-accent-500 px-5 py-2 text-sm font-black text-white transition hover:bg-accent-600"
+                  >
+                    Clear all filters
+                  </button>
+                </div>
               </div>
             )}
             {visible.length > 0 && (

@@ -6,7 +6,6 @@ import {
   ArrowRight,
   BarChart3,
   ChevronDown,
-  ChevronUp,
   Flame,
   Layers3,
   X,
@@ -528,7 +527,7 @@ function LedgerSeriesToggle({
           {detail}
         </span>
       </span>
-      {expanded ? <ChevronUp className="h-5 w-5 shrink-0" /> : <ChevronDown className="h-5 w-5 shrink-0" />}
+      <ChevronDown className={cn("h-5 w-5 shrink-0 transition-transform", expanded && "rotate-180")} />
     </button>
   );
 }

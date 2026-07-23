@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useId, useMemo, useState, type ReactNode } from "react";
 import Link from "next/link";
+import { cn } from "@/lib/utils/cn";
 import {
   Activity,
   ArrowRight,
@@ -9,7 +10,6 @@ import {
   Bike,
   Check,
   ChevronDown,
-  ChevronUp,
   Copy,
   Droplet,
   Dumbbell,
@@ -702,40 +702,47 @@ function DailyReviewSection({
   collapsedText: string;
   children: ReactNode;
 }) {
+  const contentId = useId();
   return (
     <section className="rounded-[2rem] border border-primary-200/90 bg-primary-50/35 p-3 shadow-[0_18px_48px_rgba(20,90,75,0.08)] md:p-4">
       <div className="rounded-[1.5rem] border border-white/85 bg-white/72 px-4 py-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] md:px-5">
-        <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between lg:gap-4">
-          <div className="flex gap-3">
+        {/* The whole header is the disclosure control: it sits at the top of
+            the region it collapses, and the chevron points down toward that
+            region (rotated while it's open). */}
+        <button
+          type="button"
+          onClick={onToggle}
+          aria-expanded={expanded}
+          aria-controls={contentId}
+          className="flex w-full items-start justify-between gap-3 rounded-[1rem] text-left transition hover:bg-primary-50/50"
+        >
+          <span className="flex min-w-0 gap-3">
             <span className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-100 text-primary-700">
               <Icon className="h-5 w-5" />
             </span>
-            <div>
-              <p className="text-xs font-black uppercase tracking-[0.16em] text-primary-600">
+            <span className="min-w-0">
+              <span className="block text-xs font-black uppercase tracking-[0.16em] text-primary-600">
                 {eyebrow}
-              </p>
-              <h2 className="mt-0.5 font-heading text-xl font-black text-[#16302a] md:text-3xl">
+              </span>
+              <span className="mt-0.5 block font-heading text-xl font-black text-[#16302a] md:text-3xl">
                 {title}
-              </h2>
-              <p className="mt-1 max-w-3xl text-sm font-semibold leading-6 text-[#6f8981] md:text-base">
+              </span>
+              <span className="mt-1 block max-w-3xl text-sm font-semibold leading-6 text-[#6f8981] md:text-base">
                 {description}
-              </p>
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={onToggle}
-            className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-primary-100 bg-white px-4 py-2.5 text-sm font-black text-primary-700 shadow-[0_10px_22px_rgba(20,90,75,0.08)] transition hover:bg-primary-50 sm:w-auto md:min-h-0"
-            aria-expanded={expanded}
-          >
-            {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-            {expanded ? "Collapse section" : "Expand section"}
-          </button>
-        </div>
+              </span>
+            </span>
+          </span>
+          <span className="mt-1 inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full border border-primary-100 bg-white px-4 py-2.5 text-sm font-black text-primary-700 shadow-[0_10px_22px_rgba(20,90,75,0.08)]">
+            <ChevronDown
+              className={cn("h-4 w-4 transition-transform", expanded && "rotate-180")}
+            />
+            <span className="hidden sm:inline">{expanded ? "Collapse" : "Expand"}</span>
+          </span>
+        </button>
       </div>
 
       {expanded ? (
-        <div className="mt-3 md:mt-4">{children}</div>
+        <div id={contentId} className="mt-3 md:mt-4">{children}</div>
       ) : (
         <div className="mt-4 rounded-[1.2rem] border border-primary-100 bg-white/78 px-4 py-3 text-sm font-bold text-primary-900/75 shadow-[inset_0_1px_0_rgba(255,255,255,0.75)]">
           {collapsedText}
@@ -1201,7 +1208,9 @@ function CollapsibleLogPanel({
             className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-primary-50 px-3.5 py-2 text-xs font-black text-primary-700 transition hover:bg-primary-100 md:min-h-0"
             aria-expanded={expanded}
           >
-            {expanded ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+            <ChevronDown
+              className={cn("h-3.5 w-3.5 transition-transform", expanded && "rotate-180")}
+            />
             {expanded ? "Hide" : "Show"}
           </button>
           <Link
