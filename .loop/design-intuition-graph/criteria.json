@@ -173,7 +173,7 @@
         "coherence",
         "design-ruleset"
       ],
-      "status": "failing"
+      "status": "pass"
     }
   ]
 }
