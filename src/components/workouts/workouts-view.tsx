@@ -10,7 +10,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Columns3,
-  Eye,
   Flame,
   Info,
   Leaf,
@@ -344,7 +343,9 @@ export function WorkoutsView({
   const [intensityFilter, setIntensityFilter] = useState<IntensityFilter>("all");
   const [activeQuickFilters, setActiveQuickFilters] = useState<QuickFilter[]>([]);
   const [workoutQuery, setWorkoutQuery] = useState(initialQuery ?? "");
-  const [showRecommendation, setShowRecommendation] = useState(false);
+  // Auto-expanded: a first-time visitor should see the coach pick, not a
+  // page of collapsed accordions (audit W7).
+  const [showRecommendation, setShowRecommendation] = useState(true);
   const [showActivityPlanner, setShowActivityPlanner] = useState(false);
   const [showWorkoutLibrary, setShowWorkoutLibrary] = useState(
     () =>
@@ -354,6 +355,8 @@ export function WorkoutsView({
   );
   const [currentPage, setCurrentPage] = useState(1);
   const [showAllMobileColumns, setShowAllMobileColumns] = useState(false);
+  const [tableScrollable, setTableScrollable] = useState(false);
+  const tableScrollRef = useRef<HTMLDivElement>(null);
   const libraryRef = useRef<HTMLElement>(null);
   const libraryHeadingRef = useRef<HTMLHeadingElement>(null);
   const shouldFocusLibraryRef = useRef(false);
@@ -382,7 +385,7 @@ export function WorkoutsView({
 
   const visible = useMemo(() => {
     const base = workoutQuery.trim() ? searchWorkouts(workoutQuery) : workouts;
-    return base.filter((workout) => {
+    const filtered = base.filter((workout) => {
       const matchesBodyPart = bodyPart === "all" || workout.category === bodyPart;
       const matchesType = workoutType === "all" || workout.workoutType === workoutType;
       const matchesLength = lengthFilter === "all" || getWorkoutLengthBucket(workout) === lengthFilter;
@@ -410,6 +413,13 @@ export function WorkoutsView({
         matchesQuickFilters
       );
     });
+    if (!workoutQuery.trim()) return filtered;
+    // Curated workouts surface before the generated permutations so a search
+    // like "core" leads with the hand-built sessions instead of variant rows.
+    return [
+      ...filtered.filter((workout) => !workout.id.startsWith("generated-")),
+      ...filtered.filter((workout) => workout.id.startsWith("generated-")),
+    ];
   }, [
     activeQuickFilters,
     bodyPart,
@@ -427,6 +437,17 @@ export function WorkoutsView({
     () => visible.slice((activePage - 1) * WORKOUTS_PER_PAGE, activePage * WORKOUTS_PER_PAGE),
     [activePage, visible]
   );
+
+  useEffect(() => {
+    const scroller = tableScrollRef.current;
+    if (!showWorkoutLibrary || !scroller) return;
+    // ResizeObserver fires once on observe, covering the initial measure.
+    const observer = new ResizeObserver(() =>
+      setTableScrollable(scroller.scrollWidth > scroller.clientWidth + 1)
+    );
+    observer.observe(scroller);
+    return () => observer.disconnect();
+  }, [showWorkoutLibrary, showAllMobileColumns, paginatedWorkouts]);
 
   useEffect(() => {
     if (!showWorkoutLibrary || !shouldFocusLibraryRef.current) return;
@@ -530,7 +551,7 @@ export function WorkoutsView({
                     <Link
                       key={option.id}
                       href={workoutHref(option.id)}
-                      className="flex items-center justify-between rounded-[0.95rem] bg-white/10 px-3 py-2 text-xs font-black text-primary-50 transition hover:bg-white/15"
+                      className="flex min-h-11 items-center justify-between rounded-[0.95rem] bg-white/10 px-3 py-2 text-xs font-black text-primary-50 transition hover:bg-white/15"
                     >
                       <span>{option.title}</span>
                       <span>{option.duration}</span>
@@ -985,16 +1006,24 @@ export function WorkoutsView({
           </div>
 
           <div className="min-w-0 overflow-hidden rounded-[24px] border border-border">
-            <div className="flex items-center justify-between gap-3 border-b border-border bg-primary-50/70 px-3 py-2.5 md:hidden">
-              <p className="min-w-0 text-xs font-semibold text-primary-900/70">
+            <div
+              className={cn(
+                "flex items-center justify-between gap-3 border-b border-border bg-primary-50/70 px-3 py-2.5",
+                !tableScrollable && "md:hidden"
+              )}
+            >
+              <p className="min-w-0 text-xs font-semibold text-primary-900/70 md:hidden">
                 {showAllMobileColumns ? "Swipe within the table for every detail." : "Tap a workout to preview it; time is shown."}
+              </p>
+              <p className="hidden min-w-0 text-xs font-semibold text-primary-900/70 md:block">
+                Scroll the table sideways for the equipment and goal columns.
               </p>
               <button
                 type="button"
                 aria-expanded={showAllMobileColumns}
                 aria-controls="workout-results-table"
                 onClick={() => setShowAllMobileColumns((current) => !current)}
-                className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-primary-100 bg-white px-3 py-2 text-xs font-black text-primary-700"
+                className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-primary-100 bg-white px-3 py-2 text-xs font-black text-primary-700 md:hidden"
               >
                 <Columns3 className="h-3.5 w-3.5" />
                 {showAllMobileColumns ? "Essential only" : "Show all columns"}
@@ -1003,12 +1032,13 @@ export function WorkoutsView({
             <div
               id="workout-results-table"
               data-testid="workout-results-scroll"
+              ref={tableScrollRef}
               className="max-w-full overflow-x-auto overscroll-x-contain"
             >
               <table
                 className={cn(
                   "w-full border-collapse bg-white text-left",
-                  showAllMobileColumns ? "min-w-[72rem]" : "min-w-0 md:min-w-[72rem]"
+                  showAllMobileColumns ? "min-w-[64rem]" : "min-w-0 md:min-w-[64rem]"
                 )}
               >
                 <thead className="bg-[#f4f8f6] text-xs font-black uppercase tracking-[0.14em] text-muted-foreground">
@@ -1021,7 +1051,6 @@ export function WorkoutsView({
                     <th className={cn("whitespace-nowrap px-4 py-3", !showAllMobileColumns && "hidden md:table-cell")}>Intensity</th>
                     <th className={cn("px-4 py-3", !showAllMobileColumns && "hidden md:table-cell")}>Equipment</th>
                     <th className={cn("px-4 py-3", !showAllMobileColumns && "hidden md:table-cell")}>Goal</th>
-                    <th className={cn("px-4 py-3 text-right", !showAllMobileColumns && "hidden md:table-cell")}>Preview</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-neutral-100">
@@ -1066,15 +1095,6 @@ export function WorkoutsView({
                         </td>
                         <td className={cn("max-w-[11rem] px-4 py-2.5 text-xs font-semibold text-muted-foreground", !showAllMobileColumns && "hidden md:table-cell")}>{workout.equipment}</td>
                         <td className={cn("max-w-[12rem] px-4 py-2.5 text-xs font-semibold text-muted-foreground", !showAllMobileColumns && "hidden md:table-cell")}>{workout.goal}</td>
-                        <td className={cn("px-3 py-2.5 text-right sm:px-4", !showAllMobileColumns && "hidden md:table-cell")}>
-                          <Link
-                            href={workoutHref(workout.id)}
-                            aria-label={`Preview ${workout.title}`}
-                            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-primary-100 bg-primary-50 text-primary-700 transition hover:border-primary-200 hover:bg-primary-100"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Link>
-                        </td>
                       </tr>
                     );
                   })}

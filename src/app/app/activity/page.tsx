@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useMemo } from "react";
 import {
   Activity,
   ArrowRight,
@@ -18,6 +18,8 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { useWorkoutLog } from "@/lib/use-workout-log";
+import type { WorkoutEntry } from "@/lib/coach/types";
 
 const activitySummary = {
   dateLabel: "Today",
@@ -26,10 +28,8 @@ const activitySummary = {
     "Your logged meals support a light training day, but recovery inputs are incomplete. Treat calorie burn as directional until wearable data is connected.",
   nextAction: "Log post-workout protein",
   sourceNote:
-    "Meals and soreness are user-entered examples. Steps, active calories, and readiness are deterministic estimates for this early product slice.",
+    "Meals and soreness are user-entered examples. Steps, active calories, and readiness are deterministic estimates for this early product slice. Rows marked Sample are illustrative; workouts you log appear beside them.",
 };
-
-const modes = ["Now", "After workout", "Tonight"];
 
 const metrics = [
   { label: "Steps", value: "6,420", detail: "Estimated from baseline activity", source: "Estimated", icon: Activity, tone: "primary" },
@@ -38,12 +38,40 @@ const metrics = [
   { label: "Last meal", value: "2h ago", detail: "Greek yogurt, berries, granola", source: "User-entered", icon: UtensilsCrossed, tone: "lemon" },
 ] as const;
 
-const timeline = [
-  { time: "7:20 AM", title: "Breakfast logged", detail: "Protein-forward meal, 31g protein.", source: "User-entered", status: "done" },
-  { time: "10:45 AM", title: "Walk detected", detail: "Estimated 1.8 mi easy effort.", source: "Estimated", status: "done" },
-  { time: "12:30 PM", title: "Lunch gap", detail: "Carbs are light for an afternoon workout.", source: "Estimated", status: "watch" },
-  { time: "5:30 PM", title: "Planned workout", detail: "Zone 2 ride or strength primer.", source: "User-entered", status: "next" },
+type TimelineEntry = {
+  id: string;
+  time: string;
+  minutes: number;
+  title: string;
+  detail: string;
+  source: "Sample" | "Logged";
+  status: "done" | "watch" | "next";
+  href?: string;
+};
+
+const sampleTimeline: TimelineEntry[] = [
+  { id: "sample-breakfast", time: "7:20 AM", minutes: 7 * 60 + 20, title: "Breakfast logged", detail: "Protein-forward meal, 31g protein.", source: "Sample", status: "done", href: "/app/log" },
+  { id: "sample-walk", time: "10:45 AM", minutes: 10 * 60 + 45, title: "Walk detected", detail: "Estimated 1.8 mi easy effort.", source: "Sample", status: "done", href: "/app/fitness" },
+  { id: "sample-lunch", time: "12:30 PM", minutes: 12 * 60 + 30, title: "Lunch gap", detail: "Carbs are light for an afternoon workout.", source: "Sample", status: "watch", href: "/app/log" },
+  { id: "sample-planned", time: "5:30 PM", minutes: 17 * 60 + 30, title: "Planned workout", detail: "Zone 2 ride or strength primer.", source: "Sample", status: "next", href: "/app/workouts/zone-2-ride" },
 ];
+
+function loggedTimelineEntries(workouts: WorkoutEntry[]): TimelineEntry[] {
+  return workouts.map((workout) => {
+    const loggedAt = new Date(workout.loggedAt);
+    const calories = Math.round(workout.calories ?? 0);
+    return {
+      id: workout.id,
+      time: loggedAt.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }),
+      minutes: loggedAt.getHours() * 60 + loggedAt.getMinutes(),
+      title: workout.name,
+      detail: `${workout.category} · ${workout.durationMin} min${calories > 0 ? ` · ${calories} active kcal` : ""}`,
+      source: "Logged",
+      status: "done",
+      href: "/app/fitness",
+    };
+  });
+}
 
 const decisions = [
   { label: "Keep intensity conversational", detail: "Add 35-50g carbs first if you want to push harder.", icon: Clock3 },
@@ -71,21 +99,29 @@ const toneMap = {
 };
 
 function SourceBadge({ children }: { children: string }) {
-  const estimated = children === "Estimated";
+  const styles =
+    children === "Estimated"
+      ? "bg-lemon-50 text-lemon-700"
+      : children === "Sample"
+        ? "bg-neutral-100 text-neutral-500"
+        : "bg-primary-50 text-primary-700";
 
   return (
-    <span
-      className={`inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-black ${
-        estimated ? "bg-lemon-50 text-lemon-700" : "bg-primary-50 text-primary-700"
-      }`}
-    >
+    <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-black ${styles}`}>
       {children}
     </span>
   );
 }
 
 export default function ActivityPage() {
-  const [selectedMode, setSelectedMode] = useState(modes[0]);
+  const { workouts } = useWorkoutLog();
+  const timeline = useMemo(
+    () =>
+      [...sampleTimeline, ...loggedTimelineEntries(workouts)].sort(
+        (a, b) => a.minutes - b.minutes
+      ),
+    [workouts]
+  );
 
   return (
     <div className="fw-app-surface">
@@ -96,21 +132,6 @@ export default function ActivityPage() {
             <p className="fw-muted mt-1 text-sm md:text-base">{activitySummary.dateLabel} · movement and fuel timing</p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <div className="rounded-full bg-white p-1 shadow-[0_18px_44px_rgba(22,48,42,0.10)]">
-              {modes.map((mode) => (
-                <button
-                  key={mode}
-                  type="button"
-                  onClick={() => setSelectedMode(mode)}
-                  className={`inline-flex rounded-full px-4 py-2 text-sm font-black ${
-                    selectedMode === mode ? "bg-primary-500 text-white" : "text-primary-900/60"
-                  }`}
-                  aria-pressed={selectedMode === mode}
-                >
-                  {mode}
-                </button>
-              ))}
-            </div>
             <Link
               href="/app/log"
               className="inline-flex items-center justify-center gap-2 rounded-full bg-primary-600 px-5 py-3 text-sm font-black text-white shadow-[0_16px_34px_rgba(21,145,108,0.24)] transition hover:bg-primary-700"
@@ -166,7 +187,7 @@ export default function ActivityPage() {
             </div>
             <div className="rounded-[1.25rem] border border-primary-100 bg-primary-50/70 p-4">
               <div className="mb-2 flex items-center justify-between text-xs font-black uppercase tracking-[0.12em] text-primary-800">
-                <span>{selectedMode} confidence</span>
+                <span>Current confidence</span>
                 <span>Medium</span>
               </div>
               <div className="h-2 overflow-hidden rounded-full bg-white">
@@ -273,24 +294,49 @@ export default function ActivityPage() {
 
         <section className="grid gap-4 xl:grid-cols-[1.35fr_0.85fr]">
           <Card className="px-6 py-6">
-            <div className="mb-3 flex items-center justify-between">
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
               <h2 className="text-2xl font-black text-neutral-900">Daily activity log</h2>
-              <span className="rounded-full bg-primary-50 px-3 py-1 text-xs font-black text-primary-700">4 signals</span>
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="rounded-full bg-primary-50 px-3 py-1 text-xs font-black text-primary-700">
+                  {timeline.length} signal{timeline.length === 1 ? "" : "s"}
+                </span>
+                <Link
+                  href="/app/fitness"
+                  className="inline-flex min-h-11 items-center gap-1.5 rounded-full bg-[#f4f8f6] px-3 py-1 text-xs font-black text-neutral-600 transition hover:bg-primary-50 hover:text-primary-700 md:min-h-0"
+                >
+                  Open activity detail
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
             </div>
             <div className="divide-y divide-primary-100/70">
-              {timeline.map((item) => (
-                <div key={`${item.time}-${item.title}`} className="grid gap-3 py-5 md:grid-cols-[6rem_1fr] md:items-center">
-                  <div className="text-sm font-black tabular-nums text-neutral-500">{item.time}</div>
-                  <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${item.status === "watch" ? "bg-lemon-500" : item.status === "next" ? "bg-accent-500" : "bg-primary-500"}`} />
-                      <p className="text-lg font-black text-neutral-900">{item.title}</p>
-                      <SourceBadge>{item.source}</SourceBadge>
+              {timeline.map((item) => {
+                const row = (
+                  <div className="grid gap-3 py-5 md:grid-cols-[6rem_1fr] md:items-center">
+                    <div className="text-sm font-black tabular-nums text-neutral-500">{item.time}</div>
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${item.status === "watch" ? "bg-lemon-500" : item.status === "next" ? "bg-accent-500" : "bg-primary-500"}`} />
+                        <p className="text-lg font-black text-neutral-900">{item.title}</p>
+                        <SourceBadge>{item.source}</SourceBadge>
+                      </div>
+                      <p className="mt-1 text-sm font-semibold leading-6 text-neutral-500">{item.detail}</p>
                     </div>
-                    <p className="mt-1 text-sm font-semibold leading-6 text-neutral-500">{item.detail}</p>
                   </div>
-                </div>
-              ))}
+                );
+
+                return item.href ? (
+                  <Link
+                    key={item.id}
+                    href={item.href}
+                    className="block transition hover:bg-primary-50/40"
+                  >
+                    {row}
+                  </Link>
+                ) : (
+                  <div key={item.id}>{row}</div>
+                );
+              })}
             </div>
           </Card>
 

@@ -166,7 +166,7 @@ test("Progress: owns fitness navigation and keeps the activity deep link", async
 
   await activityEntry.click();
   await expect(page).toHaveURL(/\/app\/fitness$/);
-  await expect(page.getByRole("heading", { name: "Fitness detail" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Activity detail" })).toBeVisible();
   await expect(mainNavigation.getByRole("link", { name: "Progress" })).toHaveAttribute(
     "aria-current",
     "page"

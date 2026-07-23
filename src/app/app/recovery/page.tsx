@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
 import {
   ArrowRight,
   CheckCircle2,
@@ -29,19 +28,11 @@ const readiness = {
   nextAction: "Pick a lower-intensity workout",
 };
 
-const windows = ["Today", "3 days", "7 days"];
-
-const windowEstimateCopy: Record<string, string> = {
-  Today: "Today’s readiness is",
-  "3 days": "Your 3-day readiness estimate is",
-  "7 days": "Your 7-day readiness estimate is",
-};
-
 const checklist = [
-  { label: "Sleep entered", detail: "7h 10m, quality marked good", done: true, source: "User-entered" },
-  { label: "Hydration check", detail: "2 of 3 bottles logged", done: true, source: "User-entered" },
-  { label: "Soreness check", detail: "Legs marked 6/10 after yesterday", done: true, source: "User-entered" },
-  { label: "Wearable sync", detail: "Heart-rate variability is not connected yet", done: false, source: "Missing" },
+  { label: "Sleep entered", detail: "7h 10m, quality marked good", done: true, source: "User-entered", href: "/app/daily-review" },
+  { label: "Hydration check", detail: "2 of 3 bottles logged", done: true, source: "User-entered", href: "/app/daily-review" },
+  { label: "Soreness check", detail: "Legs marked 6/10 after yesterday", done: true, source: "User-entered", href: "/app/daily-review" },
+  { label: "Wearable sync", detail: "Heart-rate variability is not connected yet", done: false, source: "Missing", href: "/app/settings" },
 ];
 
 const recoverySignals = [
@@ -95,8 +86,6 @@ function SourceBadge({ children }: { children: string }) {
 }
 
 export default function RecoveryPage() {
-  const [selectedWindow, setSelectedWindow] = useState(windows[0]);
-
   return (
     <div className="fw-app-surface">
       <header className="fw-page-header">
@@ -106,21 +95,6 @@ export default function RecoveryPage() {
             <p className="fw-muted mt-1 text-sm md:text-base">Sleep, soreness, hydration, and readiness signals</p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <div className="rounded-full bg-white p-1 shadow-[0_18px_44px_rgba(22,48,42,0.10)]">
-              {windows.map((window) => (
-                <button
-                  key={window}
-                  type="button"
-                  onClick={() => setSelectedWindow(window)}
-                  className={`inline-flex min-h-11 items-center rounded-full px-4 py-2 text-sm font-black md:min-h-0 ${
-                    selectedWindow === window ? "bg-primary-500 text-white" : "text-primary-900/60"
-                  }`}
-                  aria-pressed={selectedWindow === window}
-                >
-                  {window}
-                </button>
-              ))}
-            </div>
             <Link
               href="/app/workouts"
               className="inline-flex items-center justify-center gap-2 rounded-full bg-primary-600 px-5 py-3 text-sm font-black text-white shadow-[0_16px_34px_rgba(21,145,108,0.24)] transition hover:bg-primary-700"
@@ -177,12 +151,20 @@ export default function RecoveryPage() {
                 <span>2 tasks</span>
               </div>
               <div className="grid grid-cols-2 gap-2">
-                <span className="rounded-full bg-white px-3 py-2 text-center text-xs font-black text-primary-800">
+                <Link
+                  href="/app/daily-review"
+                  className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full bg-white px-3 py-2 text-center text-xs font-black text-primary-800 transition hover:bg-primary-100"
+                >
+                  <Droplets className="h-3.5 w-3.5" />
                   +1 bottle
-                </span>
-                <span className="rounded-full bg-white px-3 py-2 text-center text-xs font-black text-primary-800">
+                </Link>
+                <Link
+                  href="/app/log"
+                  className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full bg-white px-3 py-2 text-center text-xs font-black text-primary-800 transition hover:bg-primary-100"
+                >
+                  <UtensilsCrossed className="h-3.5 w-3.5" />
                   25g protein
-                </span>
+                </Link>
               </div>
             </div>
           </Card>
@@ -267,7 +249,7 @@ export default function RecoveryPage() {
             </div>
             <div className="divide-y divide-primary-100/70">
               {checklist.map((item) => (
-                <div key={item.label} className="flex gap-4 py-5">
+                <Link key={item.label} href={item.href} className="group flex gap-4 py-5 transition hover:bg-primary-50/40">
                   <span className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${item.done ? "bg-primary-100 text-primary-700" : "bg-neutral-100 text-neutral-300"}`}>
                     {item.done ? <CheckCircle2 className="h-5 w-5" /> : <Circle className="h-5 w-5" />}
                   </span>
@@ -278,7 +260,8 @@ export default function RecoveryPage() {
                     </div>
                     <p className="mt-1 text-sm font-semibold leading-6 text-neutral-500">{item.detail}</p>
                   </div>
-                </div>
+                  <ArrowRight className="mt-1 h-4 w-4 shrink-0 self-center text-neutral-300 transition group-hover:translate-x-0.5 group-hover:text-primary-600" />
+                </Link>
               ))}
             </div>
           </Card>
@@ -292,7 +275,7 @@ export default function RecoveryPage() {
                 <div>
                   <h2 className="text-xl font-black text-lemon-800">What is estimated?</h2>
                   <p className="mt-2 text-sm font-semibold leading-6 text-lemon-800/78">
-                  {windowEstimateCopy[selectedWindow]} calculated from your logged sleep, hydration, and soreness — the signals shown above are today&apos;s only. HRV, resting heart rate, and workout load are not included yet.
+                    Today&apos;s readiness is calculated from your logged sleep, hydration, and soreness — the signals shown above are today&apos;s only. HRV, resting heart rate, and workout load are not included yet.
                   </p>
                 </div>
               </div>

@@ -102,8 +102,8 @@ const CURATED_WORKOUTS: WorkoutLibraryItem[] = [
     duration: "42 min",
     intensity: "Easy",
     focus: "Aerobic base",
-    category: "lower",
-    categoryLabel: "Lower body",
+    category: "cardio",
+    categoryLabel: "Cardio",
     workoutType: "Cardio",
     equipment: "Bike",
     goal: "Aerobic base",
@@ -130,8 +130,8 @@ const CURATED_WORKOUTS: WorkoutLibraryItem[] = [
     duration: "18 min",
     intensity: "Light",
     focus: "Hips and upper back",
-    category: "full",
-    categoryLabel: "Full body",
+    category: "mobility",
+    categoryLabel: "Mobility",
     workoutType: "Mobility",
     equipment: "Mat",
     goal: "Restore range of motion",
@@ -792,7 +792,9 @@ const formats = [
   },
 ];
 
-const exerciseBank: Record<WorkoutCategory, string[]> = {
+type ExercisePlanKey = WorkoutCategory | "upper-push" | "upper-pull";
+
+const exerciseBank: Record<ExercisePlanKey, string[]> = {
   upper: [
     "Incline press",
     "One-arm row",
@@ -800,6 +802,22 @@ const exerciseBank: Record<WorkoutCategory, string[]> = {
     "Face pull",
     "Lateral raise",
     "Half-kneeling press",
+  ],
+  "upper-push": [
+    "Dumbbell press",
+    "Incline press",
+    "Half-kneeling press",
+    "Lateral raise",
+    "Push-up",
+    "Triceps pressdown",
+  ],
+  "upper-pull": [
+    "One-arm row",
+    "Lat pulldown",
+    "Cable row",
+    "Face pull",
+    "Band pull-apart",
+    "Farmer carry",
   ],
   lower: [
     "Goblet squat",
@@ -856,18 +874,43 @@ export function getWorkoutLengthBucket(workout: WorkoutLibraryItem): WorkoutLeng
   return "50-plus";
 }
 
+/**
+ * "upper" workouts split into push and pull days; picking exercises from one
+ * mixed upper bank put pull moves in push sessions (and vice versa). Resolve
+ * the bank from the workout's own copy so the plan matches what it promises.
+ */
+function resolveExercisePlanKey({
+  category,
+  title,
+  focus,
+  goal,
+}: {
+  category: WorkoutCategory;
+  title: string;
+  focus: string;
+  goal: string;
+}): ExercisePlanKey {
+  if (category !== "upper") return category;
+  const text = `${title} ${focus} ${goal}`.toLowerCase();
+  if (/push|press|chest|triceps/.test(text)) return "upper-push";
+  if (/pull|row|posture|back|rear delt|biceps/.test(text)) return "upper-pull";
+  return "upper";
+}
+
 function buildExercisePlan({
   category,
+  planKey,
   title,
   minutes,
   intensity,
 }: {
   category: WorkoutCategory;
+  planKey?: ExercisePlanKey;
   title: string;
   minutes: number;
   intensity: string;
 }): WorkoutExercise[] {
-  const names = exerciseBank[category];
+  const names = exerciseBank[planKey ?? category];
   const count = category === "mobility" ? 5 : category === "cardio" ? 5 : minutes >= 40 ? 6 : 5;
   const sets = intensity === "Hard" ? 4 : intensity === "Light" || category === "mobility" ? 2 : 3;
   return names.slice(0, count).map((name, index) => {
@@ -905,6 +948,12 @@ export function getWorkoutExercisePlan(workout: WorkoutLibraryItem): WorkoutExer
   const minutes = minutesFromDuration(workout.duration);
   return buildExercisePlan({
     category: workout.category,
+    planKey: resolveExercisePlanKey({
+      category: workout.category,
+      title: workout.title,
+      focus: workout.focus,
+      goal: workout.goal,
+    }),
     title: workout.id,
     minutes,
     intensity: workout.intensity,
@@ -924,6 +973,12 @@ function generatedWorkouts(): WorkoutLibraryItem[] {
       const minutes = Math.max(12, template.minutes + variant.minutes + format.minuteDelta);
       const intensity = variant.intensity || template.intensity;
       const formatFocus = variant.focus || format.focus || template.focus;
+      const planKey = resolveExercisePlanKey({
+        category: template.category,
+        title: template.title,
+        focus: template.focus,
+        goal: template.goal,
+      });
 
       return {
       id: `generated-${template.id}-${variant.id}-${format.id}`,
@@ -953,10 +1008,11 @@ function generatedWorkouts(): WorkoutLibraryItem[] {
       recoveryCost: variant.id === "deload" ? "Low" : template.recoveryCost,
       bestFor: Array.from(new Set([...template.bestFor, variant.label, format.label])),
       blocks: template.blocks,
-      targetMuscles: exerciseBank[template.category].slice(0, 4),
+      targetMuscles: exerciseBank[planKey].slice(0, 4),
       tags: Array.from(new Set([template.category, template.workoutType, template.goal, variant.label, format.label, intensity])),
       exercisePlan: buildExercisePlan({
         category: template.category,
+        planKey,
         title,
         minutes,
         intensity,
@@ -1028,6 +1084,9 @@ export function getSimilarWorkouts(id: string, limit = 3) {
       const tagOverlap = tags.filter((tag) => currentTags.has(tag)).length;
       const muscleOverlap = Array.from(muscles).filter((muscle) => currentMuscles.has(muscle)).length;
       const score =
+        // Curated workouts outrank near-duplicate generated variants in
+        // "Close matches" so suggestions read as picks, not database rows.
+        (workout.id.startsWith("generated-") ? 0 : 12) +
         (workout.category === current.category ? 35 : 0) +
         (workout.workoutType === current.workoutType ? 24 : 0) +
         (workout.intensity === current.intensity ? 14 : 0) +

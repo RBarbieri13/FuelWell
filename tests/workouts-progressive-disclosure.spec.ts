@@ -24,7 +24,7 @@ test("Workouts: keeps the library secondary while preserving its controls", asyn
   await page.getByRole("button", { name: "Upper", exact: true }).click();
   await page.getByRole("button", { name: "Strength", exact: true }).click();
   await expect(page.getByText("Upper push base")).toBeVisible();
-  await expect(page.getByRole("link", { name: /Preview Upper push base/i })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Upper push base/i }).first()).toBeVisible();
 });
 
 test("Workouts: opens the library for a direct filtered URL", async ({ page }) => {

@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
+  ArrowRight,
   CheckCircle2,
   Circle,
   Image as ImageIcon,
@@ -11,6 +12,7 @@ import {
   PlayCircle,
   Save,
   Timer,
+  UtensilsCrossed,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -51,6 +53,9 @@ export function LiveWorkoutSession({
   exercises: WorkoutExercise[];
 }) {
   const { addWorkout } = useWorkoutLog();
+  // Mobility, cardio, and recovery plans are timed flows; a "Weight used"
+  // field on a stretch or a walk contradicts the session's own copy.
+  const tracksWeight = !["Mobility", "Cardio", "Recovery"].includes(workout.workoutType);
   const [started, setStarted] = useState(false);
   const [completedSets, setCompletedSets] = useState<Set<string>>(() => new Set());
   const [expandedGraphics, setExpandedGraphics] = useState<Set<string>>(() => new Set());
@@ -296,6 +301,7 @@ export function LiveWorkoutSession({
                       })}
                     </div>
 
+                    {tracksWeight && (
                     <label className="block">
                       <span className="text-xs font-black uppercase tracking-[0.14em] text-muted-foreground">
                         Weight used
@@ -310,6 +316,7 @@ export function LiveWorkoutSession({
                         className="mt-2 w-full rounded-[1rem] border border-border bg-[#f4f8f6] px-4 py-3 text-sm font-bold text-[#16302a] outline-none placeholder:text-[#9db0aa] focus:border-primary-300 focus:ring-2 focus:ring-primary-200"
                       />
                     </label>
+                    )}
 
                     <label className="block">
                       <span className="text-xs font-black uppercase tracking-[0.14em] text-muted-foreground">
@@ -333,29 +340,74 @@ export function LiveWorkoutSession({
         </div>
 
         <div className="sticky bottom-3 z-10 rounded-[1.35rem] border border-primary-100 bg-white/95 p-3 shadow-[0_18px_44px_rgba(22,48,42,0.16)] backdrop-blur">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 text-primary-700">
-                <Timer className="h-5 w-5" />
-              </span>
-              <div>
-                <p className="text-sm font-black text-[#16302a]">
-                  {completedCount}/{totalSets} sets checked
-                </p>
-                <p className="text-xs font-semibold text-muted-foreground">
-                  {!started
-                    ? "Tap Begin to start checking off sets."
-                    : completedCount === 0
-                      ? "Check off at least one set to log this workout."
-                      : "Progress saves when you log the workout."}
-                </p>
+          {saved ? (
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center gap-3">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary-100 text-primary-700">
+                  <CheckCircle2 className="h-5 w-5" />
+                </span>
+                <div>
+                  <p className="text-sm font-black text-[#16302a]">Workout logged</p>
+                  <p className="text-xs font-semibold text-muted-foreground">
+                    {completedCount}/{totalSets} sets saved to today&apos;s activity.
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <Link
+                  href="/app/fitness"
+                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-[1.15rem] bg-gradient-to-r from-primary-500 to-teal-500 px-5 py-3 text-sm font-black text-white shadow-[0_16px_34px_rgba(21,145,108,0.24)] transition hover:from-primary-600 hover:to-teal-600"
+                >
+                  Review in Activity
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+                <Link
+                  href="/app/log"
+                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-[1.15rem] bg-primary-50 px-5 py-3 text-sm font-black text-primary-800 transition hover:bg-primary-100"
+                >
+                  <UtensilsCrossed className="h-4 w-4" />
+                  Log post-workout protein
+                </Link>
+                <Link
+                  href="/app/workouts"
+                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-[1.15rem] bg-[#f4f8f6] px-5 py-3 text-sm font-black text-[#54635d] transition hover:bg-primary-50 hover:text-primary-700"
+                >
+                  Done
+                </Link>
               </div>
             </div>
-            <Button type="button" onClick={saveWorkout} disabled={saved || completedCount === 0}>
-              <Save className="h-4 w-4" />
-              {saved ? "Saved to Fitness" : "Log completed workout"}
-            </Button>
-          </div>
+          ) : (
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-3">
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 text-primary-700">
+                  <Timer className="h-5 w-5" />
+                </span>
+                <div>
+                  <p className="text-sm font-black text-[#16302a]">
+                    {completedCount}/{totalSets} sets checked
+                  </p>
+                  <p className="text-xs font-semibold text-muted-foreground">
+                    {!started
+                      ? "Tap Begin to start checking off sets."
+                      : completedCount === 0
+                        ? "Check off at least one set to log this workout."
+                        : "Progress saves when you log the workout."}
+                  </p>
+                </div>
+              </div>
+              {started ? (
+                <Button type="button" onClick={saveWorkout} disabled={completedCount === 0}>
+                  <Save className="h-4 w-4" />
+                  Log completed workout
+                </Button>
+              ) : (
+                <Button type="button" onClick={() => setStarted(true)}>
+                  <PlayCircle className="h-5 w-5" />
+                  Begin
+                </Button>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -39,7 +39,7 @@ const routeChecks = [
   { label: "Coach artifact history", path: "/api/coach/artifacts", required: false },
   { label: "Menu review", path: "/app/coach/menu-review", required: true },
   { label: "Nutrition detail", path: "/app/nutrition", required: true },
-  { label: "Fitness detail", path: "/app/fitness", required: true },
+  { label: "Activity detail", path: "/app/fitness", required: true },
   { label: "Daily review", path: "/app/daily-review", required: true },
   { label: "Workout database", path: "/app/workouts", required: true },
   { label: "Progress", path: "/app/progress", required: true },
