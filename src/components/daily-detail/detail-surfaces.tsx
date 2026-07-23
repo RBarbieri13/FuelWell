@@ -67,6 +67,7 @@ type ActivityRecord = {
   source: "Logged" | "Estimated" | "Planned";
   items: { label: string; value: string; tone: Tone }[];
   icon: LucideIcon;
+  workoutHref?: string;
 };
 
 const baseActivityLog: ActivityRecord[] = [
@@ -99,6 +100,7 @@ const baseActivityLog: ActivityRecord[] = [
     intensity: "Easy",
     source: "Planned",
     icon: Bike,
+    workoutHref: "/app/workouts/zone-2-ride",
     items: [
       { label: "Time", value: "42 min", tone: "neutral" },
       { label: "Burn", value: "310 kcal", tone: "neutral" },
@@ -117,6 +119,7 @@ const baseActivityLog: ActivityRecord[] = [
     intensity: "Light",
     source: "Planned",
     icon: HeartPulse,
+    workoutHref: "/app/workouts/mobility-reset",
     items: [
       { label: "Range", value: "Hips", tone: "neutral" },
       { label: "Cost", value: "Low", tone: "neutral" },
@@ -143,6 +146,9 @@ function activityFromWorkout(workout: WorkoutEntry): ActivityRecord {
     hour: "numeric",
     minute: "2-digit",
   });
+  // Sessions logged from a library workout carry ids like
+  // "live-<workout-id>-<timestamp>"; recover the detail-page link from them.
+  const libraryId = workout.id.match(/^(?:live|workout)-(.+)-\d+$/)?.[1];
 
   return {
     id: workout.id,
@@ -155,6 +161,7 @@ function activityFromWorkout(workout: WorkoutEntry): ActivityRecord {
     intensity: workout.met && workout.met >= 7 ? "Hard" : workout.met && workout.met >= 5 ? "Moderate" : "Easy",
     source: workout.source === "coach" ? "Logged" : workout.source === "database" ? "Logged" : "Estimated",
     icon: Icon,
+    workoutHref: libraryId ? `/app/workouts/${libraryId}` : undefined,
     items: [
       { label: "Time", value: `${workout.durationMin} min`, tone: "neutral" },
       {
@@ -173,13 +180,29 @@ function buildActivityLog(workouts: WorkoutEntry[]) {
   return [...logged, ...baseActivityLog];
 }
 
+/**
+ * Planned activities have not happened yet, so they are tallied separately —
+ * "Active burn" and net calories only count completed (logged/estimated)
+ * movement, with planned burn surfaced as an expected-later figure.
+ */
 function calculateFitnessTotals(activities: ActivityRecord[]) {
   return activities.reduce(
-  (total, activity) => ({
-    calories: total.calories + activity.calories,
-    minutes: total.minutes + Number.parseInt(activity.duration, 10),
-  }),
-  { calories: 0, minutes: 0 }
+    (total, activity) => {
+      const minutes = Number.parseInt(activity.duration, 10) || 0;
+      if (activity.source === "Planned") {
+        return {
+          ...total,
+          plannedCalories: total.plannedCalories + activity.calories,
+          plannedMinutes: total.plannedMinutes + minutes,
+        };
+      }
+      return {
+        ...total,
+        calories: total.calories + activity.calories,
+        minutes: total.minutes + minutes,
+      };
+    },
+    { calories: 0, minutes: 0, plannedCalories: 0, plannedMinutes: 0 }
   );
 }
 
@@ -248,7 +271,7 @@ export function FitnessDetailSurface() {
     <div className="fw-app-surface">
       <header className="fw-page-header">
         <div className="fw-page-inner py-5">
-          <h1 className="fw-heading text-2xl md:text-4xl">Fitness detail</h1>
+          <h1 className="fw-heading text-2xl md:text-4xl">Activity detail</h1>
           <p className="fw-muted mt-1 text-sm md:text-base">
             Today&apos;s movement · what&apos;s counting toward your activity
           </p>
@@ -273,7 +296,9 @@ export function FitnessDetailSurface() {
           ))}
         </section>
 
-        <FitnessWorkoutManager />
+        <div id="edit-activity" className="scroll-mt-24">
+          <FitnessWorkoutManager />
+        </div>
 
         <Card className="rounded-[1.5rem] border-primary-100 bg-white/85 px-6 py-5 shadow-[0_10px_26px_rgba(20,90,75,0.05)]">
           <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-center">
@@ -292,13 +317,22 @@ export function FitnessDetailSurface() {
                 </p>
               </div>
             </div>
-            <Link
-              href="/app/daily-review"
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-sm font-black text-primary-700 transition hover:bg-primary-100 md:min-h-0"
-            >
-              View full day
-              <ArrowRight className="h-4 w-4" />
-            </Link>
+            <div className="flex flex-wrap gap-2">
+              <Link
+                href="/app/daily-review"
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-sm font-black text-primary-700 transition hover:bg-primary-100 md:min-h-0"
+              >
+                View full day
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link
+                href="/app/activity"
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-[#f4f8f6] px-4 py-2 text-sm font-black text-[#54635d] transition hover:bg-primary-50 hover:text-primary-700 md:min-h-0"
+              >
+                Fuel timing verdict
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
           </div>
         </Card>
 
@@ -411,14 +445,14 @@ export function NutritionDetailSurface({
               title="Full-day ledger"
               detail="See nutrition beside fitness before asking the coach what to do next."
               href="/app/daily-review"
-              action="Open daily detail"
+              action="Open daily review"
             />
             <DetailLinkCard
               icon={Activity}
-              title="Fitness detail"
+              title="Activity detail"
               detail="Compare food room against planned and logged activity."
               href="/app/fitness"
-              action="Open fitness"
+              action="Open activity detail"
             />
             <DetailLinkCard
               icon={UtensilsCrossed}
@@ -461,12 +495,13 @@ export function DailyReviewSurface({
   );
   const totals = sumMeals(meals);
   const netCalories = Math.max(0, totals.calories - fitnessTotals.calories);
+  const calorieRoom = remaining(totals.calories, targets.calories);
 
   return (
     <div className="fw-app-surface">
       <header className="fw-page-header">
         <div className="fw-page-inner py-5">
-          <h1 className="fw-heading text-2xl md:text-4xl">Daily detail</h1>
+          <h1 className="fw-heading text-2xl md:text-4xl">Daily review</h1>
           <p className="fw-muted mt-1 text-sm md:text-base">
             Nutrition + fitness · the full health ledger for today
           </p>
@@ -485,10 +520,30 @@ export function DailyReviewSurface({
         >
           <div className="space-y-4">
             <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-              <TargetTile label="Food in" current={totals.calories} target={targets.calories} unit="kcal" tone="primary" icon={Flame} />
-              <TargetTile label="Active burn" current={fitnessTotals.calories} target={fitnessTargets.activeCalories} unit="kcal" tone="accent" icon={Dumbbell} />
-              <SimpleSummaryCard label="Net calories" value={netCalories.toLocaleString()} detail={`${remaining(netCalories, targets.calories).toLocaleString()} kcal room after activity`} tone="teal" icon={Target} />
-              <TargetTile label="Protein" current={totals.protein} target={targets.protein} unit="g" tone="sky" icon={Beef} />
+              <TargetTile label="Food in" current={totals.calories} target={targets.calories} unit="kcal" tone="primary" icon={Flame} href="/app/nutrition" />
+              <TargetTile
+                label="Active burn"
+                current={fitnessTotals.calories}
+                target={fitnessTargets.activeCalories}
+                unit="kcal"
+                tone="accent"
+                icon={Dumbbell}
+                href="/app/fitness"
+                footnote={
+                  fitnessTotals.plannedCalories > 0
+                    ? `Completed only · ${fitnessTotals.plannedCalories.toLocaleString()} kcal still planned`
+                    : "Completed activity only"
+                }
+              />
+              <SimpleSummaryCard
+                label="Net calories"
+                value={netCalories.toLocaleString()}
+                detail={`${calorieRoom.toLocaleString()} kcal left of the food target · completed burn adds ${fitnessTotals.calories.toLocaleString()} kcal back`}
+                tone="teal"
+                icon={Target}
+                href="#energy-ledger"
+              />
+              <TargetTile label="Protein" current={totals.protein} target={targets.protein} unit="g" tone="sky" icon={Beef} href="/app/nutrition" />
             </section>
           </div>
         </DailyReviewSection>
@@ -510,6 +565,7 @@ export function DailyReviewSurface({
                 detail="Meals counted toward today's nutrition."
                 tone="primary"
                 icon={Salad}
+                href="#nutrition-log"
               />
               <SimpleSummaryCard
                 label="Activity entries"
@@ -517,13 +573,19 @@ export function DailyReviewSurface({
                 detail="Workouts and movement counted today."
                 tone="accent"
                 icon={Activity}
+                href="#fitness-log"
               />
               <SimpleSummaryCard
                 label="Next best review"
-                value={remaining(netCalories, targets.calories) > 0 ? "Dinner" : "Coach"}
-                detail="Where to look next, based on the calorie room you have left."
+                value={calorieRoom > 0 ? "Dinner" : "Coach"}
+                detail={
+                  calorieRoom > 0
+                    ? "Calorie room remains — log or plan dinner next."
+                    : "The day is fully spent — ask coach what still fits."
+                }
                 tone="sky"
                 icon={Sparkles}
+                href={calorieRoom > 0 ? "/app/log" : "/app/coach"}
               />
             </section>
             <Link
@@ -536,7 +598,7 @@ export function DailyReviewSurface({
           </div>
         </DailyReviewSection>
 
-        <section aria-label="Energy ledger" className="min-w-0">
+        <section aria-label="Energy ledger" id="energy-ledger" className="min-w-0 scroll-mt-24">
           <CalorieBalanceChart
             meals={meals}
             targets={targets}
@@ -555,6 +617,7 @@ export function DailyReviewSurface({
         >
             <section className="mt-4 grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
               <CollapsibleLogPanel
+                id="nutrition-log"
                 icon={Salad}
                 title="Nutrition log"
                 detail={`${meals.length} meal${meals.length === 1 ? "" : "s"} counted today`}
@@ -576,6 +639,7 @@ export function DailyReviewSurface({
               </CollapsibleLogPanel>
 
               <CollapsibleLogPanel
+                id="fitness-log"
                 icon={Activity}
                 title="Fitness log"
                 detail={`${activityLog.length} activity signal${activityLog.length === 1 ? "" : "s"} counted today`}
@@ -744,6 +808,8 @@ function TargetTile({
   unit,
   tone,
   icon: Icon,
+  href,
+  footnote,
 }: {
   label: string;
   current: number;
@@ -751,13 +817,15 @@ function TargetTile({
   unit: string;
   tone: Tone;
   icon: LucideIcon;
+  href?: string;
+  footnote?: string;
 }) {
   const styles = toneStyles[tone];
   const met = target > 0 && current >= target;
   const unitSuffix = unit === "g" || unit === "%" ? unit : ` ${unit}`;
 
-  return (
-    <Card className="min-w-0 space-y-2 rounded-[1.2rem] px-4 py-3.5 shadow-[0_8px_22px_rgba(20,90,75,0.06)] md:space-y-2.5 md:px-5 md:py-4">
+  const card = (
+    <Card className="h-full min-w-0 space-y-2 rounded-[1.2rem] px-4 py-3.5 shadow-[0_8px_22px_rgba(20,90,75,0.06)] md:space-y-2.5 md:px-5 md:py-4">
       {/* The pill wraps under the label when data widens it (e.g. 3-digit
           percentages); a fixed one-line row overflows 2-up tiles at 320px. */}
       <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
@@ -787,6 +855,9 @@ function TargetTile({
           ? `+${Math.round(current - target).toLocaleString()}${unitSuffix} past the ${target.toLocaleString()}${unitSuffix} target`
           : `${remaining(current, target).toLocaleString()}${unitSuffix} left of ${target.toLocaleString()}${unitSuffix}`}
       </p>
+      {footnote ? (
+        <p className="text-xs font-semibold text-muted-foreground/80">{footnote}</p>
+      ) : null}
       <div className="h-[7px] overflow-hidden rounded-full bg-[#edf3f0]">
         <div
           className={`h-full rounded-full ${styles.bar}`}
@@ -794,6 +865,20 @@ function TargetTile({
         />
       </div>
     </Card>
+  );
+
+  if (!href) {
+    return card;
+  }
+
+  return (
+    <Link
+      href={href}
+      aria-label={`${label} — open detail`}
+      className="block min-w-0 rounded-[1.2rem] transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+    >
+      {card}
+    </Link>
   );
 }
 
@@ -803,17 +888,19 @@ function SimpleSummaryCard({
   detail,
   tone,
   icon: Icon,
+  href,
 }: {
   label: string;
   value: string;
   detail: string;
   tone: Tone;
   icon: LucideIcon;
+  href?: string;
 }) {
   const styles = toneStyles[tone];
 
-  return (
-    <Card className="space-y-2 rounded-[1.2rem] px-4 py-3.5 shadow-[0_8px_22px_rgba(20,90,75,0.06)] md:space-y-2.5 md:px-5 md:py-4">
+  const card = (
+    <Card className="h-full space-y-2 rounded-[1.2rem] px-4 py-3.5 shadow-[0_8px_22px_rgba(20,90,75,0.06)] md:space-y-2.5 md:px-5 md:py-4">
       <div className="flex items-center gap-3">
         <span className={`flex h-[30px] w-[30px] items-center justify-center rounded-full ${styles.chip}`}>
           <Icon className="h-[15px] w-[15px]" />
@@ -825,6 +912,20 @@ function SimpleSummaryCard({
       </p>
       <p className="text-xs font-semibold leading-5 text-muted-foreground">{detail}</p>
     </Card>
+  );
+
+  if (!href) {
+    return card;
+  }
+
+  return (
+    <Link
+      href={href}
+      aria-label={`${label} — open detail`}
+      className="block min-w-0 rounded-[1.2rem] transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+    >
+      {card}
+    </Link>
   );
 }
 
@@ -899,19 +1000,21 @@ function ActivityLogCard({
 
       <div className="flex flex-wrap gap-2">
         <Link
-          href="/app/fitness"
+          href="/app/fitness#edit-activity"
           className="inline-flex min-h-11 items-center gap-2 rounded-full bg-primary-50 px-3.5 py-2 text-xs font-black text-primary-700 transition hover:bg-primary-100 md:min-h-0"
         >
           <Pencil className="h-3.5 w-3.5" />
           Edit routine
         </Link>
-        <Link
-          href="/app/workouts"
-          className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[#f4f8f6] px-3.5 py-2 text-xs font-black text-[#54635d] transition hover:bg-primary-50 hover:text-primary-700 md:min-h-0"
-        >
-          Open workouts
-          <ArrowRight className="h-3.5 w-3.5" />
-        </Link>
+        {activity.workoutHref && (
+          <Link
+            href={activity.workoutHref}
+            className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[#f4f8f6] px-3.5 py-2 text-xs font-black text-[#54635d] transition hover:bg-primary-50 hover:text-primary-700 md:min-h-0"
+          >
+            Open workout
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
+        )}
       </div>
 
       <div className="grid grid-cols-2 gap-2 border-t border-primary-100/70 pt-4 sm:grid-cols-4">
@@ -1059,6 +1162,7 @@ function SmallStat({
 }
 
 function CollapsibleLogPanel({
+  id,
   icon: Icon,
   title,
   detail,
@@ -1068,6 +1172,7 @@ function CollapsibleLogPanel({
   onToggle,
   children,
 }: {
+  id?: string;
   icon: LucideIcon;
   title: string;
   detail: string;
@@ -1078,7 +1183,7 @@ function CollapsibleLogPanel({
   children: ReactNode;
 }) {
   return (
-    <section className="rounded-[1.4rem] border border-primary-100 bg-white/86 p-4 shadow-[0_10px_26px_rgba(20,90,75,0.06)]">
+    <section id={id} className="scroll-mt-24 rounded-[1.4rem] border border-primary-100 bg-white/86 p-4 shadow-[0_10px_26px_rgba(20,90,75,0.06)]">
       <div className="flex flex-col gap-3 border-b border-primary-100/80 pb-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-100 text-primary-700">

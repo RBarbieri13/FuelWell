@@ -1,12 +1,11 @@
 "use client";
 
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
   Activity,
+  ArrowRight,
   BarChart3,
   ChevronDown,
-  ChevronLeft,
-  ChevronRight,
   ChevronUp,
   Flame,
   Layers3,
@@ -166,6 +165,27 @@ function buildSampleHistory(today: BalanceDay): BalanceDay[] {
   return [...generated, today];
 }
 
+/**
+ * Scale macro-derived segment calories so the intake bar total equals the
+ * item-level calorie total shown in the overview tiles — both surfaces then
+ * report the same "food in" number (grams in each segment stay as logged).
+ */
+function scaleSegmentsToTotal(segments: Segment[], targetTotal: number): Segment[] {
+  const macroTotal = totalCalories(segments);
+  if (macroTotal <= 0 || targetTotal <= 0) {
+    return segments;
+  }
+  let allocated = 0;
+  return segments.map((segment, index) => {
+    if (index === segments.length - 1) {
+      return { ...segment, calories: Math.max(0, targetTotal - allocated) };
+    }
+    const scaled = Math.round((segment.calories / macroTotal) * targetTotal);
+    allocated += scaled;
+    return { ...segment, calories: scaled };
+  });
+}
+
 function buildToday(
   meals: MealRecord[],
   targets: MacroTargets,
@@ -176,12 +196,13 @@ function buildToday(
   const protein = hasMeals ? totals.protein : Math.round(targets.protein * 0.78);
   const carbs = hasMeals ? totals.carbs : Math.round(targets.carbs * 0.72);
   const fat = hasMeals ? totals.fat : Math.round(targets.fat * 0.68);
+  const macroSegments = macroSegmentsForTotals({ protein, carbs, fat });
 
   return {
     id: "today",
     label: "Today",
     dateLabel: "Current day",
-    intake: macroSegmentsForTotals({ protein, carbs, fat }),
+    intake: hasMeals ? scaleSegmentsToTotal(macroSegments, totals.calories) : macroSegments,
     output: [
       {
         label: "Base burn",
@@ -228,22 +249,29 @@ export function CalorieBalanceChart({
   activityOutputSignals?: ActivityOutputSignal[];
 }) {
   const [range, setRange] = useState<RangeOption>(7);
-  const [offset, setOffset] = useState(0);
   const [showBmr, setShowBmr] = useState(true);
   const [showSessions, setShowSessions] = useState(true);
   const [selectedBar, setSelectedBar] = useState<SelectedBar | null>(null);
   const [intakeExpanded, setIntakeExpanded] = useState(true);
   const [outputExpanded, setOutputExpanded] = useState(true);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
 
   const days = useMemo(
     () => buildSampleHistory(buildToday(meals, targets, activityOutputSignals)),
     [activityOutputSignals, meals, targets]
   );
   const hasRealData = meals.length > 0 || activityOutputSignals.length > 0;
-  const maxOffset = Math.max(0, days.length - range);
-  const clampedOffset = Math.min(offset, maxOffset);
-  const start = Math.max(0, days.length - range - clampedOffset);
+  const start = Math.max(0, days.length - range);
   const visibleDays = days.slice(start, start + range);
+
+  // Days render oldest → newest; on a page about today the strip should open
+  // with Today in view (swipe left for history), not scrolled to the oldest day.
+  useEffect(() => {
+    const element = scrollRef.current;
+    if (element) {
+      element.scrollLeft = element.scrollWidth;
+    }
+  }, [range, intakeExpanded, outputExpanded]);
   const filteredDays = visibleDays.map((day) => ({
     ...day,
     output: day.output.filter((segment) => {
@@ -260,12 +288,7 @@ export function CalorieBalanceChart({
     ])
   );
   const hasExpandedSeries = intakeExpanded || outputExpanded;
-  const windowLabel =
-    range === 1 && clampedOffset === 0
-      ? "Today only"
-      : clampedOffset === 0
-      ? `Latest ${range}`
-      : `${range} days · ${clampedOffset} window${clampedOffset === 1 ? "" : "s"} back`;
+  const windowLabel = range === 1 ? "Today only" : `Latest ${range}`;
 
   // Controls make no sense with nothing charted: without a single logged
   // meal or activity signal the card explains itself and points at Log.
@@ -319,10 +342,7 @@ export function CalorieBalanceChart({
                 <button
                   key={option.value}
                   type="button"
-                  onClick={() => {
-                    setRange(option.value);
-                    setOffset(0);
-                  }}
+                  onClick={() => setRange(option.value)}
                   className={cn(
                     "min-h-11 rounded-full px-3.5 py-2 text-xs font-black transition md:min-h-0",
                     range === option.value
@@ -369,30 +389,6 @@ export function CalorieBalanceChart({
                   Tap any bar to pin its full breakdown open.
                 </p>
               </div>
-              <div className="flex shrink-0 gap-2">
-                <Button
-                  type="button"
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => setOffset((value) => Math.min(value + 1, maxOffset))}
-                  disabled={clampedOffset >= maxOffset}
-                  aria-label="Earlier days"
-                  className="h-11 w-11 rounded-full p-0"
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </Button>
-                <Button
-                  type="button"
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => setOffset((value) => Math.max(value - 1, 0))}
-                  disabled={clampedOffset === 0}
-                  aria-label="Later days"
-                  className="h-11 w-11 rounded-full p-0"
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-              </div>
             </div>
 
             {outputExpanded && (
@@ -406,7 +402,7 @@ export function CalorieBalanceChart({
               </div>
             )}
 
-            <div className="mt-4 overflow-x-auto pb-2">
+            <div ref={scrollRef} className="mt-4 overflow-x-auto pb-2">
               {range >= 7 && (
                 <p className="mb-3 text-xs font-black uppercase tracking-[0.12em] text-muted-foreground md:hidden">
                   Swipe sideways to compare days
@@ -842,9 +838,14 @@ function BarDetailModal({
         {isIntake && selected.day.id === "today" && (
           <div className="mt-5 rounded-[1.25rem] border border-primary-100 bg-primary-50/70 p-4">
             <p className="text-sm font-black text-primary-800">Meal detail available below</p>
-            <p className="mt-1 text-sm font-semibold leading-6 text-primary-800/70">
-              Scroll to the nutrition log to inspect breakfast, lunch, dinner, and item-level macros.
-            </p>
+            <a
+              href="#nutrition-log"
+              onClick={onClose}
+              className="mt-2 inline-flex min-h-11 items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-black text-primary-700 shadow-[0_3px_8px_rgba(20,90,75,0.08)] transition hover:bg-primary-100 md:min-h-0"
+            >
+              Jump to the nutrition log
+              <ArrowRight className="h-4 w-4" />
+            </a>
           </div>
         )}
       </div>

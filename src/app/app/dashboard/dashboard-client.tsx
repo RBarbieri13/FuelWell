@@ -11,11 +11,12 @@ import {
   Dumbbell,
   HeartPulse,
   Info,
+  Plus,
   Salad,
-  Search,
   Sparkles,
   UtensilsCrossed,
 } from "lucide-react";
+import { cn } from "@/lib/utils/cn";
 import { CalorieRing } from "@/components/dashboard/calorie-ring";
 import { MacroBar } from "@/components/dashboard/macro-bar";
 import { QuickActions } from "@/components/dashboard/quick-actions";
@@ -128,22 +129,6 @@ export function DashboardClient({
               {tagline}
             </p>
           </div>
-          <div className="flex items-center gap-3">
-            <Link
-              href="/app/log"
-              className="flex h-11 w-11 items-center justify-center rounded-full border border-primary-100 bg-white text-neutral-700 shadow-[0_4px_12px_rgba(20,90,75,0.05)] transition hover:bg-primary-50 hover:text-primary-700"
-              aria-label="Search foods to log"
-            >
-              <Search className="h-5 w-5" />
-            </Link>
-            <Link
-              href="/app/profile"
-              aria-label="Open profile"
-              className="flex h-11 w-11 items-center justify-center rounded-full bg-primary-600 text-base font-black text-white shadow-[0_8px_18px_rgba(30,174,132,0.3)] transition hover:bg-primary-700"
-            >
-              {effectiveDisplayName.slice(0, 1).toUpperCase()}
-            </Link>
-          </div>
         </div>
       </header>
 
@@ -221,10 +206,12 @@ export function DashboardClient({
                     <EnergyStat
                       label="Calories left"
                       value={remaining(totals.calories, effectiveTargets.calories).toLocaleString()}
+                      href="/app/nutrition"
                     />
                     <EnergyStat
                       label="Protein left"
                       value={`${remaining(totals.protein, effectiveTargets.protein)}g`}
+                      href="/app/nutrition"
                     />
                   </div>
                 )}
@@ -248,7 +235,9 @@ export function DashboardClient({
                   className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-5 py-3 text-sm font-black text-white backdrop-blur transition hover:bg-white/15"
                 >
                   <span className="text-white/80">Health score</span>
-                  <span className="tabular-nums text-primary-200">{healthScore ?? "--"}</span>
+                  <span className="tabular-nums text-primary-200">
+                    {healthScore !== null ? `${healthScore}/100` : "--"}
+                  </span>
                   <ChevronRight className="h-3.5 w-3.5 text-white/70" />
                 </Link>
               </div>
@@ -380,6 +369,21 @@ export function DashboardClient({
                   </Link>
                 );
               })}
+              {!todaysMeals.some((meal) => meal.mealType === "dinner") && (
+                <Link
+                  href="/app/log"
+                  className="flex items-center justify-between rounded-[1.25rem] border border-dashed border-primary-200 bg-primary-50/50 p-4 transition hover:border-primary-300 hover:bg-primary-50"
+                >
+                  <div>
+                    <p className="font-bold text-neutral-900">Dinner</p>
+                    <p className="text-sm text-neutral-500">Not logged yet</p>
+                  </div>
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-600 px-3.5 py-1.5 text-xs font-black text-white">
+                    <Plus className="h-3.5 w-3.5" />
+                    Log dinner
+                  </span>
+                </Link>
+              )}
             </div>
           )}
         </Card>
@@ -432,11 +436,30 @@ function MealMakeupHover({
   children: ReactNode;
 }) {
   const mealTypes = ["breakfast", "lunch", "dinner"] as const;
+  const [open, setOpen] = useState(false);
 
   return (
-    <div className="group relative flex justify-center" tabIndex={0}>
-      {children}
-      <div className="pointer-events-none absolute left-1/2 top-[calc(100%+0.5rem)] z-20 w-[min(24rem,calc(100vw-3rem))] -translate-x-1/2 translate-y-3 rounded-[1.35rem] border border-primary-100 bg-white p-4 text-left opacity-0 shadow-[0_24px_70px_rgba(22,48,42,0.16)] transition duration-150 group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:translate-y-0 group-focus-within:opacity-100">
+    <div className="group relative flex flex-col items-center justify-center">
+      <button
+        type="button"
+        onClick={() => setOpen((value) => !value)}
+        aria-expanded={open}
+        aria-label="Show meal makeup breakdown"
+        className="rounded-full focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+      >
+        {children}
+      </button>
+      <p className="mt-1 text-[11px] font-bold text-neutral-400">
+        Tap the ring for meal makeup
+      </p>
+      <div
+        className={cn(
+          "absolute left-1/2 top-[calc(100%+0.5rem)] z-20 w-[min(24rem,calc(100vw-3rem))] -translate-x-1/2 rounded-[1.35rem] border border-primary-100 bg-white p-4 text-left shadow-[0_24px_70px_rgba(22,48,42,0.16)] transition duration-150",
+          open
+            ? "pointer-events-auto translate-y-0 opacity-100"
+            : "pointer-events-none translate-y-3 opacity-0 group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:translate-y-0 group-focus-within:opacity-100"
+        )}
+      >
         <div className="mb-3 flex items-center gap-2">
           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-100 text-primary-700">
             <Info className="h-4 w-4" />
@@ -492,14 +515,19 @@ function MealMakeupHover({
   );
 }
 
-function EnergyStat({ label, value }: { label: string; value: string }) {
+function EnergyStat({ label, value, href }: { label: string; value: string; href: string }) {
   return (
-    <div className="min-w-[7.5rem] flex-1 rounded-2xl border border-white/14 bg-white/10 px-4 py-2.5 text-left backdrop-blur">
+    <Link
+      href={href}
+      aria-label={`${label}: ${value}. Open nutrition detail.`}
+      className="group min-w-[7.5rem] flex-1 rounded-2xl border border-white/14 bg-white/10 px-4 py-2.5 text-left backdrop-blur transition hover:border-white/30 hover:bg-white/15"
+    >
       <p className="text-[1.45rem] font-black leading-none tabular-nums text-white">{value}</p>
-      <p className="mt-1.5 whitespace-nowrap text-xs font-bold uppercase tracking-[0.06em] text-white/60">
+      <p className="mt-1.5 flex items-center gap-1 whitespace-nowrap text-xs font-bold uppercase tracking-[0.06em] text-white/60">
         {label}
+        <ChevronRight className="h-3 w-3 text-white/50 transition group-hover:translate-x-0.5 group-hover:text-white/80" />
       </p>
-    </div>
+    </Link>
   );
 }
 

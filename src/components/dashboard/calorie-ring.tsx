@@ -29,28 +29,33 @@ export function CalorieRing({ consumed, target, emphasis = "normal" }: CalorieRi
     return () => clearTimeout(timer);
   }, [circumference, progress]);
 
+  // Compact (dashboard plate) centers on what was eaten — the hero tiles own
+  // the "remaining" number, so the ring stops repeating it. Larger variants
+  // keep the remaining-focused readout.
+  const primaryValue = compact ? consumed : remaining;
+
   // Animate number
-  const [displayRemaining, setDisplayRemaining] = useState(0);
+  const [displayValue, setDisplayValue] = useState(0);
   useEffect(() => {
     const duration = 800;
     const start = performance.now();
-    const end = remaining;
+    const end = primaryValue;
 
     function tick(now: number) {
       const elapsed = now - start;
       const t = Math.max(0, Math.min(elapsed / duration, 1));
       // ease-out cubic
       const eased = 1 - Math.pow(1 - t, 3);
-      setDisplayRemaining(Math.round(eased * end));
+      setDisplayValue(Math.round(eased * end));
       if (t < 1) requestAnimationFrame(tick);
     }
 
     requestAnimationFrame(tick);
     // rAF can be throttled to a standstill (backgrounded tab, embedded webview);
     // pin the terminal value so the headline number is never left mid-count.
-    const settle = setTimeout(() => setDisplayRemaining(end), duration + 150);
+    const settle = setTimeout(() => setDisplayValue(end), duration + 150);
     return () => clearTimeout(settle);
-  }, [remaining]);
+  }, [primaryValue]);
 
   const ringColor = isOver ? "var(--color-accent-400)" : "var(--color-primary-500)";
   const percent = Math.round(progress * 100);
@@ -90,10 +95,10 @@ export function CalorieRing({ consumed, target, emphasis = "normal" }: CalorieRi
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <span className={`${compact ? "text-[2.1rem]" : hero ? "text-7xl" : "text-6xl"} font-black leading-none text-neutral-900 tabular-nums`}>
-          {displayRemaining.toLocaleString()}
+          {displayValue.toLocaleString()}
         </span>
         <span className={`${compact ? "mt-1.5 text-xs" : hero ? "mt-3 text-base" : "mt-2 text-sm"} font-black uppercase tracking-[0.14em] text-neutral-500`}>
-          {isOver ? "kcal over" : "kcal remaining"}
+          {compact ? "kcal eaten" : isOver ? "kcal over" : "kcal remaining"}
         </span>
         {!compact && (
           <span className="mt-2 rounded-full bg-white/85 px-2.5 py-1 text-xs font-black text-neutral-500 shadow-sm shadow-primary-900/5">
@@ -102,7 +107,9 @@ export function CalorieRing({ consumed, target, emphasis = "normal" }: CalorieRi
         )}
         <div className={`${compact ? "mt-1.5 bg-transparent px-0 py-0 shadow-none" : hero ? "mt-4 px-5 py-2.5" : "mt-3 px-4 py-2"} rounded-full bg-primary-50 shadow-sm shadow-primary-900/5`}>
           <span className={`${compact ? "text-xs" : hero ? "text-base" : "text-sm"} font-black text-primary-700 tabular-nums`}>
-            {consumed.toLocaleString()} of {target.toLocaleString()} kcal
+            {compact
+              ? `of ${target.toLocaleString()} kcal target`
+              : `${consumed.toLocaleString()} of ${target.toLocaleString()} kcal`}
           </span>
         </div>
       </div>
