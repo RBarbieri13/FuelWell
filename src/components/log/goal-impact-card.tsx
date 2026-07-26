@@ -58,16 +58,25 @@ export function GoalImpactCard({ impact }: { impact: MealGoalImpact }) {
         >
           <Target className="h-5 w-5" strokeWidth={2} aria-hidden="true" />
         </span>
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
+          {/* Kept as one string in one element: "Goal impact · <confidence>"
+              is a single label, and splitting it into a heading plus a chip
+              both loses the separator and breaks the shipped assertions that
+              read this line verbatim. */}
           <p
             className={cn(
-              "flex items-center gap-1.5 text-xs font-black uppercase tracking-[0.14em]",
+              // Plain flow rather than a flex row: the label is normal text, so
+              // it wraps instead of overflowing a 320px column.
+              "text-xs font-black uppercase leading-4 tracking-[0.14em]",
               tone.text
             )}
           >
             <span
               aria-hidden="true"
-              className={cn("h-1.5 w-1.5 shrink-0 rounded-full", tone.dot)}
+              className={cn(
+                "mr-1.5 inline-block h-1.5 w-1.5 rounded-full align-middle",
+                tone.dot
+              )}
             />
             Goal impact · {CONFIDENCE_LABEL[impact.confidence]}
           </p>
@@ -77,7 +86,7 @@ export function GoalImpactCard({ impact }: { impact: MealGoalImpact }) {
           <p className="mt-1 text-sm font-semibold leading-5 text-ink-muted">
             {impact.nextAction}
           </p>
-          <p className="mt-2 border-t border-hairline pt-2 text-xs font-semibold leading-5 text-ink-subtle">
+          <p className="mt-2.5 border-t border-hairline pt-2 text-xs font-semibold leading-5 text-ink-subtle">
             {impact.sourceNote}
           </p>
         </div>

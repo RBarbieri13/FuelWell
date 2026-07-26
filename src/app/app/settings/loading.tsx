@@ -13,17 +13,21 @@ export default function SettingsLoading() {
           <div className="min-w-0">
             <Skeleton className="h-8 w-44 bg-primary-100/80 md:h-10" />
             <Skeleton className="mt-2 h-4 w-80 max-w-full bg-primary-50" />
-            <div className="mt-3 flex gap-2 md:hidden">
-              {Array.from({ length: 4 }, (_, index) => (
-                <Skeleton key={index} className="h-9 w-20 shrink-0 rounded-full bg-primary-50" />
+            {/* Same scroller as the real section nav — four non-shrinking
+                80px chips overflow a 320px viewport without it. */}
+            <div className="-mx-1 mt-3 flex gap-2 overflow-x-auto px-1 pb-1 md:hidden">
+              {Array.from({ length: 6 }, (_, index) => (
+                <Skeleton key={index} className="h-11 w-20 shrink-0 rounded-full bg-primary-50" />
               ))}
             </div>
           </div>
-          <Skeleton className="h-9 w-20 rounded-full bg-primary-100/70" />
+          <Skeleton className="h-9 w-20 shrink-0 rounded-full bg-primary-100/70" />
         </div>
       </header>
 
-      <div className="fw-page-inner space-y-4 pb-28 md:space-y-6 md:pb-8">
+      {/* Mirrors SettingsClient's container; the app shell already pads for the
+          mobile tab bar, so no extra bottom padding belongs here. */}
+      <div className="fw-page-inner space-y-4 md:space-y-6">
         <section className="grid min-w-0 gap-6 xl:grid-cols-[0.95fr_1.05fr]">
           <div className="fw-dark-panel min-w-0 rounded-[24px] border px-5 py-6 sm:px-8 sm:py-8">
             <Skeleton className="h-3 w-40 bg-white/12" />

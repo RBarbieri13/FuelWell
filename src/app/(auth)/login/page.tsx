@@ -7,7 +7,12 @@ import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { OAuthButtons } from "@/components/auth/oauth-buttons";
-import { AuthLink, AuthShell } from "@/components/auth/auth-shell";
+import {
+  AuthDivider,
+  AuthLink,
+  AuthShell,
+  authFieldClass,
+} from "@/components/auth/auth-shell";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AlertCircle, BarChart3, Brain, LogIn, Utensils } from "lucide-react";
 
@@ -82,15 +87,7 @@ function LoginForm() {
 
             <OAuthButtons next={redirectTo} />
 
-            {/* Two hairlines instead of a chip floated over a rule — the chip
-                needed an opaque fill that never quite matched the card. */}
-            <div className="flex items-center gap-3" aria-hidden="true">
-              <span className="h-px flex-1 bg-gradient-to-r from-transparent to-hairline-strong" />
-              <span className="text-[0.6875rem] font-black uppercase tracking-[0.16em] text-ink-subtle">
-                or email
-              </span>
-              <span className="h-px flex-1 bg-gradient-to-l from-transparent to-hairline-strong" />
-            </div>
+            <AuthDivider label="or email" />
 
             <form onSubmit={handleEmailLogin} className="space-y-4">
               {error && !isCredentialError && (
@@ -102,6 +99,9 @@ function LoginForm() {
                   <span className="min-w-0">{error}</span>
                 </p>
               )}
+              {/* iOS capitalises and autocorrects the first token of a plain
+                  email field, which turns "rob@…" into "Rob@…" and fails the
+                  sign-in before it is sent. */}
               <Input
                 label="Email"
                 type="email"
@@ -110,6 +110,11 @@ function LoginForm() {
                 required
                 placeholder="you@example.com"
                 autoComplete="email"
+                inputMode="email"
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
+                className={authFieldClass}
               />
               <div>
                 <Input
@@ -121,6 +126,7 @@ function LoginForm() {
                   placeholder="Your password"
                   autoComplete="current-password"
                   error={isCredentialError ? error || undefined : undefined}
+                  className={authFieldClass}
                 />
                 <div className="mt-1 flex justify-end">
                   <Link
@@ -146,10 +152,12 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        // Shape-matched to the real card so the swap doesn't jump the layout.
-        <div className="fw-app-surface flex min-h-screen items-center justify-center px-4 py-8">
+        // Shape-matched to the real card — same radius, same border, same
+        // fw-lift-edge depth, same header block — so the swap is a content
+        // change rather than a layout jump.
+        <div className="fw-app-surface flex min-h-dvh items-center justify-center px-4 py-8">
           <div
-            className="w-full max-w-md rounded-[2rem] border border-hairline-strong bg-surface/95 p-5 shadow-e2 sm:p-7"
+            className="fw-lift-edge w-full max-w-md rounded-[2rem] border border-hairline-strong bg-surface/95 p-5 sm:p-7"
             role="status"
             aria-label="Loading sign-in"
           >
@@ -158,7 +166,11 @@ export default function LoginPage() {
               <Skeleton className="h-7 w-48" />
               <Skeleton className="h-4 w-full max-w-xs" />
             </div>
-            <div className="mt-7 space-y-2.5">
+            <span
+              aria-hidden="true"
+              className="mt-5 block h-px w-full bg-gradient-to-r from-primary-200 via-hairline to-transparent"
+            />
+            <div className="mt-6 space-y-2.5">
               <Skeleton className="h-12 w-full rounded-[1.15rem]" />
               <Skeleton className="h-12 w-full rounded-[1.15rem]" />
               <Skeleton className="h-12 w-full rounded-[1.15rem]" />

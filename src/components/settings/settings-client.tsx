@@ -631,22 +631,29 @@ export function SettingsClient({
         )}
 
         <section className="grid min-w-0 gap-6 xl:grid-cols-[0.95fr_1.05fr]">
-          <Card className="fw-dark-panel min-w-0 px-5 py-6 sm:px-8 sm:py-8">
+          {/* Deliberately not <Card>: fw-dark-panel supplies its own background
+              and shadow, so Card's bg-surface/shadow-e2 utilities would stack a
+              second elevation onto the same element. */}
+          <div className="fw-dark-panel min-w-0 rounded-[24px] border px-5 py-6 sm:px-8 sm:py-8">
             <p className="text-[0.6875rem] font-black uppercase tracking-[0.18em] text-primary-200">
               Account control center
             </p>
-            <h2 className="mt-2 text-2xl font-black leading-tight text-white md:mt-4 md:text-5xl">
+            <h2 className="mt-2 text-2xl font-black leading-tight break-words text-white md:mt-4 md:text-5xl">
               {displayNameValue || "FuelWell preview account"}
             </h2>
-            <p className="mt-2 truncate text-sm font-semibold text-white/66 md:mt-3 md:text-base">
+            <p className="mt-2 truncate text-sm font-semibold text-white/70 md:mt-3 md:text-base">
               {email || "No email set"}
             </p>
             <div className="mt-5 grid grid-cols-3 gap-2 md:mt-8 md:gap-3">
               <HeroStat label="Units" value={units} />
-              <HeroStat label="Diets" value={dietLabels.length > 0 ? `${dietLabels.length}` : "None"} />
+              <HeroStat
+                label="Diets"
+                value={dietLabels.length > 0 ? `${dietLabels.length}` : "None"}
+                numeric={dietLabels.length > 0}
+              />
               <HeroStat label="Garmin" value={formatIntegrationShort(integrationSummary.status)} />
             </div>
-          </Card>
+          </div>
 
           <Card variant="elevated" className="min-w-0 space-y-5">
             <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2">
@@ -687,22 +694,30 @@ export function SettingsClient({
                 {integrationSummary.note ??
                   "Connect Garmin to bring goal context into meal guidance. Nutrition remains saved in FuelWell."}
               </p>
+              {/* Three grouped readings instead of one dot-separated sentence:
+                  the figures line up and wrap cleanly at 320px. Each reading
+                  keeps its unit noun beside the figure ("430 active calories")
+                  so the value is never a bare number stranded from what it
+                  measures. */}
               {integrationSummary.activeCalories !== undefined && (
-                <p className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-base font-black text-ink">
-                  <span className="tabular-nums">{integrationSummary.activeCalories}</span> active
-                  calories
-                  <span aria-hidden="true" className="text-ink-faint">
-                    ·
-                  </span>
-                  <span className="tabular-nums">
-                    {integrationSummary.steps?.toLocaleString()}
-                  </span>{" "}
-                  steps
-                  <span aria-hidden="true" className="text-ink-faint">
-                    ·
-                  </span>
-                  {integrationSummary.recoveryLabel}
-                </p>
+                <dl className="mt-3 grid gap-2 sm:grid-cols-3">
+                  <IntegrationStat
+                    label="Energy"
+                    value={integrationSummary.activeCalories?.toLocaleString() ?? "—"}
+                    unit="active calories"
+                    numeric
+                  />
+                  <IntegrationStat
+                    label="Movement"
+                    value={integrationSummary.steps?.toLocaleString() ?? "—"}
+                    unit="steps"
+                    numeric
+                  />
+                  <IntegrationStat
+                    label="Recovery"
+                    value={integrationSummary.recoveryLabel ?? "—"}
+                  />
+                </dl>
               )}
             </div>
             <div className="flex flex-wrap gap-2">
@@ -722,12 +737,12 @@ export function SettingsClient({
 
         <section className="grid min-w-0 gap-4 xl:grid-cols-[0.9fr_1.1fr]">
           <Section id="account" title="Account">
-            <Card className="divide-y divide-hairline px-6 py-3">
+            <Card padding="none" className="divide-y divide-hairline px-5 py-1.5 md:px-6">
               <Row icon={User} label="Display name">
                 {displayNameValue ? (
                   <span className="text-sm font-black text-ink">{displayNameValue}</span>
                 ) : (
-                  <span className="text-sm font-bold text-ink-faint">Not set</span>
+                  <span className="text-sm font-bold text-ink-muted">Not set</span>
                 )}
               </Row>
               <Row icon={Mail} label="Email">
@@ -736,7 +751,7 @@ export function SettingsClient({
                     {email}
                   </span>
                 ) : (
-                  <span className="text-sm font-bold text-ink-faint">Not set</span>
+                  <span className="text-sm font-bold text-ink-muted">Not set</span>
                 )}
               </Row>
             </Card>
@@ -748,7 +763,7 @@ export function SettingsClient({
           </Section>
 
           <Section id="preferences" title="Preferences">
-            <Card className="space-y-5 px-6 py-6">
+            <Card padding="none" className="space-y-5 p-5 md:p-6">
               <PreferenceBlock icon={Ruler} title="Units" divided={false}>
                 <SegmentedField
                   label="Units"
@@ -795,25 +810,45 @@ export function SettingsClient({
         </section>
 
         <Section id="health-profile" title="Health profile">
-          <Card className="space-y-5 px-6 py-6">
+          <Card padding="none" className="space-y-5 p-5 md:p-6">
             <SectionHeader
               icon={UserCog}
               title="Edit your health profile"
               description="These rows drive calorie targets, macro targets, workout estimates, and coach recommendations."
               action={
-                <Button
-                  onClick={saveHealthProfile}
-                  loading={savingHealth}
-                  className="hidden rounded-full md:inline-flex"
-                >
-                  <Save className="h-4 w-4" />
-                  {savedHealth ? "Saved" : "Save health profile"}
-                </Button>
+                // Confirmation moved off the button: a control labelled "Saved"
+                // misstates what pressing it does, and the badge is announced
+                // by its live region on both breakpoints.
+                <div className="flex items-center gap-2">
+                  <span aria-live="polite">
+                    {savedHealth && (
+                      <Badge dot variant="success">
+                        Saved
+                      </Badge>
+                    )}
+                  </span>
+                  <Button
+                    onClick={saveHealthProfile}
+                    loading={savingHealth}
+                    className="hidden rounded-full md:inline-flex"
+                  >
+                    <Save className="h-4 w-4" />
+                    Save health profile
+                  </Button>
+                </div>
               }
             />
             {healthError && (
-              <p role="alert" className="rounded-[1.15rem] bg-red-50 px-4 py-3 text-sm font-bold text-red-700 ring-1 ring-inset ring-red-100">
-                {healthError}
+              <p
+                role="alert"
+                className="flex gap-3 rounded-[1.15rem] bg-red-50 px-4 py-3 ring-1 ring-inset ring-red-200"
+              >
+                <ShieldAlert
+                  aria-hidden="true"
+                  className="mt-0.5 h-4 w-4 shrink-0 text-red-600"
+                  strokeWidth={2}
+                />
+                <span className="min-w-0 text-sm font-bold leading-6 text-red-700">{healthError}</span>
               </p>
             )}
 
@@ -1060,31 +1095,48 @@ export function SettingsClient({
               className="w-full rounded-full md:hidden"
             >
               <Save className="h-4 w-4" />
-              {savedHealth ? "Saved" : "Save health profile"}
+              Save health profile
             </Button>
           </Card>
         </Section>
 
         <Section id="coach-preferences" title="Intake preferences">
-          <Card className="space-y-5 px-6 py-6">
+          <Card padding="none" className="space-y-5 p-5 md:p-6">
             <SectionHeader
               icon={SlidersHorizontal}
               title="Edit your signup answers"
               description="These preferences guide coaching, meal flexibility, grocery suggestions, and workout recommendations."
               action={
-                <Button
-                  onClick={saveIntakePreferences}
-                  loading={savingIntake}
-                  className="hidden rounded-full md:inline-flex"
-                >
-                  <Save className="h-4 w-4" />
-                  {savedIntake ? "Saved" : "Save changes"}
-                </Button>
+                <div className="flex items-center gap-2">
+                  <span aria-live="polite">
+                    {savedIntake && (
+                      <Badge dot variant="success">
+                        Saved
+                      </Badge>
+                    )}
+                  </span>
+                  <Button
+                    onClick={saveIntakePreferences}
+                    loading={savingIntake}
+                    className="hidden rounded-full md:inline-flex"
+                  >
+                    <Save className="h-4 w-4" />
+                    Save changes
+                  </Button>
+                </div>
               }
             />
             {intakeError && (
-              <p role="alert" className="rounded-[1.15rem] bg-red-50 px-4 py-3 text-sm font-bold text-red-700 ring-1 ring-inset ring-red-100">
-                {intakeError}
+              <p
+                role="alert"
+                className="flex gap-3 rounded-[1.15rem] bg-red-50 px-4 py-3 ring-1 ring-inset ring-red-200"
+              >
+                <ShieldAlert
+                  aria-hidden="true"
+                  className="mt-0.5 h-4 w-4 shrink-0 text-red-600"
+                  strokeWidth={2}
+                />
+                <span className="min-w-0 text-sm font-bold leading-6 text-red-700">{intakeError}</span>
               </p>
             )}
             <div className="flex flex-col gap-3 rounded-[1.15rem] bg-primary-50/70 px-4 py-3 ring-1 ring-inset ring-primary-100 sm:flex-row sm:items-center sm:justify-between">
@@ -1115,7 +1167,7 @@ export function SettingsClient({
               className="w-full rounded-full md:hidden"
             >
               <Save className="h-4 w-4" />
-              {savedIntake ? "Saved" : "Save changes"}
+              Save changes
             </Button>
           </Card>
         </Section>
@@ -1175,7 +1227,7 @@ export function SettingsClient({
           </Section>
 
           <Section title="About">
-            <Card className="divide-y divide-hairline px-6 py-3">
+            <Card padding="none" className="divide-y divide-hairline px-5 py-1.5 md:px-6">
               <Row icon={Info} label="App">
                 <span className="text-sm font-black text-ink">
                   FuelWell — AI Nutrition Coach
@@ -1191,7 +1243,9 @@ export function SettingsClient({
         </section>
 
         <Section id="delete-account" title="Danger zone">
-          <Card className="border-red-100 ring-1 ring-inset ring-red-100">
+          {/* One edge, not two: the previous border + inset ring read as a 2px
+              border, which this system reserves for selection. */}
+          <Card className="border-red-200">
             <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-2">
               <div className="flex min-w-0 items-start gap-3">
                 <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[1rem] bg-red-50 text-red-600 ring-1 ring-inset ring-red-100">
@@ -1215,13 +1269,58 @@ export function SettingsClient({
   );
 }
 
-function HeroStat({ label, value }: { label: string; value: string }) {
+function HeroStat({
+  label,
+  value,
+  numeric = false,
+}: {
+  label: string;
+  value: string;
+  numeric?: boolean;
+}) {
   return (
     <div className="rounded-[1.25rem] bg-white/10 px-3 py-3 ring-1 ring-inset ring-white/15 backdrop-blur md:px-4 md:py-4">
-      <p className="truncate text-base font-black capitalize text-white md:text-lg">{value}</p>
+      <p
+        className={cn(
+          "truncate text-base font-black capitalize text-white md:text-lg",
+          numeric && "tabular-nums"
+        )}
+      >
+        {value}
+      </p>
       <p className="mt-1 text-[0.6875rem] font-black uppercase tracking-[0.12em] text-white/65">
         {label}
       </p>
+    </div>
+  );
+}
+
+function IntegrationStat({
+  label,
+  value,
+  unit,
+  numeric = false,
+}: {
+  label: string;
+  value: string;
+  /** Unit noun kept in the same line of text as the figure. */
+  unit?: string;
+  numeric?: boolean;
+}) {
+  return (
+    <div className="min-w-0 rounded-[0.9rem] bg-surface px-3 py-2.5 ring-1 ring-inset ring-hairline">
+      <dt className="truncate text-[0.6875rem] font-black uppercase tracking-[0.12em] text-ink-muted">
+        {label}
+      </dt>
+      <dd className="mt-0.5 break-words text-base font-black leading-6 text-ink">
+        <span className={cn(numeric && "tabular-nums")}>{value}</span>
+        {unit ? (
+          <>
+            {" "}
+            <span className="text-sm font-bold text-ink-muted">{unit}</span>
+          </>
+        ) : null}
+      </dd>
     </div>
   );
 }
@@ -1263,11 +1362,14 @@ function PreferenceBlock({
 }) {
   return (
     <div className={cn(divided && "border-t border-hairline pt-4")}>
-      <div className="mb-3 flex items-center gap-2.5">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[0.8rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100">
+      {/* Row anatomy is fixed across Settings: 36px tinted plate, 16px glyph,
+          stroke 2, then the label. Three plate sizes used to appear on one
+          screen. */}
+      <div className="mb-3 flex items-center gap-3">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100">
           <Icon className="h-4 w-4" strokeWidth={2} />
         </span>
-        <span className="text-sm font-black text-ink">{title}</span>
+        <span className="min-w-0 text-sm font-black text-ink">{title}</span>
       </div>
       {children}
     </div>
@@ -1313,12 +1415,19 @@ function IntakePreferenceGroup({
   const Icon = group.icon;
 
   return (
-    <div className="rounded-[1.35rem] bg-surface-muted p-4 ring-1 ring-inset ring-hairline">
-      <div className="mb-3 flex items-center gap-2.5">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-surface text-primary-700 ring-1 ring-inset ring-hairline">
-          <Icon className="h-4 w-4" strokeWidth={2} />
-        </span>
-        <p className="min-w-0 text-sm font-black text-ink">{group.label}</p>
+    <div className="flex h-full flex-col rounded-[1.35rem] bg-surface-muted p-4 ring-1 ring-inset ring-hairline">
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-3">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.9rem] bg-surface text-primary-700 ring-1 ring-inset ring-hairline">
+            <Icon className="h-4 w-4" strokeWidth={2} />
+          </span>
+          <p className="min-w-0 text-sm font-black text-ink">{group.label}</p>
+        </div>
+        {/* The chosen option is repeated as text so the card is readable
+            without decoding which pill is filled. */}
+        <p className="hidden min-w-0 shrink truncate text-xs font-bold text-ink-muted sm:block">
+          {formatOptionLabel(group.options, value)}
+        </p>
       </div>
       <div className="flex flex-wrap gap-2">
         {group.options.map((option) => (
@@ -1337,6 +1446,12 @@ function IntakePreferenceGroup({
   );
 }
 
+/**
+ * A real toggle rather than two independently styled buttons: one thumb slides
+ * between equal-width slots, so the change of state is a movement the eye can
+ * follow instead of two simultaneous repaints. Slots are `flex-1 basis-0` so
+ * the thumb's `translateX(index * 100%)` always lands exactly on a slot.
+ */
 function SegmentedField({
   label,
   value,
@@ -1348,11 +1463,24 @@ function SegmentedField({
   onChange: (value: string) => void;
   options: Array<[string, string]>;
 }) {
+  const activeIndex = Math.max(
+    options.findIndex(([optionValue]) => optionValue === value),
+    0
+  );
+
   return (
     <fieldset
       aria-label={label}
-      className="inline-flex rounded-full bg-surface-sunken p-1 ring-1 ring-inset ring-hairline"
+      className="relative inline-flex max-w-full rounded-full bg-surface-sunken p-1 ring-1 ring-inset ring-hairline"
     >
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-y-1 left-1 rounded-full bg-surface shadow-e1 ring-1 ring-inset ring-hairline-strong transition-transform duration-300 ease-spring"
+        style={{
+          width: `calc((100% - 0.5rem) / ${options.length})`,
+          transform: `translateX(${activeIndex * 100}%)`,
+        }}
+      />
       {options.map(([optionValue, optionLabel]) => {
         const selected = value === optionValue;
         return (
@@ -1361,10 +1489,8 @@ function SegmentedField({
             type="button"
             onClick={() => onChange(optionValue)}
             className={cn(
-              "fw-press min-h-11 rounded-full px-5 py-2 text-sm font-black md:min-h-9",
-              selected
-                ? "bg-surface text-ink shadow-e1 ring-1 ring-inset ring-hairline-strong"
-                : "text-ink-muted hover:text-ink"
+              "fw-press relative z-10 min-h-11 flex-1 basis-0 rounded-full px-5 py-2 text-sm font-black transition-colors duration-200 ease-out-soft md:min-h-9",
+              selected ? "text-ink" : "text-ink-muted hover:text-ink"
             )}
             aria-pressed={selected}
           >
@@ -1395,7 +1521,7 @@ function TextField({
     <label className="block">
       <span
         className={cn(
-          "block text-[0.6875rem] font-black uppercase tracking-[0.14em] text-ink-subtle",
+          "block text-[0.6875rem] font-black uppercase tracking-[0.14em] text-ink-muted",
           hideLabel && "sr-only"
         )}
       >
@@ -1432,7 +1558,7 @@ function NumberField({
     <label className="block">
       <span
         className={cn(
-          "block text-[0.6875rem] font-black uppercase tracking-[0.14em] text-ink-subtle",
+          "block text-[0.6875rem] font-black uppercase tracking-[0.14em] text-ink-muted",
           hideLabel && "sr-only"
         )}
       >
@@ -1452,7 +1578,7 @@ function NumberField({
           className="min-w-0 flex-1 bg-transparent text-sm font-bold tabular-nums text-ink outline-none"
         />
         {suffix && (
-          <span className="shrink-0 text-xs font-black uppercase text-ink-subtle">{suffix}</span>
+          <span className="shrink-0 text-xs font-black uppercase text-ink-muted">{suffix}</span>
         )}
       </div>
     </label>
@@ -1476,7 +1602,7 @@ function SelectField({
     <label className="block">
       <span
         className={cn(
-          "block text-[0.6875rem] font-black uppercase tracking-[0.14em] text-ink-subtle",
+          "block text-[0.6875rem] font-black uppercase tracking-[0.14em] text-ink-muted",
           hideLabel && "sr-only"
         )}
       >
@@ -1541,7 +1667,7 @@ function Section({
   return (
     <div id={id} className="min-w-0 scroll-mt-24">
       <div className="mb-3 flex items-center gap-3">
-        <h2 className="shrink-0 text-[0.6875rem] font-black uppercase tracking-[0.18em] text-ink-subtle">
+        <h2 className="shrink-0 text-[0.6875rem] font-black uppercase tracking-[0.18em] text-ink-muted">
           {title}
         </h2>
         <span aria-hidden="true" className="h-px min-w-0 flex-1 bg-hairline" />

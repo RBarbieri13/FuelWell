@@ -27,15 +27,31 @@ type RestaurantPicksArtifact = ArtifactSpec & {
 const SLOTS = ["breakfast", "lunch", "dinner", "snack"] as const;
 type Slot = (typeof SLOTS)[number];
 
-/** Fixed metric cell — macros align column-wise across every pick. */
+/**
+ * Canonical macro palette, shared verbatim by every coach card that prints a
+ * macro figure. Bright `--color-macro-*` tokens are reserved for fills; text
+ * uses the darker step so each figure clears 4.5:1 on the surfaces it sits on.
+ */
+const MACRO_TEXT = {
+  calories: "var(--color-primary-800)",
+  protein: "var(--color-sky-700)",
+  carbs: "var(--color-lemon-700)",
+  fat: "var(--color-accent-700)",
+} as const;
+
+/**
+ * Fixed metric cell — macros align column-wise across every pick. Sits on the
+ * sunken pick panel, so it takes the raised surface tone (one step up), and the
+ * label is the only part allowed to truncate.
+ */
 function MetricCell({ label, value, tone }: { label: string; value: string; tone: string }) {
   return (
-    <span className="flex min-w-0 items-baseline justify-between gap-1 rounded-lg bg-surface-muted px-1.5 py-1 ring-1 ring-inset ring-hairline">
-      <span className="shrink-0 text-[0.625rem] font-black uppercase tracking-wide text-ink-subtle">
+    <span className="flex min-h-6 min-w-0 items-baseline justify-between gap-1.5 rounded-lg bg-surface px-1.5 py-1 ring-1 ring-inset ring-hairline">
+      <span className="min-w-0 truncate text-[0.625rem] font-black uppercase tracking-wide text-ink-muted">
         {label}
       </span>
       <span
-        className="min-w-0 truncate text-[0.6875rem] font-black tabular-nums"
+        className="shrink-0 text-[0.6875rem] font-black tabular-nums"
         style={{ color: tone }}
       >
         {value}
@@ -57,6 +73,11 @@ export function RestaurantPicksCard({ artifact, onAction }: ArtifactCardProps<Re
         icon={artifact.restaurant ? Store : UtensilsCrossed}
         eyebrow="Eating out"
         title={artifact.restaurant ? `Picks at ${artifact.restaurant}` : "Restaurant picks"}
+        description={
+          picks.length > 0
+            ? `${picks.length} option${picks.length === 1 ? "" : "s"} · macros for the portion shown`
+            : undefined
+        }
       />
 
       {picks.length === 0 ? (
@@ -68,35 +89,41 @@ export function RestaurantPicksCard({ artifact, onAction }: ArtifactCardProps<Re
         />
       ) : (
         <>
-          <div
-            className="mt-3 flex flex-wrap gap-1.5"
-            role="group"
-            aria-label="Meal slot"
-          >
-            {SLOTS.map((s) => (
-              <button
-                key={s}
-                type="button"
-                aria-label={`Use ${s} slot`}
-                aria-pressed={slot === s}
-                onClick={() => setSlot(s)}
-                className={cn(
-                  "fw-press min-h-11 rounded-full px-3.5 text-xs font-black capitalize focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2 md:min-h-9",
-                  slot === s
-                    ? "bg-primary-600 text-white shadow-e1 ring-1 ring-inset ring-primary-700"
-                    : "bg-surface-muted text-ink-muted ring-1 ring-inset ring-hairline-strong hover:bg-primary-50 hover:text-primary-800"
-                )}
-              >
-                {s}
-              </button>
-            ))}
+          {/* The slot picker had no visible label — sighted users saw four
+              pills with no stated effect. The eyebrow states what they set. */}
+          <div className="mt-3" role="group" aria-label="Meal slot">
+            <p
+              aria-hidden="true"
+              className="px-0.5 text-[0.625rem] font-black uppercase tracking-[0.12em] text-ink-muted"
+            >
+              Log to
+            </p>
+            <div className="mt-1.5 flex flex-wrap gap-1.5">
+              {SLOTS.map((s) => (
+                <button
+                  key={s}
+                  type="button"
+                  aria-label={`Use ${s} slot`}
+                  aria-pressed={slot === s}
+                  onClick={() => setSlot(s)}
+                  className={cn(
+                    "fw-press min-h-11 rounded-full px-3.5 text-xs font-black capitalize focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2 md:min-h-9",
+                    slot === s
+                      ? "bg-primary-600 text-white shadow-e1 ring-1 ring-inset ring-primary-700"
+                      : "bg-surface-muted text-ink-muted ring-1 ring-inset ring-hairline-strong hover:bg-primary-50 hover:text-primary-800 active:bg-primary-100"
+                  )}
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
           </div>
 
           <ul className="mt-3 space-y-2">
             {picks.map((pick) => (
               <li
                 key={pick.foodId}
-                className="rounded-2xl bg-surface-subtle p-3 ring-1 ring-inset ring-hairline"
+                className="rounded-2xl bg-surface-muted p-3 ring-1 ring-inset ring-hairline"
               >
                 <div className="fw-artifact-mobile-stack flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
@@ -141,27 +168,29 @@ export function RestaurantPicksCard({ artifact, onAction }: ArtifactCardProps<Re
                   <MetricCell
                     label="kcal"
                     value={`${Math.round(pick.macros.calories)}`}
-                    tone="var(--color-macro-calories)"
+                    tone={MACRO_TEXT.calories}
                   />
                   <MetricCell
                     label="P"
                     value={`${round1(pick.macros.protein)}g`}
-                    tone="var(--color-macro-protein)"
+                    tone={MACRO_TEXT.protein}
                   />
                   <MetricCell
                     label="C"
                     value={`${round1(pick.macros.carbs)}g`}
-                    tone="var(--color-lemon-700)"
+                    tone={MACRO_TEXT.carbs}
                   />
                   <MetricCell
                     label="F"
                     value={`${round1(pick.macros.fat)}g`}
-                    tone="var(--color-accent-700)"
+                    tone={MACRO_TEXT.fat}
                   />
                 </div>
 
                 {pick.why && (
-                  <p className="mt-2 text-xs font-semibold leading-5 text-ink-muted">{pick.why}</p>
+                  <p className="mt-2 rounded-xl bg-surface px-2.5 py-1.5 text-xs font-semibold leading-5 text-ink-muted ring-1 ring-inset ring-hairline">
+                    {pick.why}
+                  </p>
                 )}
               </li>
             ))}

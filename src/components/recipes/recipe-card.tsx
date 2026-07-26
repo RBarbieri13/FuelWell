@@ -26,6 +26,22 @@ export function RecipeCard({
   onOpen: (recipe: Recipe) => void;
   planStatus?: RecipePlanStatus | null;
 }) {
+  // Same 4/4/9 derivation the recipe dialog uses, so the card and the detail
+  // never disagree. Null when the recipe carries no macro grams at all —
+  // an empty axis is worse than no chart.
+  const energy = (() => {
+    const protein = Math.max(recipe.perServing.protein, 0) * 4;
+    const carbs = Math.max(recipe.perServing.carbs, 0) * 4;
+    const fat = Math.max(recipe.perServing.fat, 0) * 9;
+    const total = protein + carbs + fat;
+    if (total <= 0) return null;
+    return [
+      { key: "Protein", share: (protein / total) * 100, fill: "var(--color-macro-protein)" },
+      { key: "Carbs", share: (carbs / total) * 100, fill: "var(--color-macro-carbs)" },
+      { key: "Fat", share: (fat / total) * 100, fill: "var(--color-macro-fat)" },
+    ];
+  })();
+
   const macroTiles = [
     {
       label: "kcal",
@@ -64,7 +80,7 @@ export function RecipeCard({
     >
       {/* Tinted header plate — the card's only large colour field, so the
           title always lands on a designed surface instead of bare white. */}
-      <div className="relative border-b border-hairline bg-gradient-to-br from-primary-50 via-surface-subtle to-surface px-5 pb-4 pt-4">
+      <div className="relative border-b border-hairline bg-gradient-to-br from-primary-50 via-surface-subtle to-surface px-5 pb-4 pt-4 transition-colors duration-200 ease-out-soft group-hover:from-primary-100 group-hover:via-primary-50">
         <span
           aria-hidden="true"
           className="absolute inset-x-0 top-0 h-px bg-white/70"
@@ -135,6 +151,40 @@ export function RecipeCard({
               );
             })}
           </span>
+          {energy && (
+            <>
+              <span
+                role="img"
+                aria-label={`Energy split: protein ${Math.round(energy[0].share)} percent, carbs ${Math.round(
+                  energy[1].share
+                )} percent, fat ${Math.round(energy[2].share)} percent`}
+                className="mt-2.5 flex h-1.5 w-full overflow-hidden rounded-full bg-surface-sunken ring-1 ring-inset ring-hairline"
+              >
+                {energy.map((part) => (
+                  <span
+                    key={part.key}
+                    className="h-full first:rounded-l-full last:rounded-r-full"
+                    style={{ width: `${part.share}%`, backgroundColor: part.fill }}
+                  />
+                ))}
+              </span>
+              <span className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1 text-[10px] font-black uppercase tracking-[0.08em] text-ink-subtle">
+                {energy.map((part) => (
+                  <span key={part.key} className="inline-flex items-center gap-1">
+                    <span
+                      aria-hidden="true"
+                      className="h-1.5 w-1.5 shrink-0 rounded-full"
+                      style={{ backgroundColor: part.fill }}
+                    />
+                    {part.key}
+                    <span className="tabular-nums text-ink-muted">
+                      {Math.round(part.share)}%
+                    </span>
+                  </span>
+                ))}
+              </span>
+            </>
+          )}
         </button>
 
         {recipe.tags.length > 0 && (

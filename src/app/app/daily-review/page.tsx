@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { DailyReviewSurface } from "@/components/daily-detail/detail-surfaces";
 import { createClient } from "@/lib/supabase/server";
@@ -52,6 +53,12 @@ function mapMeal(meal: SupabaseMeal): MealRecord {
     items: (meal.meal_items || []).map(mapItem),
   };
 }
+
+// Route-level chrome, matching Dashboard: the tab / iOS webview title is the
+// only label for the current screen once the header scrolls away.
+export const metadata: Metadata = {
+  title: "Daily review · FuelWell",
+};
 
 export default async function DailyReviewPage() {
   const host = (await headers()).get("host");

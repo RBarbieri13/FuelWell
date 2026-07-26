@@ -198,7 +198,7 @@ function ScoreDetail({
                     {contributor.score !== null ? (
                       <p className="text-3xl font-black tabular-nums text-ink md:text-4xl">
                         {contributor.score}
-                        <span className="ml-0.5 text-base font-bold text-ink-faint">
+                        <span className="ml-0.5 text-base font-bold text-ink-muted">
                           /100
                         </span>
                       </p>
@@ -219,7 +219,7 @@ function ScoreDetail({
                           color="var(--color-primary-500)"
                           label={`${contributor.label} contributor score: ${contributor.score} out of 100`}
                         />
-                        <div className="mt-1 flex items-center justify-between text-[0.625rem] font-bold tabular-nums text-ink-faint">
+                        <div className="mt-1 flex items-center justify-between text-[0.625rem] font-bold tabular-nums text-ink-muted">
                           <span>0</span>
                           <span>100</span>
                         </div>

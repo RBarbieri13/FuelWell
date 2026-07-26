@@ -26,6 +26,17 @@ type PhotoEstimateResponse = {
   sourceNote: string;
 };
 
+/** Macro roles carry the same colour as the totals panel and portion picker. */
+const CANDIDATE_MACROS: {
+  key: "protein" | "carbs" | "fat";
+  label: string;
+  color: string;
+}[] = [
+  { key: "protein", label: "protein", color: "var(--color-macro-protein)" },
+  { key: "carbs", label: "carbs", color: "var(--color-macro-carbs)" },
+  { key: "fat", label: "fat", color: "var(--color-macro-fat)" },
+];
+
 function readFileAsDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -103,7 +114,7 @@ export function PhotoEstimateReview({
         accept="image/jpeg,image/png,image/webp"
         aria-label="Meal photo"
         onChange={(event) => void handleFile(event.target.files?.[0])}
-        className="block w-full cursor-pointer rounded-[1.25rem] border border-dashed border-primary-200 bg-primary-50/55 px-4 py-4 text-sm font-semibold text-ink-muted transition duration-200 ease-out-soft hover:border-primary-300 hover:bg-primary-50 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2 file:mr-3 file:cursor-pointer file:rounded-full file:border-0 file:bg-primary-600 file:px-4 file:py-2 file:text-xs file:font-black file:text-white hover:file:bg-primary-700"
+        className="block w-full cursor-pointer rounded-[1.25rem] border border-dashed border-primary-200 bg-primary-50/55 px-4 py-4 text-sm font-semibold text-ink-muted transition duration-200 ease-out-soft hover:border-primary-300 hover:bg-primary-50 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2 file:mr-3 file:cursor-pointer file:rounded-full file:border-0 file:bg-primary-700 file:px-4 file:py-2 file:text-xs file:font-black file:text-white hover:file:bg-primary-800"
       />
 
       {imageDataUrl && (
@@ -203,16 +214,53 @@ export function PhotoEstimateReview({
                           confidence
                         </Badge>
                       </div>
-                      <p className="mt-1 text-xs font-bold text-ink-muted">
-                        {candidate.portionLabel} ·{" "}
-                        <span className="tabular-nums">
-                          {candidate.totals.calories.toLocaleString()}
-                        </span>{" "}
-                        kcal ·{" "}
-                        <span className="tabular-nums">{candidate.totals.protein}</span>g
-                        protein
+                      {/* A percentage in a chip is a claim; the meter turns it
+                          into something you can compare between candidates. */}
+                      <div
+                        role="img"
+                        aria-label={`Model confidence ${Math.round(
+                          candidate.confidence * 100
+                        )} percent`}
+                        className="mt-1.5 h-1.5 max-w-56 overflow-hidden rounded-full bg-surface-sunken"
+                      >
+                        <div
+                          className="h-full rounded-full bg-lemon-500 transition-[width] duration-500 ease-out-soft"
+                          style={{
+                            width: `${Math.max(
+                              4,
+                              Math.min(100, Math.round(candidate.confidence * 100))
+                            )}%`,
+                          }}
+                        />
+                      </div>
+                      <p className="mt-2 flex flex-wrap items-center gap-x-2.5 gap-y-0.5 text-xs font-bold text-ink-muted">
+                        <span className="min-w-0 truncate">
+                          {candidate.portionLabel}
+                        </span>
+                        <span className="whitespace-nowrap font-black text-ink">
+                          <span className="tabular-nums">
+                            {candidate.totals.calories.toLocaleString()}
+                          </span>{" "}
+                          kcal
+                        </span>
+                        {CANDIDATE_MACROS.map((macro) => (
+                          <span
+                            key={macro.key}
+                            className="inline-flex items-center gap-1 whitespace-nowrap"
+                          >
+                            <span
+                              aria-hidden="true"
+                              className="h-1.5 w-1.5 shrink-0 rounded-full"
+                              style={{ backgroundColor: macro.color }}
+                            />
+                            <span className="tabular-nums">
+                              {candidate.totals[macro.key]}
+                            </span>
+                            g {macro.label}
+                          </span>
+                        ))}
                       </p>
-                      <p className="mt-1 text-xs font-semibold leading-5 text-ink-subtle">
+                      <p className="mt-1.5 text-xs font-semibold leading-5 text-ink-subtle">
                         {candidate.sourceNote}
                       </p>
                     </div>

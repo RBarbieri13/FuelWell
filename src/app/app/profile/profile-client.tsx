@@ -10,6 +10,7 @@ import { SectionHeader } from "@/components/ui/section-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { cn } from "@/lib/utils/cn";
 import {
+  AlertTriangle,
   User,
   LogOut,
   Settings,
@@ -184,7 +185,10 @@ export function ProfileClient({
         )}
 
         <section className="grid min-w-0 gap-6 xl:grid-cols-[1.08fr_0.92fr]">
-          <Card className="fw-dark-panel min-w-0 px-5 py-5 sm:px-8 sm:py-8">
+          {/* Deliberately not <Card>: fw-dark-panel owns its own background and
+              shadow, and layering Card's bg-surface/shadow-e2 utilities on top
+              meant two competing elevations on one element. */}
+          <div className="fw-dark-panel min-w-0 rounded-[24px] border px-5 py-5 sm:px-8 sm:py-8">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:gap-6">
               <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[1.35rem] bg-white/12 text-white ring-1 ring-inset ring-white/15 md:h-24 md:w-24 md:rounded-[2rem]">
                 <User className="h-8 w-8 md:h-11 md:w-11" strokeWidth={1.75} />
@@ -249,9 +253,13 @@ export function ProfileClient({
             <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3 md:mt-8 md:gap-3">
               <HeroStat label="Goal" value={formatGoalShort(effectiveGoal)} />
               <HeroStat label="Activity" value={formatActivityShort(effectiveActivityLevel)} />
-              <HeroStat label="Setup" value={onboardingComplete ? "Complete" : "Needs setup"} />
+              <HeroStat
+                label="Setup"
+                value={onboardingComplete ? "Complete" : "Needs setup"}
+                tone={onboardingComplete ? "default" : "attention"}
+              />
             </div>
-          </Card>
+          </div>
 
           <Card variant="elevated" className="min-w-0 space-y-5">
             <SectionHeader
@@ -339,33 +347,38 @@ export function ProfileClient({
                 </Link>
               }
             />
+            {/* Weight and height stay in the list when unrecorded. Dropping the
+                rows silently shortened the panel and gave no clue that the two
+                values feeding the targets were missing. */}
             <div className="divide-y divide-hairline overflow-hidden rounded-[1.35rem] bg-surface-muted ring-1 ring-inset ring-hairline">
               <InfoRow icon={Target} label="Goal" value={formatGoal(goal)} />
               <InfoRow icon={Activity} label="Activity" value={formatActivity(activityLevel)} />
-              {weightKg && (
-                <InfoRow
-                  icon={Scale}
-                  label="Weight"
-                  value={
-                    units === "metric"
+              <InfoRow
+                icon={Scale}
+                label="Weight"
+                value={
+                  weightKg
+                    ? units === "metric"
                       ? `${Math.round(weightKg)} kg`
                       : `${weightLb ?? Math.round(weightKg * 2.20462)} lb`
-                  }
-                  numeric
-                />
-              )}
-              {heightCm && (
-                <InfoRow
-                  icon={Ruler}
-                  label="Height"
-                  value={
-                    units === "metric"
+                    : "Not set"
+                }
+                numeric={!!weightKg}
+                unset={!weightKg}
+              />
+              <InfoRow
+                icon={Ruler}
+                label="Height"
+                value={
+                  heightCm
+                    ? units === "metric"
                       ? `${Math.round(heightCm)} cm`
                       : `${heightIn ?? Math.round(heightCm / 2.54)} in`
-                  }
-                  numeric
-                />
-              )}
+                    : "Not set"
+                }
+                numeric={!!heightCm}
+                unset={!heightCm}
+              />
             </div>
           </Card>
 
@@ -386,18 +399,28 @@ export function ProfileClient({
             />
 
             {showSignOutConfirm && (
-              <div className="mt-4 rounded-[1.35rem] bg-red-50/70 p-4 ring-1 ring-inset ring-red-200">
-                <p className="text-sm font-black text-ink">
-                  Are you sure you want to sign out?
-                </p>
-                <div className="mt-3 flex flex-wrap items-center gap-2">
-                  <Button variant="danger" size="sm" onClick={handleSignOut}>
-                    <LogOut className="h-3.5 w-3.5" />
-                    Yes, sign out
-                  </Button>
-                  <Button variant="ghost" size="sm" onClick={() => setShowSignOutConfirm(false)}>
-                    Cancel
-                  </Button>
+              <div
+                role="group"
+                aria-live="polite"
+                aria-label="Confirm sign out"
+                className="animate-in fade-in slide-in-from-top-1 mt-4 flex gap-3 rounded-[1.35rem] bg-red-50/70 p-4 ring-1 ring-inset ring-red-200 duration-200 ease-out-soft"
+              >
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.9rem] bg-surface text-red-600 ring-1 ring-inset ring-red-100">
+                  <AlertTriangle className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
+                </span>
+                <div className="min-w-0">
+                  <p className="text-sm font-black leading-6 text-ink">
+                    Are you sure you want to sign out?
+                  </p>
+                  <div className="mt-3 flex flex-wrap items-center gap-2">
+                    <Button variant="danger" size="sm" onClick={handleSignOut}>
+                      <LogOut className="h-4 w-4" />
+                      Yes, sign out
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={() => setShowSignOutConfirm(false)}>
+                      Cancel
+                    </Button>
+                  </div>
                 </div>
               </div>
             )}
@@ -408,17 +431,52 @@ export function ProfileClient({
   );
 }
 
-function HeroStat({ label, value }: { label: string; value: string }) {
+/**
+ * `attention` is not decoration: it is the only place an unfinished setup is
+ * visible on this page, so the tile has to read as a state, not a value.
+ */
+function HeroStat({
+  label,
+  value,
+  tone = "default",
+}: {
+  label: string;
+  value: string;
+  tone?: "default" | "attention";
+}) {
   return (
-    <div className="rounded-[1.25rem] bg-white/10 px-3 py-3 ring-1 ring-inset ring-white/15 backdrop-blur md:px-4 md:py-4">
-      <p className="truncate text-base font-black text-white md:text-lg">{value}</p>
-      <p className="mt-1 text-[0.6875rem] font-black uppercase tracking-[0.12em] text-white/65">
+    <div
+      className={cn(
+        "rounded-[1.25rem] px-3 py-3 ring-1 ring-inset backdrop-blur md:px-4 md:py-4",
+        tone === "attention"
+          ? "bg-accent-400/15 ring-accent-300/45"
+          : "bg-white/10 ring-white/15"
+      )}
+    >
+      <p
+        className={cn(
+          "truncate text-base font-black md:text-lg",
+          tone === "attention" ? "text-accent-200" : "text-white"
+        )}
+      >
+        {value}
+      </p>
+      <p
+        className={cn(
+          "mt-1 text-[0.6875rem] font-black uppercase tracking-[0.12em]",
+          tone === "attention" ? "text-accent-100/80" : "text-white/65"
+        )}
+      >
         {label}
       </p>
     </div>
   );
 }
 
+/**
+ * Label reads first, figure second. The previous order buried the macro name
+ * under the number and produced "kcal calories" as a single run-on caption.
+ */
 function TargetCard({
   label,
   value,
@@ -432,9 +490,14 @@ function TargetCard({
 }) {
   return (
     <div className={cn("rounded-[1.35rem] px-4 py-4 text-center ring-1 ring-inset", color)}>
-      <p className="text-3xl font-black leading-none tabular-nums">{value}</p>
-      <p className="mt-1.5 text-xs font-bold uppercase tracking-[0.08em] opacity-75">
-        {unit} {label.toLowerCase()}
+      <p className="text-[0.6875rem] font-black uppercase tracking-[0.12em] opacity-75">
+        {label}
+      </p>
+      <p className="mt-1.5 flex items-baseline justify-center gap-1">
+        <span className="text-3xl font-black leading-none tabular-nums">{value}</span>
+        <span className="text-xs font-black uppercase tracking-[0.08em] opacity-70">
+          {unit}
+        </span>
       </p>
     </div>
   );
@@ -468,25 +531,41 @@ function MacroSplitBar({
   return (
     <div className="rounded-[1.35rem] bg-surface-muted p-4 ring-1 ring-inset ring-hairline">
       <div className="flex items-baseline justify-between gap-3">
-        <p className="text-[0.6875rem] font-black uppercase tracking-[0.14em] text-ink-subtle">
+        <p className="text-[0.6875rem] font-black uppercase tracking-[0.14em] text-ink-muted">
           Share of calories
         </p>
-        <p className="text-[0.6875rem] font-bold tabular-nums text-ink-faint">
+        <p className="text-[0.6875rem] font-bold tabular-nums text-ink-muted">
           {Math.round(total)} kcal from macros
         </p>
       </div>
       <div
         role="img"
         aria-label={`Calorie split: ${segments[0].pct}% protein, ${segments[1].pct}% carbs, ${segments[2].pct}% fat.`}
-        className="mt-2 flex h-2.5 gap-0.5 overflow-hidden rounded-full bg-surface-sunken"
+        className="relative mt-2 h-2.5 overflow-hidden rounded-full bg-surface-sunken ring-1 ring-inset ring-hairline"
       >
-        {segments.map((segment) => (
-          <span
-            key={segment.label}
-            className={cn("transition-[width] duration-700 ease-out-soft", segment.bar)}
-            style={{ width: `${segment.pct}%` }}
-          />
-        ))}
+        <div className="flex h-full gap-0.5">
+          {segments.map((segment) => (
+            <span
+              key={segment.label}
+              className={cn(
+                "min-w-0.5 transition-[width] duration-700 ease-out-soft",
+                segment.bar
+              )}
+              style={{ width: `${segment.pct}%` }}
+            />
+          ))}
+        </div>
+        {/* Quarter rules give the eye a scale; a stacked bar with no ticks is
+            impossible to read comparatively. */}
+        <span aria-hidden="true" className="pointer-events-none absolute inset-0">
+          {[25, 50, 75].map((tick) => (
+            <span
+              key={tick}
+              className="absolute inset-y-0 w-px bg-surface/60"
+              style={{ left: `${tick}%` }}
+            />
+          ))}
+        </span>
       </div>
       <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1">
         {segments.map((segment) => (
@@ -507,24 +586,37 @@ function InfoRow({
   label,
   value,
   numeric = false,
+  unset = false,
 }: {
   icon: LucideIcon;
   label: string;
   value: string;
   numeric?: boolean;
+  /** Renders the value as a placeholder rather than a recorded figure. */
+  unset?: boolean;
 }) {
   return (
     <div className="flex min-h-14 items-center justify-between gap-4 px-4 py-3">
       <div className="flex min-w-0 items-center gap-3">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.9rem] bg-surface text-primary-700 ring-1 ring-inset ring-hairline">
+        <span
+          className={cn(
+            "flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.9rem] ring-1 ring-inset",
+            unset
+              ? "bg-surface-sunken text-ink-muted ring-hairline"
+              : "bg-surface text-primary-700 ring-hairline"
+          )}
+        >
           <Icon className="h-4 w-4" strokeWidth={2} />
         </span>
         <span className="truncate text-sm font-bold text-ink-muted">{label}</span>
       </div>
       <span
         className={cn(
-          "shrink-0 text-sm font-black text-ink",
-          numeric && "tabular-nums"
+          "max-w-[55%] truncate text-right text-sm font-black",
+          numeric && "tabular-nums",
+          // "Not set" is a real status the user has to be able to read, so it
+          // steps down to ink-muted rather than the ink-faint watermark tone.
+          unset ? "text-ink-muted" : "text-ink"
         )}
       >
         {value}

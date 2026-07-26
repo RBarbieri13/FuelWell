@@ -38,6 +38,7 @@ import {
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { SectionHeader } from "@/components/ui/section-header";
 import { cn } from "@/lib/utils/cn";
 import { createClient } from "@/lib/supabase/client";
 import { hasSupabaseConfig, isPreviewHost, SAMPLE_USER } from "@/lib/preview-session";
@@ -354,7 +355,7 @@ export default function CoachPage() {
           padding and can never slice the last row of text mid-glyph. */}
       <main
         className={cn(
-          "fw-chat-bottom-fade min-w-0 flex-1 overflow-x-hidden overflow-y-auto px-3 pt-5 sm:px-4 sm:pt-6 md:px-8",
+          "fw-chat-bottom-fade min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain px-3 pt-5 sm:px-4 sm:pt-6 md:px-8",
           items.length === 0 ? "pb-14" : "pb-11 sm:pb-12"
         )}
       >
@@ -395,20 +396,18 @@ export default function CoachPage() {
                 </Button>
               </section>
               <section className="rounded-[2rem] bg-surface/92 p-5 shadow-e3 ring-1 ring-inset ring-hairline">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="text-[0.6875rem] font-black uppercase tracking-[0.16em] text-primary-700">
-                      Try asking
-                    </p>
-                    <h2 className="mt-1.5 text-xl font-black text-ink md:text-2xl">Start with a useful question</h2>
-                  </div>
-                  <span
-                    aria-hidden="true"
-                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[1rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100"
-                  >
-                    <Sparkles className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
-                  </span>
-                </div>
+                <SectionHeader
+                  eyebrow="Try asking"
+                  title="Start with a useful question"
+                  action={
+                    <span
+                      aria-hidden="true"
+                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[1rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100"
+                    >
+                      <Sparkles className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
+                    </span>
+                  }
+                />
                 <div className="mt-4 grid gap-2">
                   {quickPrompts.map((prompt) => (
                     <button
@@ -444,12 +443,10 @@ export default function CoachPage() {
             {showTour && (
             <div className="grid gap-4 duration-300 ease-out-soft animate-in fade-in slide-in-from-top-2 xl:grid-cols-2">
               <section className="rounded-[2rem] bg-surface/92 p-5 shadow-e3 ring-1 ring-inset ring-hairline md:p-6">
-                <p className="text-[0.6875rem] font-black uppercase tracking-[0.16em] text-primary-700">
-                  How a chat plays out
-                </p>
-                <h2 className="mt-1.5 text-xl font-black text-ink md:text-2xl">
-                  From question to logged in three moves
-                </h2>
+                <SectionHeader
+                  eyebrow="How a chat plays out"
+                  title="From question to logged in three moves"
+                />
                 <ol className="mt-4 space-y-2">
                   {[
                     {
@@ -486,12 +483,10 @@ export default function CoachPage() {
                 </ol>
               </section>
               <section className="rounded-[2rem] bg-surface/92 p-5 shadow-e3 ring-1 ring-inset ring-hairline md:p-6">
-                <p className="text-[0.6875rem] font-black uppercase tracking-[0.16em] text-primary-700">
-                  What it can do
-                </p>
-                <h2 className="mt-1.5 text-xl font-black text-ink md:text-2xl">
-                  A coach with hands, not just answers
-                </h2>
+                <SectionHeader
+                  eyebrow="What it can do"
+                  title="A coach with hands, not just answers"
+                />
                 <div className="mt-4 grid gap-3 sm:grid-cols-2">
                   {[
                     {
@@ -558,6 +553,8 @@ export default function CoachPage() {
               </div>
             )}
 
+            {items.length > 0 && (
+            <div className="min-w-0">
             {items.map((item, index) => {
               const hiddenArtifactId = showActionDrawer ? actionDrawer?.artifact?.id : undefined;
               const visibleArtifacts = hiddenArtifactId
@@ -565,25 +562,43 @@ export default function CoachPage() {
                 : item.artifacts;
               const hideConfirm =
                 showActionDrawer && item.confirm && actionDrawer?.id === `${item.id}-confirm`;
+              // Consecutive turns from the same speaker read as one utterance:
+              // the avatar prints once per run and the follow-on rows sit
+              // closer together, so the column has rhythm instead of an even
+              // ladder of identical gaps.
+              const startsRun = items[index - 1]?.role !== item.role;
 
               return (
-            <div key={item.id} className="max-w-full min-w-0 space-y-3">
+            <div
+              key={item.id}
+              className={cn(
+                "max-w-full min-w-0 space-y-3",
+                index === 0 ? "" : startsRun ? "mt-5" : "mt-1.5"
+              )}
+            >
               <div
                 className={cn(
                   "flex max-w-full min-w-0 gap-2 sm:gap-3",
                   item.role === "user" ? "justify-end" : "justify-start"
                 )}
               >
-                {item.role === "assistant" && <CoachAvatar />}
+                {item.role === "assistant" &&
+                  (startsRun ? <CoachAvatar /> : <AvatarGutter />)}
                 {item.role === "user" ? (
-                  // Mirror of the assistant bubble: same radius, tail on the
-                  // opposite corner, one elevation step so the two sides read
-                  // as the same object in two voices.
-                  <div className="max-w-full min-w-0 break-words rounded-[1.5rem] rounded-br-md bg-gradient-to-b from-primary-600 to-primary-700 px-3 py-3 text-sm font-semibold leading-6 text-white shadow-e2 ring-1 ring-inset ring-white/10 [overflow-wrap:anywhere] sm:max-w-[85%] sm:px-4">
-                    {item.attachments && item.attachments.length > 0 && (
-                      <AttachmentSummary attachments={item.attachments} sent />
-                    )}
-                    {item.text}
+                  // Mirror of the assistant bubble: same radius, same tail
+                  // geometry on the opposite corner, one elevation step — so
+                  // the two sides read as the same object in two voices.
+                  <div className="relative max-w-full min-w-0 sm:max-w-[85%]">
+                    <span
+                      aria-hidden="true"
+                      className="absolute bottom-3 -right-1 h-3 w-3 rotate-45 rounded-[3px] bg-primary-700"
+                    />
+                    <div className="relative max-w-full min-w-0 break-words rounded-[1.5rem] rounded-br-md bg-gradient-to-b from-primary-600 to-primary-700 px-3 py-3 text-sm font-semibold leading-6 text-white shadow-e2 ring-1 ring-inset ring-white/10 duration-300 ease-out-soft animate-in fade-in slide-in-from-bottom-1 [overflow-wrap:anywhere] sm:px-4">
+                      {item.attachments && item.attachments.length > 0 && (
+                        <AttachmentSummary attachments={item.attachments} sent />
+                      )}
+                      {item.text}
+                    </div>
                   </div>
                 ) : (
                   <div
@@ -622,11 +637,14 @@ export default function CoachPage() {
                     )}
                   </div>
                 )}
-                {item.role === "user" && <UserAvatar />}
+                {item.role === "user" &&
+                  (startsRun ? <UserAvatar /> : <AvatarGutter />)}
               </div>
             </div>
               );
             })}
+            </div>
+            )}
 
             {items.length === 0 && (
             <RichTextPreview />
@@ -634,24 +652,31 @@ export default function CoachPage() {
 
             <div ref={endRef} />
           </div>
-
-          {showActionDrawer && actionDrawer && (
-            <CoachActionDrawer
-              drawer={actionDrawer}
-              collapsed={isActionDrawerCollapsed}
-              onAction={handleCardAction}
-              onCollapse={() => setCollapsedDrawerId(actionDrawer.id)}
-              onExpand={() => setCollapsedDrawerId(null)}
-              onClose={() => {
-                setDismissedDrawerId(actionDrawer.id);
-                setCollapsedDrawerId(null);
-              }}
-            />
-          )}
         </div>
       </main>
 
-      <div className="border-t border-hairline bg-surface/88 px-4 py-3 backdrop-blur-xl md:px-8">
+      {/* Rendered as a sibling of <main>, never inside it: the transcript
+          carries a mask-image, and a mask on an ancestor clips and fades its
+          position:fixed descendants — which would slice the drawer's footer
+          actions clean off. */}
+      {showActionDrawer && actionDrawer && (
+        <CoachActionDrawer
+          drawer={actionDrawer}
+          collapsed={isActionDrawerCollapsed}
+          onAction={handleCardAction}
+          onCollapse={() => setCollapsedDrawerId(actionDrawer.id)}
+          onExpand={() => setCollapsedDrawerId(null)}
+          onClose={() => {
+            setDismissedDrawerId(actionDrawer.id);
+            setCollapsedDrawerId(null);
+          }}
+        />
+      )}
+
+      {/* fw-lift-edge puts a hairline highlight along the top of the bar, so the
+          composer reads as sitting above the transcript rather than being cut
+          out of it — the counterpart to the scroll fade directly above. */}
+      <div className="fw-lift-edge border-t border-hairline bg-surface/88 px-4 py-3 backdrop-blur-xl md:px-8">
         <form onSubmit={handleSubmit} className="mx-auto max-w-5xl space-y-2">
           {attachments.length > 0 && (
             <AttachmentTray
@@ -670,7 +695,7 @@ export default function CoachPage() {
           )}
           {/* The whole rail lifts on focus-within, so typing feels like the
               composer comes forward rather than one input glowing in place. */}
-          <div className="flex min-w-0 items-center gap-2 rounded-[1.6rem] bg-surface/70 p-1 shadow-e1 ring-1 ring-inset ring-hairline transition-shadow duration-200 ease-out-soft focus-within:shadow-e3 focus-within:ring-primary-300">
+          <div className="flex min-w-0 items-center gap-2 rounded-[1.6rem] bg-surface/70 p-1 shadow-e1 ring-1 ring-inset ring-hairline transition-shadow duration-200 ease-out-soft focus-within:bg-surface focus-within:shadow-e3 focus-within:ring-primary-300">
             <label
               className={cn(
                 "fw-press flex h-12 w-12 shrink-0 items-center justify-center rounded-[1.2rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100",
@@ -703,8 +728,12 @@ export default function CoachPage() {
                 if (actionDrawer) setCollapsedDrawerId(actionDrawer.id);
               }}
               placeholder="Ask, or attach a photo…"
-              className="min-h-12 min-w-0 flex-1 rounded-[1.2rem] bg-transparent px-3 py-3 text-sm font-semibold text-ink placeholder:font-medium placeholder:text-ink-subtle focus:outline-none disabled:cursor-not-allowed disabled:opacity-60 sm:px-4"
+              className="min-h-12 min-w-0 flex-1 rounded-[1.2rem] bg-transparent px-3 py-3 text-sm font-semibold text-ink placeholder:font-medium placeholder:text-ink-muted focus:outline-none disabled:cursor-not-allowed disabled:opacity-60 sm:px-4"
               disabled={busy}
+              autoComplete="off"
+              // Mobile keyboards otherwise offer a newline key on a form that
+              // has no newline to give.
+              enterKeyHint="send"
               aria-label="Message Coach"
             />
             <Button
@@ -967,6 +996,11 @@ function UserAvatar() {
   );
 }
 
+/** Holds the avatar column open for follow-on rows in the same run. */
+function AvatarGutter() {
+  return <div aria-hidden="true" className="h-1 w-8 shrink-0" />;
+}
+
 function AttachmentTray({
   attachments,
   onRemove,
@@ -986,14 +1020,14 @@ function AttachmentTray({
           <AttachmentIcon attachment={attachment} />
           <div className="min-w-0 flex-1">
             <p className="truncate text-xs font-black text-ink">{attachment.name}</p>
-            <p className="truncate text-[11px] font-bold tabular-nums text-ink-subtle">
+            <p className="truncate text-[0.6875rem] font-bold uppercase tracking-[0.06em] tabular-nums text-ink-muted">
               {attachment.kind} · {formatAttachmentSize(attachment.size)}
             </p>
           </div>
           <button
             type="button"
             onClick={() => onRemove(attachment.id)}
-            className="fw-press flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-ink-subtle hover:bg-accent-50 hover:text-accent-700 active:bg-accent-100 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-accent-600"
+            className="fw-press flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-ink-muted hover:bg-accent-50 hover:text-accent-700 active:bg-accent-100 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-accent-600"
             aria-label={`Remove ${attachment.name}`}
           >
             <X className="h-4 w-4" strokeWidth={2} />
@@ -1073,13 +1107,11 @@ function RichTextPreview() {
     <section className="max-w-full min-w-0 overflow-hidden rounded-[2rem] bg-surface/90 p-4 shadow-e2 ring-1 ring-inset ring-hairline sm:p-5">
       <div className="flex max-w-full min-w-0 flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
         <div className="max-w-full min-w-0 xl:max-w-xl">
-          <p className="text-[0.6875rem] font-black uppercase tracking-[0.16em] text-primary-700">
-            Rich response support
-          </p>
-          <h2 className="mt-1.5 text-xl font-black text-ink md:text-2xl">Coach answers can be structured, visual, and math-aware.</h2>
-          <p className="mt-2 text-sm font-semibold leading-6 text-ink-muted">
-            The same chat bubble supports headers, nested lists, tables, formulas, links, and inline media when the coach replies.
-          </p>
+          <SectionHeader
+            eyebrow="Rich response support"
+            title="Coach answers can be structured, visual, and math-aware."
+            description="The same chat bubble supports headers, nested lists, tables, formulas, links, and inline media when the coach replies."
+          />
         </div>
         <div className="hidden max-w-full min-w-0 gap-2 sm:grid sm:grid-cols-2 xl:w-[30rem]">
           {capabilities.map((item) => {

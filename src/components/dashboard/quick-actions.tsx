@@ -67,15 +67,15 @@ export function QuickActions() {
         <Link
           key={action.label}
           href={action.href}
-          className="fw-press group flex min-h-[4.5rem] items-center gap-3 rounded-[1.4rem] border border-hairline bg-surface p-4 shadow-e1 hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-e2 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2 sm:gap-4 sm:p-5"
+          className="fw-press group flex min-h-[4.5rem] items-center gap-2.5 rounded-[1.4rem] border border-hairline bg-surface p-3 shadow-e1 hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-e2 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2 sm:gap-4 sm:p-5"
         >
           <span
             aria-hidden="true"
-            className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-[1rem] ring-1 ring-inset ${action.iconBg} ${action.iconRing} ${action.iconColor}`}
+            className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.9rem] ring-1 ring-inset sm:h-11 sm:w-11 sm:rounded-[1rem] ${action.iconBg} ${action.iconRing} ${action.iconColor}`}
           >
-            <action.icon className="h-5 w-5" strokeWidth={2} />
+            <action.icon className="h-[1.125rem] w-[1.125rem] sm:h-5 sm:w-5" strokeWidth={2} />
           </span>
-          <span className="min-w-0 flex-1 truncate text-[0.9375rem] font-black text-ink transition-colors group-hover:text-primary-800 sm:text-base">
+          <span className="min-w-0 flex-1 break-words text-sm font-black leading-tight text-ink transition-colors group-hover:text-primary-800 sm:text-base">
             {action.label}
           </span>
           <ChevronRight

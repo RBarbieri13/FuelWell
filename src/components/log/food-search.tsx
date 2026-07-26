@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Check, Plus, Search, SearchX, SlidersHorizontal } from "lucide-react";
+import { Check, Plus, Search, SearchX, SlidersHorizontal, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -102,9 +102,24 @@ export function FoodSearch({
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Search 1,000+ foods by name"
           aria-label="Search 1,000+ foods by name"
-          className="min-h-12 w-full rounded-[1.35rem] border border-primary-100 bg-primary-50/55 py-3 pl-12 pr-4 text-base font-semibold text-ink shadow-e1 transition duration-200 ease-out-soft placeholder:text-ink-faint hover:border-primary-200 focus:border-primary-500 focus:bg-surface focus:outline-none focus:ring-[3px] focus:ring-primary-500/35"
+          className={cn(
+            "min-h-12 w-full rounded-[1.35rem] border bg-primary-50/55 py-3 pl-12 text-base font-semibold text-ink shadow-e1 transition duration-200 ease-out-soft placeholder:text-ink-faint hover:border-primary-200 focus:border-primary-500 focus:bg-surface focus:outline-none focus:ring-[3px] focus:ring-primary-500/35",
+            // Reserve the trailing gutter only when the clear control is there,
+            // so short queries never sit under a floating button.
+            query ? "border-primary-200 pr-14" : "border-primary-100 pr-4"
+          )}
           autoFocus
         />
+        {query && (
+          <button
+            type="button"
+            onClick={() => setQuery("")}
+            aria-label="Clear search"
+            className="fw-press absolute right-2 top-1/2 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full text-ink-subtle ring-1 ring-inset ring-transparent hover:bg-surface hover:text-ink hover:ring-hairline-strong focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600"
+          >
+            <X className="h-4 w-4" strokeWidth={2.5} aria-hidden="true" />
+          </button>
+        )}
       </div>
 
       <DietFilterChips active={diets} onToggle={toggleDiet} />
@@ -125,7 +140,7 @@ export function FoodSearch({
               className={cn(
                 "fw-press inline-flex min-h-11 items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-bold ring-1 ring-inset focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2 md:min-h-9",
                 isOn
-                  ? "bg-primary-600 text-white shadow-e1 ring-primary-700"
+                  ? "bg-primary-700 text-white shadow-e1 ring-primary-800"
                   : "bg-surface-muted text-ink-muted ring-hairline hover:bg-primary-50 hover:text-primary-800 hover:ring-primary-100 active:bg-primary-100"
               )}
             >
@@ -159,6 +174,9 @@ export function FoodSearch({
         </div>
       )}
 
+      {/* Results come from a synchronous useMemo over an in-memory array, so
+          there is no pending state to render — the list re-ranks in the same
+          commit as the keystroke and never blanks. */}
       {tooShort ? (
         <SearchState
           title="Keep going."
@@ -190,37 +208,67 @@ export function FoodSearch({
         >
           {results.map((food) => {
             const isSelected = selectedId === food.id;
+            const justAdded = recentlyAddedId === food.id;
             return (
               <div
                 role="listitem"
                 key={food.id}
                 className={cn(
-                  "fw-press grid min-w-0 items-center gap-2 rounded-[1rem] px-3 py-2.5 ring-1 ring-inset md:grid-cols-[minmax(0,1fr)_auto]",
+                  "fw-press relative grid min-h-[4.25rem] min-w-0 items-center gap-2 overflow-hidden rounded-[1rem] py-2.5 pl-4 pr-3 ring-1 ring-inset md:grid-cols-[minmax(0,1fr)_auto]",
                   isSelected
                     ? "bg-primary-50 shadow-e2 ring-2 ring-primary-400"
-                    : "bg-surface-muted ring-hairline hover:-translate-y-0.5 hover:bg-surface hover:shadow-e2 hover:ring-primary-200"
+                    : justAdded
+                      ? "bg-primary-50/60 ring-primary-200"
+                      : "bg-surface-muted ring-hairline hover:-translate-y-0.5 hover:bg-surface hover:shadow-e2 hover:ring-primary-200"
                 )}
               >
+                {/* Full-height selection rail. A ring alone is easy to lose in a
+                    dense list; an edge marker survives peripheral vision. */}
+                {(isSelected || justAdded) && (
+                  <span
+                    aria-hidden="true"
+                    className={cn(
+                      "absolute inset-y-0 left-0 w-1",
+                      isSelected ? "bg-primary-500" : "bg-primary-300"
+                    )}
+                  />
+                )}
                 <button
                   type="button"
                   onClick={() => onSelect(food)}
                   className="flex min-h-11 min-w-0 flex-col justify-center rounded-[0.75rem] text-left focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2 md:min-h-0"
                 >
-                  <span className="flex min-w-0 items-center gap-2">
+                  <span className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
                     <span className="min-w-0 truncate font-black text-ink">
                       {food.name}
                     </span>
-                    {isSelected && (
+                    {isSelected ? (
                       <Badge variant="success" size="sm" className="shrink-0">
                         Selected
                       </Badge>
-                    )}
+                    ) : justAdded ? (
+                      <Badge variant="default" size="sm" className="shrink-0" dot>
+                        Just logged
+                      </Badge>
+                    ) : null}
                   </span>
-                  <span className="mt-0.5 block text-xs font-semibold text-ink-muted">
-                    {food.categoryLabel} &middot;{" "}
-                    <span className="tabular-nums">{food.per100.kcal}</span> kcal /100
-                    {food.servingUnit} &middot;{" "}
-                    <span className="tabular-nums">{food.per100.protein}</span>g protein
+                  <span className="mt-1 flex min-w-0 flex-wrap items-center gap-x-2 gap-y-0.5 text-xs font-semibold text-ink-muted">
+                    <span className="min-w-0 truncate">{food.categoryLabel}</span>
+                    <span aria-hidden="true" className="text-ink-faint">
+                      &middot;
+                    </span>
+                    <span className="whitespace-nowrap">
+                      <span className="tabular-nums">{food.per100.kcal}</span> kcal
+                      /100
+                      {food.servingUnit}
+                    </span>
+                    <span aria-hidden="true" className="text-ink-faint">
+                      &middot;
+                    </span>
+                    <span className="whitespace-nowrap">
+                      <span className="tabular-nums">{food.per100.protein}</span>g
+                      protein
+                    </span>
                   </span>
                 </button>
                 <div className="flex items-center justify-between gap-2 md:justify-end">
@@ -232,10 +280,8 @@ export function FoodSearch({
                     className={cn(
                       "fw-press inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-[1rem] ring-1 ring-inset focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2",
                       isSelected
-                        ? "bg-primary-600 text-white ring-primary-700"
-                        : "bg-primary-100 text-primary-700 ring-primary-200/70 hover:bg-primary-200 active:bg-primary-300",
-                      recentlyAddedId === food.id &&
-                        "animate-pulse bg-primary-600 text-white ring-4 ring-primary-200"
+                        ? "bg-primary-700 text-white shadow-e1 ring-primary-800"
+                        : "bg-primary-100 text-primary-700 ring-primary-200/70 hover:bg-primary-200 active:bg-primary-300"
                     )}
                   >
                     {isSelected ? (

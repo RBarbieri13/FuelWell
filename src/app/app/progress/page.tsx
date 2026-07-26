@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { ProgressClient } from "./progress-client";
 import { createClient } from "@/lib/supabase/server";
@@ -52,6 +53,12 @@ function mapMeal(meal: SupabaseMeal): MealRecord {
     items: (meal.meal_items || []).map(mapItem),
   };
 }
+
+// Route-level chrome, matching Dashboard: the tab / iOS webview title is the
+// only label for the current screen once the header scrolls away.
+export const metadata: Metadata = {
+  title: "Progress · FuelWell",
+};
 
 /**
  * Progress reads the same day data as Dashboard and Daily review: preview

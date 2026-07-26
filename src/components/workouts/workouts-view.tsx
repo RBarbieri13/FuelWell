@@ -17,13 +17,16 @@ import {
   Pencil,
   Plus,
   Search,
+  SearchX,
   Save,
   SlidersHorizontal,
   Sparkles,
   Trash2,
 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { SectionHeader } from "@/components/ui/section-header";
 import { cn } from "@/lib/utils/cn";
 import { useWorkoutLog } from "@/lib/use-workout-log";
 import {
@@ -102,43 +105,104 @@ interface DailyVerdict {
   recommendedId: string;
 }
 
+/**
+ * Chips carry a hairline inset ring rather than a border so a dense table row
+ * never picks up a second visual weight next to the row divider.
+ */
+const chipBase =
+  "inline-flex max-w-full items-center gap-1 whitespace-nowrap rounded-full py-1 font-black ring-1 ring-inset";
+
+/** Chip type scale. Two steps only — dense rows and roomy panels. */
+const chipSm = "px-2.5 text-[0.6875rem]";
+const chipMd = "px-3 text-xs";
+
+/** The two entry-point cards under the coach hero share one shell. */
+const pathCardClass =
+  "flex min-w-0 flex-col gap-3 rounded-[20px] px-3 py-4 shadow-e2 sm:gap-4 sm:rounded-[24px] sm:px-6 sm:py-6";
+
+const pathPlateClass =
+  "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.8rem] ring-1 ring-inset sm:h-10 sm:w-10 sm:rounded-[0.9rem]";
+
+const filterLabelClass =
+  "text-[0.6875rem] font-black uppercase tracking-[0.12em] text-ink-subtle";
+
+const filterSelectClass =
+  "mt-1.5 min-h-11 w-full min-w-0 rounded-[1rem] bg-surface-muted px-3 py-2.5 text-sm font-bold text-ink outline-none ring-1 ring-inset ring-hairline-strong transition focus:bg-surface focus:ring-2 focus:ring-primary-400";
+
+const editFieldClass =
+  "min-h-11 w-full min-w-0 rounded-full bg-surface px-3.5 text-xs font-black tabular-nums text-ink outline-none ring-1 ring-inset ring-primary-100 focus:ring-2 focus:ring-primary-400";
+
 function workoutTone(workout: WorkoutRow) {
   if (workout.id === "zone-2-ride" || workout.category === "cardio") {
     return {
-      icon: "bg-sky-100 text-sky-600",
-      badge: "bg-sky-100 text-sky-700",
-      intensity: "bg-primary-100 text-primary-700",
+      icon: "bg-sky-50 text-sky-700 ring-1 ring-inset ring-sky-100",
+      badge: "bg-sky-50 text-sky-700 ring-sky-100",
+      intensity: "bg-primary-50 text-primary-800 ring-primary-100",
       intensityIcon: Leaf,
     };
   }
 
   if (workout.id === "mobility-reset" || workout.category === "mobility") {
     return {
-      icon: "bg-accent-100 text-accent-500",
-      badge: "bg-primary-100 text-primary-700",
-      intensity: "bg-primary-100 text-primary-700",
+      icon: "bg-accent-50 text-accent-600 ring-1 ring-inset ring-accent-200",
+      badge: "bg-primary-50 text-primary-800 ring-primary-100",
+      intensity: "bg-primary-50 text-primary-800 ring-primary-100",
       intensityIcon: Leaf,
     };
   }
 
   if (workout.intensity === "Hard") {
     return {
-      icon: "bg-accent-100 text-accent-500",
-      badge: "bg-primary-100 text-primary-700",
-      intensity: "bg-accent-100 text-accent-600",
+      icon: "bg-accent-50 text-accent-600 ring-1 ring-inset ring-accent-200",
+      badge: "bg-primary-50 text-primary-800 ring-primary-100",
+      intensity: "bg-accent-50 text-accent-700 ring-accent-200",
       intensityIcon: Flame,
     };
   }
 
   return {
-    icon: "bg-primary-100 text-primary-600",
-    badge: "bg-primary-100 text-primary-700",
+    icon: "bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100",
+    badge: "bg-primary-50 text-primary-800 ring-primary-100",
     intensity:
       workout.intensity === "Moderate"
-        ? "bg-lemon-50 text-lemon-700"
-        : "bg-primary-100 text-primary-700",
+        ? "bg-lemon-50 text-lemon-700 ring-lemon-100"
+        : "bg-primary-50 text-primary-800 ring-primary-100",
     intensityIcon: workout.intensity === "Moderate" ? Flame : Leaf,
   };
+}
+
+/**
+ * Every filter pill in the library shares this shape, so selected state is the
+ * only thing that changes between the four rows of controls.
+ */
+function FilterChip({
+  active,
+  onClick,
+  children,
+  tone = "primary",
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+  tone?: "primary" | "ink";
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      className={cn(
+        "fw-press inline-flex min-h-10 items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-black ring-1 ring-inset focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-500",
+        active
+          ? tone === "ink"
+            ? "bg-ink text-white shadow-e1 ring-ink"
+            : "bg-primary-600 text-white shadow-e1 ring-primary-700"
+          : "bg-surface-muted text-ink-muted ring-hairline hover:bg-primary-50 hover:text-primary-800 hover:ring-primary-200"
+      )}
+    >
+      {children}
+    </button>
+  );
 }
 
 function parseBodyPart(value?: string): BodyPartFilter {
@@ -213,31 +277,26 @@ function ManualActivityPlanner({
   const resolvedMinutes = distanceMinutes > 0 ? distanceMinutes : minutes;
   const calories = estimateWorkoutCalories({ met: option.met, minutes: resolvedMinutes });
 
+  const fieldLabelClass =
+    "text-[0.6875rem] font-black uppercase tracking-[0.14em] text-ink-subtle";
+  const fieldClass =
+    "mt-2 min-h-11 w-full rounded-[1rem] bg-surface-muted px-4 py-3 text-sm font-bold text-ink outline-none ring-1 ring-inset ring-hairline-strong transition placeholder:font-semibold placeholder:text-ink-faint focus:bg-surface focus:ring-2 focus:ring-primary-400";
+
   return (
-    <Card className="space-y-4 rounded-[24px] border-border px-5 py-5 shadow-[0_12px_30px_rgba(20,90,75,0.07)] sm:px-6 sm:py-6">
-      <div className="flex items-start gap-4">
-        <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[13px] bg-sky-100 text-sky-700">
-          <Activity className="h-5 w-5" />
-        </span>
-        <div>
-          <h2 className="font-heading text-[22px] font-black tracking-tight text-[#16302a]">
-            Custom activity details
-          </h2>
-          <p className="mt-1 text-sm font-semibold leading-5 text-[#54635d]">
-            Log any activity with minutes, distance, and an estimated burn.
-          </p>
-        </div>
-      </div>
+    <Card className="space-y-4 shadow-e2">
+      <SectionHeader
+        icon={Activity}
+        title="Custom activity details"
+        description="Log any activity with minutes, distance, and an estimated burn."
+      />
 
       <div className="grid gap-3">
-        <label>
-          <span className="text-xs font-black uppercase tracking-[0.14em] text-muted-foreground">
-            Activity type
-          </span>
+        <label className="block">
+          <span className={fieldLabelClass}>Activity type</span>
           <select
             value={activityId}
             onChange={(event) => setActivityId(event.target.value)}
-            className="mt-2 w-full rounded-2xl border border-border bg-[#f4f8f6] px-4 py-3 text-sm font-bold text-[#16302a] outline-none focus:border-primary-300 focus:ring-2 focus:ring-primary-200"
+            className={fieldClass}
           >
             {MANUAL_ACTIVITY_OPTIONS.map((activity) => (
               <option key={activity.id} value={activity.id}>
@@ -248,22 +307,18 @@ function ManualActivityPlanner({
         </label>
 
         <div className="grid gap-3 sm:grid-cols-2">
-          <label>
-            <span className="text-xs font-black uppercase tracking-[0.14em] text-muted-foreground">
-              Minutes
-            </span>
+          <label className="block min-w-0">
+            <span className={fieldLabelClass}>Minutes</span>
             <input
               type="number"
               min={1}
               value={minutes}
               onChange={(event) => setMinutes(Number(event.target.value))}
-              className="mt-2 w-full rounded-2xl border border-border bg-[#f4f8f6] px-4 py-3 text-sm font-bold text-[#16302a] outline-none focus:border-primary-300 focus:ring-2 focus:ring-primary-200"
+              className={cn(fieldClass, "tabular-nums")}
             />
           </label>
-          <label>
-            <span className="text-xs font-black uppercase tracking-[0.14em] text-muted-foreground">
-              Distance
-            </span>
+          <label className="block min-w-0">
+            <span className={fieldLabelClass}>Distance</span>
             <input
               type="number"
               min={0}
@@ -271,24 +326,27 @@ function ManualActivityPlanner({
               value={distance}
               onChange={(event) => setDistance(event.target.value)}
               placeholder="Optional mi"
-              className="mt-2 w-full rounded-2xl border border-border bg-[#f4f8f6] px-4 py-3 text-sm font-bold text-[#16302a] outline-none placeholder:text-[#9db0aa] focus:border-primary-300 focus:ring-2 focus:ring-primary-200"
+              className={cn(fieldClass, "tabular-nums")}
             />
           </label>
         </div>
       </div>
 
-      <div className="rounded-[1.15rem] border border-primary-100 bg-primary-50/70 px-4 py-2.5">
-        <p className="text-lg font-black tabular-nums text-primary-800">
-          {calories} active kcal
+      <div className="rounded-[1.15rem] bg-primary-50/70 px-4 py-3 ring-1 ring-inset ring-primary-100">
+        <p className="flex flex-wrap items-baseline gap-x-1.5 text-primary-800">
+          <span className="text-2xl font-black tabular-nums leading-none">{calories}</span>
+          <span className="text-xs font-black uppercase tracking-[0.12em] text-primary-700">
+            active kcal
+          </span>
         </p>
-        <p className="mt-0.5 text-xs font-semibold leading-5 text-primary-900/70">
-          Estimate uses {resolvedMinutes} min, {option.label.toLowerCase()} intensity, preview age {PROFILE_AGE}, and profile weight {PROFILE_WEIGHT_LB} lb.
+        <p className="mt-1.5 text-xs font-semibold leading-5 text-primary-900/70">
+          Estimate uses <span className="tabular-nums">{resolvedMinutes}</span> min, {option.label.toLowerCase()} intensity, preview age <span className="tabular-nums">{PROFILE_AGE}</span>, and profile weight <span className="tabular-nums">{PROFILE_WEIGHT_LB}</span> lb.
         </p>
       </div>
 
       <Button
         type="button"
-        disabled={isSaving}
+        loading={isSaving}
         onClick={async () => {
           if (resolvedMinutes <= 0 || isSaving) return;
           setIsSaving(true);
@@ -312,12 +370,16 @@ function ManualActivityPlanner({
         }}
         className="w-full"
       >
-        <Plus className="h-4 w-4" />
+        {!isSaving && <Plus className="h-4 w-4 shrink-0" strokeWidth={2.5} />}
         {isSaving ? "Saving activity..." : "Add activity"}
       </Button>
       {saveError && (
-        <p role="alert" className="text-sm font-semibold text-accent-700">
-          {saveError}
+        <p
+          role="alert"
+          className="flex items-start gap-2 rounded-[1rem] bg-accent-50 px-3.5 py-2.5 text-sm font-semibold leading-5 text-accent-700 ring-1 ring-inset ring-accent-200"
+        >
+          <Info className="mt-0.5 h-4 w-4 shrink-0" strokeWidth={2.25} />
+          <span className="min-w-0">{saveError}</span>
         </p>
       )}
     </Card>
@@ -504,19 +566,23 @@ export function WorkoutsView({
 
       <div className="grid min-w-0 grid-cols-2 items-stretch gap-3 sm:gap-5">
         {/* Path 1: Coach recommends */}
-        <Card className="fw-dark-panel relative col-span-2 overflow-hidden rounded-[24px] border-primary-500/30 px-5 py-6 shadow-[0_22px_46px_rgba(16,48,40,0.34)] ring-2 ring-primary-300/25 sm:px-7 sm:py-7">
+        <Card
+          variant="elevated"
+          padding="none"
+          className="fw-dark-panel relative col-span-2 overflow-hidden border-primary-500/30 px-5 py-6 shadow-e4 ring-1 ring-inset ring-primary-300/25 sm:px-7 sm:py-7"
+        >
           <div className="pointer-events-none absolute -right-8 -top-10 h-40 w-40 rounded-full bg-primary-500/25 blur-2xl" />
           <div className="relative space-y-5">
           <div className="flex items-start gap-3">
-            <div className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[13px] bg-gradient-to-br from-primary-500 to-teal-500 text-white shadow-[0_8px_18px_rgba(30,174,132,0.4)]">
-              <Sparkles className="h-5 w-5" />
+            <div className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[0.9rem] bg-gradient-to-br from-primary-500 to-teal-500 text-white shadow-e2 ring-1 ring-inset ring-white/20">
+              <Sparkles className="h-[1.125rem] w-[1.125rem]" strokeWidth={2.25} />
             </div>
-            <div>
+            <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
                 <h2 className="font-heading text-[22px] font-black tracking-tight text-white">
                   Coach recommends
                 </h2>
-                <span className="rounded-full bg-white/12 px-2.5 py-1 text-[11px] font-black uppercase tracking-[0.12em] text-primary-100">
+                <span className="rounded-full bg-white/12 px-2.5 py-1 text-[0.6875rem] font-black uppercase tracking-[0.12em] text-primary-100 ring-1 ring-inset ring-white/15">
                   Start here
                 </span>
               </div>
@@ -529,21 +595,38 @@ export function WorkoutsView({
           {!showRecommendation ? (
             <Button onClick={() => setShowRecommendation(true)} className="w-full">
               Show today&apos;s pick
-              <ArrowRight className="h-4 w-4" />
+              <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.25} />
             </Button>
           ) : (
             <div className="space-y-3">
-              <div className="rounded-[20px] border border-white/10 bg-white/10 p-4">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-primary-500 text-white">
-                    <RecommendedIcon className="h-4 w-4" />
+              <div className="rounded-[20px] bg-white/10 p-4 ring-1 ring-inset ring-white/12">
+                <div className="flex min-w-0 items-start gap-3">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-500 text-white ring-1 ring-inset ring-white/20">
+                    <RecommendedIcon className="h-[1.125rem] w-[1.125rem]" strokeWidth={2.25} />
                   </span>
-                  <h3 className="font-black text-white">{recommended.title}</h3>
-                  <span className="rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-primary-100">
-                    {recommended.duration}
-                  </span>
+                  <div className="min-w-0">
+                    <h3 className="font-heading text-lg font-black leading-tight text-white">
+                      {recommended.title}
+                    </h3>
+                    {/* Aligned metadata row: length, effort, kit — the three
+                        questions asked before committing to a session. */}
+                    <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                      <span className={cn(chipBase, chipSm, "bg-white/12 text-primary-50 ring-white/15 tabular-nums")}>
+                        {recommended.duration}
+                      </span>
+                      <span className={cn(chipBase, chipSm, "bg-white/12 text-primary-50 ring-white/15")}>
+                        {recommended.intensity}
+                      </span>
+                      <span
+                        className={cn(chipBase, chipSm, "min-w-0 bg-white/12 text-primary-50 ring-white/15")}
+                        title={recommended.equipment}
+                      >
+                        <span className="truncate">{recommended.equipment}</span>
+                      </span>
+                    </div>
+                  </div>
                 </div>
-                <p className="mt-2 text-sm leading-relaxed text-white/72">
+                <p className="mt-3 text-sm font-semibold leading-6 text-white/72">
                   {coachRecommendation.reason}
                 </p>
                 <div className="mt-3 grid gap-2">
@@ -551,44 +634,46 @@ export function WorkoutsView({
                     <Link
                       key={option.id}
                       href={workoutHref(option.id)}
-                      className="flex min-h-11 items-center justify-between rounded-[0.95rem] bg-white/10 px-3 py-2 text-xs font-black text-primary-50 transition hover:bg-white/15"
+                      className="fw-press flex min-h-11 items-center justify-between gap-3 rounded-[0.95rem] bg-white/10 px-3 py-2 text-xs font-black text-primary-50 ring-1 ring-inset ring-white/10 hover:bg-white/18 hover:ring-white/25 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-300"
                     >
-                      <span>{option.title}</span>
-                      <span>{option.duration}</span>
+                      <span className="min-w-0 truncate">{option.title}</span>
+                      <span className="shrink-0 tabular-nums text-primary-100/80">
+                        {option.duration}
+                      </span>
                     </Link>
                   ))}
                 </div>
               </div>
               <Link
                 href={workoutHref(recommended.id)}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-[1.15rem] bg-gradient-to-r from-primary-500 to-teal-500 px-4 py-3 text-sm font-bold text-white shadow-[0_16px_34px_rgba(21,145,108,0.24)] transition-colors hover:from-primary-600 hover:to-teal-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+                className="fw-press inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-[1.15rem] bg-gradient-to-b from-primary-500 to-teal-500 px-4 py-3 text-sm font-black text-white shadow-glow hover:from-primary-400 hover:to-teal-400 hover:shadow-e3 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-300 focus-visible:ring-offset-2 focus-visible:ring-offset-primary-950"
               >
                 Preview this workout
-                <ArrowRight className="h-4 w-4" />
+                <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.25} />
               </Link>
             </div>
           )}
           <Link
             href="/app/coach?prompt=Help%20me%20customize%20today%27s%20workout%20recommendation."
-            className="inline-flex w-full items-center justify-center gap-2 rounded-[1.15rem] border border-white/15 bg-white/10 px-4 py-3 text-sm font-bold text-primary-50 transition hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300"
+            className="fw-press inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-[1.15rem] bg-white/10 px-4 py-3 text-sm font-bold text-primary-50 ring-1 ring-inset ring-white/15 hover:bg-white/18 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-300"
           >
             Customize with Coach
-            <ArrowRight className="h-4 w-4" />
+            <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.25} />
           </Link>
           </div>
         </Card>
 
         {/* Path 2: Pick my own */}
-        <Card className="flex min-w-0 flex-col gap-3 rounded-[20px] border-border px-3 py-4 shadow-[0_12px_30px_rgba(20,90,75,0.07)] sm:gap-4 sm:rounded-[24px] sm:px-6 sm:py-6">
+        <Card padding="none" className={pathCardClass}>
           <div className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:gap-4">
-            <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[12px] bg-primary-100 text-primary-600 sm:h-10 sm:w-10 sm:rounded-[13px]">
-              <ListFilter className="h-5 w-5" />
+            <span className={cn(pathPlateClass, "bg-primary-50 text-primary-700 ring-primary-100")}>
+              <ListFilter className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
             </span>
             <div className="min-w-0">
-              <h2 className="font-heading text-base font-black tracking-tight text-[#16302a] sm:text-[22px]">
+              <h2 className="font-heading text-base font-black tracking-tight text-ink sm:text-[22px]">
                 Pick my own
               </h2>
-              <p className="mt-1 hidden text-sm font-semibold leading-5 text-[#54635d] sm:block">
+              <p className="mt-1 hidden text-sm font-semibold leading-6 text-ink-muted sm:block">
                 Search and filter the full library when you want to choose the session yourself.
               </p>
             </div>
@@ -605,23 +690,24 @@ export function WorkoutsView({
             {showWorkoutLibrary ? "Hide library" : "Browse library"}
             <ChevronDown
               className={cn(
-                "h-4 w-4 transition-transform",
+                "h-4 w-4 shrink-0 transition-transform duration-200 ease-out-soft",
                 showWorkoutLibrary && "rotate-180"
               )}
+              strokeWidth={2.5}
             />
           </Button>
         </Card>
 
-        <Card className="flex min-w-0 flex-col gap-3 rounded-[20px] border-border px-3 py-4 shadow-[0_12px_30px_rgba(20,90,75,0.07)] sm:gap-4 sm:rounded-[24px] sm:px-6 sm:py-6">
+        <Card padding="none" className={pathCardClass}>
           <div className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:gap-4">
-            <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[12px] bg-sky-100 text-sky-700 sm:h-10 sm:w-10 sm:rounded-[13px]">
-              <Activity className="h-5 w-5" />
+            <span className={cn(pathPlateClass, "bg-sky-50 text-sky-700 ring-sky-100")}>
+              <Activity className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
             </span>
             <div className="min-w-0">
-              <h2 className="font-heading text-base font-black tracking-tight text-[#16302a] sm:text-[22px]">
+              <h2 className="font-heading text-base font-black tracking-tight text-ink sm:text-[22px]">
                 Activity
               </h2>
-              <p className="mt-1 hidden text-sm font-semibold leading-5 text-[#54635d] sm:block">
+              <p className="mt-1 hidden text-sm font-semibold leading-6 text-ink-muted sm:block">
                 Log minutes or distance for walking, running, sports, and more.
               </p>
             </div>
@@ -637,9 +723,10 @@ export function WorkoutsView({
             {showActivityPlanner ? "Hide activity" : "Log activity"}
             <ChevronDown
               className={cn(
-                "h-4 w-4 transition-transform",
+                "h-4 w-4 shrink-0 transition-transform duration-200 ease-out-soft",
                 showActivityPlanner && "rotate-180"
               )}
+              strokeWidth={2.5}
             />
           </Button>
         </Card>
@@ -652,34 +739,39 @@ export function WorkoutsView({
       </div>
 
       {loggedWorkouts.length > 0 && (
-        <Card className="space-y-3 rounded-[24px] border-border px-6 py-5 shadow-[0_8px_22px_rgba(20,90,75,0.06)]" data-testid="logged-workouts">
-          <div className="flex items-center justify-between gap-3">
-            <h2 className="font-heading text-lg font-black text-[#16302a]">Recent activity</h2>
-            <span className="rounded-full bg-primary-50 px-3 py-1 text-xs font-black text-primary-700">
-              Editable today
-            </span>
-          </div>
-          <ul className="divide-y divide-neutral-100">
+        <Card className="space-y-3 shadow-e1" data-testid="logged-workouts">
+          <SectionHeader
+            as="h2"
+            title="Recent activity"
+            action={<Badge variant="default">Editable today</Badge>}
+          />
+          <ul className="divide-y divide-hairline">
             {loggedWorkouts
               .slice(-5)
               .reverse()
               .map((w) => (
                 <li key={w.id} className="grid gap-3 py-3 md:grid-cols-[1fr_auto] md:items-center">
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-semibold text-neutral-900">{w.name}</p>
-                    <p className="text-xs text-neutral-500">
-                      {w.category} · {w.durationMin} min ·{" "}
-                      {w.calories ? `${w.calories} active kcal` : "burn not estimated"}
+                    <p className="truncate text-sm font-black text-ink">{w.name}</p>
+                    <p className="mt-0.5 text-xs font-semibold leading-5 text-ink-muted">
+                      {w.category} · <span className="tabular-nums">{w.durationMin}</span> min ·{" "}
+                      {w.calories ? (
+                        <>
+                          <span className="tabular-nums">{w.calories}</span> active kcal
+                        </>
+                      ) : (
+                        "burn not estimated"
+                      )}
                     </p>
                   </div>
                   {editingWorkoutId === w.id ? (
-                    <div className="grid gap-2 sm:grid-cols-[5.5rem_6.5rem_auto]">
+                    <div className="grid gap-2 sm:grid-cols-[6rem_7rem_auto]">
                       <input
                         type="number"
                         min={1}
                         value={editMinutes}
                         onChange={(event) => setEditMinutes(Number(event.target.value))}
-                        className="rounded-full border border-primary-100 bg-white px-3 py-2 text-xs font-black text-[#16302a]"
+                        className={editFieldClass}
                         aria-label="Edit workout minutes"
                       />
                       <input
@@ -687,7 +779,7 @@ export function WorkoutsView({
                         min={0}
                         value={editCalories}
                         onChange={(event) => setEditCalories(Number(event.target.value))}
-                        className="rounded-full border border-primary-100 bg-white px-3 py-2 text-xs font-black text-[#16302a]"
+                        className={editFieldClass}
                         aria-label="Edit workout calories"
                       />
                       <button
@@ -700,15 +792,15 @@ export function WorkoutsView({
                           });
                           setEditingWorkoutId(null);
                         }}
-                        className="inline-flex items-center justify-center gap-1.5 rounded-full bg-primary-600 px-3 py-2 text-xs font-black text-white"
+                        className="fw-press inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full bg-primary-600 px-4 text-xs font-black text-white shadow-e1 ring-1 ring-inset ring-primary-700 hover:bg-primary-700 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-500"
                       >
-                        <Save className="h-3.5 w-3.5" />
+                        <Save className="h-3.5 w-3.5 shrink-0" strokeWidth={2.5} />
                         Save
                       </button>
                     </div>
                   ) : (
                     <div className="flex flex-wrap items-center gap-2 md:justify-end">
-                      <span className="shrink-0 text-xs font-medium text-neutral-500">
+                      <span className="shrink-0 text-xs font-bold tabular-nums text-ink-subtle">
                         {new Date(w.loggedAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}
                       </span>
                       <button
@@ -718,17 +810,17 @@ export function WorkoutsView({
                           setEditMinutes(w.durationMin);
                           setEditCalories(w.calories ?? 0);
                         }}
-                        className="inline-flex items-center gap-1.5 rounded-full bg-primary-50 px-3 py-1.5 text-xs font-black text-primary-700 hover:bg-primary-100"
+                        className="fw-press inline-flex min-h-11 items-center gap-1.5 rounded-full bg-primary-50 px-3.5 text-xs font-black text-primary-800 ring-1 ring-inset ring-primary-100 hover:bg-primary-100 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-500 md:min-h-9"
                       >
-                        <Pencil className="h-3.5 w-3.5" />
+                        <Pencil className="h-3.5 w-3.5 shrink-0" strokeWidth={2.5} />
                         Edit
                       </button>
                       <button
                         type="button"
                         onClick={() => removeWorkout(w.id)}
-                        className="inline-flex items-center gap-1.5 rounded-full bg-accent-100 px-3 py-1.5 text-xs font-black text-accent-700 hover:bg-accent-200"
+                        className="fw-press inline-flex min-h-11 items-center gap-1.5 rounded-full bg-accent-50 px-3.5 text-xs font-black text-accent-700 ring-1 ring-inset ring-accent-200 hover:bg-accent-100 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-accent-500 md:min-h-9"
                       >
-                        <Trash2 className="h-3.5 w-3.5" />
+                        <Trash2 className="h-3.5 w-3.5 shrink-0" strokeWidth={2.5} />
                         Delete
                       </button>
                     </div>
@@ -741,38 +833,42 @@ export function WorkoutsView({
 
       {showWorkoutLibrary && (
       <section ref={libraryRef} id="workout-library" className="min-w-0 scroll-mt-4 space-y-4">
-        <div className="mt-1 flex items-center justify-between">
-          <h2 className="font-heading text-sm font-black uppercase tracking-[0.16em] text-muted-foreground">
+        <div className="mt-1 flex items-center justify-between gap-3">
+          <h2 className="font-heading text-sm font-black uppercase tracking-[0.16em] text-ink-subtle">
             Workout library
           </h2>
           <button
             type="button"
             onClick={() => setShowWorkoutLibrary(false)}
-            className="text-sm font-black text-primary-700 transition hover:text-primary-800"
+            className="fw-press -mr-2 inline-flex min-h-11 items-center rounded-full px-2 text-sm font-black text-primary-700 hover:bg-primary-50 hover:text-primary-800 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-500 md:min-h-9"
           >
             Close library
           </button>
         </div>
 
-        <Card className="space-y-5 rounded-[24px] border-border px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)] md:px-7 md:py-7">
+        <Card padding="none" className="space-y-5 px-4 py-5 shadow-e2 sm:px-6 sm:py-6 md:px-7 md:py-7">
           <div className="space-y-5">
             <div className="flex flex-wrap items-end justify-between gap-3">
               <h2
                 ref={libraryHeadingRef}
                 tabIndex={-1}
-                className="flex min-w-0 items-center gap-3 font-heading text-xl font-black tracking-tight text-[#16302a] outline-none sm:text-2xl"
+                className="flex min-w-0 items-center gap-3 font-heading text-xl font-black tracking-tight text-ink outline-none sm:text-2xl"
               >
-                <span className="inline-flex h-10 w-10 items-center justify-center rounded-[13px] bg-primary-100 text-primary-600">
-                  <SlidersHorizontal className="h-5 w-5" />
+                <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100">
+                  <SlidersHorizontal className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
                 </span>
                 Workout database
               </h2>
-              <p className="rounded-full bg-primary-100 px-3.5 py-1.5 text-sm font-black text-primary-700">
-                {visible.length} of {workouts.length} workouts shown
+              <p
+                aria-live="polite"
+                className="rounded-full bg-primary-50 px-3.5 py-1.5 text-sm font-black text-primary-800 ring-1 ring-inset ring-primary-100"
+              >
+                <span className="tabular-nums">{visible.length}</span> of{" "}
+                <span className="tabular-nums">{workouts.length}</span> workouts shown
               </p>
             </div>
-            <div className="flex flex-col gap-2 rounded-[1.15rem] border border-primary-100 bg-primary-50/70 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-sm font-semibold text-primary-900/70">
+            <div className="flex flex-col gap-2 rounded-[1.15rem] bg-primary-50/70 px-4 py-3 ring-1 ring-inset ring-primary-100 sm:flex-row sm:items-center sm:justify-between">
+              <p className="min-w-0 text-sm font-semibold leading-6 text-primary-900/70">
                 {hasActiveFilters
                   ? `Filtering by ${bodyPart === "all" ? "all body parts" : bodyPart}, ${workoutType === "all" ? "all types" : workoutType}${workoutQuery.trim() ? `, and "${workoutQuery.trim()}"` : ""}.`
                   : "Use filters to narrow by body part, workout type, or search term before previewing."}
@@ -789,17 +885,17 @@ export function WorkoutsView({
                     setActiveQuickFilters([]);
                     setWorkoutQuery("");
                   }}
-                  className="self-start rounded-full bg-white px-3 py-1.5 text-xs font-black text-primary-700 transition hover:bg-primary-100 sm:self-center"
+                  className="fw-press inline-flex min-h-11 shrink-0 items-center justify-center self-start rounded-full bg-surface px-4 text-xs font-black text-primary-800 shadow-e1 ring-1 ring-inset ring-primary-100 hover:bg-primary-100 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-500 sm:min-h-9 sm:self-center"
                 >
                   Clear filters
                 </button>
               )}
             </div>
 
-            <div className="space-y-3 rounded-[1.35rem] border border-border bg-white px-4 py-4">
+            <div className="space-y-3 rounded-[1.35rem] bg-surface px-4 py-4 ring-1 ring-inset ring-hairline">
               <div className="grid gap-3 md:hidden">
                 <label>
-                  <span className="text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">Body part</span>
+                  <span className={filterLabelClass}>Body part</span>
                   <select
                     aria-label="Body part"
                     value={bodyPart}
@@ -807,14 +903,14 @@ export function WorkoutsView({
                       setCurrentPage(1);
                       setBodyPart(event.target.value as BodyPartFilter);
                     }}
-                    className="mt-1.5 w-full rounded-2xl border border-border bg-[#f4f8f6] px-3 py-2.5 text-sm font-bold text-[#16302a]"
+                    className={filterSelectClass}
                   >
                     {bodyPartFilters.map((filterOption) => <option key={filterOption.id} value={filterOption.id}>{filterOption.label}</option>)}
                   </select>
                 </label>
                 <div className="grid grid-cols-2 gap-3">
                   <label className="min-w-0">
-                    <span className="text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">Length</span>
+                    <span className={filterLabelClass}>Length</span>
                     <select
                       aria-label="Workout length"
                       value={lengthFilter}
@@ -822,13 +918,13 @@ export function WorkoutsView({
                         setCurrentPage(1);
                         setLengthFilter(event.target.value as LengthFilter);
                       }}
-                      className="mt-1.5 w-full rounded-2xl border border-border bg-[#f4f8f6] px-3 py-2.5 text-sm font-bold text-[#16302a]"
+                      className={filterSelectClass}
                     >
                       {lengthFilters.map((filterOption) => <option key={filterOption.id} value={filterOption.id}>{filterOption.label}</option>)}
                     </select>
                   </label>
                   <label className="min-w-0">
-                    <span className="text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">Intensity</span>
+                    <span className={filterLabelClass}>Intensity</span>
                     <select
                       aria-label="Intensity"
                       value={intensityFilter}
@@ -836,7 +932,7 @@ export function WorkoutsView({
                         setCurrentPage(1);
                         setIntensityFilter(event.target.value as IntensityFilter);
                       }}
-                      className="mt-1.5 w-full rounded-2xl border border-border bg-[#f4f8f6] px-3 py-2.5 text-sm font-bold text-[#16302a]"
+                      className={filterSelectClass}
                     >
                       {intensityFilters.map((filterOption) => <option key={filterOption.id} value={filterOption.id}>{filterOption.label}</option>)}
                     </select>
@@ -844,7 +940,7 @@ export function WorkoutsView({
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <label className="min-w-0">
-                    <span className="text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">Type</span>
+                    <span className={filterLabelClass}>Type</span>
                     <select
                       aria-label="Workout type"
                       value={workoutType}
@@ -852,13 +948,13 @@ export function WorkoutsView({
                         setCurrentPage(1);
                         setWorkoutType(event.target.value as WorkoutTypeFilter);
                       }}
-                      className="mt-1.5 w-full rounded-2xl border border-border bg-[#f4f8f6] px-3 py-2.5 text-sm font-bold text-[#16302a]"
+                      className={filterSelectClass}
                     >
                       {workoutTypeFilters.map((filterOption) => <option key={filterOption.id} value={filterOption.id}>{filterOption.label}</option>)}
                     </select>
                   </label>
                   <label className="min-w-0">
-                    <span className="text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">Smart filter</span>
+                    <span className={filterLabelClass}>Smart filter</span>
                     <select
                       aria-label="Smart filter"
                       value={activeQuickFilters[0] ?? "all"}
@@ -866,7 +962,7 @@ export function WorkoutsView({
                         setCurrentPage(1);
                         setActiveQuickFilters(event.target.value === "all" ? [] : [event.target.value as QuickFilter]);
                       }}
-                      className="mt-1.5 w-full rounded-2xl border border-border bg-[#f4f8f6] px-3 py-2.5 text-sm font-bold text-[#16302a]"
+                      className={filterSelectClass}
                     >
                       <option value="all">All workouts</option>
                       {quickFilters.map((filterOption) => <option key={filterOption.id} value={filterOption.id}>{filterOption.label}</option>)}
@@ -875,102 +971,77 @@ export function WorkoutsView({
                 </div>
               </div>
 
-              <div className="hidden flex-wrap gap-2 md:flex">
+              <div className="hidden flex-wrap items-center gap-2 md:flex">
+                <span className={cn(filterLabelClass, "w-20 shrink-0 leading-4")}>Body part</span>
                 {bodyPartFilters.map((filterOption) => (
-                  <button
+                  <FilterChip
                     key={filterOption.id}
-                    type="button"
+                    active={bodyPart === filterOption.id}
                     onClick={() => {
                       setCurrentPage(1);
                       setBodyPart(filterOption.id);
                     }}
-                    className={cn(
-                      "rounded-full px-3.5 py-2 text-xs font-black transition",
-                      bodyPart === filterOption.id
-                        ? "bg-primary-600 text-white shadow-[0_10px_22px_rgba(30,174,132,0.22)]"
-                        : "bg-[#f4f8f6] text-[#54635d] hover:bg-primary-50"
-                    )}
                   >
                     {filterOption.label}
-                  </button>
+                  </FilterChip>
                 ))}
               </div>
-              <div className="hidden flex-wrap gap-2 md:flex">
+              <div className="hidden flex-wrap items-center gap-2 md:flex">
+                <span className={cn(filterLabelClass, "w-20 shrink-0 leading-4")}>Length</span>
                 {lengthFilters.map((filterOption) => (
-                  <button
+                  <FilterChip
                     key={filterOption.id}
-                    type="button"
+                    active={lengthFilter === filterOption.id}
                     onClick={() => {
                       setCurrentPage(1);
                       setLengthFilter(filterOption.id);
                     }}
-                    className={cn(
-                      "rounded-full px-3.5 py-2 text-xs font-black transition",
-                      lengthFilter === filterOption.id
-                        ? "bg-primary-600 text-white"
-                        : "bg-[#f4f8f6] text-[#54635d] hover:bg-primary-50"
-                    )}
                   >
                     {filterOption.label}
-                  </button>
+                  </FilterChip>
                 ))}
               </div>
-              <div className="hidden flex-wrap gap-2 md:flex">
+              <div className="hidden flex-wrap items-center gap-2 md:flex">
+                <span className={cn(filterLabelClass, "w-20 shrink-0 leading-4")}>Intensity</span>
                 {intensityFilters.map((filterOption) => (
-                  <button
+                  <FilterChip
                     key={filterOption.id}
-                    type="button"
+                    active={intensityFilter === filterOption.id}
                     onClick={() => {
                       setCurrentPage(1);
                       setIntensityFilter(filterOption.id);
                     }}
-                    className={cn(
-                      "rounded-full px-3.5 py-2 text-xs font-black transition",
-                      intensityFilter === filterOption.id
-                        ? "bg-primary-600 text-white"
-                        : "bg-[#f4f8f6] text-[#54635d] hover:bg-primary-50"
-                    )}
                   >
                     {filterOption.label}
-                  </button>
+                  </FilterChip>
                 ))}
                 {workoutTypeFilters.map((filterOption) => (
-                  <button
+                  <FilterChip
                     key={filterOption.id}
-                    type="button"
+                    active={workoutType === filterOption.id}
                     onClick={() => {
                       setCurrentPage(1);
                       setWorkoutType(filterOption.id);
                     }}
-                    className={cn(
-                      "rounded-full px-3.5 py-2 text-xs font-black transition",
-                      workoutType === filterOption.id
-                        ? "bg-primary-600 text-white"
-                        : "bg-[#f4f8f6] text-[#54635d] hover:bg-primary-50"
-                    )}
                   >
                     {filterOption.label}
-                  </button>
+                  </FilterChip>
                 ))}
               </div>
-              <div className="hidden flex-wrap gap-2 border-t border-primary-100/70 pt-3 md:flex">
+              <div className="hidden flex-wrap items-center gap-2 border-t border-hairline pt-3 md:flex">
+                <span className={cn(filterLabelClass, "w-20 shrink-0 leading-4")}>Smart</span>
                 {quickFilters.map((filterOption) => {
                   const active = activeQuickFilters.includes(filterOption.id);
                   return (
-                    <button
+                    <FilterChip
                       key={filterOption.id}
-                      type="button"
+                      tone="ink"
+                      active={active}
                       onClick={() => toggleQuickFilter(filterOption.id)}
-                      className={cn(
-                        "inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-black transition",
-                        active
-                          ? "bg-[#16302a] text-white"
-                          : "bg-[#f4f8f6] text-[#54635d] hover:bg-primary-50"
-                      )}
                     >
-                      {active && <Check className="h-3.5 w-3.5" />}
+                      {active && <Check className="h-3.5 w-3.5 shrink-0" strokeWidth={3} />}
                       {filterOption.label}
-                    </button>
+                    </FilterChip>
                   );
                 })}
               </div>
@@ -986,12 +1057,10 @@ export function WorkoutsView({
               }}
               className="grid gap-3 lg:grid-cols-[minmax(14rem,1fr)_auto]"
             >
-              <label className="block">
-                <span className="text-xs font-black uppercase tracking-[0.14em] text-muted-foreground">
-                  Workout
-                </span>
-                <div className="mt-2 flex items-center gap-2 rounded-2xl border border-border bg-[#f4f8f6] px-4 py-3">
-                  <Search className="h-4 w-4 text-muted-foreground" />
+              <label className="block min-w-0">
+                <span className={filterLabelClass}>Workout</span>
+                <div className="mt-2 flex min-h-12 items-center gap-2 rounded-[1rem] bg-surface-muted px-4 py-3 ring-1 ring-inset ring-hairline-strong transition focus-within:bg-surface focus-within:ring-2 focus-within:ring-primary-400">
+                  <Search className="h-4 w-4 shrink-0 text-ink-subtle" strokeWidth={2.25} />
                   <input
                     name="q"
                     value={workoutQuery}
@@ -1000,31 +1069,28 @@ export function WorkoutsView({
                       setWorkoutQuery(event.target.value);
                     }}
                     placeholder="Search rows, pull, ride..."
-                    className="min-w-0 flex-1 bg-transparent text-sm font-bold text-[#16302a] outline-none placeholder:text-[#9db0aa]"
+                    className="min-w-0 flex-1 bg-transparent text-sm font-bold text-ink outline-none placeholder:font-semibold placeholder:text-ink-faint"
                   />
                 </div>
               </label>
 
-              <button
-                type="submit"
-                className="self-end rounded-2xl bg-gradient-to-r from-primary-500 to-teal-500 px-5 py-3 text-sm font-black text-white shadow-[0_12px_24px_rgba(21,145,108,0.22)] transition hover:from-primary-600 hover:to-teal-600"
-              >
+              <Button type="submit" variant="tonal" className="self-end">
                 Apply
-              </button>
+              </Button>
             </form>
           </div>
 
-          <div className="min-w-0 overflow-hidden rounded-[24px] border border-border">
+          <div className="min-w-0 overflow-hidden rounded-[24px] ring-1 ring-inset ring-hairline">
             <div
               className={cn(
-                "flex items-center justify-between gap-3 border-b border-border bg-primary-50/70 px-3 py-2.5",
+                "flex items-center justify-between gap-3 border-b border-hairline bg-primary-50/70 px-3 py-2.5",
                 !tableScrollable && "md:hidden"
               )}
             >
-              <p className="min-w-0 text-xs font-semibold text-primary-900/70 md:hidden">
+              <p className="min-w-0 text-xs font-semibold leading-5 text-primary-900/70 md:hidden">
                 {showAllMobileColumns ? "Swipe within the table for every detail." : "Tap a workout to preview it; time is shown."}
               </p>
-              <p className="hidden min-w-0 text-xs font-semibold text-primary-900/70 md:block">
+              <p className="hidden min-w-0 text-xs font-semibold leading-5 text-primary-900/70 md:block">
                 Scroll the table sideways for the equipment and goal columns.
               </p>
               <button
@@ -1032,9 +1098,9 @@ export function WorkoutsView({
                 aria-expanded={showAllMobileColumns}
                 aria-controls="workout-results-table"
                 onClick={() => setShowAllMobileColumns((current) => !current)}
-                className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-primary-100 bg-white px-3 py-2 text-xs font-black text-primary-700 md:hidden"
+                className="fw-press inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-full bg-surface px-3.5 text-xs font-black text-primary-800 shadow-e1 ring-1 ring-inset ring-primary-100 hover:bg-primary-50 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-500 md:hidden"
               >
-                <Columns3 className="h-3.5 w-3.5" />
+                <Columns3 className="h-3.5 w-3.5 shrink-0" strokeWidth={2.5} />
                 {showAllMobileColumns ? "Essential only" : "Show all columns"}
               </button>
             </div>
@@ -1046,11 +1112,11 @@ export function WorkoutsView({
             >
               <table
                 className={cn(
-                  "w-full border-collapse bg-white text-left",
+                  "w-full border-collapse bg-surface text-left",
                   showAllMobileColumns ? "min-w-[64rem]" : "min-w-0 md:min-w-[64rem]"
                 )}
               >
-                <thead className="bg-[#f4f8f6] text-xs font-black uppercase tracking-[0.14em] text-muted-foreground">
+                <thead className="bg-surface-muted text-[0.6875rem] font-black uppercase tracking-[0.14em] text-ink-subtle">
                   <tr>
                     <th className="px-4 py-3">Workout</th>
                     <th className={cn("whitespace-nowrap px-4 py-3", !showAllMobileColumns && "hidden md:table-cell")}>Body part</th>
@@ -1062,48 +1128,76 @@ export function WorkoutsView({
                     <th className={cn("px-4 py-3", !showAllMobileColumns && "hidden md:table-cell")}>Goal</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-neutral-100">
+                <tbody className="divide-y divide-hairline">
                   {paginatedWorkouts.map((workout) => {
                     const Icon = workout.icon;
                     const tone = workoutTone(workout);
                     const muscles = workout.targetMuscles ?? workout.bestFor.slice(0, 3);
                     const title = (
-                      <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-                        <span className={cn("flex h-8 w-8 items-center justify-center rounded-[0.75rem]", tone.icon)}>
-                          <Icon className="h-4 w-4" />
+                      <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
+                        <span
+                          className={cn(
+                            "flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.8rem]",
+                            tone.icon
+                          )}
+                        >
+                          <Icon className="h-4 w-4" strokeWidth={2} />
                         </span>
                         <div className="min-w-0">
-                          <p className="break-words text-sm font-black leading-5 text-[#16302a]">{workout.title}</p>
-                          <p className="hidden text-xs font-semibold text-muted-foreground sm:block">{workout.focus}</p>
+                          <p className="break-words text-sm font-black leading-5 text-ink">{workout.title}</p>
+                          <p className="hidden text-xs font-semibold leading-5 text-ink-muted sm:block">
+                            {workout.focus}
+                          </p>
+                          {/* On phones the body-part and intensity columns are
+                              hidden, so the same two facts ride along with the
+                              title as an aligned chip row instead of vanishing. */}
+                          <div
+                            className={cn(
+                              "mt-1.5 flex flex-wrap items-center gap-1.5 md:hidden",
+                              showAllMobileColumns && "hidden"
+                            )}
+                          >
+                            <span className={cn(chipBase, chipSm, tone.badge)}>{workout.categoryLabel}</span>
+                            <span className={cn(chipBase, chipSm, tone.intensity)}>{workout.intensity}</span>
+                          </div>
                         </div>
                       </div>
                     );
 
                     return (
-                      <tr key={workout.id} className="transition hover:bg-primary-50/45">
-                        <td className="min-w-0 px-3 py-2.5 sm:px-4">
-                          <Link href={workoutHref(workout.id)} className="group inline-flex items-center gap-2">
+                      <tr
+                        key={workout.id}
+                        className="transition-colors duration-200 ease-out-soft hover:bg-primary-50/45"
+                      >
+                        <td className="min-w-0 px-3 py-2.5 align-top sm:px-4">
+                          <Link
+                            href={workoutHref(workout.id)}
+                            className="group flex min-h-11 items-center gap-2 rounded-[1rem] focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-500"
+                          >
                             {title}
-                            <ArrowRight className="hidden h-3.5 w-3.5 text-neutral-300 transition group-hover:translate-x-0.5 group-hover:text-primary-600 sm:block" />
+                            <ArrowRight
+                              className="hidden h-3.5 w-3.5 shrink-0 text-ink-faint transition-transform duration-200 ease-out-soft group-hover:translate-x-0.5 group-hover:text-primary-600 sm:block"
+                              strokeWidth={2.5}
+                            />
                           </Link>
                         </td>
-                        <td className={cn("px-4 py-2.5", !showAllMobileColumns && "hidden md:table-cell")}>
-                          <span className={cn("whitespace-nowrap rounded-full px-3 py-1 text-xs font-black", tone.badge)}>
+                        <td className={cn("px-4 py-2.5 align-top", !showAllMobileColumns && "hidden md:table-cell")}>
+                          <span className={cn(chipBase, chipMd, tone.badge)}>
                             {workout.categoryLabel}
                           </span>
                         </td>
-                        <td className={cn("whitespace-nowrap px-4 py-2.5 text-sm font-bold text-[#54635d]", !showAllMobileColumns && "hidden md:table-cell")}>{workout.workoutType}</td>
-                        <td className={cn("max-w-[12rem] px-4 py-2.5 text-xs font-semibold text-muted-foreground", !showAllMobileColumns && "hidden md:table-cell")}>
+                        <td className={cn("whitespace-nowrap px-4 py-2.5 align-top text-sm font-bold text-ink-muted", !showAllMobileColumns && "hidden md:table-cell")}>{workout.workoutType}</td>
+                        <td className={cn("max-w-[12rem] px-4 py-2.5 align-top text-xs font-semibold leading-5 text-ink-muted", !showAllMobileColumns && "hidden md:table-cell")}>
                           {muscles.slice(0, 3).join(", ")}
                         </td>
-                        <td className="whitespace-nowrap px-4 py-2.5 text-sm font-bold tabular-nums text-[#54635d]">{workout.duration}</td>
-                        <td className={cn("px-4 py-2.5", !showAllMobileColumns && "hidden md:table-cell")}>
-                          <span className={cn("whitespace-nowrap rounded-full px-3 py-1 text-xs font-black", tone.intensity)}>
+                        <td className="whitespace-nowrap px-4 py-2.5 align-top text-sm font-black tabular-nums text-ink">{workout.duration}</td>
+                        <td className={cn("px-4 py-2.5 align-top", !showAllMobileColumns && "hidden md:table-cell")}>
+                          <span className={cn(chipBase, chipMd, tone.intensity)}>
                             {workout.intensity}
                           </span>
                         </td>
-                        <td className={cn("max-w-[11rem] px-4 py-2.5 text-xs font-semibold text-muted-foreground", !showAllMobileColumns && "hidden md:table-cell")}>{workout.equipment}</td>
-                        <td className={cn("max-w-[12rem] px-4 py-2.5 text-xs font-semibold text-muted-foreground", !showAllMobileColumns && "hidden md:table-cell")}>{workout.goal}</td>
+                        <td className={cn("max-w-[11rem] px-4 py-2.5 align-top text-xs font-semibold leading-5 text-ink-muted", !showAllMobileColumns && "hidden md:table-cell")}>{workout.equipment}</td>
+                        <td className={cn("max-w-[12rem] px-4 py-2.5 align-top text-xs font-semibold leading-5 text-ink-muted", !showAllMobileColumns && "hidden md:table-cell")}>{workout.goal}</td>
                       </tr>
                     );
                   })}
@@ -1112,10 +1206,16 @@ export function WorkoutsView({
             </div>
 
             {visible.length === 0 && (
-              <div role="status" aria-live="polite" className="bg-white px-5 py-8">
-                <div className="mx-auto max-w-md rounded-[1.35rem] border-2 border-accent-500/60 bg-accent-50 px-5 py-5 text-center">
+              <div role="status" aria-live="polite" className="bg-surface px-5 py-8">
+                <div className="mx-auto max-w-md rounded-[1.35rem] bg-accent-50 px-5 py-6 text-center ring-1 ring-inset ring-accent-200">
+                  <span
+                    aria-hidden="true"
+                    className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-[1.1rem] bg-surface text-accent-600 shadow-e1 ring-1 ring-inset ring-accent-200"
+                  >
+                    <SearchX className="h-5 w-5" strokeWidth={2} />
+                  </span>
                   <p className="text-base font-black text-accent-700">Found 0 workouts</p>
-                  <p className="mt-1 text-sm font-semibold leading-6 text-[#54635d]">
+                  <p className="mt-1.5 text-sm font-semibold leading-6 text-ink-muted">
                     Nothing in the library matches
                     {workoutQuery.trim() ? ` "${workoutQuery.trim()}" with` : ""} the
                     filters you selected. Try removing a filter or broadening the search.
@@ -1131,7 +1231,7 @@ export function WorkoutsView({
                       setActiveQuickFilters([]);
                       setWorkoutQuery("");
                     }}
-                    className="mt-3 inline-flex min-h-11 items-center justify-center rounded-full bg-accent-500 px-5 py-2 text-sm font-black text-white transition hover:bg-accent-600"
+                    className="fw-press mt-4 inline-flex min-h-11 items-center justify-center rounded-full bg-accent-500 px-5 text-sm font-black text-white shadow-e1 hover:bg-accent-600 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-accent-500 focus-visible:ring-offset-2"
                   >
                     Clear all filters
                   </button>
@@ -1139,8 +1239,8 @@ export function WorkoutsView({
               </div>
             )}
             {visible.length > 0 && (
-              <div className="flex flex-col gap-3 border-t border-border bg-white px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-                <p className="text-center text-xs font-bold text-muted-foreground sm:text-left" aria-live="polite">
+              <div className="flex flex-col gap-3 border-t border-hairline bg-surface px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-center text-xs font-bold tabular-nums text-ink-muted sm:text-left" aria-live="polite">
                   Page {activePage} of {totalPages} · Showing {(activePage - 1) * WORKOUTS_PER_PAGE + 1}-{Math.min(activePage * WORKOUTS_PER_PAGE, visible.length)} of {visible.length}
                 </p>
                 <div className="grid grid-cols-2 gap-2">
@@ -1148,19 +1248,19 @@ export function WorkoutsView({
                     type="button"
                     onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
                     disabled={activePage === 1}
-                    className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full border border-primary-100 bg-white px-4 py-2 text-sm font-black text-primary-700 disabled:cursor-not-allowed disabled:opacity-40"
+                    className="fw-press inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full bg-surface px-4 text-sm font-black text-primary-800 shadow-e1 ring-1 ring-inset ring-primary-100 hover:bg-primary-50 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-500 disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
                   >
-                    <ChevronLeft className="h-4 w-4" />
+                    <ChevronLeft className="h-4 w-4 shrink-0" strokeWidth={2.5} />
                     Previous
                   </button>
                   <button
                     type="button"
                     onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
                     disabled={activePage === totalPages}
-                    className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full bg-primary-600 px-4 py-2 text-sm font-black text-white disabled:cursor-not-allowed disabled:opacity-40"
+                    className="fw-press inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full bg-primary-600 px-4 text-sm font-black text-white shadow-e1 ring-1 ring-inset ring-primary-700 hover:bg-primary-700 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-500 disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
                   >
                     Next
-                    <ChevronRight className="h-4 w-4" />
+                    <ChevronRight className="h-4 w-4 shrink-0" strokeWidth={2.5} />
                   </button>
                 </div>
               </div>
@@ -1170,12 +1270,16 @@ export function WorkoutsView({
       </section>
       )}
 
-      <Card className="rounded-[20px] border-lemon-200 bg-lemon-50/80 px-6 py-5 shadow-none">
+      <Card
+        variant="tinted"
+        padding="none"
+        className="rounded-[20px] border-lemon-200 bg-lemon-50/80 px-5 py-5 shadow-none sm:px-6"
+      >
         <div className="flex gap-3.5">
-          <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-lemon-600">
-            <Info className="h-5 w-5" />
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.85rem] bg-surface text-lemon-600 ring-1 ring-inset ring-lemon-200">
+            <Info className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
           </span>
-          <div>
+          <div className="min-w-0">
             <h2 className="font-heading text-lg font-black text-lemon-700">
               How the suggestion is made
             </h2>

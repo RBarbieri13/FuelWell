@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarCheck, Lightbulb } from "lucide-react";
+import { CalendarCheck, Check, Lightbulb } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { SectionHeader } from "@/components/ui/section-header";
 import type { MacroTargets } from "@/lib/fuelwell-data";
@@ -18,11 +18,13 @@ type WeeklyGoalReviewArtifact = {
 export function WeeklyGoalReviewCard({ artifact }: ArtifactCardProps<WeeklyGoalReviewArtifact>) {
   const targets = artifact.targets;
   const evidence = artifact.evidence ?? [];
-  const cells: Array<{ label: string; value: string }> = [
-    { label: "kcal", value: `${targets.calories}` },
-    { label: "protein", value: `${targets.protein}g` },
-    { label: "carbs", value: `${targets.carbs}g` },
-    { label: "fat", value: `${targets.fat}g` },
+  // Same colour roles the macro charts use, so a target cell and its bar
+  // elsewhere in the transcript are recognisably the same quantity.
+  const cells: Array<{ label: string; value: string; color: string }> = [
+    { label: "kcal", value: `${targets.calories}`, color: "var(--color-macro-calories)" },
+    { label: "protein", value: `${targets.protein}g`, color: "var(--color-macro-protein)" },
+    { label: "carbs", value: `${targets.carbs}g`, color: "var(--color-macro-carbs)" },
+    { label: "fat", value: `${targets.fat}g`, color: "var(--color-macro-fat)" },
   ];
 
   return (
@@ -35,30 +37,41 @@ export function WeeklyGoalReviewCard({ artifact }: ArtifactCardProps<WeeklyGoalR
       />
 
       <div className="mt-4 rounded-[1.15rem] bg-surface-muted p-3 ring-1 ring-inset ring-hairline">
-        <p className="text-[0.625rem] font-black uppercase text-ink-subtle">Current target</p>
-        <div className="mt-2 grid grid-cols-2 gap-2 min-[380px]:grid-cols-4">
+        <p className="text-[0.625rem] font-black uppercase tracking-[0.1em] text-ink-muted">
+          Current target
+        </p>
+        <dl className="mt-2 grid grid-cols-2 gap-2 min-[380px]:grid-cols-4">
           {cells.map((cell) => (
             <div
               key={cell.label}
-              className="min-w-0 rounded-[0.9rem] bg-surface px-2 py-2 text-center ring-1 ring-inset ring-hairline"
+              className="relative flex min-w-0 flex-col-reverse overflow-hidden rounded-[0.9rem] bg-surface px-2 py-2 text-center ring-1 ring-inset ring-hairline"
             >
-              <p className="truncate text-sm font-black tabular-nums text-ink">{cell.value}</p>
-              <p className="mt-0.5 truncate text-[0.625rem] font-bold uppercase text-ink-subtle">
+              <span
+                aria-hidden="true"
+                className="absolute inset-x-0 top-0 h-1"
+                style={{ backgroundColor: cell.color }}
+              />
+              <dt className="mt-0.5 truncate text-[0.625rem] font-bold uppercase tracking-[0.06em] text-ink-muted">
                 {cell.label}
-              </p>
+              </dt>
+              <dd className="mt-0.5 truncate text-sm font-black tabular-nums text-ink">
+                {cell.value}
+              </dd>
             </div>
           ))}
-        </div>
+        </dl>
       </div>
 
       {evidence.length > 0 && (
-        <ul className="mt-4 space-y-1.5">
+        <ul className="mt-4 space-y-2">
           {evidence.map((item) => (
-            <li key={item} className="flex gap-2 text-xs font-semibold leading-5 text-ink-muted">
+            <li key={item} className="flex gap-2.5 text-xs font-semibold leading-5 text-ink-muted">
               <span
                 aria-hidden="true"
-                className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary-300"
-              />
+                className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100"
+              >
+                <Check className="h-2.5 w-2.5" strokeWidth={3} />
+              </span>
               <span className="min-w-0">{item}</span>
             </li>
           ))}

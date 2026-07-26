@@ -21,6 +21,10 @@ export function FacebookIcon({ className }: { className?: string }) {
   );
 }
 
+// currentColor inside the secondary button resolves to the brand's primary-800
+// green, which renders the Apple mark as a green apple — the one mark in the
+// row that is unmistakably wrong when tinted. It is pinned to the ink role so
+// it stays black-on-white with the other two brand marks.
 export function AppleIcon({ className }: { className?: string }) {
   return (
     <svg
@@ -31,7 +35,7 @@ export function AppleIcon({ className }: { className?: string }) {
     >
       <path
         d="M17.05 12.536c-.024-2.62 2.14-3.877 2.238-3.94-1.218-1.782-3.113-2.026-3.787-2.052-1.613-.163-3.148.948-3.967.948-.815 0-2.078-.924-3.42-.899-1.76.026-3.382 1.022-4.287 2.598-1.827 3.171-.467 7.864 1.31 10.434.868 1.258 1.902 2.672 3.258 2.622 1.308-.052 1.802-.846 3.384-.846 1.582 0 2.026.846 3.41.82 1.408-.026 2.3-1.284 3.16-2.546.995-1.46 1.405-2.873 1.428-2.946-.031-.014-2.74-1.05-2.768-4.165zM14.62 4.93c.722-.876 1.21-2.094 1.076-3.305-1.04.042-2.3.693-3.046 1.567-.669.776-1.255 2.016-1.098 3.205 1.16.09 2.346-.59 3.068-1.467z"
-        fill="currentColor"
+        fill="var(--color-ink)"
       />
     </svg>
   );

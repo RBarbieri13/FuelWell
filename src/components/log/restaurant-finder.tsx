@@ -13,12 +13,14 @@ import {
   Plus,
   RotateCcw,
   Search,
+  SearchX,
   Store,
   UtensilsCrossed,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import { SectionHeader } from "@/components/ui/section-header";
 import {
   ALL_RESTAURANTS,
@@ -122,6 +124,41 @@ function resultMacros(result: RestaurantMenuSearchResult) {
 /** Ranking score badge tone — the same mapping used in both result surfaces. */
 function scoreTone(tone: RestaurantMenuSearchResult["insight"]["tone"]) {
   return tone === "success" ? "success" : tone === "warning" ? "warning" : "info";
+}
+
+const SCORE_BAR_TONE: Record<"success" | "warning" | "info", string> = {
+  success: "bg-primary-500",
+  warning: "bg-lemon-500",
+  info: "bg-sky-500",
+};
+
+/**
+ * Fit score as a chip plus a 0–100 meter. A bare number tells you nothing about
+ * whether 62 is good; sitting on a track against a fixed scale, it does.
+ */
+function FitScore({ result }: { result: RestaurantMenuSearchResult }) {
+  const tone = scoreTone(result.insight.tone);
+  const score = Math.max(0, Math.min(100, Math.round(result.score * 100)));
+  return (
+    <div className="flex shrink-0 flex-col items-end gap-1">
+      <Badge variant={tone} size="sm">
+        <span className="tabular-nums">{score}</span> fit
+      </Badge>
+      <span
+        role="img"
+        aria-label={`Fit score ${score} out of 100`}
+        className="block h-1 w-16 overflow-hidden rounded-full bg-surface-sunken"
+      >
+        <span
+          className={cn(
+            "block h-full rounded-full transition-[width] duration-500 ease-out-soft",
+            SCORE_BAR_TONE[tone]
+          )}
+          style={{ width: `${Math.max(3, score)}%` }}
+        />
+      </span>
+    </div>
+  );
 }
 
 function BrandLogo({
@@ -417,7 +454,7 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
                           ? "bg-surface text-ink ring-2 ring-ink"
                           : matched
                             ? "bg-surface text-ink-muted ring-hairline-strong"
-                            : "bg-surface/90 text-ink-faint ring-hairline"
+                            : "bg-surface/90 text-ink-subtle ring-hairline"
                       )}
                       style={{ left: `${position.left}%`, top: `${position.top}%` }}
                     >
@@ -426,7 +463,7 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
                       ) : (
                         <span
                           aria-hidden="true"
-                          className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-surface-muted text-ink-faint"
+                          className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-surface-muted text-ink-subtle"
                         >
                           <Store className="h-3.5 w-3.5" strokeWidth={2} />
                         </span>
@@ -486,17 +523,36 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
             <div className="absolute bottom-3 left-3 right-3 z-20 rounded-[1.25rem] bg-surface/92 p-3 shadow-e2 ring-1 ring-inset ring-hairline backdrop-blur">
               <div className="flex items-center justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="text-xs font-black uppercase tracking-[0.12em] text-ink-subtle">
-                    {locationStatus === "ready" ? "Local map" : "Preview map"}
-                  </p>
-                  <p className="text-sm font-black text-ink">
-                    {matchedPlaces.length > 0
-                      ? `${matchedPlaces.length} local places matched to menu nutrition`
-                      : `${stats.restaurantCount} chains · ${stats.itemCount} menu items`}
+                  {/* Preview vs live is the single most important thing to be
+                      honest about here — a badge, not a caption. */}
+                  {locationStatus === "ready" ? (
+                    <Badge variant="success" size="sm" dot>
+                      Local map
+                    </Badge>
+                  ) : (
+                    <Badge variant="neutral" size="sm" dot>
+                      Preview map · not your location
+                    </Badge>
+                  )}
+                  <p className="mt-1.5 text-sm font-black text-ink">
+                    {matchedPlaces.length > 0 ? (
+                      <>
+                        <span className="tabular-nums">{matchedPlaces.length}</span>{" "}
+                        local places matched to menu nutrition
+                      </>
+                    ) : (
+                      <>
+                        <span className="tabular-nums">{stats.restaurantCount}</span>{" "}
+                        chains ·{" "}
+                        <span className="tabular-nums">{stats.itemCount}</span> menu
+                        items
+                      </>
+                    )}
                   </p>
                   {mapCenter && (
                     <p className="mt-0.5 truncate text-xs font-semibold text-ink-muted">
-                      Centered on {mapCenter.label} · zoom {zoom}
+                      Centered on {mapCenter.label} · zoom{" "}
+                      <span className="tabular-nums">{zoom}</span>
                     </p>
                   )}
                 </div>
@@ -552,9 +608,9 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
                     onClick={() => pickPlace(place)}
                     data-testid={`nearby-place-${place.id}`}
                     className={cn(
-                      "fw-press flex min-h-14 items-center justify-between gap-3 rounded-2xl px-3 py-2 text-left ring-1 ring-inset focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2",
+                      "fw-press flex min-h-14 items-center justify-between gap-3 rounded-[1.15rem] px-3 py-2 text-left ring-1 ring-inset focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2",
                       selectedPlaceId === place.id
-                        ? "bg-primary-50 ring-2 ring-primary-400"
+                        ? "bg-primary-50 shadow-e1 ring-2 ring-primary-400"
                         : restaurant
                           ? "bg-surface ring-hairline hover:bg-primary-50/60 hover:ring-primary-200"
                           : "bg-surface/70 ring-hairline hover:ring-hairline-strong"
@@ -566,7 +622,7 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
                       ) : (
                         <span
                           aria-hidden="true"
-                          className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-surface-muted text-ink-faint"
+                          className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-surface-muted text-ink-subtle"
                         >
                           <Store className="h-4 w-4" strokeWidth={2} />
                         </span>
@@ -595,9 +651,9 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
                     type="button"
                     onClick={() => pickRestaurant(restaurant.id)}
                     className={cn(
-                      "fw-press flex min-h-12 items-center gap-2 rounded-2xl px-3 py-2 text-left text-sm font-black ring-1 ring-inset focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2",
+                      "fw-press flex min-h-12 items-center gap-2 rounded-[1.15rem] px-3 py-2 text-left text-sm font-black ring-1 ring-inset focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2",
                       selectedRestaurantId === restaurant.id
-                        ? "bg-primary-50 text-primary-800 ring-2 ring-primary-400"
+                        ? "bg-primary-50 text-primary-800 shadow-e1 ring-2 ring-primary-400"
                         : "bg-surface text-ink-muted ring-hairline hover:bg-primary-50/50 hover:ring-primary-200"
                     )}
                   >
@@ -609,7 +665,7 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
             )}
 
             {fallbackRestaurants.length > 0 && (
-              <div className="mt-1 rounded-2xl bg-primary-50/50 p-3 ring-1 ring-inset ring-primary-100">
+              <div className="mt-1 rounded-[1.35rem] bg-primary-50/50 p-3 ring-1 ring-inset ring-primary-100">
                 <p className="text-xs font-black uppercase tracking-[0.12em] text-primary-700">
                   Always actionable
                 </p>
@@ -619,7 +675,7 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
                       key={restaurant.id}
                       type="button"
                       onClick={() => pickRestaurant(restaurant.id)}
-                      className="fw-press flex min-h-11 items-center gap-2 rounded-xl bg-surface px-2.5 py-2 text-left text-xs font-black text-ink ring-1 ring-inset ring-hairline hover:ring-primary-200 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2"
+                      className="fw-press flex min-h-11 items-center gap-2 rounded-[0.9rem] bg-surface px-2.5 py-2 text-left text-xs font-black text-ink ring-1 ring-inset ring-hairline hover:bg-primary-50/60 hover:ring-primary-200 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2"
                     >
                       <BrandLogo restaurant={restaurant} className="h-7 w-7" />
                       <span className="min-w-0 truncate">{restaurant.name}</span>
@@ -633,7 +689,7 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
 
         <div className="min-w-0 space-y-4">
           {(selectedRestaurant || selectedPlace) && (
-            <div className="rounded-2xl bg-surface-subtle p-4 ring-1 ring-inset ring-hairline-strong">
+            <div className="rounded-[1.35rem] bg-surface-subtle p-4 ring-1 ring-inset ring-hairline-strong">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex min-w-0 items-center gap-3">
                   {selectedRestaurant ? (
@@ -641,7 +697,7 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
                   ) : (
                     <span
                       aria-hidden="true"
-                      className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-surface-muted text-ink-faint"
+                      className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-surface-muted text-ink-subtle"
                     >
                       <Store className="h-5 w-5" strokeWidth={2} />
                     </span>
@@ -663,7 +719,7 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
                 <button
                   type="button"
                   onClick={() => pickRestaurant(null)}
-                  className="fw-press inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-ink-subtle ring-1 ring-inset ring-transparent hover:bg-surface-muted hover:text-ink hover:ring-hairline focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2 md:h-9 md:w-9"
+                  className="fw-press inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-[0.9rem] text-ink-subtle ring-1 ring-inset ring-transparent hover:bg-surface-muted hover:text-ink hover:ring-hairline focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2 md:h-9 md:w-9"
                   aria-label="Close restaurant page"
                 >
                   <ArrowLeft className="h-4 w-4" strokeWidth={2.5} aria-hidden="true" />
@@ -675,7 +731,7 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
                   {detailResults.map((result) => (
                     <div
                       key={result.item.id}
-                      className="rounded-xl bg-surface p-3 ring-1 ring-inset ring-hairline"
+                      className="rounded-[1.15rem] bg-surface p-3 ring-1 ring-inset ring-hairline"
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
@@ -684,9 +740,7 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
                             {resultMacros(result)}
                           </p>
                         </div>
-                        <Badge variant={scoreTone(result.insight.tone)} size="sm" className="shrink-0">
-                          <span className="tabular-nums">{Math.round(result.score * 100)}</span> fit
-                        </Badge>
+                        <FitScore result={result} />
                       </div>
                       <p className="mt-2 text-xs font-bold leading-5 text-ink-muted">
                         {result.insight.headline}. {result.insight.proteinLine}.
@@ -695,7 +749,7 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
                   ))}
                 </div>
               ) : (
-                <div className="mt-4 rounded-xl border border-dashed border-hairline-strong bg-surface-muted p-3">
+                <div className="mt-4 rounded-[1.15rem] border border-dashed border-hairline-strong bg-surface-muted p-3">
                   <p className="text-sm font-bold text-ink">FuelWell has this local place on the map, but no published menu match yet.</p>
                   <p className="mt-1 text-xs font-semibold leading-5 text-ink-muted">
                     Use the database picks below for exact macros, or search a similar chain/item and log it with lower confidence later.
@@ -733,7 +787,7 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
                     className={cn(
                       "fw-press inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 py-2 text-xs font-black ring-1 ring-inset focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2 md:min-h-9",
                       isOn
-                        ? "bg-primary-600 text-white shadow-e1 ring-primary-700"
+                        ? "bg-primary-700 text-white shadow-e1 ring-primary-800"
                         : "bg-surface text-ink-muted ring-hairline hover:bg-primary-50 hover:text-primary-700 hover:ring-primary-200"
                     )}
                   >
@@ -766,17 +820,21 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
 
           <div className="grid max-h-[34rem] gap-3 overflow-y-auto overscroll-contain pr-1">
             {results.length === 0 ? (
-              <div className="rounded-[1.35rem] border border-dashed border-primary-200 bg-primary-50/60 p-5">
-                <p className="font-black text-ink">No menu matches yet.</p>
-                <p className="mt-1 text-sm font-semibold text-ink-muted">
-                  Try a restaurant name, item name, or a quick filter like chicken.
-                </p>
+              <div className="rounded-[1.35rem] border border-dashed border-primary-200 bg-primary-50/60">
+                <EmptyState
+                  size="inline"
+                  icon={SearchX}
+                  title="No menu matches yet."
+                  description="Try a restaurant name, item name, or a quick filter like chicken."
+                />
               </div>
             ) : (
               results.map((result) => (
                 <article
                   key={result.item.id}
-                  className="rounded-[1.35rem] bg-surface p-4 ring-1 ring-inset ring-hairline"
+                  // Sits inside the finder Card, so it steps down to the tinted
+                  // face rather than repeating the card's own white.
+                  className="rounded-[1.35rem] bg-surface-subtle p-4 ring-1 ring-inset ring-hairline-strong"
                   data-testid={`restaurant-menu-result-${result.item.id}`}
                 >
                   <div className="flex items-start justify-between gap-3">
@@ -794,12 +852,10 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
                         </p>
                       </div>
                     </div>
-                    <Badge variant={scoreTone(result.insight.tone)} size="sm" className="shrink-0">
-                      <span className="tabular-nums">{Math.round(result.score * 100)}</span> fit
-                    </Badge>
+                    <FitScore result={result} />
                   </div>
 
-                  <div className="mt-3 grid gap-2 rounded-xl bg-surface-muted px-3 py-2.5 ring-1 ring-inset ring-hairline sm:grid-cols-2">
+                  <div className="mt-3 grid gap-2 rounded-[1.15rem] bg-surface px-3 py-2.5 ring-1 ring-inset ring-hairline sm:grid-cols-2">
                     <p className="text-xs font-bold leading-5 text-ink">
                       {result.insight.headline}
                     </p>

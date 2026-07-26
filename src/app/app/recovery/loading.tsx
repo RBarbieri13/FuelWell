@@ -26,7 +26,15 @@ export default function RecoveryLoading() {
                 <Skeleton className="h-8 w-full rounded-2xl bg-primary-100/70 md:h-10" />
                 <Skeleton className="h-3.5 w-5/6 rounded-full bg-surface/70" />
               </div>
-              <Skeleton className="h-24 w-24 shrink-0 rounded-[20px] bg-surface/80 md:h-32 md:w-32" />
+              {/* The readiness dial is a circle with a labelled 0-100 baseline
+                  under it; a rounded square here would pop when it resolves. */}
+              <div className="flex shrink-0 flex-col items-center gap-1">
+                <Skeleton className="h-28 w-28 rounded-full bg-surface/80 md:h-32 md:w-32" />
+                <div className="flex w-28 items-center justify-between md:w-32">
+                  <Skeleton className="h-2.5 w-3 rounded-full bg-surface/70" />
+                  <Skeleton className="h-2.5 w-5 rounded-full bg-surface/70" />
+                </div>
+              </div>
             </div>
           </div>
 
@@ -57,18 +65,43 @@ export default function RecoveryLoading() {
           ))}
         </div>
 
-        <div className="grid gap-4 xl:grid-cols-2">
-          {[0, 1].map((index) => (
-            <div key={index} className="space-y-4 rounded-[24px] border border-hairline bg-surface p-6 shadow-e2">
-              <Skeleton className="h-6 w-48 max-w-full rounded-full bg-surface-sunken" />
-              {[0, 1, 2, 3].map((row) => (
-                <div key={row} className="space-y-2">
-                  <Skeleton className="h-3.5 w-28 rounded-full bg-surface-muted" />
-                  <Skeleton className="h-3 w-full rounded-full bg-surface-sunken" />
+        {/* Readiness makeup (stacked bars) beside the soreness map (2x2 tiles). */}
+        <div className="grid gap-4 xl:grid-cols-[0.98fr_1.02fr]">
+          <div className="space-y-4 rounded-[24px] border border-hairline bg-surface p-6 shadow-e2">
+            <div className="flex items-center gap-3">
+              <Skeleton className="h-9 w-9 shrink-0 rounded-[0.9rem] bg-primary-100/80" />
+              <div className="min-w-0 flex-1 space-y-2">
+                <Skeleton className="h-5 w-44 max-w-full rounded-full bg-surface-sunken" />
+                <Skeleton className="h-3.5 w-60 max-w-full rounded-full bg-surface-muted" />
+              </div>
+            </div>
+            <Skeleton className="h-3 w-full rounded-full bg-surface-muted" />
+            {[0, 1, 2, 3].map((row) => (
+              <div key={row} className="space-y-2">
+                <Skeleton className="h-3.5 w-28 rounded-full bg-surface-muted" />
+                <Skeleton className="h-4 w-full rounded-full bg-surface-sunken" />
+              </div>
+            ))}
+          </div>
+
+          <div className="space-y-4 rounded-[24px] border border-hairline bg-surface p-6 shadow-e2">
+            <div className="flex items-center gap-3">
+              <Skeleton className="h-9 w-9 shrink-0 rounded-[0.9rem] bg-primary-100/80" />
+              <div className="min-w-0 flex-1 space-y-2">
+                <Skeleton className="h-5 w-40 max-w-full rounded-full bg-surface-sunken" />
+                <Skeleton className="h-3.5 w-56 max-w-full rounded-full bg-surface-muted" />
+              </div>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {[0, 1, 2, 3].map((tile) => (
+                <div key={tile} className="space-y-2 rounded-[1.25rem] bg-surface-subtle p-4">
+                  <Skeleton className="h-3.5 w-16 rounded-full bg-surface-muted" />
+                  <Skeleton className="h-8 w-20 rounded-xl bg-surface-sunken" />
+                  <Skeleton className="h-1.5 w-full rounded-full bg-surface-sunken" />
                 </div>
               ))}
             </div>
-          ))}
+          </div>
         </div>
       </div>
     </div>

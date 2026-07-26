@@ -4,11 +4,12 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 
 const RECIPE_BATCH_SIZE = 12;
-import { ArrowRight, BookOpen, CalendarDays, ChefHat, Search, SlidersHorizontal, Sparkles, Timer } from "lucide-react";
+import { ArrowRight, BookOpen, CalendarDays, CheckCircle2, ChefHat, Search, SlidersHorizontal, Sparkles, Timer } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ProgressMeter } from "@/components/ui/progress-meter";
 import { SectionHeader } from "@/components/ui/section-header";
 import { DietFilterChips } from "@/components/food/diet-filter-chips";
 import { RecipeCard, type RecipePlanStatus } from "@/components/recipes/recipe-card";
@@ -116,6 +117,17 @@ export default function RecipesPage() {
     setBatch({ key: filterKey, count: visibleCount + RECIPE_BATCH_SIZE });
   const visibleResults = results.slice(0, visibleCount);
 
+  // Counts for the segmented control, taken before the meal filter is applied
+  // so each tab can honestly say how many recipes it would show.
+  const mealCounts = useMemo(() => {
+    const pool = applyRecipeFilters(searchRecipes(query), diets, allergies);
+    const counts: Record<string, number> = { All: pool.length };
+    for (const recipe of pool) {
+      counts[recipe.meal] = (counts[recipe.meal] ?? 0) + 1;
+    }
+    return counts;
+  }, [query, diets, allergies]);
+
   const mealFilters: Array<"All" | Recipe["meal"]> = [
     "All",
     "Breakfast",
@@ -158,19 +170,33 @@ export default function RecipesPage() {
               </p>
               <div className="mt-2 flex flex-wrap items-center gap-1.5">
                 {[
-                  { label: "kcal", value: leftToday.calories.toLocaleString() },
-                  { label: "protein", value: `${leftToday.protein}g` },
-                  { label: "carbs", value: `${leftToday.carbs}g` },
-                  { label: "fat", value: `${leftToday.fat}g` },
-                ].map((chip) => (
-                  <span
-                    key={chip.label}
-                    className="rounded-full bg-white/10 px-3 py-1.5 text-xs font-black tabular-nums text-white ring-1 ring-inset ring-white/15"
-                  >
-                    {chip.value}
-                    <span className="ml-1 font-bold text-white/70">{chip.label}</span>
-                  </span>
-                ))}
+                  { label: "kcal", raw: leftToday.calories, value: leftToday.calories.toLocaleString() },
+                  { label: "protein", raw: leftToday.protein, value: `${leftToday.protein}g` },
+                  { label: "carbs", raw: leftToday.carbs, value: `${leftToday.carbs}g` },
+                  { label: "fat", raw: leftToday.fat, value: `${leftToday.fat}g` },
+                ].map((chip) => {
+                  // Nothing left is a different state from "still room" — it
+                  // should not render as just another neutral number.
+                  const met = chip.raw <= 0;
+                  return (
+                    <span
+                      key={chip.label}
+                      className={`inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-black tabular-nums ring-1 ring-inset ${
+                        met
+                          ? "bg-primary-400/22 text-primary-100 ring-primary-300/40"
+                          : "bg-white/10 text-white ring-white/15"
+                      }`}
+                    >
+                      {met && (
+                        <CheckCircle2 className="h-3.5 w-3.5 shrink-0" strokeWidth={2.5} aria-hidden="true" />
+                      )}
+                      {chip.value}
+                      <span className={`font-bold ${met ? "text-primary-100/75" : "text-white/70"}`}>
+                        {chip.label}
+                      </span>
+                    </span>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -214,21 +240,34 @@ export default function RecipesPage() {
           </div>
           <div className="relative min-w-0">
             <div className="flex gap-1 overflow-x-auto rounded-[1.35rem] bg-surface-sunken p-1 ring-1 ring-inset ring-hairline">
-              {mealFilters.map((meal) => (
-                <button
-                  key={meal}
-                  type="button"
-                  onClick={() => setMealFilter(meal)}
-                  aria-pressed={mealFilter === meal}
-                  className={`fw-press min-h-11 shrink-0 rounded-full px-4 py-2 text-sm font-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 md:min-h-10 ${
-                    mealFilter === meal
-                      ? "bg-primary-600 text-white shadow-e2"
-                      : "text-ink-muted hover:bg-surface hover:text-primary-800"
-                  }`}
-                >
-                  {meal}
-                </button>
-              ))}
+              {mealFilters.map((meal) => {
+                const count = mealCounts[meal] ?? 0;
+                const active = mealFilter === meal;
+                return (
+                  <button
+                    key={meal}
+                    type="button"
+                    onClick={() => setMealFilter(meal)}
+                    aria-pressed={active}
+                    className={`fw-press inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 md:min-h-10 ${
+                      active
+                        ? "bg-primary-600 text-white shadow-e2"
+                        : count === 0
+                          ? "text-ink-faint hover:bg-surface"
+                          : "text-ink-muted hover:bg-surface hover:text-primary-800"
+                    }`}
+                  >
+                    {meal}
+                    <span
+                      className={`rounded-full px-1.5 py-0.5 text-[10px] tabular-nums ${
+                        active ? "bg-white/20" : "bg-surface text-ink-subtle"
+                      }`}
+                    >
+                      {count}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
             {/* Cue that the chip row scrolls — Snack sits off-screen at phone widths. */}
             <div
@@ -346,7 +385,19 @@ export default function RecipesPage() {
             ))}
           </div>
           {results.length > visibleCount && (
-            <div className="flex justify-center">
+            <div className="mx-auto flex w-full max-w-sm flex-col items-center gap-3">
+              <ProgressMeter
+                className="w-full bg-surface-sunken"
+                size="sm"
+                value={visibleResults.length}
+                target={results.length}
+                color="var(--color-primary-500)"
+                label={`Showing ${visibleResults.length} of ${results.length} matching recipes`}
+              />
+              <p className="text-xs font-black uppercase tracking-[0.12em] text-ink-subtle">
+                <span className="tabular-nums">{visibleResults.length.toLocaleString()}</span> of{" "}
+                <span className="tabular-nums">{results.length.toLocaleString()}</span> shown
+              </p>
               <Button type="button" variant="secondary" size="lg" onClick={showMore}>
                 Show {Math.min(RECIPE_BATCH_SIZE, results.length - visibleCount)} more of{" "}
                 {results.length - visibleCount} remaining

@@ -11,12 +11,14 @@ import { RecipeDetail } from "@/components/recipes/recipe-detail";
 import { cn } from "@/lib/utils/cn";
 import {
   ArrowRight,
+  Beef,
   BookOpen,
   CalendarDays,
   CheckCircle2,
   ChevronRight,
   CircleDashed,
   Clock,
+  Flame,
   Plus,
   RefreshCcw,
   ShoppingBasket,
@@ -55,6 +57,49 @@ function dayTotals(day: PlanDay) {
 
 function recipeForMeal(meal: PlannedMeal): Recipe | undefined {
   return meal.recipeId ? RECIPES.find((recipe) => recipe.id === meal.recipeId) : undefined;
+}
+
+/**
+ * One segment per slot, in slot order. Filled = planned, hollow = open. The
+ * week view adds the slot initial underneath so the strip is readable as data
+ * rather than as four anonymous ticks.
+ */
+function SlotStrip({
+  meals,
+  showLabels = false,
+}: {
+  meals: PlannedMeal[];
+  showLabels?: boolean;
+}) {
+  return (
+    <>
+      {meals.map((meal) => {
+        const planned = meal.status !== "open";
+        return (
+          <span key={meal.slot} className="flex min-w-0 flex-1 flex-col items-center gap-1">
+            <span
+              className={cn(
+                "h-1.5 w-full rounded-full transition-colors duration-200 ease-out-soft",
+                planned
+                  ? "bg-primary-600"
+                  : "bg-surface-sunken ring-1 ring-inset ring-hairline-strong"
+              )}
+            />
+            {showLabels && (
+              <span
+                className={cn(
+                  "text-[10px] font-black uppercase leading-none tracking-[0.06em]",
+                  planned ? "text-primary-700" : "text-ink-muted"
+                )}
+              >
+                {meal.slot.slice(0, 1)}
+              </span>
+            )}
+          </span>
+        );
+      })}
+    </>
+  );
 }
 
 export default function MealPlanPage() {
@@ -303,8 +348,8 @@ export default function MealPlanPage() {
                     className={cn(
                       "fw-press relative w-full overflow-hidden rounded-[1.25rem] px-4 py-4 pl-5 text-left ring-1 ring-inset focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600",
                       isSelected
-                        ? "bg-primary-50 ring-primary-300 shadow-e2"
-                        : "bg-surface-subtle ring-hairline hover:-translate-y-0.5 hover:bg-surface hover:ring-primary-200 hover:shadow-e2"
+                        ? "bg-primary-50 ring-primary-300"
+                        : "bg-surface-subtle ring-hairline hover:-translate-y-0.5 hover:bg-surface hover:ring-primary-200"
                     )}
                   >
                     {/* Today rail — the marker has to survive whichever day is
@@ -341,17 +386,7 @@ export default function MealPlanPage() {
                         role="img"
                         aria-label={`${totals.planned} of ${day.meals.length} meals planned`}
                       >
-                        {day.meals.map((meal) => (
-                          <span
-                            key={meal.slot}
-                            className={cn(
-                              "h-1.5 flex-1 rounded-full",
-                              meal.status === "open"
-                                ? "bg-surface-sunken ring-1 ring-inset ring-hairline-strong"
-                                : "bg-primary-500"
-                            )}
-                          />
-                        ))}
+                        <SlotStrip meals={day.meals} />
                       </span>
                       <span className="shrink-0 font-black tabular-nums text-ink-subtle">
                         {totals.planned}/{day.meals.length}
@@ -414,7 +449,7 @@ export default function MealPlanPage() {
               {actionNote && (
                 <div
                   role="status"
-                  className="mt-4 flex items-start gap-2 rounded-[1.15rem] bg-primary-50 px-4 py-3 text-sm font-black text-primary-800 ring-1 ring-inset ring-primary-100"
+                  className="mt-4 flex items-start gap-2 rounded-[1.15rem] bg-primary-50 px-4 py-3 text-sm font-black text-primary-800 ring-1 ring-inset ring-primary-100 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-top-1 motion-safe:duration-300"
                 >
                   <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" strokeWidth={2.25} />
                   <span className="min-w-0 break-words">{actionNote}</span>
@@ -430,10 +465,21 @@ export default function MealPlanPage() {
                   return (
                     <div
                       key={meal.slot}
-                      className={cn(
-                        "rounded-[1.45rem] p-5 transition-colors",
+                      // Open slots read as a hatched well: a hairline dashed
+                      // outline plus a faint diagonal fill, so "nothing here
+                      // yet" is unmistakable without a heavy 2px frame.
+                      style={
                         isOpen
-                          ? "border-2 border-dashed border-hairline-strong bg-surface-muted/70"
+                          ? {
+                              backgroundImage:
+                                "repeating-linear-gradient(135deg, rgba(22,48,42,0.035) 0 6px, transparent 6px 14px)",
+                            }
+                          : undefined
+                      }
+                      className={cn(
+                        "rounded-[1.45rem] p-5 transition-colors duration-200 ease-out-soft",
+                        isOpen
+                          ? "border border-dashed border-hairline-strong bg-surface-muted/70"
                           : "bg-surface-subtle ring-1 ring-inset ring-hairline"
                       )}
                     >
@@ -463,7 +509,7 @@ export default function MealPlanPage() {
                               {isOpen ? " · Suggested" : ""}
                             </p>
                             {isOpen && (
-                              <p className="mt-1 text-[11px] font-black uppercase tracking-[0.12em] text-ink-faint">
+                              <p className="mt-1 text-[11px] font-black uppercase tracking-[0.12em] text-ink-muted">
                                 Open slot — nothing planned yet
                               </p>
                             )}
@@ -475,11 +521,21 @@ export default function MealPlanPage() {
                             >
                               {meal.title}
                             </h3>
-                            <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-bold text-ink-muted">
-                              <span className="tabular-nums">{meal.calories.toLocaleString()} kcal</span>
-                              <span className="tabular-nums">{meal.protein}g protein</span>
-                              <span className="inline-flex items-center gap-1">
-                                <Clock className="h-3.5 w-3.5 shrink-0" strokeWidth={2.25} />
+                            <div className="mt-2 flex flex-wrap items-center gap-1.5 text-xs font-bold">
+                              <span className="inline-flex items-center gap-1 rounded-full bg-surface px-2.5 py-1 text-ink-muted ring-1 ring-inset ring-hairline">
+                                <Flame className="h-3.5 w-3.5 shrink-0 text-primary-600" strokeWidth={2.25} />
+                                <span className="font-black tabular-nums text-ink">
+                                  {meal.calories.toLocaleString()}
+                                </span>
+                                kcal
+                              </span>
+                              <span className="inline-flex items-center gap-1 rounded-full bg-surface px-2.5 py-1 text-ink-muted ring-1 ring-inset ring-hairline">
+                                <Beef className="h-3.5 w-3.5 shrink-0 text-sky-600" strokeWidth={2.25} />
+                                <span className="font-black tabular-nums text-ink">{meal.protein}g</span>
+                                protein
+                              </span>
+                              <span className="inline-flex items-center gap-1 rounded-full bg-surface px-2.5 py-1 text-ink-muted ring-1 ring-inset ring-hairline">
+                                <Clock className="h-3.5 w-3.5 shrink-0 text-ink-subtle" strokeWidth={2.25} />
                                 {meal.prep}
                               </span>
                             </div>
@@ -555,10 +611,30 @@ export default function MealPlanPage() {
                   </Badge>
                 }
               />
-              <div className="mt-5 grid gap-3 md:grid-cols-2">
+              {/* Legend for the strips below — a chart with no key is decoration. */}
+              <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 rounded-[1.15rem] bg-surface-muted px-3.5 py-2.5 ring-1 ring-inset ring-hairline">
+                <span className="inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.1em] text-ink-muted">
+                  <span aria-hidden="true" className="h-1.5 w-6 rounded-full bg-primary-600" />
+                  Planned
+                </span>
+                <span className="inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.1em] text-ink-muted">
+                  <span
+                    aria-hidden="true"
+                    className="h-1.5 w-6 rounded-full bg-surface-sunken ring-1 ring-inset ring-hairline-strong"
+                  />
+                  Open
+                </span>
+                <span className="text-[11px] font-bold text-ink-muted">
+                  B / L / D / S = breakfast, lunch, dinner, snack
+                </span>
+              </div>
+              <div className="mt-4 grid gap-3 md:grid-cols-2">
                 {days.map((day) => {
                   const totals = dayTotals(day);
                   const isToday = day.iso === today;
+                  const openSlots = day.meals
+                    .filter((meal) => meal.status === "open")
+                    .map((meal) => meal.slot);
 
                   return (
                     <button
@@ -570,7 +646,7 @@ export default function MealPlanPage() {
                       }}
                       aria-current={isToday ? "date" : undefined}
                       className={cn(
-                        "fw-press relative overflow-hidden rounded-[1.35rem] p-5 pl-6 text-left ring-1 ring-inset hover:-translate-y-0.5 hover:bg-surface hover:shadow-e2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600",
+                        "fw-press relative overflow-hidden rounded-[1.35rem] p-5 pl-6 text-left ring-1 ring-inset hover:-translate-y-0.5 hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600",
                         isToday
                           ? "bg-primary-50/70 ring-primary-200"
                           : "bg-surface-subtle ring-hairline hover:ring-primary-200"
@@ -602,22 +678,26 @@ export default function MealPlanPage() {
                         </Badge>
                       </div>
                       <div
-                        className="mt-3 flex items-center gap-1"
+                        className="mt-3 flex items-start gap-1"
                         role="img"
-                        aria-label={`${totals.planned} of ${day.meals.length} meals planned on ${day.label}`}
+                        aria-label={`${totals.planned} of ${day.meals.length} meals planned on ${day.label}: ${
+                          openSlots.length > 0
+                            ? `${openSlots.join(", ")} still open`
+                            : "every slot filled"
+                        }`}
                       >
-                        {day.meals.map((meal) => (
-                          <span
-                            key={meal.slot}
-                            className={cn(
-                              "h-1.5 flex-1 rounded-full",
-                              meal.status === "open"
-                                ? "bg-surface-sunken ring-1 ring-inset ring-hairline-strong"
-                                : "bg-primary-500"
-                            )}
-                          />
-                        ))}
+                        <SlotStrip meals={day.meals} showLabels />
                       </div>
+                      <p
+                        className={cn(
+                          "mt-2 break-words text-[11px] font-black uppercase tracking-[0.1em]",
+                          openSlots.length > 0 ? "text-ink-subtle" : "text-primary-700"
+                        )}
+                      >
+                        {openSlots.length > 0
+                          ? `Open: ${openSlots.join(", ")}`
+                          : "Every slot filled"}
+                      </p>
                       <div className="mt-4 grid grid-cols-2 gap-2">
                         <div className="min-w-0 rounded-[1rem] bg-surface px-4 py-3 ring-1 ring-inset ring-hairline">
                           <p className="text-[11px] font-black uppercase tracking-[0.12em] text-ink-subtle">Calories</p>

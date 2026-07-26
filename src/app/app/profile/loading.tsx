@@ -18,7 +18,10 @@ export default function ProfileLoading() {
         </div>
       </header>
 
-      <div className="fw-page-inner space-y-4 pb-28 md:space-y-6 md:pb-8">
+      {/* Matches ProfileClient's container exactly — the app shell already
+          reserves room for the mobile tab bar, so an extra pb here made the
+          skeleton taller than the page it stands in for. */}
+      <div className="fw-page-inner space-y-4 md:space-y-6">
         <section className="grid min-w-0 gap-6 xl:grid-cols-[1.08fr_0.92fr]">
           <div className="fw-dark-panel min-w-0 rounded-[24px] border px-5 py-5 sm:px-8 sm:py-8">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:gap-6">
@@ -46,10 +49,10 @@ export default function ProfileLoading() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               {Array.from({ length: 4 }, (_, index) => (
-                <Skeleton key={index} className="h-24 rounded-[1.35rem] bg-surface-sunken" />
+                <Skeleton key={index} className="h-[5.5rem] rounded-[1.35rem] bg-surface-sunken" />
               ))}
             </div>
-            <Skeleton className="h-24 rounded-[1.35rem] bg-surface-muted" />
+            <Skeleton className="h-[6.5rem] rounded-[1.35rem] bg-surface-muted" />
             <div className="space-y-2">
               <Skeleton className="h-11 rounded-[1.15rem] bg-surface-sunken" />
               <Skeleton className="h-11 rounded-[1.15rem] bg-surface-muted" />

@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
+import { SectionHeader } from "@/components/ui/section-header";
 import type { ArtifactSpec } from "@/lib/coach/types";
 import type { ArtifactCardProps } from "./contract";
 
@@ -23,21 +24,26 @@ export function WorkoutPlanCard({ artifact, onAction }: ArtifactCardProps<Workou
 
   return (
     <Card padding="sm" className="min-w-0 max-w-full">
-      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
-        <div className="flex min-w-0 items-center gap-2.5">
-          <span
-            aria-hidden="true"
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100"
-          >
-            <Dumbbell className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
-          </span>
-          <h3 className="min-w-0 text-base font-black capitalize text-ink">{focusLabel}</h3>
-        </div>
-        <Badge variant="neutral" size="sm" className="shrink-0 tabular-nums">
-          <Timer className="h-3 w-3" strokeWidth={2.25} aria-hidden="true" />
-          {Math.round(artifact.durationMin)} min
-        </Badge>
-      </div>
+      {/* `capitalize` is applied in CSS, not by rewriting the string — the
+          focus label stays lowercase in the DOM. */}
+      <SectionHeader
+        as="h3"
+        icon={Dumbbell}
+        eyebrow="Workout plan"
+        title={focusLabel}
+        description={
+          exercises.length > 0
+            ? `${exercises.length} exercise${exercises.length === 1 ? "" : "s"}`
+            : undefined
+        }
+        action={
+          <Badge variant="neutral" size="sm" className="tabular-nums">
+            <Timer className="h-3 w-3" strokeWidth={2.25} aria-hidden="true" />
+            {Math.round(artifact.durationMin)} min
+          </Badge>
+        }
+        className="[&_h3]:capitalize"
+      />
 
       {exercises.length === 0 ? (
         <EmptyState
@@ -48,12 +54,12 @@ export function WorkoutPlanCard({ artifact, onAction }: ArtifactCardProps<Workou
         />
       ) : (
         <>
-          <div className="mt-3 grid grid-cols-[1.5rem_minmax(0,1fr)_auto] items-baseline gap-x-2.5 px-1 pb-1 text-[0.625rem] font-black uppercase tracking-[0.1em] text-ink-subtle">
+          <div className="mt-3 grid grid-cols-[1.5rem_minmax(0,1fr)_auto] items-baseline gap-x-2.5 px-2 pb-1 text-[0.625rem] font-black uppercase tracking-[0.1em] text-ink-muted">
             <span aria-hidden="true" />
             <span>Exercise</span>
             <span className="text-right">Sets · rest</span>
           </div>
-          <ol className="divide-y divide-hairline rounded-2xl bg-surface-subtle px-2 ring-1 ring-inset ring-hairline">
+          <ol className="divide-y divide-hairline rounded-2xl bg-surface-muted px-2 ring-1 ring-inset ring-hairline">
             {exercises.map((e, i) => (
               <li
                 key={`${e.name}-${i}`}
@@ -63,9 +69,10 @@ export function WorkoutPlanCard({ artifact, onAction }: ArtifactCardProps<Workou
                   {i + 1}
                 </span>
                 <span className="min-w-0 truncate font-bold text-ink">{e.name}</span>
+                {/* Sets and rest never truncate — the whole point of the row. */}
                 <span className="shrink-0 text-right text-xs font-black tabular-nums text-ink-muted">
                   {e.sets}x{e.reps}
-                  <span className="ml-1.5 font-bold text-ink-subtle">{e.restSec}s rest</span>
+                  <span className="ml-1.5 font-bold text-ink-muted">{e.restSec}s rest</span>
                 </span>
               </li>
             ))}

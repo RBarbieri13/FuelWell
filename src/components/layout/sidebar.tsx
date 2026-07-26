@@ -22,18 +22,36 @@ import {
 import { cn } from "@/lib/utils/cn";
 import { Logo } from "@/components/ui/logo";
 
-const navItems = [
-  { href: "/app/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/app/daily-review", label: "Daily review", icon: ClipboardList },
-  { href: "/app/log", label: "Log meal", icon: UtensilsCrossed },
-  { href: "/app/coach", label: "Coach", icon: MessageSquare },
-  { href: "/app/workouts", label: "Workouts", icon: Dumbbell },
-  { href: "/app/recipes", label: "Recipes", icon: BookOpen },
-  { href: "/app/grocery-list", label: "Groceries", icon: ShoppingBasket },
-  { href: "/app/recovery", label: "Recovery", icon: HeartPulse },
-  { href: "/app/progress", label: "Progress", icon: TrendingUp },
-  { href: "/app/profile", label: "Profile", icon: User },
-  { href: "/app/settings", label: "Settings", icon: Settings },
+// Eleven equal-weight rows scan as one undifferentiated list. Grouping keeps
+// the existing order exactly and only adds the seams: what you do today, what
+// you plan and review, and what belongs to the account.
+const navGroups = [
+  {
+    label: "Today",
+    items: [
+      { href: "/app/dashboard", label: "Dashboard", icon: LayoutDashboard },
+      { href: "/app/daily-review", label: "Daily review", icon: ClipboardList },
+      { href: "/app/log", label: "Log meal", icon: UtensilsCrossed },
+      { href: "/app/coach", label: "Coach", icon: MessageSquare },
+    ],
+  },
+  {
+    label: "Plan & progress",
+    items: [
+      { href: "/app/workouts", label: "Workouts", icon: Dumbbell },
+      { href: "/app/recipes", label: "Recipes", icon: BookOpen },
+      { href: "/app/grocery-list", label: "Groceries", icon: ShoppingBasket },
+      { href: "/app/recovery", label: "Recovery", icon: HeartPulse },
+      { href: "/app/progress", label: "Progress", icon: TrendingUp },
+    ],
+  },
+  {
+    label: "Account",
+    items: [
+      { href: "/app/profile", label: "Profile", icon: User },
+      { href: "/app/settings", label: "Settings", icon: Settings },
+    ],
+  },
 ];
 
 // Hidden subpages highlight their owning nav destination so deep routes
@@ -141,49 +159,83 @@ export function Sidebar() {
       </div>
 
       <nav
-        className={cn("min-h-0 flex-1 space-y-1 overflow-y-auto px-3 py-2 pb-4", collapsed && "px-2")}
+        className={cn("min-h-0 flex-1 overflow-y-auto px-3 py-2 pb-4", collapsed && "px-2")}
         role="navigation"
         aria-label="Main"
       >
-        {navItems.map((item) => {
-          const aliasTarget = Object.entries(activeAliases).find(([alias]) =>
-            pathname.startsWith(alias)
-          )?.[1];
-          const isActive = pathname.startsWith(item.href) || aliasTarget === item.href;
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              title={collapsed ? item.label : undefined}
-              aria-current={isActive ? "page" : undefined}
-              className={cn(
-                "fw-press group relative flex min-h-12 items-center gap-3.5 rounded-2xl px-4 py-2.5 text-base font-bold",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 focus-visible:ring-offset-2",
-                collapsed && "justify-center px-0",
-                isActive
-                  ? "bg-gradient-to-b from-primary-500 to-teal-600 font-black text-white shadow-e2"
-                  : "text-ink-muted hover:bg-primary-50/80 hover:text-primary-800"
-              )}
-            >
-              {/* Rail keeps the selection legible when the row scrolls behind
-                  the header blur and for anyone who can't resolve the fill. */}
-              {isActive && !collapsed && (
+        {navGroups.map((group, groupIndex) => (
+          <div
+            key={group.label}
+            role="group"
+            aria-label={group.label}
+            className={groupIndex > 0 ? "mt-3" : undefined}
+          >
+            {collapsed ? (
+              // Collapsed to 72px there is no room for a kicker, so the seam
+              // itself carries the grouping.
+              groupIndex > 0 && (
                 <span
                   aria-hidden="true"
-                  className="absolute left-1.5 top-1/2 h-6 w-1 -translate-y-1/2 rounded-full bg-white/80"
+                  className="mx-auto mb-3 block h-px w-7 rounded-full bg-hairline-strong"
                 />
-              )}
-              <item.icon
-                className={cn(
-                  "h-5 w-5 shrink-0",
-                  isActive ? "text-white" : "text-ink-subtle group-hover:text-primary-700"
-                )}
-                strokeWidth={isActive ? 2.4 : 2}
-              />
-              <span className={cn("truncate", collapsed && "sr-only")}>{item.label}</span>
-            </Link>
-          );
-        })}
+              )
+            ) : (
+              // ink-subtle lands at 3.5:1 against the sidebar's near-white
+              // fill, which an 11px tracked kicker cannot afford.
+              <p className="px-4 pb-1.5 pt-1 text-[0.6875rem] font-black uppercase tracking-[0.14em] text-ink-muted">
+                {group.label}
+              </p>
+            )}
+            <div className="space-y-1">
+              {group.items.map((item) => {
+                const aliasTarget = Object.entries(activeAliases).find(([alias]) =>
+                  pathname.startsWith(alias)
+                )?.[1];
+                const isActive = pathname.startsWith(item.href) || aliasTarget === item.href;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    title={collapsed ? item.label : undefined}
+                    aria-current={isActive ? "page" : undefined}
+                    className={cn(
+                      "fw-press group relative flex min-h-12 items-center gap-3.5 rounded-2xl px-4 py-2.5 text-base font-bold",
+                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 focus-visible:ring-offset-2",
+                      collapsed && "justify-center px-0",
+                      isActive
+                        ? "bg-gradient-to-b from-primary-500 to-teal-600 font-black text-white shadow-e2"
+                        : "text-ink-muted hover:bg-primary-50/80 hover:text-primary-800"
+                    )}
+                  >
+                    {/* Rail keeps the selection legible when the row scrolls
+                        behind the header blur and for anyone who can't resolve
+                        the fill. Collapsed, it moves to the outer edge where
+                        there is no label competing for the space. */}
+                    {isActive && (
+                      <span
+                        aria-hidden="true"
+                        className={cn(
+                          "absolute top-1/2 h-6 w-1 -translate-y-1/2 rounded-full bg-white/80",
+                          collapsed ? "left-1" : "left-1.5"
+                        )}
+                      />
+                    )}
+                    <item.icon
+                      className={cn(
+                        "h-5 w-5 shrink-0",
+                        isActive ? "text-white" : "text-ink-subtle group-hover:text-primary-700"
+                      )}
+                      strokeWidth={isActive ? 2.4 : 2}
+                    />
+                    <span className={cn("truncate", collapsed && "sr-only")}>
+                      {item.label}
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        ))}
       </nav>
 
       {!collapsed && (

@@ -268,7 +268,7 @@ export function CalorieRing({ consumed, target, emphasis = "normal" }: CalorieRi
           className={`${
             compact ? "text-[2.1rem]" : hero ? "text-7xl" : "text-6xl"
           } font-black leading-none tabular-nums ${
-            hasIntake ? (isOver ? "text-accent-700" : "text-ink") : "text-ink-faint"
+            hasIntake ? (isOver ? "text-accent-700" : "text-ink") : "text-ink-muted"
           }`}
         >
           {displayValue.toLocaleString()}

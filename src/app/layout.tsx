@@ -42,6 +42,15 @@ export const metadata: Metadata = {
     title: "FuelWell",
     statusBarStyle: "black-translucent",
   },
+  // iOS Safari otherwise auto-links bare figures — calorie totals, macro grams,
+  // weights — and repaints them as blue underlined tel:/date links, which
+  // breaks every tabular-nums column in the app.
+  formatDetection: {
+    telephone: false,
+    date: false,
+    address: false,
+    email: false,
+  },
   icons: {
     apple: "/apple-touch-icon.png",
   },
@@ -59,8 +68,11 @@ export default function RootLayout({
       className={`${hankenGrotesk.variable} ${quicksand.variable} ${geistMono.variable} h-full antialiased`}
     >
       {/* touch-manipulation removes the double-tap-zoom delay so taps on the
-          marketing and auth pages register as fast as they do in the shell. */}
-      <body className="flex min-h-full flex-col bg-background text-foreground touch-manipulation">
+          marketing and auth pages register as fast as they do in the shell.
+          min-h-dvh (not min-h-full) so the page floor tracks the *small*
+          viewport while mobile browser chrome is showing, instead of leaving a
+          100vh-tall gap under the fold. */}
+      <body className="flex min-h-dvh flex-col bg-background text-foreground touch-manipulation">
         {children}
       </body>
     </html>

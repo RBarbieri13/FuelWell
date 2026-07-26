@@ -33,12 +33,21 @@ export function SeriesToggle({
             aria-pressed={isOn}
             disabled={isLast}
             onClick={() => onToggle(key)}
-            title={isLast ? "Keep at least one series visible" : undefined}
+            title={
+              isLast
+                ? "Keep at least one series visible"
+                : isOn
+                  ? `Hide ${meta.label.toLowerCase()}`
+                  : `Show ${meta.label.toLowerCase()}`
+            }
             className={cn(
               "fw-press inline-flex min-h-11 items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-black ring-inset focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-1 md:min-h-9",
               isOn
                 ? cn("bg-surface shadow-e1 ring-2", meta.ringClass, meta.textClass)
-                : "bg-surface-muted text-ink-subtle ring-1 ring-hairline-strong hover:bg-surface hover:text-ink-muted",
+                : "bg-surface-muted text-ink-subtle ring-1 ring-hairline-strong hover:bg-surface hover:text-ink-muted hover:ring-primary-200",
+              // Disabled here means "already the only series" — dimming it
+              // would read as broken, so it keeps full contrast and explains
+              // itself with the padlock instead.
               isLast ? "cursor-not-allowed" : "cursor-pointer"
             )}
           >
@@ -54,6 +63,9 @@ export function SeriesToggle({
               {isOn ? <Check className="h-2.5 w-2.5 text-white" strokeWidth={3.5} /> : null}
             </span>
             {meta.label}
+            {/* State is carried by the fill, the check, the ring and the raised
+                surface — this makes it carried by words too. */}
+            <span className="sr-only">{isOn ? " — shown" : " — hidden"}</span>
             {isLast ? (
               <Lock className="h-3 w-3 shrink-0 opacity-60" strokeWidth={2.5} aria-hidden="true" />
             ) : null}

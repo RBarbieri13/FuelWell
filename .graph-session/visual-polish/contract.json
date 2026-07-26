@@ -45,6 +45,39 @@
         "src/components/ui/section-header.tsx NEW shared title/description/action row"
       ],
       "evidence": "built CSS asserts .text-neutral-500{color:#516b63}, .text-neutral-900{color:#16302a}, .bg-surface-muted, .shadow-e2, .ease-out-soft all emitted"
+    },
+    "fan_out": {
+      "status": "complete",
+      "surfaces_dispatched": 11,
+      "surfaces_returned": 11,
+      "agents_total": 55,
+      "agents_error": 0,
+      "note": "First run was killed mid-flight by a host process exit; grocery-list/page.tsx was caught with unbalanced JSX and reverted, detail-surfaces.tsx had a half-finished bar->meter rename finished by hand. Resumed via resumeFromRunId; completed agents replayed from cache."
     }
-  }
+  },
+  "final_metrics": {
+    "raw_hex_literals_tsx": 20,
+    "files_with_raw_hex": 8,
+    "neutral_palette_usages": 47,
+    "semantic_token_usages": 2048,
+    "progress_meter_adoption_files": 16,
+    "section_header_adoption_files": 45
+  },
+  "anchors_fired": {
+    "tsc_noEmit": "exit 0",
+    "eslint_src": "exit 0",
+    "next_build": "exit 0",
+    "mobile_component_clipping": "36/36 passed, Chromium + mobile WebKit at 320/375/390/430",
+    "visual_qa_matrix": "52 captures (26 routes x mobile/desktop): 0 nav failures, 0 horizontal overflow, 0 collapsed text nodes, 0 console/page errors",
+    "frozen_rule_violations": 0,
+    "file_ownership_violations": 0
+  },
+  "harness_corrections": [
+    "collapsed-text detector originally checked only the element's own computed display, producing 26 false positives from responsive hidden/lg:hidden ancestors and the closed nav drawer; fixed to walk the full ancestor chain",
+    "fullPage screenshots only captured the first viewport because the app scrolls inside <main> under an h-dvh overflow-hidden shell; fixed by unwinding height/overflow on every ancestor up to <html>"
+  ],
+  "open_observations": [
+    "mobile-nav activeAliases maps /app/progress, /app/fitness and /app/activity onto the Workouts tab (pre-existing, labelled F7). Visible result: standing on Progress, the bottom nav highlights Workouts. Deliberate prior IA decision, left unchanged - flagged for a product call.",
+    "dashboard/score and calorie-ring empty state used text-ink-faint on white (~2.28:1) - raised as blockers by the a11y lens and repaired in-run; re-verify visually if the palette shifts again."
+  ]
 }

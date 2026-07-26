@@ -21,8 +21,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { SectionHeader } from "@/components/ui/section-header";
-import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils/cn";
+import LogLoading from "./loading";
 import { formatMealType, type MacroTotals, type MealType } from "@/lib/fuelwell-data";
 import {
   buildDailyGoalContext,
@@ -81,6 +81,17 @@ const MODE_HELP: Record<LogMode, { title: string; detail: string }> = {
     detail: "Scan or type a barcode, then confirm the serving size.",
   },
 };
+
+/** Macro roles carry the same colour here as in the totals panel. */
+const DRAWER_MACROS: {
+  key: "protein" | "carbs" | "fat";
+  label: string;
+  color: string;
+}[] = [
+  { key: "protein", label: "protein", color: "var(--color-macro-protein)" },
+  { key: "carbs", label: "carbs", color: "var(--color-macro-carbs)" },
+  { key: "fat", label: "fat", color: "var(--color-macro-fat)" },
+];
 
 /** Shared pill chrome for the meal-slot selectors, so both copies match. */
 const SLOT_PILL_BASE =
@@ -278,7 +289,7 @@ function LogContent() {
                   className={cn(
                     "fw-press flex min-h-12 min-w-0 items-center justify-center gap-1.5 rounded-[1.15rem] px-2 py-3 text-sm font-black focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2 sm:gap-2 sm:px-3",
                     isOn
-                      ? "bg-primary-600 text-white shadow-glow ring-1 ring-inset ring-primary-700"
+                      ? "bg-primary-700 text-white shadow-glow ring-1 ring-inset ring-primary-800"
                       : "text-ink-muted hover:bg-primary-50 hover:text-primary-800 active:bg-primary-100"
                   )}
                 >
@@ -356,6 +367,7 @@ function LogContent() {
                 </span>
                 {MEAL_TYPES.map((type) => {
                   const isOn = mealType === type;
+                  const SlotIcon = MEAL_ICONS[type];
                   return (
                     <button
                       key={type}
@@ -365,14 +377,21 @@ function LogContent() {
                       className={cn(
                         SLOT_PILL_BASE,
                         isOn
-                          ? "bg-primary-600 text-white shadow-e1 ring-primary-700"
-                          : "bg-primary-50 text-primary-800 ring-primary-100 hover:bg-primary-100 hover:ring-primary-200"
+                          ? "bg-primary-700 text-white shadow-e1 ring-primary-800"
+                          : "bg-surface-muted text-ink-muted ring-hairline hover:bg-primary-50 hover:text-primary-800 hover:ring-primary-100"
                       )}
                     >
-                      {isOn && (
-                        <Check aria-hidden="true" className="h-3 w-3" strokeWidth={3} />
-                      )}
+                      {/* Same glyph as the rail selector, so the two copies of
+                          this control are recognisably the same control. */}
+                      <SlotIcon
+                        aria-hidden="true"
+                        className="h-3.5 w-3.5 shrink-0"
+                        strokeWidth={isOn ? 2.5 : 2}
+                      />
                       {formatMealType(type)}
+                      {isOn && (
+                        <Check aria-hidden="true" className="h-3 w-3 shrink-0" strokeWidth={3} />
+                      )}
                     </button>
                   );
                 })}
@@ -497,17 +516,34 @@ function RecentMeals({
             }),
             { calories: 0, protein: 0, carbs: 0, fat: 0 }
           );
+          const MealIcon = MEAL_ICONS[meal.mealType];
           return (
             <button
               key={meal.id}
               type="button"
               onClick={() => onLog(meal.name, mealTotals)}
-              className="fw-press min-h-16 rounded-[1.2rem] bg-surface-muted px-4 py-3 text-left ring-1 ring-inset ring-hairline hover:-translate-y-0.5 hover:bg-surface hover:shadow-e2 hover:ring-primary-200 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2"
+              aria-label={`Log ${meal.name} again to ${formatMealType(
+                meal.mealType
+              ).toLowerCase()}: ${mealTotals.calories.toLocaleString()} kcal, ${
+                mealTotals.protein
+              }g protein`}
+              className="fw-press flex min-h-20 flex-col justify-between gap-2 rounded-[1.2rem] bg-surface-muted px-4 py-3 text-left ring-1 ring-inset ring-hairline hover:-translate-y-0.5 hover:bg-surface hover:shadow-e2 hover:ring-primary-200 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2"
             >
-              <span className="line-clamp-2 block text-sm font-black text-ink">
-                {meal.name}
+              <span className="flex min-w-0 items-start gap-2">
+                <span
+                  aria-hidden="true"
+                  className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-[0.7rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100"
+                >
+                  <MealIcon className="h-3.5 w-3.5" strokeWidth={2} />
+                </span>
+                <span className="line-clamp-2 min-w-0 text-sm font-black text-ink">
+                  {meal.name}
+                </span>
               </span>
-              <span className="mt-1 block text-xs font-bold text-ink-muted">
+              <span
+                aria-hidden="true"
+                className="block text-xs font-bold text-ink-muted"
+              >
                 <span className="tabular-nums">{mealTotals.calories.toLocaleString()}</span>{" "}
                 kcal · <span className="tabular-nums">{mealTotals.protein}</span>g protein
               </span>
@@ -555,7 +591,17 @@ function SessionIngredientDrawer({
   ];
 
   return (
-    <aside
+    <>
+      {/* Scrim: a full-height panel with nothing behind it dimmed reads as a
+          layout bug rather than a layer. Clicking it closes, matching Escape. */}
+      {open && (
+        <div
+          aria-hidden="true"
+          onClick={onClose}
+          className="fixed inset-0 z-30 bg-ink/25 backdrop-blur-[2px]"
+        />
+      )}
+      <aside
       className={cn(
         "fixed bottom-0 right-0 top-0 z-40 w-full max-w-md transform bg-surface shadow-e4 ring-1 ring-inset ring-hairline transition-transform duration-300 ease-out-soft md:top-0",
         open ? "translate-x-0" : "hidden translate-x-full"
@@ -585,7 +631,9 @@ function SessionIngredientDrawer({
           </button>
         </div>
 
-        <div className="grid grid-cols-4 gap-2 px-5 py-4">
+        {/* 2×2 below 400px: four columns clip a four-digit calorie figure on a
+            320px screen, and a clipped metric is worse than a taller panel. */}
+        <div className="grid grid-cols-2 gap-2 px-5 py-4 min-[400px]:grid-cols-4">
           {tiles.map((tile) => (
             <div
               key={tile.label}
@@ -614,13 +662,29 @@ function SessionIngredientDrawer({
                   className="rounded-[1rem] bg-surface-muted px-4 py-3 ring-1 ring-inset ring-hairline"
                 >
                   <p className="text-sm font-black text-ink">{ingredient.name}</p>
-                  <p className="mt-1 text-xs font-semibold leading-5 text-ink-muted">
-                    <span className="tabular-nums">
-                      {ingredient.totals.calories.toLocaleString()}
-                    </span>{" "}
-                    kcal · <span className="tabular-nums">{ingredient.totals.protein}</span>g
-                    protein · <span className="tabular-nums">{ingredient.totals.carbs}</span>g
-                    carbs · <span className="tabular-nums">{ingredient.totals.fat}</span>g fat
+                  <p className="mt-1 flex flex-wrap items-center gap-x-2.5 gap-y-0.5 text-xs font-semibold leading-5 text-ink-muted">
+                    <span className="whitespace-nowrap font-black text-ink">
+                      <span className="tabular-nums">
+                        {ingredient.totals.calories.toLocaleString()}
+                      </span>{" "}
+                      kcal
+                    </span>
+                    {DRAWER_MACROS.map((macro) => (
+                      <span
+                        key={macro.key}
+                        className="inline-flex items-center gap-1 whitespace-nowrap"
+                      >
+                        <span
+                          aria-hidden="true"
+                          className="h-1.5 w-1.5 shrink-0 rounded-full"
+                          style={{ backgroundColor: macro.color }}
+                        />
+                        <span className="tabular-nums">
+                          {ingredient.totals[macro.key]}
+                        </span>
+                        g {macro.label}
+                      </span>
+                    ))}
                   </p>
                 </div>
               ))}
@@ -628,7 +692,8 @@ function SessionIngredientDrawer({
           )}
         </div>
       </div>
-    </aside>
+      </aside>
+    </>
   );
 }
 
@@ -681,22 +746,11 @@ function MealTypeSelector({
 }
 
 export default function LogPage() {
+  // Reuse the route-level skeleton rather than keeping a second, coarser copy
+  // here — two different pending states for one screen guarantees one of them
+  // reflows into the real layout.
   return (
-    <Suspense
-      fallback={
-        <div
-          className="mx-auto w-full max-w-6xl min-w-0 space-y-4 p-4 pb-28 md:space-y-5 md:p-8"
-          role="status"
-          aria-label="Loading meal logging"
-        >
-          <Skeleton className="h-28 rounded-[24px] bg-[#123d32]/85 md:h-32" />
-          <div className="grid min-w-0 gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.72fr)]">
-            <Skeleton className="h-72 rounded-[24px] bg-surface/80" />
-            <Skeleton className="h-72 rounded-[24px] bg-surface/80" />
-          </div>
-        </div>
-      }
-    >
+    <Suspense fallback={<LogLoading />}>
       <LogContent />
     </Suspense>
   );

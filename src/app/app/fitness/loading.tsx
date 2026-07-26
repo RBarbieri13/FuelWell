@@ -1,9 +1,10 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
 /**
- * Mirrors the Activity-detail route: hero, the summary tile row, then the
- * stack of activity log cards. Same rhythm as the loaded page so the first
- * paint doesn't reflow.
+ * Mirrors the Activity-detail route: the compact hero row, the four target
+ * tiles (icon + pill + big number + meter), the stack of activity log cards,
+ * then the workout manager and the two footer notes. Same rhythm and the same
+ * radii as the loaded page, so the first paint doesn't reflow.
  */
 export default function FitnessLoading() {
   return (
@@ -16,12 +17,12 @@ export default function FitnessLoading() {
       </div>
 
       <div className="fw-page-inner space-y-4 pb-28 md:space-y-6 md:pb-8">
-        <div className="rounded-[24px] border border-hairline bg-surface p-5 shadow-e3 md:p-6">
+        <div className="rounded-[1.35rem] border border-hairline bg-surface px-5 py-4 shadow-e2 md:px-6 md:py-5">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div className="flex min-w-0 flex-1 items-start gap-3">
-              <Skeleton className="h-11 w-11 shrink-0 rounded-[1rem] bg-primary-100/80" />
+              <Skeleton className="h-9 w-9 shrink-0 rounded-[0.9rem] bg-primary-100/80" />
               <div className="min-w-0 flex-1 space-y-2">
-                <Skeleton className="h-3.5 w-32 rounded-full bg-surface-muted" />
+                <Skeleton className="h-3 w-32 rounded-full bg-surface-muted" />
                 <Skeleton className="h-6 w-64 max-w-full rounded-xl bg-surface-sunken" />
                 <Skeleton className="h-3.5 w-full rounded-full bg-surface-muted" />
               </div>
@@ -30,12 +31,23 @@ export default function FitnessLoading() {
           </div>
         </div>
 
+        {/* Four target tiles: chip + percent pill, the figure, then the meter. */}
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
           {[0, 1, 2, 3].map((index) => (
-            <div key={index} className="space-y-3 rounded-[24px] border border-hairline bg-surface p-4 shadow-e2">
-              <Skeleton className="h-10 w-10 rounded-[1rem] bg-surface-sunken" />
-              <Skeleton className="h-7 w-20 rounded-xl bg-surface-sunken" />
+            <div
+              key={index}
+              className="space-y-2.5 rounded-[1.2rem] border border-hairline bg-surface px-4 py-3.5 shadow-e2 md:px-5 md:py-4"
+            >
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex min-w-0 items-center gap-3">
+                  <Skeleton className="h-[30px] w-[30px] shrink-0 rounded-full bg-surface-sunken" />
+                  <Skeleton className="h-4 w-16 max-w-full rounded-full bg-surface-muted" />
+                </div>
+                <Skeleton className="h-6 w-12 shrink-0 rounded-full bg-surface-muted" />
+              </div>
+              <Skeleton className="h-7 w-24 max-w-full rounded-xl bg-surface-sunken" />
               <Skeleton className="h-3.5 w-full rounded-full bg-surface-muted" />
+              <Skeleton className="h-1.5 w-full rounded-full bg-surface-sunken" />
             </div>
           ))}
         </div>
@@ -53,6 +65,38 @@ export default function FitnessLoading() {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Workout manager, then the source-check row. */}
+        <div className="space-y-4 rounded-[1.5rem] border border-hairline bg-surface px-5 py-5 shadow-e2 md:px-6">
+          <div className="flex items-center gap-3">
+            <Skeleton className="h-9 w-9 shrink-0 rounded-[0.9rem] bg-primary-100/80" />
+            <div className="min-w-0 flex-1 space-y-2">
+              <Skeleton className="h-5 w-44 max-w-full rounded-full bg-surface-sunken" />
+              <Skeleton className="h-3.5 w-64 max-w-full rounded-full bg-surface-muted" />
+            </div>
+          </div>
+          <Skeleton className="h-11 w-full rounded-[1rem] bg-surface-muted" />
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Skeleton className="h-11 rounded-[1rem] bg-surface-muted" />
+            <Skeleton className="h-11 rounded-[1rem] bg-surface-muted" />
+          </div>
+        </div>
+
+        <div className="rounded-[1.5rem] border border-hairline bg-surface px-5 py-5 shadow-e2 md:px-6">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div className="flex min-w-0 flex-1 items-start gap-3">
+              <Skeleton className="h-9 w-9 shrink-0 rounded-[0.9rem] bg-primary-100/80" />
+              <div className="min-w-0 flex-1 space-y-2">
+                <Skeleton className="h-5 w-40 max-w-full rounded-full bg-surface-sunken" />
+                <Skeleton className="h-3.5 w-full rounded-full bg-surface-muted" />
+              </div>
+            </div>
+            <div className="flex shrink-0 flex-wrap gap-2">
+              <Skeleton className="h-11 w-32 rounded-full bg-surface-muted" />
+              <Skeleton className="h-11 w-40 rounded-full bg-surface-muted" />
+            </div>
+          </div>
         </div>
 
         <Skeleton className="h-28 rounded-[1.5rem] bg-lemon-50/80" />

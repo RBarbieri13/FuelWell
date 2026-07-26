@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Check, Plus, ShoppingBasket } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ProgressMeter } from "@/components/ui/progress-meter";
 import { SectionHeader } from "@/components/ui/section-header";
 import type { ArtifactSpec, GroceryItem } from "@/lib/coach/types";
 import { groceryItemKey, normalizeGroceryInput } from "@/lib/grocery-normalization";
@@ -36,6 +37,8 @@ export function GroceryListCard({ artifact, onAction }: ArtifactCardProps<Grocer
       : artifact.added && artifact.added.length > 0
         ? `Added ${artifact.added.map((name) => normalizeGroceryInput(name).name).join(", ")}`
         : null;
+  // Clearing the list removes things; it should not wear the same green as an add.
+  const contextIsRemoval = Boolean(artifact.cleared);
 
   function submitAdd() {
     const { name, quantity } = normalizeGroceryInput(draft);
@@ -59,11 +62,32 @@ export function GroceryListCard({ artifact, onAction }: ArtifactCardProps<Grocer
         }
       />
 
+      {items.length > 0 && (
+        <ProgressMeter
+          className="mt-2.5"
+          size="sm"
+          value={boughtCount}
+          target={items.length}
+          color="var(--color-primary-500)"
+          label={`${boughtCount} of ${items.length} items bought`}
+        />
+      )}
+
       {contextLine && (
-        <p className="mt-2 flex max-w-full items-start gap-1.5 rounded-[0.9rem] bg-primary-50 px-2.5 py-1.5 text-xs font-black text-primary-800 ring-1 ring-inset ring-primary-100">
+        <p
+          className={cn(
+            "mt-2.5 flex max-w-full items-start gap-1.5 rounded-[0.9rem] px-2.5 py-1.5 text-xs font-black ring-1 ring-inset",
+            contextIsRemoval
+              ? "bg-lemon-50 text-lemon-700 ring-lemon-200"
+              : "bg-primary-50 text-primary-800 ring-primary-100"
+          )}
+        >
           <span
             aria-hidden="true"
-            className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary-500"
+            className={cn(
+              "mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full",
+              contextIsRemoval ? "bg-lemon-500" : "bg-primary-500"
+            )}
           />
           <span className="min-w-0 break-words">{contextLine}</span>
         </p>
@@ -73,7 +97,7 @@ export function GroceryListCard({ artifact, onAction }: ArtifactCardProps<Grocer
         <div className="mt-3 flex items-center gap-3 rounded-[1.25rem] bg-surface-muted px-3 py-4 ring-1 ring-inset ring-hairline">
           <span
             aria-hidden="true"
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.9rem] bg-surface text-ink-subtle ring-1 ring-inset ring-hairline-strong"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[1rem] bg-surface text-ink-subtle ring-1 ring-inset ring-hairline-strong"
           >
             <ShoppingBasket className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
           </span>
@@ -91,61 +115,73 @@ export function GroceryListCard({ artifact, onAction }: ArtifactCardProps<Grocer
             <div>Item</div>
             <div className="hidden sm:block">Quantity</div>
           </div>
-          {items.map((item) => (
-            <div
-              key={item.id}
-              className={cn(
-                "grid min-h-12 min-w-0 grid-cols-[2.75rem_minmax(0,1fr)] items-center border-t border-hairline px-2 py-1.5 sm:grid-cols-[3.75rem_minmax(0,1fr)_7.25rem] sm:px-3",
-                changedKeys.has(groceryItemKey(item.name)) ? "bg-primary-50/80" : "bg-surface"
-              )}
-            >
-              <button
-                type="button"
-                aria-label={
-                  item.checked ? `Mark ${item.name} as not bought` : `Mark ${item.name} as bought`
-                }
-                onClick={() =>
-                  onAction({
-                    kind: "invoke_tool",
-                    name: "check_grocery_item",
-                    input: { item: item.id },
-                  })
-                }
-                className="fw-press flex h-11 w-11 items-center justify-center rounded-full hover:bg-primary-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 active:bg-primary-100"
+          {items.map((item) => {
+            const changed = changedKeys.has(groceryItemKey(item.name));
+            return (
+              <div
+                key={item.id}
+                className={cn(
+                  "relative grid min-h-12 min-w-0 grid-cols-[2.75rem_minmax(0,1fr)] items-center border-t border-hairline px-2 py-1.5 sm:grid-cols-[3.75rem_minmax(0,1fr)_7.25rem] sm:px-3",
+                  changed ? "bg-primary-50/80" : "bg-surface"
+                )}
               >
-                <span
-                  className={cn(
-                    "flex h-6 w-6 shrink-0 items-center justify-center rounded-full ring-1 ring-inset transition-colors",
-                    item.checked
-                      ? "bg-primary-600 text-white ring-primary-700/20"
-                      : "bg-surface ring-hairline-strong"
-                  )}
+                {changed && (
+                  <span
+                    aria-hidden="true"
+                    className="absolute inset-y-0 left-0 w-1 bg-primary-500"
+                  />
+                )}
+                <button
+                  type="button"
+                  aria-label={
+                    item.checked ? `Mark ${item.name} as not bought` : `Mark ${item.name} as bought`
+                  }
+                  aria-pressed={item.checked}
+                  onClick={() =>
+                    onAction({
+                      kind: "invoke_tool",
+                      name: "check_grocery_item",
+                      input: { item: item.id },
+                    })
+                  }
+                  className="fw-press flex h-11 w-11 items-center justify-center rounded-full hover:bg-primary-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 active:bg-primary-100"
                 >
-                  {item.checked && <Check className="h-3.5 w-3.5" strokeWidth={3} />}
-                </span>
-              </button>
-              <div className="min-w-0 py-1">
-                <span
-                  className={cn(
-                    "block min-w-0 break-words text-sm font-black",
-                    item.checked ? "text-ink-muted line-through" : "text-ink"
-                  )}
-                >
-                  {item.name}
-                </span>
-                <span className="mt-1 inline-flex max-w-full break-words rounded-full bg-surface-muted px-2.5 py-1 text-xs font-bold tabular-nums text-ink-muted ring-1 ring-inset ring-hairline sm:hidden">
+                  <span
+                    className={cn(
+                      "flex h-6 w-6 shrink-0 items-center justify-center rounded-full ring-1 ring-inset transition-colors duration-200 ease-out-soft",
+                      item.checked
+                        ? "bg-primary-600 text-white ring-primary-700/20"
+                        : "bg-surface ring-hairline-strong"
+                    )}
+                  >
+                    {item.checked && <Check className="h-3.5 w-3.5" strokeWidth={3} />}
+                  </span>
+                </button>
+                <div className="min-w-0 py-1">
+                  <span
+                    className={cn(
+                      "block min-w-0 break-words text-sm font-black transition-colors duration-200 ease-out-soft",
+                      item.checked
+                        ? "text-ink-muted line-through decoration-ink-faint"
+                        : "text-ink"
+                    )}
+                  >
+                    {item.name}
+                  </span>
+                  <span className="mt-1 inline-flex max-w-full break-words rounded-full bg-surface-muted px-2.5 py-1 text-xs font-bold tabular-nums text-ink-muted ring-1 ring-inset ring-hairline sm:hidden">
+                    {item.quantity ?? "1 item"}
+                  </span>
+                </div>
+                <span className="hidden min-w-0 break-words rounded-full bg-surface-muted px-3 py-1.5 text-center text-xs font-bold tabular-nums text-ink-muted ring-1 ring-inset ring-hairline sm:block">
                   {item.quantity ?? "1 item"}
                 </span>
               </div>
-              <span className="hidden min-w-0 break-words rounded-full bg-surface-muted px-3 py-1.5 text-center text-xs font-bold tabular-nums text-ink-muted ring-1 ring-inset ring-hairline sm:block">
-                {item.quantity ?? "1 item"}
-              </span>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
-      <div className="mt-3 flex items-center gap-2 border-t border-hairline pt-3">
+      <div className="mt-3 flex items-center gap-2 border-t border-dashed border-hairline-strong pt-3">
         <input
           type="text"
           value={draft}

@@ -24,6 +24,7 @@ import {
   Scale,
   ShoppingBasket,
   SlidersHorizontal,
+  ShieldAlert,
   ShieldCheck,
   Sparkles,
   Target,
@@ -613,57 +614,83 @@ export default function OnboardingPage() {
     return (
       <main className="fw-app-surface min-h-full">
         <div className="fw-page-inner flex min-h-full max-w-3xl flex-col items-stretch justify-center gap-5 py-10">
-          <section className="animate-in fade-in slide-in-from-bottom-3 rounded-[2rem] border border-hairline bg-surface/95 p-6 text-center shadow-e4 duration-500 ease-out-soft md:p-10">
-            <span className="relative mx-auto flex h-20 w-20 items-center justify-center">
-              <span
-                aria-hidden="true"
-                className="absolute inset-0 rounded-full bg-primary-100/70 blur-lg"
-              />
-              <span
-                aria-hidden="true"
-                className="absolute inset-1 rounded-full ring-1 ring-inset ring-primary-200"
-              />
-              <span className="animate-in zoom-in relative flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-b from-primary-500 to-teal-600 text-white shadow-glow duration-700 ease-spring">
-                <Check className="h-8 w-8" strokeWidth={2.5} />
+          {/* The payoff screen. Content lands in sequence — seal, headline,
+              target, macros — so it reads as a reveal rather than a form that
+              happened to change. All delays are transitions/animations, which
+              the global prefers-reduced-motion rule collapses to ~0ms. */}
+          <section className="animate-in fade-in slide-in-from-bottom-3 relative overflow-hidden rounded-[2rem] border border-hairline bg-surface/95 p-6 text-center shadow-e4 duration-500 ease-out-soft md:p-10">
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute -top-24 left-1/2 h-56 w-[28rem] max-w-[140%] -translate-x-1/2 rounded-full bg-primary-100/55 blur-3xl"
+            />
+            <div className="relative">
+              <span className="relative mx-auto flex h-24 w-24 items-center justify-center">
+                <span
+                  aria-hidden="true"
+                  className="animate-in zoom-in absolute inset-0 rounded-full bg-primary-100/60 duration-700 ease-out-soft"
+                />
+                <span
+                  aria-hidden="true"
+                  className="animate-in zoom-in absolute inset-2 rounded-full ring-1 ring-inset ring-primary-200 delay-100 duration-700 ease-out-soft"
+                />
+                <span className="animate-in zoom-in relative flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-b from-primary-500 to-teal-600 text-white shadow-glow duration-700 ease-spring">
+                  <Check className="h-8 w-8" strokeWidth={2.5} />
+                </span>
               </span>
-            </span>
-            <p className="mt-5 text-[0.6875rem] font-black uppercase tracking-[0.18em] text-primary-700">
-              Setup complete
-            </p>
-            <h1 className="fw-heading mt-1.5 text-2xl md:text-4xl">
-              {data.displayName ? `You're set, ${data.displayName}.` : "You're all set."}
-            </h1>
-            <p className="mx-auto mt-3 max-w-md text-base font-semibold leading-7 text-ink-subtle">
-              Your plan is live. The dashboard, coach, and meal suggestions now
-              use these targets.
-            </p>
-            <div className="fw-mint-panel mt-6 rounded-[1.75rem] border p-5">
-              <p className="text-sm font-black uppercase tracking-[0.16em] text-primary-700">
-                Daily calorie target
+              <p className="animate-in fade-in mt-5 text-[0.6875rem] font-black uppercase tracking-[0.18em] text-primary-700 delay-150 duration-500 fill-mode-both">
+                Setup complete
               </p>
-              <div className="mt-2 flex items-end justify-center gap-2">
-                <p className="text-5xl font-black leading-none tabular-nums text-ink">
-                  {celebration.macros.calories}
+              <h1 className="fw-heading animate-in fade-in slide-in-from-bottom-2 mt-1.5 text-2xl delay-200 duration-500 ease-out-soft fill-mode-both md:text-4xl">
+                {data.displayName ? `You're set, ${data.displayName}.` : "You're all set."}
+              </h1>
+              <p className="animate-in fade-in mx-auto mt-3 max-w-md text-base font-semibold leading-7 text-ink-muted delay-300 duration-500 fill-mode-both">
+                Your plan is live. The dashboard, coach, and meal suggestions now
+                use these targets.
+              </p>
+              <div className="fw-mint-panel animate-in fade-in slide-in-from-bottom-2 mt-6 rounded-[1.75rem] border p-5 delay-300 duration-500 ease-out-soft fill-mode-both">
+                <p className="text-sm font-black uppercase tracking-[0.16em] text-primary-700">
+                  Daily calorie target
                 </p>
-                <p className="pb-1 text-sm font-black uppercase tracking-[0.1em] text-primary-700">
-                  kcal/day
-                </p>
+                <div className="mt-2 flex flex-wrap items-end justify-center gap-x-2 gap-y-1">
+                  <p className="text-5xl font-black leading-none tabular-nums text-ink">
+                    {celebration.macros.calories}
+                  </p>
+                  <p className="pb-1 text-sm font-black uppercase tracking-[0.1em] text-primary-700">
+                    kcal/day
+                  </p>
+                </div>
               </div>
+              <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                {(
+                  [
+                    ["protein", "Protein", celebration.macros.protein],
+                    ["carbs", "Carbs", celebration.macros.carbs],
+                    ["fat", "Fat", celebration.macros.fat],
+                  ] as const
+                ).map(([color, label, value], index) => (
+                  <MacroTile
+                    key={label}
+                    color={color}
+                    label={label}
+                    value={value}
+                    className="animate-in fade-in slide-in-from-bottom-2 duration-500 ease-out-soft fill-mode-both"
+                    style={{ animationDelay: `${380 + index * 90}ms` }}
+                  />
+                ))}
+              </div>
+              <MacroSplitMeter
+                className="animate-in fade-in mt-4 delay-700 duration-500 fill-mode-both"
+                macros={celebration.macros}
+              />
+              <Button
+                size="lg"
+                className="mt-8 w-full sm:w-auto"
+                onClick={() => router.push("/app/dashboard?setup=complete")}
+              >
+                Open your dashboard
+                <ArrowRight className="h-4 w-4" />
+              </Button>
             </div>
-            <div className="mt-4 grid gap-3 sm:grid-cols-3">
-              <MacroTile color="protein" label="Protein" value={celebration.macros.protein} />
-              <MacroTile color="carbs" label="Carbs" value={celebration.macros.carbs} />
-              <MacroTile color="fat" label="Fat" value={celebration.macros.fat} />
-            </div>
-            <MacroSplitMeter className="mt-4" macros={celebration.macros} />
-            <Button
-              size="lg"
-              className="mt-8 w-full sm:w-auto"
-              onClick={() => router.push("/app/dashboard?setup=complete")}
-            >
-              Open your dashboard
-              <ArrowRight className="h-4 w-4" />
-            </Button>
           </section>
         </div>
       </main>
@@ -788,33 +815,47 @@ export default function OnboardingPage() {
                     <h2 className="fw-heading text-2xl md:text-3xl">{currentStep.title}</h2>
                   </div>
                 </div>
-                <p className="shrink-0 text-sm font-black tabular-nums text-ink-subtle md:text-right">
+                <p className="shrink-0 text-sm font-black tabular-nums text-ink-muted md:text-right">
                   {Math.round(progress)}% complete
                 </p>
               </div>
 
               <StepProgress current={step} total={totalSteps} className="mt-4 md:mt-5" />
 
+              {/* Four states, not three: answered steps carry a check so the
+                  jump-back targets are distinguishable from steps that are
+                  merely unlocked but still ahead of the cursor. */}
               <div className="mt-4 hidden flex-wrap gap-1.5 md:flex">
                 {STEP_META.map((meta, index) => {
                   const isCurrent = index === step;
                   const isUnlocked = index <= maxStepReached;
+                  const isAnswered = isUnlocked && index < step;
                   return (
                     <button
                       key={meta.short}
                       type="button"
                       onClick={() => setStep(index)}
                       disabled={!isUnlocked}
+                      title={meta.title}
                       aria-current={isCurrent ? "step" : undefined}
                       className={cn(
-                        "fw-press rounded-full px-2.5 py-1.5 text-[11px] font-black ring-1 ring-inset",
+                        "fw-press inline-flex items-center gap-1 rounded-full px-2.5 py-1.5 text-[11px] font-black ring-1 ring-inset",
                         isCurrent
                           ? "bg-primary-600 text-white ring-primary-700 shadow-e1"
-                          : isUnlocked
-                            ? "bg-primary-50 text-primary-800 ring-primary-100 hover:bg-primary-100"
-                            : "cursor-default bg-surface-muted text-ink-faint ring-hairline"
+                          : isAnswered
+                            ? "bg-primary-50 text-primary-800 ring-primary-200 hover:bg-primary-100"
+                            : isUnlocked
+                              ? "bg-surface text-ink-muted ring-hairline-strong hover:bg-primary-50 hover:text-primary-800 hover:ring-primary-200"
+                              : "cursor-default bg-surface-muted text-ink-faint ring-hairline"
                       )}
                     >
+                      {isAnswered && (
+                        <Check
+                          aria-hidden="true"
+                          className="h-3 w-3 shrink-0 text-primary-600"
+                          strokeWidth={3}
+                        />
+                      )}
                       {meta.short}
                     </button>
                   );
@@ -822,8 +863,18 @@ export default function OnboardingPage() {
               </div>
 
               {resumed && (
-                <p className="mt-4 rounded-2xl bg-primary-50 px-4 py-3 text-sm font-bold text-primary-800 ring-1 ring-inset ring-primary-100">
-                  Picked up where you left off. Your progress is saved on this device.
+                <p
+                  role="status"
+                  className="mt-4 flex items-start gap-2.5 rounded-2xl bg-primary-50 px-4 py-3 text-sm font-bold leading-6 text-primary-800 ring-1 ring-inset ring-primary-100"
+                >
+                  <Clock3
+                    aria-hidden="true"
+                    className="mt-0.5 h-4 w-4 shrink-0 text-primary-600"
+                    strokeWidth={2}
+                  />
+                  <span className="min-w-0">
+                    Picked up where you left off. Your progress is saved on this device.
+                  </span>
                 </p>
               )}
             </div>
@@ -1007,7 +1058,7 @@ export default function OnboardingPage() {
                 >
                   <div className="space-y-5">
                     <div>
-                      <p className="mb-3 text-[0.6875rem] font-black uppercase tracking-[0.16em] text-ink-subtle">
+                      <p className="mb-3 text-[0.6875rem] font-black uppercase tracking-[0.16em] text-ink-muted">
                         Goal aggressiveness
                       </p>
                       <div className="grid gap-3 md:grid-cols-2">
@@ -1024,7 +1075,7 @@ export default function OnboardingPage() {
                       </div>
                     </div>
                     <div>
-                      <p className="mb-3 text-[0.6875rem] font-black uppercase tracking-[0.16em] text-ink-subtle">
+                      <p className="mb-3 text-[0.6875rem] font-black uppercase tracking-[0.16em] text-ink-muted">
                         Diet flexibility
                       </p>
                       <div className="grid gap-3 md:grid-cols-2">
@@ -1109,7 +1160,7 @@ export default function OnboardingPage() {
                   </div>
                   <div className="grid gap-5 xl:grid-cols-2">
                     <div>
-                      <p className="mb-3 text-[0.6875rem] font-black uppercase tracking-[0.16em] text-ink-subtle">
+                      <p className="mb-3 text-[0.6875rem] font-black uppercase tracking-[0.16em] text-ink-muted">
                         Grocery budget habits
                       </p>
                       <div className="grid gap-3">
@@ -1126,7 +1177,7 @@ export default function OnboardingPage() {
                       </div>
                     </div>
                     <div>
-                      <p className="mb-3 text-[0.6875rem] font-black uppercase tracking-[0.16em] text-ink-subtle">
+                      <p className="mb-3 text-[0.6875rem] font-black uppercase tracking-[0.16em] text-ink-muted">
                         Cooking habits
                       </p>
                       <div className="grid gap-3">
@@ -1158,7 +1209,7 @@ export default function OnboardingPage() {
                         onClick={() => toggleAllergy(allergy)}
                         icon={allergy === "None" ? Check : WheatOff}
                         title={allergy}
-                        selectedClassName="bg-accent-50 text-accent-700 shadow-e1 ring-2 ring-accent-400"
+                        tone="accent"
                       />
                     ))}
                   </div>
@@ -1212,7 +1263,7 @@ export default function OnboardingPage() {
                 >
                   <div className="space-y-5">
                     <div>
-                      <p className="mb-3 text-[0.6875rem] font-black uppercase tracking-[0.16em] text-ink-subtle">
+                      <p className="mb-3 text-[0.6875rem] font-black uppercase tracking-[0.16em] text-ink-muted">
                         Workout location
                       </p>
                       <div className="grid gap-3 md:grid-cols-2">
@@ -1229,7 +1280,7 @@ export default function OnboardingPage() {
                       </div>
                     </div>
                     <div>
-                      <p className="mb-3 text-[0.6875rem] font-black uppercase tracking-[0.16em] text-ink-subtle">
+                      <p className="mb-3 text-[0.6875rem] font-black uppercase tracking-[0.16em] text-ink-muted">
                         Check-in preference
                       </p>
                       <div className="grid gap-3 md:grid-cols-3">
@@ -1246,7 +1297,7 @@ export default function OnboardingPage() {
                       </div>
                     </div>
                     <div>
-                      <p className="mb-3 text-[0.6875rem] font-black uppercase tracking-[0.16em] text-ink-subtle">
+                      <p className="mb-3 text-[0.6875rem] font-black uppercase tracking-[0.16em] text-ink-muted">
                         Coaching style
                       </p>
                       <div className="grid gap-3 md:grid-cols-3">
@@ -1280,7 +1331,7 @@ export default function OnboardingPage() {
                           <p className="text-5xl font-black leading-none tabular-nums text-ink">
                             {previewMacros.calories}
                           </p>
-                          <p className="text-base font-black text-ink-subtle">kcal/day</p>
+                          <p className="text-base font-black text-ink-muted">kcal/day</p>
                         </div>
                       </div>
                       <div className="grid gap-3 md:grid-cols-3">
@@ -1323,8 +1374,18 @@ export default function OnboardingPage() {
                     </div>
                   )}
                   {error && (
-                    <p className="mt-4 rounded-[1.25rem] bg-red-50 px-4 py-3 text-sm font-bold text-red-700 ring-1 ring-inset ring-red-100" role="alert">
-                      {error}
+                    <p
+                      role="alert"
+                      className="mt-4 flex gap-3 rounded-[1.25rem] bg-red-50 px-4 py-3 ring-1 ring-inset ring-red-200"
+                    >
+                      <ShieldAlert
+                        aria-hidden="true"
+                        className="mt-0.5 h-4 w-4 shrink-0 text-red-600"
+                        strokeWidth={2}
+                      />
+                      <span className="min-w-0 text-sm font-bold leading-6 text-red-700">
+                        {error}
+                      </span>
                     </p>
                   )}
                 </StepWrapper>
@@ -1420,12 +1481,14 @@ function BirthdaySelector({
   }
 
   const selectClassName =
-    "h-14 w-full rounded-[1rem] border border-hairline-strong bg-surface px-3 text-base font-bold text-ink outline-none transition duration-200 ease-out-soft hover:border-primary-200 focus:border-primary-400 focus:ring-2 focus:ring-primary-100";
+    "h-14 w-full min-w-0 rounded-[1rem] border border-hairline-strong bg-surface px-3 text-base font-bold text-ink outline-none transition duration-200 ease-out-soft hover:border-primary-200 focus:border-primary-400 focus:ring-2 focus:ring-primary-100";
 
+  // "September" clips inside a third-width select on a 320px screen, so the
+  // month claims the full row until there is width for the three-up layout.
   return (
-    <div className="grid grid-cols-[1.4fr_0.8fr_1fr] gap-3">
-      <label className="block">
-        <span className="mb-1.5 block text-[0.6875rem] font-black uppercase tracking-[0.14em] text-ink-subtle">Month</span>
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-[1.4fr_0.8fr_1fr]">
+      <label className="col-span-2 block sm:col-span-1">
+        <span className="mb-1.5 block text-[0.6875rem] font-black uppercase tracking-[0.14em] text-ink-muted">Month</span>
         <select
           className={selectClassName}
           value={monthIndex === "" ? "" : monthIndex}
@@ -1446,7 +1509,7 @@ function BirthdaySelector({
         </select>
       </label>
       <label className="block">
-        <span className="mb-1.5 block text-[0.6875rem] font-black uppercase tracking-[0.14em] text-ink-subtle">Day</span>
+        <span className="mb-1.5 block text-[0.6875rem] font-black uppercase tracking-[0.14em] text-ink-muted">Day</span>
         <select
           className={selectClassName}
           value={day === "" ? "" : day}
@@ -1467,7 +1530,7 @@ function BirthdaySelector({
         </select>
       </label>
       <label className="block">
-        <span className="mb-1.5 block text-[0.6875rem] font-black uppercase tracking-[0.14em] text-ink-subtle">Year</span>
+        <span className="mb-1.5 block text-[0.6875rem] font-black uppercase tracking-[0.14em] text-ink-muted">Year</span>
         <select
           className={selectClassName}
           value={year === "" ? "" : year}
@@ -1518,8 +1581,10 @@ function WelcomeStep() {
 
 /**
  * Segmented step meter. One segment per step so the user can see how much of
- * the intake is left at a glance; the current segment is widened and tinted so
- * "where am I" survives a glance on a 320px screen.
+ * the intake is left at a glance; the current segment is widened, tinted and
+ * lifted so "where am I" survives a glance on a 320px screen. Segments settle
+ * in sequence (a few ms apart) so advancing a step reads as forward motion
+ * rather than an instant repaint — `prefers-reduced-motion` flattens it.
  */
 function StepProgress({
   current,
@@ -1537,19 +1602,23 @@ function StepProgress({
       aria-valuemax={total}
       aria-valuenow={current + 1}
       aria-valuetext={`Step ${current + 1} of ${total}`}
-      className={cn("flex items-center gap-1", className)}
+      className={cn(
+        "flex h-2.5 items-center gap-[3px] sm:gap-1",
+        className
+      )}
     >
       {Array.from({ length: total }, (_, index) => (
         <span
           key={index}
           aria-hidden="true"
+          style={{ transitionDelay: `${Math.min(index, 16) * 14}ms` }}
           className={cn(
             "min-w-0 flex-1 rounded-full transition-all duration-500 ease-out-soft",
             index === current
-              ? "h-2.5 bg-gradient-to-r from-primary-500 to-teal-500"
+              ? "h-2.5 bg-gradient-to-r from-primary-500 to-teal-500 shadow-e1 ring-1 ring-inset ring-primary-600/25"
               : index < current
                 ? "h-1.5 bg-primary-400"
-                : "h-1.5 bg-surface-sunken"
+                : "h-1 bg-surface-sunken ring-1 ring-inset ring-hairline"
           )}
         />
       ))}
@@ -1593,39 +1662,69 @@ function StepWrapper({
   );
 }
 
+/**
+ * Selection is carried four ways at once — fill, 2px ring, a solid check
+ * badge, and a tinted rule down the leading edge — because a single tint is
+ * easy to misread on a phone in daylight. `tone` keeps the allergy step's
+ * coral selection internally consistent instead of pairing a coral tile with
+ * a green check.
+ */
 function OptionTile({
   selected,
   onClick,
   icon: Icon,
   title,
   description,
-  selectedClassName,
+  tone = "primary",
 }: {
   selected: boolean;
   onClick: () => void;
   icon: LucideIcon;
   title: string;
   description?: string;
-  selectedClassName?: string;
+  tone?: "primary" | "accent";
 }) {
+  const toneStyles =
+    tone === "accent"
+      ? {
+          tile: "bg-accent-50 text-accent-800 shadow-e1 ring-2 ring-accent-500",
+          edge: "bg-accent-500",
+          plate: "bg-surface text-accent-700 ring-accent-200",
+          badge: "bg-accent-600 text-white",
+          description: "text-accent-700",
+        }
+      : {
+          tile: "bg-primary-50 text-primary-900 shadow-e1 ring-2 ring-primary-600",
+          edge: "bg-primary-600",
+          plate: "bg-surface text-primary-700 ring-primary-200",
+          badge: "bg-primary-600 text-white",
+          description: "text-primary-800",
+        };
+
   return (
     <button
       type="button"
       onClick={onClick}
       aria-pressed={selected}
       className={cn(
-        "fw-press group relative flex min-h-20 w-full min-w-0 items-center gap-3 rounded-[1.35rem] p-4 text-left ring-inset",
+        "fw-press group relative flex min-h-20 w-full min-w-0 items-center gap-3 overflow-hidden rounded-[1.35rem] p-4 pl-[1.125rem] text-left ring-inset",
         selected
-          ? selectedClassName ||
-            "bg-primary-50 text-primary-900 shadow-e1 ring-2 ring-primary-500"
+          ? toneStyles.tile
           : "bg-surface-subtle text-ink-muted ring-1 ring-hairline-strong hover:bg-surface hover:ring-primary-200"
       )}
     >
       <span
+        aria-hidden="true"
+        className={cn(
+          "absolute inset-y-2 left-0 w-1 rounded-full transition-all duration-200 ease-out-soft",
+          selected ? cn("opacity-100", toneStyles.edge) : "opacity-0"
+        )}
+      />
+      <span
         className={cn(
           "flex h-11 w-11 shrink-0 items-center justify-center rounded-[1rem] ring-1 ring-inset transition-colors duration-200 ease-out-soft",
           selected
-            ? "bg-surface text-primary-700 ring-primary-100"
+            ? toneStyles.plate
             : "bg-surface text-ink-subtle ring-hairline group-hover:text-primary-600"
         )}
       >
@@ -1637,7 +1736,7 @@ function OptionTile({
           <span
             className={cn(
               "mt-0.5 block text-sm font-semibold leading-6",
-              selected ? "text-primary-800" : "text-ink-muted"
+              selected ? toneStyles.description : "text-ink-muted"
             )}
           >
             {description}
@@ -1649,7 +1748,7 @@ function OptionTile({
         className={cn(
           "flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition-all duration-200 ease-spring",
           selected
-            ? "scale-100 bg-primary-600 text-white opacity-100 shadow-e1"
+            ? cn("scale-100 opacity-100 shadow-e1", toneStyles.badge)
             : "scale-75 bg-transparent text-transparent opacity-0 ring-1 ring-inset ring-hairline-strong group-hover:opacity-60"
         )}
       >
@@ -1756,24 +1855,45 @@ function PreviewSplitBar({ macros }: { macros: MacroTargets }) {
       role="img"
       aria-label={`Calorie split: ${split.proteinPct}% protein, ${split.carbsPct}% carbs, ${split.fatPct}% fat.`}
     >
-      <div className="flex h-2 gap-0.5 overflow-hidden rounded-full bg-white/10">
-        <span
-          className="bg-sky-200 transition-[width] duration-700 ease-out-soft"
-          style={{ width: `${split.proteinPct}%` }}
-        />
-        <span
-          className="bg-lemon-200 transition-[width] duration-700 ease-out-soft"
-          style={{ width: `${split.carbsPct}%` }}
-        />
-        <span
-          className="bg-accent-300 transition-[width] duration-700 ease-out-soft"
-          style={{ width: `${split.fatPct}%` }}
-        />
+      <div className="relative h-2.5 overflow-hidden rounded-full bg-white/10">
+        <div className="flex h-full gap-0.5">
+          <span
+            className="min-w-0.5 bg-sky-200 transition-[width] duration-700 ease-out-soft"
+            style={{ width: `${split.proteinPct}%` }}
+          />
+          <span
+            className="min-w-0.5 bg-lemon-200 transition-[width] duration-700 ease-out-soft"
+            style={{ width: `${split.carbsPct}%` }}
+          />
+          <span
+            className="min-w-0.5 bg-accent-300 transition-[width] duration-700 ease-out-soft"
+            style={{ width: `${split.fatPct}%` }}
+          />
+        </div>
+        <QuarterTicks className="bg-primary-950/35" />
       </div>
       <p className="mt-2 text-[0.6875rem] font-bold tabular-nums text-white/60">
         {split.proteinPct}% protein · {split.carbsPct}% carbs · {split.fatPct}% fat
       </p>
     </div>
+  );
+}
+
+/**
+ * 25 / 50 / 75% rules laid over a share bar. Without them the eye has no scale
+ * to judge one segment against another — the bar becomes decoration.
+ */
+function QuarterTicks({ className }: { className: string }) {
+  return (
+    <span aria-hidden="true" className="pointer-events-none absolute inset-0">
+      {[25, 50, 75].map((tick) => (
+        <span
+          key={tick}
+          className={cn("absolute inset-y-0 w-px", className)}
+          style={{ left: `${tick}%` }}
+        />
+      ))}
+    </span>
   );
 }
 
@@ -1796,26 +1916,29 @@ function MacroSplitMeter({
 
   return (
     <div className={cn("rounded-[1.35rem] bg-surface-muted p-4 ring-1 ring-inset ring-hairline", className)}>
-      <p className="text-left text-[0.6875rem] font-black uppercase tracking-[0.14em] text-ink-subtle">
+      <p className="text-left text-[0.6875rem] font-black uppercase tracking-[0.14em] text-ink-muted">
         Share of calories
       </p>
       <div
         role="img"
         aria-label={`Calorie split: ${split.proteinPct}% protein, ${split.carbsPct}% carbs, ${split.fatPct}% fat.`}
-        className="mt-2 flex h-2.5 gap-0.5 overflow-hidden rounded-full bg-surface-sunken"
+        className="relative mt-2 h-2.5 overflow-hidden rounded-full bg-surface-sunken ring-1 ring-inset ring-hairline"
       >
-        <span
-          className="bg-sky-500 transition-[width] duration-700 ease-out-soft"
-          style={{ width: `${split.proteinPct}%` }}
-        />
-        <span
-          className="bg-lemon-500 transition-[width] duration-700 ease-out-soft"
-          style={{ width: `${split.carbsPct}%` }}
-        />
-        <span
-          className="bg-accent-500 transition-[width] duration-700 ease-out-soft"
-          style={{ width: `${split.fatPct}%` }}
-        />
+        <div className="flex h-full gap-0.5">
+          <span
+            className="min-w-0.5 bg-sky-500 transition-[width] duration-700 ease-out-soft"
+            style={{ width: `${split.proteinPct}%` }}
+          />
+          <span
+            className="min-w-0.5 bg-lemon-500 transition-[width] duration-700 ease-out-soft"
+            style={{ width: `${split.carbsPct}%` }}
+          />
+          <span
+            className="min-w-0.5 bg-accent-500 transition-[width] duration-700 ease-out-soft"
+            style={{ width: `${split.fatPct}%` }}
+          />
+        </div>
+        <QuarterTicks className="bg-surface/60" />
       </div>
       <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1">
         {legend.map((entry) => (
@@ -1867,7 +1990,7 @@ function MiniMetric({ icon: Icon, label, value }: { icon: LucideIcon; label: str
         <Icon className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
       </div>
       <div className="min-w-0">
-        <p className="text-[0.6875rem] font-black uppercase tracking-[0.14em] text-ink-subtle">{label}</p>
+        <p className="text-[0.6875rem] font-black uppercase tracking-[0.14em] text-ink-muted">{label}</p>
         <p className="truncate text-base font-black leading-tight text-ink">{value}</p>
       </div>
     </div>
@@ -1878,23 +2001,40 @@ function MacroTile({
   color,
   label,
   value,
+  className,
+  style,
 }: {
   color: "protein" | "carbs" | "fat";
   label: string;
   value: number;
+  className?: string;
+  style?: React.CSSProperties;
 }) {
   const styles = {
     protein: "bg-sky-50 text-sky-700 ring-sky-100",
     carbs: "bg-lemon-50 text-lemon-700 ring-lemon-100",
     fat: "bg-accent-50 text-accent-700 ring-accent-100",
   };
+  const dots = {
+    protein: "bg-sky-500",
+    carbs: "bg-lemon-500",
+    fat: "bg-accent-500",
+  };
   return (
-    <div className={cn("rounded-[1.35rem] p-4 text-left ring-1 ring-inset", styles[color])}>
+    <div
+      className={cn("rounded-[1.35rem] p-4 text-left ring-1 ring-inset", styles[color], className)}
+      style={style}
+    >
       <p className="flex items-baseline gap-1 text-2xl font-black md:text-3xl">
         <span className="tabular-nums">{value}</span>
         <span className="text-base font-black opacity-70">g</span>
       </p>
-      <p className="mt-1 text-sm font-black">{label}</p>
+      {/* The dot ties the tile to its segment in the share-of-calories bar
+          below; without it the two readings look like unrelated widgets. */}
+      <p className="mt-1 flex items-center gap-1.5 text-sm font-black">
+        <span aria-hidden="true" className={cn("h-2 w-2 shrink-0 rounded-full", dots[color])} />
+        {label}
+      </p>
     </div>
   );
 }
@@ -1902,7 +2042,7 @@ function MacroTile({
 function SummaryPill({ label, value }: { label: string; value: string }) {
   return (
     <div className="fw-soft-row p-4">
-      <p className="text-[0.6875rem] font-black uppercase tracking-[0.14em] text-ink-subtle">{label}</p>
+      <p className="text-[0.6875rem] font-black uppercase tracking-[0.14em] text-ink-muted">{label}</p>
       <p className="mt-1 text-base font-black capitalize text-ink">{value}</p>
     </div>
   );

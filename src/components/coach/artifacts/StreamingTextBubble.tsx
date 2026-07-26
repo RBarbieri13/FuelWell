@@ -15,31 +15,49 @@ export function StreamingTextBubble({ text, streaming }: StreamingTextBubbleProp
   return (
     <div
       className={cn(
-        // The tail is the bottom-left corner tightening to 6px — the only
-        // asymmetry, so the bubble still reads as belonging to the avatar.
-        "relative w-full max-w-full min-w-0 overflow-hidden rounded-[1.5rem] rounded-bl-md",
-        "bg-surface/94 px-3 py-3 text-sm font-semibold leading-6 text-ink-muted",
-        "ring-1 ring-inset ring-hairline shadow-e2 backdrop-blur-[2px]",
-        "transition-shadow duration-300 ease-out-soft sm:px-4 md:max-w-[85%]",
+        "relative w-full max-w-full min-w-0 md:max-w-[85%]",
         // With no text yet the bubble hugs the typing dots instead of stretching
         // an empty plate across the column.
         !text && "w-fit"
       )}
     >
-      {text ? (
-        <div className="max-w-full min-w-0 break-words [overflow-wrap:anywhere] [&>*]:max-w-full [&>*]:min-w-0">
-          <ReactMarkdown
-            remarkPlugins={[remarkGfm, remarkMath]}
-            rehypePlugins={[rehypeKatex]}
-            components={markdownComponents}
-          >
-            {text}
-          </ReactMarkdown>
-          {streaming && <StreamingCaret />}
-        </div>
-      ) : (
-        <TypingIndicator />
-      )}
+      {/* Real tail, not just a tightened corner: a rotated plate tucked under
+          the bubble's bottom-left, matching its fill and hairline so the shape
+          points back at the avatar. It sits inside the avatar gutter, so it
+          can never push the row wider than the column. */}
+      <span
+        aria-hidden="true"
+        className="absolute bottom-3 -left-1 h-3 w-3 rotate-45 rounded-[3px] bg-surface ring-1 ring-inset ring-hairline"
+      />
+      <div
+        aria-busy={streaming || undefined}
+        className={cn(
+          // The bottom-left corner tightens to meet the tail — the only
+          // asymmetry, so the bubble still reads as belonging to the avatar.
+          "relative max-w-full min-w-0 overflow-hidden rounded-[1.5rem] rounded-bl-md",
+          "bg-surface px-3 py-3 text-sm font-semibold leading-6 text-ink",
+          "shadow-e2 ring-1 ring-inset",
+          // A live reply carries a faint primary ring, so an in-flight answer is
+          // distinguishable from a settled one without moving anything.
+          streaming ? "ring-primary-200" : "ring-hairline",
+          "duration-300 ease-out-soft transition-shadow animate-in fade-in slide-in-from-bottom-1 sm:px-4"
+        )}
+      >
+        {text ? (
+          <div className="max-w-full min-w-0 break-words [overflow-wrap:anywhere] [&>*]:max-w-full [&>*]:min-w-0">
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm, remarkMath]}
+              rehypePlugins={[rehypeKatex]}
+              components={markdownComponents}
+            >
+              {text}
+            </ReactMarkdown>
+            {streaming && <StreamingCaret />}
+          </div>
+        ) : (
+          <TypingIndicator />
+        )}
+      </div>
     </div>
   );
 }
@@ -53,35 +71,38 @@ function StreamingCaret() {
   return (
     <span
       aria-hidden
-      className="ml-1 inline-block h-3.5 w-[3px] animate-pulse rounded-full bg-primary-500 align-middle motion-reduce:animate-none"
+      className="ml-1 inline-block h-3.5 w-[3px] animate-caret-blink rounded-full bg-primary-500 align-middle motion-reduce:animate-none motion-reduce:opacity-100"
     />
   );
 }
 
 /**
- * Typing state. Three dots on a staggered bounce, sitting on a faint sunken
- * plate so the empty bubble has a floor instead of reading as a stray dot row.
- * Under reduced motion the dots hold at three legible opacities so the state is
- * still distinguishable from a rendered reply.
+ * Typing state. A jumping dot reads as a glitch at this size; a wave of
+ * dots easing between 40% and 100% opacity/scale reads as thought in progress.
+ * The dots sit on a sunken plate so the empty bubble has a floor instead of
+ * looking like three stray specks, and under reduced motion they hold at three
+ * legible opacities so the state stays distinguishable from a rendered reply.
  */
 function TypingIndicator() {
   return (
     <span
-      className="flex items-center gap-1.5 rounded-full bg-surface-sunken/70 px-2.5 py-1.5"
+      className="flex items-center gap-1.5 rounded-full bg-surface-sunken px-2.5 py-1.5 ring-1 ring-inset ring-hairline"
       role="status"
       aria-label="Coach is typing"
     >
-      {[0, 160, 320].map((delay, index) => (
+      {[0, 150, 300].map((delay, index) => (
         <span
           key={delay}
           aria-hidden="true"
           className={cn(
-            "h-2 w-2 animate-bounce rounded-full bg-primary-500 motion-reduce:animate-none",
+            "h-2 w-2 rounded-full bg-primary-500",
+            "animate-in fade-in-40 zoom-in-50 repeat-infinite direction-alternate ease-out-soft",
+            "motion-reduce:animate-none",
             index === 0 && "motion-reduce:opacity-100",
             index === 1 && "motion-reduce:opacity-70",
             index === 2 && "motion-reduce:opacity-40"
           )}
-          style={{ animationDelay: `${delay}ms`, animationDuration: "1.1s" }}
+          style={{ animationDelay: `${delay}ms`, animationDuration: "620ms" }}
         />
       ))}
     </span>
@@ -110,6 +131,27 @@ const markdownComponents = {
   em: ({ className, ...props }: React.ComponentProps<"em">) => (
     <em className={cn("font-semibold text-ink-muted", className)} {...props} />
   ),
+  del: ({ className, ...props }: React.ComponentProps<"del">) => (
+    // GFM strikethrough previously fell through unstyled and read as damaged
+    // text; retiring it to the faint role makes "ruled out" look deliberate.
+    <del
+      className={cn("font-semibold text-ink-faint decoration-ink-faint decoration-2", className)}
+      {...props}
+    />
+  ),
+  input: ({ className, type, ...props }: React.ComponentProps<"input">) => (
+    // GFM task lists render a raw checkbox — the one native control that leaks
+    // default browser blue into an otherwise fully themed bubble.
+    <input
+      type={type}
+      className={cn(
+        type === "checkbox" &&
+          "mr-1.5 h-3.5 w-3.5 -translate-y-px accent-primary-600 align-middle",
+        className
+      )}
+      {...props}
+    />
+  ),
   a: ({ className, href, ...props }: React.ComponentProps<"a">) => (
     <a
       // py-3.5 pads the tap target to >=44px without shifting inline layout
@@ -132,7 +174,16 @@ const markdownComponents = {
     <ol className={cn("my-2 ml-4 max-w-[calc(100%-1rem)] list-decimal space-y-1.5 marker:font-black marker:text-primary-600", className)} {...props} />
   ),
   li: ({ className, ...props }: React.ComponentProps<"li">) => (
-    <li className={cn("max-w-full break-words pl-1 leading-6 [overflow-wrap:anywhere] [&>ul]:mt-1.5 [&>ol]:mt-1.5", className)} {...props} />
+    <li
+      className={cn(
+        "max-w-full break-words pl-1 leading-6 [overflow-wrap:anywhere] [&>ul]:mt-1.5 [&>ol]:mt-1.5",
+        // A task-list row already carries a checkbox; the disc beside it is
+        // double marking.
+        "[&:has(>input[type=checkbox])]:-ml-4 [&:has(>input[type=checkbox])]:list-none",
+        className
+      )}
+      {...props}
+    />
   ),
   blockquote: ({ className, ...props }: React.ComponentProps<"blockquote">) => (
     <blockquote
@@ -175,7 +226,7 @@ const markdownComponents = {
   ),
   td: ({ className, ...props }: React.ComponentProps<"td">) => (
     <td
-      className={cn("border-t border-hairline px-3 py-2 align-top font-semibold text-ink-muted", className)}
+      className={cn("border-t border-hairline px-3 py-2 align-top font-semibold text-ink", className)}
       {...props}
     />
   ),

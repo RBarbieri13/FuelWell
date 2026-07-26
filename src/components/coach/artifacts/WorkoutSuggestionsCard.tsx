@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
+import { SectionHeader } from "@/components/ui/section-header";
 import type { ArtifactSpec } from "@/lib/coach/types";
 import type { ArtifactCardProps } from "./contract";
 
@@ -40,15 +41,13 @@ export function WorkoutSuggestionsCard({
 
   return (
     <Card padding="sm" className="min-w-0 max-w-full">
-      <div className="flex items-center gap-2.5">
-        <span
-          aria-hidden="true"
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100"
-        >
-          <Dumbbell className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
-        </span>
-        <h3 className="min-w-0 text-base font-black text-ink">Workout ideas</h3>
-      </div>
+      <SectionHeader
+        as="h3"
+        icon={Dumbbell}
+        eyebrow="Coach picks"
+        title="Workout ideas"
+        description={`${suggestions.length} option${suggestions.length === 1 ? "" : "s"} · tap one to build the full plan`}
+      />
 
       <ul className="mt-3 space-y-2">
         {suggestions.map((s, i) => {
@@ -57,7 +56,7 @@ export function WorkoutSuggestionsCard({
           return (
             <li
               key={`${s.focus}-${i}`}
-              className="rounded-2xl bg-surface-subtle p-3 ring-1 ring-inset ring-hairline"
+              className="rounded-2xl bg-surface-muted p-3 ring-1 ring-inset ring-hairline"
             >
               <div className="fw-artifact-mobile-stack flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
@@ -88,20 +87,28 @@ export function WorkoutSuggestionsCard({
               </div>
 
               {s.why && (
-                <p className="mt-2 text-xs font-semibold leading-5 text-ink-muted">{s.why}</p>
+                <p className="mt-2 rounded-xl bg-surface px-2.5 py-1.5 text-xs font-semibold leading-5 text-ink-muted ring-1 ring-inset ring-hairline">
+                  {s.why}
+                </p>
               )}
 
               {preview.length > 0 && (
-                <ul className="mt-2 flex flex-wrap gap-1">
-                  {preview.map((move, moveIndex) => (
-                    <li
-                      key={`${move}-${moveIndex}`}
-                      className="max-w-full truncate rounded-full bg-surface px-2 py-0.5 text-[0.6875rem] font-bold text-ink-muted ring-1 ring-inset ring-hairline"
-                    >
-                      {move}
-                    </li>
-                  ))}
-                </ul>
+                <div className="mt-2">
+                  {/* Bare chips read as tags; the kicker says what they are. */}
+                  <p className="px-0.5 text-[0.625rem] font-black uppercase tracking-[0.12em] text-ink-muted">
+                    Includes
+                  </p>
+                  <ul className="mt-1 flex flex-wrap gap-1">
+                    {preview.map((move, moveIndex) => (
+                      <li
+                        key={`${move}-${moveIndex}`}
+                        className="max-w-full truncate rounded-full bg-surface px-2 py-0.5 text-[0.6875rem] font-bold text-ink-muted ring-1 ring-inset ring-hairline"
+                      >
+                        {move}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               )}
             </li>
           );

@@ -12,6 +12,9 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
+import { SectionHeader } from "@/components/ui/section-header";
+import { cn } from "@/lib/utils/cn";
 import { useWorkoutLog } from "@/lib/use-workout-log";
 import {
   MANUAL_ACTIVITY_OPTIONS,
@@ -20,6 +23,17 @@ import {
   estimateMinutesFromDistance,
   estimateWorkoutCalories,
 } from "@/lib/workout-estimates";
+
+/** One field recipe for every control in this panel — sunken well, hairline
+ *  ring, one focus treatment. */
+const FIELD_CLASS =
+  "mt-2 w-full min-w-0 rounded-2xl bg-surface-muted px-4 py-3 text-sm font-bold tabular-nums text-ink ring-1 ring-inset ring-hairline-strong outline-none transition-shadow duration-200 ease-out-soft placeholder:font-semibold placeholder:text-ink-faint focus-visible:ring-[3px] focus-visible:ring-primary-600";
+
+const FIELD_LABEL_CLASS =
+  "text-[11px] font-black uppercase tracking-[0.12em] text-ink-subtle";
+
+const ROW_ACTION_CLASS =
+  "fw-press inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-surface px-3.5 py-2 text-xs font-black shadow-e1 ring-1 ring-inset ring-hairline focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 md:min-h-0";
 
 export function FitnessWorkoutManager() {
   const { workouts, addWorkout, removeWorkout, updateWorkout } = useWorkoutLog();
@@ -69,39 +83,30 @@ export function FitnessWorkoutManager() {
   }
 
   return (
-    <Card className="space-y-5 rounded-[1.5rem] border-primary-100 bg-white px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <div className="flex gap-3">
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-100 text-primary-700">
-            <Activity className="h-5 w-5" />
-          </span>
-          <div>
-            <h2 className="font-heading text-2xl font-black text-[#16302a]">
-              Edit today&apos;s activity
-            </h2>
-            <p className="mt-1 text-sm font-semibold leading-6 text-[#6e8981]">
-              Add real-life movement, adjust minutes or calories, or remove a workout from today&apos;s log.
-            </p>
-          </div>
-        </div>
-        <Link
-          href="/app/workouts"
-          className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-sm font-black text-primary-700 transition hover:bg-primary-100 md:min-h-0"
-        >
-          Workout page
-          <ArrowRight className="h-4 w-4" />
-        </Link>
-      </div>
+    <Card padding="none" className="min-w-0 space-y-5 rounded-[1.5rem] px-5 py-5 md:px-6 md:py-6">
+      <SectionHeader
+        as="h2"
+        icon={Activity}
+        title="Edit today's activity"
+        description="Add real-life movement, adjust minutes or calories, or remove a workout from today's log."
+        action={
+          <Link
+            href="/app/workouts"
+            className="fw-press inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-sm font-black text-primary-700 ring-1 ring-inset ring-primary-100 hover:bg-primary-100 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 md:min-h-0"
+          >
+            Workout page
+            <ArrowRight className="h-4 w-4" strokeWidth={2.25} />
+          </Link>
+        }
+      />
 
       <div className="grid gap-3 lg:grid-cols-[1.1fr_0.65fr_0.65fr_auto]">
-        <label className="block">
-          <span className="text-xs font-black uppercase tracking-[0.14em] text-muted-foreground">
-            Activity
-          </span>
+        <label className="block min-w-0">
+          <span className={FIELD_LABEL_CLASS}>Activity</span>
           <select
             value={activityId}
             onChange={(event) => setActivityId(event.target.value)}
-            className="mt-2 w-full rounded-2xl border border-border bg-[#f4f8f6] px-4 py-3 text-sm font-bold text-[#16302a] outline-none focus:border-primary-300 focus:ring-2 focus:ring-primary-200"
+            className={FIELD_CLASS}
           >
             {MANUAL_ACTIVITY_OPTIONS.map((activity) => (
               <option key={activity.id} value={activity.id}>
@@ -111,23 +116,19 @@ export function FitnessWorkoutManager() {
           </select>
         </label>
 
-        <label className="block">
-          <span className="text-xs font-black uppercase tracking-[0.14em] text-muted-foreground">
-            Minutes
-          </span>
+        <label className="block min-w-0">
+          <span className={FIELD_LABEL_CLASS}>Minutes</span>
           <input
             type="number"
             min={1}
             value={minutes}
             onChange={(event) => setMinutes(Number(event.target.value))}
-            className="mt-2 w-full rounded-2xl border border-border bg-[#f4f8f6] px-4 py-3 text-sm font-bold text-[#16302a] outline-none focus:border-primary-300 focus:ring-2 focus:ring-primary-200"
+            className={FIELD_CLASS}
           />
         </label>
 
-        <label className="block">
-          <span className="text-xs font-black uppercase tracking-[0.14em] text-muted-foreground">
-            Distance
-          </span>
+        <label className="block min-w-0">
+          <span className={FIELD_LABEL_CLASS}>Distance</span>
           <input
             type="number"
             min={0}
@@ -135,81 +136,127 @@ export function FitnessWorkoutManager() {
             value={distance}
             onChange={(event) => setDistance(event.target.value)}
             placeholder="Optional mi"
-            className="mt-2 w-full rounded-2xl border border-border bg-[#f4f8f6] px-4 py-3 text-sm font-bold text-[#16302a] outline-none placeholder:text-[#9db0aa] focus:border-primary-300 focus:ring-2 focus:ring-primary-200"
+            className={FIELD_CLASS}
           />
         </label>
 
-        <div className="flex flex-col justify-end gap-2">
-          <p className="rounded-[1rem] bg-primary-50 px-4 py-2 text-center text-sm font-black text-primary-800">
-            {calories} kcal
+        <div className="flex min-w-0 flex-col justify-end gap-2">
+          {/* The live estimate is a readout, not a control — it is labelled so
+              the bare number never reads as another button. */}
+          <p
+            className="rounded-[1rem] bg-primary-50 px-4 py-2 text-center ring-1 ring-inset ring-primary-100"
+            aria-live="polite"
+          >
+            <span className="block text-[10px] font-black uppercase tracking-[0.12em] text-primary-700/75">
+              Estimated burn
+            </span>
+            <span className="block text-sm font-black tabular-nums text-primary-800">
+              {calories.toLocaleString()} kcal
+            </span>
           </p>
-          <Button type="button" onClick={addManualActivity} className="rounded-2xl">
-            <Plus className="h-4 w-4" />
+          <Button
+            type="button"
+            onClick={addManualActivity}
+            disabled={resolvedMinutes <= 0}
+            className="rounded-2xl"
+          >
+            <Plus className="h-4 w-4" strokeWidth={2.25} />
             Add
           </Button>
         </div>
       </div>
 
-      <p className="rounded-[1.15rem] border border-primary-100 bg-primary-50/70 px-4 py-3 text-sm font-semibold leading-6 text-primary-900/70">
-        Estimate uses {option.label.toLowerCase()} intensity, {resolvedMinutes} minutes, and the preview profile weight of {PROFILE_WEIGHT_LB} lb. Calories can be corrected after logging.
+      <p className="rounded-[1.15rem] bg-primary-50/70 px-4 py-3 text-sm font-semibold leading-6 text-ink-muted ring-1 ring-inset ring-primary-100">
+        Estimate uses {option.label.toLowerCase()} intensity,{" "}
+        <span className="tabular-nums">{resolvedMinutes}</span> minutes, and the preview profile
+        weight of <span className="tabular-nums">{PROFILE_WEIGHT_LB}</span> lb. Calories can be
+        corrected after logging.
       </p>
 
-      {latestWorkouts.length > 0 && (
-        <div className="divide-y divide-primary-100/70 rounded-[1.25rem] border border-primary-100 bg-[#f8fbf9] px-4">
-          {latestWorkouts.map((workout) => (
-            <div key={workout.id} className="grid gap-3 py-4 lg:grid-cols-[1fr_auto] lg:items-center">
-              <div>
-                <p className="text-base font-black text-[#16302a]">{workout.name}</p>
-                <p className="text-sm font-semibold text-muted-foreground">
-                  {workout.category} · {workout.durationMin} min ·{" "}
-                  {workout.calories ? `${workout.calories} active kcal` : "burn not estimated"}
-                </p>
+      {latestWorkouts.length > 0 ? (
+        // Inset well inside an already-raised card — one hairline, no second
+        // drop shadow.
+        <div className="min-w-0 divide-y divide-hairline rounded-[1.25rem] bg-surface-subtle px-4 ring-1 ring-inset ring-hairline">
+          {latestWorkouts.map((workout) => {
+            const isEditing = editingId === workout.id;
+            return (
+              <div
+                key={workout.id}
+                className="grid min-w-0 gap-3 py-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center"
+              >
+                <div className="min-w-0">
+                  <p className="break-words text-base font-black text-ink">{workout.name}</p>
+                  <p className="text-sm font-semibold tabular-nums text-ink-muted">
+                    {workout.category} · {workout.durationMin} min ·{" "}
+                    {workout.calories
+                      ? `${workout.calories.toLocaleString()} active kcal`
+                      : "burn not estimated"}
+                  </p>
+                </div>
+                {isEditing ? (
+                  <div className="grid min-w-0 gap-2 sm:grid-cols-[minmax(0,6rem)_minmax(0,7rem)_auto]">
+                    <input
+                      type="number"
+                      min={1}
+                      value={editMinutes}
+                      onChange={(event) => setEditMinutes(Number(event.target.value))}
+                      className="min-w-0 rounded-full bg-surface px-3 py-2 text-sm font-black tabular-nums text-ink ring-1 ring-inset ring-primary-200 outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600"
+                      aria-label="Edit minutes"
+                    />
+                    <input
+                      type="number"
+                      min={0}
+                      value={editCalories}
+                      onChange={(event) => setEditCalories(Number(event.target.value))}
+                      className="min-w-0 rounded-full bg-surface px-3 py-2 text-sm font-black tabular-nums text-ink ring-1 ring-inset ring-primary-200 outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600"
+                      aria-label="Edit calories"
+                    />
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={() => saveEdit(workout.id)}
+                      className="rounded-full"
+                    >
+                      <Save className="h-4 w-4" strokeWidth={2.25} />
+                      Save
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="flex flex-wrap gap-2 lg:justify-end">
+                    <button
+                      type="button"
+                      onClick={() => beginEdit(workout.id, workout.durationMin, workout.calories)}
+                      aria-label={`Edit ${workout.name}`}
+                      className={cn(ROW_ACTION_CLASS, "text-primary-700 hover:bg-primary-50")}
+                    >
+                      <Pencil className="h-3.5 w-3.5" strokeWidth={2.25} />
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => removeWorkout(workout.id)}
+                      aria-label={`Delete ${workout.name}`}
+                      className={cn(ROW_ACTION_CLASS, "text-accent-700 hover:bg-accent-50")}
+                    >
+                      <Trash2 className="h-3.5 w-3.5" strokeWidth={2.25} />
+                      Delete
+                    </button>
+                  </div>
+                )}
               </div>
-              {editingId === workout.id ? (
-                <div className="grid gap-2 sm:grid-cols-[6rem_7rem_auto]">
-                  <input
-                    type="number"
-                    min={1}
-                    value={editMinutes}
-                    onChange={(event) => setEditMinutes(Number(event.target.value))}
-                    className="rounded-full border border-primary-100 bg-white px-3 py-2 text-sm font-black text-[#16302a]"
-                    aria-label="Edit minutes"
-                  />
-                  <input
-                    type="number"
-                    min={0}
-                    value={editCalories}
-                    onChange={(event) => setEditCalories(Number(event.target.value))}
-                    className="rounded-full border border-primary-100 bg-white px-3 py-2 text-sm font-black text-[#16302a]"
-                    aria-label="Edit calories"
-                  />
-                  <Button type="button" size="sm" onClick={() => saveEdit(workout.id)} className="rounded-full">
-                    <Save className="h-4 w-4" />
-                    Save
-                  </Button>
-                </div>
-              ) : (
-                <div className="flex flex-wrap gap-2 lg:justify-end">
-                  <button
-                    type="button"
-                    onClick={() => beginEdit(workout.id, workout.durationMin, workout.calories)}
-                    className="inline-flex items-center gap-2 rounded-full bg-white px-3.5 py-2 text-xs font-black text-primary-700 transition hover:bg-primary-50"
-                  >
-                    <Pencil className="h-3.5 w-3.5" />
-                    Edit
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => removeWorkout(workout.id)}
-                    className="inline-flex items-center gap-2 rounded-full bg-white px-3.5 py-2 text-xs font-black text-accent-600 transition hover:bg-accent-100"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                    Delete
-                  </button>
-                </div>
-              )}
-            </div>
-          ))}
+            );
+          })}
+        </div>
+      ) : (
+        // An honest empty well beats an invisible one: the panel used to render
+        // nothing at all before the first manual entry.
+        <div className="rounded-[1.25rem] bg-surface-subtle ring-1 ring-inset ring-hairline">
+          <EmptyState
+            size="inline"
+            icon={Activity}
+            title="No manual activity logged yet"
+            description="Anything you add above lands here, where minutes and calories can be corrected or removed."
+          />
         </div>
       )}
     </Card>

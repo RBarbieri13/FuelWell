@@ -38,8 +38,25 @@ function slotForNow(): string {
 const grams = (n: number) => `${Math.round(n * 10) / 10}g`;
 
 /**
+ * Canonical macro palette, shared verbatim by every coach card that prints a
+ * macro figure. The bright `--color-macro-*` tokens stay reserved for fills
+ * (bars, dots, rings) where contrast rules do not apply; anything rendered as
+ * text uses the darker step below so each figure clears 4.5:1 on both the
+ * raised and inset surfaces these cells sit on.
+ */
+const MACRO_TEXT = {
+  calories: "var(--color-primary-800)",
+  protein: "var(--color-sky-700)",
+  carbs: "var(--color-lemon-700)",
+  fat: "var(--color-accent-700)",
+} as const;
+
+/**
  * One metric cell. Every row uses the same four cells in the same grid, so
  * the numbers read down as columns instead of as a ragged sentence.
+ *
+ * The label is the element allowed to shrink — the figure is never truncated,
+ * because a half-clipped macro is worse than no macro at all.
  */
 function MetricCell({
   label,
@@ -51,12 +68,12 @@ function MetricCell({
   tone?: string;
 }) {
   return (
-    <span className="flex min-w-0 items-baseline justify-between gap-1 rounded-lg bg-surface-muted px-1.5 py-1 ring-1 ring-inset ring-hairline">
-      <span className="shrink-0 text-[0.625rem] font-black uppercase tracking-wide text-ink-subtle">
+    <span className="flex min-h-6 min-w-0 items-baseline justify-between gap-1.5 rounded-lg bg-surface-muted px-1.5 py-1 ring-1 ring-inset ring-hairline">
+      <span className="min-w-0 truncate text-[0.625rem] font-black uppercase tracking-wide text-ink-muted">
         {label}
       </span>
       <span
-        className="min-w-0 truncate text-[0.6875rem] font-black tabular-nums text-ink"
+        className="shrink-0 text-[0.6875rem] font-black tabular-nums text-ink"
         style={tone ? { color: tone } : undefined}
       >
         {value}
@@ -93,7 +110,7 @@ export function FoodSearchResultsCard({
           description="Try another name."
         />
       ) : (
-        <ul className="mt-3 space-y-1">
+        <ul className="mt-3 space-y-1.5">
           {foods.map((food) => {
             const portion = defaultPortion(food);
             return (
@@ -112,7 +129,7 @@ export function FoodSearchResultsCard({
                       },
                     })
                   }
-                  className="fw-press group flex min-h-11 w-full items-center gap-3 rounded-2xl px-2 py-2.5 text-left hover:bg-primary-50/70 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2"
+                  className="fw-press group flex min-h-11 w-full items-center gap-2.5 rounded-2xl px-2.5 py-2.5 text-left ring-1 ring-inset ring-transparent hover:bg-primary-50/60 hover:ring-primary-100 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2"
                 >
                   <span className="min-w-0 flex-1">
                     <span className="flex min-w-0 items-center gap-2">
@@ -127,26 +144,34 @@ export function FoodSearchResultsCard({
                       <MetricCell
                         label="kcal"
                         value={`${Math.round(food.per100.kcal)}`}
-                        tone="var(--color-macro-calories)"
+                        tone={MACRO_TEXT.calories}
                       />
                       <MetricCell
                         label="P"
                         value={grams(food.per100.protein)}
-                        tone="var(--color-macro-protein)"
+                        tone={MACRO_TEXT.protein}
                       />
                       <MetricCell
                         label="C"
                         value={grams(food.per100.carbs)}
-                        tone="var(--color-lemon-700)"
+                        tone={MACRO_TEXT.carbs}
                       />
                       <MetricCell
                         label="F"
                         value={grams(food.per100.fat)}
-                        tone="var(--color-accent-700)"
+                        tone={MACRO_TEXT.fat}
                       />
                     </span>
-                    <span className="mt-1 block truncate text-[0.6875rem] font-bold text-ink-subtle">
-                      {food.categoryLabel} · per 100{food.servingUnit}
+                    {/* Category may be long; the scale the macros are quoted at
+                        must survive regardless, so only the category truncates. */}
+                    <span className="mt-1.5 flex min-w-0 items-baseline gap-1.5 text-[0.6875rem] font-bold text-ink-muted">
+                      <span className="min-w-0 truncate">{food.categoryLabel}</span>
+                      <span aria-hidden="true" className="shrink-0 text-ink-faint">
+                        ·
+                      </span>
+                      <span className="shrink-0 tabular-nums">
+                        per 100{food.servingUnit}
+                      </span>
                     </span>
                   </span>
                   <ChevronRight

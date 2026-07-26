@@ -1,7 +1,16 @@
 "use client";
 
-import { useState } from "react";
-import { ChevronDown, Flame, Wheat, Droplet, Beef, Gauge } from "lucide-react";
+import { useId, useState } from "react";
+import {
+  ArrowDown,
+  ArrowUp,
+  Beef,
+  ChevronDown,
+  Droplet,
+  Flame,
+  Gauge,
+  Wheat,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { ProgressMeter } from "@/components/ui/progress-meter";
@@ -58,7 +67,11 @@ const MACROS: {
   },
 ];
 
-/** Five evenly spaced ticks give the meter an actual 0 → target scale. */
+/**
+ * Five evenly spaced ticks give the meter an actual 0 → target scale. The
+ * midpoint is drawn taller so the eye has one fixed reference to read halves
+ * against instead of five identical marks.
+ */
 const TICKS = [0, 1, 2, 3, 4];
 
 /**
@@ -76,6 +89,7 @@ export function TotalsSummary({
   targets: MacroTargets;
   meals?: MealRecord[];
 }) {
+  const panelId = useId();
   const [expanded, setExpanded] = useState<keyof MacroTotals | null>(null);
   const nothingLogged = MACROS.every((macro) => totals[macro.key] <= 0);
   const overCount = MACROS.filter(
@@ -89,17 +103,68 @@ export function TotalsSummary({
         title="Today's totals"
         description="Live macro math for the selected day. Tap a macro for the meal breakdown."
         action={
-          overCount > 0 ? (
+          nothingLogged ? (
+            <Badge variant="neutral" dot>
+              Nothing logged
+            </Badge>
+          ) : overCount > 0 ? (
             <Badge variant="warning" dot>
-              {overCount} over target
+              <span className="tabular-nums">{overCount}</span> over target
             </Badge>
           ) : (
-            <Badge variant="neutral" dot>
+            <Badge variant="success" dot>
               All under target
             </Badge>
           )
         }
       />
+
+      {/* Four-dot status rail: the whole day's over/under read in one glance,
+          before the eye has to parse any individual number. */}
+      <div
+        className="flex items-center gap-2 rounded-[1.15rem] bg-surface-muted px-3 py-2.5 ring-1 ring-inset ring-hairline"
+        role="img"
+        aria-label={MACROS.map((macro) => {
+          const current = totals[macro.key];
+          const target = targets[macro.key];
+          return `${macro.label} ${percentOf(current, target)}% of target${
+            current > target ? ", over" : ""
+          }`;
+        }).join("; ")}
+      >
+        {MACROS.map((macro) => {
+          const current = totals[macro.key];
+          const target = targets[macro.key];
+          const isOver = current > target;
+          return (
+            <div key={macro.key} className="min-w-0 flex-1">
+              <span
+                aria-hidden="true"
+                className="flex items-center gap-1.5 text-[0.625rem] font-black uppercase tracking-[0.08em] text-ink-muted"
+              >
+                <span
+                  className="h-1.5 w-1.5 shrink-0 rounded-full"
+                  style={{
+                    backgroundColor: isOver
+                      ? "var(--color-accent-500)"
+                      : macro.color,
+                  }}
+                />
+                <span className="min-w-0 truncate">{macro.label}</span>
+              </span>
+              <span
+                aria-hidden="true"
+                className={cn(
+                  "mt-0.5 block text-sm font-black tabular-nums",
+                  isOver ? "text-accent-700" : "text-ink"
+                )}
+              >
+                {percentOf(current, target)}%
+              </span>
+            </div>
+          );
+        })}
+      </div>
 
       {nothingLogged && (
         <p className="rounded-[1.15rem] bg-surface-muted px-4 py-3 text-sm font-semibold leading-6 text-ink-muted ring-1 ring-inset ring-hairline">
@@ -116,21 +181,24 @@ export function TotalsSummary({
           const over = current > target ? current - target : 0;
           const Icon = macro.icon;
           const isExpanded = expanded === macro.key;
+          // Biggest contributor first: an unsorted list makes the reader scan
+          // every row to find what actually moved the number.
           const contributions = meals
             .map((meal) => ({
               id: meal.id,
               name: meal.name,
               amount: Math.round(sumMealItems(meal.items)[macro.key]),
             }))
-            .filter((entry) => entry.amount > 0);
+            .filter((entry) => entry.amount > 0)
+            .sort((a, b) => b.amount - a.amount);
 
           return (
             <div
               key={macro.key}
               className={cn(
-                "rounded-[1.2rem] p-3 ring-1 ring-inset transition-colors duration-200 ease-out-soft",
+                "overflow-hidden rounded-[1.2rem] p-3 ring-1 ring-inset transition-colors duration-200 ease-out-soft",
                 over > 0
-                  ? "bg-accent-50/50 ring-accent-100"
+                  ? "bg-accent-50/60 ring-accent-200"
                   : "bg-surface-muted ring-hairline"
               )}
             >
@@ -138,6 +206,7 @@ export function TotalsSummary({
                 type="button"
                 onClick={() => setExpanded(isExpanded ? null : macro.key)}
                 aria-expanded={isExpanded}
+                aria-controls={`${panelId}-${macro.key}`}
                 aria-label={`${macro.label} breakdown`}
                 className="fw-press flex min-h-11 w-full flex-wrap items-center justify-between gap-x-3 gap-y-1 rounded-[0.9rem] text-left focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2 md:min-h-0"
               >
@@ -173,16 +242,22 @@ export function TotalsSummary({
                     </span>
                   </span>
                   {over > 0 ? (
-                    <span className="mt-0.5 flex items-center justify-end gap-1.5 text-xs font-black tabular-nums text-accent-700">
-                      <span
+                    <span className="mt-1 inline-flex items-center gap-1 rounded-full bg-accent-100/70 px-2 py-0.5 text-xs font-black tabular-nums text-accent-700 ring-1 ring-inset ring-accent-200">
+                      <ArrowUp
                         aria-hidden="true"
-                        className="h-1.5 w-1.5 rounded-full bg-accent-500"
+                        className="h-3 w-3 shrink-0"
+                        strokeWidth={3}
                       />
                       {over.toLocaleString()}
                       {macro.unit} over · {percent}%
                     </span>
                   ) : (
-                    <span className="mt-0.5 block text-xs font-black tabular-nums text-ink-muted">
+                    <span className="mt-1 inline-flex items-center gap-1 rounded-full bg-surface px-2 py-0.5 text-xs font-black tabular-nums text-ink-muted ring-1 ring-inset ring-hairline">
+                      <ArrowDown
+                        aria-hidden="true"
+                        className="h-3 w-3 shrink-0"
+                        strokeWidth={3}
+                      />
                       {left.toLocaleString()}
                       {macro.unit} left · {percent}%
                     </span>
@@ -204,12 +279,18 @@ export function TotalsSummary({
                 />
                 <div aria-hidden="true" className="mt-1 flex justify-between px-px">
                   {TICKS.map((tick) => (
-                    <span key={tick} className="h-1.5 w-px bg-hairline-strong" />
+                    <span
+                      key={tick}
+                      className={cn(
+                        "w-px bg-hairline-strong",
+                        tick === 2 ? "h-2.5" : "h-1.5"
+                      )}
+                    />
                   ))}
                 </div>
                 <div
                   aria-hidden="true"
-                  className="mt-0.5 flex items-baseline justify-between gap-2 text-[0.625rem] font-black uppercase tracking-[0.1em] text-ink-faint"
+                  className="mt-0.5 flex items-baseline justify-between gap-2 text-[0.625rem] font-black uppercase tracking-[0.1em] text-ink-muted"
                 >
                   <span>0</span>
                   <span className="tabular-nums">
@@ -223,39 +304,47 @@ export function TotalsSummary({
               </div>
 
               {isExpanded && (
-                <div className="mt-3 space-y-1.5 border-t border-hairline pt-3">
+                <div
+                  id={`${panelId}-${macro.key}`}
+                  className="mt-3 space-y-1.5 border-t border-hairline pt-3"
+                >
                   {contributions.length > 0 ? (
                     <>
                       <p className="px-0.5 text-[0.625rem] font-black uppercase tracking-[0.12em] text-ink-subtle">
-                        Share of today&apos;s {macro.label.toLowerCase()}
+                        Share of today&apos;s {macro.label.toLowerCase()} · largest
+                        first
                       </p>
                       {contributions.map((entry) => {
-                        const share =
+                        const sharePercent =
                           current > 0
-                            ? Math.min(100, (entry.amount / current) * 100)
+                            ? Math.min(100, Math.round((entry.amount / current) * 100))
                             : 0;
                         return (
                           <div
                             key={entry.id}
                             className="rounded-[0.85rem] bg-surface px-3 py-2 ring-1 ring-inset ring-hairline"
                           >
-                            <div className="flex items-center justify-between gap-3">
+                            <div className="flex items-baseline justify-between gap-3">
                               <p className="min-w-0 truncate text-sm font-bold text-ink-muted">
                                 {entry.name}
                               </p>
                               <p className="shrink-0 text-sm font-black tabular-nums text-ink">
                                 {entry.amount.toLocaleString()}
                                 {macro.unit}
+                                <span className="ml-1.5 text-xs font-bold text-ink-subtle">
+                                  {sharePercent}%
+                                </span>
                               </p>
                             </div>
                             <div
-                              aria-hidden="true"
+                              role="img"
+                              aria-label={`${entry.name}: ${sharePercent}% of today's ${macro.label.toLowerCase()}`}
                               className="mt-1.5 h-1 overflow-hidden rounded-full bg-surface-sunken"
                             >
                               <div
                                 className="h-full rounded-full transition-[width] duration-500 ease-out-soft"
                                 style={{
-                                  width: `${share}%`,
+                                  width: `${sharePercent}%`,
                                   backgroundColor: macro.color,
                                   opacity: 0.78,
                                 }}

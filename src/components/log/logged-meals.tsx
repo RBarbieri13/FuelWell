@@ -2,14 +2,30 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Check, ClipboardList, Pencil, Trash2, UtensilsCrossed, X } from "lucide-react";
+import {
+  ArrowRight,
+  Check,
+  ClipboardList,
+  Moon,
+  Pencil,
+  Salad,
+  Sun,
+  Trash2,
+  UtensilsCrossed,
+  X,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { SectionHeader } from "@/components/ui/section-header";
 import { cn } from "@/lib/utils/cn";
-import { formatMealType, type MealItem, type MealRecord } from "@/lib/fuelwell-data";
+import {
+  formatMealType,
+  type MealItem,
+  type MealRecord,
+  type MealType,
+} from "@/lib/fuelwell-data";
 
 type ItemPatch = Partial<Omit<MealItem, "id">>;
 
@@ -21,6 +37,24 @@ const MACRO_FIELDS: { key: FieldKey; label: string }[] = [
   { key: "carbs", label: "Carb" },
   { key: "fat", label: "Fat" },
 ];
+
+/** Same glyphs the log page uses for its slot picker, so a meal keeps one
+ *  identity from the selector through to the logged list. */
+const MEAL_ICONS: Record<MealType, typeof Sun> = {
+  breakfast: Sun,
+  lunch: Salad,
+  dinner: Moon,
+  snack: UtensilsCrossed,
+};
+
+/** Macro roles carry the same colour here as in totals and portion picking, so
+ *  a coloured dot means one thing across the whole logging surface. */
+const ITEM_MACROS: { key: "protein" | "carbs" | "fat"; label: string; color: string }[] =
+  [
+    { key: "protein", label: "protein", color: "var(--color-macro-protein)" },
+    { key: "carbs", label: "carbs", color: "var(--color-macro-carbs)" },
+    { key: "fat", label: "fat", color: "var(--color-macro-fat)" },
+  ];
 
 function parseNonNegative(value: string): number | null {
   if (value.trim() === "") return null;
@@ -87,6 +121,7 @@ export function LoggedMeals({
             (sum, item) => sum + item.calories,
             0
           );
+          const MealIcon = MEAL_ICONS[meal.mealType];
           return (
             // Nested one level inside the card — inset ring, no second shadow.
             <div
@@ -94,21 +129,29 @@ export function LoggedMeals({
               className="rounded-[1.35rem] bg-surface-subtle p-3 ring-1 ring-inset ring-hairline"
             >
               <div className="flex items-start justify-between gap-2">
-                <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                    <p className="text-xs font-black uppercase tracking-[0.14em] text-primary-700">
-                      {formatMealType(meal.mealType)}
+                <div className="flex min-w-0 items-start gap-2.5">
+                  <span
+                    aria-hidden="true"
+                    className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100"
+                  >
+                    <MealIcon className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
+                  </span>
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                      <p className="text-xs font-black uppercase tracking-[0.14em] text-primary-700">
+                        {formatMealType(meal.mealType)}
+                      </p>
+                      <Badge variant="neutral" size="sm">
+                        <span className="tabular-nums">
+                          {Math.round(mealCalories).toLocaleString()}
+                        </span>{" "}
+                        kcal
+                      </Badge>
+                    </div>
+                    <p className="mt-0.5 truncate text-sm font-black text-ink">
+                      {meal.name}
                     </p>
-                    <Badge variant="neutral" size="sm">
-                      <span className="tabular-nums">
-                        {Math.round(mealCalories).toLocaleString()}
-                      </span>{" "}
-                      kcal
-                    </Badge>
                   </div>
-                  <p className="mt-0.5 truncate text-sm font-black text-ink">
-                    {meal.name}
-                  </p>
                 </div>
                 <Button
                   type="button"
@@ -190,14 +233,32 @@ function LoggedItem({
 
   if (!editing) {
     return (
-      <div className="flex items-center justify-between gap-2 rounded-[1.15rem] bg-surface px-3 py-2.5 ring-1 ring-inset ring-hairline">
+      <div className="flex min-h-14 items-center justify-between gap-2 rounded-[1.15rem] bg-surface px-3 py-2.5 ring-1 ring-inset ring-hairline">
         <div className="min-w-0">
           <p className="truncate font-black text-ink">{item.name}</p>
-          <p className="mt-0.5 text-xs font-bold text-ink-muted">
-            <span className="tabular-nums">{item.calories}</span> kcal &middot;{" "}
-            <span className="tabular-nums">{item.protein}</span>p &middot;{" "}
-            <span className="tabular-nums">{item.carbs}</span>c &middot;{" "}
-            <span className="tabular-nums">{item.fat}</span>f
+          {/* "12p · 30c · 5f" is only legible to someone who already knows the
+              order. Colour-coded dots plus the unit spell it out. */}
+          <p className="mt-1 flex flex-wrap items-center gap-x-2.5 gap-y-0.5 text-xs font-bold text-ink-muted">
+            <span className="whitespace-nowrap font-black text-ink">
+              <span className="tabular-nums">
+                {Math.round(item.calories).toLocaleString()}
+              </span>{" "}
+              kcal
+            </span>
+            {ITEM_MACROS.map((macro) => (
+              <span
+                key={macro.key}
+                className="inline-flex items-center gap-1 whitespace-nowrap"
+              >
+                <span
+                  aria-hidden="true"
+                  className="h-1.5 w-1.5 shrink-0 rounded-full"
+                  style={{ backgroundColor: macro.color }}
+                />
+                <span className="tabular-nums">{Math.round(item[macro.key])}</span>g{" "}
+                {macro.label}
+              </span>
+            ))}
           </p>
         </div>
         <button

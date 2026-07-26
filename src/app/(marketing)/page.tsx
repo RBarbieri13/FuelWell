@@ -67,20 +67,29 @@ export default function HomePage() {
   return (
     <div className="fw-app-surface min-h-screen">
       <header className="sticky top-0 z-40 border-b border-hairline bg-background/85 backdrop-blur-xl">
-        <nav className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
-          <Logo size="lg" href="/" />
+        {/* The wordmark steps down a size below sm: at 320px a 24px logo plus
+            both CTAs overran the viewport and pushed the header into a
+            horizontal scroll. */}
+        <nav className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-4 py-3 sm:gap-3 sm:px-6 lg:px-8">
+          <span className="min-w-0 shrink">
+            <Logo size="lg" href="/" className="text-xl sm:text-2xl" />
+          </span>
           {/* Nav CTAs step down to ghost/tonal so the hero owns the page's one
               primary action. */}
-          <div className="flex items-center gap-1.5">
+          <div className="flex shrink-0 items-center gap-1 sm:gap-1.5">
             <Link href="/login">
-              <Button variant="ghost" size="sm">
+              <Button variant="ghost" size="sm" className="whitespace-nowrap">
                 Log in
               </Button>
             </Link>
             <Link href="/signup">
-              <Button variant="tonal" size="sm">
+              <Button variant="tonal" size="sm" className="whitespace-nowrap">
                 Get started
-                <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.25} />
+                <ArrowRight
+                  className="hidden h-4 w-4 shrink-0 sm:block"
+                  strokeWidth={2.25}
+                  aria-hidden="true"
+                />
               </Button>
             </Link>
           </div>
@@ -123,7 +132,12 @@ export default function HomePage() {
           <AppPreview />
         </section>
 
-        <section id="how-it-works" className="border-y border-hairline bg-surface/60 py-16 sm:py-20">
+        {/* scroll-mt clears the sticky header — without it an in-page jump to
+            #how-it-works parks the section title behind the nav bar. */}
+        <section
+          id="how-it-works"
+          className="scroll-mt-20 border-y border-hairline bg-surface/60 py-16 sm:py-20"
+        >
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <SectionHeading
               kicker="How it works"
@@ -232,7 +246,10 @@ function AppPreview() {
     // One elevation for the whole mock. Everything nested inside steps down to
     // hairlines and tints rather than stacking a second drop shadow.
     <div className="rounded-[2.25rem] border border-hairline-strong bg-surface/90 p-4 shadow-e4 backdrop-blur">
-      <div className="fw-dark-panel rounded-[1.75rem] border p-6">
+      {/* shadow-none cancels the box-shadow .fw-dark-panel carries by default —
+          nested inside the shadow-e4 wrapper it would stack a second drop
+          shadow on the same mock. */}
+      <div className="fw-dark-panel rounded-[1.75rem] border p-6 shadow-none">
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
             <p className="text-xs font-black uppercase tracking-[0.16em] text-primary-100">
@@ -246,9 +263,16 @@ function AppPreview() {
             <Sparkles className="h-6 w-6" strokeWidth={2} />
           </span>
         </div>
+        {/* The calorie figure is read from the same constant the ring below is
+            drawn from, so the panel and the arc can never state two different
+            numbers — and it gets the same thousands separator. */}
         <div className="mt-6 grid gap-3 sm:grid-cols-2">
-          <DarkMetric label="Calories left" value="1400" />
-          <DarkMetric label="Protein left" value="102g" />
+          <DarkMetric
+            label="Calories left"
+            value={RING_REMAINING.toLocaleString()}
+            of={`of ${RING_TARGET.toLocaleString()}`}
+          />
+          <DarkMetric label="Protein left" value="102g" of="today's target" />
         </div>
       </div>
 
@@ -264,13 +288,14 @@ function AppPreview() {
             </span>
           </div>
           <CalorieRing />
+          <CalorieRingLegend />
         </div>
 
-        <div className="grid gap-3">
+        <ul className="grid gap-3">
           <MiniSurface icon={UtensilsCrossed} title="Log Meal" detail="Breakfast and lunch are already counted." />
           <MiniSurface icon={MessageCircle} title="Ask Coach" detail="Generate dinner options that close the gap." />
           <MiniSurface icon={Dumbbell} title="Move" detail="Pick a low-impact workout for today." />
-        </div>
+        </ul>
       </div>
     </div>
   );
@@ -340,13 +365,45 @@ function CalorieRing() {
         <p className="text-3xl font-black tabular-nums leading-none text-ink">
           {RING_REMAINING.toLocaleString()}
         </p>
-        <p className="mt-1 text-xs font-black uppercase tracking-[0.12em] text-ink-subtle">
+        {/* Both sublabels sit at ink-muted (5.78:1 on the white card); at 12px
+            and 11px neither can afford ink-subtle/ink-faint. Hierarchy below
+            the figure is carried by weight and size instead of by fading. */}
+        <p className="mt-1 text-xs font-black uppercase tracking-[0.12em] text-ink-muted">
           remaining
         </p>
-        <p className="mt-1.5 text-[0.6875rem] font-bold tabular-nums text-ink-faint">
+        <p className="mt-1.5 text-[0.6875rem] font-semibold tabular-nums text-ink-muted">
           of {RING_TARGET.toLocaleString()}
         </p>
       </div>
+    </div>
+  );
+}
+
+// Keys the two arc segments to their figures. Both numbers are derived from
+// the same two constants the arc is drawn from, so the legend cannot drift.
+function CalorieRingLegend() {
+  return (
+    <div className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 text-xs font-bold">
+      <span className="inline-flex items-center gap-1.5 text-ink-muted">
+        <span
+          aria-hidden="true"
+          className="h-2 w-2 shrink-0 rounded-full bg-gradient-to-br from-primary-400 to-teal-600"
+        />
+        <span className="tabular-nums">
+          {(RING_TARGET - RING_REMAINING).toLocaleString()} used
+        </span>
+      </span>
+      {/* Both entries carry the same ink so neither of two equally-weighted
+          12px labels drops below 4.5:1; the swatch alone distinguishes them. */}
+      <span className="inline-flex items-center gap-1.5 text-ink-muted">
+        <span
+          aria-hidden="true"
+          className="h-2 w-2 shrink-0 rounded-full bg-surface-sunken ring-1 ring-inset ring-hairline-strong"
+        />
+        <span className="tabular-nums">
+          {RING_REMAINING.toLocaleString()} left
+        </span>
+      </span>
     </div>
   );
 }
@@ -439,10 +496,26 @@ function CoachExample({ question, answer }: { question: string; answer: string }
   );
 }
 
-function DarkMetric({ label, value }: { label: string; value: string }) {
+function DarkMetric({
+  label,
+  value,
+  of,
+}: {
+  label: string;
+  value: string;
+  /** Denominator line — a number with no scale is decoration. */
+  of: string;
+}) {
   return (
     <div className="rounded-[1.25rem] bg-white/10 p-4 ring-1 ring-inset ring-white/15">
-      <p className="text-3xl font-black tabular-nums leading-none text-white">{value}</p>
+      <p className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+        <span className="text-3xl font-black tabular-nums leading-none text-white">
+          {value}
+        </span>
+        <span className="text-xs font-bold tabular-nums leading-none text-white/70">
+          {of}
+        </span>
+      </p>
       <p className="mt-1.5 text-xs font-black uppercase tracking-[0.14em] text-white/60">
         {label}
       </p>
@@ -452,14 +525,14 @@ function DarkMetric({ label, value }: { label: string; value: string }) {
 
 function MiniSurface({ icon: Icon, title, detail }: { icon: LucideIcon; title: string; detail: string }) {
   return (
-    <div className="flex items-center gap-3 rounded-[1.25rem] bg-surface-subtle p-4 ring-1 ring-inset ring-hairline">
+    <li className="flex items-center gap-3 rounded-[1.25rem] bg-surface-subtle p-4 ring-1 ring-inset ring-hairline">
       <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[1rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100">
-        <Icon className="h-5 w-5" strokeWidth={2} />
+        <Icon className="h-5 w-5" strokeWidth={2} aria-hidden="true" />
       </span>
       <div className="min-w-0">
         <p className="font-black text-ink">{title}</p>
         <p className="mt-0.5 text-sm font-semibold leading-6 text-ink-muted">{detail}</p>
       </div>
-    </div>
+    </li>
   );
 }

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { AuthShell } from "@/components/auth/auth-shell";
+import { AuthShell, authFieldClass } from "@/components/auth/auth-shell";
 import { ArrowLeft, Brain, Mail, Send, ShieldCheck } from "lucide-react";
 
 export default function ForgotPasswordPage() {
@@ -72,7 +72,7 @@ export default function ForgotPasswordPage() {
               className="absolute inset-0 -z-10 rounded-[1.6rem] bg-primary-100/60 blur-lg"
             />
             <span className="flex h-16 w-16 items-center justify-center rounded-[1.4rem] border border-primary-100 bg-gradient-to-br from-primary-50 to-surface text-primary-600 shadow-e1">
-              <Mail className="h-7 w-7" strokeWidth={1.75} />
+              <Mail className="h-7 w-7" strokeWidth={1.75} aria-hidden="true" />
             </span>
           </div>
           <p className="text-sm font-semibold leading-7 text-ink-muted">
@@ -84,9 +84,11 @@ export default function ForgotPasswordPage() {
             </strong>
             . Click the link in the email to reset your password.
           </p>
-          <Link href="/login" className="mt-6 inline-block">
-            <Button variant="secondary">
-              <ArrowLeft className="h-4 w-4 shrink-0" strokeWidth={2.25} />
+          {/* The Link has to carry the width too, or a full-width button inside
+              an inline anchor collapses to its text on mobile. */}
+          <Link href="/login" className="mt-6 block w-full sm:inline-block sm:w-auto">
+            <Button variant="secondary" className="w-full sm:w-auto">
+              <ArrowLeft className="h-4 w-4 shrink-0" strokeWidth={2.25} aria-hidden="true" />
               Back to login
             </Button>
           </Link>
@@ -101,7 +103,12 @@ export default function ForgotPasswordPage() {
             required
             placeholder="you@example.com"
             autoComplete="email"
+            inputMode="email"
+            autoCapitalize="none"
+            autoCorrect="off"
+            spellCheck={false}
             error={error || undefined}
+            className={authFieldClass}
             autoFocus
           />
           <Button type="submit" size="lg" className="w-full" loading={loading}>

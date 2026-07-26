@@ -9,39 +9,44 @@ type PreferencesUpdatedArtifact = ArtifactSpec & {
   patch: Partial<CoachDaySnapshot["preferences"]>;
 };
 
+type PreferenceRow = {
+  label: string;
+  values: string[];
+  /** Allergies carry a safety consequence, so they never sit in the neutral role. */
+  tone: "default" | "warning" | "neutral";
+};
+
 export function PreferencesUpdatedCard({ artifact }: ArtifactCardProps<PreferencesUpdatedArtifact>) {
   const patch = artifact.patch ?? {};
 
-  const rows: Array<{ label: string; value: string }> = [];
+  const rows: PreferenceRow[] = [];
   if (patch.diets !== undefined) {
-    rows.push({ label: "Diet", value: patch.diets.length > 0 ? patch.diets.join(", ") : "none" });
+    rows.push({ label: "Diet", values: patch.diets, tone: "default" });
   }
   if (patch.allergies !== undefined) {
-    rows.push({
-      label: "Allergies",
-      value: patch.allergies.length > 0 ? patch.allergies.join(", ") : "none",
-    });
+    rows.push({ label: "Allergies", values: patch.allergies, tone: "warning" });
   }
   if (patch.likes !== undefined) {
-    rows.push({ label: "Likes", value: patch.likes.length > 0 ? patch.likes.join(", ") : "none" });
+    rows.push({ label: "Likes", values: patch.likes, tone: "neutral" });
   }
   if (patch.dislikes !== undefined) {
-    rows.push({
-      label: "Dislikes",
-      value: patch.dislikes.length > 0 ? patch.dislikes.join(", ") : "none",
-    });
+    rows.push({ label: "Dislikes", values: patch.dislikes, tone: "neutral" });
   }
   if (patch.units !== undefined) {
-    rows.push({ label: "Units", value: patch.units });
+    rows.push({ label: "Units", values: [patch.units], tone: "neutral" });
   }
 
   return (
-    <div className="max-w-full rounded-[24px] border border-hairline bg-surface p-4 shadow-e2">
+    <div
+      role="group"
+      aria-label="Preferences updated"
+      className="max-w-full rounded-[24px] border border-hairline bg-surface p-4 shadow-e2"
+    >
       <div className="flex items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
           <span
             aria-hidden="true"
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[1rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100"
           >
             <Settings2 className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
           </span>
@@ -65,14 +70,30 @@ export function PreferencesUpdatedCard({ artifact }: ArtifactCardProps<Preferenc
           {rows.map((row) => (
             <li
               key={row.label}
-              className="grid grid-cols-[4.75rem_minmax(0,1fr)] items-baseline gap-3 border-t border-hairline px-3 py-2.5 first:border-t-0"
+              className="grid grid-cols-[4.75rem_minmax(0,1fr)] items-start gap-3 border-t border-hairline px-3 py-2.5 first:border-t-0"
             >
-              <div className="text-[10px] font-black uppercase tracking-[0.08em] text-ink-muted">
+              <div className="mt-1 text-[10px] font-black uppercase tracking-[0.08em] text-ink-muted">
                 {row.label}
               </div>
-              <span className="min-w-0 break-words text-sm font-bold capitalize text-ink">
-                {row.value}
-              </span>
+              <div className="flex min-w-0 flex-wrap gap-1.5">
+                {row.values.length > 0 ? (
+                  row.values.map((value) => (
+                    <Badge
+                      key={value}
+                      variant={row.tone}
+                      size="sm"
+                      dot={row.tone === "warning"}
+                      className="max-w-full capitalize"
+                    >
+                      <span className="min-w-0 break-words">{value}</span>
+                    </Badge>
+                  ))
+                ) : (
+                  <span className="inline-flex items-center rounded-full bg-surface px-2 py-0.5 text-[0.6875rem] font-bold text-ink-subtle ring-1 ring-inset ring-hairline-strong">
+                    none
+                  </span>
+                )}
+              </div>
             </li>
           ))}
         </ul>

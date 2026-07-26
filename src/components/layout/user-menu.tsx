@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import {
+  ChevronRight,
   CreditCard,
   Download,
   HelpCircle,
@@ -24,16 +25,28 @@ export type UserMenuSession = "authenticated" | "preview" | "anonymous";
 // 44px rows so the menu is usable with a thumb, shared by links and buttons
 // so the two never drift apart.
 const itemClass =
-  "group/item flex min-h-11 items-center gap-3 rounded-[0.95rem] px-3 text-sm font-bold transition-colors duration-150 hover:bg-primary-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary-600";
+  "group/item flex min-h-11 items-center gap-3 rounded-[0.95rem] px-3 text-sm font-bold transition-colors duration-150 hover:bg-primary-50 active:bg-primary-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary-600";
 
-const menuItems = [
-  { label: "Profile", href: "/app/profile", icon: User },
-  { label: "Account Details", href: "/app/settings#account", icon: UserCog },
-  { label: "Privacy", href: "/app/settings#privacy", icon: Shield },
-  { label: "Coach Preferences", href: "/app/settings#coach-preferences", icon: Sparkles },
-  { label: "Data Export", href: "/app/settings#data", icon: Download },
-  { label: "Subscription", href: "/app/settings#subscription", icon: CreditCard },
-  { label: "Support", href: "/app/settings#support", icon: HelpCircle },
+// Same seven destinations, same order — split at the natural seam so "who I
+// am" and "how the app behaves" stop reading as one seven-item wall.
+const menuGroups = [
+  {
+    label: "Account",
+    items: [
+      { label: "Profile", href: "/app/profile", icon: User },
+      { label: "Account Details", href: "/app/settings#account", icon: UserCog },
+      { label: "Privacy", href: "/app/settings#privacy", icon: Shield },
+    ],
+  },
+  {
+    label: "Preferences & data",
+    items: [
+      { label: "Coach Preferences", href: "/app/settings#coach-preferences", icon: Sparkles },
+      { label: "Data Export", href: "/app/settings#data", icon: Download },
+      { label: "Subscription", href: "/app/settings#subscription", icon: CreditCard },
+      { label: "Support", href: "/app/settings#support", icon: HelpCircle },
+    ],
+  },
 ];
 
 export function UserMenu({ session = "anonymous" }: { session?: UserMenuSession }) {
@@ -112,26 +125,50 @@ export function UserMenu({ session = "anonymous" }: { session?: UserMenuSession 
             <p className="px-3 pb-1.5 pt-2 text-[0.6875rem] font-black uppercase tracking-[0.14em] text-primary-700">
               User Settings
             </p>
-            <div className="grid gap-0.5">
-              {menuItems.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <Link
-                    key={item.label}
-                    href={item.href}
-                    role="menuitem"
-                    onClick={() => setOpen(false)}
-                    className={cn(itemClass, "text-ink")}
-                  >
-                    <Icon
-                      className="h-4 w-4 shrink-0 text-ink-subtle transition-colors group-hover/item:text-primary-700"
-                      strokeWidth={2}
-                    />
-                    <span className="truncate">{item.label}</span>
-                  </Link>
-                );
-              })}
-            </div>
+            {menuGroups.map((group, groupIndex) => (
+              <div
+                key={group.label}
+                role="group"
+                aria-label={group.label}
+                className={
+                  groupIndex > 0 ? "mt-1.5 border-t border-hairline pt-1.5" : undefined
+                }
+              >
+                {groupIndex > 0 && (
+                  <p className="px-3 pb-1 text-[0.625rem] font-black uppercase tracking-[0.14em] text-ink-muted">
+                    {group.label}
+                  </p>
+                )}
+                <div className="grid gap-0.5">
+                  {group.items.map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <Link
+                        key={item.label}
+                        href={item.href}
+                        role="menuitem"
+                        onClick={() => setOpen(false)}
+                        className={cn(itemClass, "text-ink")}
+                      >
+                        <Icon
+                          className="h-4 w-4 shrink-0 text-ink-subtle transition-colors group-hover/item:text-primary-700"
+                          strokeWidth={2}
+                        />
+                        <span className="min-w-0 flex-1 truncate">{item.label}</span>
+                        {/* Confirms the row navigates rather than toggles.
+                            Hidden until the row is engaged so seven arrows
+                            don't add seven competing marks at rest. */}
+                        <ChevronRight
+                          aria-hidden="true"
+                          className="h-3.5 w-3.5 shrink-0 text-primary-600 opacity-0 transition-all duration-150 ease-out-soft group-hover/item:translate-x-0.5 group-hover/item:opacity-100 group-focus-visible/item:opacity-100"
+                          strokeWidth={2.5}
+                        />
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
 
             {/* Session actions are a separate group — a hairline keeps "Sign
                 out" from reading as one more settings destination. */}

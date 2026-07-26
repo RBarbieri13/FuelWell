@@ -4,6 +4,7 @@ import {
   ArrowLeft,
   ArrowRight,
   CheckCircle2,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Clock3,
@@ -120,13 +121,21 @@ function SimilarWorkoutLink({ workout }: { workout: WorkoutLibraryItem }) {
         <Icon className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
       </span>
       <span className="min-w-0 flex-1">
-        <span className="flex min-w-0 flex-wrap items-center gap-2">
-          <span className="truncate text-sm font-black text-ink">{workout.title}</span>
+        <span className="block truncate text-sm font-black text-ink">{workout.title}</span>
+        {/* Aligned metadata row: length, effort, kit — the same three facts in
+            the same order on every workout link across the surface. */}
+        <span className="mt-1.5 flex min-w-0 flex-wrap items-center gap-1.5">
           <Badge size="sm" variant="default" className="tabular-nums">
             {workout.duration}
           </Badge>
+          <Badge size="sm" variant="neutral">
+            {workout.intensity}
+          </Badge>
+          <Badge size="sm" variant="neutral" className="min-w-0">
+            <span className="truncate">{workout.equipment}</span>
+          </Badge>
         </span>
-        <span className="mt-1 block truncate text-xs font-semibold text-ink-muted">
+        <span className="mt-1.5 block truncate text-xs font-semibold text-ink-muted">
           {workout.focus}
         </span>
       </span>
@@ -237,32 +246,48 @@ function ExerciseDetailRow({ exercise }: { exercise: WorkoutExercise }) {
   const diagram = getExerciseDiagram(exercise.name);
 
   return (
-    <details className="group px-2 py-5">
-      <summary className="cursor-pointer list-none rounded-[1.15rem] focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-500">
+    <details className="group px-2 py-4">
+      <summary className="-mx-2 flex min-h-11 cursor-pointer list-none flex-col justify-center rounded-[1.15rem] px-2 py-1 transition-colors duration-200 ease-out-soft hover:bg-primary-50/50 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-500">
         <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_20rem] xl:items-center">
           <div className="min-w-0">
-            <div className="flex min-w-0 flex-wrap items-center gap-2.5">
-              <p className="text-lg font-black text-ink md:text-xl">{exercise.name}</p>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-50 px-2.5 py-1 text-xs font-black text-primary-700 ring-1 ring-inset ring-primary-100">
-                <ImageIcon className="h-3.5 w-3.5" strokeWidth={2.25} />
-                <span className="group-open:hidden">View diagram</span>
-                <span className="hidden group-open:inline">Hide diagram</span>
-              </span>
-              {exercise.rest && (
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-surface-muted px-2.5 py-1 text-xs font-bold text-ink-subtle ring-1 ring-inset ring-hairline">
-                  <Clock3 className="h-3.5 w-3.5" strokeWidth={2.25} />
-                  <span className="tabular-nums">{exercise.rest}</span> rest
+            <div className="flex min-w-0 items-start gap-2.5">
+              <div className="flex min-w-0 flex-wrap items-center gap-2.5">
+                <p className="text-lg font-black text-ink md:text-xl">{exercise.name}</p>
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-50 px-2.5 py-1 text-xs font-black text-primary-700 ring-1 ring-inset ring-primary-100">
+                  <ImageIcon className="h-3.5 w-3.5 shrink-0" strokeWidth={2.25} />
+                  <span className="group-open:hidden">View diagram</span>
+                  <span className="hidden group-open:inline">Hide diagram</span>
                 </span>
-              )}
+                {exercise.rest && (
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-surface-muted px-2.5 py-1 text-xs font-bold text-ink-subtle ring-1 ring-inset ring-hairline">
+                    <Clock3 className="h-3.5 w-3.5 shrink-0" strokeWidth={2.25} />
+                    <span className="tabular-nums">{exercise.rest}</span> rest
+                  </span>
+                )}
+              </div>
+              {/* The chevron is the disclosure's only always-visible state cue
+                  at narrow widths, where the chip row wraps away from view. */}
+              <ChevronDown
+                aria-hidden="true"
+                className="ml-auto mt-1 h-4 w-4 shrink-0 text-ink-faint transition-transform duration-200 ease-out-soft group-open:rotate-180 xl:hidden"
+                strokeWidth={2.5}
+              />
             </div>
             <p className="mt-2 text-sm font-semibold leading-6 text-ink-muted md:text-base md:leading-7">
               {exercise.target}
             </p>
           </div>
-          <div className="grid grid-cols-3 gap-2">
-            <PlanStat value={exercise.sets} label="sets" tone="primary" />
-            <PlanStat value={exercise.reps} label="reps" tone="sky" />
-            <PlanStat value={exercise.time} label="time" tone="lemon" />
+          <div className="flex items-center gap-2">
+            <div className="grid min-w-0 flex-1 grid-cols-3 gap-2">
+              <PlanStat value={exercise.sets} label="sets" tone="primary" />
+              <PlanStat value={exercise.reps} label="reps" tone="sky" />
+              <PlanStat value={exercise.time} label="time" tone="lemon" />
+            </div>
+            <ChevronDown
+              aria-hidden="true"
+              className="hidden h-4 w-4 shrink-0 text-ink-faint transition-transform duration-200 ease-out-soft group-open:rotate-180 xl:block"
+              strokeWidth={2.5}
+            />
           </div>
         </div>
       </summary>
@@ -391,10 +416,12 @@ export default async function WorkoutDetailPage({
                 />
               </div>
               <div className="divide-y divide-hairline">
-                {workout.blocks.map((block) => (
+                {workout.blocks.map((block, blockIndex) => (
                   <div key={block.name} className="flex gap-4 px-2 py-4">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100">
-                      <CheckCircle2 className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
+                    {/* Ordinal, not a checkmark — nothing here is completed yet,
+                        and the running order is the useful signal. */}
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-50 text-sm font-black tabular-nums text-primary-700 ring-1 ring-inset ring-primary-100">
+                      {blockIndex + 1}
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex min-w-0 flex-wrap items-center gap-2">

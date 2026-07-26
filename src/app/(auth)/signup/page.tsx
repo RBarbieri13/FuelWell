@@ -6,7 +6,12 @@ import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { OAuthButtons } from "@/components/auth/oauth-buttons";
-import { AuthLink, AuthShell } from "@/components/auth/auth-shell";
+import {
+  AuthDivider,
+  AuthLink,
+  AuthShell,
+  authFieldClass,
+} from "@/components/auth/auth-shell";
 import { cn } from "@/lib/utils/cn";
 import { Brain, Leaf, ShieldCheck, Target, UserPlus } from "lucide-react";
 
@@ -133,18 +138,7 @@ export default function SignupPage() {
               <OAuthButtons next="/app/onboarding" />
             )}
 
-            <div
-              className={
-                isNewUserPreview ? "hidden" : "flex items-center gap-3"
-              }
-              aria-hidden="true"
-            >
-              <span className="h-px flex-1 bg-gradient-to-r from-transparent to-hairline-strong" />
-              <span className="text-[0.6875rem] font-black uppercase tracking-[0.16em] text-ink-subtle">
-                or email
-              </span>
-              <span className="h-px flex-1 bg-gradient-to-l from-transparent to-hairline-strong" />
-            </div>
+            <AuthDivider label="or email" hidden={isNewUserPreview} />
 
             <form onSubmit={handleEmailSignup} noValidate className="space-y-4">
               <Input
@@ -160,7 +154,12 @@ export default function SignupPage() {
                 required
                 placeholder="you@example.com"
                 autoComplete="email"
+                inputMode="email"
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
                 error={emailError || undefined}
+                className={authFieldClass}
               />
               <div>
                 <Input
@@ -178,6 +177,7 @@ export default function SignupPage() {
                   placeholder="Min 8 characters"
                   autoComplete="new-password"
                   error={passwordError || error || undefined}
+                  className={authFieldClass}
                 />
                 {/* Password strength indicator */}
                 {password.length > 0 && (
@@ -191,19 +191,25 @@ export default function SignupPage() {
                         <span
                           key={level}
                           className={cn(
-                            // Unfilled segments sit in the sunken well so the
-                            // meter still reads as a 4-step scale at level 1.
+                            // Unfilled segments sit in the sunken well with a
+                            // hairline of their own, so the meter still reads
+                            // as a 4-step scale at level 1 instead of as one
+                            // short bar floating on the card.
                             "h-1.5 flex-1 rounded-full transition-colors duration-300 ease-out-soft",
                             level <= passwordStrength.level
                               ? passwordStrength.color
-                              : "bg-surface-sunken"
+                              : "bg-surface-sunken ring-1 ring-inset ring-hairline"
                           )}
                         />
                       ))}
                     </div>
+                    {/* Reading matches the meter: state on the left where the
+                        fill starts, the count on the right where the scale
+                        ends. The dot carries the state without relying on the
+                        red/amber/green distinction alone. */}
                     <p
                       className={cn(
-                        "flex items-baseline gap-1.5 text-xs font-bold",
+                        "flex items-center justify-between gap-2 text-xs font-bold",
                         passwordStrength.level <= 1
                           ? "text-red-600"
                           : passwordStrength.level <= 2
@@ -212,8 +218,17 @@ export default function SignupPage() {
                       )}
                       aria-live="polite"
                     >
-                      {passwordStrength.label}
-                      <span className="font-semibold tabular-nums text-ink-subtle">
+                      <span className="inline-flex min-w-0 items-center gap-1.5">
+                        <span
+                          aria-hidden="true"
+                          className={cn(
+                            "h-1.5 w-1.5 shrink-0 rounded-full",
+                            passwordStrength.color
+                          )}
+                        />
+                        <span className="truncate">{passwordStrength.label}</span>
+                      </span>
+                      <span className="shrink-0 font-semibold tabular-nums text-ink-subtle">
                         {passwordStrength.level}/4
                       </span>
                     </p>

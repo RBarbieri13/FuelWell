@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useId, useState, type ReactNode } from "react";
 import {
   Activity,
   ArrowRight,
@@ -369,7 +369,7 @@ export function DashboardClient({
                 icon={UtensilsCrossed}
                 title="No meals logged yet."
                 description="Add your first meal to unlock today's nutrition detail and plate."
-                action={{ label: "Log a meal", href: "/app/log" }}
+                secondaryAction={{ label: "Log a meal", href: "/app/log" }}
               />
             </div>
           ) : (
@@ -402,13 +402,13 @@ export function DashboardClient({
               {!todaysMeals.some((meal) => meal.mealType === "dinner") && (
                 <Link
                   href="/app/log"
-                  className="fw-press flex min-h-[3.75rem] items-center justify-between gap-3 rounded-[1.25rem] border border-dashed border-primary-200 bg-primary-50/50 p-4 hover:border-primary-300 hover:bg-primary-50 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2"
+                  className="fw-press group flex min-h-[3.75rem] items-center justify-between gap-3 rounded-[1.25rem] border border-dashed border-primary-200 bg-primary-50/50 p-4 hover:border-primary-300 hover:bg-primary-50 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2"
                 >
                   <div className="min-w-0">
                     <p className="font-bold text-ink">Dinner</p>
                     <p className="text-sm text-ink-muted">Not logged yet</p>
                   </div>
-                  <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-primary-600 px-3.5 py-1.5 text-xs font-black text-white shadow-e1">
+                  <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-surface px-3.5 py-1.5 text-xs font-black text-primary-800 shadow-e1 ring-1 ring-inset ring-primary-200 transition-colors group-hover:bg-primary-50">
                     <Plus className="h-3.5 w-3.5" strokeWidth={2.5} />
                     Log dinner
                   </span>
@@ -467,13 +467,17 @@ function MealMakeupHover({
 }) {
   const mealTypes = ["breakfast", "lunch", "dinner"] as const;
   const [open, setOpen] = useState(false);
+  const panelId = `${useId().replace(/[^a-zA-Z0-9]/g, "")}-meal-makeup`;
 
   return (
-    <div className="group relative flex flex-col items-center justify-center">
+    <div className="relative flex flex-col items-center justify-center">
+      {/* Visibility is driven only by `open` — a hover-only reveal would show
+          the panel to pointer users while aria-expanded still said collapsed. */}
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
         aria-expanded={open}
+        aria-controls={panelId}
         aria-label="Show meal makeup breakdown"
         className="fw-press rounded-full focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2"
       >
@@ -483,11 +487,13 @@ function MealMakeupHover({
         Tap the ring for meal makeup
       </p>
       <div
+        id={panelId}
+        aria-hidden={!open}
         className={cn(
           "absolute left-1/2 top-[calc(100%+0.5rem)] z-20 w-[min(24rem,calc(100vw-3rem))] -translate-x-1/2 rounded-[1.35rem] border border-hairline-strong bg-surface p-4 text-left shadow-e4 transition duration-150 ease-out-soft",
           open
             ? "pointer-events-auto translate-y-0 opacity-100"
-            : "pointer-events-none translate-y-3 opacity-0 group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:translate-y-0 group-focus-within:opacity-100"
+            : "pointer-events-none translate-y-3 opacity-0"
         )}
       >
         <div className="mb-3 flex items-center gap-2">

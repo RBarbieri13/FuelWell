@@ -39,8 +39,11 @@ export function AuthShell({
   );
 
   return (
-    <main className="fw-app-surface min-h-screen">
-      <div className="grid min-h-screen lg:grid-cols-[0.88fr_1fr]">
+    // dvh, not vh: on iOS Safari a 100vh column is taller than the visible
+    // viewport while the browser chrome is up, which pushed the submit button
+    // of every auth form under the fold on first paint.
+    <main className="fw-app-surface min-h-dvh">
+      <div className="grid min-h-dvh lg:grid-cols-[0.88fr_1fr]">
         <aside className="fw-dark-panel relative hidden overflow-hidden rounded-none border-0 p-10 lg:flex lg:flex-col lg:justify-between xl:p-12">
           <div className="relative z-10 flex items-center justify-between gap-4">
             <Logo href="/" size="lg" className="[&_span]:text-white" />
@@ -65,21 +68,23 @@ export function AuthShell({
             </p>
           </div>
 
-          <div className="relative z-10 grid gap-2.5">
+          {/* A list of parallel claims is a list — announcing "3 items" is
+              worth more here than three anonymous divs. */}
+          <ul className="relative z-10 grid gap-2.5">
             {features.map((feature) => (
-              <div
+              <li
                 key={feature.text}
                 className="flex items-center gap-3 rounded-[1.25rem] bg-white/[0.075] p-3 ring-1 ring-inset ring-white/10"
               >
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[1rem] bg-primary-300 text-primary-950">
-                  <feature.icon className="h-5 w-5" strokeWidth={2} />
+                  <feature.icon className="h-5 w-5" strokeWidth={2} aria-hidden="true" />
                 </span>
-                <span className="text-sm font-bold leading-6 text-white/85">
+                <span className="min-w-0 text-sm font-bold leading-6 text-white/85">
                   {feature.text}
                 </span>
-              </div>
+              </li>
             ))}
-          </div>
+          </ul>
 
           {showPreviewCard && (
             <div className="relative z-10 rounded-[1.75rem] bg-white/[0.08] p-5 ring-1 ring-inset ring-white/10">
@@ -100,7 +105,9 @@ export function AuthShell({
           )}
         </aside>
 
-        <section className="flex min-h-screen items-center justify-center px-4 py-8 sm:px-8 lg:py-12">
+        {/* The notch owns the top-left corner in landscape, and the home
+            indicator the bottom edge; the card must clear both. */}
+        <section className="flex min-h-dvh items-center justify-center pb-[max(env(safe-area-inset-bottom),2rem)] pl-[max(env(safe-area-inset-left),1rem)] pr-[max(env(safe-area-inset-right),1rem)] pt-[max(env(safe-area-inset-top),2rem)] sm:pl-8 sm:pr-8 lg:py-12">
           <div className={cn("w-full max-w-md", className)}>
             <div className="mb-6 flex items-center justify-between gap-4 lg:hidden">
               <div className="flex min-w-0 items-center gap-3">
@@ -149,6 +156,42 @@ export function AuthShell({
 // The preview-host signal never changes within a page lifetime.
 function subscribeNever() {
   return () => {};
+}
+
+/**
+ * Shared field refinement for the three auth forms. The Input primitive owns
+ * the ring; this adds the parts it deliberately leaves to the caller — a 48px
+ * touch height, a calm hover edge, and a lift to the raised surface on focus
+ * so the active field separates from the card behind it.
+ */
+export const authFieldClass =
+  "min-h-12 hover:border-primary-200 focus:bg-surface focus:shadow-e1";
+
+/**
+ * Two hairlines fading into a centred kicker. Lives here rather than being
+ * pasted per page so the login and signup forms cannot drift apart by a
+ * tracking step. `hidden` keeps the caller from having to re-declare the
+ * layout classes just to hide it.
+ */
+export function AuthDivider({
+  label,
+  hidden = false,
+}: {
+  label: string;
+  hidden?: boolean;
+}) {
+  return (
+    <div
+      className={cn("items-center gap-3", hidden ? "hidden" : "flex")}
+      aria-hidden="true"
+    >
+      <span className="h-px flex-1 bg-gradient-to-r from-transparent to-hairline-strong" />
+      <span className="text-[0.6875rem] font-black uppercase tracking-[0.16em] text-ink-subtle">
+        {label}
+      </span>
+      <span className="h-px flex-1 bg-gradient-to-l from-transparent to-hairline-strong" />
+    </div>
+  );
 }
 
 export function AuthLink({

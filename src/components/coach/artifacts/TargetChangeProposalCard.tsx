@@ -31,12 +31,21 @@ export function TargetChangeProposalCard({
     return { key, label, unit, current, proposed, delta: proposed - current };
   });
 
+  const hasChange = rows.some((row) => row.delta !== 0);
+  // A percentage scale only means something when every baseline is non-zero.
+  // Otherwise the bars get dropped rather than drawn against an invented axis.
+  const scalable = hasChange && rows.every((row) => row.current > 0);
+  const maxShift = scalable
+    ? Math.max(...rows.map((row) => Math.abs(row.delta) / row.current))
+    : 0;
+  const axisLabel = Math.max(Math.round(maxShift * 100), 1);
+
   return (
     <div className="max-w-full rounded-[24px] border border-sky-100 bg-sky-50/60 p-4 shadow-e2">
       <div className="flex items-start gap-3">
         <span
           aria-hidden="true"
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.9rem] bg-sky-100 text-sky-700 ring-1 ring-inset ring-sky-200"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[1rem] bg-sky-100 text-sky-700 ring-1 ring-inset ring-sky-200"
         >
           <Target className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
         </span>
@@ -59,38 +68,82 @@ export function TargetChangeProposalCard({
             Current → Proposed
           </div>
         </li>
-        {rows.map((row) => (
-          <li
-            key={row.key}
-            className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 border-t border-hairline px-3 py-2.5"
-          >
-            <div className="min-w-0 text-xs font-black uppercase tracking-[0.08em] text-ink-muted">
-              {row.label}
-            </div>
-            <span
-              className="flex flex-wrap items-baseline gap-x-1.5 gap-y-1"
-              role="img"
-              aria-label={`${row.label}: ${row.current} ${row.unit} now, ${row.proposed} ${row.unit} proposed`}
+        {rows.map((row) => {
+          const shift = scalable ? Math.abs(row.delta) / row.current : 0;
+          // Half the track is the largest change in the set, so the four rows
+          // are comparable to each other rather than each self-scaled.
+          const width = maxShift > 0 ? (shift / maxShift) * 50 : 0;
+          const up = row.delta > 0;
+
+          return (
+            <li
+              key={row.key}
+              className="border-t border-hairline px-3 py-2.5"
             >
-              <span className="text-sm font-bold tabular-nums text-ink-muted">
-                {row.current}
-              </span>
-              <ArrowRight aria-hidden="true" className="h-3.5 w-3.5 shrink-0 text-ink-subtle" />
-              <span className="text-sm font-black tabular-nums text-ink">{row.proposed}</span>
-              <span className="text-[0.6875rem] font-bold text-ink-muted">{row.unit}</span>
-              {row.delta !== 0 && (
-                <span className="rounded-full bg-surface-sunken px-1.5 py-0.5 text-[0.6875rem] font-black tabular-nums text-ink-muted ring-1 ring-inset ring-hairline">
-                  {row.delta > 0 ? "+" : "−"}
-                  {Math.abs(row.delta)}
+              <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+                <div className="min-w-0 text-xs font-black uppercase tracking-[0.08em] text-ink-muted">
+                  {row.label}
+                </div>
+                <span
+                  className="flex flex-wrap items-baseline gap-x-1.5 gap-y-1"
+                  role="img"
+                  aria-label={`${row.label}: ${row.current} ${row.unit} now, ${row.proposed} ${row.unit} proposed`}
+                >
+                  <span className="text-sm font-bold tabular-nums text-ink-muted">
+                    {row.current}
+                  </span>
+                  <ArrowRight aria-hidden="true" className="h-3.5 w-3.5 shrink-0 text-ink-subtle" />
+                  <span className="text-sm font-black tabular-nums text-ink">{row.proposed}</span>
+                  <span className="text-[0.6875rem] font-bold text-ink-muted">{row.unit}</span>
+                  {row.delta !== 0 && (
+                    <span
+                      className={`rounded-full px-1.5 py-0.5 text-[0.6875rem] font-black tabular-nums ring-1 ring-inset ${
+                        up
+                          ? "bg-primary-50 text-primary-700 ring-primary-100"
+                          : "bg-accent-50 text-accent-700 ring-accent-100"
+                      }`}
+                    >
+                      {up ? "+" : "−"}
+                      {Math.abs(row.delta)}
+                    </span>
+                  )}
                 </span>
+              </div>
+
+              {scalable && (
+                <div
+                  aria-hidden="true"
+                  className="relative mt-2 h-1.5 w-full rounded-full bg-surface-sunken"
+                >
+                  <span className="absolute inset-y-[-2px] left-1/2 w-px -translate-x-1/2 bg-ink/20" />
+                  {row.delta !== 0 && (
+                    <span
+                      className="absolute inset-y-0 rounded-full transition-[width] duration-500 ease-out-soft"
+                      style={{
+                        width: `${width}%`,
+                        left: up ? "50%" : `${50 - width}%`,
+                        backgroundColor: up
+                          ? "var(--color-primary-500)"
+                          : "var(--color-accent-400)",
+                      }}
+                    />
+                  )}
+                </div>
               )}
-            </span>
+            </li>
+          );
+        })}
+        {scalable && (
+          <li className="flex items-center justify-between gap-2 border-t border-hairline bg-surface-muted px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.08em] text-ink-subtle">
+            <span className="tabular-nums">−{axisLabel}%</span>
+            <span>No change</span>
+            <span className="tabular-nums">+{axisLabel}%</span>
           </li>
-        ))}
+        )}
       </ul>
 
       {artifact.evidence.length > 0 && (
-        <ul className="mt-3 space-y-1.5">
+        <ul className="mt-3 space-y-1.5 border-t border-dashed border-sky-200 pt-3">
           {artifact.evidence.map((item) => (
             <li
               key={item}

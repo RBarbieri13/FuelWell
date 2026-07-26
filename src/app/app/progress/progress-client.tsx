@@ -710,7 +710,11 @@ const PLOT_H = 40;
  * pins a readout — a line with no axis is decoration, not data.
  */
 function WeightTrendChart({ points }: { points: { date: string; lb: number }[] }) {
-  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  // A tap pins a weigh-in; hover/focus only previews it. Without the split, a
+  // mouse leaving the chart left a stale readout pinned above it.
+  const [pinnedIndex, setPinnedIndex] = useState<number | null>(null);
+  const [hoverIndex, setHoverIndex] = useState<number | null>(null);
+  const activeIndex = hoverIndex ?? pinnedIndex;
   const [drawn, setDrawn] = useState(false);
 
   useEffect(() => {
@@ -718,15 +722,27 @@ function WeightTrendChart({ points }: { points: { date: string; lb: number }[] }
     return () => clearTimeout(timer);
   }, []);
 
+  const mean = useMemo(
+    () => points.reduce((sum, point) => sum + point.lb, 0) / points.length,
+    [points]
+  );
+
   const { lo, hi, coords, area, ticks } = useMemo(() => {
     const values = points.map((point) => point.lb);
     const min = Math.min(...values);
     const max = Math.max(...values);
-    // Pad the domain so a nearly-flat series doesn't render glued to an edge.
+    // Pad the domain so a nearly-flat series doesn't render glued to an edge,
+    // then snap the bounds out to whole pounds with an even span. The axis
+    // prints three whole-pound ticks (lo, midpoint, hi), so the domain has to
+    // land on values those labels can state exactly — a sub-pound domain
+    // rounded to whole pounds printed the same number at two different heights.
     const rawSpan = max - min;
     const pad = rawSpan < 0.6 ? 0.6 : rawSpan * 0.18;
-    const low = min - pad;
-    const high = max + pad;
+    const low = Math.floor(min - pad);
+    let high = Math.ceil(max + pad);
+    if ((high - low) % 2 !== 0) {
+      high += 1;
+    }
     const span = high - low || 1;
 
     const xAt = (index: number) =>
@@ -776,7 +792,8 @@ function WeightTrendChart({ points }: { points: { date: string; lb: number }[] }
           </p>
         ) : (
           <p className="text-xs font-semibold text-ink-subtle">
-            Tap a point for that weigh-in.
+            Tap a point for that weigh-in. Dashed line is the{" "}
+            <span className="tabular-nums">{mean.toFixed(1)} lb</span> average.
           </p>
         )}
       </div>
@@ -797,7 +814,7 @@ function WeightTrendChart({ points }: { points: { date: string; lb: number }[] }
             preserveAspectRatio="none"
             className="h-20 w-full text-primary-500"
             role="img"
-            aria-label={`Weight trend across ${points.length} weigh-ins, from ${points[0].lb.toFixed(1)} pounds on ${shortDate(points[0].date)} to ${points[points.length - 1].lb.toFixed(1)} pounds on ${shortDate(points[points.length - 1].date)}. Chart scale runs ${lo.toFixed(0)} to ${hi.toFixed(0)} pounds.`}
+            aria-label={`Weight trend across ${points.length} weigh-ins, from ${points[0].lb.toFixed(1)} pounds on ${shortDate(points[0].date)} to ${points[points.length - 1].lb.toFixed(1)} pounds on ${shortDate(points[points.length - 1].date)}. Average ${mean.toFixed(1)} pounds. Chart scale runs ${lo.toFixed(0)} to ${hi.toFixed(0)} pounds.`}
           >
             <defs>
               <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
@@ -838,6 +855,19 @@ function WeightTrendChart({ points }: { points: { date: string; lb: number }[] }
                 transition: "opacity 700ms var(--ease-out-soft)",
               }}
             />
+            {/* Mean of the plotted weigh-ins — a reference the line can be
+                read against, not another invented series. */}
+            <line
+              x1="0"
+              x2={PLOT_W}
+              y1={PLOT_H - ((mean - lo) / (hi - lo || 1)) * PLOT_H}
+              y2={PLOT_H - ((mean - lo) / (hi - lo || 1)) * PLOT_H}
+              stroke="var(--color-primary-400)"
+              strokeWidth="1"
+              strokeDasharray="4 4"
+              vectorEffect="non-scaling-stroke"
+              opacity={0.7}
+            />
             <polyline
               points={coords}
               fill="none"
@@ -862,15 +892,19 @@ function WeightTrendChart({ points }: { points: { date: string; lb: number }[] }
                 <button
                   key={`${tick.date}-${index}`}
                   type="button"
-                  onClick={() => setActiveIndex((current) => (current === index ? null : index))}
-                  onMouseEnter={() => setActiveIndex(index)}
-                  onFocus={() => setActiveIndex(index)}
-                  aria-pressed={isActive}
+                  onClick={() => setPinnedIndex((current) => (current === index ? null : index))}
+                  onMouseEnter={() => setHoverIndex(index)}
+                  onMouseLeave={() => setHoverIndex(null)}
+                  onFocus={() => setHoverIndex(index)}
+                  onBlur={() => setHoverIndex(null)}
+                  aria-pressed={pinnedIndex === index}
                   aria-label={`${shortDate(tick.date)}: ${tick.lb.toFixed(1)} pounds`}
                   className="absolute top-0 h-full -translate-x-1/2 rounded-md focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600"
                   style={{
                     left: `${tick.x}%`,
-                    width: `max(1.75rem, ${(100 / points.length).toFixed(2)}%)`,
+                    // 2.75rem = the 44px minimum touch target; a dense series
+                    // never shrinks a tick below a thumb.
+                    width: `max(2.75rem, ${(100 / points.length).toFixed(2)}%)`,
                   }}
                 >
                   <span
@@ -908,7 +942,11 @@ function StatTile({
   icon: typeof CalendarCheck;
 }) {
   return (
-    <div className="min-w-0 rounded-2xl bg-surface px-2 py-3 text-center shadow-e1 sm:px-3 sm:py-4">
+    // Sits on the tinted verdict panel, which is already e1. The tile ascends a
+    // full tier to e2 so the two depths read as a hierarchy rather than the same
+    // shadow printed twice, and keeps its own hairline edge because a shadow
+    // alone disappears against a tinted ground.
+    <div className="min-w-0 rounded-2xl bg-surface px-2 py-3 text-center shadow-e2 ring-1 ring-inset ring-hairline sm:px-3 sm:py-4">
       <span className="mx-auto mb-2 flex h-7 w-7 items-center justify-center rounded-[0.7rem] bg-primary-50 text-primary-600 ring-1 ring-inset ring-primary-100">
         <Icon className="h-4 w-4" strokeWidth={2} />
       </span>

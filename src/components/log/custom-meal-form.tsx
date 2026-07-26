@@ -147,6 +147,7 @@ export function CustomMealForm({
           aria-label="Meal name"
           aria-invalid={touched && !nameValid ? "true" : undefined}
           maxLength={120}
+          autoFocus
           className={cn(
             FIELD_BASE,
             touched && !nameValid ? "ring-red-400" : "ring-hairline-strong"
@@ -168,52 +169,59 @@ export function CustomMealForm({
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-2">
-        {MACRO_FIELDS.map((field) => {
-          const invalid = touched && parsed[field.key] === null;
-          return (
-            <div key={field.key} className="min-w-0">
-              <label className="mb-1 flex items-center gap-1.5 text-xs font-black uppercase tracking-[0.12em] text-ink-subtle">
-                <span
-                  aria-hidden="true"
-                  className="h-1.5 w-1.5 shrink-0 rounded-full"
-                  style={{ backgroundColor: field.accent }}
-                />
-                <span className="min-w-0 truncate">{field.label}</span>
-              </label>
-              <input
-                ref={field.key === "calories" ? firstMacroRef : undefined}
-                type="number"
-                inputMode="decimal"
-                min={0}
-                max={field.max}
-                aria-label={field.label}
-                aria-invalid={invalid ? "true" : undefined}
-                value={values[field.key]}
-                onChange={(event) =>
-                  setValues((current) => ({
-                    ...current,
-                    [field.key]: event.target.value,
-                  }))
-                }
-                placeholder="0"
-                className={cn(
-                  FIELD_BASE,
-                  "tabular-nums",
-                  invalid ? "ring-red-400" : "ring-hairline-strong"
-                )}
-              />
-            </div>
-          );
-        })}
-      </div>
-      {touched && !numbersValid && (
-        <p className="text-xs font-bold leading-5 text-red-600" role="alert">
-          {overMax
-            ? "Values above 10,000 calories or 1,000 g per macro usually mean a typo — double-check the numbers."
-            : "Enter a number of 0 or more in every macro field."}
+      {/* Macros live in their own sunken well so the form reads as two steps —
+          what the meal is, then what is in it — rather than six equal fields. */}
+      <div className="rounded-[1.35rem] bg-surface-muted p-3 ring-1 ring-inset ring-hairline">
+        <p className="mb-2 px-1 text-xs font-black uppercase tracking-[0.12em] text-ink-subtle">
+          Macros — all four required
         </p>
-      )}
+        <div className="grid grid-cols-2 gap-2">
+          {MACRO_FIELDS.map((field) => {
+            const invalid = touched && parsed[field.key] === null;
+            return (
+              <div key={field.key} className="min-w-0">
+                <label className="mb-1 flex items-center gap-1.5 text-xs font-black uppercase tracking-[0.12em] text-ink-subtle">
+                  <span
+                    aria-hidden="true"
+                    className="h-1.5 w-1.5 shrink-0 rounded-full"
+                    style={{ backgroundColor: field.accent }}
+                  />
+                  <span className="min-w-0 truncate">{field.label}</span>
+                </label>
+                <input
+                  ref={field.key === "calories" ? firstMacroRef : undefined}
+                  type="number"
+                  inputMode="decimal"
+                  min={0}
+                  max={field.max}
+                  aria-label={field.label}
+                  aria-invalid={invalid ? "true" : undefined}
+                  value={values[field.key]}
+                  onChange={(event) =>
+                    setValues((current) => ({
+                      ...current,
+                      [field.key]: event.target.value,
+                    }))
+                  }
+                  placeholder="0"
+                  className={cn(
+                    FIELD_BASE,
+                    "tabular-nums",
+                    invalid ? "ring-red-400" : "ring-hairline-strong"
+                  )}
+                />
+              </div>
+            );
+          })}
+        </div>
+        {touched && !numbersValid && (
+          <p className="mt-2 px-1 text-xs font-bold leading-5 text-red-600" role="alert">
+            {overMax
+              ? "Values above 10,000 calories or 1,000 g per macro usually mean a typo — double-check the numbers."
+              : "Enter a number of 0 or more in every macro field."}
+          </p>
+        )}
+      </div>
 
       <Button type="button" size="lg" className="w-full" onClick={handleSubmit}>
         <Check className="h-4 w-4" strokeWidth={2.5} aria-hidden="true" />

@@ -4,6 +4,7 @@ import {
   ArrowRight,
   Camera,
   CheckCircle2,
+  CornerDownRight,
   Mail,
   Paperclip,
   ReceiptText,
@@ -86,7 +87,7 @@ export default async function CoachAttachmentsReviewPage() {
       </header>
 
       <main className="fw-page-inner space-y-4 md:space-y-6 pb-28 md:pb-8">
-        <Card variant="elevated" padding="lg" className="rounded-[1.5rem]">
+        <Card variant="elevated" padding="lg">
           <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
             <div className="min-w-0">
               <SectionHeader
@@ -103,7 +104,7 @@ export default async function CoachAttachmentsReviewPage() {
                 {["Images", "PDFs", "Emails", "CSV / JSON / text"].map((item) => (
                   <div
                     key={item}
-                    className="flex min-h-11 items-center gap-2 rounded-full bg-surface px-3.5 py-2 text-sm font-black text-ink shadow-e1"
+                    className="flex min-h-11 items-center gap-2 rounded-full bg-surface px-3.5 py-2 text-sm font-black text-ink shadow-e1 ring-1 ring-inset ring-primary-100/70"
                   >
                     <ShieldCheck className="h-4 w-4 shrink-0 text-primary-600" strokeWidth={2} />
                     <span className="truncate">{item}</span>
@@ -114,7 +115,7 @@ export default async function CoachAttachmentsReviewPage() {
           </div>
         </Card>
 
-        <Card padding="lg" className="rounded-[1.5rem]">
+        <Card padding="lg">
           <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] lg:items-center">
             <div className="flex min-w-0 gap-3">
               <span
@@ -142,10 +143,12 @@ export default async function CoachAttachmentsReviewPage() {
                 </p>
               </div>
             </div>
-            <div className="flex min-w-0 gap-3 rounded-[1.1rem] bg-surface-muted px-4 py-3">
+            {/* Sunken well, hairline ring, no second shadow — the card already
+                owns this layer's elevation. */}
+            <div className="flex min-w-0 gap-3 rounded-[1.1rem] bg-surface-muted px-4 py-3 ring-1 ring-inset ring-hairline">
               <span
                 aria-hidden="true"
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[0.9rem] bg-surface text-primary-700 ring-1 ring-inset ring-hairline"
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[1rem] bg-surface text-primary-700 ring-1 ring-inset ring-hairline"
               >
                 <ShieldCheck className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
               </span>
@@ -160,7 +163,7 @@ export default async function CoachAttachmentsReviewPage() {
             {showPreflightLink && (
               <Link
                 href="/app/launch-preflight"
-                className="fw-press inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-sm font-black text-primary-800 ring-1 ring-inset ring-primary-100 hover:bg-primary-100 active:bg-primary-200"
+                className="fw-press inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-sm font-black text-primary-800 ring-1 ring-inset ring-primary-100 hover:bg-primary-100 hover:ring-primary-200 active:bg-primary-200 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600"
               >
                 Open preflight
                 <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2} />
@@ -173,7 +176,7 @@ export default async function CoachAttachmentsReviewPage() {
           {attachmentTypes.map((item) => {
             const Icon = item.icon;
             return (
-              <Card key={item.title} padding="md" className="flex flex-col rounded-[1.4rem]">
+              <Card key={item.title} padding="md" className="flex flex-col">
                 <span
                   aria-hidden="true"
                   className="flex h-11 w-11 items-center justify-center rounded-[1rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100"
@@ -181,9 +184,21 @@ export default async function CoachAttachmentsReviewPage() {
                   <Icon className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
                 </span>
                 <h2 className="mt-4 text-lg font-black leading-tight text-ink">{item.title}</h2>
-                <p className="mt-2 text-sm font-semibold leading-6 text-ink-muted">{item.detail}</p>
-                <p className="mt-4 rounded-[1rem] bg-surface-muted px-3 py-3 text-sm font-bold leading-6 text-ink-muted">
-                  {item.output}
+                {/* flex-1 on the description lets the four outcome wells line
+                    up across the row even when the copy wraps unevenly. */}
+                <p className="mt-2 flex-1 text-sm font-semibold leading-6 text-ink-muted">
+                  {item.detail}
+                </p>
+                {/* The outcome row is what you get back, so it is marked as a
+                    result rather than sitting as a second paragraph of equal
+                    weight. */}
+                <p className="mt-4 flex gap-2 rounded-[1rem] bg-surface-muted px-3 py-3 text-sm font-bold leading-6 text-ink-muted ring-1 ring-inset ring-hairline">
+                  <CornerDownRight
+                    aria-hidden="true"
+                    className="mt-1 h-4 w-4 shrink-0 text-primary-600"
+                    strokeWidth={2}
+                  />
+                  <span className="min-w-0">{item.output}</span>
                 </p>
               </Card>
             );
@@ -191,19 +206,26 @@ export default async function CoachAttachmentsReviewPage() {
         </section>
 
         <section className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-          <Card padding="lg" className="rounded-[1.5rem]">
+          <Card padding="lg">
             <SectionHeader as="h2" title="Review flow" />
-            {/* Numbered steps read as an ordered list to assistive tech, and the
-                connector between plates keeps the sequence legible at a glance. */}
+            {/* Numbered steps read as an ordered list to assistive tech, and a
+                connector runs between the plates so the four rows read as one
+                sequence rather than four unrelated tiles. */}
             <ol className="mt-4 grid gap-2">
               {reviewSteps.map((step, index) => (
                 <li
                   key={step}
-                  className="flex items-start gap-3 rounded-[1.1rem] bg-primary-50/60 p-3 ring-1 ring-inset ring-primary-100"
+                  className="relative flex items-start gap-3 rounded-[1.1rem] bg-primary-50/60 p-3 ring-1 ring-inset ring-primary-100"
                 >
+                  {index < reviewSteps.length - 1 && (
+                    <span
+                      aria-hidden="true"
+                      className="absolute left-[1.75rem] top-11 -bottom-2 w-px bg-primary-200"
+                    />
+                  )}
                   <span
                     aria-hidden="true"
-                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-surface text-sm font-black tabular-nums text-primary-700 shadow-e1"
+                    className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-surface text-sm font-black tabular-nums text-primary-700 shadow-e1 ring-1 ring-inset ring-primary-100"
                   >
                     {index + 1}
                   </span>
@@ -213,7 +235,7 @@ export default async function CoachAttachmentsReviewPage() {
             </ol>
           </Card>
 
-          <Card padding="lg" className="rounded-[1.5rem]">
+          <Card padding="lg">
             <SectionHeader
               as="h2"
               title="Try it in chat"
@@ -228,7 +250,9 @@ export default async function CoachAttachmentsReviewPage() {
                 <Link
                   key={prompt}
                   href={`/app/coach?prompt=${encodeURIComponent(prompt)}`}
-                  className="fw-press group flex min-h-12 items-center justify-between gap-3 rounded-[1.1rem] bg-surface-muted px-4 py-3 text-sm font-bold text-ink-muted ring-1 ring-inset ring-transparent hover:bg-primary-50 hover:text-primary-800 hover:ring-primary-200 active:bg-primary-100"
+                  // A row you can tap needs a visible boundary at rest, not
+                  // only on hover — the ring starts as a hairline.
+                  className="fw-press group flex min-h-12 items-center justify-between gap-3 rounded-[1.1rem] bg-surface-muted px-4 py-3 text-sm font-bold text-ink-muted ring-1 ring-inset ring-hairline hover:bg-primary-50 hover:text-primary-800 hover:ring-primary-200 active:bg-primary-100 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600"
                 >
                   <span className="min-w-0">{prompt}</span>
                   <ArrowRight

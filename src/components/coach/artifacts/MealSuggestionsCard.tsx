@@ -25,15 +25,30 @@ type MealSuggestionsArtifact = {
 
 const grams = (n: number) => `${Math.round(n * 10) / 10}g`;
 
-/** Fixed four-cell metric strip so macros line up column-wise between rows. */
+/**
+ * Canonical macro palette, shared verbatim by every coach card that prints a
+ * macro figure. Bright `--color-macro-*` tokens are reserved for fills; text
+ * uses the darker step so each figure clears 4.5:1 on the surfaces it sits on.
+ */
+const MACRO_TEXT = {
+  calories: "var(--color-primary-800)",
+  protein: "var(--color-sky-700)",
+  carbs: "var(--color-lemon-700)",
+  fat: "var(--color-accent-700)",
+} as const;
+
+/**
+ * Fixed four-cell metric strip so macros line up column-wise between rows.
+ * The label shrinks, never the figure — clipped numbers are not acceptable.
+ */
 function MetricCell({ label, value, tone }: { label: string; value: string; tone: string }) {
   return (
-    <span className="flex min-w-0 items-baseline justify-between gap-1 rounded-lg bg-surface px-1.5 py-1 ring-1 ring-inset ring-hairline">
-      <span className="shrink-0 text-[0.625rem] font-black uppercase tracking-wide text-ink-subtle">
+    <span className="flex min-h-6 min-w-0 items-baseline justify-between gap-1.5 rounded-lg bg-surface px-1.5 py-1 ring-1 ring-inset ring-hairline">
+      <span className="min-w-0 truncate text-[0.625rem] font-black uppercase tracking-wide text-ink-muted">
         {label}
       </span>
       <span
-        className="min-w-0 truncate text-[0.6875rem] font-black tabular-nums"
+        className="shrink-0 text-[0.6875rem] font-black tabular-nums"
         style={{ color: tone }}
       >
         {value}
@@ -85,8 +100,12 @@ export function MealSuggestionsCard({
                     </Badge>
                   </p>
                 </div>
+                {/* Tonal, not primary: a list of N equally-weighted options has
+                    no single primary action, and N glowing buttons flatten the
+                    hierarchy of the whole transcript. */}
                 <Button
                   type="button"
+                  variant="tonal"
                   size="sm"
                   aria-label={`Log ${s.name} to ${s.slot}`}
                   onClick={() =>
@@ -111,27 +130,29 @@ export function MealSuggestionsCard({
                 <MetricCell
                   label="kcal"
                   value={`${Math.round(s.macros.kcal)}`}
-                  tone="var(--color-macro-calories)"
+                  tone={MACRO_TEXT.calories}
                 />
                 <MetricCell
                   label="P"
                   value={grams(s.macros.protein)}
-                  tone="var(--color-macro-protein)"
+                  tone={MACRO_TEXT.protein}
                 />
                 <MetricCell
                   label="C"
                   value={grams(s.macros.carbs)}
-                  tone="var(--color-lemon-700)"
+                  tone={MACRO_TEXT.carbs}
                 />
                 <MetricCell
                   label="F"
                   value={grams(s.macros.fat)}
-                  tone="var(--color-accent-700)"
+                  tone={MACRO_TEXT.fat}
                 />
               </div>
 
               {s.why && (
-                <p className="mt-2 text-xs font-semibold leading-5 text-ink-muted">{s.why}</p>
+                <p className="mt-2 rounded-xl bg-surface px-2.5 py-1.5 text-xs font-semibold leading-5 text-ink-muted ring-1 ring-inset ring-hairline">
+                  {s.why}
+                </p>
               )}
             </li>
           ))}

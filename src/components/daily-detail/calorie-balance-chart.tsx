@@ -51,6 +51,17 @@ type SelectedBar = {
 /** Fixed plot band height in px. Bars and gridlines share this scale. */
 const PLOT_HEIGHT = 168;
 
+/**
+ * Headroom above the plot band, in Tailwind steps (`pt-5` = 20px), shared by
+ * the y-axis, the gridline layer, and every day column. The per-bar value label
+ * rides just above its bar, and the day strip is a horizontal scroller —
+ * `overflow-x: auto` forces `overflow-y` to compute to `auto` as well, so
+ * without this reserved band a full-height bar's label is clipped away.
+ */
+const PLOT_TOP_PAD = "pt-5";
+/** Same 20px offset, expressed for the absolutely-positioned gridline layer. */
+const PLOT_TOP_OFFSET = "top-5";
+
 const TONE_CLASSES: Record<SegmentTone, string> = {
   protein: "bg-sky-500",
   carbs: "bg-lemon-500",
@@ -479,7 +490,7 @@ export function CalorieBalanceChart({
             <div className="mt-3 flex min-w-0 gap-2">
               {/* Shared y axis, parked outside the scroller so the scale stays
                   on screen while the day strip pans. */}
-              <div aria-hidden="true" className="w-9 shrink-0 pt-2 sm:w-11">
+              <div aria-hidden="true" className={cn("w-9 shrink-0 sm:w-11", PLOT_TOP_PAD)}>
                 <div
                   className="flex flex-col justify-between text-right text-[10px] font-bold leading-none tabular-nums text-ink-faint"
                   style={{ height: PLOT_HEIGHT }}
@@ -492,16 +503,23 @@ export function CalorieBalanceChart({
 
               <div ref={scrollRef} className="min-w-0 flex-1 overflow-x-auto pb-2">
                 {/* Column minimums alone size the grid: narrow ranges fit the
-                    viewport (no phantom scroll area), wide ranges scroll. */}
+                    viewport (no phantom scroll area), wide ranges scroll. The
+                    minimum has to clear the column's own content — two 36px
+                    bars, an 8px gap, and 16px of column padding — or the bars
+                    spill past the track they are supposed to sit inside. */}
                 <div
                   className="relative grid items-end gap-2"
-                  style={{ gridTemplateColumns: `repeat(${filteredDays.length}, minmax(84px, 1fr))` }}
+                  style={{
+                    gridTemplateColumns: `repeat(${filteredDays.length}, minmax(${
+                      intakeExpanded && outputExpanded ? 100 : 72
+                    }px, 1fr))`,
+                  }}
                 >
                   {/* Gridlines span the whole strip at the same stops as the
                       axis labels — values are being compared across days. */}
                   <div
                     aria-hidden="true"
-                    className="pointer-events-none absolute inset-x-0 top-2"
+                    className={cn("pointer-events-none absolute inset-x-0", PLOT_TOP_OFFSET)}
                     style={{ height: PLOT_HEIGHT }}
                   >
                     <span className="absolute inset-x-0 top-0 border-t border-dashed border-hairline-strong" />
@@ -659,7 +677,10 @@ function DayColumn({
   return (
     <div
       className={cn(
-        "flex flex-col rounded-[1.1rem] p-2 transition-colors duration-200 ease-out-soft",
+        "flex min-w-0 flex-col rounded-[1.1rem] px-2 pb-2 transition-colors duration-200 ease-out-soft",
+        // Reserved headroom keeps the tallest bar's value label inside the
+        // scroller's painted box instead of clipped at its top edge.
+        PLOT_TOP_PAD,
         isToday
           ? "bg-primary-50/60 ring-1 ring-inset ring-primary-200"
           : "ring-1 ring-inset ring-transparent hover:bg-surface hover:ring-hairline"
@@ -745,8 +766,9 @@ function StackedBar({
       onMouseLeave={onPreviewEnd}
       onFocus={onPreview}
       onBlur={onPreviewEnd}
-      className="group relative flex h-full w-9 items-end justify-center rounded-lg focus:outline-none focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600"
-      aria-label={`Open ${label.toLowerCase()} detail with ${total} calories`}
+      className="group relative flex h-full w-9 shrink-0 items-end justify-center rounded-lg focus:outline-none focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600"
+      aria-haspopup="dialog"
+      aria-label={`Open ${label.toLowerCase()} detail with ${total.toLocaleString()} calories`}
     >
       {/* Value rides above the bar, outside its clipped box, so it is never
           swallowed the way an inside-the-bar label would be. */}
@@ -825,12 +847,23 @@ function AggregateChart({
   const max = Math.max(1, ...segments.map((segment) => segment.calories));
 
   return (
-    <div className="rounded-[1.5rem] bg-surface-subtle p-4 ring-1 ring-inset ring-hairline sm:p-5">
+    <div className="min-w-0 rounded-[1.5rem] bg-surface-subtle p-4 ring-1 ring-inset ring-hairline sm:p-5">
       <h3 className="font-heading text-lg font-black text-ink md:text-xl">{title}</h3>
-      <p className="mt-1 text-sm font-semibold text-ink-muted">{detail}</p>
-      <div className="mt-5 grid gap-4">
+      <p className="mt-1 text-sm font-semibold leading-6 text-ink-muted">{detail}</p>
+      {segments.length === 0 ? (
+        <p className="mt-4 rounded-[1rem] bg-surface-sunken px-4 py-5 text-center text-xs font-semibold leading-5 text-ink-muted">
+          Nothing in this series over the visible window.
+        </p>
+      ) : (
+      <>
+      {/* Every bar below is measured against the same maximum — say what it is
+          rather than leaving the widths unscaled. */}
+      <p className="mt-3 text-[11px] font-bold tabular-nums text-ink-subtle">
+        Bars scaled 0 – {max.toLocaleString()} kcal
+      </p>
+      <div className="mt-4 grid gap-4">
         {segments.map((segment) => (
-          <div key={`${title}-${segment.label}`} className="grid gap-2">
+          <div key={`${title}-${segment.label}`} className="grid min-w-0 gap-2">
             <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
               <span className="inline-flex items-center gap-2 text-sm font-black text-ink-muted">
                 <span
@@ -856,6 +889,8 @@ function AggregateChart({
           </div>
         ))}
       </div>
+      </>
+      )}
     </div>
   );
 }
@@ -897,6 +932,7 @@ function BarDetailModal({
   const total = totalCalories(segments);
   const isIntake = selected.kind === "intake";
   const heights = segmentHeights(segments, total);
+  const closeRef = useRef<HTMLButtonElement | null>(null);
 
   // Escape closes the pinned breakdown — a modal that only closes by a small
   // corner target is a trap on a phone.
@@ -908,6 +944,12 @@ function BarDetailModal({
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
 
+  // Move focus into the dialog so the close control is the first stop for
+  // keyboard and screen-reader users rather than whatever was behind it.
+  useEffect(() => {
+    closeRef.current?.focus();
+  }, []);
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-primary-950/40 p-4 backdrop-blur-sm"
@@ -918,7 +960,7 @@ function BarDetailModal({
         aria-modal="true"
         aria-label={`${selected.day.label} ${selected.kind} breakdown`}
         onClick={(event) => event.stopPropagation()}
-        className="max-h-[88vh] w-full max-w-2xl overflow-y-auto rounded-[2rem] border border-hairline bg-surface p-5 shadow-e4 md:p-7"
+        className="max-h-[88vh] w-full max-w-2xl overflow-y-auto overscroll-contain rounded-[2rem] border border-hairline bg-surface p-5 shadow-e4 md:p-7"
       >
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
@@ -933,6 +975,7 @@ function BarDetailModal({
             </p>
           </div>
           <button
+            ref={closeRef}
             type="button"
             onClick={onClose}
             className="fw-press flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-surface-muted text-ink-muted ring-1 ring-inset ring-hairline hover:bg-primary-50 hover:text-primary-700 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600"

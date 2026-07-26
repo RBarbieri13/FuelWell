@@ -48,11 +48,15 @@ export function WorkoutLoggedCard({ artifact, onAction }: ArtifactCardProps<Work
       : null;
 
   return (
-    <div className="max-w-full rounded-[24px] border border-hairline bg-surface p-4 shadow-e2">
+    <div
+      role="group"
+      aria-label={`Workout logged: ${workout.name}`}
+      className="max-w-full rounded-[24px] border border-hairline bg-surface p-4 shadow-e2"
+    >
       <div className="flex items-start gap-3">
         <span
           aria-hidden="true"
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[1rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100"
         >
           <Dumbbell className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
         </span>
@@ -77,28 +81,51 @@ export function WorkoutLoggedCard({ artifact, onAction }: ArtifactCardProps<Work
       </div>
 
       <dl className="mt-3 grid grid-cols-2 gap-1.5 sm:grid-cols-3">
-        <Stat label="Duration" value={`${Math.round(workout.durationMin)}`} unit="min" />
-        {burned !== null && <Stat label="Burned" value={`${burned}`} unit="kcal" />}
+        <Stat label="Duration" value={`${Math.round(workout.durationMin)}`} unit="min" emphasis />
+        {burned !== null && (
+          <Stat
+            label="Burned"
+            value={`${burned}`}
+            unit="kcal"
+            tint="var(--color-macro-calories)"
+          />
+        )}
         {distance !== null && <Stat label="Distance" value={`${distance}`} unit="mi" />}
       </dl>
 
       {exercises.length > 0 && (
-        <ul className="mt-3 overflow-hidden rounded-[1rem] bg-surface-muted ring-1 ring-inset ring-hairline">
-          {exercises.map((e, i) => {
-            const detail = formatExercise(e);
-            return (
-              <li
-                key={`${e.name}-${i}`}
-                className="flex items-baseline justify-between gap-3 border-t border-hairline px-3 py-2 text-sm first:border-t-0"
-              >
-                <span className="min-w-0 truncate font-bold text-ink">{e.name}</span>
-                {detail && (
-                  <span className="shrink-0 font-bold tabular-nums text-ink-muted">{detail}</span>
-                )}
-              </li>
-            );
-          })}
-        </ul>
+        <div className="mt-3 border-t border-dashed border-hairline-strong pt-3">
+          <div className="flex items-baseline justify-between gap-3">
+            <div className="text-[0.6875rem] font-black uppercase tracking-[0.14em] text-ink-muted">
+              Exercises
+            </div>
+            <span className="shrink-0 text-[0.6875rem] font-black tabular-nums text-ink-subtle">
+              {exercises.length}
+            </span>
+          </div>
+          <ul className="mt-2 overflow-hidden rounded-[1rem] bg-surface-muted ring-1 ring-inset ring-hairline">
+            {exercises.map((e, i) => {
+              const detail = formatExercise(e);
+              return (
+                <li
+                  key={`${e.name}-${i}`}
+                  className="flex items-baseline gap-2.5 border-t border-hairline px-3 py-2 text-sm first:border-t-0"
+                >
+                  <span
+                    aria-hidden="true"
+                    className="w-4 shrink-0 text-right text-[0.6875rem] font-black tabular-nums text-ink-faint"
+                  >
+                    {i + 1}
+                  </span>
+                  <span className="min-w-0 flex-1 truncate font-bold text-ink">{e.name}</span>
+                  {detail && (
+                    <span className="shrink-0 font-bold tabular-nums text-ink-muted">{detail}</span>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       )}
 
       {workout.notes && (
@@ -124,14 +151,43 @@ export function WorkoutLoggedCard({ artifact, onAction }: ArtifactCardProps<Work
   );
 }
 
-function Stat({ label, value, unit }: { label: string; value: string; unit: string }) {
+function Stat({
+  label,
+  value,
+  unit,
+  tint,
+  emphasis = false,
+}: {
+  label: string;
+  value: string;
+  unit: string;
+  tint?: string;
+  emphasis?: boolean;
+}) {
   return (
-    <div className="min-w-0 rounded-[0.9rem] bg-surface-muted px-3 py-2 ring-1 ring-inset ring-hairline">
-      <dt className="text-[10px] font-black uppercase tracking-[0.08em] text-ink-muted">
-        {label}
+    <div
+      className={`min-w-0 rounded-[0.9rem] px-3 py-2 ring-1 ring-inset ${
+        emphasis ? "bg-primary-50 ring-primary-100" : "bg-surface-muted ring-hairline"
+      }`}
+    >
+      <dt className="flex items-center gap-1 text-[10px] font-black uppercase tracking-[0.08em] text-ink-muted">
+        {tint && (
+          <span
+            aria-hidden="true"
+            className="h-1.5 w-1.5 shrink-0 rounded-full"
+            style={{ backgroundColor: tint }}
+          />
+        )}
+        <span className="min-w-0 truncate">{label}</span>
       </dt>
       <dd className="mt-0.5 flex items-baseline gap-1">
-        <span className="text-sm font-black tabular-nums text-ink">{value}</span>
+        <span
+          className={`text-base font-black tabular-nums ${
+            emphasis ? "text-primary-800" : "text-ink"
+          }`}
+        >
+          {value}
+        </span>
         <span className="text-[0.6875rem] font-bold text-ink-muted">{unit}</span>
       </dd>
     </div>

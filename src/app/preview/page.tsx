@@ -32,13 +32,16 @@ const previewLinks = [
 const APP_VERSION = version;
 
 // Shared chip shape: 44px on touch, tightened once a pointer is available.
+// The focus ring carries a dark offset so it reads as a halo on the near-black
+// deck rather than merging with the chip's own inset ring — matching the
+// new-user deck, which already did this.
 const previewChip =
-  "inline-flex min-h-11 items-center gap-2 rounded-full bg-white/10 px-3 text-xs font-black text-white ring-1 ring-inset ring-white/15 transition-colors duration-150 hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300 md:min-h-8";
+  "fw-press inline-flex min-h-11 items-center gap-2 rounded-full bg-white/10 px-3 text-xs font-black text-white ring-1 ring-inset ring-white/15 hover:bg-white/20 active:bg-white/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-950 md:min-h-8";
 
 // Shared shape for the clickable deck panels, so hover/press/focus never
 // drift between them.
 const previewPanel =
-  "group rounded-[1.5rem] bg-white/[0.06] p-4 ring-1 ring-inset ring-white/10 transition-colors duration-150 hover:bg-white/[0.1] hover:ring-primary-300/40 active:bg-white/[0.13] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300";
+  "fw-press group rounded-[1.5rem] bg-white/[0.06] p-4 ring-1 ring-inset ring-white/10 hover:bg-white/[0.1] hover:ring-primary-300/40 active:bg-white/[0.13] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-950";
 
 const previewFrame =
   "flex min-h-[680px] flex-col overflow-hidden rounded-[2rem] bg-neutral-900 shadow-2xl shadow-black/30 ring-1 ring-inset ring-white/10";
@@ -75,7 +78,7 @@ export default function PreviewHubPage() {
             {previewLinks.map((link) => (
               <Link key={link.href} href={link.href} className={previewChip}>
                 {link.label}
-                <ArrowUpRight className="h-3.5 w-3.5 shrink-0" strokeWidth={2.5} />
+                <ArrowUpRight className="h-3.5 w-3.5 shrink-0" strokeWidth={2.5} aria-hidden="true" />
               </Link>
             ))}
           </nav>
@@ -107,10 +110,7 @@ export default function PreviewHubPage() {
               <div className="min-w-0 flex-1">
                 <div className="flex items-start justify-between gap-3">
                   <h2 className="text-base font-black">2. New user signup + intake</h2>
-                  <ArrowUpRight
-                    className="h-4 w-4 shrink-0 text-primary-200 transition-transform duration-200 ease-out-soft group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                    strokeWidth={2.5}
-                  />
+                  <ArrowUpRight className="h-4 w-4 shrink-0 text-primary-200 transition-transform duration-200 ease-out-soft group-hover:translate-x-0.5 group-hover:-translate-y-0.5" strokeWidth={2.5} aria-hidden="true" />
                 </div>
                 <p className="mt-1 text-sm font-semibold leading-6 text-neutral-300">
                   Starts at account creation, then walks through the full
@@ -177,7 +177,7 @@ export default function PreviewHubPage() {
                 className={cn(previewChip, "hidden bg-white text-neutral-950 ring-white/0 hover:bg-primary-100 sm:inline-flex")}
               >
                 Open
-                <ArrowUpRight className="h-3.5 w-3.5 shrink-0" strokeWidth={2.5} />
+                <ArrowUpRight className="h-3.5 w-3.5 shrink-0" strokeWidth={2.5} aria-hidden="true" />
               </Link>
             </div>
             <iframe
@@ -196,13 +196,13 @@ export default function PreviewHubPage() {
                 <div className="min-w-0">
                   <h2 className="truncate text-sm font-black">iOS simulator</h2>
                   <p className="truncate text-xs font-semibold tabular-nums text-neutral-400">
-                    375 x 812 phone viewport
+                    375 × 812 phone viewport
                   </p>
                 </div>
               </div>
               <Link href="/ios-preview" className={previewChip}>
                 Focus
-                <ArrowUpRight className="h-3.5 w-3.5 shrink-0" strokeWidth={2.5} />
+                <ArrowUpRight className="h-3.5 w-3.5 shrink-0" strokeWidth={2.5} aria-hidden="true" />
               </Link>
             </div>
             <div className="flex flex-1 items-center justify-center overflow-auto bg-[radial-gradient(circle_at_top,_rgba(30,174,132,0.18),_transparent_32rem)] p-5">

@@ -19,7 +19,6 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { ProgressMeter } from "@/components/ui/progress-meter";
 import { SectionHeader } from "@/components/ui/section-header";
 import { useWorkoutLog } from "@/lib/use-workout-log";
 import type { WorkoutEntry } from "@/lib/coach/types";
@@ -124,20 +123,6 @@ function SourceBadge({ children }: { children: string }) {
   );
 }
 
-/**
- * Shared 0-100% scale for the movement-load bars. Without it the bars are
- * decoration: three lengths with nothing to read them against.
- */
-function LoadAxis() {
-  return (
-    <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-[0.12em] text-ink-faint">
-      <span>0%</span>
-      <span>50%</span>
-      <span>100% of capacity</span>
-    </div>
-  );
-}
-
 export default function ActivityPage() {
   const { workouts } = useWorkoutLog();
   const timeline = useMemo(
@@ -213,16 +198,17 @@ export default function ActivityPage() {
             <div className="rounded-[1.25rem] bg-primary-50/70 p-4 ring-1 ring-inset ring-primary-100">
               <div className="mb-2 flex items-center justify-between gap-3 text-[0.6875rem] font-black uppercase tracking-[0.12em] text-primary-800">
                 <span>Current confidence</span>
-                <span className="tabular-nums">68 / 100 · Medium</span>
+                <span>Medium</span>
               </div>
-              <ProgressMeter
-                value={68}
-                target={100}
-                color="var(--color-primary-500)"
-                size="md"
-                label="Recommendation confidence: 68 out of 100"
-                className="bg-surface"
-              />
+              {/* Qualitative only. Confidence is a judgement here, not a
+                  computed score, so the bar is decoration and is announced
+                  as the word beside it, never as a figure. */}
+              <div
+                aria-hidden="true"
+                className="h-2.5 overflow-hidden rounded-full bg-surface"
+              >
+                <div className="h-full w-2/3 rounded-full bg-primary-500 transition-[width] duration-700 ease-out-soft" />
+              </div>
               <p className="mt-2 text-xs font-semibold leading-5 text-ink-muted">
                 Add a wearable sync or recovery check-in to make this recommendation more precise.
               </p>
@@ -263,41 +249,35 @@ export default function ActivityPage() {
               description="Aisle-style scan of where today's effort comes from."
               action={<Badge variant="success" dot>Light day</Badge>}
             />
+            {/* The bar lengths are relative weighting only — there is no
+                measured capacity behind them, so they carry no axis, no
+                readout, and no numeric announcement. The words carry the
+                meaning; the bar is a visual rank. */}
             <div className="space-y-4">
-              <LoadAxis />
-              <div className="space-y-4">
-                {movementLoad.map((load) => (
-                  <div key={load.label}>
-                    <div className="mb-2 flex items-center justify-between gap-3 text-sm font-black">
-                      <span className="min-w-0 truncate text-ink">{load.label}</span>
-                      <span className="shrink-0 tabular-nums text-ink-muted">
-                        {load.detail} · {load.value}%
-                      </span>
-                    </div>
-                    <div className="relative">
-                      <ProgressMeter
-                        value={load.value}
-                        target={100}
-                        color={load.color}
-                        size="lg"
-                        label={`${load.label}: ${load.value} percent of capacity — ${load.detail}`}
-                        className="bg-surface-sunken"
+              {movementLoad.map((load) => (
+                <div key={load.label}>
+                  <div className="mb-2 flex items-center justify-between gap-3 text-sm font-black">
+                    <span className="flex min-w-0 items-center gap-2">
+                      <span
+                        aria-hidden="true"
+                        className="h-2.5 w-2.5 shrink-0 rounded-full"
+                        style={{ backgroundColor: load.color }}
                       />
-                      {/* Quarter gridlines so three bar lengths are comparable
-                          rather than three unlabelled swatches. */}
-                      <span aria-hidden="true" className="pointer-events-none absolute inset-0">
-                        {[25, 50, 75].map((tick) => (
-                          <span
-                            key={tick}
-                            className="absolute inset-y-0 w-px bg-ink/10"
-                            style={{ left: `${tick}%` }}
-                          />
-                        ))}
-                      </span>
-                    </div>
+                      <span className="min-w-0 truncate text-ink">{load.label}</span>
+                    </span>
+                    <span className="shrink-0 text-ink-muted">{load.detail}</span>
                   </div>
-                ))}
-              </div>
+                  <div
+                    aria-hidden="true"
+                    className="h-4 overflow-hidden rounded-full bg-surface-sunken"
+                  >
+                    <div
+                      className="h-full rounded-full transition-[width] duration-700 ease-out-soft"
+                      style={{ width: `${load.value}%`, backgroundColor: load.color }}
+                    />
+                  </div>
+                </div>
+              ))}
             </div>
           </Card>
 
@@ -321,22 +301,20 @@ export default function ActivityPage() {
                         <span className="tabular-nums">{window.time}</span> · {window.macro}
                       </p>
                     </div>
-                    <Badge variant={fuelStateVariant[window.state]} size="sm">
+                    <Badge variant={fuelStateVariant[window.state]} size="sm" className="capitalize" dot>
                       {window.state}
                     </Badge>
                   </div>
-                  <div className="mt-3 flex items-center gap-2">
-                    <ProgressMeter
-                      value={window.fill}
-                      target={100}
-                      color="var(--color-primary-500)"
-                      size="md"
-                      label={`${window.label} fuelling coverage: ${window.fill} percent`}
-                      className="flex-1 bg-surface"
+                  {/* Same rule as movement load: no measured coverage exists
+                      behind this width, so it stays a decorative rank. */}
+                  <div
+                    aria-hidden="true"
+                    className="mt-3 h-2.5 overflow-hidden rounded-full bg-surface"
+                  >
+                    <div
+                      className="h-full rounded-full bg-primary-500 transition-[width] duration-700 ease-out-soft"
+                      style={{ width: `${window.fill}%` }}
                     />
-                    <span className="w-10 shrink-0 text-right text-xs font-black tabular-nums text-ink-subtle">
-                      {window.fill}%
-                    </span>
                   </div>
                 </div>
               ))}
@@ -383,17 +361,29 @@ export default function ActivityPage() {
                   : `${loggedCount} logged workout${loggedCount === 1 ? "" : "s"} mixed in.`}
               </span>
             </p>
-            <div className="mt-1 divide-y divide-hairline">
-              {timeline.map((item) => {
+            {/* A continuous rail turns a stack of rows into a day: the dots
+                sit on one axis, so "morning" and "tonight" read as distance. */}
+            <div className="mt-2">
+              {timeline.map((item, index) => {
+                const isLast = index === timeline.length - 1;
                 const row = (
-                  <div className="grid gap-2 py-4 md:grid-cols-[5.5rem_1fr] md:items-start md:gap-3">
-                    <div className="text-sm font-black tabular-nums text-ink-subtle">{item.time}</div>
+                  <div className="grid grid-cols-[1.5rem_minmax(0,1fr)] items-start gap-x-3 py-3 md:grid-cols-[5rem_1.5rem_minmax(0,1fr)]">
+                    <div className="hidden pt-0.5 text-sm font-black tabular-nums text-ink-subtle md:block">
+                      {item.time}
+                    </div>
+                    <div aria-hidden="true" className="relative flex h-full justify-center">
+                      <span
+                        className={`absolute top-1.5 h-3 w-3 rounded-full ring-4 ring-surface ${statusDot[item.status]}`}
+                      />
+                      {!isLast && (
+                        <span className="absolute bottom-[-0.75rem] top-5 w-px bg-hairline-strong" />
+                      )}
+                    </div>
                     <div className="min-w-0">
-                      <div className="flex min-w-0 flex-wrap items-center gap-2">
-                        <span
-                          aria-hidden="true"
-                          className={`h-2.5 w-2.5 shrink-0 rounded-full ${statusDot[item.status]}`}
-                        />
+                      <p className="text-xs font-black tabular-nums text-ink-subtle md:hidden">
+                        {item.time}
+                      </p>
+                      <div className="mt-0.5 flex min-w-0 flex-wrap items-center gap-2 md:mt-0">
                         <p className="min-w-0 text-base font-black text-ink md:text-lg">{item.title}</p>
                         <SourceBadge>{item.source}</SourceBadge>
                       </div>

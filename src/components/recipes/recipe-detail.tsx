@@ -80,7 +80,8 @@ export function RecipeDetail({
     { label: "Protein", value: `${recipe.perServing.protein}g`, tone: "bg-sky-50 ring-sky-100", glyph: "text-sky-600", icon: Beef },
     { label: "Carbs", value: `${recipe.perServing.carbs}g`, tone: "bg-lemon-50 ring-lemon-100", glyph: "text-lemon-600", icon: Wheat },
     { label: "Fat", value: `${recipe.perServing.fat}g`, tone: "bg-accent-50 ring-accent-100", glyph: "text-accent-600", icon: Droplet },
-    { label: "Fiber", value: `${recipe.perServing.fiber}g`, tone: "bg-primary-50 ring-primary-100", glyph: "text-primary-600", icon: Leaf },
+    // Neutral plate so fiber is not mistaken for a second calories tile.
+    { label: "Fiber", value: `${recipe.perServing.fiber}g`, tone: "bg-surface-muted ring-hairline-strong", glyph: "text-primary-700", icon: Leaf },
   ];
 
   // Energy split of the three macros, derived from the same per-serving grams
@@ -376,21 +377,53 @@ export function RecipeDetail({
                     est. from 4/4/9 kcal per gram
                   </p>
                 </div>
-                <div
-                  role="img"
-                  aria-label={`Energy split per serving: protein ${energy.parts[0].pct} percent, carbs ${energy.parts[1].pct} percent, fat ${energy.parts[2].pct} percent`}
-                  className="mt-2 flex h-3 w-full overflow-hidden rounded-full bg-surface-sunken ring-1 ring-inset ring-hairline"
-                >
-                  {/* Exact shares (not the rounded label values) so the three
-                      segments always tile to precisely 100% of the track. */}
-                  {energy.parts.map((part) => (
-                    <span
-                      key={part.key}
-                      className="h-full"
-                      style={{ width: `${part.share}%`, backgroundColor: part.fill }}
-                    />
-                  ))}
+                <div className="relative mt-2">
+                  <div
+                    role="img"
+                    aria-label={`Energy split per serving: protein ${energy.parts[0].pct} percent, carbs ${energy.parts[1].pct} percent, fat ${energy.parts[2].pct} percent, about ${Math.round(
+                      energy.total
+                    )} calories from macros`}
+                    className="flex h-3.5 w-full overflow-hidden rounded-full bg-surface-sunken ring-1 ring-inset ring-hairline"
+                  >
+                    {/* Exact shares (not the rounded label values) so the three
+                        segments always tile to precisely 100% of the track. */}
+                    {energy.parts.map((part, index) => (
+                      <span
+                        key={part.key}
+                        className={cn(
+                          "h-full transition-[width] duration-500 ease-out-soft",
+                          index > 0 && "border-l border-surface/70"
+                        )}
+                        style={{ width: `${part.share}%`, backgroundColor: part.fill }}
+                      />
+                    ))}
+                  </div>
+                  {/* Quarter gridlines so a reader can eyeball 25/50/75 without
+                      counting pixels. */}
+                  <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+                    {[25, 50, 75].map((tick) => (
+                      <span
+                        key={tick}
+                        className="absolute inset-y-0 w-px bg-ink/12"
+                        style={{ left: `${tick}%` }}
+                      />
+                    ))}
+                  </div>
                 </div>
+                <div
+                  aria-hidden="true"
+                  className="mt-1 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.1em] text-ink-faint"
+                >
+                  <span className="tabular-nums">0%</span>
+                  <span className="tabular-nums">50%</span>
+                  <span className="tabular-nums">100%</span>
+                </div>
+                <p className="mt-1.5 text-[11px] font-bold text-ink-subtle">
+                  <span className="tabular-nums text-ink-muted">
+                    ≈{Math.round(energy.total).toLocaleString()}
+                  </span>{" "}
+                  kcal from macros
+                </p>
                 <div className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1.5">
                   {energy.parts.map((part) => (
                     <span
@@ -426,10 +459,16 @@ export function RecipeDetail({
               {recipe.ingredients.map((ing, i) => (
                 <li
                   key={`${ing.item}-${i}`}
-                  className="flex items-baseline justify-between gap-4 border-b border-hairline bg-surface-subtle px-3.5 py-2.5 text-sm last:border-b-0 odd:bg-surface"
+                  className="flex items-baseline justify-between gap-4 border-b border-hairline bg-surface-subtle px-3.5 py-2.5 text-sm transition-colors last:border-b-0 odd:bg-surface hover:bg-primary-50/60"
                 >
-                  <span className="min-w-0 break-words font-semibold text-ink-muted">{ing.item}</span>
-                  <span className="shrink-0 font-black tabular-nums text-ink">
+                  <span className="flex min-w-0 items-baseline gap-2.5">
+                    <span
+                      aria-hidden="true"
+                      className="mt-1 h-1.5 w-1.5 shrink-0 self-start rounded-full bg-primary-300"
+                    />
+                    <span className="min-w-0 break-words font-semibold text-ink-muted">{ing.item}</span>
+                  </span>
+                  <span className="shrink-0 text-right font-black tabular-nums text-ink">
                     {ing.amount}
                   </span>
                 </li>

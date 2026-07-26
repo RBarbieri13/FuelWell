@@ -16,6 +16,14 @@ function kgToLb(value: number) {
   return Math.round(value * 2.20462 * 10) / 10;
 }
 
+/** One tint per measurement family so three receipts in a row stay tellable apart. */
+const PLATE_STYLES = {
+  weight: "bg-primary-50 text-primary-700 ring-primary-100",
+  mood: "bg-lemon-50 text-lemon-700 ring-lemon-200",
+  water: "bg-sky-50 text-sky-700 ring-sky-200",
+  default: "bg-surface-muted text-ink-muted ring-hairline-strong",
+} as const;
+
 export function BodyLogConfirmCard({ artifact }: ArtifactCardProps<BodyLogConfirmArtifact>) {
   const { kind, value } = artifact;
 
@@ -48,11 +56,17 @@ export function BodyLogConfirmCard({ artifact }: ArtifactCardProps<BodyLogConfir
       break;
   }
 
+  const plate = PLATE_STYLES[kind] ?? PLATE_STYLES.default;
+
   return (
-    <div className="flex max-w-full items-center gap-3 rounded-[24px] border border-hairline bg-surface px-4 py-3 shadow-e1">
+    <div
+      role="group"
+      aria-label={figure ? `${label}: ${figure}${unit ? ` ${unit}` : ""}` : label}
+      className="flex max-w-full items-center gap-3 rounded-[24px] border border-hairline bg-surface px-4 py-3 shadow-e1"
+    >
       <span
         aria-hidden="true"
-        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100"
+        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-[1rem] ring-1 ring-inset ${plate}`}
       >
         <Icon className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
       </span>
@@ -62,10 +76,12 @@ export function BodyLogConfirmCard({ artifact }: ArtifactCardProps<BodyLogConfir
           {label}
         </div>
         {figure && (
-          <p className="mt-0.5 text-base font-black leading-6 text-ink [overflow-wrap:anywhere]">
+          <p className="mt-0.5 flex flex-wrap items-baseline gap-x-1 text-lg font-black leading-6 text-ink [overflow-wrap:anywhere]">
             <span className="tabular-nums">{figure}</span>
             {unit && (
-              <span className="ml-1 text-xs font-bold text-ink-muted">{unit}</span>
+              <span className="text-xs font-bold uppercase tracking-[0.08em] text-ink-muted">
+                {unit}
+              </span>
             )}
           </p>
         )}

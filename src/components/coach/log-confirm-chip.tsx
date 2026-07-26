@@ -19,10 +19,14 @@ type LogConfirmChipProps = {
   onDismiss: () => void;
 };
 
+/**
+ * The macro swatches reuse the same three roles the rest of the app charts
+ * macros with, so a protein number is the same blue here as on the dashboard.
+ */
 const MACRO_ROWS = [
-  { key: "protein", label: "Protein" },
-  { key: "carbs", label: "Carbs" },
-  { key: "fat", label: "Fat" },
+  { key: "protein", label: "Protein", swatch: "var(--color-macro-protein)" },
+  { key: "carbs", label: "Carbs", swatch: "var(--color-macro-carbs)" },
+  { key: "fat", label: "Fat", swatch: "var(--color-macro-fat)" },
 ] as const;
 
 export function LogConfirmChip({
@@ -32,7 +36,9 @@ export function LogConfirmChip({
   onDismiss,
 }: LogConfirmChipProps) {
   const isMeal = intent.kind === "meal";
-  const Icon = isMeal ? UtensilsCrossed : Dumbbell;
+  const isConfirmed = status === "confirmed";
+  const isDismissed = status === "dismissed";
+  const Icon = isConfirmed ? Check : isMeal ? UtensilsCrossed : Dumbbell;
 
   return (
     <div
@@ -40,10 +46,13 @@ export function LogConfirmChip({
         // Nested inside a message bubble, so this stays a ringed plate rather
         // than stacking a second drop shadow on the bubble's elevation.
         "mt-3 rounded-[1.25rem] p-3 ring-1 ring-inset transition-colors duration-200 ease-out-soft",
-        status === "confirmed"
+        isConfirmed
           ? "bg-primary-50/70 ring-primary-200"
-          : status === "dismissed"
-            ? "bg-surface-muted opacity-70 ring-hairline"
+          : isDismissed
+            ? // Settled-and-declined used to be a blanket 70% opacity, which
+              // dragged the numbers under the contrast floor. It now steps down
+              // in colour instead, so the record stays readable.
+              "bg-surface-muted ring-hairline"
             : "bg-surface ring-hairline-strong"
       )}
     >
@@ -51,10 +60,12 @@ export function LogConfirmChip({
         <span
           aria-hidden="true"
           className={cn(
-            "mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.9rem] ring-1 ring-inset",
-            status === "confirmed"
-              ? "bg-primary-100 text-primary-700 ring-primary-200"
-              : "bg-primary-50 text-primary-700 ring-primary-100"
+            "mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.9rem] ring-1 ring-inset transition-colors duration-200 ease-out-soft",
+            isConfirmed
+              ? "bg-primary-600 text-white ring-primary-600"
+              : isDismissed
+                ? "bg-surface text-ink-subtle ring-hairline"
+                : "bg-primary-50 text-primary-700 ring-primary-100"
           )}
         >
           <Icon className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
@@ -62,14 +73,16 @@ export function LogConfirmChip({
         <div className="min-w-0 flex-1">
           {intent.kind === "meal" ? (
             <>
-              <p className="text-[0.6875rem] font-black uppercase tracking-[0.12em] text-ink-subtle">
+              <p className="text-[0.6875rem] font-black uppercase tracking-[0.12em] text-ink-muted">
                 Confirm {intent.mealType}
               </p>
-              <ul className="mt-1.5 space-y-1">
+              {/* Hairline rules between rows give the kcal column something to
+                  track against once a meal runs to four or five items. */}
+              <ul className="mt-1.5 divide-y divide-hairline">
                 {intent.foods.map((f) => (
                   <li
                     key={f.food.id}
-                    className="flex items-baseline justify-between gap-2 text-sm"
+                    className="flex items-baseline justify-between gap-2 py-1 text-sm first:pt-0 last:pb-0"
                   >
                     <span className="min-w-0 truncate font-bold text-ink">
                       {f.quantity !== 1 ? (
@@ -78,7 +91,7 @@ export function LogConfirmChip({
                         ""
                       )}
                       {f.food.name}
-                      <span className="ml-1 font-semibold tabular-nums text-ink-faint">
+                      <span className="ml-1 font-semibold tabular-nums text-ink-muted">
                         {f.amount}
                         {f.food.servingUnit}
                       </span>
@@ -93,7 +106,7 @@ export function LogConfirmChip({
                   numbers being confirmed are scannable, not a run-on line. */}
               <div className="mt-2.5 rounded-[0.9rem] bg-surface-muted px-3 py-2">
                 <div className="flex items-baseline justify-between gap-2">
-                  <span className="text-[0.6875rem] font-black uppercase tracking-[0.12em] text-ink-subtle">
+                  <span className="text-[0.6875rem] font-black uppercase tracking-[0.12em] text-ink-muted">
                     Total
                   </span>
                   <span className="text-sm font-black tabular-nums text-ink">
@@ -102,11 +115,16 @@ export function LogConfirmChip({
                 </div>
                 <dl className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1">
                   {MACRO_ROWS.map((row) => (
-                    <div key={row.key} className="flex items-baseline gap-1.5">
-                      <dt className="text-[0.6875rem] font-bold uppercase tracking-[0.08em] text-ink-subtle">
+                    <div key={row.key} className="flex items-center gap-1.5">
+                      <span
+                        aria-hidden="true"
+                        className="h-1.5 w-1.5 shrink-0 rounded-full"
+                        style={{ backgroundColor: row.swatch }}
+                      />
+                      <dt className="text-[0.6875rem] font-bold uppercase tracking-[0.08em] text-ink-muted">
                         {row.label}
                       </dt>
-                      <dd className="text-xs font-black tabular-nums text-ink-muted">
+                      <dd className="text-xs font-black tabular-nums text-ink">
                         {totalMacro(intent.foods, row.key)}g
                       </dd>
                     </div>
@@ -116,7 +134,7 @@ export function LogConfirmChip({
             </>
           ) : (
             <>
-              <p className="text-[0.6875rem] font-black uppercase tracking-[0.12em] text-ink-subtle">
+              <p className="text-[0.6875rem] font-black uppercase tracking-[0.12em] text-ink-muted">
                 Confirm workout
               </p>
               <p className="mt-1 text-sm font-black text-ink">{intent.label}</p>
@@ -128,24 +146,27 @@ export function LogConfirmChip({
           )}
 
           {status === "pending" ? (
+            // One primary action, one step down to ghost — and both keep the
+            // 44px target the rest of the chat rows use.
             <div className="mt-3 flex flex-wrap gap-2">
-              <Button size="sm" onClick={onConfirm}>
-                <Check className="h-3.5 w-3.5" />
+              <Button size="sm" className="rounded-full px-4" onClick={onConfirm}>
+                <Check className="h-4 w-4 shrink-0" strokeWidth={2} />
                 Confirm
               </Button>
-              <Button size="sm" variant="ghost" onClick={onDismiss}>
-                <X className="h-3.5 w-3.5" />
+              <Button
+                size="sm"
+                variant="ghost"
+                className="rounded-full px-4"
+                onClick={onDismiss}
+              >
+                <X className="h-4 w-4 shrink-0" strokeWidth={2} />
                 Not now
               </Button>
             </div>
           ) : (
-            <div className="mt-2.5">
-              <Badge
-                dot
-                size="sm"
-                variant={status === "confirmed" ? "success" : "neutral"}
-              >
-                {status === "confirmed" ? "Added" : "Dismissed"}
+            <div className="mt-2.5" role="status">
+              <Badge dot size="sm" variant={isConfirmed ? "success" : "neutral"}>
+                {isConfirmed ? "Added" : "Dismissed"}
               </Badge>
             </div>
           )}

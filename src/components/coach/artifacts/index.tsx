@@ -109,14 +109,24 @@ export function ArtifactRenderer({ artifact, onAction }: ArtifactRendererProps) 
     case "quick_replies":
       return <QuickReplyChips artifact={a} onAction={onAction} />;
     default:
+      // Honest degradation: name the gap and show the raw type, rather than
+      // silently dropping a payload the transcript was told to expect.
       return (
-        <div className="flex items-center gap-2.5 rounded-2xl border border-dashed border-hairline-strong bg-surface-muted px-4 py-3 text-xs font-bold text-ink-subtle">
-          <CircleAlert
+        <div className="flex min-h-11 items-center gap-3 rounded-2xl border border-dashed border-hairline-strong bg-surface-muted px-3 py-2.5">
+          <span
             aria-hidden="true"
-            strokeWidth={2}
-            className="h-4 w-4 shrink-0 text-ink-faint"
-          />
-          <span className="min-w-0">Unsupported card: {artifact.type}</span>
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.9rem] bg-surface text-ink-faint ring-1 ring-inset ring-hairline"
+          >
+            <CircleAlert strokeWidth={2} className="h-[1.125rem] w-[1.125rem]" />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-[0.6875rem] font-black uppercase tracking-[0.12em] text-ink-muted">
+              Unsupported card
+            </span>
+            <code className="mt-0.5 block min-w-0 break-all font-mono text-xs font-bold text-ink-muted">
+              {artifact.type}
+            </code>
+          </span>
         </div>
       );
   }

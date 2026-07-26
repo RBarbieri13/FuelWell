@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { NutritionDetailSurface } from "@/components/daily-detail/detail-surfaces";
 import { createClient } from "@/lib/supabase/server";
@@ -52,6 +53,12 @@ function mapMeal(meal: SupabaseMeal): MealRecord {
     items: (meal.meal_items || []).map(mapItem),
   };
 }
+
+// Route-level chrome, matching Dashboard / Progress: the tab and iOS webview
+// title is the only label for this screen once the header scrolls away.
+export const metadata: Metadata = {
+  title: "Nutrition detail · FuelWell",
+};
 
 export default async function NutritionPage() {
   const host = (await headers()).get("host");

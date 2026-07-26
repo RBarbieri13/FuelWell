@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils/cn";
 // Same chip/frame shapes as the /preview deck so the two review decks stay
 // visually interchangeable.
 const previewChip =
-  "inline-flex min-h-11 items-center gap-2 rounded-full px-3 text-xs font-black transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-950 md:min-h-8";
+  "fw-press inline-flex min-h-11 items-center gap-2 rounded-full px-3 text-xs font-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-950 md:min-h-8";
 
 const previewFrame =
   "flex min-h-[720px] flex-col overflow-hidden rounded-[2rem] bg-neutral-900 shadow-2xl shadow-black/30 ring-1 ring-inset ring-white/10";
@@ -35,14 +35,14 @@ export default function NewUserPreviewPage() {
               className={cn(previewChip, "bg-white/10 text-white ring-1 ring-inset ring-white/15 hover:bg-white/20")}
             >
               Existing user deck
-              <ArrowUpRight className="h-3.5 w-3.5 shrink-0" strokeWidth={2.5} />
+              <ArrowUpRight className="h-3.5 w-3.5 shrink-0" strokeWidth={2.5} aria-hidden="true" />
             </Link>
             <Link
               href="/signup?preview=new-user"
               className={cn(previewChip, "bg-white text-neutral-950 hover:bg-primary-100")}
             >
               Open signup
-              <ArrowUpRight className="h-3.5 w-3.5 shrink-0" strokeWidth={2.5} />
+              <ArrowUpRight className="h-3.5 w-3.5 shrink-0" strokeWidth={2.5} aria-hidden="true" />
             </Link>
           </div>
         </header>
@@ -64,16 +64,19 @@ export default function NewUserPreviewPage() {
               {index < steps.length - 1 && (
                 <span
                   aria-hidden="true"
-                  className="absolute right-[-0.75rem] top-8 hidden h-px w-3 bg-white/15 md:block"
+                  className="absolute right-[-0.75rem] top-9 hidden h-px w-3 bg-white/15 md:block"
                 />
               )}
+              {/* Plate size, radius, and body-copy ink all match the /preview
+                  deck's panels — the two decks are meant to be read as the
+                  same tool in two modes. */}
               <div className="flex items-start gap-3">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-primary-300 text-sm font-black tabular-nums text-neutral-950">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-primary-300 text-sm font-black tabular-nums text-neutral-950">
                   {number}
                 </span>
                 <div className="min-w-0">
-                  <h2 className="text-sm font-black">{title}</h2>
-                  <p className="mt-1 text-sm font-semibold leading-6 text-neutral-400">
+                  <h2 className="text-base font-black">{title}</h2>
+                  <p className="mt-1 text-sm font-semibold leading-6 text-neutral-300">
                     {body}
                   </p>
                 </div>
@@ -101,7 +104,7 @@ export default function NewUserPreviewPage() {
                 className={cn(previewChip, "hidden bg-white text-neutral-950 hover:bg-primary-100 sm:inline-flex")}
               >
                 Open
-                <ArrowUpRight className="h-3.5 w-3.5 shrink-0" strokeWidth={2.5} />
+                <ArrowUpRight className="h-3.5 w-3.5 shrink-0" strokeWidth={2.5} aria-hidden="true" />
               </Link>
             </div>
             <iframe
@@ -120,7 +123,7 @@ export default function NewUserPreviewPage() {
                 <div className="min-w-0">
                   <h2 className="truncate text-sm font-black">Phone signup + intake</h2>
                   <p className="truncate text-xs font-semibold tabular-nums text-neutral-400">
-                    375 x 812 first-run viewport
+                    375 × 812 first-run viewport
                   </p>
                 </div>
               </div>

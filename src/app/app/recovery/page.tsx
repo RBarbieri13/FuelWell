@@ -60,12 +60,14 @@ const readinessStack = [
   { label: "Wearable signal", value: 0, note: "Not connected", color: "var(--color-ink-faint)", connected: false },
 ];
 
+// Colours are authored per area alongside the entered value. Deriving them
+// from a threshold would assert a decision rule this app does not implement.
 const bodyAreas = [
-  { label: "Upper", value: 2 },
-  { label: "Core", value: 3 },
-  { label: "Legs", value: 6 },
-  { label: "Joints", value: 1 },
-];
+  { label: "Upper", value: 2, plate: "bg-primary-50 text-primary-800 ring-primary-100", meter: "var(--color-primary-500)" },
+  { label: "Core", value: 3, plate: "bg-primary-50 text-primary-800 ring-primary-100", meter: "var(--color-primary-500)" },
+  { label: "Legs", value: 6, plate: "bg-accent-50 text-accent-700 ring-accent-200", meter: "var(--color-accent-400)" },
+  { label: "Joints", value: 1, plate: "bg-sky-50 text-sky-700 ring-sky-100", meter: "var(--color-sky-500)" },
+] as const;
 
 const toneMap = {
   primary: "bg-primary-50 text-primary-700 ring-primary-100",
@@ -73,29 +75,6 @@ const toneMap = {
   sky: "bg-sky-50 text-sky-700 ring-sky-100",
   lemon: "bg-lemon-50 text-lemon-700 ring-lemon-100",
 };
-
-/** 0-3 easy, 4-5 watch, 6+ cap intensity. Colour follows the same thresholds. */
-function sorenessTone(value: number) {
-  if (value >= 6) {
-    return {
-      plate: "bg-accent-50 text-accent-700 ring-accent-200",
-      meter: "var(--color-accent-400)",
-      word: "high",
-    };
-  }
-  if (value >= 4) {
-    return {
-      plate: "bg-lemon-50 text-lemon-700 ring-lemon-200",
-      meter: "var(--color-lemon-500)",
-      word: "moderate",
-    };
-  }
-  return {
-    plate: "bg-primary-50 text-primary-800 ring-primary-100",
-    meter: "var(--color-primary-500)",
-    word: "low",
-  };
-}
 
 function SourceBadge({ children }: { children: string }) {
   const variant =
@@ -138,6 +117,22 @@ function ReadinessDial({ score }: { score: number }) {
             strokeLinecap="round"
             strokeDasharray={`${circumference * sweep} ${circumference}`}
           />
+          {/* Quarter ticks: without them the arc says "some of the way round"
+              rather than "roughly three quarters". */}
+          {[0.25, 0.5, 0.75].map((tick) => (
+            <circle
+              key={tick}
+              cx="50"
+              cy="50"
+              r={radius}
+              fill="none"
+              stroke="var(--color-hairline-strong)"
+              strokeWidth="9"
+              strokeLinecap="butt"
+              strokeDasharray={`1.5 ${circumference}`}
+              strokeDashoffset={-circumference * sweep * tick}
+            />
+          ))}
           <circle
             cx="50"
             cy="50"
@@ -273,45 +268,32 @@ export default function RecoveryPage() {
               description="The ingredients behind today's cap-intensity call."
               action={<Badge variant="warning" dot>mixed</Badge>}
             />
+            {/* Nothing in the app composes these inputs into the readiness
+                score, so the bars stay unscaled: no axis, no numeric readout,
+                no numeric announcement. The note is the meaning. */}
             <div className="space-y-4">
-              <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-[0.12em] text-ink-faint">
-                <span>0</span>
-                <span>50</span>
-                <span>100 contribution</span>
-              </div>
               {readinessStack.map((item) => (
                 <div key={item.label}>
                   <div className="mb-2 flex items-center justify-between gap-3 text-sm font-black">
-                    <span className="min-w-0 truncate text-ink">{item.label}</span>
-                    <span className="shrink-0 text-ink-muted">
-                      {item.connected ? (
-                        <>
-                          <span className="tabular-nums">{item.value}</span> · {item.note}
-                        </>
-                      ) : (
-                        item.note
-                      )}
+                    <span className="flex min-w-0 items-center gap-2">
+                      <span
+                        aria-hidden="true"
+                        className="h-2.5 w-2.5 shrink-0 rounded-full"
+                        style={{ backgroundColor: item.color }}
+                      />
+                      <span className="min-w-0 truncate text-ink">{item.label}</span>
                     </span>
+                    <span className="shrink-0 text-ink-muted">{item.note}</span>
                   </div>
                   {item.connected ? (
-                    <div className="relative">
-                      <ProgressMeter
-                        value={item.value}
-                        target={100}
-                        color={item.color}
-                        size="lg"
-                        label={`${item.label}: ${item.value} out of 100 — ${item.note}`}
-                        className="bg-surface-sunken"
+                    <div
+                      aria-hidden="true"
+                      className="h-4 overflow-hidden rounded-full bg-surface-sunken"
+                    >
+                      <div
+                        className="h-full rounded-full transition-[width] duration-700 ease-out-soft"
+                        style={{ width: `${item.value}%`, backgroundColor: item.color }}
                       />
-                      <span aria-hidden="true" className="pointer-events-none absolute inset-0">
-                        {[25, 50, 75].map((tick) => (
-                          <span
-                            key={tick}
-                            className="absolute inset-y-0 w-px bg-ink/10"
-                            style={{ left: `${tick}%` }}
-                          />
-                        ))}
-                      </span>
                     </div>
                   ) : (
                     // No series, no bar. A zero-width fill would read as "you
@@ -336,37 +318,37 @@ export default function RecoveryPage() {
               action={<Badge variant="error" dot>legs high</Badge>}
             />
             <div className="grid gap-3 sm:grid-cols-2">
-              {bodyAreas.map((area) => {
-                const tone = sorenessTone(area.value);
-                return (
-                  <div
-                    key={area.label}
-                    className={cn("min-w-0 rounded-[1.25rem] p-4 ring-1 ring-inset", tone.plate)}
-                  >
-                    <div className="flex items-baseline justify-between gap-2">
-                      <p className="min-w-0 truncate text-sm font-black">{area.label}</p>
-                      <p className="shrink-0 text-[10px] font-black uppercase tracking-[0.12em] opacity-70">
-                        {tone.word}
-                      </p>
-                    </div>
-                    <p className="mt-2 text-2xl font-black tabular-nums md:text-3xl">
-                      {area.value}
-                      <span className="text-base opacity-60">/10</span>
-                    </p>
+              {bodyAreas.map((area) => (
+                <div
+                  key={area.label}
+                  className={cn("min-w-0 rounded-[1.25rem] p-4 ring-1 ring-inset", area.plate)}
+                >
+                  <p className="min-w-0 truncate text-sm font-black">{area.label}</p>
+                  <p className="mt-2 text-2xl font-black tabular-nums md:text-3xl">
+                    {area.value}
+                    <span className="text-base opacity-60">/10</span>
+                  </p>
+                  {/* The 0-10 scale is the one the user actually enters against,
+                      so the bar is measured and its endpoints are labelled. */}
+                  <div className="mt-3">
                     <ProgressMeter
                       value={area.value}
                       target={10}
-                      color={tone.meter}
+                      color={area.meter}
                       size="sm"
                       label={`${area.label} soreness: ${area.value} out of 10`}
-                      className="mt-3 bg-surface/70"
+                      className="bg-surface/70"
                     />
                   </div>
-                );
-              })}
+                  <p className="mt-1.5 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.12em] tabular-nums opacity-60">
+                    <span>0</span>
+                    <span>10</span>
+                  </p>
+                </div>
+              ))}
             </div>
             <p className="text-xs font-semibold leading-5 text-ink-muted">
-              Scale runs 0 (no soreness) to 10 (very sore). Anything at 6 or above caps today&apos;s intensity.
+              Scale runs 0 (no soreness) to 10 (very sore).
             </p>
           </Card>
         </section>

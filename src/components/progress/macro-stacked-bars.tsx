@@ -151,6 +151,13 @@ export function MacroStackedBars({
 
   const midDomain = Math.round(domain / 2);
 
+  // Mean of the bars actually drawn. It is derived from the same series, not an
+  // invented target, and it is what makes a single tall bar readable as "above
+  // your usual" rather than just "tall".
+  const averageKcal =
+    days.reduce((sum, day) => sum + visibleCalories(day, stackKeys), 0) / days.length;
+  const averagePct = Math.min((averageKcal / domain) * 100, 100);
+
   return (
     <div className="min-w-0">
       {/* Legend first: the stack means nothing without it. */}
@@ -173,6 +180,13 @@ export function MacroStackedBars({
             className="h-2.5 w-2.5 rounded-[3px] bg-[image:repeating-linear-gradient(135deg,var(--color-hairline-strong)_0,var(--color-hairline-strong)_2px,transparent_2px,transparent_4px)] ring-1 ring-inset ring-hairline-strong"
           />
           Sample day
+        </span>
+        <span className="inline-flex items-center gap-1.5 text-[11px] font-bold tabular-nums text-ink-subtle">
+          <span
+            aria-hidden="true"
+            className="h-0 w-3.5 border-t-2 border-dashed border-primary-400"
+          />
+          Avg {Math.round(averageKcal).toLocaleString()} kcal
         </span>
       </div>
 
@@ -205,8 +219,17 @@ export function MacroStackedBars({
               .map((k) => MACRO_META[k].label)
               .join(", ")} over ${days.length} days, scaled 0 to ${Math.round(
               domain
-            ).toLocaleString()} kcal. Tap a bar for its breakdown. Sample and logged data combined.`}
+            ).toLocaleString()} kcal, averaging ${Math.round(
+              averageKcal
+            ).toLocaleString()} kcal per day. Tap a bar for its breakdown. Sample and logged data combined.`}
           >
+            {/* Average reference line, drawn behind the bars at the same scale
+                as the gridlines. */}
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-x-0 border-t-2 border-dashed border-primary-400/70"
+              style={{ bottom: `${averagePct}%` }}
+            />
             {days.map((day) => {
               const dayKcal = visibleCalories(day, stackKeys);
               const totalKcal = totalMacroCalories(day);

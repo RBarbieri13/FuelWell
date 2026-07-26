@@ -37,6 +37,7 @@ import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ProgressMeter } from "@/components/ui/progress-meter";
 import { SectionHeader } from "@/components/ui/section-header";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   CalorieBalanceChart,
   type ActivityOutputSignal,
@@ -228,46 +229,50 @@ const estimatedSteps = 6420;
 const recoveryReadiness = 72;
 
 /**
- * One tone = one icon plate, one pill, one meter colour, one stat chip. The
- * plate and pill both carry a hairline ring rather than a heavier border so
- * tinted chips read as one family across nutrition and fitness.
+ * One tone = one icon plate, one pill, one meter colour, one stat chip. Every
+ * variant carries `ring-1 ring-inset` rather than a border so tinted chips read
+ * as one family across nutrition and fitness and never add a pixel of layout.
+ * (The ring *width* used to be missing here, so the ring colours below were
+ * declared but never painted — the plates rendered as flat fills.)
  */
+const RING = "ring-1 ring-inset";
+
 const toneStyles = {
   primary: {
-    chip: "bg-primary-50 text-primary-700 ring-primary-100",
-    pill: "bg-primary-50 text-primary-800 ring-primary-100",
+    chip: `bg-primary-50 text-primary-700 ${RING} ring-primary-100`,
+    pill: `bg-primary-50 text-primary-800 ${RING} ring-primary-100`,
     meter: "var(--color-macro-calories)",
-    macro: "bg-primary-50 text-primary-800 ring-primary-100",
+    macro: `bg-primary-50 text-primary-800 ${RING} ring-primary-100`,
   },
   sky: {
-    chip: "bg-sky-50 text-sky-700 ring-sky-100",
-    pill: "bg-sky-50 text-sky-700 ring-sky-100",
+    chip: `bg-sky-50 text-sky-700 ${RING} ring-sky-100`,
+    pill: `bg-sky-50 text-sky-700 ${RING} ring-sky-100`,
     meter: "var(--color-macro-protein)",
-    macro: "bg-sky-50 text-sky-700 ring-sky-100",
+    macro: `bg-sky-50 text-sky-700 ${RING} ring-sky-100`,
   },
   lemon: {
-    chip: "bg-lemon-50 text-lemon-700 ring-lemon-100",
-    pill: "bg-lemon-50 text-lemon-700 ring-lemon-100",
+    chip: `bg-lemon-50 text-lemon-700 ${RING} ring-lemon-100`,
+    pill: `bg-lemon-50 text-lemon-700 ${RING} ring-lemon-100`,
     meter: "var(--color-macro-carbs)",
-    macro: "bg-lemon-50 text-lemon-700 ring-lemon-100",
+    macro: `bg-lemon-50 text-lemon-700 ${RING} ring-lemon-100`,
   },
   accent: {
-    chip: "bg-accent-50 text-accent-700 ring-accent-100",
-    pill: "bg-accent-50 text-accent-700 ring-accent-100",
+    chip: `bg-accent-50 text-accent-700 ${RING} ring-accent-100`,
+    pill: `bg-accent-50 text-accent-700 ${RING} ring-accent-100`,
     meter: "var(--color-macro-fat)",
-    macro: "bg-accent-50 text-accent-700 ring-accent-100",
+    macro: `bg-accent-50 text-accent-700 ${RING} ring-accent-100`,
   },
   teal: {
-    chip: "bg-teal-500/10 text-teal-600 ring-teal-500/20",
-    pill: "bg-teal-500/10 text-teal-600 ring-teal-500/20",
+    chip: `bg-teal-500/10 text-teal-600 ${RING} ring-teal-500/20`,
+    pill: `bg-teal-500/10 text-teal-600 ${RING} ring-teal-500/20`,
     meter: "var(--color-teal-500)",
-    macro: "bg-teal-500/10 text-teal-600 ring-teal-500/20",
+    macro: `bg-teal-500/10 text-teal-600 ${RING} ring-teal-500/20`,
   },
   neutral: {
-    chip: "bg-surface-muted text-ink-muted ring-hairline-strong",
-    pill: "bg-surface-muted text-ink-muted ring-hairline-strong",
+    chip: `bg-surface-muted text-ink-muted ${RING} ring-hairline-strong`,
+    pill: `bg-surface-muted text-ink-muted ${RING} ring-hairline-strong`,
     meter: "var(--color-primary-300)",
-    macro: "bg-surface-muted text-ink ring-hairline-strong",
+    macro: `bg-surface-muted text-ink ${RING} ring-hairline-strong`,
   },
 } as const;
 
@@ -404,7 +409,9 @@ export function NutritionDetailSurface({
       </header>
 
       <div className="fw-page-inner pb-28 md:pb-8">
-        <div className="space-y-4 rounded-[1.75rem] bg-surface/70 p-3 shadow-e3 md:p-4">
+        {/* Grouping tray sits one step *below* the cards it holds (e1 under
+            their e2) — a tray at e3 made the cards inside it look sunken. */}
+        <div className="space-y-4 rounded-[1.75rem] bg-surface/70 p-3 shadow-e1 md:p-4">
           <DetailHero
             icon={Salad}
             label="Today's plate"
@@ -441,13 +448,13 @@ export function NutritionDetailSurface({
               {!meals.some((meal) => meal.mealType === "dinner") && (
                 <Card
                   variant="outlined"
-                  className="flex flex-col gap-4 rounded-[1.5rem] border-2 border-dashed border-primary-200 bg-surface/60 md:flex-row md:items-center md:justify-between"
+                  className="flex flex-col gap-4 rounded-[1.5rem] border-dashed border-primary-300 bg-surface/60 md:flex-row md:items-center md:justify-between"
                 >
                   <div className="flex min-w-0 items-center gap-4">
                     <MealIcon mealType="dinner" muted />
                     <div className="min-w-0">
                       <h2 className="text-lg font-black text-ink-muted md:text-xl">Dinner</h2>
-                      <p className="text-sm font-semibold text-ink-subtle">
+                      <p className="text-sm font-semibold tabular-nums text-ink-subtle">
                         Not logged yet · {remaining(totals.calories, targets.calories).toLocaleString()} kcal of room left
                       </p>
                     </div>
@@ -614,9 +621,13 @@ export function DailyReviewSurface({
                 href={calorieRoom > 0 ? "/app/log" : "/app/coach"}
               />
             </section>
-            <Link href="/app/coach" className={pillLinkClass("primary")}>
-              <Sparkles className="h-4 w-4" strokeWidth={2.25} />
-              Ask coach what to do next
+            {/* The single primary action on Daily review — everything else on
+                this page steps down to tonal pills and card links. */}
+            <Link href="/app/coach" className="inline-flex w-full sm:w-auto">
+              <Button className="w-full rounded-full px-5 sm:w-auto">
+                <Sparkles className="h-4 w-4" strokeWidth={2.25} />
+                Ask coach what to do next
+              </Button>
             </Link>
           </div>
         </DailyReviewSection>
@@ -672,24 +683,38 @@ export function DailyReviewSurface({
                 onToggle={() => setFitnessExpanded((value) => !value)}
               >
                 {workoutPersistence.mode === "unknown" || workoutPersistence.status === "loading" ? (
+                  // Nested inside an already-raised panel, so these status
+                  // cards are inset rather than a second floating layer.
                   <Card
                     role="status"
-                    className="rounded-[1.25rem] border-primary-100 bg-primary-50/55 px-5 py-4 shadow-none"
+                    variant="tinted"
+                    padding="none"
+                    className="flex items-start gap-3 rounded-[1.25rem] border-primary-200/70 bg-primary-50/55 px-5 py-4"
                   >
-                    <p className="text-sm font-black text-primary-800">Loading your activity log...</p>
-                    <p className="mt-1 text-xs font-semibold text-primary-900/65">
-                      FuelWell is checking your saved workouts before showing today&apos;s review.
-                    </p>
+                    <Skeleton className="mt-0.5 h-5 w-5 shrink-0 rounded-full bg-primary-100" />
+                    <span className="min-w-0">
+                      <p className="text-sm font-black text-primary-800">Loading your activity log...</p>
+                      <p className="mt-1 text-xs font-semibold leading-5 text-primary-900/65">
+                        FuelWell is checking your saved workouts before showing today&apos;s review.
+                      </p>
+                    </span>
                   </Card>
                 ) : workoutPersistence.status === "error" ? (
                   <Card
                     role="alert"
-                    className="rounded-[1.25rem] border-accent-200 bg-accent-100/55 px-5 py-4 shadow-none"
+                    variant="tinted"
+                    padding="none"
+                    className="flex items-start gap-3 rounded-[1.25rem] border-accent-200 bg-accent-100/55 px-5 py-4"
                   >
-                    <p className="text-sm font-black text-accent-800">Activity log could not load</p>
-                    <p className="mt-1 text-xs font-semibold text-accent-900/70">
-                      {workoutPersistence.error || "Refresh to try the saved workout check again."}
-                    </p>
+                    <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-surface text-accent-700 ring-1 ring-inset ring-accent-200">
+                      <Info className="h-3.5 w-3.5" strokeWidth={2.5} />
+                    </span>
+                    <span className="min-w-0">
+                      <p className="text-sm font-black text-accent-700">Activity log could not load</p>
+                      <p className="mt-1 text-xs font-semibold leading-5 text-accent-700/80">
+                        {workoutPersistence.error || "Refresh to try the saved workout check again."}
+                      </p>
+                    </span>
                   </Card>
                 ) : (
                   <div data-testid="workout-log-ready" className="contents">
@@ -727,8 +752,11 @@ function DailyReviewSection({
 }) {
   const contentId = useId();
   return (
-    <section className="rounded-[2rem] border border-primary-200/90 bg-primary-50/35 p-3 shadow-[0_18px_48px_rgba(20,90,75,0.08)] md:p-4">
-      <div className="rounded-[1.5rem] border border-white/85 bg-white/72 px-4 py-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] md:px-5">
+    // Tinted tray at e1; the header plate above it carries the only lift
+    // (fw-lift-edge = inset highlight + e2) so the region reads as one depth
+    // step rather than two stacked drop shadows.
+    <section className="rounded-[2rem] border border-primary-200/90 bg-primary-50/35 p-3 shadow-e1 md:p-4">
+      <div className="fw-lift-edge rounded-[1.5rem] border border-white/85 bg-surface/72 px-4 py-3.5 md:px-5">
         {/* The whole header is the disclosure control: it sits at the top of
             the region it collapses, and the chevron points down toward that
             region (rotated while it's open). */}
@@ -737,27 +765,31 @@ function DailyReviewSection({
           onClick={onToggle}
           aria-expanded={expanded}
           aria-controls={contentId}
-          className="flex w-full items-start justify-between gap-3 rounded-[1rem] text-left transition hover:bg-primary-50/50"
+          className="group flex w-full items-start justify-between gap-3 rounded-[1rem] text-left transition-colors duration-200 ease-out-soft hover:bg-primary-50/50 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2"
         >
           <span className="flex min-w-0 gap-3">
-            <span className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-100 text-primary-700">
-              <Icon className="h-5 w-5" />
+            <span className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100">
+              <Icon className="h-5 w-5" strokeWidth={2} />
             </span>
             <span className="min-w-0">
-              <span className="block text-xs font-black uppercase tracking-[0.16em] text-primary-600">
+              <span className="block text-[0.6875rem] font-black uppercase tracking-[0.14em] text-primary-700">
                 {eyebrow}
               </span>
-              <span className="mt-0.5 block font-heading text-xl font-black text-[#16302a] md:text-3xl">
+              <span className="mt-0.5 block font-heading text-xl font-black tracking-tight text-ink md:text-3xl">
                 {title}
               </span>
-              <span className="mt-1 block max-w-3xl text-sm font-semibold leading-6 text-[#6f8981] md:text-base">
+              <span className="mt-1 block max-w-3xl text-sm font-semibold leading-6 text-ink-muted md:text-base">
                 {description}
               </span>
             </span>
           </span>
-          <span className="mt-1 inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full border border-primary-100 bg-white px-4 py-2.5 text-sm font-black text-primary-700 shadow-[0_10px_22px_rgba(20,90,75,0.08)]">
+          <span className="mt-1 inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full bg-surface px-4 py-2.5 text-sm font-black text-primary-700 shadow-e1 ring-1 ring-inset ring-primary-100 transition-colors duration-200 ease-out-soft group-hover:bg-primary-50">
             <ChevronDown
-              className={cn("h-4 w-4 transition-transform", expanded && "rotate-180")}
+              className={cn(
+                "h-4 w-4 transition-transform duration-200 ease-out-soft",
+                expanded && "rotate-180"
+              )}
+              strokeWidth={2.25}
             />
             <span className="hidden sm:inline">{expanded ? "Collapse" : "Expand"}</span>
           </span>
@@ -767,7 +799,7 @@ function DailyReviewSection({
       {expanded ? (
         <div id={contentId} className="mt-3 md:mt-4">{children}</div>
       ) : (
-        <div className="mt-4 rounded-[1.2rem] border border-primary-100 bg-white/78 px-4 py-3 text-sm font-bold text-primary-900/75 shadow-[inset_0_1px_0_rgba(255,255,255,0.75)]">
+        <div className="mt-4 rounded-[1.2rem] bg-surface/78 px-4 py-3 text-sm font-bold leading-6 text-ink-muted ring-1 ring-inset ring-primary-100">
           {collapsedText}
         </div>
       )}
@@ -791,27 +823,23 @@ function DetailHero({
   action: string;
 }) {
   return (
-    <Card variant="elevated" className="rounded-[1.35rem] bg-white px-5 py-4 shadow-[0_12px_30px_rgba(20,90,75,0.07)] md:px-6 md:py-5">
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div>
-          <p className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.14em] text-primary-600">
-            <Icon className="h-4 w-4" />
-            {label}
-          </p>
-          <h2 className="mt-1.5 text-lg font-black tracking-normal text-[#16302a] md:text-2xl">
-            {title}
-          </h2>
-          <p className="mt-1 max-w-3xl text-sm font-semibold leading-6 text-[#54635d] md:text-base">
-            {copy}
-          </p>
-        </div>
-        <Link href={href}>
-          <Button size="lg" className="whitespace-nowrap rounded-full px-6">
-            <Plus className="h-4 w-4" />
-            {action}
-          </Button>
-        </Link>
-      </div>
+    <Card padding="none" className="rounded-[1.35rem] px-5 py-4 md:px-6 md:py-5">
+      <SectionHeader
+        as="h2"
+        icon={Icon}
+        eyebrow={label}
+        title={title}
+        description={copy}
+        className="items-center"
+        action={
+          <Link href={href} className="block">
+            <Button size="lg" className="w-full whitespace-nowrap rounded-full px-6 sm:w-auto">
+              <Plus className="h-4 w-4" strokeWidth={2.25} />
+              {action}
+            </Button>
+          </Link>
+        }
+      />
     </Card>
   );
 }
@@ -855,20 +883,25 @@ function TargetTile({
   const unitSuffix = unit === "g" || unit === "%" ? unit : ` ${unit}`;
 
   const card = (
-    <Card className="h-full min-w-0 space-y-2 rounded-[1.2rem] px-4 py-3.5 shadow-[0_8px_22px_rgba(20,90,75,0.06)] md:space-y-2.5 md:px-5 md:py-4">
+    <Card
+      padding="none"
+      className="h-full min-w-0 space-y-2 rounded-[1.2rem] px-4 py-3.5 md:space-y-2.5 md:px-5 md:py-4"
+    >
       {/* The pill wraps under the label when data widens it (e.g. 3-digit
           percentages); a fixed one-line row overflows 2-up tiles at 320px. */}
       <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
         <div className="flex min-w-0 items-center gap-3">
           <span className={`flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full ${styles.chip}`}>
-            <Icon className="h-[15px] w-[15px]" />
+            <Icon className="h-[15px] w-[15px]" strokeWidth={2} />
           </span>
-          <p className="min-w-0 text-sm font-black leading-tight text-[#54635d] md:text-base">{label}</p>
+          <p className="min-w-0 text-sm font-black leading-tight text-ink-muted md:text-base">{label}</p>
         </div>
-        <p className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-xs font-black ${styles.pill}`}>
+        {/* Over-target is a different state, not a clamped one: it swaps to a
+            check + "Met" instead of a percentage that would read as 100%. */}
+        <p className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-xs font-black tabular-nums ${styles.pill}`}>
           {met ? (
             <>
-              <Check className="h-3 w-3" />
+              <Check className="h-3 w-3" strokeWidth={3} />
               Met
             </>
           ) : (
@@ -876,17 +909,17 @@ function TargetTile({
           )}
         </p>
       </div>
-      <p className="text-2xl font-black leading-none tabular-nums text-[#16302a] md:text-[1.75rem]">
+      <p className="text-2xl font-black leading-none tabular-nums text-ink md:text-[1.75rem]">
         {current.toLocaleString()}
-        <span className="ml-1 text-[13px] font-bold text-muted-foreground">{unit}</span>
+        <span className="ml-1 text-[13px] font-bold text-ink-subtle">{unit}</span>
       </p>
-      <p className="text-xs font-semibold text-muted-foreground">
+      <p className="text-xs font-semibold leading-5 text-ink-muted">
         {met
           ? `+${Math.round(current - target).toLocaleString()}${unitSuffix} past the ${target.toLocaleString()}${unitSuffix} target`
           : `${remaining(current, target).toLocaleString()}${unitSuffix} left of ${target.toLocaleString()}${unitSuffix}`}
       </p>
       {footnote ? (
-        <p className="text-xs font-semibold text-muted-foreground/80">{footnote}</p>
+        <p className="text-xs font-semibold leading-5 text-ink-subtle">{footnote}</p>
       ) : null}
       <ProgressMeter
         value={current}
@@ -906,7 +939,7 @@ function TargetTile({
     <Link
       href={href}
       aria-label={`${label} — open detail`}
-      className="block min-w-0 rounded-[1.2rem] transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+      className="fw-press block min-w-0 rounded-[1.2rem] hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2"
     >
       {card}
     </Link>
@@ -931,17 +964,20 @@ function SimpleSummaryCard({
   const styles = toneStyles[tone];
 
   const card = (
-    <Card className="h-full space-y-2 rounded-[1.2rem] px-4 py-3.5 shadow-[0_8px_22px_rgba(20,90,75,0.06)] md:space-y-2.5 md:px-5 md:py-4">
-      <div className="flex items-center gap-3">
-        <span className={`flex h-[30px] w-[30px] items-center justify-center rounded-full ${styles.chip}`}>
-          <Icon className="h-[15px] w-[15px]" />
+    <Card
+      padding="none"
+      className="h-full min-w-0 space-y-2 rounded-[1.2rem] px-4 py-3.5 md:space-y-2.5 md:px-5 md:py-4"
+    >
+      <div className="flex min-w-0 items-center gap-3">
+        <span className={`flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full ${styles.chip}`}>
+          <Icon className="h-[15px] w-[15px]" strokeWidth={2} />
         </span>
-        <p className="text-sm font-black leading-tight text-[#54635d] md:text-base">{label}</p>
+        <p className="min-w-0 text-sm font-black leading-tight text-ink-muted md:text-base">{label}</p>
       </div>
-      <p className="text-2xl font-black leading-none tabular-nums text-[#16302a] md:text-[1.75rem]">
+      <p className="text-2xl font-black leading-none tabular-nums text-ink md:text-[1.75rem]">
         {value}
       </p>
-      <p className="text-xs font-semibold leading-5 text-muted-foreground">{detail}</p>
+      <p className="text-xs font-semibold leading-5 text-ink-muted">{detail}</p>
     </Card>
   );
 
@@ -953,7 +989,7 @@ function SimpleSummaryCard({
     <Link
       href={href}
       aria-label={`${label} — open detail`}
-      className="block min-w-0 rounded-[1.2rem] transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+      className="fw-press block min-w-0 rounded-[1.2rem] hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2"
     >
       {card}
     </Link>
@@ -976,16 +1012,19 @@ function DetailLinkCard({
   return (
     <Link
       href={href}
-      className="group rounded-[1.25rem] border border-primary-100 bg-white px-4 py-4 shadow-[0_8px_22px_rgba(20,90,75,0.06)] transition md:px-5 md:py-5 hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-[0_14px_32px_rgba(20,90,75,0.09)]"
+      className="fw-press group flex min-h-[9.5rem] min-w-0 flex-col rounded-[1.25rem] border border-hairline bg-surface px-4 py-4 shadow-e1 hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-e3 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2 md:px-5 md:py-5"
     >
-      <span className="flex h-10 w-10 items-center justify-center rounded-[0.9rem] bg-primary-100 text-primary-700">
-        <Icon className="h-5 w-5" />
+      <span className="flex h-10 w-10 items-center justify-center rounded-[0.9rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100">
+        <Icon className="h-5 w-5" strokeWidth={2} />
       </span>
-      <h2 className="mt-2.5 font-heading text-lg font-black text-[#16302a]">{title}</h2>
-      <p className="mt-1 text-sm font-semibold leading-6 text-[#6e8981]">{detail}</p>
-      <span className="mt-4 inline-flex items-center gap-2 text-sm font-black text-primary-700">
+      <h2 className="mt-2.5 font-heading text-lg font-black text-ink">{title}</h2>
+      <p className="mt-1 text-sm font-semibold leading-6 text-ink-muted">{detail}</p>
+      <span className="mt-auto inline-flex items-center gap-2 pt-4 text-sm font-black text-primary-700">
         {action}
-        <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+        <ArrowRight
+          className="h-4 w-4 transition-transform duration-200 ease-out-soft group-hover:translate-x-0.5"
+          strokeWidth={2.25}
+        />
       </span>
     </Link>
   );
@@ -1001,54 +1040,62 @@ function ActivityLogCard({
   const Icon = activity.icon;
 
   return (
-    <Card className={`space-y-4 rounded-[1.5rem] px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)] ${compact ? "px-5 py-5" : ""}`}>
+    <Card
+      padding="none"
+      className={cn(
+        "min-w-0 space-y-4 rounded-[1.5rem]",
+        compact ? "px-5 py-5" : "px-5 py-5 md:px-6 md:py-6"
+      )}
+    >
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        <div className="flex items-center gap-4">
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-100 text-primary-700">
-            <Icon className="h-[21px] w-[21px]" />
+        <div className="flex min-w-0 items-center gap-4">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100">
+            <Icon className="h-[21px] w-[21px]" strokeWidth={2} />
           </span>
-          <div>
+          <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
-              <h2 className="text-xl font-black text-[#16302a]">{activity.title}</h2>
-              <span className="rounded-full bg-[#f4f8f6] px-2.5 py-1 text-xs font-black text-muted-foreground">
+              <h2 className="min-w-0 break-words text-lg font-black text-ink md:text-xl">
+                {activity.title}
+              </h2>
+              <Badge
+                variant={activity.source === "Logged" ? "success" : "neutral"}
+                size="sm"
+                dot={activity.source === "Logged"}
+              >
                 {activity.source}
-              </span>
+              </Badge>
             </div>
-            <p className="text-sm font-semibold text-muted-foreground">
+            <p className="text-sm font-semibold leading-6 text-ink-muted">
               {activity.subtitle} · {activity.time}
             </p>
           </div>
         </div>
-        <div className="rounded-[0.9rem] bg-[#f4f8f6] px-4 py-3 text-right">
-          <p className="text-xl font-black tabular-nums text-[#16302a]">
+        <div className="shrink-0 rounded-[0.9rem] bg-surface-muted px-4 py-3 text-right ring-1 ring-inset ring-hairline">
+          <p className="text-xl font-black tabular-nums text-ink">
             {activity.duration}
           </p>
-          <p className="text-xs font-bold text-primary-600">
-            {activity.calories > 0 ? `${activity.calories} active kcal` : "burn not estimated"}
+          <p className="text-xs font-bold tabular-nums text-primary-700">
+            {activity.calories > 0
+              ? `${activity.calories.toLocaleString()} active kcal`
+              : "burn not estimated"}
           </p>
         </div>
       </div>
 
       <div className="flex flex-wrap gap-2">
-        <Link
-          href="/app/fitness#edit-activity"
-          className="inline-flex min-h-11 items-center gap-2 rounded-full bg-primary-50 px-3.5 py-2 text-xs font-black text-primary-700 transition hover:bg-primary-100 md:min-h-0"
-        >
-          <Pencil className="h-3.5 w-3.5" />
+        <Link href="/app/fitness#edit-activity" className={pillLinkClass("primary", "sm")}>
+          <Pencil className="h-3.5 w-3.5" strokeWidth={2.25} />
           Edit routine
         </Link>
         {activity.workoutHref && (
-          <Link
-            href={activity.workoutHref}
-            className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[#f4f8f6] px-3.5 py-2 text-xs font-black text-[#54635d] transition hover:bg-primary-50 hover:text-primary-700 md:min-h-0"
-          >
+          <Link href={activity.workoutHref} className={pillLinkClass("neutral", "sm")}>
             Open workout
-            <ArrowRight className="h-3.5 w-3.5" />
+            <ArrowRight className="h-3.5 w-3.5" strokeWidth={2.25} />
           </Link>
         )}
       </div>
 
-      <div className="grid grid-cols-2 gap-2 border-t border-primary-100/70 pt-4 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-2 border-t border-hairline pt-4 sm:grid-cols-4">
         {activity.items.map((item) => (
           <SmallStat key={`${activity.id}-${item.label}`} {...item} />
         ))}
@@ -1071,61 +1118,53 @@ function MealLogCard({
   const mealTotals = sumMealItems(meal.items);
 
   return (
-    <Card className={`space-y-4 rounded-[1.5rem] px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)] ${compact ? "px-5 py-5" : ""}`}>
+    <Card
+      padding="none"
+      className={cn(
+        "min-w-0 space-y-4 rounded-[1.5rem]",
+        compact ? "px-5 py-5" : "px-5 py-5 md:px-6 md:py-6"
+      )}
+    >
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        <div className="flex items-center gap-4">
+        <div className="flex min-w-0 items-center gap-4">
           <MealIcon mealType={meal.mealType} />
-          <div>
-            <h2 className="text-xl font-black text-[#16302a]">
+          <div className="min-w-0">
+            <h2 className="text-lg font-black text-ink md:text-xl">
               {formatMealType(meal.mealType)}
             </h2>
-            <p className="text-sm font-semibold text-muted-foreground">
+            <p className="break-words text-sm font-semibold leading-6 text-ink-muted">
               {meal.name} · {meal.items.length} item{meal.items.length === 1 ? "" : "s"}
             </p>
           </div>
         </div>
-        <div className="rounded-[0.9rem] bg-[#f4f8f6] px-4 py-3 text-right">
-          <p className="text-xl font-black tabular-nums text-[#16302a]">
-            {mealTotals.calories} kcal
+        <div className="shrink-0 rounded-[0.9rem] bg-surface-muted px-4 py-3 text-right ring-1 ring-inset ring-hairline">
+          <p className="text-xl font-black tabular-nums text-ink">
+            {mealTotals.calories.toLocaleString()} kcal
           </p>
-          <p className="text-xs font-bold text-primary-600">
+          <p className="text-xs font-bold tabular-nums text-primary-700">
             {mealTotals.protein}g protein
           </p>
         </div>
       </div>
 
       <div className="flex flex-wrap gap-2">
-        <Link
-          href="/app/log"
-          className="inline-flex min-h-11 items-center gap-2 rounded-full bg-primary-50 px-3.5 py-2 text-xs font-black text-primary-700 transition hover:bg-primary-100 md:min-h-0"
-        >
-          <Pencil className="h-3.5 w-3.5" />
+        <Link href="/app/log" className={pillLinkClass("primary", "sm")}>
+          <Pencil className="h-3.5 w-3.5" strokeWidth={2.25} />
           Edit meal
         </Link>
-        <Link
-          href="/app/log"
-          className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[#f4f8f6] px-3.5 py-2 text-xs font-black text-[#54635d] transition hover:bg-primary-50 hover:text-primary-700 md:min-h-0"
-        >
+        <Link href="/app/log" className={pillLinkClass("neutral", "sm")}>
           Log another
-          <Plus className="h-3.5 w-3.5" />
+          <Plus className="h-3.5 w-3.5" strokeWidth={2.25} />
         </Link>
         {onDuplicate && (
-          <button
-            type="button"
-            onClick={onDuplicate}
-            className="inline-flex items-center gap-2 rounded-full bg-[#f4f8f6] px-3.5 py-2 text-xs font-black text-primary-700 transition hover:bg-primary-50"
-          >
-            <Copy className="h-3.5 w-3.5" />
+          <button type="button" onClick={onDuplicate} className={pillLinkClass("neutral", "sm")}>
+            <Copy className="h-3.5 w-3.5" strokeWidth={2.25} />
             Duplicate
           </button>
         )}
         {onDelete && (
-          <button
-            type="button"
-            onClick={onDelete}
-            className="inline-flex items-center gap-2 rounded-full bg-[#f4f8f6] px-3.5 py-2 text-xs font-black text-accent-600 transition hover:bg-accent-100"
-          >
-            <Trash2 className="h-3.5 w-3.5" />
+          <button type="button" onClick={onDelete} className={pillLinkClass("danger", "sm")}>
+            <Trash2 className="h-3.5 w-3.5" strokeWidth={2.25} />
             Delete
           </button>
         )}
@@ -1133,10 +1172,13 @@ function MealLogCard({
 
       <div className="grid gap-2">
         {meal.items.map((item) => (
-          <div key={item.id} className="grid gap-4 border-t border-primary-100/70 py-4 md:grid-cols-[1fr_auto] md:items-center">
-            <div>
-              <p className="text-base font-black text-[#16302a]">{item.name}</p>
-              <p className="text-sm font-semibold text-muted-foreground">
+          <div
+            key={item.id}
+            className="grid gap-3 border-t border-hairline py-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-center md:gap-4"
+          >
+            <div className="min-w-0">
+              <p className="break-words text-base font-black text-ink">{item.name}</p>
+              <p className="text-sm font-semibold tabular-nums text-ink-muted">
                 {item.servings} serving{item.servings === 1 ? "" : "s"}
               </p>
             </div>
@@ -1154,21 +1196,26 @@ function MealLogCard({
 }
 
 function MealIcon({ mealType, muted = false }: { mealType: MealType; muted?: boolean }) {
+  // One plate recipe per meal slot: 50-weight tint, 100-weight inset ring,
+  // 600/700-weight glyph — the same construction as every other icon plate on
+  // these surfaces, so a row of them reads as one set.
   const config =
     muted
-      ? { styles: "bg-[#f4f8f6] text-muted-foreground", Icon: Moon }
+      ? { styles: "bg-surface-muted text-ink-subtle ring-hairline-strong", Icon: Moon }
       : mealType === "breakfast"
-        ? { styles: "bg-lemon-50 text-lemon-600", Icon: Sun }
+        ? { styles: "bg-lemon-50 text-lemon-700 ring-lemon-100", Icon: Sun }
         : mealType === "lunch"
-          ? { styles: "bg-accent-100 text-accent-600", Icon: Salad }
+          ? { styles: "bg-accent-50 text-accent-600 ring-accent-100", Icon: Salad }
           : mealType === "dinner"
-            ? { styles: "bg-primary-100 text-primary-700", Icon: Moon }
-            : { styles: "bg-sky-100 text-sky-600", Icon: UtensilsCrossed };
+            ? { styles: "bg-primary-50 text-primary-700 ring-primary-100", Icon: Moon }
+            : { styles: "bg-sky-50 text-sky-700 ring-sky-100", Icon: UtensilsCrossed };
   const Icon = config.Icon;
 
   return (
-    <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-[0.9rem] ${config.styles}`}>
-      <Icon className="h-[21px] w-[21px]" />
+    <span
+      className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-[0.9rem] ring-1 ring-inset ${config.styles}`}
+    >
+      <Icon className="h-[21px] w-[21px]" strokeWidth={2} />
     </span>
   );
 }
@@ -1183,9 +1230,11 @@ function SmallStat({
   tone: Tone;
 }) {
   return (
-    <div className={`min-w-[50px] rounded-[11px] px-3 py-2 text-center ${toneStyles[tone].macro}`}>
-      <p className="text-sm font-black tabular-nums">{value}</p>
-      <p className="mt-0.5 text-[9px] font-semibold uppercase tracking-[0.06em] opacity-70">
+    // min-w-0 (not a pixel floor): four of these sit in a row inside a 2-up
+    // grid at 320px, and any fixed minimum pushes the row past the card.
+    <div className={`min-w-0 rounded-[11px] px-2 py-2 text-center sm:px-3 ${toneStyles[tone].macro}`}>
+      <p className="truncate text-sm font-black tabular-nums">{value}</p>
+      <p className="mt-0.5 truncate text-[9px] font-semibold uppercase tracking-[0.06em] opacity-70">
         {label}
       </p>
     </div>
@@ -1214,39 +1263,48 @@ function CollapsibleLogPanel({
   children: ReactNode;
 }) {
   return (
-    <section id={id} className="scroll-mt-24 rounded-[1.4rem] border border-primary-100 bg-white/86 p-4 shadow-[0_10px_26px_rgba(20,90,75,0.06)]">
-      <div className="flex flex-col gap-3 border-b border-primary-100/80 pb-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3">
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-100 text-primary-700">
-            <Icon className="h-5 w-5" />
+    <section
+      id={id}
+      className="min-w-0 scroll-mt-24 rounded-[1.4rem] border border-hairline bg-surface/86 p-4 shadow-e1"
+    >
+      <div className="flex flex-col gap-3 border-b border-hairline pb-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex min-w-0 items-center gap-3">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100">
+            <Icon className="h-5 w-5" strokeWidth={2} />
           </span>
-          <div>
-            <h2 className="font-heading text-xl font-black text-[#16302a]">{title}</h2>
-            <p className="text-sm font-semibold text-muted-foreground">{detail}</p>
+          <div className="min-w-0">
+            <h2 className="font-heading text-lg font-black text-ink md:text-xl">{title}</h2>
+            <p className="text-sm font-semibold tabular-nums text-ink-muted">{detail}</p>
           </div>
         </div>
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
             onClick={onToggle}
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-primary-50 px-3.5 py-2 text-xs font-black text-primary-700 transition hover:bg-primary-100 md:min-h-0"
+            className={pillLinkClass("primary", "sm")}
             aria-expanded={expanded}
+            aria-controls={id ? `${id}-content` : undefined}
           >
             <ChevronDown
-              className={cn("h-3.5 w-3.5 transition-transform", expanded && "rotate-180")}
+              className={cn(
+                "h-3.5 w-3.5 transition-transform duration-200 ease-out-soft",
+                expanded && "rotate-180"
+              )}
+              strokeWidth={2.25}
             />
             {expanded ? "Hide" : "Show"}
           </button>
-          <Link
-            href={href}
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-white px-3.5 py-2 text-xs font-black text-primary-700 shadow-[0_8px_18px_rgba(20,90,75,0.07)] transition hover:bg-primary-50 md:min-h-0"
-          >
-            <Pencil className="h-3.5 w-3.5" />
+          <Link href={href} className={pillLinkClass("neutral", "sm")}>
+            <Pencil className="h-3.5 w-3.5" strokeWidth={2.25} />
             {action}
           </Link>
         </div>
       </div>
-      {expanded && <div className="mt-4 space-y-3">{children}</div>}
+      {expanded && (
+        <div id={id ? `${id}-content` : undefined} className="mt-4 space-y-3">
+          {children}
+        </div>
+      )}
     </section>
   );
 }
@@ -1263,17 +1321,18 @@ function EmptyLedgerCard({
   action: string;
 }) {
   return (
-    <Card className="rounded-[1.5rem] border-dashed border-primary-200 bg-white/75 px-6 py-8 text-center">
-      <h2 className="text-xl font-black text-[#16302a]">{title}</h2>
-      <p className="mx-auto mt-2 max-w-md text-sm font-semibold leading-6 text-muted-foreground">
-        {detail}
-      </p>
-      <Link href={href} className="mt-5 inline-flex">
-        <Button size="lg">
-          {action}
-          <ArrowRight className="h-4 w-4" />
-        </Button>
-      </Link>
+    <Card
+      variant="outlined"
+      padding="none"
+      className="rounded-[1.5rem] border-dashed border-primary-200 bg-surface/75"
+    >
+      <EmptyState
+        size="inline"
+        icon={UtensilsCrossed}
+        title={title}
+        description={detail}
+        action={{ label: action, href }}
+      />
     </Card>
   );
 }

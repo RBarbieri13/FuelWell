@@ -1,10 +1,11 @@
 "use client";
 
-import { Activity, Flag } from "lucide-react";
+import { Activity, Flag, Info } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
+import { SectionHeader } from "@/components/ui/section-header";
 import { cn } from "@/lib/utils/cn";
 import type { ArtifactSpec } from "@/lib/coach/types";
 import type { ArtifactCardProps } from "./contract";
@@ -27,20 +28,30 @@ export function WorkoutSessionCard({ artifact, onAction }: ArtifactCardProps<Wor
 
   return (
     <Card padding="sm" className="min-w-0 max-w-full">
-      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
-        <div className="flex min-w-0 items-center gap-2.5">
-          <span
-            aria-hidden="true"
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100"
+      {/* `capitalize` stays a CSS concern so the underlying focus string is
+          untouched; only the heading is transformed. */}
+      <SectionHeader
+        as="h3"
+        icon={Activity}
+        eyebrow="Session"
+        title={planName}
+        description={
+          sets.length > 0
+            ? `${sets.length} set${sets.length === 1 ? "" : "s"} logged`
+            : undefined
+        }
+        action={
+          <Badge
+            variant={isActive ? "success" : "neutral"}
+            size="sm"
+            dot
+            className="capitalize"
           >
-            <Activity className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
-          </span>
-          <h3 className="min-w-0 truncate text-base font-black capitalize text-ink">{planName}</h3>
-        </div>
-        <Badge variant={isActive ? "success" : "neutral"} size="sm" dot className="shrink-0 capitalize">
-          {isActive ? "Active" : artifact.status}
-        </Badge>
-      </div>
+            {isActive ? "Active" : artifact.status}
+          </Badge>
+        }
+        className="[&_h3]:capitalize"
+      />
 
       {sets.length === 0 ? (
         <EmptyState
@@ -57,12 +68,21 @@ export function WorkoutSessionCard({ artifact, onAction }: ArtifactCardProps<Wor
               <li
                 key={`${s.exercise}-${i}`}
                 className={cn(
-                  "grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-3 rounded-xl px-2.5 py-2 text-sm",
+                  "grid grid-cols-[1.25rem_minmax(0,1fr)_auto] items-baseline gap-x-2.5 rounded-xl px-2.5 py-2 text-sm",
                   latest
                     ? "bg-primary-50 ring-1 ring-inset ring-primary-100"
-                    : "bg-surface-subtle"
+                    : "bg-surface-muted"
                 )}
               >
+                <span
+                  aria-hidden="true"
+                  className={cn(
+                    "text-right text-[0.625rem] font-black tabular-nums",
+                    latest ? "text-primary-600" : "text-ink-faint"
+                  )}
+                >
+                  {i + 1}
+                </span>
                 <span
                   className={cn(
                     "min-w-0 truncate",
@@ -71,9 +91,11 @@ export function WorkoutSessionCard({ artifact, onAction }: ArtifactCardProps<Wor
                 >
                   {s.exercise}
                 </span>
+                {/* Load and reps are the payload of the row — shrink-0 so they
+                    are never the thing that gets cut. */}
                 <span
                   className={cn(
-                    "shrink-0 tabular-nums",
+                    "shrink-0 text-right tabular-nums",
                     latest ? "font-black text-primary-700" : "font-bold text-ink-muted"
                   )}
                 >
@@ -86,8 +108,15 @@ export function WorkoutSessionCard({ artifact, onAction }: ArtifactCardProps<Wor
         </ul>
       )}
 
-      <p className="mt-3 text-xs font-semibold text-ink-subtle">
-        Log sets by typing e.g. &ldquo;bench 135 lb x 8&rdquo;
+      <p className="mt-3 flex items-start gap-2 rounded-xl bg-surface-subtle px-2.5 py-2 text-xs font-semibold leading-5 text-ink-muted ring-1 ring-inset ring-hairline">
+        <Info
+          aria-hidden="true"
+          strokeWidth={2.25}
+          className="mt-px h-3.5 w-3.5 shrink-0 text-ink-faint"
+        />
+        <span className="min-w-0">
+          Log sets by typing e.g. &ldquo;bench 135 lb x 8&rdquo;
+        </span>
       </p>
 
       <Button
