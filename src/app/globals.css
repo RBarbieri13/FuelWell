@@ -55,6 +55,47 @@
   --color-macro-fat: #f0795b;
   --color-macro-calories: #1eae84;
   --font-heading: var(--font-fw-display);
+  /* Semantic ink + surface scale. Named roles so screens stop hard-coding the
+     literal hexes that used to drift apart across pages. */
+  --color-ink: #16302a;
+  --color-ink-muted: #516b63;
+  --color-ink-subtle: #6f8981;
+  --color-ink-faint: #9db0aa;
+  --color-surface: #ffffff;
+  --color-surface-subtle: #f8fbf9;
+  --color-surface-muted: #f4f8f6;
+  --color-surface-sunken: #edf4f1;
+  --color-hairline: #e6efeb;
+  --color-hairline-strong: #d3e4dd;
+
+  /* Neutral ramp is remapped onto the brand's sage axis at matched lightness,
+     so the hundreds of existing neutral-* utilities read as one family with
+     the greens instead of as flat grey. 900 and 500 are deliberately the same
+     values as --color-ink and --color-ink-muted. */
+  --color-neutral-50: #f8fbf9;
+  --color-neutral-100: #f2f7f5;
+  --color-neutral-200: #e3ece8;
+  --color-neutral-300: #cddcd7;
+  --color-neutral-400: #9db0aa;
+  --color-neutral-500: #516b63;
+  --color-neutral-600: #41564f;
+  --color-neutral-700: #2f443d;
+  --color-neutral-800: #223b34;
+  --color-neutral-900: #16302a;
+  --color-neutral-950: #0b251f;
+
+  /* Elevation scale. Two-part shadows (contact + ambient) so cards read as
+     lifted rather than blurred, and so depth is comparable across surfaces. */
+  --shadow-e1: 0 1px 2px rgba(16, 48, 40, 0.05), 0 4px 12px rgba(20, 90, 75, 0.05);
+  --shadow-e2: 0 2px 4px rgba(16, 48, 40, 0.05), 0 12px 30px rgba(20, 90, 75, 0.07);
+  --shadow-e3: 0 4px 10px rgba(16, 48, 40, 0.06), 0 18px 44px rgba(20, 90, 75, 0.1);
+  --shadow-e4: 0 10px 20px rgba(16, 48, 40, 0.08), 0 30px 70px rgba(20, 90, 75, 0.14);
+  --shadow-glow: 0 14px 32px rgba(21, 145, 108, 0.24);
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --animate-shimmer: shimmer 1.6s var(--ease-out-soft) infinite;
+
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -227,7 +268,61 @@ html {
   }
 }
 
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
 @layer components {
+  /* Sweeping highlight for loading placeholders — a static pulse reads as a
+     broken element, a sweep reads as pending. */
+  .fw-shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .fw-shimmer::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.62),
+      transparent
+    );
+    animation: var(--animate-shimmer);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fw-shimmer::after {
+      display: none;
+    }
+  }
+
+  /* Tactile press feedback for tappable cards and rows. */
+  .fw-press {
+    transition:
+      transform var(--duration-fast, 120ms) var(--ease-out-soft),
+      box-shadow 200ms var(--ease-out-soft),
+      border-color 200ms var(--ease-out-soft),
+      background-color 200ms var(--ease-out-soft);
+  }
+
+  .fw-press:active {
+    transform: scale(0.985);
+  }
+
+  /* Hairline highlight along the top of raised surfaces — the detail that
+     separates a card from a plain rectangle at small sizes. */
+  .fw-lift-edge {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.72),
+      var(--shadow-e2);
+  }
+
   .fw-app-surface {
     min-height: 100%;
     background:

@@ -1,0 +1,50 @@
+{
+  "objective": "Raise the visual craft of every graphic, chart, component, colour, border and shading across all FuelWell app surfaces, without changing product logic or weakening any gate.",
+  "definition_of_done": {
+    "anchors": [
+      "npx tsc --noEmit exits 0",
+      "npm run build exits 0",
+      "npx playwright test tests/mobile-component-clipping.spec.ts passes (Chromium + mobile WebKit, 320/375/390/430)",
+      "raw #rrggbb literal count in src/**/*.tsx strictly below baseline 452",
+      "rendered screenshot matrix captured at 390px and 1280px for every /app route with zero blockers"
+    ]
+  },
+  "frozen_rules": [
+    "tests/** may not be edited or weakened",
+    "tools/release/** untouched",
+    "ios/Features, ios/Packages, Theme.swift untouched",
+    ".github/workflows/** untouched",
+    "package.json dependencies unchanged",
+    "no change to computed values, API calls, persisted shapes, or auth flow",
+    "no push, deploy, PR, or TestFlight upload without explicit approval"
+  ],
+  "budget": {
+    "build_nodes": 10,
+    "verify_lenses_per_node": 3,
+    "max_concurrent": 10,
+    "retries_per_node": 1,
+    "wall_clock_minutes": 90
+  },
+  "baseline_metrics": {
+    "raw_hex_literals_tsx": 452,
+    "files_with_raw_hex": 44,
+    "neutral_palette_usages": 523,
+    "base_commit": "dbfd2f7"
+  },
+  "graph": {
+    "foundation": {
+      "status": "complete",
+      "outputs": [
+        "src/app/globals.css semantic ink/surface/hairline tokens, elevation scale e1-e4, shadow-glow, ease tokens, shimmer keyframe, fw-press/fw-shimmer/fw-lift-edge utilities, neutral ramp remapped onto brand sage axis",
+        "src/components/ui/card.tsx tinted+sunken+interactive variants on elevation tokens",
+        "src/components/ui/badge.tsx inset ring, neutral tone, size scale, status dot",
+        "src/components/ui/button.tsx tonal variant, icon size, glow token, press feedback",
+        "src/components/ui/empty-state.tsx brand glyph plate, secondary action, inline size",
+        "src/components/ui/skeleton.tsx shimmer sweep on brand tint",
+        "src/components/ui/progress-meter.tsx NEW shared meter with honest over-target treatment and pace marker",
+        "src/components/ui/section-header.tsx NEW shared title/description/action row"
+      ],
+      "evidence": "built CSS asserts .text-neutral-500{color:#516b63}, .text-neutral-900{color:#16302a}, .bg-surface-muted, .shadow-e2, .ease-out-soft all emitted"
+    }
+  }
+}
