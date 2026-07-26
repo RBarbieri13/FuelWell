@@ -5,7 +5,11 @@ import Link from "next/link";
 
 const RECIPE_BATCH_SIZE = 12;
 import { ArrowRight, BookOpen, CalendarDays, ChefHat, Search, SlidersHorizontal, Sparkles, Timer } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
+import { SectionHeader } from "@/components/ui/section-header";
 import { DietFilterChips } from "@/components/food/diet-filter-chips";
 import { RecipeCard, type RecipePlanStatus } from "@/components/recipes/recipe-card";
 import { RecipeDetail } from "@/components/recipes/recipe-detail";
@@ -142,51 +146,52 @@ export default function RecipesPage() {
             </p>
             <Link
               href="/app/meal-plan"
-              className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-full border border-white/14 bg-white/10 px-4 py-2 text-sm font-black text-white transition hover:bg-white/15"
+              className="fw-press mt-5 inline-flex min-h-11 items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-black text-white ring-1 ring-inset ring-white/20 transition hover:bg-white/16 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
             >
-              <CalendarDays className="h-4 w-4" />
+              <CalendarDays className="h-4 w-4 shrink-0" strokeWidth={2.25} />
               Open meal plan
-              <ArrowRight className="h-4 w-4" />
+              <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.25} />
             </Link>
-            <div className="mt-4 flex flex-wrap items-center gap-2">
-              <span className="text-xs font-black uppercase tracking-[0.12em] text-primary-200">
+            <div className="mt-5 border-t border-white/10 pt-4">
+              <p className="text-[11px] font-black uppercase tracking-[0.14em] text-primary-200">
                 Left today
-              </span>
-              {[
-                { label: "kcal", value: leftToday.calories.toLocaleString() },
-                { label: "protein", value: `${leftToday.protein}g` },
-                { label: "carbs", value: `${leftToday.carbs}g` },
-                { label: "fat", value: `${leftToday.fat}g` },
-              ].map((chip) => (
-                <span
-                  key={chip.label}
-                  className="rounded-full border border-white/14 bg-white/10 px-3 py-1.5 text-xs font-black tabular-nums text-white"
-                >
-                  {chip.value}
-                  <span className="ml-1 font-bold text-white/60">{chip.label}</span>
-                </span>
-              ))}
+              </p>
+              <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                {[
+                  { label: "kcal", value: leftToday.calories.toLocaleString() },
+                  { label: "protein", value: `${leftToday.protein}g` },
+                  { label: "carbs", value: `${leftToday.carbs}g` },
+                  { label: "fat", value: `${leftToday.fat}g` },
+                ].map((chip) => (
+                  <span
+                    key={chip.label}
+                    className="rounded-full bg-white/10 px-3 py-1.5 text-xs font-black tabular-nums text-white ring-1 ring-inset ring-white/15"
+                  >
+                    {chip.value}
+                    <span className="ml-1 font-bold text-white/70">{chip.label}</span>
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
           <div className="grid grid-cols-3 gap-2 text-center">
-            <div className="rounded-[1.15rem] border border-white/12 bg-white/10 px-4 py-3">
-              <p className="text-2xl font-black tabular-nums">{results.length}</p>
-              <p className="text-xs font-black uppercase tracking-[0.12em] text-white/70">
-                Matches
-              </p>
-            </div>
-            <div className="rounded-[1.15rem] border border-white/12 bg-white/10 px-4 py-3">
-              <p className="text-2xl font-black tabular-nums">{quickCount}</p>
-              <p className="text-xs font-black uppercase tracking-[0.12em] text-white/70">
-                Quick
-              </p>
-            </div>
-            <div className="rounded-[1.15rem] border border-white/12 bg-white/10 px-4 py-3">
-              <p className="text-2xl font-black tabular-nums">{highProteinCount}</p>
-              <p className="text-xs font-black uppercase tracking-[0.12em] text-white/70">
-                30g+ protein
-              </p>
-            </div>
+            {[
+              { value: results.length.toLocaleString(), label: "Matches" },
+              { value: quickCount.toLocaleString(), label: "Quick" },
+              { value: highProteinCount.toLocaleString(), label: "30g+ protein" },
+            ].map((stat) => (
+              <div
+                key={stat.label}
+                className="min-w-0 rounded-[1.15rem] bg-white/10 px-3 py-3 ring-1 ring-inset ring-white/15 sm:px-4"
+              >
+                <p className="font-heading text-2xl font-black tabular-nums leading-none">
+                  {stat.value}
+                </p>
+                <p className="mt-1.5 text-[11px] font-black uppercase tracking-[0.1em] text-white/72">
+                  {stat.label}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </Card>
@@ -194,27 +199,31 @@ export default function RecipesPage() {
       <Card className="space-y-5 px-6 py-6 md:px-7">
         <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start">
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-primary-600" />
+            <Search
+              className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-primary-600"
+              strokeWidth={2.25}
+              aria-hidden="true"
+            />
             <input
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Search recipes"
               aria-label="Search recipes"
-              className="w-full rounded-[1.3rem] border border-primary-100 bg-primary-50/55 py-4 pl-12 pr-4 text-sm font-semibold text-[#16302a] outline-none placeholder:text-[#91a7a0] transition focus:border-transparent focus:bg-white focus:ring-2 focus:ring-primary-500"
+              className="min-h-14 w-full rounded-[1.3rem] bg-surface-muted py-4 pl-12 pr-4 text-sm font-semibold text-ink outline-none ring-1 ring-inset ring-hairline-strong transition placeholder:text-ink-faint hover:bg-surface-subtle focus:bg-surface focus:ring-2 focus:ring-primary-500"
             />
           </div>
           <div className="relative min-w-0">
-            <div className="flex gap-2 overflow-x-auto rounded-[1.35rem] bg-[#f2f7f5] p-1">
+            <div className="flex gap-1 overflow-x-auto rounded-[1.35rem] bg-surface-sunken p-1 ring-1 ring-inset ring-hairline">
               {mealFilters.map((meal) => (
                 <button
                   key={meal}
                   type="button"
                   onClick={() => setMealFilter(meal)}
                   aria-pressed={mealFilter === meal}
-                  className={`min-h-11 shrink-0 rounded-full px-4 py-2 text-sm font-black transition md:min-h-0 ${
+                  className={`fw-press min-h-11 shrink-0 rounded-full px-4 py-2 text-sm font-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 md:min-h-10 ${
                     mealFilter === meal
-                      ? "bg-primary-500 text-white shadow-[0_12px_24px_rgba(21,145,108,0.18)]"
-                      : "text-neutral-600 hover:bg-white"
+                      ? "bg-primary-600 text-white shadow-e2"
+                      : "text-ink-muted hover:bg-surface hover:text-primary-800"
                   }`}
                 >
                   {meal}
@@ -224,25 +233,25 @@ export default function RecipesPage() {
             {/* Cue that the chip row scrolls — Snack sits off-screen at phone widths. */}
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute inset-y-1 right-1 w-8 rounded-r-[1.35rem] bg-gradient-to-l from-[#f2f7f5] to-transparent sm:hidden"
+              className="pointer-events-none absolute inset-y-1 right-1 w-8 rounded-r-[1.35rem] bg-gradient-to-l from-surface-sunken to-transparent sm:hidden"
             />
           </div>
         </div>
 
         <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_18rem]">
           <div className="space-y-2">
-            <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-muted-foreground">
-              <SlidersHorizontal className="h-3.5 w-3.5" />
+            <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-ink-subtle">
+              <SlidersHorizontal className="h-3.5 w-3.5 shrink-0" strokeWidth={2.25} />
               Diet filters
             </div>
             <DietFilterChips active={diets} onToggle={toggleDiet} />
             {allergies.length > 0 && (
-              <p className="text-xs font-semibold text-muted-foreground">
+              <p className="text-xs font-semibold text-ink-muted">
                 Hiding recipes with: {allergies.join(", ")}.
               </p>
             )}
             {(likes.length > 0 || dislikes.length > 0) && (
-              <p className="text-xs font-semibold text-muted-foreground">
+              <p className="text-xs font-semibold text-ink-muted">
                 Your thumbs tune this list — liked recipes rank first, &ldquo;Not for
                 me&rdquo; sinks to the end.
               </p>
@@ -253,65 +262,79 @@ export default function RecipesPage() {
             <button
               type="button"
               onClick={() => openRecipeDialog(featured)}
-              className="w-full rounded-[1.35rem] border border-primary-100 bg-primary-50/70 p-4 text-left transition hover:border-primary-200"
+              className="fw-press w-full rounded-[1.35rem] bg-gradient-to-br from-primary-50 to-surface-subtle p-4 text-left ring-1 ring-inset ring-primary-100 hover:ring-primary-200 hover:shadow-e1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600"
             >
               <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.14em] text-primary-700">
-                <Sparkles className="h-4 w-4" />
+                <Sparkles className="h-3.5 w-3.5 shrink-0" strokeWidth={2.25} />
                 Best fit
               </div>
-              <p className="mt-3 text-base font-black text-[#16302a]">{featured.title}</p>
-              <div className="mt-3 flex flex-wrap gap-2 text-xs font-black text-[#60776f]">
-                <span className="inline-flex items-center gap-1 rounded-full bg-white px-2.5 py-1">
-                  <ChefHat className="h-3.5 w-3.5 text-primary-600" />
+              <p className="mt-3 break-words font-heading text-base font-black leading-snug tracking-tight text-ink">
+                {featured.title}
+              </p>
+              <div className="mt-3 flex flex-wrap gap-1.5 text-xs font-black text-ink-muted">
+                <span className="inline-flex items-center gap-1 rounded-full bg-surface px-2.5 py-1 ring-1 ring-inset ring-hairline">
+                  <ChefHat className="h-3.5 w-3.5 shrink-0 text-primary-600" strokeWidth={2.25} />
                   {featured.meal}
                 </span>
-                <span className="inline-flex items-center gap-1 rounded-full bg-white px-2.5 py-1">
-                  <Timer className="h-3.5 w-3.5 text-primary-600" />
-                  {featured.minutes} min
+                <span className="inline-flex items-center gap-1 rounded-full bg-surface px-2.5 py-1 ring-1 ring-inset ring-hairline">
+                  <Timer className="h-3.5 w-3.5 shrink-0 text-primary-600" strokeWidth={2.25} />
+                  <span className="tabular-nums">{featured.minutes}</span> min
                 </span>
               </div>
             </button>
           )}
         </div>
         {hasRecipeFilters && (
-          <div className="flex flex-col gap-2 rounded-[1.15rem] border border-primary-100 bg-primary-50/70 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-sm font-semibold text-primary-900/70">
-              {results.length} match{results.length === 1 ? "" : "es"} visible
+          <div className="flex flex-col gap-3 rounded-[1.15rem] bg-primary-50/70 px-4 py-3 ring-1 ring-inset ring-primary-100 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm font-semibold leading-6 text-primary-900/75">
+              <span className="font-black tabular-nums">{results.length}</span> match
+              {results.length === 1 ? "" : "es"} visible
               {mealFilter !== "All" ? ` for ${mealFilter.toLowerCase()}` : ""}.
               {highProteinCount > 0 ? ` ${highProteinCount} are 30g+ protein.` : " Try loosening filters for more protein options."}
             </p>
-            <button
+            <Button
               type="button"
+              variant="secondary"
+              size="sm"
+              className="shrink-0 self-start sm:self-center"
               onClick={() => {
                 setQuery("");
                 setMealFilter("All");
                 diets.forEach((diet) => toggleDiet(diet));
               }}
-              className="self-start rounded-full bg-white px-3 py-1.5 text-xs font-black text-primary-700 transition hover:bg-primary-100 sm:self-center"
             >
               Clear filters
-            </button>
+            </Button>
           </div>
         )}
       </Card>
 
       {results.length === 0 ? (
-        <Card className="text-center">
-          <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-[1rem] bg-primary-100 text-primary-700">
-            <Sparkles className="h-5 w-5" />
-          </div>
-          <p className="mt-3 text-sm font-black text-[#16302a]">
-            No recipes match these filters yet.
-          </p>
-          <p className="mt-1 text-sm font-semibold text-muted-foreground">
-            Try a different search term or turn off a diet filter to see more.
-          </p>
+        <Card variant="tinted" padding="none">
+          <EmptyState
+            icon={Sparkles}
+            title="No recipes match these filters yet."
+            description="Try a different search term or turn off a diet filter to see more."
+          />
         </Card>
       ) : (
         <>
-          <p className="text-xs font-black uppercase tracking-[0.16em] text-muted-foreground">
-            {results.length} {results.length === 1 ? "recipe" : "recipes"}
-          </p>
+          <SectionHeader
+            as="h2"
+            title={`${results.length.toLocaleString()} ${results.length === 1 ? "recipe" : "recipes"}`}
+            description={
+              results.length > visibleCount
+                ? `Showing the first ${visibleResults.length.toLocaleString()}.`
+                : undefined
+            }
+            action={
+              quickCount > 0 ? (
+                <Badge variant="info" size="sm" dot>
+                  {quickCount.toLocaleString()} under 15 min
+                </Badge>
+              ) : undefined
+            }
+          />
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {visibleResults.map((recipe) => (
               <RecipeCard
@@ -323,14 +346,12 @@ export default function RecipesPage() {
             ))}
           </div>
           {results.length > visibleCount && (
-            <button
-              type="button"
-              onClick={showMore}
-              className="mx-auto block rounded-full border border-primary-200 bg-white px-6 py-3 text-sm font-black text-primary-700 shadow-[0_8px_22px_rgba(20,90,75,0.06)] transition hover:bg-primary-50"
-            >
-              Show {Math.min(RECIPE_BATCH_SIZE, results.length - visibleCount)} more of{" "}
-              {results.length - visibleCount} remaining
-            </button>
+            <div className="flex justify-center">
+              <Button type="button" variant="secondary" size="lg" onClick={showMore}>
+                Show {Math.min(RECIPE_BATCH_SIZE, results.length - visibleCount)} more of{" "}
+                {results.length - visibleCount} remaining
+              </Button>
+            </div>
           )}
         </>
       )}

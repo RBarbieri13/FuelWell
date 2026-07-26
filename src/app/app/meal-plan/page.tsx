@@ -5,6 +5,8 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { ProgressMeter } from "@/components/ui/progress-meter";
+import { SectionHeader } from "@/components/ui/section-header";
 import { RecipeDetail } from "@/components/recipes/recipe-detail";
 import { cn } from "@/lib/utils/cn";
 import {
@@ -13,6 +15,7 @@ import {
   CalendarDays,
   CheckCircle2,
   ChevronRight,
+  CircleDashed,
   Clock,
   Plus,
   RefreshCcw,
@@ -160,15 +163,18 @@ export default function MealPlanPage() {
               Plan the next few days around protein, prep time, and grocery needs.
             </p>
           </div>
-          <div className="flex rounded-full border border-primary-100/80 bg-white/92 p-1 shadow-[0_18px_42px_rgba(22,48,42,0.10)]">
+          <div className="flex self-start rounded-full bg-surface/92 p-1 shadow-e2 ring-1 ring-inset ring-hairline-strong">
             {(["day", "week"] as const).map((mode) => (
               <button
                 key={mode}
                 type="button"
                 onClick={() => setView(mode)}
+                aria-pressed={view === mode}
                 className={cn(
-                  "rounded-full px-6 py-3 text-sm font-black capitalize transition-all",
-                  view === mode ? "bg-primary-600 text-white shadow-[0_12px_24px_rgba(21,145,108,0.18)]" : "text-muted-foreground hover:text-primary-800"
+                  "fw-press min-h-11 rounded-full px-6 py-2 text-sm font-black capitalize focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600",
+                  view === mode
+                    ? "bg-primary-600 text-white shadow-e2"
+                    : "text-ink-muted hover:bg-primary-50 hover:text-primary-800"
                 )}
               >
                 {mode}
@@ -188,7 +194,22 @@ export default function MealPlanPage() {
             <h2 className="mt-4 max-w-3xl font-heading text-2xl font-black leading-tight tracking-tight text-white md:text-4xl">
               {weekTotals.planned} of {slotCount} meals are planned.
             </h2>
-            <p className="mt-4 max-w-2xl text-base font-semibold leading-7 text-white/74">
+            <div className="mt-5 max-w-2xl">
+              <ProgressMeter
+                value={weekTotals.planned}
+                target={slotCount}
+                color="var(--color-primary-400)"
+                size="lg"
+                label={`${weekTotals.planned} of ${slotCount} meal slots planned`}
+                className="bg-white/15"
+              />
+              <div className="mt-2 flex items-center justify-between text-[11px] font-black uppercase tracking-[0.12em] text-white/60">
+                <span>0 slots</span>
+                <span className="tabular-nums text-white/85">{weekPlannedPercent}% planned</span>
+                <span className="tabular-nums">{slotCount} slots</span>
+              </div>
+            </div>
+            <p className="mt-5 max-w-2xl text-base font-semibold leading-7 text-white/74">
               {firstOpenSlot
                 ? `Next best move: fill ${firstOpenSlot.day.label} ${firstOpenSlot.meal.slot.toLowerCase()} with a lean protein recipe so the week stays above 135g protein per day.`
                 : "Every slot is planned — build the grocery list to lock in the week."}
@@ -214,94 +235,105 @@ export default function MealPlanPage() {
                 ["Avg protein", `${Math.round(weekTotals.protein / days.length)}g`],
                 ["Open slots", `${openSlotCount}`],
               ].map(([label, value]) => (
-                <div key={label} className="rounded-[1.15rem] border border-white/12 bg-white/10 px-3 py-3 backdrop-blur sm:rounded-[1.25rem] sm:px-5 sm:py-4">
-                  <p className="font-heading text-2xl font-black tabular-nums text-white">{value}</p>
-                  <p className="mt-1 text-xs font-black uppercase tracking-[0.08em] text-white/58 sm:tracking-[0.12em]">{label}</p>
+                <div key={label} className="min-w-0 rounded-[1.15rem] bg-white/10 px-3 py-3 ring-1 ring-inset ring-white/15 backdrop-blur sm:rounded-[1.25rem] sm:px-5 sm:py-4">
+                  <p className="font-heading text-2xl font-black tabular-nums leading-none text-white">{value}</p>
+                  <p className="mt-1.5 text-[11px] font-black uppercase tracking-[0.08em] text-white/70 sm:tracking-[0.12em]">{label}</p>
                 </div>
               ))}
             </div>
           </Card>
 
-          <Card variant="elevated" className="h-fit space-y-4">
-            <div className="flex items-start gap-4">
-              <span className="fw-icon-chip">
-                <ShoppingBasket className="h-6 w-6" />
-              </span>
-              <div>
-                <h2 className="text-2xl font-black text-[#16302a]">Grocery readiness</h2>
-                <p className="mt-1 text-sm font-semibold leading-6 text-muted-foreground">
-                  Planned meals are grouped into the grocery list as soon as the open slots are filled.
+          <Card variant="elevated" className="h-fit space-y-5">
+            <SectionHeader
+              icon={ShoppingBasket}
+              title="Grocery readiness"
+              description="Planned meals are grouped into the grocery list as soon as the open slots are filled."
+            />
+            <div className="grid gap-2 sm:grid-cols-2">
+              <div className="min-w-0 rounded-[1.25rem] bg-surface-muted p-4 ring-1 ring-inset ring-hairline">
+                <p className="font-heading text-2xl font-black tabular-nums leading-none text-ink md:text-3xl">
+                  {uniqueIngredientCount.toLocaleString()}
                 </p>
+                <p className="mt-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-ink-subtle">unique ingredients</p>
+              </div>
+              <div className="min-w-0 rounded-[1.25rem] bg-surface-muted p-4 ring-1 ring-inset ring-hairline">
+                <p className="font-heading text-2xl font-black tabular-nums leading-none text-ink md:text-3xl">
+                  {openSlotCount.toLocaleString()}
+                </p>
+                <p className="mt-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-ink-subtle">slots to fill</p>
               </div>
             </div>
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div className="fw-soft-row p-4">
-                <p className="text-2xl font-black text-[#16302a] md:text-3xl">{uniqueIngredientCount}</p>
-                <p className="text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">unique ingredients</p>
-              </div>
-              <div className="fw-soft-row p-4">
-                <p className="text-2xl font-black text-[#16302a] md:text-3xl">{openSlotCount}</p>
-                <p className="text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">slots to fill</p>
-              </div>
+            <div className="space-y-2">
+              <Link href="/app/grocery-list" className="block">
+                <Button type="button" className="w-full">
+                  Build grocery list
+                  <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.25} />
+                </Button>
+              </Link>
+              <Link
+                href="/app/recipes"
+                className="fw-press flex min-h-11 items-center justify-between gap-2 rounded-[1.1rem] bg-surface-muted px-4 py-3 text-sm font-black text-primary-800 ring-1 ring-inset ring-hairline transition hover:bg-primary-50 hover:ring-primary-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600"
+              >
+                <span className="inline-flex min-w-0 items-center gap-2">
+                  <BookOpen className="h-4 w-4 shrink-0" strokeWidth={2.25} />
+                  Browse the recipe library
+                </span>
+                <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.25} />
+              </Link>
             </div>
-            <Link href="/app/grocery-list" className="block">
-              <Button type="button" className="w-full">
-                Build grocery list
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
-            <Link
-              href="/app/recipes"
-              className="flex min-h-11 items-center justify-between rounded-[1.1rem] bg-[#f7faf8] px-4 py-3 text-sm font-black text-primary-800 transition hover:bg-primary-50"
-            >
-              <span className="inline-flex items-center gap-2">
-                <BookOpen className="h-4 w-4" />
-                Browse the recipe library
-              </span>
-              <ArrowRight className="h-4 w-4" />
-            </Link>
           </Card>
         </section>
 
         <div className="grid gap-6 xl:grid-cols-[20rem_1fr]">
           <Card className="h-fit px-5 py-5">
-            <h2 className="flex items-center gap-2 text-lg font-black text-[#16302a]">
-              <CalendarDays className="w-5 h-5 text-primary-600" />
-              This week
-            </h2>
-            <div className="mt-3 space-y-2">
+            <SectionHeader as="h3" icon={CalendarDays} title="This week" />
+            <div className="mt-4 space-y-2">
               {days.map((day) => {
                 const totals = dayTotals(day);
                 const isSelected = day.id === selectedDay.id;
+                const isToday = day.iso === today;
 
                 return (
                   <button
                     key={day.id}
                     type="button"
                     onClick={() => setSelectedDayId(day.id)}
+                    aria-pressed={isSelected}
+                    aria-current={isToday ? "date" : undefined}
                     className={cn(
-                      "w-full rounded-[1.25rem] border px-4 py-4 text-left transition-all",
+                      "fw-press relative w-full overflow-hidden rounded-[1.25rem] px-4 py-4 pl-5 text-left ring-1 ring-inset focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600",
                       isSelected
-                        ? "border-primary-300 bg-primary-50 shadow-[0_16px_34px_rgba(21,145,108,0.12)]"
-                        : "border-primary-100 bg-[#f7faf8] hover:-translate-y-0.5 hover:border-primary-200 hover:bg-white hover:shadow-md hover:shadow-primary-900/10"
+                        ? "bg-primary-50 ring-primary-300 shadow-e2"
+                        : "bg-surface-subtle ring-hairline hover:-translate-y-0.5 hover:bg-surface hover:ring-primary-200 hover:shadow-e2"
                     )}
                   >
+                    {/* Today rail — the marker has to survive whichever day is
+                        currently selected, so it is a separate channel. */}
+                    {isToday && (
+                      <span
+                        aria-hidden="true"
+                        className="absolute inset-y-0 left-0 w-1.5 bg-gradient-to-b from-primary-400 to-primary-600"
+                      />
+                    )}
                     <div className="flex items-center justify-between gap-2">
-                      <div>
-                        <p className="text-base font-black text-[#16302a]">
-                          {day.label}, {day.date}
-                          {day.iso === today && (
-                            <span className="ml-2 rounded-full bg-primary-600 px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.08em] text-white">
+                      <div className="min-w-0">
+                        <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-base font-black text-ink">
+                          <span className="tabular-nums">{day.label}, {day.date}</span>
+                          {isToday && (
+                            <span className="rounded-full bg-primary-600 px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.08em] text-white">
                               Today
                             </span>
                           )}
                         </p>
-                        <p className="text-xs font-semibold text-muted-foreground mt-0.5">{day.focus}</p>
+                        <p className="mt-0.5 break-words text-xs font-semibold text-ink-muted">{day.focus}</p>
                       </div>
-                      <ChevronRight className={cn("w-4 h-4", isSelected ? "text-primary-600" : "text-[#b8cac4]")} />
+                      <ChevronRight
+                        className={cn("h-4 w-4 shrink-0", isSelected ? "text-primary-600" : "text-ink-faint")}
+                        strokeWidth={2.25}
+                      />
                     </div>
-                    <div className="mt-3 flex items-center gap-2 text-xs font-semibold text-muted-foreground">
-                      <span className="font-black tabular-nums text-muted-foreground">
+                    <div className="mt-3 flex items-center gap-2 text-xs font-semibold">
+                      <span className="shrink-0 font-black tabular-nums text-ink-muted">
                         {totals.protein}g protein
                       </span>
                       <span
@@ -314,10 +346,15 @@ export default function MealPlanPage() {
                             key={meal.slot}
                             className={cn(
                               "h-1.5 flex-1 rounded-full",
-                              meal.status === "open" ? "bg-primary-100" : "bg-primary-500"
+                              meal.status === "open"
+                                ? "bg-surface-sunken ring-1 ring-inset ring-hairline-strong"
+                                : "bg-primary-500"
                             )}
                           />
                         ))}
+                      </span>
+                      <span className="shrink-0 font-black tabular-nums text-ink-subtle">
+                        {totals.planned}/{day.meals.length}
                       </span>
                     </div>
                   </button>
@@ -330,46 +367,57 @@ export default function MealPlanPage() {
           {view === "day" ? (
             <Card variant="elevated">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                <div>
+                <div className="min-w-0">
                   <p className="text-xs font-black uppercase tracking-[0.16em] text-primary-700">
                     {selectedDay.focus}
                   </p>
-                  <h2 className="mt-1 text-2xl font-black text-[#16302a] md:text-3xl">
-                    {selectedDay.label}, {selectedDay.date}
+                  <h2 className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 font-heading text-2xl font-black tracking-tight text-ink md:text-3xl">
+                    <span className="tabular-nums">{selectedDay.label}, {selectedDay.date}</span>
+                    {selectedDay.iso === today && (
+                      <Badge variant="success" size="sm" dot>
+                        Today
+                      </Badge>
+                    )}
                   </h2>
                 </div>
                 <div className="grid grid-cols-2 gap-2 sm:min-w-56">
-                  <div className="rounded-[1rem] bg-primary-50 px-4 py-3">
-                    <p className="text-xs font-black uppercase tracking-[0.1em] text-primary-700">Calories</p>
-                    <p className="text-xl font-black tabular-nums text-[#16302a]">
+                  <div className="min-w-0 rounded-[1rem] bg-primary-50 px-4 py-3 ring-1 ring-inset ring-primary-100">
+                    <p className="text-[11px] font-black uppercase tracking-[0.1em] text-primary-700">Calories</p>
+                    <p className="mt-0.5 text-xl font-black tabular-nums leading-none text-ink">
                       {selectedTotals.calories.toLocaleString()}
                     </p>
                   </div>
-                  <div className="rounded-[1rem] bg-sky-50 px-4 py-3">
-                    <p className="text-xs font-black uppercase tracking-[0.1em] text-sky-700">Protein</p>
-                    <p className="text-xl font-black tabular-nums text-[#16302a]">
+                  <div className="min-w-0 rounded-[1rem] bg-sky-50 px-4 py-3 ring-1 ring-inset ring-sky-100">
+                    <p className="text-[11px] font-black uppercase tracking-[0.1em] text-sky-700">Protein</p>
+                    <p className="mt-0.5 text-xl font-black tabular-nums leading-none text-ink">
                       {selectedTotals.protein}g
                     </p>
                   </div>
                 </div>
               </div>
-              <div className="mt-5 rounded-[1.15rem] border border-primary-100 bg-primary-50/70 p-4">
+              <div className="mt-5 rounded-[1.15rem] bg-primary-50/70 p-4 ring-1 ring-inset ring-primary-100">
                 <div className="mb-2 flex items-center justify-between text-xs font-black uppercase tracking-[0.12em] text-primary-800">
                   <span>Week planned</span>
-                  <span>{weekPlannedPercent}%</span>
+                  <span className="tabular-nums">
+                    {weekTotals.planned}/{slotCount} · {weekPlannedPercent}%
+                  </span>
                 </div>
-                <div className="h-2.5 overflow-hidden rounded-full bg-white">
-                  <div className="h-full rounded-full bg-primary-500" style={{ width: `${weekPlannedPercent}%` }} />
-                </div>
+                <ProgressMeter
+                  value={weekTotals.planned}
+                  target={slotCount}
+                  color="var(--color-primary-500)"
+                  label={`${weekTotals.planned} of ${slotCount} meal slots planned this week`}
+                  className="bg-surface"
+                />
               </div>
 
               {actionNote && (
                 <div
                   role="status"
-                  className="mt-4 flex items-start gap-2 rounded-[1.15rem] border border-primary-100 bg-primary-50 px-4 py-3 text-sm font-black text-primary-800"
+                  className="mt-4 flex items-start gap-2 rounded-[1.15rem] bg-primary-50 px-4 py-3 text-sm font-black text-primary-800 ring-1 ring-inset ring-primary-100"
                 >
-                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" />
-                  <span>{actionNote}</span>
+                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" strokeWidth={2.25} />
+                  <span className="min-w-0 break-words">{actionNote}</span>
                 </div>
               )}
 
@@ -383,66 +431,89 @@ export default function MealPlanPage() {
                     <div
                       key={meal.slot}
                       className={cn(
-                        "rounded-[1.45rem] border p-5 transition-colors",
-                        isOpen ? "border-dashed border-accent-200 bg-accent-50/50" : "border-primary-100 bg-[#f7faf8]"
+                        "rounded-[1.45rem] p-5 transition-colors",
+                        isOpen
+                          ? "border-2 border-dashed border-hairline-strong bg-surface-muted/70"
+                          : "bg-surface-subtle ring-1 ring-inset ring-hairline"
                       )}
                     >
                       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                        <div className="flex items-start gap-3">
+                        <div className="flex min-w-0 items-start gap-3">
                           <div
                             className={cn(
-                              "mt-0.5 rounded-[1rem] p-3",
+                              "mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-[1rem] ring-1 ring-inset",
                               meal.status === "logged"
-                                ? "bg-primary-50 text-primary-600"
+                                ? "bg-primary-50 text-primary-600 ring-primary-100"
                                 : isOpen
-                                  ? "bg-accent-100 text-accent-700"
-                                  : `${tone.bg} ${tone.text}`
+                                  ? "bg-surface text-ink-faint ring-hairline-strong"
+                                  : `${tone.bg} ${tone.text} ring-ink/5`
                             )}
                           >
                             {meal.status === "logged" ? (
-                              <CheckCircle2 className="w-4 h-4" />
+                              <CheckCircle2 className="h-4 w-4" strokeWidth={2.25} />
+                            ) : isOpen ? (
+                              <CircleDashed className="h-4 w-4" strokeWidth={2.25} />
                             ) : (
-                              <UtensilsCrossed className="w-4 h-4" />
+                              <UtensilsCrossed className="h-4 w-4" strokeWidth={2.25} />
                             )}
                           </div>
-                          <div>
-                            <p className="text-xs font-black uppercase tracking-[0.14em] text-muted-foreground">
+                          <div className="min-w-0">
+                            <p className="text-xs font-black uppercase tracking-[0.14em] text-ink-subtle">
                               {meal.slot} · {tone.label}
                               {isOpen ? " · Suggested" : ""}
                             </p>
-                            <h3 className="mt-1 text-lg font-black text-[#16302a]">
+                            {isOpen && (
+                              <p className="mt-1 text-[11px] font-black uppercase tracking-[0.12em] text-ink-faint">
+                                Open slot — nothing planned yet
+                              </p>
+                            )}
+                            <h3
+                              className={cn(
+                                "mt-1 break-words text-lg font-black leading-snug",
+                                isOpen ? "text-ink-muted" : "text-ink"
+                              )}
+                            >
                               {meal.title}
                             </h3>
-                            <div className="mt-2 flex flex-wrap items-center gap-2 text-xs font-bold text-muted-foreground">
+                            <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-bold text-ink-muted">
                               <span className="tabular-nums">{meal.calories.toLocaleString()} kcal</span>
                               <span className="tabular-nums">{meal.protein}g protein</span>
                               <span className="inline-flex items-center gap-1">
-                                <Clock className="w-3 h-3" />
+                                <Clock className="h-3.5 w-3.5 shrink-0" strokeWidth={2.25} />
                                 {meal.prep}
                               </span>
                             </div>
                           </div>
                         </div>
                         {isOpen ? (
-                          <Button type="button" variant="secondary" size="sm" onClick={() => fillOpenSlot(selectedDay, meal)}>
-                            <Plus className="w-4 h-4" />
+                          <Button
+                            type="button"
+                            variant="tonal"
+                            size="sm"
+                            className="shrink-0"
+                            onClick={() => fillOpenSlot(selectedDay, meal)}
+                          >
+                            <Plus className="h-4 w-4 shrink-0" strokeWidth={2.25} />
                             Fill slot
                           </Button>
                         ) : (
-                          <Badge variant={meal.status === "logged" ? "success" : "default"}>
+                          <Badge
+                            variant={meal.status === "logged" ? "success" : "default"}
+                            dot={meal.status === "logged"}
+                          >
                             {meal.status === "logged" ? "Logged" : meal.status === "added" ? "Added" : "Planned"}
                           </Badge>
                         )}
                       </div>
                       {!isOpen && (
-                        <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-primary-100/70 pt-3">
+                        <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-hairline pt-3">
                           {recipe && (
                             <button
                               type="button"
                               onClick={() => setOpenRecipe(recipe)}
-                              className="inline-flex min-h-11 items-center gap-1.5 rounded-full bg-white px-3.5 py-1.5 text-xs font-black text-primary-700 transition hover:bg-primary-50 md:min-h-0"
+                              className="fw-press inline-flex min-h-11 items-center gap-1.5 rounded-full bg-surface px-3.5 py-1.5 text-xs font-black text-primary-700 ring-1 ring-inset ring-hairline transition hover:bg-primary-50 hover:ring-primary-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 md:min-h-9"
                             >
-                              <BookOpen className="h-3.5 w-3.5" />
+                              <BookOpen className="h-3.5 w-3.5 shrink-0" strokeWidth={2.25} />
                               Open recipe
                             </button>
                           )}
@@ -451,17 +522,17 @@ export default function MealPlanPage() {
                               <button
                                 type="button"
                                 onClick={() => void logMealToToday(selectedDay, meal)}
-                                className="inline-flex min-h-11 items-center gap-1.5 rounded-full bg-white px-3.5 py-1.5 text-xs font-black text-primary-700 transition hover:bg-primary-50 md:min-h-0"
+                                className="fw-press inline-flex min-h-11 items-center gap-1.5 rounded-full bg-surface px-3.5 py-1.5 text-xs font-black text-primary-700 ring-1 ring-inset ring-hairline transition hover:bg-primary-50 hover:ring-primary-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 md:min-h-9"
                               >
-                                <UtensilsCrossed className="h-3.5 w-3.5" />
+                                <UtensilsCrossed className="h-3.5 w-3.5 shrink-0" strokeWidth={2.25} />
                                 Log to today
                               </button>
                               <button
                                 type="button"
                                 onClick={() => swapMeal(selectedDay, meal)}
-                                className="inline-flex min-h-11 items-center gap-1.5 rounded-full bg-white px-3.5 py-1.5 text-xs font-black text-primary-700 transition hover:bg-primary-50 md:min-h-0"
+                                className="fw-press inline-flex min-h-11 items-center gap-1.5 rounded-full bg-surface px-3.5 py-1.5 text-xs font-black text-primary-700 ring-1 ring-inset ring-hairline transition hover:bg-primary-50 hover:ring-primary-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 md:min-h-9"
                               >
-                                <RefreshCcw className="h-3.5 w-3.5" />
+                                <RefreshCcw className="h-3.5 w-3.5 shrink-0" strokeWidth={2.25} />
                                 Swap
                               </button>
                             </>
@@ -475,10 +546,19 @@ export default function MealPlanPage() {
             </Card>
           ) : (
             <Card variant="elevated">
-              <h2 className="text-2xl font-black text-[#16302a]">Week at a glance</h2>
-              <div className="mt-4 grid gap-3 md:grid-cols-2">
+              <SectionHeader
+                title="Week at a glance"
+                description="Each strip is one day's meal slots — filled means planned, hollow means open."
+                action={
+                  <Badge variant={openSlotCount === 0 ? "success" : "warning"} dot>
+                    {openSlotCount === 0 ? "Week complete" : `${openSlotCount} open`}
+                  </Badge>
+                }
+              />
+              <div className="mt-5 grid gap-3 md:grid-cols-2">
                 {days.map((day) => {
                   const totals = dayTotals(day);
+                  const isToday = day.iso === today;
 
                   return (
                     <button
@@ -488,29 +568,66 @@ export default function MealPlanPage() {
                         setSelectedDayId(day.id);
                         setView("day");
                       }}
-                      className="rounded-[1.35rem] border border-primary-100 bg-[#f7faf8] p-5 text-left transition hover:-translate-y-0.5 hover:border-primary-200 hover:bg-white hover:shadow-md hover:shadow-primary-900/10"
+                      aria-current={isToday ? "date" : undefined}
+                      className={cn(
+                        "fw-press relative overflow-hidden rounded-[1.35rem] p-5 pl-6 text-left ring-1 ring-inset hover:-translate-y-0.5 hover:bg-surface hover:shadow-e2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600",
+                        isToday
+                          ? "bg-primary-50/70 ring-primary-200"
+                          : "bg-surface-subtle ring-hairline hover:ring-primary-200"
+                      )}
                     >
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-lg font-black text-[#16302a]">
-                            {day.label}, {day.date}
+                      {isToday && (
+                        <span
+                          aria-hidden="true"
+                          className="absolute inset-y-0 left-0 w-1.5 bg-gradient-to-b from-primary-400 to-primary-600"
+                        />
+                      )}
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-lg font-black text-ink">
+                            <span className="tabular-nums">{day.label}, {day.date}</span>
+                            {isToday && (
+                              <span className="rounded-full bg-primary-600 px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.08em] text-white">
+                                Today
+                              </span>
+                            )}
                           </p>
-                          <p className="text-xs font-semibold text-muted-foreground">{day.focus}</p>
+                          <p className="mt-0.5 break-words text-xs font-semibold text-ink-muted">{day.focus}</p>
                         </div>
-                        <Badge variant={totals.planned === day.meals.length ? "success" : "warning"}>
+                        <Badge
+                          variant={totals.planned === day.meals.length ? "success" : "warning"}
+                          className="shrink-0 tabular-nums"
+                        >
                           {totals.planned}/{day.meals.length}
                         </Badge>
                       </div>
+                      <div
+                        className="mt-3 flex items-center gap-1"
+                        role="img"
+                        aria-label={`${totals.planned} of ${day.meals.length} meals planned on ${day.label}`}
+                      >
+                        {day.meals.map((meal) => (
+                          <span
+                            key={meal.slot}
+                            className={cn(
+                              "h-1.5 flex-1 rounded-full",
+                              meal.status === "open"
+                                ? "bg-surface-sunken ring-1 ring-inset ring-hairline-strong"
+                                : "bg-primary-500"
+                            )}
+                          />
+                        ))}
+                      </div>
                       <div className="mt-4 grid grid-cols-2 gap-2">
-                        <div className="rounded-[1rem] bg-white px-4 py-3">
-                          <p className="text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">Calories</p>
-                          <p className="text-xl font-black tabular-nums text-[#16302a]">
+                        <div className="min-w-0 rounded-[1rem] bg-surface px-4 py-3 ring-1 ring-inset ring-hairline">
+                          <p className="text-[11px] font-black uppercase tracking-[0.12em] text-ink-subtle">Calories</p>
+                          <p className="mt-0.5 text-xl font-black tabular-nums leading-none text-ink">
                             {totals.calories.toLocaleString()}
                           </p>
                         </div>
-                        <div className="rounded-[1rem] bg-white px-4 py-3">
-                          <p className="text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">Protein</p>
-                          <p className="text-xl font-black tabular-nums text-[#16302a]">
+                        <div className="min-w-0 rounded-[1rem] bg-surface px-4 py-3 ring-1 ring-inset ring-hairline">
+                          <p className="text-[11px] font-black uppercase tracking-[0.12em] text-ink-subtle">Protein</p>
+                          <p className="mt-0.5 text-xl font-black tabular-nums leading-none text-ink">
                             {totals.protein}g
                           </p>
                         </div>

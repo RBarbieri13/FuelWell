@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { SectionHeader } from "@/components/ui/section-header";
 import { cn } from "@/lib/utils/cn";
 import {
   DIET_FILTERS,
@@ -56,6 +57,8 @@ import {
   Watch,
   Dumbbell,
   Activity,
+  UserCog,
+  type LucideIcon,
 } from "lucide-react";
 import {
   clearUserScopedIdentityCaches,
@@ -604,21 +607,24 @@ export function SettingsClient({
                 <a
                   key={href}
                   href={href}
-                  className="inline-flex min-h-11 shrink-0 items-center rounded-full border border-primary-100 bg-white/80 px-3.5 py-1.5 text-xs font-black text-primary-700 transition hover:bg-primary-50"
+                  className="fw-press inline-flex min-h-11 shrink-0 items-center rounded-full bg-surface/85 px-3.5 py-1.5 text-xs font-black text-primary-800 ring-1 ring-inset ring-primary-100 hover:bg-primary-50 hover:ring-primary-200"
                 >
                   {label}
                 </a>
               ))}
             </nav>
           </div>
-          <Badge className="px-4 py-2 text-sm">v{appVersion}</Badge>
+          <Badge className="shrink-0 px-4 py-2 text-sm tabular-nums">v{appVersion}</Badge>
         </div>
       </header>
 
       <div className="fw-page-inner space-y-4 md:space-y-6">
         {isPreview && (
-          <Card className="border-primary-100 bg-primary-50/80">
-            <p className="text-sm font-black text-primary-900">
+          <Card variant="tinted" padding="sm" className="flex gap-3 bg-primary-50/80">
+            <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-[0.8rem] bg-surface text-primary-700 ring-1 ring-inset ring-primary-100">
+              <Info className="h-4 w-4" strokeWidth={2} />
+            </span>
+            <p className="min-w-0 text-sm font-bold leading-6 text-primary-900">
               Preview mode is using a sample account. Account details below are placeholder values, not a real signed-in user.
             </p>
           </Card>
@@ -626,7 +632,7 @@ export function SettingsClient({
 
         <section className="grid min-w-0 gap-6 xl:grid-cols-[0.95fr_1.05fr]">
           <Card className="fw-dark-panel min-w-0 px-5 py-6 sm:px-8 sm:py-8">
-            <p className="text-sm font-black uppercase tracking-[0.16em] text-primary-200">
+            <p className="text-[0.6875rem] font-black uppercase tracking-[0.18em] text-primary-200">
               Account control center
             </p>
             <h2 className="mt-2 text-2xl font-black leading-tight text-white md:mt-4 md:text-5xl">
@@ -643,27 +649,30 @@ export function SettingsClient({
           </Card>
 
           <Card variant="elevated" className="min-w-0 space-y-5">
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex items-start gap-4">
-                <span className="fw-icon-chip">
-                  <Watch className="h-6 w-6" />
+            <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2">
+              <div className="flex min-w-0 items-start gap-3">
+                <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100">
+                  <Watch className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
                 </span>
-                <div>
+                <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
-                    <h2 className="text-xl font-black text-neutral-900 md:text-2xl">Garmin Connect</h2>
-                    <Badge>Coming soon</Badge>
+                    <h2 className="text-xl font-black text-ink">Garmin Connect</h2>
+                    <Badge size="sm" variant="neutral">
+                      Coming soon
+                    </Badge>
                   </div>
-                  <p className="mt-1 text-sm font-semibold leading-6 text-neutral-500">
+                  <p className="mt-1 text-sm font-semibold leading-6 text-ink-muted">
                     Top priority for active calories, steps, sleep, recovery, and planned workouts.
                   </p>
                 </div>
               </div>
               <Badge
+                dot
                 variant={
                   integrationSummary.status === "connected" ||
                   integrationSummary.status === "preview_sample"
                     ? "success"
-                    : undefined
+                    : "neutral"
                 }
               >
                 {integrationSummary.status === "preview_sample"
@@ -673,15 +682,25 @@ export function SettingsClient({
                     : "Disconnected"}
               </Badge>
             </div>
-            <div className="fw-soft-row p-4">
-              <p className="text-sm font-semibold leading-6 text-neutral-500">
+            <div className="rounded-[1.25rem] bg-surface-muted p-4 ring-1 ring-inset ring-hairline">
+              <p className="text-sm font-semibold leading-6 text-ink-muted">
                 {integrationSummary.note ??
                   "Connect Garmin to bring goal context into meal guidance. Nutrition remains saved in FuelWell."}
               </p>
               {integrationSummary.activeCalories !== undefined && (
-                <p className="mt-3 text-base font-black text-neutral-900">
-                  {integrationSummary.activeCalories} active calories ·{" "}
-                  {integrationSummary.steps?.toLocaleString()} steps ·{" "}
+                <p className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-base font-black text-ink">
+                  <span className="tabular-nums">{integrationSummary.activeCalories}</span> active
+                  calories
+                  <span aria-hidden="true" className="text-ink-faint">
+                    ·
+                  </span>
+                  <span className="tabular-nums">
+                    {integrationSummary.steps?.toLocaleString()}
+                  </span>{" "}
+                  steps
+                  <span aria-hidden="true" className="text-ink-faint">
+                    ·
+                  </span>
                   {integrationSummary.recoveryLabel}
                 </p>
               )}
@@ -703,20 +722,26 @@ export function SettingsClient({
 
         <section className="grid min-w-0 gap-4 xl:grid-cols-[0.9fr_1.1fr]">
           <Section id="account" title="Account">
-            <Card className="divide-y divide-primary-100/70 px-6 py-3">
+            <Card className="divide-y divide-hairline px-6 py-3">
               <Row icon={User} label="Display name">
-                <span className="text-sm font-black text-neutral-900">
-                  {displayNameValue || <span className="text-neutral-400">Not set</span>}
-                </span>
+                {displayNameValue ? (
+                  <span className="text-sm font-black text-ink">{displayNameValue}</span>
+                ) : (
+                  <span className="text-sm font-bold text-ink-faint">Not set</span>
+                )}
               </Row>
               <Row icon={Mail} label="Email">
-                <span className="block min-w-0 truncate text-sm font-black text-neutral-900">
-                  {email || <span className="text-neutral-400">Not set</span>}
-                </span>
+                {email ? (
+                  <span className="block min-w-0 truncate text-sm font-black text-ink">
+                    {email}
+                  </span>
+                ) : (
+                  <span className="text-sm font-bold text-ink-faint">Not set</span>
+                )}
               </Row>
             </Card>
             {isPreview && (
-              <p className="mt-2 px-1 text-xs font-semibold text-neutral-500">
+              <p className="mt-2 px-1 text-xs font-semibold text-ink-muted">
                 Sign in to manage your real account details.
               </p>
             )}
@@ -724,11 +749,7 @@ export function SettingsClient({
 
           <Section id="preferences" title="Preferences">
             <Card className="space-y-5 px-6 py-6">
-              <div>
-                <div className="mb-3 flex items-center gap-2">
-                  <Ruler className="h-4 w-4 text-primary-600" />
-                  <span className="text-sm font-black text-neutral-900">Units</span>
-                </div>
+              <PreferenceBlock icon={Ruler} title="Units" divided={false}>
                 <SegmentedField
                   label="Units"
                   value={units}
@@ -738,7 +759,7 @@ export function SettingsClient({
                     ["metric", "Metric"],
                   ]}
                 />
-              </div>
+              </PreferenceBlock>
 
               <PreferenceBlock icon={Salad} title="Dietary preferences">
                 {dietLabels.length > 0 ? (
@@ -750,7 +771,7 @@ export function SettingsClient({
                     ))}
                   </div>
                 ) : (
-                  <p className="text-sm font-semibold text-neutral-400">
+                  <p className="text-sm font-semibold text-ink-muted">
                     No dietary filters selected. Choose some in Log or Recipes.
                   </p>
                 )}
@@ -766,7 +787,7 @@ export function SettingsClient({
                     ))}
                   </div>
                 ) : (
-                  <p className="text-sm font-semibold text-neutral-400">No allergies recorded.</p>
+                  <p className="text-sm font-semibold text-ink-muted">No allergies recorded.</p>
                 )}
               </PreferenceBlock>
             </Card>
@@ -775,27 +796,28 @@ export function SettingsClient({
 
         <Section id="health-profile" title="Health profile">
           <Card className="space-y-5 px-6 py-6">
-            <div className="flex flex-col justify-between gap-3 md:flex-row md:items-start">
-              <div>
-                <h2 className="text-2xl font-black text-neutral-900">
-                  Edit your health profile
-                </h2>
-                <p className="mt-1 max-w-2xl text-sm font-semibold leading-6 text-neutral-500">
-                  These rows drive calorie targets, macro targets, workout estimates, and coach recommendations.
-                </p>
-              </div>
-              <Button onClick={saveHealthProfile} loading={savingHealth} className="rounded-full">
-                <Save className="h-4 w-4" />
-                {savedHealth ? "Saved" : "Save health profile"}
-              </Button>
-            </div>
+            <SectionHeader
+              icon={UserCog}
+              title="Edit your health profile"
+              description="These rows drive calorie targets, macro targets, workout estimates, and coach recommendations."
+              action={
+                <Button
+                  onClick={saveHealthProfile}
+                  loading={savingHealth}
+                  className="hidden rounded-full md:inline-flex"
+                >
+                  <Save className="h-4 w-4" />
+                  {savedHealth ? "Saved" : "Save health profile"}
+                </Button>
+              }
+            />
             {healthError && (
-              <p role="alert" className="rounded-[1.15rem] bg-red-50 px-4 py-3 text-sm font-bold text-red-700">
+              <p role="alert" className="rounded-[1.15rem] bg-red-50 px-4 py-3 text-sm font-bold text-red-700 ring-1 ring-inset ring-red-100">
                 {healthError}
               </p>
             )}
 
-            <div className="divide-y divide-primary-100/80 rounded-[1.35rem] border border-primary-100 bg-muted/60">
+            <div className="divide-y divide-hairline rounded-[1.35rem] bg-surface-muted ring-1 ring-inset ring-hairline">
               <HealthProfileRow
                 icon={User}
                 label="Display name"
@@ -918,12 +940,7 @@ export function SettingsClient({
                             toggleAllergySelection(currentList, option).join(", ")
                           )
                         }
-                        className={cn(
-                          "min-h-11 rounded-full px-3.5 py-2 text-xs font-black transition md:min-h-0",
-                          selected
-                            ? "bg-primary-600 text-white shadow-sm shadow-primary-900/10"
-                            : "bg-white text-neutral-500 hover:bg-primary-50 hover:text-primary-700"
-                        )}
+                        className={choiceChipClass(selected)}
                       >
                         {option}
                       </button>
@@ -977,7 +994,7 @@ export function SettingsClient({
               </HealthProfileRow>
             </div>
 
-            <div className="grid gap-4 rounded-[1.35rem] border border-primary-100 bg-muted/60 p-4 md:grid-cols-2 xl:grid-cols-5">
+            <div className="grid gap-4 rounded-[1.35rem] bg-surface-muted p-4 ring-1 ring-inset ring-hairline md:grid-cols-2 xl:grid-cols-5">
               <TextField
                 label="Date of birth"
                 type="date"
@@ -1024,10 +1041,14 @@ export function SettingsClient({
               />
             </div>
 
-            <div className="rounded-[1.15rem] border border-primary-100 bg-primary-50/70 px-4 py-3">
+            <div className="rounded-[1.15rem] bg-primary-50/70 px-4 py-3 ring-1 ring-inset ring-primary-100">
               <div className="flex items-start gap-3">
-                <Dumbbell className="mt-0.5 h-4 w-4 text-primary-700" />
-                <p className="text-sm font-semibold leading-6 text-primary-900/70">
+                <Info
+                  className="mt-0.5 h-4 w-4 shrink-0 text-primary-700"
+                  strokeWidth={2}
+                  aria-hidden="true"
+                />
+                <p className="min-w-0 text-sm font-semibold leading-6 text-primary-900/75">
                   Preview saves stay on this device. Signed-in saves update your profile inputs and stored preference context.
                 </p>
               </div>
@@ -1046,32 +1067,33 @@ export function SettingsClient({
 
         <Section id="coach-preferences" title="Intake preferences">
           <Card className="space-y-5 px-6 py-6">
-            <div className="flex flex-col justify-between gap-3 md:flex-row md:items-start">
-              <div>
-                <h2 className="text-2xl font-black text-neutral-900">
-                  Edit your signup answers
-                </h2>
-                <p className="mt-1 max-w-2xl text-sm font-semibold leading-6 text-neutral-500">
-                  These preferences guide coaching, meal flexibility, grocery suggestions, and workout recommendations.
-                </p>
-              </div>
-              <Button onClick={saveIntakePreferences} loading={savingIntake} className="rounded-full">
-                <Save className="h-4 w-4" />
-                {savedIntake ? "Saved" : "Save changes"}
-              </Button>
-            </div>
+            <SectionHeader
+              icon={SlidersHorizontal}
+              title="Edit your signup answers"
+              description="These preferences guide coaching, meal flexibility, grocery suggestions, and workout recommendations."
+              action={
+                <Button
+                  onClick={saveIntakePreferences}
+                  loading={savingIntake}
+                  className="hidden rounded-full md:inline-flex"
+                >
+                  <Save className="h-4 w-4" />
+                  {savedIntake ? "Saved" : "Save changes"}
+                </Button>
+              }
+            />
             {intakeError && (
-              <p role="alert" className="rounded-[1.15rem] bg-red-50 px-4 py-3 text-sm font-bold text-red-700">
+              <p role="alert" className="rounded-[1.15rem] bg-red-50 px-4 py-3 text-sm font-bold text-red-700 ring-1 ring-inset ring-red-100">
                 {intakeError}
               </p>
             )}
-            <div className="flex flex-col gap-2 rounded-[1.15rem] border border-primary-100 bg-primary-50/70 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-sm font-semibold leading-6 text-primary-900/70">
+            <div className="flex flex-col gap-3 rounded-[1.15rem] bg-primary-50/70 px-4 py-3 ring-1 ring-inset ring-primary-100 sm:flex-row sm:items-center sm:justify-between">
+              <p className="min-w-0 text-sm font-semibold leading-6 text-primary-900/75">
                 Re-run the full intake when you want the guided setup flow to rebuild these answers from scratch.
               </p>
               <Link
                 href="/app/onboarding"
-                className="inline-flex min-h-11 items-center self-start rounded-full bg-white px-3 py-1.5 text-xs font-black text-primary-700 transition hover:bg-primary-100 sm:self-center md:min-h-0"
+                className="fw-press inline-flex min-h-11 shrink-0 items-center self-start rounded-full bg-surface px-3.5 py-1.5 text-xs font-black text-primary-800 shadow-e1 ring-1 ring-inset ring-primary-100 hover:bg-primary-100 sm:self-center md:min-h-9"
               >
                 Retake the setup quiz
               </Link>
@@ -1104,7 +1126,7 @@ export function SettingsClient({
             title="Coach nudge preference"
             detail={`Current cadence: ${formatOptionLabel(CHECK_IN_OPTIONS, intakePrefs.checkInPreference)}. This saves preference context only.`}
           >
-            <Badge variant={savedIntake ? "success" : undefined}>
+            <Badge dot variant={savedIntake ? "success" : "neutral"}>
               {savedIntake ? "Saved" : "Editable"}
             </Badge>
           </ActionCard>
@@ -1114,22 +1136,22 @@ export function SettingsClient({
           <div className="grid gap-4 xl:grid-cols-2">
             <div id="data" className="min-w-0 scroll-mt-24">
               <ActionCard icon={Download} title="Export your data" detail="Download your logs and preferences as a file.">
-                <Badge>Coming soon</Badge>
+                <Badge variant="neutral">Coming soon</Badge>
               </ActionCard>
             </div>
             <div id="privacy" className="min-w-0 scroll-mt-24">
               <ActionCard icon={Shield} title="Privacy controls" detail="Review what Coach can remember, what files are attached, and what data is used for guidance.">
-                <Badge>Preview</Badge>
+                <Badge variant="info">Preview</Badge>
               </ActionCard>
             </div>
             <div id="subscription" className="min-w-0 scroll-mt-24">
               <ActionCard icon={CreditCard} title="Plan and billing" detail="Manage your FuelWell plan, invoices, and subscription status.">
-                <Badge>Coming soon</Badge>
+                <Badge variant="neutral">Coming soon</Badge>
               </ActionCard>
             </div>
             <div id="support" className="min-w-0 scroll-mt-24">
               <ActionCard icon={HelpCircle} title="Get help" detail="A support contact and coach-data review path arrive with the public release.">
-                <Badge>Coming soon</Badge>
+                <Badge variant="neutral">Coming soon</Badge>
               </ActionCard>
             </div>
           </div>
@@ -1141,7 +1163,10 @@ export function SettingsClient({
 
         <section className="grid gap-4 xl:grid-cols-[0.8fr_1.2fr]">
           <Section id="session" title="Session">
-            <Card>
+            <Card className="flex flex-wrap items-center justify-between gap-3">
+              <p className="min-w-0 text-sm font-semibold leading-6 text-ink-muted">
+                Ends this session on this device.
+              </p>
               <Button variant="danger" onClick={handleSignOut} loading={signingOut}>
                 <LogOut className="h-4 w-4" />
                 Sign out
@@ -1150,14 +1175,14 @@ export function SettingsClient({
           </Section>
 
           <Section title="About">
-            <Card className="divide-y divide-primary-100/70 px-6 py-3">
+            <Card className="divide-y divide-hairline px-6 py-3">
               <Row icon={Info} label="App">
-                <span className="text-sm font-black text-neutral-900">
+                <span className="text-sm font-black text-ink">
                   FuelWell — AI Nutrition Coach
                 </span>
               </Row>
               <Row icon={Info} label="Version">
-                <span className="text-sm font-black tabular-nums text-neutral-900">
+                <span className="text-sm font-black tabular-nums text-ink">
                   {appVersion}
                 </span>
               </Row>
@@ -1166,15 +1191,15 @@ export function SettingsClient({
         </section>
 
         <Section id="delete-account" title="Danger zone">
-          <Card className="border-red-200">
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex items-start gap-3">
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[1rem] bg-red-50 text-red-600">
-                  <Trash2 className="h-4 w-4" />
+          <Card className="border-red-100 ring-1 ring-inset ring-red-100">
+            <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-2">
+              <div className="flex min-w-0 items-start gap-3">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[1rem] bg-red-50 text-red-600 ring-1 ring-inset ring-red-100">
+                  <Trash2 className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
                 </span>
-                <div>
+                <div className="min-w-0">
                   <p className="text-base font-black text-red-700">Delete account</p>
-                  <p className="mt-1 text-sm font-semibold leading-6 text-neutral-500">
+                  <p className="mt-1 text-sm font-semibold leading-6 text-ink-muted">
                     Permanently removes your account, logs, preferences, and coach history.
                     Self-serve deletion and the support contact to request it arrive with the
                     public release.
@@ -1192,10 +1217,25 @@ export function SettingsClient({
 
 function HeroStat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-[1.25rem] border border-white/12 bg-white/10 px-3 py-3 backdrop-blur md:px-4 md:py-4">
+    <div className="rounded-[1.25rem] bg-white/10 px-3 py-3 ring-1 ring-inset ring-white/15 backdrop-blur md:px-4 md:py-4">
       <p className="truncate text-base font-black capitalize text-white md:text-lg">{value}</p>
-      <p className="mt-1 text-xs font-black uppercase tracking-[0.12em] text-white/58">{label}</p>
+      <p className="mt-1 text-[0.6875rem] font-black uppercase tracking-[0.12em] text-white/65">
+        {label}
+      </p>
     </div>
+  );
+}
+
+/**
+ * Single source of truth for the selectable pills used by the allergy row and
+ * every intake group — they had drifted into two near-identical class strings.
+ */
+function choiceChipClass(selected: boolean) {
+  return cn(
+    "fw-press min-h-11 rounded-full px-3.5 py-2 text-xs font-black ring-1 ring-inset md:min-h-9",
+    selected
+      ? "bg-primary-600 text-white shadow-e1 ring-primary-700"
+      : "bg-surface text-ink-muted ring-hairline-strong hover:bg-primary-50 hover:text-primary-800 hover:ring-primary-200"
   );
 }
 
@@ -1213,16 +1253,21 @@ function PreferenceBlock({
   icon: Icon,
   title,
   children,
+  divided = true,
 }: {
-  icon: typeof Salad;
+  icon: LucideIcon;
   title: string;
   children: React.ReactNode;
+  /** First block in a card sits flush; the rest get a hairline separator. */
+  divided?: boolean;
 }) {
   return (
-    <div className="border-t border-primary-100/70 pt-4">
-      <div className="mb-3 flex items-center gap-2">
-        <Icon className="h-4 w-4 text-primary-600" />
-        <span className="text-sm font-black text-neutral-900">{title}</span>
+    <div className={cn(divided && "border-t border-hairline pt-4")}>
+      <div className="mb-3 flex items-center gap-2.5">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[0.8rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100">
+          <Icon className="h-4 w-4" strokeWidth={2} />
+        </span>
+        <span className="text-sm font-black text-ink">{title}</span>
       </div>
       {children}
     </div>
@@ -1235,23 +1280,23 @@ function HealthProfileRow({
   detail,
   children,
 }: {
-  icon: typeof Scale;
+  icon: LucideIcon;
   label: string;
   detail: string;
   children: React.ReactNode;
 }) {
   return (
     <div className="grid gap-3 p-4 md:grid-cols-[minmax(0,1fr)_minmax(15rem,22rem)] md:items-center">
-      <div className="flex items-start gap-3">
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[1rem] bg-primary-100 text-primary-700">
-          <Icon className="h-4 w-4" />
+      <div className="flex min-w-0 items-start gap-3">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100">
+          <Icon className="h-4 w-4" strokeWidth={2} />
         </span>
-        <div>
-          <p className="text-sm font-black text-neutral-900">{label}</p>
-          <p className="mt-1 text-sm font-semibold leading-6 text-neutral-500">{detail}</p>
+        <div className="min-w-0">
+          <p className="text-sm font-black text-ink">{label}</p>
+          <p className="mt-1 text-sm font-semibold leading-6 text-ink-muted">{detail}</p>
         </div>
       </div>
-      <div>{children}</div>
+      <div className="min-w-0">{children}</div>
     </div>
   );
 }
@@ -1268,12 +1313,12 @@ function IntakePreferenceGroup({
   const Icon = group.icon;
 
   return (
-    <div className="rounded-[1.35rem] border border-primary-100/80 bg-muted/60 p-4">
-      <div className="mb-3 flex items-center gap-2">
-        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-primary-700">
-          <Icon className="h-4 w-4" />
+    <div className="rounded-[1.35rem] bg-surface-muted p-4 ring-1 ring-inset ring-hairline">
+      <div className="mb-3 flex items-center gap-2.5">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-surface text-primary-700 ring-1 ring-inset ring-hairline">
+          <Icon className="h-4 w-4" strokeWidth={2} />
         </span>
-        <p className="text-sm font-black text-neutral-900">{group.label}</p>
+        <p className="min-w-0 text-sm font-black text-ink">{group.label}</p>
       </div>
       <div className="flex flex-wrap gap-2">
         {group.options.map((option) => (
@@ -1282,12 +1327,7 @@ function IntakePreferenceGroup({
             type="button"
             onClick={() => onChange(option.value)}
             aria-pressed={value === option.value}
-            className={cn(
-              "min-h-11 rounded-full px-3.5 py-2 text-xs font-black transition md:min-h-0",
-              value === option.value
-                ? "bg-primary-600 text-white shadow-sm shadow-primary-900/10"
-                : "bg-white text-neutral-500 hover:bg-primary-50 hover:text-primary-700"
-            )}
+            className={choiceChipClass(value === option.value)}
           >
             {option.label}
           </button>
@@ -1309,23 +1349,29 @@ function SegmentedField({
   options: Array<[string, string]>;
 }) {
   return (
-    <fieldset aria-label={label} className="inline-flex rounded-full bg-neutral-100 p-1">
-      {options.map(([optionValue, optionLabel]) => (
-        <button
-          key={optionValue}
-          type="button"
-          onClick={() => onChange(optionValue)}
-          className={cn(
-            "min-h-11 rounded-full px-5 py-2 text-sm font-black transition-colors md:min-h-0",
-            value === optionValue
-              ? "bg-white text-neutral-900 shadow-sm"
-              : "text-neutral-500 hover:text-neutral-700"
-          )}
-          aria-pressed={value === optionValue}
-        >
-          {optionLabel}
-        </button>
-      ))}
+    <fieldset
+      aria-label={label}
+      className="inline-flex rounded-full bg-surface-sunken p-1 ring-1 ring-inset ring-hairline"
+    >
+      {options.map(([optionValue, optionLabel]) => {
+        const selected = value === optionValue;
+        return (
+          <button
+            key={optionValue}
+            type="button"
+            onClick={() => onChange(optionValue)}
+            className={cn(
+              "fw-press min-h-11 rounded-full px-5 py-2 text-sm font-black md:min-h-9",
+              selected
+                ? "bg-surface text-ink shadow-e1 ring-1 ring-inset ring-hairline-strong"
+                : "text-ink-muted hover:text-ink"
+            )}
+            aria-pressed={selected}
+          >
+            {optionLabel}
+          </button>
+        );
+      })}
     </fieldset>
   );
 }
@@ -1349,7 +1395,7 @@ function TextField({
     <label className="block">
       <span
         className={cn(
-          "text-xs font-black uppercase tracking-[0.14em] text-neutral-400",
+          "block text-[0.6875rem] font-black uppercase tracking-[0.14em] text-ink-subtle",
           hideLabel && "sr-only"
         )}
       >
@@ -1360,7 +1406,10 @@ function TextField({
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
-        className="mt-2 w-full rounded-2xl border border-border bg-muted px-4 py-3 text-sm font-bold text-neutral-900 outline-none placeholder:text-neutral-400 focus:border-primary-300 focus:ring-2 focus:ring-primary-200"
+        className={cn(
+          "w-full rounded-2xl border border-hairline-strong bg-surface px-4 py-3 text-sm font-bold text-ink outline-none transition-colors duration-200 ease-out-soft placeholder:text-ink-faint hover:border-primary-200 focus:border-primary-300 focus:ring-2 focus:ring-primary-200",
+          !hideLabel && "mt-2"
+        )}
       />
     </label>
   );
@@ -1383,21 +1432,28 @@ function NumberField({
     <label className="block">
       <span
         className={cn(
-          "text-xs font-black uppercase tracking-[0.14em] text-neutral-400",
+          "block text-[0.6875rem] font-black uppercase tracking-[0.14em] text-ink-subtle",
           hideLabel && "sr-only"
         )}
       >
         {label}
       </span>
-      <div className="mt-2 flex items-center rounded-2xl border border-border bg-muted px-4 py-3 focus-within:border-primary-300 focus-within:ring-2 focus-within:ring-primary-200">
+      <div
+        className={cn(
+          "flex items-center gap-2 rounded-2xl border border-hairline-strong bg-surface px-4 py-3 transition-colors duration-200 ease-out-soft hover:border-primary-200 focus-within:border-primary-300 focus-within:ring-2 focus-within:ring-primary-200",
+          !hideLabel && "mt-2"
+        )}
+      >
         <input
           type="number"
           min={0}
           value={value}
           onChange={(event) => onChange(Number(event.target.value))}
-          className="min-w-0 flex-1 bg-transparent text-sm font-bold text-neutral-900 outline-none"
+          className="min-w-0 flex-1 bg-transparent text-sm font-bold tabular-nums text-ink outline-none"
         />
-        {suffix && <span className="text-xs font-black uppercase text-neutral-400">{suffix}</span>}
+        {suffix && (
+          <span className="shrink-0 text-xs font-black uppercase text-ink-subtle">{suffix}</span>
+        )}
       </div>
     </label>
   );
@@ -1420,7 +1476,7 @@ function SelectField({
     <label className="block">
       <span
         className={cn(
-          "text-xs font-black uppercase tracking-[0.14em] text-neutral-400",
+          "block text-[0.6875rem] font-black uppercase tracking-[0.14em] text-ink-subtle",
           hideLabel && "sr-only"
         )}
       >
@@ -1429,7 +1485,10 @@ function SelectField({
       <select
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="mt-2 w-full rounded-2xl border border-border bg-muted px-4 py-3 text-sm font-bold text-neutral-900 outline-none focus:border-primary-300 focus:ring-2 focus:ring-primary-200"
+        className={cn(
+          "w-full rounded-2xl border border-hairline-strong bg-surface px-4 py-3 text-sm font-bold text-ink outline-none transition-colors duration-200 ease-out-soft hover:border-primary-200 focus:border-primary-300 focus:ring-2 focus:ring-primary-200",
+          !hideLabel && "mt-2"
+        )}
       >
         {options.map(([optionValue, optionLabel]) => (
           <option key={optionValue} value={optionValue}>
@@ -1447,24 +1506,24 @@ function ActionCard({
   detail,
   children,
 }: {
-  icon: typeof Bell;
+  icon: LucideIcon;
   title: string;
   detail: string;
   children: React.ReactNode;
 }) {
   return (
-    <Card>
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-start gap-3">
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[1rem] bg-primary-100 text-primary-700">
-            <Icon className="h-4 w-4" />
+    <Card className="h-full">
+      <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-2">
+        <div className="flex min-w-0 items-start gap-3">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[1rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100">
+            <Icon className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
           </span>
-          <div>
-            <p className="text-base font-black text-neutral-900">{title}</p>
-            <p className="mt-1 text-sm font-semibold leading-6 text-neutral-500">{detail}</p>
+          <div className="min-w-0">
+            <p className="text-base font-black text-ink">{title}</p>
+            <p className="mt-1 text-sm font-semibold leading-6 text-ink-muted">{detail}</p>
           </div>
         </div>
-        {children}
+        <div className="shrink-0">{children}</div>
       </div>
     </Card>
   );
@@ -1481,9 +1540,12 @@ function Section({
 }) {
   return (
     <div id={id} className="min-w-0 scroll-mt-24">
-      <h2 className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-neutral-400">
-        {title}
-      </h2>
+      <div className="mb-3 flex items-center gap-3">
+        <h2 className="shrink-0 text-[0.6875rem] font-black uppercase tracking-[0.18em] text-ink-subtle">
+          {title}
+        </h2>
+        <span aria-hidden="true" className="h-px min-w-0 flex-1 bg-hairline" />
+      </div>
       {children}
     </div>
   );
@@ -1494,17 +1556,17 @@ function Row({
   label,
   children,
 }: {
-  icon: typeof User;
+  icon: LucideIcon;
   label: string;
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex items-center justify-between gap-4 py-4">
-      <div className="flex items-center gap-3 shrink-0">
-        <span className="flex h-9 w-9 items-center justify-center rounded-[0.9rem] bg-primary-50 text-primary-700">
-          <Icon className="h-4 w-4" />
+    <div className="flex min-h-14 items-center justify-between gap-4 py-4">
+      <div className="flex shrink-0 items-center gap-3">
+        <span className="flex h-9 w-9 items-center justify-center rounded-[0.9rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100">
+          <Icon className="h-4 w-4" strokeWidth={2} />
         </span>
-        <span className="text-sm font-black text-neutral-700">{label}</span>
+        <span className="text-sm font-bold text-ink-muted">{label}</span>
       </div>
       <div className="min-w-0 text-right">{children}</div>
     </div>

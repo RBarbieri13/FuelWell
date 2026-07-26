@@ -13,6 +13,13 @@ function portionTotals(food: FoodItem, amount: number): MacroTotals {
   return { calories: m.kcal, protein: m.protein, carbs: m.carbs, fat: m.fat };
 }
 
+/** Shared macro colour roles so a dot means the same thing here as in totals. */
+const MACRO_DOTS: { key: keyof MacroTotals; short: string; color: string }[] = [
+  { key: "protein", short: "protein", color: "var(--color-macro-protein)" },
+  { key: "carbs", short: "carbs", color: "var(--color-macro-carbs)" },
+  { key: "fat", short: "fat", color: "var(--color-macro-fat)" },
+];
+
 /**
  * One-tap portion buttons from the food's commonServings, plus a custom
  * gram/ml amount. Calling onAdd hands back the chosen amount, its label, and
@@ -40,23 +47,26 @@ export function PortionPicker({
 
   return (
     <div className="space-y-4">
-      <div className="rounded-[1.25rem] border border-primary-100/70 bg-primary-50/65 p-4">
+      {/* Sits inside the elevated "Add to plate" card, so it is a sunken well
+          rather than a second raised surface. */}
+      <div className="rounded-[1.25rem] bg-surface-muted p-4 ring-1 ring-inset ring-hairline">
         <div className="flex items-start gap-3">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[1rem] bg-white text-primary-700 shadow-sm">
-            <Scale className="h-5 w-5" />
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[1rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100">
+            <Scale className="h-5 w-5" strokeWidth={2} aria-hidden="true" />
           </span>
-          <div>
-            <p className="font-black text-[#16302a]">{food.name}</p>
-            <p className="text-sm font-semibold text-muted-foreground">
-          {food.categoryLabel} &middot; per 100{unit}: {food.per100.kcal} kcal,{" "}
-          {food.per100.protein}g protein
+          <div className="min-w-0">
+            <p className="font-black text-ink">{food.name}</p>
+            <p className="mt-0.5 text-sm font-semibold text-ink-muted">
+              {food.categoryLabel} &middot; per 100{unit}:{" "}
+              <span className="tabular-nums">{food.per100.kcal}</span> kcal,{" "}
+              <span className="tabular-nums">{food.per100.protein}</span>g protein
             </p>
           </div>
         </div>
       </div>
 
       <div>
-        <p className="mb-2 text-xs font-black uppercase tracking-[0.16em] text-muted-foreground">
+        <p className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-ink-subtle">
           One-tap portions — tapping logs instantly
         </p>
         <div className="grid gap-2">
@@ -73,25 +83,32 @@ export function PortionPicker({
                     totals,
                   })
                 }
-                className="flex items-center justify-between rounded-[1.15rem] border border-primary-100 bg-white p-4 text-left transition hover:-translate-y-0.5 hover:border-primary-300 hover:bg-primary-50/50 hover:shadow-md hover:shadow-primary-900/10"
+                className="fw-press flex min-h-[3.75rem] flex-wrap items-center justify-between gap-x-3 gap-y-2 rounded-[1.15rem] bg-surface p-4 text-left ring-1 ring-inset ring-hairline hover:-translate-y-0.5 hover:bg-primary-50/60 hover:shadow-e2 hover:ring-primary-200 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2"
               >
-                <div>
-                  <p className="font-black text-[#16302a]">
-                    {serving.label}
-                  </p>
-                  <p className="text-xs font-bold text-muted-foreground">
-                    {totals.protein}g protein &middot; {totals.carbs}g carbs
-                    &middot; {totals.fat}g fat
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="font-black tabular-nums text-[#16302a]">
-                    {totals.calories} kcal
-                  </p>
-                  <p className="mt-0.5 text-[10px] font-black uppercase tracking-[0.1em] text-primary-600">
+                <span className="min-w-0">
+                  <span className="block font-black text-ink">{serving.label}</span>
+                  <span className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-bold text-ink-muted">
+                    {MACRO_DOTS.map((macro) => (
+                      <span key={macro.key} className="inline-flex items-center gap-1.5">
+                        <span
+                          aria-hidden="true"
+                          className="h-1.5 w-1.5 shrink-0 rounded-full"
+                          style={{ backgroundColor: macro.color }}
+                        />
+                        <span className="tabular-nums">{totals[macro.key]}</span>g{" "}
+                        {macro.short}
+                      </span>
+                    ))}
+                  </span>
+                </span>
+                <span className="shrink-0 text-right">
+                  <span className="block font-black tabular-nums text-ink">
+                    {totals.calories.toLocaleString()} kcal
+                  </span>
+                  <span className="mt-1 inline-flex items-center rounded-full bg-primary-50 px-2 py-0.5 text-[0.625rem] font-black uppercase tracking-[0.1em] text-primary-700 ring-1 ring-inset ring-primary-100">
                     Tap to log
-                  </p>
-                </div>
+                  </span>
+                </span>
               </button>
             );
           })}
@@ -99,10 +116,10 @@ export function PortionPicker({
       </div>
 
       <div>
-        <p className="mb-2 text-xs font-black uppercase tracking-[0.16em] text-muted-foreground">
+        <p className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-ink-subtle">
           Custom amount ({unit})
         </p>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-start">
           <input
             type="number"
             inputMode="decimal"
@@ -114,15 +131,16 @@ export function PortionPicker({
             aria-label={`Custom amount in ${unit}`}
             aria-invalid={customAmount.trim() !== "" && !customValid ? "true" : undefined}
             className={cn(
-              "w-full rounded-[1.15rem] border bg-white px-4 py-3 text-base font-semibold text-[#16302a] placeholder:text-[#91a7a0] focus:outline-none focus:ring-2 focus:ring-primary-500",
+              "min-h-12 w-full min-w-0 rounded-[1.15rem] bg-surface px-4 py-3 text-base font-semibold tabular-nums text-ink ring-1 ring-inset transition placeholder:text-ink-faint placeholder:font-semibold focus:outline-none focus:ring-[3px] focus:ring-primary-500",
               customAmount.trim() !== "" && !customValid
-                ? "border-red-300"
-                : "border-primary-100"
+                ? "ring-red-400"
+                : "ring-hairline-strong"
             )}
           />
           <Button
             type="button"
             size="md"
+            className="shrink-0 sm:w-auto"
             disabled={!customValid}
             onClick={() => {
               if (!customValid) return;
@@ -134,12 +152,12 @@ export function PortionPicker({
               });
             }}
           >
-            <Check className="h-4 w-4" />
+            <Check className="h-4 w-4" strokeWidth={2.5} aria-hidden="true" />
             Log custom amount
           </Button>
         </div>
         {customAmount.trim() !== "" && !customValid && (
-          <p className="mt-1 text-xs font-bold text-red-600" role="alert">
+          <p className="mt-1.5 text-xs font-bold leading-5 text-red-600" role="alert">
             {customTooBig
               ? `Amounts above ${MAX_AMOUNT.toLocaleString()} ${unit} usually mean a typo — double-check the number.`
               : "Enter an amount greater than 0."}

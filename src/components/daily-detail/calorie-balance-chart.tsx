@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
   Activity,
   ArrowRight,
@@ -11,9 +11,8 @@ import {
   X,
   type LucideIcon,
 } from "lucide-react";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import { cn } from "@/lib/utils/cn";
 import { sumMeals, type MacroTargets, type MealRecord } from "@/lib/fuelwell-data";
 
@@ -49,6 +48,9 @@ type SelectedBar = {
   kind: BarKind;
 };
 
+/** Fixed plot band height in px. Bars and gridlines share this scale. */
+const PLOT_HEIGHT = 168;
+
 const TONE_CLASSES: Record<SegmentTone, string> = {
   protein: "bg-sky-500",
   carbs: "bg-lemon-500",
@@ -56,7 +58,7 @@ const TONE_CLASSES: Record<SegmentTone, string> = {
   bmr: "bg-primary-700",
   steps: "bg-primary-400",
   training: "bg-teal-500",
-  mobility: "bg-[#7dd3c7]",
+  mobility: "bg-teal-400/70",
 };
 
 const TONE_DOTS: Record<SegmentTone, string> = {
@@ -66,7 +68,7 @@ const TONE_DOTS: Record<SegmentTone, string> = {
   bmr: "bg-primary-700",
   steps: "bg-primary-400",
   training: "bg-teal-500",
-  mobility: "bg-[#7dd3c7]",
+  mobility: "bg-teal-400/70",
 };
 
 const RANGE_OPTIONS: { label: string; value: RangeOption }[] = [
@@ -79,6 +81,22 @@ const RANGE_OPTIONS: { label: string; value: RangeOption }[] = [
 
 function totalCalories(segments: Segment[]) {
   return segments.reduce((total, segment) => total + segment.calories, 0);
+}
+
+/**
+ * Segment heights as percentages that always sum to exactly 100. Clamping
+ * each segment to a visible minimum independently used to push the stack past
+ * the bar's own height, so the largest segment was silently clipped away by
+ * the bar's overflow. Flooring first and then renormalising keeps every
+ * segment visible *and* inside the painted box.
+ */
+function segmentHeights(segments: Segment[], total: number) {
+  const safeTotal = Math.max(total, 1);
+  const floored = segments.map((segment) =>
+    Math.max((segment.calories / safeTotal) * 100, 2.5)
+  );
+  const sum = floored.reduce((a, b) => a + b, 0) || 1;
+  return floored.map((value) => (value / sum) * 100);
 }
 
 function macroSegmentsForTotals({
@@ -251,6 +269,7 @@ export function CalorieBalanceChart({
   const [showBmr, setShowBmr] = useState(true);
   const [showSessions, setShowSessions] = useState(true);
   const [selectedBar, setSelectedBar] = useState<SelectedBar | null>(null);
+  const [previewBar, setPreviewBar] = useState<SelectedBar | null>(null);
   const [intakeExpanded, setIntakeExpanded] = useState(true);
   const [outputExpanded, setOutputExpanded] = useState(true);
   const scrollRef = useRef<HTMLDivElement | null>(null);
@@ -289,69 +308,83 @@ export function CalorieBalanceChart({
   const hasExpandedSeries = intakeExpanded || outputExpanded;
   const windowLabel = range === 1 ? "Today only" : `Latest ${range}`;
 
+  const clearPreview = useCallback(() => setPreviewBar(null), []);
+
   // Controls make no sense with nothing charted: without a single logged
   // meal or activity signal the card explains itself and points at Log.
   if (!hasRealData) {
     return (
-      <Card className="rounded-[1.5rem] border-primary-100/90 px-5 py-5 shadow-[0_14px_34px_rgba(20,90,75,0.07)] md:px-6 md:py-6">
-        <p className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.14em] text-primary-600">
-          <BarChart3 className="h-4 w-4" />
+      <Card className="px-5 py-5 md:px-6 md:py-6">
+        <p className="inline-flex items-center gap-2 text-[0.6875rem] font-black uppercase tracking-[0.14em] text-primary-700">
+          <BarChart3 className="h-4 w-4" strokeWidth={2} />
           Energy ledger
         </p>
-        <h2 className="mt-1.5 font-heading text-xl font-black text-[#16302a] md:text-3xl">
+        <h2 className="mt-1.5 font-heading text-xl font-black text-ink md:text-3xl">
           Intake and output by day
         </h2>
-        <div className="mt-4 rounded-[1.35rem] border border-dashed border-primary-200 bg-primary-50/60 p-5">
-          <p className="font-black text-[#16302a]">No energy data yet today.</p>
-          <p className="mt-1 text-sm font-semibold leading-6 text-[#6f8981]">
-            Log a meal or a workout and this becomes a day-by-day comparison of
-            calories eaten against calories burned.
-          </p>
-          <Link href="/app/log" className="mt-4 inline-block">
-            <Button size="sm" className="rounded-full">
-              Log your first meal
-            </Button>
-          </Link>
+        <div className="mt-4 rounded-[1.35rem] border border-dashed border-primary-200 bg-primary-50/50">
+          <EmptyState
+            size="inline"
+            icon={BarChart3}
+            title="No energy data yet today."
+            description="Log a meal or a workout and this becomes a day-by-day comparison of calories eaten against calories burned."
+            action={{ label: "Log your first meal", href: "/app/log" }}
+          />
         </div>
       </Card>
     );
   }
 
+  const readout = previewBar ?? selectedBar;
+  const readoutSegments = readout
+    ? readout.kind === "intake"
+      ? readout.day.intake
+      : readout.day.output
+    : [];
+
   return (
     <>
-      <Card className="rounded-[1.5rem] border-primary-100/90 px-5 py-5 shadow-[0_14px_34px_rgba(20,90,75,0.07)] md:px-6 md:py-6">
+      <Card className="px-5 py-5 md:px-6 md:py-6">
         <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
-          <div>
-            <p className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.14em] text-primary-600">
-              <BarChart3 className="h-4 w-4" />
+          <div className="min-w-0">
+            <p className="inline-flex items-center gap-2 text-[0.6875rem] font-black uppercase tracking-[0.14em] text-primary-700">
+              <BarChart3 className="h-4 w-4" strokeWidth={2} />
               Energy ledger
             </p>
-            <h2 className="mt-1.5 font-heading text-xl font-black text-[#16302a] md:text-3xl">
+            <h2 className="mt-1.5 font-heading text-xl font-black text-ink md:text-3xl">
               Intake and output by day
             </h2>
-            <p className="mt-1 max-w-3xl text-sm font-semibold leading-6 text-[#6f8981] md:text-base">
+            <p className="mt-1 max-w-3xl text-sm font-semibold leading-6 text-ink-muted md:text-base">
               Compare calories eaten against calories burned. Each day has an intake bar
               for protein, carbs, and fat, plus an output bar for base burn and movement.
             </p>
           </div>
 
           <div className="flex flex-col gap-3 xl:items-end">
-            <div className="flex flex-wrap gap-2">
-              {RANGE_OPTIONS.map((option) => (
-                <button
-                  key={option.value}
-                  type="button"
-                  onClick={() => setRange(option.value)}
-                  className={cn(
-                    "min-h-11 rounded-full px-3.5 py-2 text-xs font-black transition md:min-h-0",
-                    range === option.value
-                      ? "bg-primary-600 text-white shadow-[0_12px_24px_rgba(21,145,108,0.2)]"
-                      : "bg-[#f4f8f6] text-[#6f8981] hover:bg-primary-50"
-                  )}
-                >
-                  {option.label}
-                </button>
-              ))}
+            <div
+              role="group"
+              aria-label="Ledger window"
+              className="flex flex-wrap gap-1.5 rounded-[1.4rem] bg-surface-sunken p-1 ring-1 ring-inset ring-hairline"
+            >
+              {RANGE_OPTIONS.map((option) => {
+                const selected = range === option.value;
+                return (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => setRange(option.value)}
+                    aria-pressed={selected}
+                    className={cn(
+                      "fw-press min-h-11 rounded-full px-3.5 py-2 text-xs font-black focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-1 md:min-h-9",
+                      selected
+                        ? "bg-primary-600 text-white shadow-e2"
+                        : "text-ink-muted hover:bg-surface hover:text-primary-800"
+                    )}
+                  >
+                    {option.label}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -383,8 +416,8 @@ export function CalorieBalanceChart({
           <div id="energy-ledger-content" data-testid="energy-ledger-content">
             <div className="mt-4 flex items-center justify-between gap-3">
               <div className="min-w-0">
-                <p className="text-sm font-black text-primary-950">{windowLabel}</p>
-                <p className="text-xs font-semibold text-primary-900/60">
+                <p className="text-sm font-black text-ink">{windowLabel}</p>
+                <p className="text-xs font-semibold text-ink-muted">
                   Tap any bar to pin its full breakdown open.
                 </p>
               </div>
@@ -401,28 +434,94 @@ export function CalorieBalanceChart({
               </div>
             )}
 
-            <div ref={scrollRef} className="mt-4 overflow-x-auto pb-2">
-              {range >= 7 && (
-                <p className="mb-3 text-xs font-black uppercase tracking-[0.12em] text-muted-foreground md:hidden">
-                  Swipe sideways to compare days
+            {/* Hover / focus readout. It lives outside the horizontal scroller
+                so a breakdown is never clipped by the strip's own overflow. */}
+            <div
+              className="mt-3 min-h-[3.25rem] rounded-[1rem] bg-surface-subtle px-3.5 py-2.5 ring-1 ring-inset ring-hairline"
+              aria-live="polite"
+            >
+              {readout ? (
+                <>
+                  <p className="flex flex-wrap items-baseline gap-x-2 text-sm font-black tabular-nums text-ink">
+                    <span>
+                      {readout.day.label} · {readout.kind === "intake" ? "Intake" : "Output"}
+                    </span>
+                    <span className="text-primary-700">
+                      {totalCalories(readoutSegments).toLocaleString()} kcal
+                    </span>
+                  </p>
+                  <p className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-[11px] font-bold tabular-nums text-ink-muted">
+                    {readoutSegments.map((segment) => (
+                      <span key={segment.label} className="inline-flex items-center gap-1.5">
+                        <span
+                          aria-hidden="true"
+                          className={cn("h-2 w-2 rounded-full", TONE_DOTS[segment.tone])}
+                        />
+                        {segment.label} {segment.calories.toLocaleString()}
+                      </span>
+                    ))}
+                  </p>
+                </>
+              ) : (
+                <p className="text-xs font-semibold leading-5 text-ink-subtle">
+                  Hover or focus a bar for its breakdown. Scale runs 0 to{" "}
+                  <span className="tabular-nums">{maxTotal.toLocaleString()}</span> kcal.
                 </p>
               )}
-              {/* Column minimums alone size the grid: narrow ranges fit the
-                  viewport (no phantom scroll area), wide ranges scroll. */}
-              <div
-                className="grid items-end gap-2"
-                style={{ gridTemplateColumns: `repeat(${filteredDays.length}, minmax(84px, 1fr))` }}
-              >
-                {filteredDays.map((day) => (
-                  <DayColumn
-                    key={day.id}
-                    day={day}
-                    maxTotal={maxTotal}
-                    onSelect={setSelectedBar}
-                    showIntake={intakeExpanded}
-                    showOutput={outputExpanded}
-                  />
-                ))}
+            </div>
+
+            {range >= 7 && (
+              <p className="mt-3 text-[10px] font-black uppercase tracking-[0.12em] text-ink-subtle md:hidden">
+                Swipe sideways to compare days
+              </p>
+            )}
+
+            <div className="mt-3 flex min-w-0 gap-2">
+              {/* Shared y axis, parked outside the scroller so the scale stays
+                  on screen while the day strip pans. */}
+              <div aria-hidden="true" className="w-9 shrink-0 pt-2 sm:w-11">
+                <div
+                  className="flex flex-col justify-between text-right text-[10px] font-bold leading-none tabular-nums text-ink-faint"
+                  style={{ height: PLOT_HEIGHT }}
+                >
+                  <span>{maxTotal.toLocaleString()}</span>
+                  <span>{Math.round(maxTotal / 2).toLocaleString()}</span>
+                  <span>0</span>
+                </div>
+              </div>
+
+              <div ref={scrollRef} className="min-w-0 flex-1 overflow-x-auto pb-2">
+                {/* Column minimums alone size the grid: narrow ranges fit the
+                    viewport (no phantom scroll area), wide ranges scroll. */}
+                <div
+                  className="relative grid items-end gap-2"
+                  style={{ gridTemplateColumns: `repeat(${filteredDays.length}, minmax(84px, 1fr))` }}
+                >
+                  {/* Gridlines span the whole strip at the same stops as the
+                      axis labels — values are being compared across days. */}
+                  <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-x-0 top-2"
+                    style={{ height: PLOT_HEIGHT }}
+                  >
+                    <span className="absolute inset-x-0 top-0 border-t border-dashed border-hairline-strong" />
+                    <span className="absolute inset-x-0 top-1/2 border-t border-dashed border-hairline-strong" />
+                    <span className="absolute inset-x-0 bottom-0 border-t border-hairline-strong" />
+                  </div>
+
+                  {filteredDays.map((day) => (
+                    <DayColumn
+                      key={day.id}
+                      day={day}
+                      maxTotal={maxTotal}
+                      onSelect={setSelectedBar}
+                      onPreview={setPreviewBar}
+                      onPreviewEnd={clearPreview}
+                      showIntake={intakeExpanded}
+                      showOutput={outputExpanded}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
 
@@ -434,7 +533,7 @@ export function CalorieBalanceChart({
               />
             )}
 
-            <div className="mt-4 flex flex-wrap gap-3 border-t border-primary-100 pt-4 text-xs font-bold text-muted-foreground">
+            <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 border-t border-hairline pt-4 text-xs font-bold text-ink-muted">
               {intakeExpanded && <LegendItem tone="protein" label="Protein" />}
               {intakeExpanded && <LegendItem tone="carbs" label="Carbs" />}
               {intakeExpanded && <LegendItem tone="fat" label="Fat" />}
@@ -505,14 +604,14 @@ function LedgerSeriesToggle({
       type="button"
       onClick={onClick}
       className={cn(
-        "flex min-h-12 w-full min-w-0 items-center justify-between gap-2 rounded-[1rem] border px-3 py-2 text-left shadow-sm transition",
+        "fw-press flex min-h-12 w-full min-w-0 items-center justify-between gap-2 rounded-[1rem] px-3 py-2 text-left ring-1 ring-inset focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-1",
         expanded
           ? isIntake
-            ? "border-primary-600 bg-primary-600 text-white hover:bg-primary-700"
-            : "border-sky-600 bg-sky-600 text-white hover:bg-sky-700"
+            ? "bg-primary-600 text-white shadow-e2 ring-primary-700 hover:bg-primary-700"
+            : "bg-sky-600 text-white shadow-e2 ring-sky-700 hover:bg-sky-700"
           : isIntake
-            ? "border-primary-200 bg-primary-50 text-primary-800 hover:bg-primary-100"
-            : "border-sky-200 bg-sky-100 text-sky-700 hover:bg-sky-200"
+            ? "bg-primary-50 text-primary-800 ring-primary-200 hover:bg-primary-100"
+            : "bg-sky-50 text-sky-700 ring-sky-200 hover:bg-sky-100"
       )}
       aria-expanded={expanded}
       aria-controls={controlsId}
@@ -523,11 +622,14 @@ function LedgerSeriesToggle({
         <span className="block text-xs font-black sm:text-sm">
           {expanded ? `Collapse ${label.toLowerCase()}` : `Expand ${label.toLowerCase()}`}
         </span>
-        <span className={cn("hidden text-xs font-semibold sm:block", expanded ? "text-white/80" : "opacity-70")}>
+        <span className={cn("hidden text-xs font-semibold sm:block", expanded ? "text-white/80" : "opacity-75")}>
           {detail}
         </span>
       </span>
-      <ChevronDown className={cn("h-5 w-5 shrink-0 transition-transform", expanded && "rotate-180")} />
+      <ChevronDown
+        className={cn("h-5 w-5 shrink-0 transition-transform duration-200 ease-out-soft", expanded && "rotate-180")}
+        strokeWidth={2.25}
+      />
     </button>
   );
 }
@@ -536,22 +638,34 @@ function DayColumn({
   day,
   maxTotal,
   onSelect,
+  onPreview,
+  onPreviewEnd,
   showIntake,
   showOutput,
 }: {
   day: BalanceDay;
   maxTotal: number;
   onSelect: (selected: SelectedBar) => void;
+  onPreview: (selected: SelectedBar) => void;
+  onPreviewEnd: () => void;
   showIntake: boolean;
   showOutput: boolean;
 }) {
   const intakeTotal = totalCalories(day.intake);
   const outputTotal = totalCalories(day.output);
   const net = intakeTotal - outputTotal;
+  const isToday = day.id === "today";
 
   return (
-    <div className="flex min-h-[16rem] flex-col justify-end gap-2 rounded-[1.1rem] border border-transparent p-2 transition hover:border-primary-100 hover:bg-white">
-      <div className="flex flex-1 items-end justify-center gap-2">
+    <div
+      className={cn(
+        "flex flex-col rounded-[1.1rem] p-2 transition-colors duration-200 ease-out-soft",
+        isToday
+          ? "bg-primary-50/60 ring-1 ring-inset ring-primary-200"
+          : "ring-1 ring-inset ring-transparent hover:bg-surface hover:ring-hairline"
+      )}
+    >
+      <div className="flex items-end justify-center gap-2" style={{ height: PLOT_HEIGHT }}>
         {showIntake && (
           <StackedBar
             label="Intake"
@@ -559,6 +673,8 @@ function DayColumn({
             segments={day.intake}
             maxTotal={maxTotal}
             onClick={() => onSelect({ day, kind: "intake" })}
+            onPreview={() => onPreview({ day, kind: "intake" })}
+            onPreviewEnd={onPreviewEnd}
           />
         )}
         {showOutput && (
@@ -568,12 +684,31 @@ function DayColumn({
             segments={day.output}
             maxTotal={maxTotal}
             onClick={() => onSelect({ day, kind: "output" })}
+            onPreview={() => onPreview({ day, kind: "output" })}
+            onPreviewEnd={onPreviewEnd}
           />
         )}
       </div>
-      <div className="text-center">
-        <p className="text-sm font-black text-[#16302a]">{day.label}</p>
-        <p className={cn("text-xs font-black", net <= 0 ? "text-primary-700" : "text-accent-600")}>
+      <div aria-hidden="true" className="mt-1.5 flex justify-center gap-2">
+        {showIntake && (
+          <span className="w-9 text-center text-[9px] font-black uppercase tracking-[0.06em] text-ink-faint">
+            In
+          </span>
+        )}
+        {showOutput && (
+          <span className="w-9 text-center text-[9px] font-black uppercase tracking-[0.06em] text-ink-faint">
+            Out
+          </span>
+        )}
+      </div>
+      <div className="mt-1.5 text-center">
+        <p className="truncate text-sm font-black text-ink">{day.label}</p>
+        <p
+          className={cn(
+            "text-xs font-black tabular-nums",
+            net <= 0 ? "text-primary-700" : "text-accent-600"
+          )}
+        >
           {net <= 0 ? "" : "+"}
           {net.toLocaleString()} net
         </p>
@@ -588,63 +723,55 @@ function StackedBar({
   segments,
   maxTotal,
   onClick,
+  onPreview,
+  onPreviewEnd,
 }: {
   label: string;
   total: number;
   segments: Segment[];
   maxTotal: number;
   onClick: () => void;
+  onPreview: () => void;
+  onPreviewEnd: () => void;
 }) {
-  const height = Math.max(54, Math.round((total / maxTotal) * 168));
+  const heightPercent = Math.max(total > 0 ? 4 : 0, (total / Math.max(maxTotal, 1)) * 100);
+  const heights = segmentHeights(segments, total);
 
   return (
     <button
       type="button"
       onClick={onClick}
-      className="group relative flex w-9 flex-col items-center gap-2 focus:outline-none"
+      onMouseEnter={onPreview}
+      onMouseLeave={onPreviewEnd}
+      onFocus={onPreview}
+      onBlur={onPreviewEnd}
+      className="group relative flex h-full w-9 items-end justify-center rounded-lg focus:outline-none focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600"
       aria-label={`Open ${label.toLowerCase()} detail with ${total} calories`}
     >
-      <span className="text-[10px] font-black tabular-nums text-[#54635d] opacity-0 transition group-hover:opacity-100 group-focus:opacity-100">
-        {total}
-      </span>
-      <span className="absolute bottom-[calc(100%+0.65rem)] left-1/2 z-30 hidden w-72 -translate-x-1/2 rounded-[1.25rem] border border-primary-100 bg-white p-4 text-left shadow-[0_22px_58px_rgba(7,29,24,0.18)] group-hover:block group-focus:block">
-        <span className="text-sm font-black uppercase tracking-[0.12em] text-primary-600">
-          {label} breakdown
-        </span>
-        <span className="mt-2 block text-2xl font-black tabular-nums text-[#16302a]">
-          {total.toLocaleString()} kcal
-        </span>
-        <span className="mt-3 grid gap-2">
-          {segments.map((segment) => (
-            <span key={`${label}-hover-${segment.label}`} className="flex items-center justify-between gap-3">
-              <span className="inline-flex items-center gap-2 text-base font-black text-[#54635d]">
-                <span className={cn("h-3 w-3 rounded-full", TONE_DOTS[segment.tone])} />
-                {segment.label}
-              </span>
-              <span className="text-base font-black tabular-nums text-[#16302a]">
-                {segment.calories.toLocaleString()}
-              </span>
-            </span>
-          ))}
-        </span>
+      {/* Value rides above the bar, outside its clipped box, so it is never
+          swallowed the way an inside-the-bar label would be. */}
+      <span
+        className="pointer-events-none absolute left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] font-black leading-none tabular-nums text-ink-subtle transition-opacity duration-200 ease-out-soft group-hover:text-ink group-focus-visible:text-ink"
+        style={{ bottom: `calc(${heightPercent}% + 0.3rem)` }}
+      >
+        {total.toLocaleString()}
       </span>
       <span
-        className="flex w-8 flex-col justify-end overflow-hidden rounded-full bg-[#edf3f0] shadow-inner ring-1 ring-primary-900/5 transition group-hover:scale-[1.03] group-focus:ring-2 group-focus:ring-primary-400"
-        style={{ height }}
+        className="flex w-8 flex-col justify-end overflow-hidden rounded-t-[0.5rem] rounded-b-[0.2rem] bg-surface-sunken ring-1 ring-inset ring-ink/5 transition-[height,box-shadow] duration-500 ease-out-soft group-hover:ring-primary-400 group-focus-visible:ring-2 group-focus-visible:ring-primary-600"
+        style={{ height: `${heightPercent}%` }}
       >
-        {segments.map((segment) => (
+        {segments.map((segment, index) => (
           <span
             key={`${label}-${segment.label}`}
-            className={cn("w-full", TONE_CLASSES[segment.tone])}
-            style={{
-              height: `${Math.max(8, (segment.calories / Math.max(total, 1)) * 100)}%`,
-            }}
+            className={cn(
+              "block w-full",
+              TONE_CLASSES[segment.tone],
+              index > 0 && "border-t border-white/40"
+            )}
+            style={{ height: `${heights[index]}%` }}
             title={`${segment.label}: ${segment.calories} calories`}
           />
         ))}
-      </span>
-      <span className="text-[10px] font-black uppercase tracking-[0.08em] text-muted-foreground">
-        {label}
       </span>
     </button>
   );
@@ -698,25 +825,32 @@ function AggregateChart({
   const max = Math.max(1, ...segments.map((segment) => segment.calories));
 
   return (
-    <div className="rounded-[1.5rem] border border-primary-100 bg-[#f8fbf9] p-5">
-      <h3 className="font-heading text-xl font-black text-[#16302a]">{title}</h3>
-      <p className="mt-1 text-sm font-semibold text-muted-foreground">{detail}</p>
+    <div className="rounded-[1.5rem] bg-surface-subtle p-4 ring-1 ring-inset ring-hairline sm:p-5">
+      <h3 className="font-heading text-lg font-black text-ink md:text-xl">{title}</h3>
+      <p className="mt-1 text-sm font-semibold text-ink-muted">{detail}</p>
       <div className="mt-5 grid gap-4">
         {segments.map((segment) => (
           <div key={`${title}-${segment.label}`} className="grid gap-2">
-            <div className="flex items-center justify-between gap-3">
-              <span className="inline-flex items-center gap-2 text-sm font-black text-[#54635d]">
-                <span className={cn("h-3 w-3 rounded-full", TONE_DOTS[segment.tone])} />
+            <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+              <span className="inline-flex items-center gap-2 text-sm font-black text-ink-muted">
+                <span
+                  aria-hidden="true"
+                  className={cn("h-3 w-3 rounded-full", TONE_DOTS[segment.tone])}
+                />
                 {segment.label}
               </span>
-              <span className="text-sm font-black tabular-nums text-[#16302a]">
+              <span className="text-sm font-black tabular-nums text-ink">
                 {segment.calories.toLocaleString()} kcal
               </span>
             </div>
-            <div className="h-4 overflow-hidden rounded-full bg-white">
+            <div
+              className="h-3.5 overflow-hidden rounded-full bg-surface-sunken"
+              role="img"
+              aria-label={`${segment.label}: ${segment.calories.toLocaleString()} kcal of a ${max.toLocaleString()} kcal maximum`}
+            >
               <div
-                className={cn("h-full rounded-full", TONE_CLASSES[segment.tone])}
-                style={{ width: `${Math.max(8, (segment.calories / max) * 100)}%` }}
+                className={cn("h-full rounded-full transition-[width] duration-700 ease-out-soft", TONE_CLASSES[segment.tone])}
+                style={{ width: `${Math.max(4, (segment.calories / max) * 100)}%` }}
               />
             </div>
           </div>
@@ -739,11 +873,12 @@ function FilterButton({
     <button
       type="button"
       onClick={onClick}
+      aria-pressed={active}
       className={cn(
-        "min-h-11 rounded-full px-3.5 py-2 text-xs font-black transition md:min-h-0",
+        "fw-press min-h-11 rounded-full px-3.5 py-2 text-xs font-black ring-1 ring-inset focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-1 md:min-h-9",
         active
-          ? "bg-primary-100 text-primary-700"
-          : "bg-[#f4f8f6] text-muted-foreground line-through"
+          ? "bg-primary-100 text-primary-800 ring-primary-200"
+          : "bg-surface-muted text-ink-subtle line-through ring-hairline-strong hover:bg-surface"
       )}
     >
       {children}
@@ -761,73 +896,97 @@ function BarDetailModal({
   const segments = selected.kind === "intake" ? selected.day.intake : selected.day.output;
   const total = totalCalories(segments);
   const isIntake = selected.kind === "intake";
+  const heights = segmentHeights(segments, total);
+
+  // Escape closes the pinned breakdown — a modal that only closes by a small
+  // corner target is a trap on a phone.
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#071d18]/35 p-4 backdrop-blur-sm">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-primary-950/40 p-4 backdrop-blur-sm"
+      onClick={onClose}
+    >
       <div
         role="dialog"
         aria-modal="true"
         aria-label={`${selected.day.label} ${selected.kind} breakdown`}
-        className="w-full max-w-2xl rounded-[2rem] border border-primary-100 bg-white p-5 shadow-[0_28px_90px_rgba(7,29,24,0.28)] md:p-7"
+        onClick={(event) => event.stopPropagation()}
+        className="max-h-[88vh] w-full max-w-2xl overflow-y-auto rounded-[2rem] border border-hairline bg-surface p-5 shadow-e4 md:p-7"
       >
         <div className="flex items-start justify-between gap-4">
-          <div>
-            <p className="text-xs font-black uppercase tracking-[0.14em] text-primary-600">
+          <div className="min-w-0">
+            <p className="text-[0.6875rem] font-black uppercase tracking-[0.14em] text-primary-700">
               {selected.day.dateLabel}
             </p>
-            <h2 className="mt-2 font-heading text-2xl font-black text-[#16302a]">
+            <h2 className="mt-2 font-heading text-2xl font-black text-ink">
               {selected.day.label} {isIntake ? "intake" : "output"} breakdown
             </h2>
-            <p className="mt-2 text-sm font-semibold leading-6 text-[#6f8981]">
+            <p className="mt-2 text-sm font-semibold leading-6 text-ink-muted">
               {selected.day.note}
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#f4f8f6] text-[#6f8981] transition hover:bg-primary-50 hover:text-primary-700"
+            className="fw-press flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-surface-muted text-ink-muted ring-1 ring-inset ring-hairline hover:bg-primary-50 hover:text-primary-700 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600"
             aria-label="Close detail"
           >
-            <X className="h-5 w-5" />
+            <X className="h-5 w-5" strokeWidth={2.25} />
           </button>
         </div>
 
-        <div className="mt-6 rounded-[1.5rem] bg-[#f8fbf9] p-4">
-          <div className="flex items-end gap-3">
-            <p className="text-4xl font-black tabular-nums text-[#16302a]">
+        <div className="mt-6 rounded-[1.5rem] bg-surface-subtle p-4 ring-1 ring-inset ring-hairline">
+          <div className="flex flex-wrap items-end gap-x-3 gap-y-1">
+            <p className="text-4xl font-black tabular-nums text-ink">
               {total.toLocaleString()}
             </p>
-            <p className="pb-1 text-sm font-black uppercase tracking-[0.08em] text-muted-foreground">
+            <p className="pb-1 text-sm font-black uppercase tracking-[0.08em] text-ink-subtle">
               calories in this {isIntake ? "intake" : "output"} bar
             </p>
           </div>
-          <div className="mt-4 flex h-5 overflow-hidden rounded-full bg-white">
-            {segments.map((segment) => (
+          <div
+            className="mt-4 flex h-5 overflow-hidden rounded-full bg-surface-sunken"
+            role="img"
+            aria-label={segments
+              .map((segment) => `${segment.label} ${segment.calories.toLocaleString()} kcal`)
+              .join(", ")}
+          >
+            {segments.map((segment, index) => (
               <span
                 key={segment.label}
-                className={TONE_CLASSES[segment.tone]}
-                style={{ width: `${(segment.calories / Math.max(total, 1)) * 100}%` }}
+                className={cn(TONE_CLASSES[segment.tone], index > 0 && "border-l border-white/40")}
+                style={{ width: `${heights[index]}%` }}
               />
             ))}
           </div>
         </div>
 
-        <div className="mt-5 grid gap-3">
+        <div className="mt-5 grid gap-2.5">
           {segments.map((segment) => (
             <div
               key={segment.label}
-              className="flex flex-col gap-3 rounded-[1.25rem] border border-primary-100/80 px-4 py-4 md:flex-row md:items-center md:justify-between"
+              className="flex flex-col gap-3 rounded-[1.25rem] bg-surface-muted px-4 py-3.5 ring-1 ring-inset ring-hairline md:flex-row md:items-center md:justify-between"
             >
-              <div className="flex items-center gap-3">
-                <span className={cn("h-3 w-3 rounded-full", TONE_DOTS[segment.tone])} />
-                <div>
-                  <p className="font-heading text-base font-black text-[#16302a]">
+              <div className="flex min-w-0 items-center gap-3">
+                <span
+                  aria-hidden="true"
+                  className={cn("h-3 w-3 shrink-0 rounded-full", TONE_DOTS[segment.tone])}
+                />
+                <div className="min-w-0">
+                  <p className="font-heading text-base font-black text-ink">
                     {segment.label}
                   </p>
-                  <p className="text-sm font-semibold text-muted-foreground">{segment.detail}</p>
+                  <p className="text-sm font-semibold text-ink-muted">{segment.detail}</p>
                 </div>
               </div>
-              <p className="text-lg font-black tabular-nums text-[#16302a]">
+              <p className="shrink-0 text-lg font-black tabular-nums text-ink">
                 {segment.calories.toLocaleString()} kcal
               </p>
             </div>
@@ -835,15 +994,15 @@ function BarDetailModal({
         </div>
 
         {isIntake && selected.day.id === "today" && (
-          <div className="mt-5 rounded-[1.25rem] border border-primary-100 bg-primary-50/70 p-4">
+          <div className="mt-5 rounded-[1.25rem] bg-primary-50/70 p-4 ring-1 ring-inset ring-primary-100">
             <p className="text-sm font-black text-primary-800">Meal detail available below</p>
             <a
               href="#nutrition-log"
               onClick={onClose}
-              className="mt-2 inline-flex min-h-11 items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-black text-primary-700 shadow-[0_3px_8px_rgba(20,90,75,0.08)] transition hover:bg-primary-100 md:min-h-0"
+              className="fw-press mt-2 inline-flex min-h-11 items-center gap-2 rounded-full bg-surface px-4 py-2 text-sm font-black text-primary-700 shadow-e1 ring-1 ring-inset ring-primary-100 hover:bg-primary-100 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 md:min-h-0"
             >
               Jump to the nutrition log
-              <ArrowRight className="h-4 w-4" />
+              <ArrowRight className="h-4 w-4" strokeWidth={2.25} />
             </a>
           </div>
         )}
@@ -855,7 +1014,10 @@ function BarDetailModal({
 function LegendItem({ tone, label }: { tone: SegmentTone; label: string }) {
   return (
     <span className="inline-flex items-center gap-2">
-      <span className={cn("h-2.5 w-2.5 rounded-full", TONE_DOTS[tone])} />
+      <span
+        aria-hidden="true"
+        className={cn("h-2.5 w-2.5 shrink-0 rounded-full", TONE_DOTS[tone])}
+      />
       {label}
     </span>
   );
@@ -873,17 +1035,17 @@ function TrendCard({
   detail: string;
 }) {
   return (
-    <div className="rounded-[1.25rem] bg-[#f8fbf9] px-4 py-4">
+    <div className="rounded-[1.25rem] bg-surface-subtle px-4 py-4 ring-1 ring-inset ring-hairline">
       <div className="flex items-center gap-3">
-        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-primary-700">
-          <Icon className="h-4.5 w-4.5" />
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100">
+          <Icon className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
         </span>
-        <p className="text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">
+        <p className="text-[0.6875rem] font-black uppercase tracking-[0.12em] text-ink-subtle">
           {label}
         </p>
       </div>
-      <p className="mt-3 text-2xl font-black tabular-nums text-[#16302a]">{value}</p>
-      <p className="mt-1 text-xs font-semibold text-muted-foreground">{detail}</p>
+      <p className="mt-3 text-2xl font-black tabular-nums text-ink">{value}</p>
+      <p className="mt-1 text-xs font-semibold leading-5 text-ink-muted">{detail}</p>
     </div>
   );
 }

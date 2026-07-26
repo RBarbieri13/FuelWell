@@ -1,7 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Plus } from "lucide-react";
+import { Check, Plus, ShoppingBasket } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { SectionHeader } from "@/components/ui/section-header";
 import type { ArtifactSpec, GroceryItem } from "@/lib/coach/types";
 import { groceryItemKey, normalizeGroceryInput } from "@/lib/grocery-normalization";
 import { cn } from "@/lib/utils/cn";
@@ -24,6 +27,7 @@ export function GroceryListCard({ artifact, onAction }: ArtifactCardProps<Grocer
     ...(artifact.added ?? []).map((name) => groceryItemKey(name)),
     ...(artifact.toggled ? [groceryItemKey(artifact.toggled)] : []),
   ]);
+  const boughtCount = items.filter((item) => item.checked).length;
 
   const contextLine = artifact.cleared
     ? "List cleared"
@@ -41,29 +45,58 @@ export function GroceryListCard({ artifact, onAction }: ArtifactCardProps<Grocer
   }
 
   return (
-    <div className="mt-3 min-w-0 max-w-full rounded-2xl border border-primary-100 bg-white p-3 shadow-[0_12px_30px_rgba(20,90,75,0.06)] sm:p-4">
-      <div className="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-3">
-        <p className="text-sm font-black text-foreground">Grocery list</p>
-        {contextLine && (
-          <span className="min-w-0 break-words text-xs font-bold text-primary-700 sm:text-right">{contextLine}</span>
-        )}
-      </div>
+    <div className="min-w-0 max-w-full rounded-[24px] border border-hairline bg-surface p-3 shadow-e2 sm:p-4">
+      <SectionHeader
+        as="h3"
+        icon={ShoppingBasket}
+        title="Grocery list"
+        action={
+          items.length > 0 ? (
+            <Badge variant="neutral" size="sm" className="tabular-nums">
+              {boughtCount}/{items.length} bought
+            </Badge>
+          ) : undefined
+        }
+      />
+
+      {contextLine && (
+        <p className="mt-2 flex max-w-full items-start gap-1.5 rounded-[0.9rem] bg-primary-50 px-2.5 py-1.5 text-xs font-black text-primary-800 ring-1 ring-inset ring-primary-100">
+          <span
+            aria-hidden="true"
+            className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary-500"
+          />
+          <span className="min-w-0 break-words">{contextLine}</span>
+        </p>
+      )}
 
       {items.length === 0 ? (
-        <p className="mt-3 text-sm font-medium text-muted-foreground">Nothing on the list</p>
+        <div className="mt-3 flex items-center gap-3 rounded-[1.25rem] bg-surface-muted px-3 py-4 ring-1 ring-inset ring-hairline">
+          <span
+            aria-hidden="true"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.9rem] bg-surface text-ink-subtle ring-1 ring-inset ring-hairline-strong"
+          >
+            <ShoppingBasket className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
+          </span>
+          <div className="min-w-0">
+            <p className="text-sm font-black text-ink">Nothing on the list</p>
+            <p className="mt-0.5 text-xs font-semibold leading-5 text-ink-muted">
+              Add an item below and it lands on the Groceries page too.
+            </p>
+          </div>
+        </div>
       ) : (
-        <div className="mt-3 min-w-0 max-w-full max-h-72 overflow-y-auto overflow-x-hidden rounded-[1.25rem] border border-primary-100">
-          <div className="grid min-w-0 grid-cols-[2.75rem_minmax(0,1fr)] bg-sage-100 px-2 py-2 text-[10px] font-black uppercase tracking-[0.12em] text-muted-foreground sm:grid-cols-[3.75rem_minmax(0,1fr)_7.25rem] sm:px-3">
-            <span aria-hidden="true" />
-            <span>Item</span>
-            <span className="hidden sm:block">Quantity</span>
+        <div className="mt-3 max-h-72 min-w-0 max-w-full overflow-y-auto overflow-x-hidden rounded-[1.25rem] ring-1 ring-inset ring-hairline">
+          <div className="grid min-w-0 grid-cols-[2.75rem_minmax(0,1fr)] bg-surface-sunken px-2 py-2 text-[10px] font-black uppercase tracking-[0.12em] text-ink-muted sm:grid-cols-[3.75rem_minmax(0,1fr)_7.25rem] sm:px-3">
+            <div aria-hidden="true" />
+            <div>Item</div>
+            <div className="hidden sm:block">Quantity</div>
           </div>
           {items.map((item) => (
             <div
               key={item.id}
               className={cn(
-                "grid min-w-0 grid-cols-[2.75rem_minmax(0,1fr)] items-center border-t border-primary-100/70 px-2 py-2 sm:min-h-12 sm:grid-cols-[3.75rem_minmax(0,1fr)_7.25rem] sm:px-3",
-                changedKeys.has(groceryItemKey(item.name)) ? "bg-primary-50/80" : "bg-white"
+                "grid min-h-12 min-w-0 grid-cols-[2.75rem_minmax(0,1fr)] items-center border-t border-hairline px-2 py-1.5 sm:grid-cols-[3.75rem_minmax(0,1fr)_7.25rem] sm:px-3",
+                changedKeys.has(groceryItemKey(item.name)) ? "bg-primary-50/80" : "bg-surface"
               )}
             >
               <button
@@ -78,32 +111,33 @@ export function GroceryListCard({ artifact, onAction }: ArtifactCardProps<Grocer
                     input: { item: item.id },
                   })
                 }
-                className="flex h-9 w-9 items-center justify-center rounded-full transition hover:bg-primary-50"
+                className="fw-press flex h-11 w-11 items-center justify-center rounded-full hover:bg-primary-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 active:bg-primary-100"
               >
                 <span
-                  className={
+                  className={cn(
+                    "flex h-6 w-6 shrink-0 items-center justify-center rounded-full ring-1 ring-inset transition-colors",
                     item.checked
-                      ? "flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary-500 text-white"
-                      : "h-6 w-6 shrink-0 rounded-full border-2 border-primary-100"
-                  }
+                      ? "bg-primary-600 text-white ring-primary-700/20"
+                      : "bg-surface ring-hairline-strong"
+                  )}
                 >
-                  {item.checked && <Check className="h-3.5 w-3.5" />}
+                  {item.checked && <Check className="h-3.5 w-3.5" strokeWidth={3} />}
                 </span>
               </button>
               <div className="min-w-0 py-1">
                 <span
                   className={cn(
                     "block min-w-0 break-words text-sm font-black",
-                    item.checked ? "text-muted-foreground line-through" : "text-foreground"
+                    item.checked ? "text-ink-muted line-through" : "text-ink"
                   )}
                 >
                   {item.name}
                 </span>
-                <span className="mt-1 inline-flex max-w-full break-words rounded-full border border-primary-100 bg-sage-50 px-2.5 py-1 text-xs font-black text-foreground sm:hidden">
+                <span className="mt-1 inline-flex max-w-full break-words rounded-full bg-surface-muted px-2.5 py-1 text-xs font-bold tabular-nums text-ink-muted ring-1 ring-inset ring-hairline sm:hidden">
                   {item.quantity ?? "1 item"}
                 </span>
               </div>
-              <span className="hidden min-w-0 break-words rounded-full border border-primary-100 bg-sage-50 px-3 py-1.5 text-center text-xs font-black text-foreground sm:block">
+              <span className="hidden min-w-0 break-words rounded-full bg-surface-muted px-3 py-1.5 text-center text-xs font-bold tabular-nums text-ink-muted ring-1 ring-inset ring-hairline sm:block">
                 {item.quantity ?? "1 item"}
               </span>
             </div>
@@ -111,7 +145,7 @@ export function GroceryListCard({ artifact, onAction }: ArtifactCardProps<Grocer
         </div>
       )}
 
-      <div className="mt-3 flex items-center gap-2 border-t border-neutral-100 pt-3">
+      <div className="mt-3 flex items-center gap-2 border-t border-hairline pt-3">
         <input
           type="text"
           value={draft}
@@ -124,17 +158,17 @@ export function GroceryListCard({ artifact, onAction }: ArtifactCardProps<Grocer
           }}
           placeholder="Add an item"
           aria-label="New grocery item"
-          className="min-w-0 flex-1 rounded-xl bg-sage-100 px-3 py-2.5 text-sm font-medium text-foreground placeholder:text-sage-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-500"
+          className="min-h-11 min-w-0 flex-1 rounded-[1rem] bg-surface-muted px-3 py-2.5 text-sm font-semibold text-ink ring-1 ring-inset ring-hairline placeholder:font-medium placeholder:text-ink-subtle focus:bg-surface focus:outline-none focus:ring-2 focus:ring-primary-600"
         />
-        <button
+        <Button
           type="button"
+          size="icon"
           aria-label="Add item to grocery list"
           onClick={submitAdd}
           disabled={!draft.trim()}
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-600 text-white transition hover:bg-primary-700 disabled:bg-sage-400"
         >
-          <Plus className="h-4 w-4" />
-        </button>
+          <Plus className="h-4 w-4" strokeWidth={2.5} />
+        </Button>
       </div>
     </div>
   );

@@ -31,6 +31,15 @@ type LoggableWorkout = {
   recoveryCost: string;
 };
 
+// Both states of this control sit on the dark hero panel, so the confirmation
+// keeps a translucent-on-dark treatment rather than switching to a light chip
+// that would punch a hole in the panel.
+const onDarkChipClass =
+  "fw-press inline-flex min-h-11 items-center justify-center gap-2 rounded-[1.15rem] bg-white/14 px-5 py-3 text-sm font-black text-white ring-1 ring-inset ring-white/20 hover:bg-white/22 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-white/70";
+
+const onDarkPrimaryClass =
+  "fw-press inline-flex min-h-11 items-center justify-center gap-2 rounded-[1.15rem] bg-gradient-to-b from-primary-400 to-teal-500 px-5 py-3 text-sm font-black text-primary-950 shadow-e2 hover:from-primary-300 hover:to-teal-400 hover:shadow-e3 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-200";
+
 export function WorkoutLogAction({ workout }: { workout: LoggableWorkout }) {
   const { addWorkout } = useWorkoutLog();
   const [logged, setLogged] = useState(false);
@@ -42,20 +51,14 @@ export function WorkoutLogAction({ workout }: { workout: LoggableWorkout }) {
 
   if (logged) {
     return (
-      <div className="flex flex-col gap-2 sm:flex-row">
-        <Link
-          href="/app/fitness"
-          className="inline-flex items-center justify-center gap-2 rounded-[1.15rem] bg-white/14 px-5 py-3 text-sm font-black text-white ring-1 ring-white/15 transition hover:bg-white/20"
-        >
-          <CheckCircle2 className="h-4 w-4" />
-          Logged for today
-        </Link>
-        <Link
-          href="/app/fitness"
-          className="inline-flex items-center justify-center gap-2 rounded-[1.15rem] bg-gradient-to-r from-primary-500 to-teal-500 px-5 py-3 text-sm font-black text-white shadow-[0_16px_34px_rgba(21,145,108,0.24)] transition hover:from-primary-600 hover:to-teal-600"
-        >
+      <div className="flex min-w-0 flex-col gap-2 sm:flex-row" role="status" aria-live="polite">
+        <span className={onDarkChipClass}>
+          <CheckCircle2 className="h-4 w-4 shrink-0" strokeWidth={2.25} />
+          <span className="truncate">Logged for today</span>
+        </span>
+        <Link href="/app/fitness" className={onDarkPrimaryClass}>
           Review in Activity
-          <ArrowRight className="h-4 w-4" />
+          <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.25} />
         </Link>
       </div>
     );
@@ -77,7 +80,7 @@ export function WorkoutLogAction({ workout }: { workout: LoggableWorkout }) {
         });
         setLogged(true);
       }}
-      className="rounded-[1.15rem] bg-gradient-to-r from-primary-500 to-teal-500 px-5 py-3 text-sm font-black text-white shadow-[0_16px_34px_rgba(21,145,108,0.24)] transition hover:from-primary-600 hover:to-teal-600"
+      className="w-full bg-gradient-to-b from-primary-400 to-teal-500 text-primary-950 shadow-e2 hover:from-primary-300 hover:to-teal-400 hover:shadow-e3 focus-visible:ring-primary-200 sm:w-auto"
       aria-label={`Log ${workout.title} for today`}
     >
       Log this workout

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { DashboardClient } from "./dashboard-client";
 import type { MealItem, MealRecord, MealType } from "@/lib/fuelwell-data";
@@ -45,6 +46,12 @@ function mapMeal(meal: SupabaseMeal): MealRecord {
     items: (meal.meal_items || []).map(mapMealItem),
   };
 }
+
+// Route-level chrome: the tab / iOS webview title said "FuelWell — AI Nutrition
+// Coach" on every screen, so nothing identified where you actually were.
+export const metadata: Metadata = {
+  title: "Today · FuelWell",
+};
 
 export default async function DashboardPage() {
   const host = (await headers()).get("host");

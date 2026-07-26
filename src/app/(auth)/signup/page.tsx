@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { OAuthButtons } from "@/components/auth/oauth-buttons";
 import { AuthLink, AuthShell } from "@/components/auth/auth-shell";
+import { cn } from "@/lib/utils/cn";
 import { Brain, Leaf, ShieldCheck, Target, UserPlus } from "lucide-react";
 
 const ONBOARDING_STORAGE_KEY = "fuelwell:onboarding:v1";
@@ -117,12 +118,12 @@ export default function SignupPage() {
     >
       <div className="space-y-6">
             {isNewUserPreview ? (
-              <div className="flex items-center gap-3 rounded-[1.25rem] border border-primary-100 bg-primary-50/80 px-4 py-3">
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-primary-700">
-                  <ShieldCheck className="h-4 w-4" />
+              <div className="flex items-start gap-3 rounded-[1.25rem] bg-lemon-50 px-4 py-3 ring-1 ring-inset ring-lemon-100">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-surface text-lemon-700 ring-1 ring-inset ring-lemon-100">
+                  <ShieldCheck className="h-4 w-4" strokeWidth={2.25} />
                 </span>
-                <p className="text-xs font-semibold leading-5 text-[#6f8981]">
-                  <span className="font-black text-[#16302a]">
+                <p className="min-w-0 text-xs font-semibold leading-5 text-ink-muted">
+                  <span className="font-black text-ink">
                     New-user preview account.
                   </span>{" "}
                   Local review only — no auth email, no production record.
@@ -132,15 +133,17 @@ export default function SignupPage() {
               <OAuthButtons next="/app/onboarding" />
             )}
 
-            <div className={isNewUserPreview ? "hidden" : "relative"}>
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-primary-100" />
-              </div>
-              <div className="relative flex justify-center">
-                <span className="bg-white px-3 text-xs font-black uppercase tracking-[0.16em] text-muted-foreground">
-                  or email
-                </span>
-              </div>
+            <div
+              className={
+                isNewUserPreview ? "hidden" : "flex items-center gap-3"
+              }
+              aria-hidden="true"
+            >
+              <span className="h-px flex-1 bg-gradient-to-r from-transparent to-hairline-strong" />
+              <span className="text-[0.6875rem] font-black uppercase tracking-[0.16em] text-ink-subtle">
+                or email
+              </span>
+              <span className="h-px flex-1 bg-gradient-to-l from-transparent to-hairline-strong" />
             </div>
 
             <form onSubmit={handleEmailSignup} noValidate className="space-y-4">
@@ -178,36 +181,50 @@ export default function SignupPage() {
                 />
                 {/* Password strength indicator */}
                 {password.length > 0 && (
-                  <div className="mt-2 space-y-1.5">
-                    <div className="flex gap-1">
+                  <div className="mt-2.5 space-y-1.5">
+                    <div
+                      className="flex gap-1"
+                      role="img"
+                      aria-label={`Password strength: ${passwordStrength.label}, ${passwordStrength.level} of 4`}
+                    >
                       {[1, 2, 3, 4].map((level) => (
-                        <div
+                        <span
                           key={level}
-                          className={`h-1.5 flex-1 rounded-full transition-colors duration-200 ${
+                          className={cn(
+                            // Unfilled segments sit in the sunken well so the
+                            // meter still reads as a 4-step scale at level 1.
+                            "h-1.5 flex-1 rounded-full transition-colors duration-300 ease-out-soft",
                             level <= passwordStrength.level
                               ? passwordStrength.color
-                              : "bg-primary-50"
-                          }`}
+                              : "bg-surface-sunken"
+                          )}
                         />
                       ))}
                     </div>
                     <p
-                      className={`text-xs font-bold ${
+                      className={cn(
+                        "flex items-baseline gap-1.5 text-xs font-bold",
                         passwordStrength.level <= 1
-                          ? "text-red-500"
+                          ? "text-red-600"
                           : passwordStrength.level <= 2
                             ? "text-lemon-700"
                             : "text-primary-700"
-                      }`}
+                      )}
+                      aria-live="polite"
                     >
                       {passwordStrength.label}
+                      <span className="font-semibold tabular-nums text-ink-subtle">
+                        {passwordStrength.level}/4
+                      </span>
                     </p>
                   </div>
                 )}
               </div>
 
               <Button type="submit" size="lg" className="w-full" loading={loading}>
-                <UserPlus className="h-4 w-4" />
+                {!loading && (
+                  <UserPlus className="h-4 w-4 shrink-0" strokeWidth={2.25} />
+                )}
                 {isNewUserPreview ? "Create preview account" : "Create account"}
               </Button>
             </form>
@@ -229,7 +246,7 @@ function getPasswordStrength(password: string): {
   if (/\d/.test(password)) score++;
   if (/[^A-Za-z0-9]/.test(password)) score++;
 
-  if (score <= 1) return { level: 1, label: "Weak", color: "bg-red-400" };
+  if (score <= 1) return { level: 1, label: "Weak", color: "bg-red-500" };
   if (score <= 2) return { level: 2, label: "Fair", color: "bg-lemon-500" };
   if (score <= 3) return { level: 3, label: "Good", color: "bg-primary-400" };
   return { level: 4, label: "Strong", color: "bg-primary-600" };

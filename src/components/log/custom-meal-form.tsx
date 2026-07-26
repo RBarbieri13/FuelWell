@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { Check, Plus, SquarePen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { SectionHeader } from "@/components/ui/section-header";
 import { cn } from "@/lib/utils/cn";
 import type { MacroTotals } from "@/lib/fuelwell-data";
 
@@ -15,12 +16,16 @@ export type CustomMealDraft = {
 
 type FieldKey = "calories" | "protein" | "carbs" | "fat";
 
-const MACRO_FIELDS: { key: FieldKey; label: string; max: number }[] = [
-  { key: "calories", label: "Calories", max: 10000 },
-  { key: "protein", label: "Protein (g)", max: 1000 },
-  { key: "carbs", label: "Carbs (g)", max: 1000 },
-  { key: "fat", label: "Fat (g)", max: 1000 },
+const MACRO_FIELDS: { key: FieldKey; label: string; max: number; accent: string }[] = [
+  { key: "calories", label: "Calories", max: 10000, accent: "var(--color-macro-calories)" },
+  { key: "protein", label: "Protein (g)", max: 1000, accent: "var(--color-macro-protein)" },
+  { key: "carbs", label: "Carbs (g)", max: 1000, accent: "var(--color-macro-carbs)" },
+  { key: "fat", label: "Fat (g)", max: 1000, accent: "var(--color-macro-fat)" },
 ];
+
+/** Shared input chrome so every field in the form has the same focus ring. */
+const FIELD_BASE =
+  "w-full min-w-0 rounded-[1.15rem] bg-surface px-4 py-3 text-base font-semibold text-ink ring-1 ring-inset transition duration-200 ease-out-soft placeholder:font-semibold placeholder:text-ink-faint focus:outline-none focus:ring-[3px] focus:ring-primary-500";
 
 /** Returns a number within [0, max], or null when the string is not valid. */
 function parseMacro(value: string, max: number): number | null {
@@ -104,7 +109,7 @@ export function CustomMealForm({
         className="min-h-12 w-full rounded-[1.2rem]"
         onClick={() => setOpen(true)}
       >
-        <Plus className="h-4 w-4" />
+        <Plus className="h-4 w-4" strokeWidth={2.5} aria-hidden="true" />
         Add your own meal
       </Button>
     );
@@ -112,29 +117,25 @@ export function CustomMealForm({
 
   return (
     <Card className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <span className="flex h-10 w-10 items-center justify-center rounded-[1rem] bg-primary-100 text-primary-700">
-            <SquarePen className="h-5 w-5" />
-          </span>
-          <div>
-            <h2 className="text-lg font-black text-[#16302a]">
-              Add your own meal
-            </h2>
-            <p className="text-sm font-semibold text-muted-foreground">Manual macros for anything not in search.</p>
-          </div>
-        </div>
-        <button
-          type="button"
-          onClick={() => {
-            reset();
-            setOpen(false);
-          }}
-          className="rounded-full px-3 py-2 text-sm font-bold text-muted-foreground hover:bg-primary-50 hover:text-primary-800"
-        >
-          Cancel
-        </button>
-      </div>
+      <SectionHeader
+        as="h2"
+        icon={SquarePen}
+        title="Add your own meal"
+        description="Manual macros for anything not in search."
+        action={
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              reset();
+              setOpen(false);
+            }}
+          >
+            Cancel
+          </Button>
+        }
+      />
 
       <div className="space-y-2">
         <input
@@ -147,8 +148,8 @@ export function CustomMealForm({
           aria-invalid={touched && !nameValid ? "true" : undefined}
           maxLength={120}
           className={cn(
-            "w-full rounded-[1.15rem] border bg-white px-4 py-3 text-base font-semibold text-[#16302a] placeholder:text-[#91a7a0] focus:outline-none focus:ring-2 focus:ring-primary-500",
-            touched && !nameValid ? "border-red-300" : "border-primary-100"
+            FIELD_BASE,
+            touched && !nameValid ? "ring-red-400" : "ring-hairline-strong"
           )}
         />
         {touched && !nameValid && (
@@ -163,7 +164,7 @@ export function CustomMealForm({
           placeholder="Portion label (e.g. 1 bowl) — optional"
           aria-label="Portion label (optional)"
           maxLength={60}
-          className="w-full rounded-[1.15rem] border border-primary-100 bg-white px-4 py-3 text-base font-semibold text-[#16302a] placeholder:text-[#91a7a0] focus:outline-none focus:ring-2 focus:ring-primary-500"
+          className={cn(FIELD_BASE, "ring-hairline-strong")}
         />
       </div>
 
@@ -171,9 +172,14 @@ export function CustomMealForm({
         {MACRO_FIELDS.map((field) => {
           const invalid = touched && parsed[field.key] === null;
           return (
-            <div key={field.key}>
-              <label className="mb-1 block text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">
-                {field.label}
+            <div key={field.key} className="min-w-0">
+              <label className="mb-1 flex items-center gap-1.5 text-xs font-black uppercase tracking-[0.12em] text-ink-subtle">
+                <span
+                  aria-hidden="true"
+                  className="h-1.5 w-1.5 shrink-0 rounded-full"
+                  style={{ backgroundColor: field.accent }}
+                />
+                <span className="min-w-0 truncate">{field.label}</span>
               </label>
               <input
                 ref={field.key === "calories" ? firstMacroRef : undefined}
@@ -181,6 +187,7 @@ export function CustomMealForm({
                 inputMode="decimal"
                 min={0}
                 max={field.max}
+                aria-label={field.label}
                 aria-invalid={invalid ? "true" : undefined}
                 value={values[field.key]}
                 onChange={(event) =>
@@ -191,8 +198,9 @@ export function CustomMealForm({
                 }
                 placeholder="0"
                 className={cn(
-                  "w-full rounded-[1.15rem] border bg-white px-4 py-3 text-base font-semibold text-[#16302a] placeholder:text-[#91a7a0] focus:outline-none focus:ring-2 focus:ring-primary-500",
-                  invalid ? "border-red-300" : "border-primary-100"
+                  FIELD_BASE,
+                  "tabular-nums",
+                  invalid ? "ring-red-400" : "ring-hairline-strong"
                 )}
               />
             </div>
@@ -200,20 +208,15 @@ export function CustomMealForm({
         })}
       </div>
       {touched && !numbersValid && (
-        <p className="text-xs font-bold text-red-600" role="alert">
+        <p className="text-xs font-bold leading-5 text-red-600" role="alert">
           {overMax
             ? "Values above 10,000 calories or 1,000 g per macro usually mean a typo — double-check the numbers."
             : "Enter a number of 0 or more in every macro field."}
         </p>
       )}
 
-      <Button
-        type="button"
-        size="lg"
-        className="w-full"
-        onClick={handleSubmit}
-      >
-        <Check className="h-4 w-4" />
+      <Button type="button" size="lg" className="w-full" onClick={handleSubmit}>
+        <Check className="h-4 w-4" strokeWidth={2.5} aria-hidden="true" />
         Add to {mealTypeLabel}
       </Button>
     </Card>

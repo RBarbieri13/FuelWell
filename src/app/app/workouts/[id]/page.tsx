@@ -7,16 +7,20 @@ import {
   ChevronLeft,
   ChevronRight,
   Clock3,
+  Compass,
   Image as ImageIcon,
   Info,
   ListChecks,
   MapPinned,
+  Play,
   ShieldCheck,
   Sparkles,
   Target,
   UtensilsCrossed,
 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { SectionHeader } from "@/components/ui/section-header";
 import {
   getAdjacentWorkouts,
   getSimilarWorkouts,
@@ -45,10 +49,26 @@ function Metric({
   value: string;
 }) {
   return (
-    <div className="rounded-[1.5rem] border border-primary-100/80 bg-white p-4 shadow-[0_14px_36px_rgba(22,48,42,0.06)]">
-      <Icon className="h-4 w-4 text-primary-600" />
-      <p className="mt-3 text-lg font-black text-[#16302a]">{value}</p>
-      <p className="mt-1 text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">
+    <Card padding="none" className="flex min-w-0 items-start gap-3 p-4">
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100">
+        <Icon className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
+      </span>
+      <div className="min-w-0">
+        <p className="text-[0.6875rem] font-black uppercase tracking-[0.12em] text-ink-subtle">
+          {label}
+        </p>
+        <p className="mt-1 text-base font-black leading-6 text-ink">{value}</p>
+      </div>
+    </Card>
+  );
+}
+
+/** Hero stat plate. Sits on the dark panel, so it uses an inset ring, not a shadow. */
+function HeroStat({ value, label }: { value: string; label: string }) {
+  return (
+    <div className="min-w-0 rounded-[1.35rem] bg-white/10 p-4 ring-1 ring-inset ring-white/12">
+      <p className="truncate text-xl font-black tabular-nums text-white md:text-2xl">{value}</p>
+      <p className="mt-1 text-[0.6875rem] font-black uppercase tracking-[0.12em] text-white/55">
         {label}
       </p>
     </div>
@@ -70,20 +90,18 @@ function WorkoutMiniLink({
   return (
     <Link
       href={workoutHref(workout.id)}
-      className="group flex min-w-0 items-center gap-3 rounded-[1.35rem] border border-border bg-white p-3 shadow-sm transition hover:border-primary-200 hover:bg-primary-50/60"
+      className="fw-press group flex min-h-[3.5rem] min-w-0 items-center gap-3 rounded-[1.35rem] bg-surface p-3 ring-1 ring-inset ring-hairline hover:bg-primary-50/60 hover:ring-primary-200 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-500"
     >
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[0.95rem] bg-primary-100 text-primary-700">
-        <Arrow className="h-4 w-4 transition group-hover:scale-110" />
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100">
+        <Arrow className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block text-[11px] font-black uppercase tracking-[0.12em] text-muted-foreground">
+        <span className="block text-[0.6875rem] font-black uppercase tracking-[0.12em] text-ink-subtle">
           {label}
         </span>
         <span className="mt-0.5 flex items-center gap-2">
-          <Icon className="h-3.5 w-3.5 shrink-0 text-primary-600" />
-          <span className="truncate text-sm font-black text-[#16302a]">
-            {workout.title}
-          </span>
+          <Icon className="h-4 w-4 shrink-0 text-primary-600" strokeWidth={2} />
+          <span className="truncate text-sm font-black text-ink">{workout.title}</span>
         </span>
       </span>
     </Link>
@@ -96,23 +114,26 @@ function SimilarWorkoutLink({ workout }: { workout: WorkoutLibraryItem }) {
   return (
     <Link
       href={workoutHref(workout.id)}
-      className="group flex min-w-0 items-center gap-3 rounded-[1.25rem] border border-border bg-[#f6faf8] p-3 transition hover:border-primary-200 hover:bg-white"
+      className="fw-press group flex min-h-[3.5rem] min-w-0 items-center gap-3 rounded-[1.25rem] bg-surface-subtle p-3 ring-1 ring-inset ring-hairline hover:bg-surface hover:ring-primary-200 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-500"
     >
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[0.95rem] bg-white text-primary-700 shadow-sm">
-        <Icon className="h-4 w-4" />
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[0.9rem] bg-surface text-primary-700 ring-1 ring-inset ring-hairline">
+        <Icon className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
       </span>
       <span className="min-w-0 flex-1">
-        <span className="flex flex-wrap items-center gap-2">
-          <span className="truncate text-sm font-black text-[#16302a]">{workout.title}</span>
-          <span className="rounded-full bg-primary-100 px-2 py-0.5 text-[11px] font-black text-primary-700">
+        <span className="flex min-w-0 flex-wrap items-center gap-2">
+          <span className="truncate text-sm font-black text-ink">{workout.title}</span>
+          <Badge size="sm" variant="default" className="tabular-nums">
             {workout.duration}
-          </span>
+          </Badge>
         </span>
-        <span className="mt-1 block truncate text-xs font-semibold text-muted-foreground">
+        <span className="mt-1 block truncate text-xs font-semibold text-ink-muted">
           {workout.focus}
         </span>
       </span>
-      <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:text-primary-700" />
+      <ArrowRight
+        className="h-4 w-4 shrink-0 text-ink-faint transition-transform duration-200 ease-out-soft group-hover:translate-x-0.5 group-hover:text-primary-700"
+        strokeWidth={2.25}
+      />
     </Link>
   );
 }
@@ -122,17 +143,20 @@ function StartWorkoutLink({ href, variant = "light" }: { href: string; variant?:
     <Link
       href={href}
       className={cn(
-        "inline-flex min-h-12 items-center justify-center gap-3 rounded-[1.2rem] px-5 py-3 text-sm font-black shadow-sm transition",
+        "fw-press inline-flex min-h-12 items-center justify-center gap-3 rounded-[1.2rem] px-5 py-3 text-sm font-black focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-offset-2",
         variant === "dark"
-          ? "bg-primary-600 text-white shadow-[0_16px_34px_rgba(21,145,108,0.22)] hover:bg-primary-700"
-          : "bg-white text-primary-900 shadow-[0_16px_34px_rgba(255,255,255,0.12)] hover:bg-primary-50"
+          ? "bg-primary-600 text-white shadow-glow hover:bg-primary-700 hover:shadow-e3 focus-visible:ring-primary-600"
+          : "bg-surface text-primary-900 shadow-e2 hover:bg-primary-50 hover:shadow-e3 focus-visible:ring-primary-200"
       )}
     >
-      <span className={cn(
-        "flex h-8 w-8 items-center justify-center rounded-full",
-        variant === "dark" ? "bg-white/18 text-white" : "bg-primary-100 text-primary-700"
-      )}>
-        <Clock3 className="h-4 w-4" />
+      <span
+        aria-hidden="true"
+        className={cn(
+          "flex h-8 w-8 shrink-0 items-center justify-center rounded-full",
+          variant === "dark" ? "bg-white/18 text-white" : "bg-primary-100 text-primary-700"
+        )}
+      >
+        <Play className="h-4 w-4 fill-current" strokeWidth={0} />
       </span>
       Start workout
     </Link>
@@ -141,9 +165,9 @@ function StartWorkoutLink({ href, variant = "light" }: { href: string; variant?:
 
 function ExerciseDiagramCard({ diagram }: { diagram: ExerciseDiagram }) {
   return (
-    <div className="mt-4 rounded-[1.25rem] border border-primary-100 bg-white p-4 shadow-sm">
+    <div className="mt-4 rounded-[1.25rem] bg-surface-subtle p-4 ring-1 ring-inset ring-hairline">
       <div className="grid gap-4 md:grid-cols-[12rem_minmax(0,1fr)]">
-        <div className="overflow-hidden rounded-[1rem] border border-primary-100 bg-primary-50">
+        <div className="overflow-hidden rounded-[1rem] bg-primary-50 ring-1 ring-inset ring-primary-100">
           {diagram.imageUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -157,27 +181,54 @@ function ExerciseDiagramCard({ diagram }: { diagram: ExerciseDiagram }) {
             </div>
           )}
         </div>
-        <div>
-          <p className="text-xs font-black uppercase tracking-[0.14em] text-primary-600">
+        <div className="min-w-0">
+          <p className="text-[0.6875rem] font-black uppercase tracking-[0.14em] text-primary-700">
             Form diagram
           </p>
-          <h3 className="mt-1 text-xl font-black text-[#16302a]">{diagram.displayName}</h3>
-          <p className="mt-2 text-sm font-semibold leading-6 text-[#60776f]">
+          <h3 className="mt-1 text-lg font-black text-ink md:text-xl">{diagram.displayName}</h3>
+          <p className="mt-2 text-sm font-semibold leading-6 text-ink-muted">
             {diagram.equipment ?? "As programmed"} · {diagram.primaryMuscles.join(", ")}
           </p>
-          <ul className="mt-3 grid gap-2 text-sm font-semibold leading-6 text-muted-foreground">
+          <ul className="mt-3 grid gap-2 text-sm font-semibold leading-6 text-ink-muted">
             {diagram.cues.map((cue) => (
               <li key={cue} className="flex gap-2">
-                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary-500" />
-                <span>{cue}</span>
+                <span
+                  aria-hidden="true"
+                  className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary-500"
+                />
+                <span className="min-w-0">{cue}</span>
               </li>
             ))}
           </ul>
-          <p className="mt-3 text-[11px] font-black uppercase tracking-[0.12em] text-muted-foreground">
+          <p className="mt-3 text-[0.6875rem] font-black uppercase tracking-[0.12em] text-ink-faint">
             Source: {diagram.sourceLabel}
           </p>
         </div>
       </div>
+    </div>
+  );
+}
+
+/** Sets / reps / time plate. One shape, one type scale, aligned across rows. */
+function PlanStat({
+  value,
+  label,
+  tone,
+}: {
+  value: string | number;
+  label: string;
+  tone: "primary" | "sky" | "lemon";
+}) {
+  const tones = {
+    primary: "bg-primary-50 text-primary-800 ring-primary-100",
+    sky: "bg-sky-50 text-sky-800 ring-sky-100",
+    lemon: "bg-lemon-50 text-lemon-700 ring-lemon-100",
+  } as const;
+
+  return (
+    <div className={cn("min-w-0 rounded-[1.05rem] px-2 py-2.5 text-center ring-1 ring-inset", tones[tone])}>
+      <p className="truncate text-sm font-black tabular-nums leading-tight md:text-base">{value}</p>
+      <p className="mt-0.5 text-[10px] font-black uppercase tracking-[0.12em] opacity-70">{label}</p>
     </div>
   );
 }
@@ -187,34 +238,31 @@ function ExerciseDetailRow({ exercise }: { exercise: WorkoutExercise }) {
 
   return (
     <details className="group px-2 py-5">
-      <summary className="cursor-pointer list-none">
+      <summary className="cursor-pointer list-none rounded-[1.15rem] focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-500">
         <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_20rem] xl:items-center">
           <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-3">
-              <p className="text-xl font-black text-[#16302a] md:text-2xl">{exercise.name}</p>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-50 px-3 py-1 text-xs font-black text-primary-700">
-                <ImageIcon className="h-3.5 w-3.5" />
+            <div className="flex min-w-0 flex-wrap items-center gap-2.5">
+              <p className="text-lg font-black text-ink md:text-xl">{exercise.name}</p>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-50 px-2.5 py-1 text-xs font-black text-primary-700 ring-1 ring-inset ring-primary-100">
+                <ImageIcon className="h-3.5 w-3.5" strokeWidth={2.25} />
                 <span className="group-open:hidden">View diagram</span>
                 <span className="hidden group-open:inline">Hide diagram</span>
               </span>
+              {exercise.rest && (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-surface-muted px-2.5 py-1 text-xs font-bold text-ink-subtle ring-1 ring-inset ring-hairline">
+                  <Clock3 className="h-3.5 w-3.5" strokeWidth={2.25} />
+                  <span className="tabular-nums">{exercise.rest}</span> rest
+                </span>
+              )}
             </div>
-            <p className="mt-2 text-base font-semibold leading-relaxed text-muted-foreground md:text-lg">
+            <p className="mt-2 text-sm font-semibold leading-6 text-ink-muted md:text-base md:leading-7">
               {exercise.target}
             </p>
           </div>
-          <div className="grid grid-cols-3 gap-2 text-center">
-            <div className="rounded-[1.05rem] bg-primary-50 px-3 py-2.5">
-              <p className="text-sm font-black text-primary-800 md:text-base">{exercise.sets}</p>
-              <p className="text-[10px] font-black uppercase tracking-[0.12em] text-primary-700/70">sets</p>
-            </div>
-            <div className="rounded-[1.05rem] bg-sky-100 px-3 py-2.5">
-              <p className="text-sm font-black text-sky-800 md:text-base">{exercise.reps}</p>
-              <p className="text-[10px] font-black uppercase tracking-[0.12em] text-sky-700/70">reps</p>
-            </div>
-            <div className="rounded-[1.05rem] bg-lemon-50 px-3 py-2.5">
-              <p className="text-sm font-black text-lemon-800 md:text-base">{exercise.time}</p>
-              <p className="text-[10px] font-black uppercase tracking-[0.12em] text-lemon-700/70">time</p>
-            </div>
+          <div className="grid grid-cols-3 gap-2">
+            <PlanStat value={exercise.sets} label="sets" tone="primary" />
+            <PlanStat value={exercise.reps} label="reps" tone="sky" />
+            <PlanStat value={exercise.time} label="time" tone="lemon" />
           </div>
         </div>
       </summary>
@@ -244,9 +292,9 @@ export default async function WorkoutDetailPage({
       <div className="fw-page-inner min-w-0 max-w-6xl space-y-4 md:space-y-6">
         <Link
           href="/app/workouts"
-          className="inline-flex min-h-11 items-center gap-2 rounded-full bg-white/75 px-4 py-2 text-sm font-black md:min-h-0 text-muted-foreground shadow-sm transition-colors hover:text-primary-700"
+          className="fw-press inline-flex min-h-11 items-center gap-2 rounded-full bg-surface/75 px-4 py-2 text-sm font-black text-ink-muted shadow-e1 ring-1 ring-inset ring-hairline hover:bg-surface hover:text-primary-700 md:min-h-0"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="h-4 w-4" strokeWidth={2.25} />
           Back to workouts
         </Link>
 
@@ -257,16 +305,16 @@ export default async function WorkoutDetailPage({
               <div className="relative flex flex-col gap-6">
                 <div className="flex flex-col gap-5">
                   <div className="flex min-w-0 gap-3 sm:gap-4">
-                    <div className="flex h-16 w-16 shrink-0 flex-col items-center justify-center rounded-[1.35rem] bg-primary-400 text-primary-950 shadow-sm shadow-primary-950/25">
+                    <div className="flex h-16 w-16 shrink-0 flex-col items-center justify-center rounded-[1.35rem] bg-primary-400 text-primary-950 ring-1 ring-inset ring-primary-300/60">
                       <span className="text-lg font-black tabular-nums">{exercisePlan.length}</span>
                       <span className="text-[10px] font-black uppercase tracking-[0.12em]">moves</span>
                     </div>
                     <div className="min-w-0">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-primary-100">
+                      <div className="flex min-w-0 flex-wrap items-center gap-2">
+                        <span className="rounded-full bg-white/10 px-3 py-1 text-[0.6875rem] font-black uppercase tracking-[0.12em] text-primary-100 ring-1 ring-inset ring-white/15">
                           Preview before logging
                         </span>
-                        <span className="rounded-full bg-primary-400/20 px-3 py-1 text-xs font-black text-primary-100">
+                        <span className="max-w-full truncate rounded-full bg-primary-400/20 px-3 py-1 text-xs font-black text-primary-100 ring-1 ring-inset ring-primary-300/25">
                           {workout.verdict}
                         </span>
                       </div>
@@ -296,49 +344,32 @@ export default async function WorkoutDetailPage({
                 </div>
 
                 <div className="grid gap-3 sm:grid-cols-3">
-                  <div className="rounded-[1.35rem] border border-white/10 bg-white/10 p-4">
-                    <p className="text-2xl font-black text-white">{workout.duration}</p>
-                    <p className="mt-1 text-xs font-black uppercase tracking-[0.12em] text-white/50">
-                      Duration
-                    </p>
-                  </div>
-                  <div className="rounded-[1.35rem] border border-white/10 bg-white/10 p-4">
-                    <p className="text-2xl font-black text-white">{workout.intensity}</p>
-                    <p className="mt-1 text-xs font-black uppercase tracking-[0.12em] text-white/50">
-                      Intensity
-                    </p>
-                  </div>
-                  <div className="rounded-[1.35rem] border border-white/10 bg-white/10 p-4">
-                    <p className="text-2xl font-black text-white">{workout.estimatedBurn}</p>
-                    <p className="mt-1 text-xs font-black uppercase tracking-[0.12em] text-white/50">
-                      Estimated burn
-                    </p>
-                  </div>
+                  <HeroStat value={workout.duration} label="Duration" />
+                  <HeroStat value={workout.intensity} label="Intensity" />
+                  <HeroStat value={workout.estimatedBurn} label="Estimated burn" />
                 </div>
               </div>
             </div>
           </Card>
 
           <Card className="min-w-0 space-y-4 p-4 sm:p-6">
-            <div className="flex items-center gap-3">
-              <span className="inline-flex h-10 w-10 items-center justify-center rounded-[1rem] bg-primary-100 text-primary-700">
-                <MapPinned className="h-5 w-5" />
-              </span>
-              <div>
-                <h2 className="font-heading text-lg font-black text-[#16302a]">
-                  Move around
-                </h2>
-                <p className="text-sm font-semibold text-muted-foreground">
-                  Jump to the next workout or a close match.
-                </p>
-              </div>
-            </div>
+            <SectionHeader
+              as="h2"
+              icon={MapPinned}
+              title="Move around"
+              description="Jump to the next workout or a close match."
+            />
 
             <div className="grid gap-3">
               {previous && (
                 <WorkoutMiniLink workout={previous} label="Previous workout" direction="previous" />
               )}
               {next && <WorkoutMiniLink workout={next} label="Next workout" direction="next" />}
+              {!previous && !next && (
+                <p className="rounded-[1.25rem] bg-surface-muted px-4 py-3 text-sm font-semibold leading-6 text-ink-muted ring-1 ring-inset ring-hairline">
+                  This is the only workout in its slice of the library right now.
+                </p>
+              )}
             </div>
           </Card>
         </section>
@@ -352,25 +383,27 @@ export default async function WorkoutDetailPage({
           <div className="min-w-0 space-y-5">
             <Card variant="elevated" padding="sm" className="min-w-0">
               <div className="px-2 pb-3">
-                <h2 className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-primary-600">
-                  <ListChecks className="h-4 w-4" />
-                  Workout plan
-                </h2>
+                <SectionHeader
+                  as="h2"
+                  eyebrow="Workout plan"
+                  title={`${workout.blocks.length} blocks · ${workout.duration}`}
+                  icon={ListChecks}
+                />
               </div>
-              <div className="divide-y divide-primary-100/70">
+              <div className="divide-y divide-hairline">
                 {workout.blocks.map((block) => (
                   <div key={block.name} className="flex gap-4 px-2 py-4">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[1rem] bg-primary-50 text-primary-600">
-                      <CheckCircle2 className="h-4 w-4" />
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100">
+                      <CheckCircle2 className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <p className="text-lg font-black text-[#16302a]">{block.name}</p>
-                        <span className="rounded-full bg-primary-50 px-2 py-0.5 text-[11px] font-black text-primary-700">
+                      <div className="flex min-w-0 flex-wrap items-center gap-2">
+                        <p className="text-base font-black text-ink md:text-lg">{block.name}</p>
+                        <Badge size="sm" variant="default" className="tabular-nums">
                           {block.time}
-                        </span>
+                        </Badge>
                       </div>
-                      <p className="mt-1 text-base font-semibold leading-relaxed text-muted-foreground">
+                      <p className="mt-1 text-sm font-semibold leading-6 text-ink-muted md:text-base md:leading-7">
                         {block.detail}
                       </p>
                     </div>
@@ -381,26 +414,28 @@ export default async function WorkoutDetailPage({
 
             <Card variant="elevated" padding="sm" className="min-w-0">
               <div className="px-2 pb-3">
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                  <h2 className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-primary-600">
-                    <Target className="h-4 w-4" />
-                    Exercise detail
-                  </h2>
-                  <StartWorkoutLink href={`${workoutHref(workout.id)}/live`} variant="dark" />
-                </div>
+                <SectionHeader
+                  as="h2"
+                  eyebrow="Exercise detail"
+                  title={`${exercisePlan.length} moves`}
+                  icon={Target}
+                  action={<StartWorkoutLink href={`${workoutHref(workout.id)}/live`} variant="dark" />}
+                />
               </div>
-              <div className="divide-y divide-primary-100/70">
+              <div className="divide-y divide-hairline">
                 {exercisePlan.map((exercise) => (
                   <ExerciseDetailRow key={exercise.id} exercise={exercise} />
                 ))}
               </div>
             </Card>
 
-            <Card className="min-w-0 border-lemon-200 bg-lemon-50/80 p-4 sm:p-6">
+            <Card variant="tinted" className="min-w-0 border-lemon-200 bg-lemon-50/80 p-4 shadow-none sm:p-6">
               <div className="flex gap-3">
-                <Info className="mt-0.5 h-5 w-5 shrink-0 text-lemon-600" />
-                <div>
-                  <h2 className="font-heading text-lg font-black text-lemon-700">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.85rem] bg-surface text-lemon-600 ring-1 ring-inset ring-lemon-200">
+                  <Info className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
+                </span>
+                <div className="min-w-0">
+                  <h2 className="font-heading text-base font-black text-lemon-700 md:text-lg">
                     How this preview is chosen
                   </h2>
                   <p className="mt-1 text-sm font-semibold leading-6 text-lemon-700/85">
@@ -413,46 +448,41 @@ export default async function WorkoutDetailPage({
 
           <div className="min-w-0 space-y-5">
             <Card variant="elevated" className="min-w-0 space-y-4 p-4 sm:p-6">
-              <div className="flex items-center gap-3">
-                <span className="inline-flex h-10 w-10 items-center justify-center rounded-[1rem] bg-primary-100 text-primary-700">
-                  <Sparkles className="h-5 w-5" />
-                </span>
-                <div>
-                  <h2 className="font-heading text-lg font-black text-[#16302a]">
-                    Summary
-                  </h2>
-                  <p className="text-sm font-semibold text-muted-foreground">
-                    What you should know before logging it.
-                  </p>
-                </div>
-              </div>
+              <SectionHeader
+                as="h2"
+                icon={Sparkles}
+                title="Summary"
+                description="What you should know before logging it."
+              />
 
               <div className="grid gap-2">
                 {workout.bestFor.map((item) => (
                   <div
                     key={item}
-                    className="flex items-center gap-2 rounded-[1rem] bg-primary-50 px-3 py-2 text-sm font-black text-primary-800"
+                    className="flex min-w-0 items-start gap-2 rounded-[1rem] bg-primary-50 px-3 py-2.5 text-sm font-black text-primary-800 ring-1 ring-inset ring-primary-100"
                   >
-                    <CheckCircle2 className="h-4 w-4 text-primary-600" />
-                    {item}
+                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary-600" strokeWidth={2.25} />
+                    <span className="min-w-0">{item}</span>
                   </div>
                 ))}
               </div>
 
-              <div className="rounded-[1.25rem] border border-border bg-[#f6faf8] p-4">
-                <p className="text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">
+              <div className="rounded-[1.25rem] bg-surface-muted p-4 ring-1 ring-inset ring-hairline">
+                <p className="text-[0.6875rem] font-black uppercase tracking-[0.12em] text-ink-subtle">
                   Equipment
                 </p>
-                <p className="mt-1 text-sm font-black text-[#16302a]">{workout.equipment}</p>
+                <p className="mt-1 text-sm font-black leading-6 text-ink">{workout.equipment}</p>
               </div>
             </Card>
 
-            <Card className="min-w-0 space-y-3 border-primary-100 bg-primary-50/80 p-4 sm:p-6">
+            <Card variant="tinted" className="min-w-0 space-y-3 border-primary-100 bg-primary-50/80 p-4 sm:p-6">
               <div className="flex gap-3">
-                <UtensilsCrossed className="mt-0.5 h-4 w-4 shrink-0 text-primary-600" />
-                <div>
-                  <h2 className="text-sm font-black text-[#16302a]">Fuel guidance</h2>
-                  <p className="mt-1 text-sm font-semibold leading-relaxed text-muted-foreground">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.85rem] bg-surface text-primary-700 ring-1 ring-inset ring-primary-100">
+                  <UtensilsCrossed className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
+                </span>
+                <div className="min-w-0">
+                  <h2 className="text-sm font-black text-ink">Fuel guidance</h2>
+                  <p className="mt-1 text-sm font-semibold leading-6 text-ink-muted">
                     {workout.fuel}
                   </p>
                 </div>
@@ -460,19 +490,33 @@ export default async function WorkoutDetailPage({
             </Card>
 
             <Card variant="elevated" className="min-w-0 space-y-3 p-4 sm:p-6">
-              <div className="flex items-center justify-between gap-3">
-                <h2 className="font-heading text-lg font-black text-[#16302a]">
-                  Close matches
-                </h2>
-                <span className="rounded-full bg-primary-100 px-3 py-1 text-xs font-black text-primary-700">
-                  {similarWorkouts.length} nearby
-                </span>
-              </div>
-              <div className={cn("grid gap-3", similarWorkouts.length === 0 && "hidden")}>
-                {similarWorkouts.map((similarWorkout) => (
-                  <SimilarWorkoutLink key={similarWorkout.id} workout={similarWorkout} />
-                ))}
-              </div>
+              <SectionHeader
+                as="h2"
+                title="Close matches"
+                action={
+                  <Badge variant={similarWorkouts.length > 0 ? "default" : "neutral"}>
+                    <span className="tabular-nums">{similarWorkouts.length}</span>
+                    <span className="ml-1">nearby</span>
+                  </Badge>
+                }
+              />
+              {similarWorkouts.length > 0 ? (
+                <div className="grid gap-3">
+                  {similarWorkouts.map((similarWorkout) => (
+                    <SimilarWorkoutLink key={similarWorkout.id} workout={similarWorkout} />
+                  ))}
+                </div>
+              ) : (
+                <div className="flex items-start gap-3 rounded-[1.25rem] bg-surface-muted px-4 py-4 ring-1 ring-inset ring-hairline">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.85rem] bg-surface text-ink-subtle ring-1 ring-inset ring-hairline">
+                    <Compass className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
+                  </span>
+                  <p className="min-w-0 text-sm font-semibold leading-6 text-ink-muted">
+                    Nothing else in the library is close enough to call a match. Browse the full
+                    library to compare options yourself.
+                  </p>
+                </div>
+              )}
             </Card>
           </div>
         </section>

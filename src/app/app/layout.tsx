@@ -35,9 +35,16 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     <div className="flex h-dvh overflow-hidden bg-background">
       <PreferencesSync />
       <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
+      {/* min-w-0 stops a wide child (tables, chart rows) from forcing the whole
+          shell wider than the viewport on 320px devices. */}
+      <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
         <MobileHeader session={session} />
-        <main className="flex-1 overflow-y-auto pb-[calc(5rem+env(safe-area-inset-bottom,0px))] md:pb-0">
+        <main
+          className="flex-1 overflow-y-auto overscroll-y-contain pb-[calc(5rem+env(safe-area-inset-bottom,0px))] md:pb-0"
+          // Anchor jumps (Settings deep links) otherwise land underneath the
+          // sticky mobile header.
+          style={{ scrollPaddingTop: "4rem" }}
+        >
           {children}
         </main>
         <MobileNav />

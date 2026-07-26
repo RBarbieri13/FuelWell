@@ -1,5 +1,10 @@
 "use client";
 
+import { Dumbbell, Timer } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import type { ArtifactSpec } from "@/lib/coach/types";
 import type { ArtifactCardProps } from "./contract";
 
@@ -22,53 +27,86 @@ export function WorkoutSuggestionsCard({
 
   if (suggestions.length === 0) {
     return (
-      <div className="mt-3 rounded-2xl border border-neutral-200 bg-white p-4 text-sm font-medium text-neutral-500">
-        No suggestions right now
-      </div>
+      <Card padding="sm" className="min-w-0 max-w-full">
+        <EmptyState
+          size="inline"
+          icon={Dumbbell}
+          title="No suggestions right now"
+          description="Ask for a focus or a time budget and the coach will build one."
+        />
+      </Card>
     );
   }
 
   return (
-    <div className="mt-3 rounded-2xl border border-neutral-200 bg-white p-2">
-      <ul>
-        {suggestions.map((s, i) => (
-          <li
-            key={`${s.focus}-${i}`}
-            className={i > 0 ? "border-t border-neutral-100" : undefined}
-          >
-            <div className="fw-artifact-mobile-stack flex items-center gap-3 p-2.5">
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-black capitalize text-neutral-900">
-                  {s.focus.replace(/_/g, " ")}
-                  <span className="ml-2 text-xs font-bold text-neutral-400">
-                    {Math.round(s.durationMin)} min
-                  </span>
-                </p>
-                <p className="mt-0.5 text-xs font-medium text-neutral-500">{s.why}</p>
-                {(s.planPreview?.length ?? 0) > 0 && (
-                  <p className="mt-0.5 truncate text-xs font-medium text-neutral-400">
-                    {s.planPreview?.join(" · ")}
+    <Card padding="sm" className="min-w-0 max-w-full">
+      <div className="flex items-center gap-2.5">
+        <span
+          aria-hidden="true"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100"
+        >
+          <Dumbbell className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
+        </span>
+        <h3 className="min-w-0 text-base font-black text-ink">Workout ideas</h3>
+      </div>
+
+      <ul className="mt-3 space-y-2">
+        {suggestions.map((s, i) => {
+          const focusLabel = s.focus.replace(/_/g, " ");
+          const preview = s.planPreview ?? [];
+          return (
+            <li
+              key={`${s.focus}-${i}`}
+              className="rounded-2xl bg-surface-subtle p-3 ring-1 ring-inset ring-hairline"
+            >
+              <div className="fw-artifact-mobile-stack flex items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-black capitalize text-ink">{focusLabel}</p>
+                  <p className="mt-1">
+                    <Badge variant="neutral" size="sm" className="tabular-nums">
+                      <Timer className="h-3 w-3" strokeWidth={2.25} aria-hidden="true" />
+                      {Math.round(s.durationMin)} min
+                    </Badge>
                   </p>
-                )}
+                </div>
+                <Button
+                  type="button"
+                  variant="tonal"
+                  size="sm"
+                  aria-label={`Plan a ${focusLabel} workout, ${Math.round(s.durationMin)} minutes`}
+                  onClick={() =>
+                    onAction({
+                      kind: "invoke_tool",
+                      name: "plan_workout",
+                      input: { focus: s.focus, duration_min: s.durationMin },
+                    })
+                  }
+                  className="shrink-0"
+                >
+                  Plan it
+                </Button>
               </div>
-              <button
-                type="button"
-                aria-label={`Plan a ${s.focus.replace(/_/g, " ")} workout, ${Math.round(s.durationMin)} minutes`}
-                onClick={() =>
-                  onAction({
-                    kind: "invoke_tool",
-                    name: "plan_workout",
-                    input: { focus: s.focus, duration_min: s.durationMin },
-                  })
-                }
-                className="min-h-10 shrink-0 rounded-full bg-primary-50 px-4 py-2.5 text-xs font-black text-primary-700 transition hover:bg-primary-100"
-              >
-                Plan it
-              </button>
-            </div>
-          </li>
-        ))}
+
+              {s.why && (
+                <p className="mt-2 text-xs font-semibold leading-5 text-ink-muted">{s.why}</p>
+              )}
+
+              {preview.length > 0 && (
+                <ul className="mt-2 flex flex-wrap gap-1">
+                  {preview.map((move, moveIndex) => (
+                    <li
+                      key={`${move}-${moveIndex}`}
+                      className="max-w-full truncate rounded-full bg-surface px-2 py-0.5 text-[0.6875rem] font-bold text-ink-muted ring-1 ring-inset ring-hairline"
+                    >
+                      {move}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          );
+        })}
       </ul>
-    </div>
+    </Card>
   );
 }

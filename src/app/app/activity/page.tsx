@@ -17,7 +17,10 @@ import {
   UtensilsCrossed,
   type LucideIcon,
 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { ProgressMeter } from "@/components/ui/progress-meter";
+import { SectionHeader } from "@/components/ui/section-header";
 import { useWorkoutLog } from "@/lib/use-workout-log";
 import type { WorkoutEntry } from "@/lib/coach/types";
 
@@ -80,36 +83,58 @@ const decisions = [
 ] as const;
 
 const movementLoad = [
-  { label: "Walking", value: 58, detail: "6.4k steps", color: "bg-primary-500" },
-  { label: "Planned ride", value: 42, detail: "Zone 2", color: "bg-sky-500" },
-  { label: "Strength strain", value: 18, detail: "Low", color: "bg-lemon-500" },
+  { label: "Walking", value: 58, detail: "6.4k steps", color: "var(--color-primary-500)" },
+  { label: "Planned ride", value: 42, detail: "Zone 2", color: "var(--color-sky-500)" },
+  { label: "Strength strain", value: 18, detail: "Low", color: "var(--color-lemon-500)" },
 ];
 
 const fuelWindows = [
-  { label: "Breakfast", time: "7:20 AM", macro: "31g protein", state: "complete", width: "w-[64%]" },
-  { label: "Lunch", time: "12:30 PM", macro: "Carbs light", state: "watch", width: "w-[38%]" },
-  { label: "Post-workout", time: "Tonight", macro: "Protein due", state: "next", width: "w-[74%]" },
-];
+  { label: "Breakfast", time: "7:20 AM", macro: "31g protein", state: "complete", fill: 64 },
+  { label: "Lunch", time: "12:30 PM", macro: "Carbs light", state: "watch", fill: 38 },
+  { label: "Post-workout", time: "Tonight", macro: "Protein due", state: "next", fill: 74 },
+] as const;
 
 const toneMap = {
-  primary: "bg-primary-100 text-primary-700",
-  accent: "bg-accent-100 text-accent-700",
-  sky: "bg-sky-100 text-sky-700",
-  lemon: "bg-lemon-100 text-lemon-700",
+  primary: "bg-primary-50 text-primary-700 ring-primary-100",
+  accent: "bg-accent-100 text-accent-700 ring-accent-200",
+  sky: "bg-sky-50 text-sky-700 ring-sky-100",
+  lemon: "bg-lemon-50 text-lemon-700 ring-lemon-100",
 };
 
+const fuelStateVariant = {
+  complete: "success",
+  watch: "warning",
+  next: "info",
+} as const;
+
+const statusDot = {
+  done: "bg-primary-500",
+  watch: "bg-lemon-500",
+  next: "bg-accent-500",
+} as const;
+
 function SourceBadge({ children }: { children: string }) {
-  const styles =
-    children === "Estimated"
-      ? "bg-lemon-50 text-lemon-700"
-      : children === "Sample"
-        ? "bg-neutral-100 text-neutral-500"
-        : "bg-primary-50 text-primary-700";
+  const variant =
+    children === "Estimated" ? "warning" : children === "Sample" ? "neutral" : "success";
 
   return (
-    <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-black ${styles}`}>
+    <Badge variant={variant} size="sm">
       {children}
-    </span>
+    </Badge>
+  );
+}
+
+/**
+ * Shared 0-100% scale for the movement-load bars. Without it the bars are
+ * decoration: three lengths with nothing to read them against.
+ */
+function LoadAxis() {
+  return (
+    <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-[0.12em] text-ink-faint">
+      <span>0%</span>
+      <span>50%</span>
+      <span>100% of capacity</span>
+    </div>
   );
 }
 
@@ -122,22 +147,23 @@ export default function ActivityPage() {
       ),
     [workouts]
   );
+  const loggedCount = workouts.length;
 
   return (
     <div className="fw-app-surface">
       <header className="fw-page-header">
         <div className="fw-page-inner flex flex-col gap-4 py-5 md:py-7 md:flex-row md:items-center md:justify-between">
-          <div>
+          <div className="min-w-0">
             <h1 className="fw-heading text-2xl md:text-4xl">Activity</h1>
             <p className="fw-muted mt-1 text-sm md:text-base">{activitySummary.dateLabel} · movement and fuel timing</p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <Link
               href="/app/log"
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-primary-600 px-5 py-3 text-sm font-black text-white shadow-[0_16px_34px_rgba(21,145,108,0.24)] transition hover:bg-primary-700"
+              className="fw-press inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-gradient-to-b from-primary-500 to-teal-600 px-5 py-3 text-sm font-black text-white shadow-glow hover:from-primary-400 hover:to-teal-500 hover:shadow-e3 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2 md:w-auto"
             >
               {activitySummary.nextAction}
-              <ArrowRight className="h-4 w-4" />
+              <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.25} />
             </Link>
           </div>
         </div>
@@ -148,8 +174,8 @@ export default function ActivityPage() {
           <Card className="fw-dark-panel overflow-hidden p-0">
             <div className="relative p-6 md:p-7">
               <div className="relative z-10">
-                <p className="inline-flex items-center gap-2 text-sm font-black uppercase tracking-[0.16em] text-primary-200">
-                  <ShieldCheck className="h-4 w-4" />
+                <p className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-black uppercase tracking-[0.14em] text-primary-100 ring-1 ring-inset ring-white/15">
+                  <ShieldCheck className="h-4 w-4 shrink-0" strokeWidth={2.25} />
                   Today&apos;s activity verdict
                 </p>
                 <h2 className="mt-4 max-w-3xl font-heading text-2xl font-black leading-tight tracking-tight text-white md:text-4xl">
@@ -160,9 +186,12 @@ export default function ActivityPage() {
                 </p>
                 <div className="mt-6 grid grid-cols-3 gap-2 md:gap-3">
                   {metrics.slice(0, 3).map((metric) => (
-                    <div key={metric.label} className="rounded-[1.05rem] border border-white/12 bg-white/10 px-3 py-3 backdrop-blur md:rounded-[1.25rem] md:px-5 md:py-4">
-                      <p className="font-heading text-xl font-black tabular-nums text-white md:text-2xl">{metric.value}</p>
-                      <p className="mt-1 text-[10px] font-black uppercase tracking-[0.08em] text-white/58 md:text-xs md:tracking-[0.12em]">{metric.label}</p>
+                    <div
+                      key={metric.label}
+                      className="min-w-0 rounded-[1.05rem] bg-white/10 px-3 py-3 ring-1 ring-inset ring-white/12 backdrop-blur md:rounded-[1.25rem] md:px-5 md:py-4"
+                    >
+                      <p className="truncate font-heading text-xl font-black tabular-nums text-white md:text-2xl">{metric.value}</p>
+                      <p className="mt-1 truncate text-[10px] font-black uppercase tracking-[0.08em] text-white/58 md:text-xs md:tracking-[0.12em]">{metric.label}</p>
                     </div>
                   ))}
                 </div>
@@ -171,38 +200,39 @@ export default function ActivityPage() {
           </Card>
 
           <Card variant="elevated" className="space-y-5">
-            <div className="flex items-center gap-3">
-              <span className="fw-icon-chip">
-                <Sparkles className="h-6 w-6" />
-              </span>
-              <div>
-                <h2 className="text-2xl font-black text-neutral-900">Next decisions</h2>
-                <p className="text-sm font-semibold text-neutral-500">What changes the plan from here.</p>
-              </div>
-            </div>
+            <SectionHeader
+              icon={Sparkles}
+              title="Next decisions"
+              description="What changes the plan from here."
+            />
             <div className="grid gap-3">
               {decisions.map((decision) => (
                 <DecisionRow key={decision.label} {...decision} />
               ))}
             </div>
-            <div className="rounded-[1.25rem] border border-primary-100 bg-primary-50/70 p-4">
-              <div className="mb-2 flex items-center justify-between text-xs font-black uppercase tracking-[0.12em] text-primary-800">
+            <div className="rounded-[1.25rem] bg-primary-50/70 p-4 ring-1 ring-inset ring-primary-100">
+              <div className="mb-2 flex items-center justify-between gap-3 text-[0.6875rem] font-black uppercase tracking-[0.12em] text-primary-800">
                 <span>Current confidence</span>
-                <span>Medium</span>
+                <span className="tabular-nums">68 / 100 · Medium</span>
               </div>
-              <div className="h-2 overflow-hidden rounded-full bg-white">
-                <div className="h-full w-[68%] rounded-full bg-primary-500" />
-              </div>
-              <p className="mt-2 text-xs font-semibold leading-5 text-primary-900/65">
+              <ProgressMeter
+                value={68}
+                target={100}
+                color="var(--color-primary-500)"
+                size="md"
+                label="Recommendation confidence: 68 out of 100"
+                className="bg-surface"
+              />
+              <p className="mt-2 text-xs font-semibold leading-5 text-ink-muted">
                 Add a wearable sync or recovery check-in to make this recommendation more precise.
               </p>
             </div>
             <Link
               href="/app/workouts"
-              className="inline-flex w-full items-center justify-center gap-2 rounded-[1.15rem] bg-primary-50 px-4 py-3 text-sm font-black text-primary-800 transition hover:bg-primary-100"
+              className="fw-press inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-[1.15rem] bg-primary-50 px-4 py-3 text-sm font-black text-primary-800 hover:bg-primary-100 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2"
             >
               Choose a workout for this verdict
-              <Bike className="h-4 w-4" />
+              <Bike className="h-4 w-4 shrink-0" strokeWidth={2.25} />
             </Link>
           </Card>
         </section>
@@ -211,15 +241,15 @@ export default function ActivityPage() {
           {metrics.map((metric) => (
             <Card key={metric.label} className="space-y-4 px-5 py-5">
               <div className="flex items-start justify-between gap-3">
-                <div className={`flex h-12 w-12 items-center justify-center rounded-[1.15rem] ${toneMap[metric.tone]}`}>
-                  <metric.icon className="h-5 w-5" />
+                <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-[1.05rem] ring-1 ring-inset ${toneMap[metric.tone]}`}>
+                  <metric.icon className="h-5 w-5" strokeWidth={2} />
                 </div>
                 <SourceBadge>{metric.source}</SourceBadge>
               </div>
-              <div>
-                <p className="text-2xl font-black tabular-nums text-neutral-900 md:text-3xl">{metric.value}</p>
-                <p className="mt-1 text-base font-black text-neutral-800">{metric.label}</p>
-                <p className="mt-1 text-sm font-semibold leading-6 text-neutral-500">{metric.detail}</p>
+              <div className="min-w-0">
+                <p className="truncate text-2xl font-black tabular-nums text-ink md:text-3xl">{metric.value}</p>
+                <p className="mt-1 text-sm font-black text-ink md:text-base">{metric.label}</p>
+                <p className="mt-1 text-sm font-semibold leading-6 text-ink-muted">{metric.detail}</p>
               </div>
             </Card>
           ))}
@@ -227,64 +257,86 @@ export default function ActivityPage() {
 
         <section className="grid gap-4 xl:grid-cols-[0.95fr_1.05fr]">
           <Card className="space-y-5 px-6 py-6">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <h2 className="flex items-center gap-2 text-2xl font-black text-neutral-900">
-                  <BarChart3 className="h-5 w-5 text-primary-600" />
-                  Movement load
-                </h2>
-                <p className="mt-1 text-sm font-semibold text-neutral-500">Aisle-style scan of where today&apos;s effort comes from.</p>
-              </div>
-              <span className="rounded-full bg-primary-50 px-3 py-1 text-xs font-black text-primary-700">Light day</span>
-            </div>
+            <SectionHeader
+              icon={BarChart3}
+              title="Movement load"
+              description="Aisle-style scan of where today's effort comes from."
+              action={<Badge variant="success" dot>Light day</Badge>}
+            />
             <div className="space-y-4">
-              {movementLoad.map((load) => (
-                <div key={load.label}>
-                  <div className="mb-2 flex items-center justify-between text-sm font-black">
-                    <span className="text-neutral-800">{load.label}</span>
-                    <span className="text-neutral-500">{load.detail}</span>
+              <LoadAxis />
+              <div className="space-y-4">
+                {movementLoad.map((load) => (
+                  <div key={load.label}>
+                    <div className="mb-2 flex items-center justify-between gap-3 text-sm font-black">
+                      <span className="min-w-0 truncate text-ink">{load.label}</span>
+                      <span className="shrink-0 tabular-nums text-ink-muted">
+                        {load.detail} · {load.value}%
+                      </span>
+                    </div>
+                    <div className="relative">
+                      <ProgressMeter
+                        value={load.value}
+                        target={100}
+                        color={load.color}
+                        size="lg"
+                        label={`${load.label}: ${load.value} percent of capacity — ${load.detail}`}
+                        className="bg-surface-sunken"
+                      />
+                      {/* Quarter gridlines so three bar lengths are comparable
+                          rather than three unlabelled swatches. */}
+                      <span aria-hidden="true" className="pointer-events-none absolute inset-0">
+                        {[25, 50, 75].map((tick) => (
+                          <span
+                            key={tick}
+                            className="absolute inset-y-0 w-px bg-ink/10"
+                            style={{ left: `${tick}%` }}
+                          />
+                        ))}
+                      </span>
+                    </div>
                   </div>
-                  <div className="h-3 overflow-hidden rounded-full bg-primary-50">
-                    <div className={`${load.color} h-full rounded-full`} style={{ width: `${load.value}%` }} />
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </Card>
 
           <Card className="space-y-5 px-6 py-6">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <h2 className="flex items-center gap-2 text-2xl font-black text-neutral-900">
-                  <CalendarClock className="h-5 w-5 text-primary-600" />
-                  Fuel timing
-                </h2>
-                <p className="mt-1 text-sm font-semibold text-neutral-500">When today&apos;s logged food supports your planned movement.</p>
-              </div>
-              <span className="rounded-full bg-lemon-50 px-3 py-1 text-xs font-black text-lemon-700">1 gap</span>
-            </div>
+            <SectionHeader
+              icon={CalendarClock}
+              title="Fuel timing"
+              description="When today's logged food supports your planned movement."
+              action={<Badge variant="warning" dot>1 gap</Badge>}
+            />
             <div className="grid gap-3">
               {fuelWindows.map((window) => (
-                <div key={window.label} className="rounded-[1.25rem] border border-primary-100/70 bg-neutral-50/75 p-4">
-                  <div className="flex items-center justify-between gap-3">
-                    <div>
-                      <p className="text-base font-black text-neutral-900">{window.label}</p>
-                      <p className="text-xs font-semibold text-neutral-500">{window.time} · {window.macro}</p>
+                <div
+                  key={window.label}
+                  className="rounded-[1.25rem] bg-surface-subtle p-4 ring-1 ring-inset ring-hairline"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="truncate text-base font-black text-ink">{window.label}</p>
+                      <p className="mt-0.5 truncate text-xs font-semibold text-ink-muted">
+                        <span className="tabular-nums">{window.time}</span> · {window.macro}
+                      </p>
                     </div>
-                    <span
-                      className={`rounded-full px-2.5 py-1 text-[11px] font-black ${
-                        window.state === "complete"
-                          ? "bg-primary-100 text-primary-700"
-                          : window.state === "watch"
-                            ? "bg-lemon-100 text-lemon-700"
-                            : "bg-accent-100 text-accent-700"
-                      }`}
-                    >
+                    <Badge variant={fuelStateVariant[window.state]} size="sm">
                       {window.state}
-                    </span>
+                    </Badge>
                   </div>
-                  <div className="mt-3 h-2 rounded-full bg-white">
-                    <div className={`${window.width} h-full rounded-full bg-primary-500`} />
+                  <div className="mt-3 flex items-center gap-2">
+                    <ProgressMeter
+                      value={window.fill}
+                      target={100}
+                      color="var(--color-primary-500)"
+                      size="md"
+                      label={`${window.label} fuelling coverage: ${window.fill} percent`}
+                      className="flex-1 bg-surface"
+                    />
+                    <span className="w-10 shrink-0 text-right text-xs font-black tabular-nums text-ink-subtle">
+                      {window.fill}%
+                    </span>
                   </div>
                 </div>
               ))}
@@ -294,33 +346,58 @@ export default function ActivityPage() {
 
         <section className="grid gap-4 xl:grid-cols-[1.35fr_0.85fr]">
           <Card className="px-6 py-6">
-            <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-              <h2 className="text-2xl font-black text-neutral-900">Daily activity log</h2>
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="rounded-full bg-primary-50 px-3 py-1 text-xs font-black text-primary-700">
-                  {timeline.length} signal{timeline.length === 1 ? "" : "s"}
-                </span>
-                <Link
-                  href="/app/fitness"
-                  className="inline-flex min-h-11 items-center gap-1.5 rounded-full bg-[#f4f8f6] px-3 py-1 text-xs font-black text-neutral-600 transition hover:bg-primary-50 hover:text-primary-700 md:min-h-0"
-                >
-                  Open activity detail
-                  <ArrowRight className="h-3.5 w-3.5" />
-                </Link>
-              </div>
-            </div>
-            <div className="divide-y divide-primary-100/70">
+            <SectionHeader
+              title="Daily activity log"
+              action={
+                <div className="flex flex-wrap items-center gap-2">
+                  <Badge variant="default">
+                    <span className="tabular-nums">{timeline.length}</span>
+                    <span className="ml-1">signal{timeline.length === 1 ? "" : "s"}</span>
+                  </Badge>
+                  <Link
+                    href="/app/fitness"
+                    className="fw-press inline-flex min-h-11 items-center gap-1.5 rounded-full bg-surface-muted px-3 py-1 text-xs font-black text-ink-muted ring-1 ring-inset ring-hairline hover:bg-primary-50 hover:text-primary-700 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-500 md:min-h-0"
+                  >
+                    Open activity detail
+                    <ArrowRight className="h-3.5 w-3.5 shrink-0" strokeWidth={2.5} />
+                  </Link>
+                </div>
+              }
+            />
+            <p className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[0.6875rem] font-black uppercase tracking-[0.1em] text-ink-faint">
+              <span className="inline-flex items-center gap-1.5">
+                <span aria-hidden="true" className="h-2 w-2 rounded-full bg-primary-500" />
+                Done
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <span aria-hidden="true" className="h-2 w-2 rounded-full bg-lemon-500" />
+                Watch
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <span aria-hidden="true" className="h-2 w-2 rounded-full bg-accent-500" />
+                Next
+              </span>
+              <span className="normal-case tracking-normal text-ink-subtle">
+                {loggedCount === 0
+                  ? "No workouts logged today yet."
+                  : `${loggedCount} logged workout${loggedCount === 1 ? "" : "s"} mixed in.`}
+              </span>
+            </p>
+            <div className="mt-1 divide-y divide-hairline">
               {timeline.map((item) => {
                 const row = (
-                  <div className="grid gap-3 py-5 md:grid-cols-[6rem_1fr] md:items-center">
-                    <div className="text-sm font-black tabular-nums text-neutral-500">{item.time}</div>
+                  <div className="grid gap-2 py-4 md:grid-cols-[5.5rem_1fr] md:items-start md:gap-3">
+                    <div className="text-sm font-black tabular-nums text-ink-subtle">{item.time}</div>
                     <div className="min-w-0">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${item.status === "watch" ? "bg-lemon-500" : item.status === "next" ? "bg-accent-500" : "bg-primary-500"}`} />
-                        <p className="text-lg font-black text-neutral-900">{item.title}</p>
+                      <div className="flex min-w-0 flex-wrap items-center gap-2">
+                        <span
+                          aria-hidden="true"
+                          className={`h-2.5 w-2.5 shrink-0 rounded-full ${statusDot[item.status]}`}
+                        />
+                        <p className="min-w-0 text-base font-black text-ink md:text-lg">{item.title}</p>
                         <SourceBadge>{item.source}</SourceBadge>
                       </div>
-                      <p className="mt-1 text-sm font-semibold leading-6 text-neutral-500">{item.detail}</p>
+                      <p className="mt-1 text-sm font-semibold leading-6 text-ink-muted">{item.detail}</p>
                     </div>
                   </div>
                 );
@@ -329,24 +406,26 @@ export default function ActivityPage() {
                   <Link
                     key={item.id}
                     href={item.href}
-                    className="block transition hover:bg-primary-50/40"
+                    className="block rounded-[1rem] px-2 transition-colors duration-200 ease-out-soft hover:bg-primary-50/50 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-500"
                   >
                     {row}
                   </Link>
                 ) : (
-                  <div key={item.id}>{row}</div>
+                  <div key={item.id} className="px-2">
+                    {row}
+                  </div>
                 );
               })}
             </div>
           </Card>
 
-          <Card className="space-y-3 border-lemon-200 bg-lemon-50/80">
+          <Card variant="tinted" className="space-y-3 border-lemon-200 bg-lemon-50/80 shadow-none">
             <div className="flex gap-3">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-lemon-700">
-                <Info className="h-4 w-4" />
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[0.9rem] bg-surface text-lemon-700 ring-1 ring-inset ring-lemon-200">
+                <Info className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
               </span>
-              <div>
-                <h2 className="text-xl font-black text-lemon-800">Data honesty</h2>
+              <div className="min-w-0">
+                <h2 className="text-lg font-black text-lemon-800 md:text-xl">Data honesty</h2>
                 <p className="mt-2 text-sm font-semibold leading-6 text-lemon-800/78">{activitySummary.sourceNote}</p>
               </div>
             </div>
@@ -368,12 +447,12 @@ function DecisionRow({
 }) {
   return (
     <div className="fw-soft-row flex gap-3 p-4">
-      <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-100 text-primary-700">
-        <Icon className="h-4 w-4" />
+      <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100">
+        <Icon className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
       </span>
-      <div>
-        <p className="text-sm font-black text-neutral-900">{label}</p>
-        <p className="mt-1 text-sm font-semibold leading-6 text-neutral-500">{detail}</p>
+      <div className="min-w-0">
+        <p className="text-sm font-black text-ink">{label}</p>
+        <p className="mt-1 text-sm font-semibold leading-6 text-ink-muted">{detail}</p>
       </div>
     </div>
   );

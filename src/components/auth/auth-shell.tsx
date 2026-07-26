@@ -42,47 +42,49 @@ export function AuthShell({
     <main className="fw-app-surface min-h-screen">
       <div className="grid min-h-screen lg:grid-cols-[0.88fr_1fr]">
         <aside className="fw-dark-panel relative hidden overflow-hidden rounded-none border-0 p-10 lg:flex lg:flex-col lg:justify-between xl:p-12">
-          <div className="relative z-10 flex items-center justify-between">
+          <div className="relative z-10 flex items-center justify-between gap-4">
             <Logo href="/" size="lg" className="[&_span]:text-white" />
             <Link
               href="/"
-              className="rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-xs font-black text-white/70 transition hover:bg-white/15 hover:text-white"
+              className="inline-flex min-h-11 items-center rounded-full border border-white/15 bg-white/10 px-4 text-xs font-black text-white/80 transition-colors duration-150 hover:bg-white/20 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300 focus-visible:ring-offset-2 focus-visible:ring-offset-primary-950"
             >
               Home
             </Link>
           </div>
 
           <div className="relative z-10 max-w-xl">
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-xs font-black uppercase tracking-[0.18em] text-primary-100">
-              <Sparkles className="h-4 w-4" />
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-xs font-black uppercase tracking-[0.18em] text-primary-100 ring-1 ring-inset ring-white/15">
+              <Sparkles className="h-4 w-4" strokeWidth={2} />
               Daily decision system
             </div>
             <h1 className="text-5xl font-black leading-[1.02] tracking-tight text-white xl:text-6xl">
               {panelTitle}
             </h1>
-            <p className="mt-5 max-w-lg text-base font-semibold leading-7 text-white/68">
+            <p className="mt-5 max-w-lg text-base font-semibold leading-7 text-white/75">
               {panelCopy}
             </p>
           </div>
 
-          <div className="relative z-10 grid gap-3">
+          <div className="relative z-10 grid gap-2.5">
             {features.map((feature) => (
               <div
                 key={feature.text}
-                className="flex items-center gap-3 rounded-[1.25rem] border border-white/10 bg-white/[0.075] p-3"
+                className="flex items-center gap-3 rounded-[1.25rem] bg-white/[0.075] p-3 ring-1 ring-inset ring-white/10"
               >
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[1rem] bg-primary-300 text-primary-950">
-                  <feature.icon className="h-5 w-5" />
+                  <feature.icon className="h-5 w-5" strokeWidth={2} />
                 </span>
-                <span className="text-sm font-black text-white/82">{feature.text}</span>
+                <span className="text-sm font-bold leading-6 text-white/85">
+                  {feature.text}
+                </span>
               </div>
             ))}
           </div>
 
           {showPreviewCard && (
-            <div className="relative z-10 rounded-[1.75rem] border border-white/10 bg-white/[0.08] p-5">
+            <div className="relative z-10 rounded-[1.75rem] bg-white/[0.08] p-5 ring-1 ring-inset ring-white/10">
               <div className="flex items-center justify-between gap-4">
-                <div>
+                <div className="min-w-0">
                   <p className="text-xs font-black uppercase tracking-[0.16em] text-primary-100">
                     Preview mode
                   </p>
@@ -90,8 +92,8 @@ export function AuthShell({
                     Setup takes a few minutes
                   </p>
                 </div>
-                <span className="flex h-12 w-12 items-center justify-center rounded-[1rem] bg-primary-400 text-primary-950">
-                  <BadgeCheck className="h-6 w-6" />
+                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[1rem] bg-primary-400 text-primary-950">
+                  <BadgeCheck className="h-6 w-6" strokeWidth={2} />
                 </span>
               </div>
             </div>
@@ -100,32 +102,43 @@ export function AuthShell({
 
         <section className="flex min-h-screen items-center justify-center px-4 py-8 sm:px-8 lg:py-12">
           <div className={cn("w-full max-w-md", className)}>
-            <div className="mb-7 flex items-center justify-between gap-4 lg:hidden">
-              <div className="flex items-center gap-3">
-                <div className="flex h-11 w-11 items-center justify-center rounded-[1.15rem] bg-primary-600 text-white shadow-[0_16px_32px_rgba(21,145,108,0.25)]">
-                  <Leaf className="h-5 w-5" />
-                </div>
+            <div className="mb-6 flex items-center justify-between gap-4 lg:hidden">
+              <div className="flex min-w-0 items-center gap-3">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[1.15rem] bg-gradient-to-br from-primary-500 to-teal-600 text-white shadow-e2">
+                  <Leaf className="h-5 w-5" strokeWidth={2} />
+                </span>
                 <Logo size="lg" href="/" />
               </div>
-              <Link href="/" className="text-sm font-black text-primary-700">
+              <Link
+                href="/"
+                className="-mx-2 inline-flex min-h-11 items-center rounded-full px-2 text-sm font-black text-primary-700 transition-colors hover:text-primary-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 focus-visible:ring-offset-2"
+              >
                 Home
               </Link>
             </div>
 
-            <div className="rounded-[2rem] border border-primary-100/80 bg-white/92 p-5 shadow-[0_26px_70px_rgba(22,48,42,0.12)] backdrop-blur sm:p-7">
-              <div className="mb-7">
-                <p className="text-xs font-black uppercase tracking-[0.16em] text-primary-600">
+            <div className="fw-lift-edge rounded-[2rem] border border-hairline-strong bg-surface/95 p-5 backdrop-blur sm:p-7">
+              <div className="mb-6">
+                <p className="text-[0.6875rem] font-black uppercase tracking-[0.16em] text-primary-700">
                   FuelWell
                 </p>
                 <h2 className="fw-heading mt-2 text-2xl">{title}</h2>
-                <p className="mt-2 text-sm font-semibold leading-6 text-muted-foreground">
+                <p className="mt-2 text-sm font-semibold leading-6 text-ink-muted">
                   {subtitle}
                 </p>
+                <span
+                  aria-hidden="true"
+                  className="mt-5 block h-px w-full bg-gradient-to-r from-primary-200 via-hairline to-transparent"
+                />
               </div>
               {children}
             </div>
 
-            {footer && <div className="mt-6 text-center text-sm font-semibold text-muted-foreground">{footer}</div>}
+            {footer && (
+              <div className="mt-6 text-center text-sm font-semibold text-ink-muted">
+                {footer}
+              </div>
+            )}
           </div>
         </section>
       </div>
@@ -148,10 +161,13 @@ export function AuthLink({
   return (
     <Link
       href={href}
-      className="-mx-1 -my-2.5 inline-flex items-center gap-1 px-1 py-2.5 text-primary-700 transition hover:text-primary-800"
+      className="group -mx-1 -my-2.5 inline-flex min-h-11 items-center gap-1 rounded-full px-1 py-2.5 font-black text-primary-700 underline-offset-4 transition-colors hover:text-primary-800 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 focus-visible:ring-offset-2"
     >
       {children}
-      <ArrowRight className="h-3.5 w-3.5" />
+      <ArrowRight
+        className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 ease-out-soft group-hover:translate-x-0.5"
+        strokeWidth={2.5}
+      />
     </Link>
   );
 }

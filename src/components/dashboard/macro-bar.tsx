@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { ProgressMeter } from "@/components/ui/progress-meter";
 
 interface MacroBarProps {
   label: string;
@@ -19,46 +19,68 @@ export function MacroBar({
   color,
   size = "md",
 }: MacroBarProps) {
-  const progress = Math.min((current / target) * 100, 100);
   const large = size === "lg";
-
-  // Animate width on mount
-  const [animatedWidth, setAnimatedWidth] = useState(0);
-  useEffect(() => {
-    const timer = setTimeout(() => setAnimatedWidth(progress), 100);
-    return () => clearTimeout(timer);
-  }, [progress]);
+  const safeTarget = target > 0 ? target : 1;
+  const percent = Math.round((current / safeTarget) * 100);
+  const isOver = current > target;
+  const left = Math.max(0, Math.round(target - current));
+  const unitSuffix = unit === "g" ? "g" : ` ${unit}`;
 
   return (
-    <div className={large ? "space-y-3" : "space-y-2"}>
-      <div className="flex items-center justify-between">
+    <div className={large ? "space-y-2.5" : "space-y-1.5"}>
+      <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
         <div className={large ? "flex items-center gap-3" : "flex items-center gap-2"}>
-          <div
-            className={large ? "h-3 w-3 rounded-full" : "h-2 w-2 rounded-full"}
-            style={{ backgroundColor: color }}
+          <span
+            className={`${large ? "h-3 w-3" : "h-2.5 w-2.5"} shrink-0 rounded-full ring-1 ring-inset ring-black/10`}
+            style={{ backgroundColor: isOver ? "var(--color-accent-400)" : color }}
             aria-hidden="true"
           />
-          <span className={large ? "text-lg font-black text-neutral-800" : "text-sm font-bold text-neutral-700"}>
+          <span
+            className={
+              large
+                ? "text-lg font-black text-ink"
+                : "text-sm font-bold text-ink"
+            }
+          >
             {label}
           </span>
         </div>
-        <span className={large ? "text-base font-bold text-neutral-500 tabular-nums md:text-lg" : "text-sm font-semibold text-neutral-500 tabular-nums"}>
-          <span className={large ? "text-2xl font-black text-neutral-900" : "font-black text-neutral-800"}>{current.toLocaleString()}</span> / {target.toLocaleString()}
-          {unit === "g" ? "g" : ` ${unit}`}
+        <span
+          className={`tabular-nums ${
+            large ? "text-base font-bold text-ink-muted md:text-lg" : "text-sm font-semibold text-ink-muted"
+          }`}
+        >
+          <span
+            className={`${large ? "text-2xl font-black" : "font-black"} ${
+              isOver ? "text-accent-700" : "text-ink"
+            }`}
+          >
+            {current.toLocaleString()}
+          </span>{" "}
+          / {target.toLocaleString()}
+          {unitSuffix}
         </span>
       </div>
-      <div
-        className={large ? "h-4 overflow-hidden rounded-full bg-primary-100/70" : "h-2 overflow-hidden rounded-full bg-primary-100/70"}
-        role="progressbar"
-        aria-valuenow={current}
-        aria-valuemin={0}
-        aria-valuemax={target}
-        aria-label={`${label}: ${current} of ${target} ${unit}`}
-      >
-        <div
-          className="h-full rounded-full transition-all duration-700 ease-out"
-          style={{ width: `${animatedWidth}%`, backgroundColor: color }}
-        />
+
+      <ProgressMeter
+        value={current}
+        target={target}
+        color={color}
+        size={large ? "lg" : "md"}
+        label={`${label}: ${current} of ${target} ${unit}`}
+      />
+
+      {/* Endpoint scale. A bare bar tells you nothing about how far along the
+          day is; the percentage and the remainder do. */}
+      <div className="flex items-center justify-between gap-2 text-[0.6875rem] font-bold tabular-nums">
+        <span className={isOver ? "text-accent-700" : "text-ink-subtle"}>
+          {percent}%
+        </span>
+        <span className="min-w-0 truncate text-ink-subtle">
+          {isOver
+            ? `${Math.round(current - target).toLocaleString()}${unitSuffix} over`
+            : `${left.toLocaleString()}${unitSuffix} left`}
+        </span>
       </div>
     </div>
   );

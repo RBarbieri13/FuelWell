@@ -10,6 +10,7 @@
 import Link from "next/link";
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import {
+  AlertCircle,
   ArrowRight,
   BarChart3,
   Calculator,
@@ -31,6 +32,7 @@ import {
   Send,
   ShoppingBasket,
   Sparkles,
+  SquarePen,
   Table2,
   User,
   X,
@@ -271,6 +273,7 @@ export default function CoachPage() {
   const actionDrawer = latestActionDrawer(items);
   const showActionDrawer = !!actionDrawer && dismissedDrawerId !== actionDrawer.id;
   const isActionDrawerCollapsed = !!actionDrawer && collapsedDrawerId === actionDrawer.id;
+  const attachDisabled = busy || attachments.length >= MAX_ATTACHMENTS;
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -304,44 +307,55 @@ export default function CoachPage() {
 
   return (
     <div className="fw-coach-page flex h-full flex-col">
-      <div className="fw-page-header px-4 py-4 md:px-8">
-        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-[1.25rem] bg-primary-600 text-white shadow-[0_16px_34px_rgba(21,145,108,0.22)]">
-              <Sparkles className="h-5 w-5" />
+      <div className="fw-page-header px-4 py-3 md:px-8">
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[1.25rem] bg-gradient-to-b from-primary-500 to-teal-600 text-white shadow-glow">
+              <Sparkles className="h-5 w-5" strokeWidth={2} />
             </div>
-            <div>
+            <div className="min-w-0">
               <h1 className="fw-heading text-xl">Coach</h1>
-              <p className="text-xs font-bold text-muted-foreground">
-                {busy ? "Working..." : "Logs meals, plans workouts, answers — right here"}
+              {/* The subtitle doubles as the live status line, so the busy
+                  state gets a pulsing dot rather than only a word change. */}
+              <p
+                className="flex items-center gap-1.5 truncate text-xs font-bold text-ink-muted"
+                aria-live="polite"
+              >
+                {busy && (
+                  <span
+                    aria-hidden="true"
+                    className="h-1.5 w-1.5 shrink-0 animate-pulse rounded-full bg-primary-500 motion-reduce:animate-none"
+                  />
+                )}
+                <span className="truncate">
+                  {busy ? "Working..." : "Logs meals, plans workouts, answers — right here"}
+                </span>
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-4">
-            <Link href="/app/coach/attachments" className="hidden min-h-11 items-center text-sm font-black text-primary-700 sm:inline-flex">
-              Attachments
-            </Link>
-            <Link href="/app/coach/menu-review" className="hidden min-h-11 items-center text-sm font-black text-primary-700 sm:inline-flex">
-              Menu review
-            </Link>
+          <div className="flex shrink-0 items-center gap-1 sm:gap-2">
+            <HeaderLink href="/app/coach/attachments">Attachments</HeaderLink>
+            <HeaderLink href="/app/coach/menu-review">Menu review</HeaderLink>
+            <HeaderLink href="/app/dashboard">Dashboard</HeaderLink>
             <button
               type="button"
               onClick={newConversation}
-              className="min-h-11 whitespace-nowrap rounded-full bg-white/70 px-3 py-2 text-xs font-black text-muted-foreground shadow-sm transition hover:text-primary-700 md:min-h-0"
+              className="fw-press inline-flex min-h-11 items-center gap-1.5 whitespace-nowrap rounded-full bg-surface/80 px-3.5 py-2 text-xs font-black text-ink-muted shadow-e1 ring-1 ring-inset ring-hairline hover:bg-primary-50 hover:text-primary-800 hover:ring-primary-200 active:bg-primary-100 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600"
             >
+              <SquarePen className="h-3.5 w-3.5 shrink-0" strokeWidth={2} />
               New chat
             </button>
-            <Link href="/app/dashboard" className="hidden min-h-11 items-center text-sm font-black text-primary-700 sm:inline-flex">
-              Dashboard
-            </Link>
           </div>
         </div>
       </div>
 
+      {/* The bottom fade is always on, and the bottom padding is always at
+          least the 2.5rem the mask consumes — so the fade lands on empty
+          padding and can never slice the last row of text mid-glyph. */}
       <main
         className={cn(
-          "min-w-0 flex-1 overflow-x-hidden overflow-y-auto px-3 pt-5 sm:px-4 sm:pt-6 md:px-8",
-          items.length === 0 ? "fw-chat-bottom-fade pb-12" : "pb-5 sm:pb-6"
+          "fw-chat-bottom-fade min-w-0 flex-1 overflow-x-hidden overflow-y-auto px-3 pt-5 sm:px-4 sm:pt-6 md:px-8",
+          items.length === 0 ? "pb-14" : "pb-11 sm:pb-12"
         )}
       >
         <div className="mx-auto w-full max-w-5xl min-w-0">
@@ -362,13 +376,13 @@ export default function CoachPage() {
                   workouts planned, groceries updated, numbers explained.
                 </p>
                 <div className="mt-4 flex flex-wrap gap-2 md:mt-5">
-                  <span className="rounded-full border border-white/14 bg-white/10 px-3 py-1.5 text-xs font-black tabular-nums text-white">
+                  <span className="inline-flex items-baseline rounded-full bg-white/10 px-3 py-1.5 text-xs font-black tabular-nums text-white ring-1 ring-inset ring-white/15">
                     {remaining(totals.calories, targets.calories).toLocaleString()}
-                    <span className="ml-1 font-bold text-white/60">kcal left</span>
+                    <span className="ml-1 font-bold text-white/70">kcal left</span>
                   </span>
-                  <span className="rounded-full border border-white/14 bg-white/10 px-3 py-1.5 text-xs font-black tabular-nums text-white">
+                  <span className="inline-flex items-baseline rounded-full bg-white/10 px-3 py-1.5 text-xs font-black tabular-nums text-white ring-1 ring-inset ring-white/15">
                     {remaining(totals.protein, targets.protein)}g
-                    <span className="ml-1 font-bold text-white/60">protein left</span>
+                    <span className="ml-1 font-bold text-white/70">protein left</span>
                   </span>
                 </div>
                 <Button
@@ -376,20 +390,23 @@ export default function CoachPage() {
                   className="mt-6 rounded-full px-6 py-3 text-sm"
                   onClick={() => void sendMessage("What should I do right now?")}
                 >
-                  <Sparkles className="h-4 w-4" />
+                  <Sparkles className="h-4 w-4" strokeWidth={2} />
                   Ask for today&apos;s plan
                 </Button>
               </section>
-              <section className="rounded-[2rem] border border-primary-100/80 bg-white/90 p-5 shadow-[0_22px_60px_rgba(22,48,42,0.10)]">
+              <section className="rounded-[2rem] bg-surface/92 p-5 shadow-e3 ring-1 ring-inset ring-hairline">
                 <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="text-xs font-black uppercase tracking-[0.16em] text-primary-600">
+                  <div className="min-w-0">
+                    <p className="text-[0.6875rem] font-black uppercase tracking-[0.16em] text-primary-700">
                       Try asking
                     </p>
-                    <h2 className="mt-2 text-xl font-black text-[#16302a] md:text-2xl">Start with a useful question</h2>
+                    <h2 className="mt-1.5 text-xl font-black text-ink md:text-2xl">Start with a useful question</h2>
                   </div>
-                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[1rem] bg-primary-100 text-primary-700">
-                    <Sparkles className="h-5 w-5" />
+                  <span
+                    aria-hidden="true"
+                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[1rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100"
+                  >
+                    <Sparkles className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
                   </span>
                 </div>
                 <div className="mt-4 grid gap-2">
@@ -397,10 +414,13 @@ export default function CoachPage() {
                     <button
                       key={prompt}
                       onClick={() => void sendMessage(prompt)}
-                      className="group flex min-h-12 items-center justify-between gap-3 rounded-[1.2rem] border border-primary-100 bg-[#f7faf8] px-4 py-3 text-left text-sm font-black text-muted-foreground transition hover:border-primary-200 hover:bg-primary-50"
+                      className="fw-press group flex min-h-12 items-center justify-between gap-3 rounded-[1.2rem] bg-surface-subtle px-4 py-3 text-left text-sm font-bold text-ink-muted ring-1 ring-inset ring-hairline hover:bg-primary-50 hover:text-primary-800 hover:ring-primary-200 active:bg-primary-100 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600"
                     >
-                      <span>{prompt}</span>
-                      <ArrowRight className="h-4 w-4 shrink-0 text-primary-500 transition group-hover:translate-x-0.5" />
+                      <span className="min-w-0">{prompt}</span>
+                      <ArrowRight
+                        className="h-4 w-4 shrink-0 text-primary-500 transition-transform duration-200 ease-out-soft group-hover:translate-x-0.5"
+                        strokeWidth={2}
+                      />
                     </button>
                   ))}
                 </div>
@@ -410,21 +430,27 @@ export default function CoachPage() {
               type="button"
               onClick={() => setShowTour((value) => !value)}
               aria-expanded={showTour}
-              className="flex min-h-12 w-full items-center justify-between gap-3 rounded-[1.35rem] border border-primary-100 bg-white/80 px-4 py-3 text-left text-sm font-black text-primary-700 shadow-sm transition hover:bg-primary-50"
+              className="fw-press flex min-h-12 w-full items-center justify-between gap-3 rounded-[1.35rem] bg-surface/85 px-4 py-3 text-left text-sm font-black text-primary-700 shadow-e1 ring-1 ring-inset ring-hairline hover:bg-primary-50 hover:ring-primary-200 active:bg-primary-100 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600"
             >
-              <span>How Coach works and what it can do</span>
-              <ChevronDown className={cn("h-4 w-4 shrink-0 transition", showTour && "rotate-180")} />
+              <span className="min-w-0">How Coach works and what it can do</span>
+              <ChevronDown
+                className={cn(
+                  "h-4 w-4 shrink-0 transition-transform duration-200 ease-out-soft",
+                  showTour && "rotate-180"
+                )}
+                strokeWidth={2}
+              />
             </button>
             {showTour && (
-            <div className="grid gap-4 xl:grid-cols-2">
-              <section className="rounded-[2rem] border border-primary-100/80 bg-white/90 p-5 shadow-[0_22px_60px_rgba(22,48,42,0.10)] md:p-6">
-                <p className="text-xs font-black uppercase tracking-[0.16em] text-primary-600">
+            <div className="grid gap-4 duration-300 ease-out-soft animate-in fade-in slide-in-from-top-2 xl:grid-cols-2">
+              <section className="rounded-[2rem] bg-surface/92 p-5 shadow-e3 ring-1 ring-inset ring-hairline md:p-6">
+                <p className="text-[0.6875rem] font-black uppercase tracking-[0.16em] text-primary-700">
                   How a chat plays out
                 </p>
-                <h2 className="mt-2 text-2xl font-black text-[#16302a]">
+                <h2 className="mt-1.5 text-xl font-black text-ink md:text-2xl">
                   From question to logged in three moves
                 </h2>
-                <div className="mt-4 space-y-3">
+                <ol className="mt-4 space-y-2">
                   {[
                     {
                       title: "You ask",
@@ -439,25 +465,31 @@ export default function CoachPage() {
                       body: "Confirm and the meal is logged, groceries update, and the dashboard reflects it instantly.",
                     },
                   ].map((step, index) => (
-                    <div key={step.title} className="flex gap-3 rounded-[1.2rem] bg-[#f7faf8] p-3.5">
-                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-600 text-sm font-black text-white">
+                    <li
+                      key={step.title}
+                      className="flex gap-3 rounded-[1.2rem] bg-surface-subtle p-3.5 ring-1 ring-inset ring-hairline"
+                    >
+                      <span
+                        aria-hidden="true"
+                        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-600 text-sm font-black tabular-nums text-white shadow-e1"
+                      >
                         {index + 1}
                       </span>
                       <div className="min-w-0">
-                        <p className="text-sm font-black text-[#16302a]">{step.title}</p>
-                        <p className="mt-0.5 text-sm font-semibold leading-6 text-[#6f8981]">
+                        <p className="text-sm font-black text-ink">{step.title}</p>
+                        <p className="mt-0.5 text-sm font-semibold leading-6 text-ink-muted">
                           {step.body}
                         </p>
                       </div>
-                    </div>
+                    </li>
                   ))}
-                </div>
+                </ol>
               </section>
-              <section className="rounded-[2rem] border border-primary-100/80 bg-white/90 p-5 shadow-[0_22px_60px_rgba(22,48,42,0.10)] md:p-6">
-                <p className="text-xs font-black uppercase tracking-[0.16em] text-primary-600">
+              <section className="rounded-[2rem] bg-surface/92 p-5 shadow-e3 ring-1 ring-inset ring-hairline md:p-6">
+                <p className="text-[0.6875rem] font-black uppercase tracking-[0.16em] text-primary-700">
                   What it can do
                 </p>
-                <h2 className="mt-2 text-2xl font-black text-[#16302a]">
+                <h2 className="mt-1.5 text-xl font-black text-ink md:text-2xl">
                   A coach with hands, not just answers
                 </h2>
                 <div className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -483,12 +515,18 @@ export default function CoachPage() {
                       body: "Honest readouts of targets, trends, and trade-offs.",
                     },
                   ].map((capability) => (
-                    <div key={capability.title} className="rounded-[1.2rem] border border-primary-100 bg-[#f7faf8] p-4">
-                      <span className="flex h-10 w-10 items-center justify-center rounded-[0.9rem] bg-primary-100 text-primary-700">
-                        <capability.icon className="h-5 w-5" />
+                    <div
+                      key={capability.title}
+                      className="rounded-[1.2rem] bg-surface-subtle p-4 ring-1 ring-inset ring-hairline"
+                    >
+                      <span
+                        aria-hidden="true"
+                        className="flex h-10 w-10 items-center justify-center rounded-[0.9rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100"
+                      >
+                        <capability.icon className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
                       </span>
-                      <p className="mt-3 text-sm font-black text-[#16302a]">{capability.title}</p>
-                      <p className="mt-1 text-sm font-semibold leading-6 text-[#6f8981]">
+                      <p className="mt-3 text-sm font-black text-ink">{capability.title}</p>
+                      <p className="mt-1 text-sm font-semibold leading-6 text-ink-muted">
                         {capability.body}
                       </p>
                     </div>
@@ -506,8 +544,15 @@ export default function CoachPage() {
                   type="button"
                   onClick={() => void loadEarlier()}
                   disabled={loadingEarlier}
-                  className="min-h-10 rounded-full bg-white/80 px-4 py-2 text-xs font-black text-primary-700 shadow-sm transition hover:bg-primary-50 disabled:opacity-60"
+                  aria-busy={loadingEarlier || undefined}
+                  className="fw-press inline-flex min-h-11 items-center gap-2 rounded-full bg-surface/85 px-4 py-2 text-xs font-black text-primary-700 shadow-e1 ring-1 ring-inset ring-hairline hover:bg-primary-50 hover:ring-primary-200 active:bg-primary-100 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 disabled:pointer-events-none disabled:opacity-60"
                 >
+                  {loadingEarlier && (
+                    <span
+                      aria-hidden="true"
+                      className="h-3.5 w-3.5 shrink-0 animate-spin rounded-full border-2 border-primary-200 border-t-primary-600 motion-reduce:animate-none"
+                    />
+                  )}
                   {loadingEarlier ? "Loading earlier messages…" : "Show earlier messages"}
                 </button>
               </div>
@@ -531,7 +576,10 @@ export default function CoachPage() {
               >
                 {item.role === "assistant" && <CoachAvatar />}
                 {item.role === "user" ? (
-                  <div className="max-w-full min-w-0 break-words rounded-3xl rounded-br-md bg-primary-700 px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm shadow-primary-900/15 [overflow-wrap:anywhere] sm:max-w-[85%] sm:px-4">
+                  // Mirror of the assistant bubble: same radius, tail on the
+                  // opposite corner, one elevation step so the two sides read
+                  // as the same object in two voices.
+                  <div className="max-w-full min-w-0 break-words rounded-[1.5rem] rounded-br-md bg-gradient-to-b from-primary-600 to-primary-700 px-3 py-3 text-sm font-semibold leading-6 text-white shadow-e2 ring-1 ring-inset ring-white/10 [overflow-wrap:anywhere] sm:max-w-[85%] sm:px-4">
                     {item.attachments && item.attachments.length > 0 && (
                       <AttachmentSummary attachments={item.attachments} sent />
                     )}
@@ -566,9 +614,9 @@ export default function CoachPage() {
                       <button
                         type="button"
                         onClick={retryLastTurn}
-                        className="inline-flex min-h-10 items-center gap-2 rounded-full bg-accent-100 px-4 py-2 text-xs font-black text-accent-700 transition hover:bg-accent-200"
+                        className="fw-press inline-flex min-h-11 items-center gap-2 rounded-full bg-accent-50 px-4 py-2 text-xs font-black text-accent-700 ring-1 ring-inset ring-accent-200 hover:bg-accent-100 active:bg-accent-200 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-accent-600"
                       >
-                        <RotateCcw className="h-3.5 w-3.5" />
+                        <RotateCcw className="h-3.5 w-3.5 shrink-0" strokeWidth={2} />
                         Try again
                       </button>
                     )}
@@ -603,7 +651,7 @@ export default function CoachPage() {
         </div>
       </main>
 
-      <div className="border-t border-primary-100/80 bg-white/88 px-4 py-3 backdrop-blur-xl md:px-8">
+      <div className="border-t border-hairline bg-surface/88 px-4 py-3 backdrop-blur-xl md:px-8">
         <form onSubmit={handleSubmit} className="mx-auto max-w-5xl space-y-2">
           {attachments.length > 0 && (
             <AttachmentTray
@@ -612,22 +660,34 @@ export default function CoachPage() {
             />
           )}
           {uploadError && (
-            <p className="rounded-full bg-accent-100 px-4 py-2 text-xs font-black text-accent-700">
-              {uploadError}
+            <p
+              role="alert"
+              className="flex items-start gap-2 rounded-[1.1rem] bg-accent-50 px-3.5 py-2 text-xs font-black leading-5 text-accent-700 ring-1 ring-inset ring-accent-200"
+            >
+              <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" strokeWidth={2} />
+              <span className="min-w-0">{uploadError}</span>
             </p>
           )}
-          <div className="flex min-w-0 items-center gap-2">
+          {/* The whole rail lifts on focus-within, so typing feels like the
+              composer comes forward rather than one input glowing in place. */}
+          <div className="flex min-w-0 items-center gap-2 rounded-[1.6rem] bg-surface/70 p-1 shadow-e1 ring-1 ring-inset ring-hairline transition-shadow duration-200 ease-out-soft focus-within:shadow-e3 focus-within:ring-primary-300">
             <label
-              className="flex h-12 w-12 shrink-0 cursor-pointer items-center justify-center rounded-[1.35rem] border border-primary-100 bg-primary-50/70 text-primary-700 transition hover:bg-primary-100"
+              className={cn(
+                "fw-press flex h-12 w-12 shrink-0 items-center justify-center rounded-[1.2rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100",
+                attachDisabled
+                  ? "cursor-not-allowed opacity-45"
+                  : "cursor-pointer hover:bg-primary-100 active:bg-primary-200",
+                "focus-within:outline-none focus-within:ring-[3px] focus-within:ring-primary-600"
+              )}
               title="Attach screenshot, menu, photo, PDF, email, or text file"
             >
-              <Paperclip className="h-4 w-4" />
+              <Paperclip className="h-4 w-4" strokeWidth={2} />
               <input
                 type="file"
                 multiple
                 accept="image/png,image/jpeg,image/webp,image/gif,application/pdf,text/plain,text/markdown,text/csv,text/html,application/json,message/rfc822,.png,.jpg,.jpeg,.webp,.gif,.pdf,.eml,.md,.csv,.json,.txt,.html"
                 className="sr-only"
-                disabled={busy || attachments.length >= MAX_ATTACHMENTS}
+                disabled={attachDisabled}
                 onChange={(event) => {
                   void handleAttachmentChange(event.target.files);
                   event.currentTarget.value = "";
@@ -643,12 +703,18 @@ export default function CoachPage() {
                 if (actionDrawer) setCollapsedDrawerId(actionDrawer.id);
               }}
               placeholder="Ask, or attach a photo…"
-              className="min-h-12 min-w-0 flex-1 rounded-[1.35rem] border border-primary-100 bg-primary-50/70 px-3 py-3 text-sm font-semibold text-[#16302a] placeholder:text-[#91a7a0] focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 sm:px-4"
+              className="min-h-12 min-w-0 flex-1 rounded-[1.2rem] bg-transparent px-3 py-3 text-sm font-semibold text-ink placeholder:font-medium placeholder:text-ink-subtle focus:outline-none disabled:cursor-not-allowed disabled:opacity-60 sm:px-4"
               disabled={busy}
               aria-label="Message Coach"
             />
-            <Button type="submit" disabled={(!input.trim() && attachments.length === 0) || busy} aria-label="Send" className="h-12 w-12 shrink-0 px-0">
-              <Send className="h-4 w-4" />
+            <Button
+              type="submit"
+              disabled={(!input.trim() && attachments.length === 0) || busy}
+              loading={busy}
+              aria-label="Send"
+              className="h-12 w-12 shrink-0 rounded-[1.2rem] px-0"
+            >
+              {!busy && <Send className="h-4 w-4" strokeWidth={2} />}
             </Button>
           </div>
         </form>
@@ -696,10 +762,10 @@ function CoachActionDrawer({
         <button
           type="button"
           onClick={onExpand}
-          className="flex min-h-28 w-11 flex-col items-center justify-center gap-2 rounded-l-[1.2rem] border border-r-0 border-primary-100 bg-white/95 text-primary-700 shadow-[0_18px_42px_rgba(22,48,42,0.16)] backdrop-blur transition hover:bg-primary-50"
+          className="fw-press flex min-h-28 w-11 flex-col items-center justify-center gap-2 rounded-l-[1.2rem] bg-surface/95 text-primary-700 shadow-e3 ring-1 ring-inset ring-hairline backdrop-blur hover:bg-primary-50 active:bg-primary-100 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600"
           aria-label="Expand coach action panel"
         >
-          <ChevronLeft className="h-4 w-4" />
+          <ChevronLeft className="h-4 w-4" strokeWidth={2} />
           <span className="rotate-180 text-[10px] font-black uppercase tracking-[0.14em] [writing-mode:vertical-rl]">
             Action
           </span>
@@ -710,21 +776,24 @@ function CoachActionDrawer({
 
   return (
     <aside className="pointer-events-none fixed inset-x-3 bottom-[5.75rem] z-40 max-h-[72vh] xl:inset-x-auto xl:bottom-[6.25rem] xl:right-4 xl:top-[6.5rem] xl:w-[min(28rem,calc(100vw-2rem))]">
-      <div className="pointer-events-auto animate-in fade-in slide-in-from-bottom-5 duration-300 xl:h-full xl:slide-in-from-right-8">
-        <div className="flex max-h-[72vh] flex-col rounded-[2rem] border border-primary-100/90 bg-white/95 p-4 shadow-[0_28px_80px_rgba(22,48,42,0.20)] backdrop-blur xl:h-full xl:max-h-none xl:rounded-l-[2rem] xl:rounded-r-[1.25rem]">
+      <div className="pointer-events-auto duration-300 ease-out-soft animate-in fade-in slide-in-from-bottom-5 xl:h-full xl:slide-in-from-right-8">
+        <div className="flex max-h-[72vh] flex-col rounded-[2rem] bg-surface/95 p-4 shadow-e4 ring-1 ring-inset ring-hairline-strong backdrop-blur xl:h-full xl:max-h-none xl:rounded-l-[2rem] xl:rounded-r-[1.25rem]">
           <div className="flex items-start justify-between gap-3">
-            <div className="flex items-start gap-3">
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[1.05rem] bg-primary-100 text-primary-700">
-                <CheckCircle2 className="h-5 w-5" />
+            <div className="flex min-w-0 items-start gap-3">
+              <span
+                aria-hidden="true"
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[1.05rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100"
+              >
+                <CheckCircle2 className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
               </span>
-              <div>
-                <p className="text-xs font-black uppercase tracking-[0.16em] text-primary-600">
+              <div className="min-w-0">
+                <p className="text-[0.6875rem] font-black uppercase tracking-[0.16em] text-primary-700">
                   Coach action
                 </p>
-                <h2 className="mt-1 text-lg font-black leading-tight text-[#16302a]">
+                <h2 className="mt-0.5 text-lg font-black leading-tight text-ink">
                   {meta.title}
                 </h2>
-                <p className="mt-1 text-xs font-semibold leading-5 text-muted-foreground">
+                <p className="mt-1 text-xs font-semibold leading-5 text-ink-muted">
                   {meta.detail}
                 </p>
               </div>
@@ -733,23 +802,23 @@ function CoachActionDrawer({
               <button
                 type="button"
                 onClick={onCollapse}
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-[#f4f8f6] text-muted-foreground transition hover:bg-primary-100 hover:text-primary-700"
+                className="fw-press flex h-11 w-11 items-center justify-center rounded-full bg-surface-muted text-ink-muted hover:bg-primary-100 hover:text-primary-800 active:bg-primary-200 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600"
                 aria-label="Collapse coach action panel"
               >
-                <ChevronRight className="h-4 w-4" />
+                <ChevronRight className="h-4 w-4" strokeWidth={2} />
               </button>
               <button
                 type="button"
                 onClick={onClose}
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-[#f4f8f6] text-muted-foreground transition hover:bg-accent-100 hover:text-accent-700"
+                className="fw-press flex h-11 w-11 items-center justify-center rounded-full bg-surface-muted text-ink-muted hover:bg-accent-100 hover:text-accent-700 active:bg-accent-200 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-accent-600"
                 aria-label="Close coach action panel"
               >
-                <X className="h-4 w-4" />
+                <X className="h-4 w-4" strokeWidth={2} />
               </button>
             </div>
           </div>
 
-          <div className="mt-4 min-h-0 flex-1 rounded-[1.45rem] border border-primary-100 bg-primary-50/55 p-3">
+          <div className="mt-4 min-h-0 flex-1 rounded-[1.45rem] bg-primary-50/55 p-3 ring-1 ring-inset ring-primary-100">
             {drawer.artifact ? (
               <div className="fw-artifact-scope h-full overflow-y-auto pr-1">
                 <ArtifactRenderer artifact={drawer.artifact} onAction={onAction} />
@@ -767,15 +836,15 @@ function CoachActionDrawer({
           <div className="mt-4 grid gap-2">
             <Link
               href={meta.route}
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-primary-600 px-4 py-2 text-sm font-black text-white shadow-[0_16px_34px_rgba(21,145,108,0.22)] transition hover:bg-primary-700"
+              className="fw-press inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-gradient-to-b from-primary-500 to-teal-600 px-4 py-2 text-sm font-black text-white shadow-glow hover:from-primary-400 hover:to-teal-500 active:from-primary-700 active:to-primary-800 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2"
             >
               {meta.routeLabel}
-              <ExternalLink className="h-4 w-4" />
+              <ExternalLink className="h-4 w-4 shrink-0" strokeWidth={2} />
             </Link>
             <button
               type="button"
               onClick={() => onAction({ kind: "send_message", text: meta.followup })}
-              className="inline-flex min-h-10 items-center justify-center rounded-full bg-white px-4 py-2 text-xs font-black text-primary-800 shadow-sm transition hover:bg-primary-50"
+              className="fw-press inline-flex min-h-11 items-center justify-center rounded-full bg-surface px-4 py-2 text-xs font-black text-primary-800 shadow-e1 ring-1 ring-inset ring-hairline hover:bg-primary-50 hover:ring-primary-200 active:bg-primary-100 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600"
             >
               Ask Coach to review this
             </button>
@@ -864,18 +933,36 @@ function actionDrawerMeta(artifact: ArtifactSpec) {
   }
 }
 
+/** Header nav item. Hidden on small screens, where the surface is chat-only. */
+function HeaderLink({ href, children }: { href: string; children: React.ReactNode }) {
+  return (
+    <Link
+      href={href}
+      className="fw-press hidden min-h-11 items-center rounded-full px-3 text-sm font-black text-primary-700 hover:bg-primary-50 hover:text-primary-800 active:bg-primary-100 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 sm:inline-flex"
+    >
+      {children}
+    </Link>
+  );
+}
+
 function CoachAvatar() {
   return (
-    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-2xl bg-primary-600 text-white">
-      <Sparkles className="h-4 w-4" />
+    <div
+      aria-hidden="true"
+      className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-[0.85rem] bg-gradient-to-b from-primary-500 to-teal-600 text-white shadow-e1"
+    >
+      <Sparkles className="h-4 w-4" strokeWidth={2} />
     </div>
   );
 }
 
 function UserAvatar() {
   return (
-    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-primary-700">
-      <User className="h-4 w-4" />
+    <div
+      aria-hidden="true"
+      className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-[0.85rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100"
+    >
+      <User className="h-4 w-4" strokeWidth={2} />
     </div>
   );
 }
@@ -888,26 +975,28 @@ function AttachmentTray({
   onRemove: (id: string) => void;
 }) {
   return (
-    <div className="flex gap-2 overflow-x-auto rounded-[1.25rem] border border-primary-100 bg-primary-50/70 p-2">
+    // min-w on the chips is 11rem so two fit inside a 320px viewport before the
+    // rail starts scrolling, and the row never forces the composer wider.
+    <div className="fw-rich-scroll flex gap-2 rounded-[1.25rem] bg-primary-50/70 p-2 ring-1 ring-inset ring-primary-100">
       {attachments.map((attachment) => (
         <div
           key={attachment.id}
-          className="flex min-w-[13rem] items-center gap-3 rounded-[1rem] bg-white px-3 py-2 shadow-sm"
+          className="flex min-w-[11rem] max-w-[15rem] items-center gap-2.5 rounded-[1rem] bg-surface px-2.5 py-2 shadow-e1"
         >
           <AttachmentIcon attachment={attachment} />
           <div className="min-w-0 flex-1">
-            <p className="truncate text-xs font-black text-[#16302a]">{attachment.name}</p>
-            <p className="text-[11px] font-bold text-muted-foreground">
+            <p className="truncate text-xs font-black text-ink">{attachment.name}</p>
+            <p className="truncate text-[11px] font-bold tabular-nums text-ink-subtle">
               {attachment.kind} · {formatAttachmentSize(attachment.size)}
             </p>
           </div>
           <button
             type="button"
             onClick={() => onRemove(attachment.id)}
-            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#f4f8f6] text-muted-foreground transition hover:bg-accent-100 hover:text-accent-700"
+            className="fw-press flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-ink-subtle hover:bg-accent-50 hover:text-accent-700 active:bg-accent-100 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-accent-600"
             aria-label={`Remove ${attachment.name}`}
           >
-            <X className="h-3.5 w-3.5" />
+            <X className="h-4 w-4" strokeWidth={2} />
           </button>
         </div>
       ))}
@@ -923,18 +1012,26 @@ function AttachmentSummary({
   sent?: boolean;
 }) {
   return (
-    <div className={cn("mb-2 grid gap-1.5", sent ? "text-white" : "text-[#16302a]")}>
+    <div className={cn("mb-2 grid gap-1.5", sent ? "text-white" : "text-ink")}>
       {attachments.map((attachment) => (
         <div
           key={attachment.id}
           className={cn(
-            "inline-flex max-w-full items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black",
-            sent ? "bg-white/14 text-white" : "bg-primary-50 text-primary-800"
+            "inline-flex max-w-full items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black ring-1 ring-inset",
+            sent
+              ? "bg-white/14 text-white ring-white/20"
+              : "bg-primary-50 text-primary-800 ring-primary-100"
           )}
         >
-          {attachment.kind === "image" ? <ImageIcon className="h-3.5 w-3.5" /> : <FileText className="h-3.5 w-3.5" />}
+          {attachment.kind === "image" ? (
+            <ImageIcon className="h-3.5 w-3.5 shrink-0" strokeWidth={2} />
+          ) : (
+            <FileText className="h-3.5 w-3.5 shrink-0" strokeWidth={2} />
+          )}
           <span className="truncate">{attachment.name}</span>
-          <span className="opacity-70">{formatAttachmentSize(attachment.size)}</span>
+          <span className="shrink-0 tabular-nums opacity-70">
+            {formatAttachmentSize(attachment.size)}
+          </span>
         </div>
       ))}
     </div>
@@ -948,36 +1045,39 @@ function AttachmentIcon({ attachment }: { attachment: CoachAttachment }) {
       <img
         src={`data:${attachment.mediaType};base64,${attachment.data}`}
         alt=""
-        className="h-11 w-11 shrink-0 rounded-[0.85rem] object-cover"
+        className="h-11 w-11 shrink-0 rounded-[0.85rem] bg-surface-muted object-cover ring-1 ring-inset ring-hairline"
       />
     );
   }
 
   const Icon = attachment.kind === "image" ? ImageIcon : FileText;
   return (
-    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[0.85rem] bg-primary-100 text-primary-700">
-      <Icon className="h-5 w-5" />
+    <span
+      aria-hidden="true"
+      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[0.85rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100"
+    >
+      <Icon className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
     </span>
   );
 }
 
 function RichTextPreview() {
   const capabilities = [
-    { label: "Tables", detail: "Meal comparisons and macro rows", icon: Table2, tone: "bg-primary-100 text-primary-700" },
-    { label: "Nested lists", detail: "Steps, substeps, and checklists", icon: ListTree, tone: "bg-sky-100 text-sky-700" },
-    { label: "Formulas", detail: "Math rendered inline with KaTeX", icon: Calculator, tone: "bg-lemon-100 text-lemon-700" },
-    { label: "Media", detail: "Images and links inside replies", icon: ImageIcon, tone: "bg-accent-100 text-accent-700" },
+    { label: "Tables", detail: "Meal comparisons and macro rows", icon: Table2, tone: "bg-primary-50 text-primary-700 ring-primary-100" },
+    { label: "Nested lists", detail: "Steps, substeps, and checklists", icon: ListTree, tone: "bg-sky-50 text-sky-700 ring-sky-100" },
+    { label: "Formulas", detail: "Math rendered inline with KaTeX", icon: Calculator, tone: "bg-lemon-50 text-lemon-700 ring-lemon-100" },
+    { label: "Media", detail: "Images and links inside replies", icon: ImageIcon, tone: "bg-accent-50 text-accent-700 ring-accent-100" },
   ];
 
   return (
-    <section className="max-w-full min-w-0 overflow-hidden rounded-[2rem] border border-primary-100/80 bg-white/88 p-4 shadow-[0_18px_48px_rgba(22,48,42,0.07)] sm:p-5">
+    <section className="max-w-full min-w-0 overflow-hidden rounded-[2rem] bg-surface/90 p-4 shadow-e2 ring-1 ring-inset ring-hairline sm:p-5">
       <div className="flex max-w-full min-w-0 flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
         <div className="max-w-full min-w-0 xl:max-w-xl">
-          <p className="text-xs font-black uppercase tracking-[0.16em] text-primary-600">
+          <p className="text-[0.6875rem] font-black uppercase tracking-[0.16em] text-primary-700">
             Rich response support
           </p>
-          <h2 className="mt-2 text-2xl font-black text-[#16302a]">Coach answers can be structured, visual, and math-aware.</h2>
-          <p className="mt-2 text-sm font-semibold leading-6 text-muted-foreground">
+          <h2 className="mt-1.5 text-xl font-black text-ink md:text-2xl">Coach answers can be structured, visual, and math-aware.</h2>
+          <p className="mt-2 text-sm font-semibold leading-6 text-ink-muted">
             The same chat bubble supports headers, nested lists, tables, formulas, links, and inline media when the coach replies.
           </p>
         </div>
@@ -986,12 +1086,15 @@ function RichTextPreview() {
             const Icon = item.icon;
             return (
               <div key={item.label} className="fw-soft-row flex max-w-full min-w-0 gap-3 p-3">
-                <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-[0.95rem] ${item.tone}`}>
-                  <Icon className="h-4 w-4" />
+                <span
+                  aria-hidden="true"
+                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-[0.95rem] ring-1 ring-inset ${item.tone}`}
+                >
+                  <Icon className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
                 </span>
                 <div className="min-w-0">
-                  <p className="text-sm font-black text-[#16302a]">{item.label}</p>
-                  <p className="text-xs font-semibold leading-5 text-muted-foreground">{item.detail}</p>
+                  <p className="text-sm font-black text-ink">{item.label}</p>
+                  <p className="text-xs font-semibold leading-5 text-ink-muted">{item.detail}</p>
                 </div>
               </div>
             );
@@ -1008,16 +1111,19 @@ function RichTextPreview() {
             <StreamingTextBubble text={richPreviewMarkdown} streaming={false} />
           </div>
         </div>
-        <div className="hidden max-w-full min-w-0 rounded-[1.5rem] border border-primary-100 bg-primary-50/80 p-4 xl:block">
-          <div className="flex h-11 w-11 items-center justify-center rounded-[1rem] bg-white text-primary-700 shadow-sm">
-            <Heading2 className="h-5 w-5" />
+        <div className="hidden max-w-full min-w-0 rounded-[1.5rem] bg-primary-50/80 p-4 ring-1 ring-inset ring-primary-100 xl:block">
+          <div
+            aria-hidden="true"
+            className="flex h-11 w-11 items-center justify-center rounded-[1rem] bg-surface text-primary-700 shadow-e1"
+          >
+            <Heading2 className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
           </div>
-          <h3 className="mt-4 text-lg font-black text-[#16302a]">Inline artifacts stay in the conversation.</h3>
-          <p className="mt-2 text-sm font-semibold leading-6 text-muted-foreground">
+          <h3 className="mt-4 text-lg font-black text-ink">Inline artifacts stay in the conversation.</h3>
+          <p className="mt-2 text-sm font-semibold leading-6 text-ink-muted">
             The coach can answer in prose, then attach action cards for logging meals, opening pages, or saving preferences.
           </p>
-          <div className="mt-4 flex items-center gap-2 rounded-full bg-white px-3 py-2 text-xs font-black text-primary-800">
-            <Link2 className="h-3.5 w-3.5" />
+          <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-surface px-3 py-2 text-xs font-black text-primary-800 shadow-e1">
+            <Link2 className="h-3.5 w-3.5 shrink-0" strokeWidth={2} />
             Chat-native actions
           </div>
         </div>

@@ -1,5 +1,9 @@
 "use client";
 
+import { ChevronRight, Search, SearchX } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
+import { SectionHeader } from "@/components/ui/section-header";
 import type { ArtifactCardProps } from "./contract";
 
 type FoodResult = {
@@ -33,6 +37,34 @@ function slotForNow(): string {
 
 const grams = (n: number) => `${Math.round(n * 10) / 10}g`;
 
+/**
+ * One metric cell. Every row uses the same four cells in the same grid, so
+ * the numbers read down as columns instead of as a ragged sentence.
+ */
+function MetricCell({
+  label,
+  value,
+  tone,
+}: {
+  label: string;
+  value: string;
+  tone?: string;
+}) {
+  return (
+    <span className="flex min-w-0 items-baseline justify-between gap-1 rounded-lg bg-surface-muted px-1.5 py-1 ring-1 ring-inset ring-hairline">
+      <span className="shrink-0 text-[0.625rem] font-black uppercase tracking-wide text-ink-subtle">
+        {label}
+      </span>
+      <span
+        className="min-w-0 truncate text-[0.6875rem] font-black tabular-nums text-ink"
+        style={tone ? { color: tone } : undefined}
+      >
+        {value}
+      </span>
+    </span>
+  );
+}
+
 export function FoodSearchResultsCard({
   artifact,
   onAction,
@@ -40,16 +72,28 @@ export function FoodSearchResultsCard({
   const foods = artifact.foods ?? [];
 
   return (
-    <div className="max-w-full rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm">
-      <p className="text-xs font-black uppercase tracking-wider text-neutral-400">
-        Results for &ldquo;{artifact.query}&rdquo;
-      </p>
+    <Card padding="sm" className="min-w-0 max-w-full">
+      <SectionHeader
+        as="h3"
+        icon={Search}
+        eyebrow="Food search"
+        title={`Results for “${artifact.query}”`}
+        description={
+          foods.length > 0
+            ? `${foods.length} match${foods.length === 1 ? "" : "es"} · tap one to log it`
+            : undefined
+        }
+      />
+
       {foods.length === 0 ? (
-        <p className="mt-2 text-sm font-medium text-neutral-500">
-          No foods found. Try another name.
-        </p>
+        <EmptyState
+          size="inline"
+          icon={SearchX}
+          title="No foods found"
+          description="Try another name."
+        />
       ) : (
-        <ul className="mt-2 divide-y divide-neutral-100">
+        <ul className="mt-3 space-y-1">
           {foods.map((food) => {
             const portion = defaultPortion(food);
             return (
@@ -68,27 +112,54 @@ export function FoodSearchResultsCard({
                       },
                     })
                   }
-                  className="flex min-h-10 w-full items-center justify-between gap-3 rounded-xl px-2 py-2.5 text-left transition hover:bg-primary-50/60"
+                  className="fw-press group flex min-h-11 w-full items-center gap-3 rounded-2xl px-2 py-2.5 text-left hover:bg-primary-50/70 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2"
                 >
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-bold text-neutral-900">
-                      {food.name}
-                    </p>
-                    <p className="text-[11px] font-medium text-neutral-400">
-                      {food.categoryLabel} · per 100{food.servingUnit}:{" "}
-                      {Math.round(food.per100.kcal)} kcal, {grams(food.per100.protein)} P,{" "}
-                      {grams(food.per100.carbs)} C, {grams(food.per100.fat)} F
-                    </p>
-                  </div>
-                  <span className="shrink-0 rounded-full bg-neutral-100 px-2.5 py-1 text-[10px] font-black text-neutral-500">
-                    {portion} {food.servingUnit}
+                  <span className="min-w-0 flex-1">
+                    <span className="flex min-w-0 items-center gap-2">
+                      <span className="min-w-0 flex-1 truncate text-sm font-black text-ink">
+                        {food.name}
+                      </span>
+                      <span className="shrink-0 rounded-full bg-primary-50 px-2 py-0.5 text-[0.625rem] font-black tabular-nums text-primary-800 ring-1 ring-inset ring-primary-100">
+                        {portion} {food.servingUnit}
+                      </span>
+                    </span>
+                    <span className="mt-1.5 grid grid-cols-2 gap-1 sm:grid-cols-4">
+                      <MetricCell
+                        label="kcal"
+                        value={`${Math.round(food.per100.kcal)}`}
+                        tone="var(--color-macro-calories)"
+                      />
+                      <MetricCell
+                        label="P"
+                        value={grams(food.per100.protein)}
+                        tone="var(--color-macro-protein)"
+                      />
+                      <MetricCell
+                        label="C"
+                        value={grams(food.per100.carbs)}
+                        tone="var(--color-lemon-700)"
+                      />
+                      <MetricCell
+                        label="F"
+                        value={grams(food.per100.fat)}
+                        tone="var(--color-accent-700)"
+                      />
+                    </span>
+                    <span className="mt-1 block truncate text-[0.6875rem] font-bold text-ink-subtle">
+                      {food.categoryLabel} · per 100{food.servingUnit}
+                    </span>
                   </span>
+                  <ChevronRight
+                    aria-hidden="true"
+                    strokeWidth={2}
+                    className="h-4 w-4 shrink-0 text-ink-faint transition-transform duration-200 ease-out-soft group-hover:translate-x-0.5 group-hover:text-primary-600"
+                  />
                 </button>
               </li>
             );
           })}
         </ul>
       )}
-    </div>
+    </Card>
   );
 }

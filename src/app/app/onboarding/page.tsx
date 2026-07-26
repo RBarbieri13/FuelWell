@@ -71,6 +71,13 @@ interface PersistedProgress {
   data: OnboardingData;
 }
 
+type MacroTargets = {
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+};
+
 interface OnboardingData {
   displayName: string;
   dateOfBirth: string;
@@ -600,19 +607,33 @@ export default function OnboardingPage() {
     { label: "Food rules", icon: Leaf, done: stepReached("diet") && !!data.dietaryPreference },
     { label: "Training", icon: Dumbbell, done: stepReached("workouts") && data.preferredWorkoutTypes.length > 0 },
   ];
+  const completedCount = completionItems.filter((item) => item.done).length;
 
   if (celebration) {
     return (
       <main className="fw-app-surface min-h-full">
         <div className="fw-page-inner flex min-h-full max-w-3xl flex-col items-stretch justify-center gap-5 py-10">
-          <section className="rounded-[2rem] border border-primary-100/80 bg-white/95 p-6 text-center shadow-[0_26px_70px_rgba(22,48,42,0.12)] md:p-10">
-            <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary-600 text-white shadow-[0_16px_36px_rgba(21,145,108,0.35)]">
-              <Check className="h-8 w-8" />
+          <section className="animate-in fade-in slide-in-from-bottom-3 rounded-[2rem] border border-hairline bg-surface/95 p-6 text-center shadow-e4 duration-500 ease-out-soft md:p-10">
+            <span className="relative mx-auto flex h-20 w-20 items-center justify-center">
+              <span
+                aria-hidden="true"
+                className="absolute inset-0 rounded-full bg-primary-100/70 blur-lg"
+              />
+              <span
+                aria-hidden="true"
+                className="absolute inset-1 rounded-full ring-1 ring-inset ring-primary-200"
+              />
+              <span className="animate-in zoom-in relative flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-b from-primary-500 to-teal-600 text-white shadow-glow duration-700 ease-spring">
+                <Check className="h-8 w-8" strokeWidth={2.5} />
+              </span>
             </span>
-            <h1 className="fw-heading mt-5 text-2xl md:text-4xl">
+            <p className="mt-5 text-[0.6875rem] font-black uppercase tracking-[0.18em] text-primary-700">
+              Setup complete
+            </p>
+            <h1 className="fw-heading mt-1.5 text-2xl md:text-4xl">
               {data.displayName ? `You're set, ${data.displayName}.` : "You're all set."}
             </h1>
-            <p className="mx-auto mt-3 max-w-md text-base font-semibold leading-7 text-[#6f8981]">
+            <p className="mx-auto mt-3 max-w-md text-base font-semibold leading-7 text-ink-subtle">
               Your plan is live. The dashboard, coach, and meal suggestions now
               use these targets.
             </p>
@@ -620,15 +641,21 @@ export default function OnboardingPage() {
               <p className="text-sm font-black uppercase tracking-[0.16em] text-primary-700">
                 Daily calorie target
               </p>
-              <p className="mt-2 text-5xl font-black tabular-nums text-[#16302a]">
-                {celebration.macros.calories}
-              </p>
+              <div className="mt-2 flex items-end justify-center gap-2">
+                <p className="text-5xl font-black leading-none tabular-nums text-ink">
+                  {celebration.macros.calories}
+                </p>
+                <p className="pb-1 text-sm font-black uppercase tracking-[0.1em] text-primary-700">
+                  kcal/day
+                </p>
+              </div>
             </div>
             <div className="mt-4 grid gap-3 sm:grid-cols-3">
-              <MacroTile color="protein" label="Protein" value={`${celebration.macros.protein}g`} />
-              <MacroTile color="carbs" label="Carbs" value={`${celebration.macros.carbs}g`} />
-              <MacroTile color="fat" label="Fat" value={`${celebration.macros.fat}g`} />
+              <MacroTile color="protein" label="Protein" value={celebration.macros.protein} />
+              <MacroTile color="carbs" label="Carbs" value={celebration.macros.carbs} />
+              <MacroTile color="fat" label="Fat" value={celebration.macros.fat} />
             </div>
+            <MacroSplitMeter className="mt-4" macros={celebration.macros} />
             <Button
               size="lg"
               className="mt-8 w-full sm:w-auto"
@@ -652,24 +679,30 @@ export default function OnboardingPage() {
               <Logo href="/app/dashboard" size="lg" />
             </div>
             <h1 className="fw-heading text-2xl md:hidden">Setup FuelWell</h1>
-            <p className="mt-1 text-sm font-semibold text-muted-foreground">
+            <p className="mt-1 text-sm font-semibold text-ink-muted">
               Daily decision setup
             </p>
           </div>
-          <button
-            type="button"
+          <Button
+            variant="secondary"
+            size="sm"
             onClick={handleSkip}
-            className="min-h-11 rounded-full border border-primary-100 bg-white/80 px-4 py-2 text-sm font-bold text-[#6f8981] shadow-sm transition hover:border-primary-200 hover:text-[#16302a]"
+            className="shrink-0 rounded-full px-4"
           >
             Skip for now
-          </button>
+          </Button>
         </header>
 
         {isNewUserPreview && (
-          <div className="rounded-[1.5rem] border border-primary-100 bg-white/80 px-4 py-3 text-sm font-bold text-[#6f8981] shadow-sm">
-            New-user preview mode: complete the intake exactly like a first-time
-            user. Answers stay in this browser only and never write to
-            production accounts.
+          <div className="flex gap-3 rounded-[1.5rem] border border-hairline bg-surface/85 px-4 py-3 shadow-e1">
+            <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-[0.8rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100">
+              <ShieldCheck className="h-4 w-4" strokeWidth={2} />
+            </span>
+            <p className="min-w-0 text-sm font-semibold leading-6 text-ink-muted">
+              New-user preview mode: complete the intake exactly like a first-time
+              user. Answers stay in this browser only and never write to
+              production accounts.
+            </p>
           </div>
         )}
 
@@ -691,77 +724,105 @@ export default function OnboardingPage() {
                 </p>
               </div>
 
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
-                {completionItems.map((item) => (
-                  <div
-                    key={item.label}
-                    className="flex items-center gap-3 rounded-[1.25rem] border border-white/10 bg-white/[0.07] p-3"
-                  >
-                    <span
+              <div>
+                <div className="mb-3 flex items-baseline justify-between gap-3">
+                  <p className="text-[0.6875rem] font-black uppercase tracking-[0.16em] text-primary-100/80">
+                    What we have so far
+                  </p>
+                  <p className="text-xs font-black tabular-nums text-white/70">
+                    {completedCount}/{completionItems.length} ready
+                  </p>
+                </div>
+                <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+                  {completionItems.map((item) => (
+                    <div
+                      key={item.label}
                       className={cn(
-                        "flex h-9 w-9 items-center justify-center rounded-full",
-                        item.done ? "bg-primary-300 text-primary-900" : "bg-white/10 text-white/45"
+                        "flex min-h-14 items-center gap-3 rounded-[1.25rem] p-3 ring-1 ring-inset transition-colors duration-300 ease-out-soft",
+                        item.done
+                          ? "bg-white/[0.12] ring-primary-300/40"
+                          : "bg-white/[0.05] ring-white/10"
                       )}
                     >
-                      {item.done ? <Check className="h-5 w-5" /> : <item.icon className="h-4 w-4" />}
-                    </span>
-                    <span className={cn("text-sm font-black", item.done ? "text-white" : "text-white/55")}>
-                      {item.label}
-                    </span>
-                  </div>
-                ))}
+                      <span
+                        className={cn(
+                          "flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-colors duration-300 ease-out-soft",
+                          item.done ? "bg-primary-300 text-primary-950" : "bg-white/10 text-white/50"
+                        )}
+                      >
+                        {item.done ? (
+                          <Check className="h-[1.125rem] w-[1.125rem]" strokeWidth={2.5} />
+                        ) : (
+                          <item.icon className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
+                        )}
+                      </span>
+                      <span
+                        className={cn(
+                          "min-w-0 text-sm font-black",
+                          item.done ? "text-white" : "text-white/60"
+                        )}
+                      >
+                        {item.label}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
 
             <PlanPreview macros={previewMacros} data={data} />
           </aside>
 
-          <section className="order-1 flex flex-col rounded-[2rem] border border-primary-100/80 bg-white/90 shadow-[0_26px_70px_rgba(22,48,42,0.12)] backdrop-blur lg:order-2">
-            <div className="border-b border-primary-100/70 p-4 md:p-7">
+          <section className="order-1 flex flex-col rounded-[2rem] border border-hairline bg-surface/90 shadow-e4 backdrop-blur lg:order-2">
+            <div className="border-b border-hairline p-4 md:p-7">
               <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="fw-icon-chip">
-                    <CurrentStepIcon className="h-6 w-6" />
+                <div className="flex min-w-0 items-center gap-4">
+                  <div className="fw-icon-chip shrink-0 ring-1 ring-inset ring-primary-200/70">
+                    <CurrentStepIcon className="h-[1.375rem] w-[1.375rem]" strokeWidth={2} />
                   </div>
-                  <div>
-                    <p className="text-xs font-black uppercase tracking-[0.18em] text-primary-600">
-                      Step {step + 1} of {totalSteps}
+                  <div className="min-w-0">
+                    <p className="text-xs font-black uppercase tracking-[0.18em] text-primary-700">
+                      Step <span className="tabular-nums">{step + 1}</span> of{" "}
+                      <span className="tabular-nums">{totalSteps}</span>
                     </p>
                     <h2 className="fw-heading text-2xl md:text-3xl">{currentStep.title}</h2>
                   </div>
                 </div>
+                <p className="shrink-0 text-sm font-black tabular-nums text-ink-subtle md:text-right">
+                  {Math.round(progress)}% complete
+                </p>
               </div>
 
-              <div className="mt-4 h-3 overflow-hidden rounded-full bg-[#edf4f1] md:mt-5">
-                <div
-                  className="h-full rounded-full bg-gradient-to-r from-primary-500 to-teal-500 transition-all duration-500 ease-out"
-                  style={{ width: `${progress}%` }}
-                />
-              </div>
+              <StepProgress current={step} total={totalSteps} className="mt-4 md:mt-5" />
 
-              <div className="mt-4 hidden flex-wrap gap-2 md:flex">
-                {STEP_META.map((meta, index) => (
-                  <button
-                    key={meta.short}
-                    type="button"
-                    onClick={() => setStep(index)}
-                    disabled={index > maxStepReached}
-                    className={cn(
-                      "rounded-full px-2.5 py-2 text-[11px] font-black transition",
-                      index === step
-                        ? "bg-primary-600 text-white shadow-[0_12px_26px_rgba(21,145,108,0.22)]"
-                        : index <= maxStepReached
-                          ? "bg-primary-50 text-primary-700"
-                          : "cursor-default bg-[#f3f8f6] text-muted-foreground/70"
-                    )}
-                  >
-                    {meta.short}
-                  </button>
-                ))}
+              <div className="mt-4 hidden flex-wrap gap-1.5 md:flex">
+                {STEP_META.map((meta, index) => {
+                  const isCurrent = index === step;
+                  const isUnlocked = index <= maxStepReached;
+                  return (
+                    <button
+                      key={meta.short}
+                      type="button"
+                      onClick={() => setStep(index)}
+                      disabled={!isUnlocked}
+                      aria-current={isCurrent ? "step" : undefined}
+                      className={cn(
+                        "fw-press rounded-full px-2.5 py-1.5 text-[11px] font-black ring-1 ring-inset",
+                        isCurrent
+                          ? "bg-primary-600 text-white ring-primary-700 shadow-e1"
+                          : isUnlocked
+                            ? "bg-primary-50 text-primary-800 ring-primary-100 hover:bg-primary-100"
+                            : "cursor-default bg-surface-muted text-ink-faint ring-hairline"
+                      )}
+                    >
+                      {meta.short}
+                    </button>
+                  );
+                })}
               </div>
 
               {resumed && (
-                <p className="mt-4 rounded-2xl bg-primary-50 px-4 py-3 text-sm font-bold text-primary-700">
+                <p className="mt-4 rounded-2xl bg-primary-50 px-4 py-3 text-sm font-bold text-primary-800 ring-1 ring-inset ring-primary-100">
                   Picked up where you left off. Your progress is saved on this device.
                 </p>
               )}
@@ -946,7 +1007,7 @@ export default function OnboardingPage() {
                 >
                   <div className="space-y-5">
                     <div>
-                      <p className="mb-3 text-sm font-black uppercase tracking-[0.14em] text-muted-foreground">
+                      <p className="mb-3 text-[0.6875rem] font-black uppercase tracking-[0.16em] text-ink-subtle">
                         Goal aggressiveness
                       </p>
                       <div className="grid gap-3 md:grid-cols-2">
@@ -963,7 +1024,7 @@ export default function OnboardingPage() {
                       </div>
                     </div>
                     <div>
-                      <p className="mb-3 text-sm font-black uppercase tracking-[0.14em] text-muted-foreground">
+                      <p className="mb-3 text-[0.6875rem] font-black uppercase tracking-[0.16em] text-ink-subtle">
                         Diet flexibility
                       </p>
                       <div className="grid gap-3 md:grid-cols-2">
@@ -1048,7 +1109,7 @@ export default function OnboardingPage() {
                   </div>
                   <div className="grid gap-5 xl:grid-cols-2">
                     <div>
-                      <p className="mb-3 text-sm font-black uppercase tracking-[0.14em] text-muted-foreground">
+                      <p className="mb-3 text-[0.6875rem] font-black uppercase tracking-[0.16em] text-ink-subtle">
                         Grocery budget habits
                       </p>
                       <div className="grid gap-3">
@@ -1065,7 +1126,7 @@ export default function OnboardingPage() {
                       </div>
                     </div>
                     <div>
-                      <p className="mb-3 text-sm font-black uppercase tracking-[0.14em] text-muted-foreground">
+                      <p className="mb-3 text-[0.6875rem] font-black uppercase tracking-[0.16em] text-ink-subtle">
                         Cooking habits
                       </p>
                       <div className="grid gap-3">
@@ -1097,7 +1158,7 @@ export default function OnboardingPage() {
                         onClick={() => toggleAllergy(allergy)}
                         icon={allergy === "None" ? Check : WheatOff}
                         title={allergy}
-                        selectedClassName="border-accent-300 bg-accent-50 text-accent-700"
+                        selectedClassName="bg-accent-50 text-accent-700 shadow-e1 ring-2 ring-accent-400"
                       />
                     ))}
                   </div>
@@ -1151,7 +1212,7 @@ export default function OnboardingPage() {
                 >
                   <div className="space-y-5">
                     <div>
-                      <p className="mb-3 text-sm font-black uppercase tracking-[0.14em] text-muted-foreground">
+                      <p className="mb-3 text-[0.6875rem] font-black uppercase tracking-[0.16em] text-ink-subtle">
                         Workout location
                       </p>
                       <div className="grid gap-3 md:grid-cols-2">
@@ -1168,7 +1229,7 @@ export default function OnboardingPage() {
                       </div>
                     </div>
                     <div>
-                      <p className="mb-3 text-sm font-black uppercase tracking-[0.14em] text-muted-foreground">
+                      <p className="mb-3 text-[0.6875rem] font-black uppercase tracking-[0.16em] text-ink-subtle">
                         Check-in preference
                       </p>
                       <div className="grid gap-3 md:grid-cols-3">
@@ -1185,7 +1246,7 @@ export default function OnboardingPage() {
                       </div>
                     </div>
                     <div>
-                      <p className="mb-3 text-sm font-black uppercase tracking-[0.14em] text-muted-foreground">
+                      <p className="mb-3 text-[0.6875rem] font-black uppercase tracking-[0.16em] text-ink-subtle">
                         Coaching style
                       </p>
                       <div className="grid gap-3 md:grid-cols-3">
@@ -1215,18 +1276,19 @@ export default function OnboardingPage() {
                         <p className="text-sm font-black uppercase tracking-[0.16em] text-primary-700">
                           Starting calorie target
                         </p>
-                        <div className="mt-3 flex items-end gap-3">
-                          <p className="text-5xl font-black tabular-nums text-[#16302a]">
+                        <div className="mt-3 flex flex-wrap items-end gap-x-3 gap-y-1">
+                          <p className="text-5xl font-black leading-none tabular-nums text-ink">
                             {previewMacros.calories}
                           </p>
-                          <p className="pb-2 text-base font-black text-muted-foreground">kcal/day</p>
+                          <p className="text-base font-black text-ink-subtle">kcal/day</p>
                         </div>
                       </div>
                       <div className="grid gap-3 md:grid-cols-3">
-                        <MacroTile color="protein" label="Protein" value={`${previewMacros.protein}g`} />
-                        <MacroTile color="carbs" label="Carbs" value={`${previewMacros.carbs}g`} />
-                        <MacroTile color="fat" label="Fat" value={`${previewMacros.fat}g`} />
+                        <MacroTile color="protein" label="Protein" value={previewMacros.protein} />
+                        <MacroTile color="carbs" label="Carbs" value={previewMacros.carbs} />
+                        <MacroTile color="fat" label="Fat" value={previewMacros.fat} />
                       </div>
+                      <MacroSplitMeter macros={previewMacros} />
                       <div className="grid gap-3 md:grid-cols-3">
                         <SummaryPill label="Goal" value={data.goal ? `${data.goal} weight` : "Unset"} />
                         <SummaryPill label="Activity" value={data.activityLevel ? formatActivity(data.activityLevel) : "Unset"} />
@@ -1238,18 +1300,30 @@ export default function OnboardingPage() {
                         <SummaryPill label="Diet" value={formatDiet(data.dietaryPreference)} />
                       </div>
                       {data.allergies.length > 0 && (
-                        <div className="fw-soft-row p-4 text-sm font-bold text-muted-foreground">
+                        <div className="fw-soft-row flex flex-wrap items-center gap-x-2 gap-y-1 p-4 text-sm font-bold text-ink-muted">
+                          <ShieldCheck
+                            className="h-4 w-4 shrink-0 text-accent-600"
+                            strokeWidth={2}
+                            aria-hidden="true"
+                          />
                           Allergies flagged: {data.allergies.join(", ")}
                         </div>
                       )}
                     </div>
                   ) : (
-                    <p className="rounded-[1.25rem] bg-accent-50 px-4 py-3 text-sm font-bold text-accent-700">
-                      Missing required info. Go back and complete the highlighted steps.
-                    </p>
+                    <div className="flex gap-3 rounded-[1.25rem] bg-accent-50 px-4 py-3 ring-1 ring-inset ring-accent-100">
+                      <Lock
+                        className="mt-0.5 h-4 w-4 shrink-0 text-accent-600"
+                        strokeWidth={2}
+                        aria-hidden="true"
+                      />
+                      <p className="min-w-0 text-sm font-bold leading-6 text-accent-700">
+                        Missing required info. Go back and complete the highlighted steps.
+                      </p>
+                    </div>
                   )}
                   {error && (
-                    <p className="mt-4 rounded-[1.25rem] bg-red-50 px-4 py-3 text-sm font-bold text-red-600" role="alert">
+                    <p className="mt-4 rounded-[1.25rem] bg-red-50 px-4 py-3 text-sm font-bold text-red-700 ring-1 ring-inset ring-red-100" role="alert">
                       {error}
                     </p>
                   )}
@@ -1257,7 +1331,7 @@ export default function OnboardingPage() {
               )}
             </div>
 
-            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-primary-100/70 p-4 md:p-7">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-hairline p-4 md:p-7">
               {step > 0 ? (
                 <Button variant="ghost" onClick={back}>
                   <ArrowLeft className="h-4 w-4" />
@@ -1270,7 +1344,7 @@ export default function OnboardingPage() {
               {proceedHint() && (
                 <p
                   aria-live="polite"
-                  className="order-last w-full text-center text-sm font-semibold text-muted-foreground md:order-none md:w-auto md:text-right"
+                  className="order-last w-full text-center text-sm font-semibold text-ink-muted md:order-none md:w-auto md:text-right"
                 >
                   {proceedHint()}
                 </p>
@@ -1346,12 +1420,12 @@ function BirthdaySelector({
   }
 
   const selectClassName =
-    "h-14 w-full rounded-[1rem] border border-border bg-white px-3 text-base font-bold text-[#16302a] outline-none transition focus:border-primary-400 focus:ring-2 focus:ring-primary-100";
+    "h-14 w-full rounded-[1rem] border border-hairline-strong bg-surface px-3 text-base font-bold text-ink outline-none transition duration-200 ease-out-soft hover:border-primary-200 focus:border-primary-400 focus:ring-2 focus:ring-primary-100";
 
   return (
     <div className="grid grid-cols-[1.4fr_0.8fr_1fr] gap-3">
       <label className="block">
-        <span className="mb-1.5 block text-sm font-black text-muted-foreground">Month</span>
+        <span className="mb-1.5 block text-[0.6875rem] font-black uppercase tracking-[0.14em] text-ink-subtle">Month</span>
         <select
           className={selectClassName}
           value={monthIndex === "" ? "" : monthIndex}
@@ -1372,7 +1446,7 @@ function BirthdaySelector({
         </select>
       </label>
       <label className="block">
-        <span className="mb-1.5 block text-sm font-black text-muted-foreground">Day</span>
+        <span className="mb-1.5 block text-[0.6875rem] font-black uppercase tracking-[0.14em] text-ink-subtle">Day</span>
         <select
           className={selectClassName}
           value={day === "" ? "" : day}
@@ -1393,7 +1467,7 @@ function BirthdaySelector({
         </select>
       </label>
       <label className="block">
-        <span className="mb-1.5 block text-sm font-black text-muted-foreground">Year</span>
+        <span className="mb-1.5 block text-[0.6875rem] font-black uppercase tracking-[0.14em] text-ink-subtle">Year</span>
         <select
           className={selectClassName}
           value={year === "" ? "" : year}
@@ -1427,7 +1501,7 @@ function WelcomeStep() {
         <h2 className="fw-heading max-w-2xl text-[1.75rem] leading-tight md:text-4xl">
           A few answers turn FuelWell into your daily decision system.
         </h2>
-        <p className="mt-3 max-w-2xl text-sm font-semibold leading-6 text-[#6f8981] md:mt-4 md:text-base md:leading-7">
+        <p className="mt-3 max-w-2xl text-sm font-semibold leading-6 text-ink-muted md:mt-4 md:text-base md:leading-7">
           Setup takes a few minutes. You will leave with calorie and macro
           targets, food preferences, and enough context for the coach to make
           useful suggestions immediately.
@@ -1440,6 +1514,61 @@ function WelcomeStep() {
       </div>
     </div>
   );
+}
+
+/**
+ * Segmented step meter. One segment per step so the user can see how much of
+ * the intake is left at a glance; the current segment is widened and tinted so
+ * "where am I" survives a glance on a 320px screen.
+ */
+function StepProgress({
+  current,
+  total,
+  className,
+}: {
+  current: number;
+  total: number;
+  className?: string;
+}) {
+  return (
+    <div
+      role="progressbar"
+      aria-valuemin={1}
+      aria-valuemax={total}
+      aria-valuenow={current + 1}
+      aria-valuetext={`Step ${current + 1} of ${total}`}
+      className={cn("flex items-center gap-1", className)}
+    >
+      {Array.from({ length: total }, (_, index) => (
+        <span
+          key={index}
+          aria-hidden="true"
+          className={cn(
+            "min-w-0 flex-1 rounded-full transition-all duration-500 ease-out-soft",
+            index === current
+              ? "h-2.5 bg-gradient-to-r from-primary-500 to-teal-500"
+              : index < current
+                ? "h-1.5 bg-primary-400"
+                : "h-1.5 bg-surface-sunken"
+          )}
+        />
+      ))}
+    </div>
+  );
+}
+
+/** Share of total calories contributed by each macro (4/4/9 kcal per gram). */
+function macroCalorieSplit(macros: MacroTargets) {
+  const proteinKcal = macros.protein * 4;
+  const carbsKcal = macros.carbs * 4;
+  const fatKcal = macros.fat * 9;
+  const total = proteinKcal + carbsKcal + fatKcal;
+  if (total <= 0) return null;
+  return {
+    proteinPct: Math.round((proteinKcal / total) * 100),
+    carbsPct: Math.round((carbsKcal / total) * 100),
+    fatPct: Math.round((fatKcal / total) * 100),
+  };
 }
 
 function StepWrapper({
@@ -1455,7 +1584,7 @@ function StepWrapper({
     <div className="space-y-6">
       <div>
         <h3 className="fw-heading text-2xl md:text-4xl">{title}</h3>
-        <p className="mt-2 max-w-2xl text-base font-semibold leading-7 text-[#6f8981]">
+        <p className="mt-2 max-w-2xl text-base font-semibold leading-7 text-ink-muted">
           {subtitle}
         </p>
       </div>
@@ -1485,33 +1614,47 @@ function OptionTile({
       onClick={onClick}
       aria-pressed={selected}
       className={cn(
-        "group flex min-h-20 w-full min-w-0 items-center gap-3 rounded-[1.35rem] border p-4 text-left transition-all duration-150",
+        "fw-press group relative flex min-h-20 w-full min-w-0 items-center gap-3 rounded-[1.35rem] p-4 text-left ring-inset",
         selected
-          ? selectedClassName || "border-primary-300 bg-primary-50 text-primary-800 shadow-[0_14px_28px_rgba(30,174,132,0.14)]"
-          : "border-border bg-[#f7faf8] text-muted-foreground hover:border-primary-200 hover:bg-white"
+          ? selectedClassName ||
+            "bg-primary-50 text-primary-900 shadow-e1 ring-2 ring-primary-500"
+          : "bg-surface-subtle text-ink-muted ring-1 ring-hairline-strong hover:bg-surface hover:ring-primary-200"
       )}
     >
       <span
         className={cn(
-          "flex h-11 w-11 shrink-0 items-center justify-center rounded-[1rem] transition",
-          selected ? "bg-white text-primary-700" : "bg-white text-muted-foreground group-hover:text-primary-600"
+          "flex h-11 w-11 shrink-0 items-center justify-center rounded-[1rem] ring-1 ring-inset transition-colors duration-200 ease-out-soft",
+          selected
+            ? "bg-surface text-primary-700 ring-primary-100"
+            : "bg-surface text-ink-subtle ring-hairline group-hover:text-primary-600"
         )}
       >
-        <Icon className="h-5 w-5" />
+        <Icon className="h-5 w-5" strokeWidth={2} />
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block text-base font-black text-[#16302a]">{title}</span>
+        <span className="block text-base font-black text-ink">{title}</span>
         {description && (
-          <span className="mt-0.5 block text-sm font-semibold text-muted-foreground">
+          <span
+            className={cn(
+              "mt-0.5 block text-sm font-semibold leading-6",
+              selected ? "text-primary-800" : "text-ink-muted"
+            )}
+          >
             {description}
           </span>
         )}
       </span>
-      {selected && (
-        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary-600 text-white">
-          <Check className="h-4 w-4" />
-        </span>
-      )}
+      <span
+        aria-hidden="true"
+        className={cn(
+          "flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition-all duration-200 ease-spring",
+          selected
+            ? "scale-100 bg-primary-600 text-white opacity-100 shadow-e1"
+            : "scale-75 bg-transparent text-transparent opacity-0 ring-1 ring-inset ring-hairline-strong group-hover:opacity-60"
+        )}
+      >
+        <Check className="h-4 w-4" strokeWidth={3} />
+      </span>
     </button>
   );
 }
@@ -1524,34 +1667,49 @@ function PlanPreview({
   data: OnboardingData;
 }) {
   return (
-    <div className="mt-8 rounded-[1.75rem] border border-white/10 bg-white/[0.08] p-5">
+    <div className="mt-8 rounded-[1.75rem] bg-white/[0.08] p-5 ring-1 ring-inset ring-white/10">
       <div className="flex items-center justify-between gap-3">
-        <div>
-          <p className="text-xs font-black uppercase tracking-[0.16em] text-primary-100">
+        <div className="min-w-0">
+          <p className="text-[0.6875rem] font-black uppercase tracking-[0.16em] text-primary-100">
             Live preview
           </p>
           <h2 className="mt-1 text-xl font-black text-white">
-            {macros ? `${macros.calories} kcal plan` : "Plan unlocks soon"}
+            {macros ? (
+              <>
+                <span className="tabular-nums">{macros.calories}</span> kcal plan
+              </>
+            ) : (
+              "Plan unlocks soon"
+            )}
           </h2>
         </div>
         <div
           className={cn(
-            "flex h-12 w-12 items-center justify-center rounded-[1rem]",
-            macros ? "bg-primary-400 text-primary-950" : "bg-white/10 text-white/60"
+            "flex h-12 w-12 shrink-0 items-center justify-center rounded-[1rem] ring-1 ring-inset transition-colors duration-300 ease-out-soft",
+            macros
+              ? "bg-primary-400 text-primary-950 ring-primary-300/50"
+              : "bg-white/10 text-white/60 ring-white/10"
           )}
         >
-          {macros ? <BadgeCheck className="h-6 w-6" /> : <Lock className="h-6 w-6" />}
+          {macros ? (
+            <BadgeCheck className="h-6 w-6" strokeWidth={2} />
+          ) : (
+            <Lock className="h-6 w-6" strokeWidth={2} />
+          )}
         </div>
       </div>
 
       {macros ? (
-        <div className="mt-5 grid gap-2">
-          <PreviewRow label="Protein" value={`${macros.protein}g`} color="bg-sky-300" />
-          <PreviewRow label="Carbs" value={`${macros.carbs}g`} color="bg-lemon-200" />
-          <PreviewRow label="Fat" value={`${macros.fat}g`} color="bg-accent-300" />
+        <div className="mt-5 space-y-3">
+          <PreviewSplitBar macros={macros} />
+          <div className="grid gap-2">
+            <PreviewRow label="Protein" value={`${macros.protein}g`} color="bg-sky-200" />
+            <PreviewRow label="Carbs" value={`${macros.carbs}g`} color="bg-lemon-200" />
+            <PreviewRow label="Fat" value={`${macros.fat}g`} color="bg-accent-300" />
+          </div>
         </div>
       ) : (
-        <p className="mt-4 text-sm font-semibold leading-6 text-white/62">
+        <p className="mt-4 text-sm font-semibold leading-6 text-white/65">
           Complete age, body context, activity, and goal to see the starting
           targets before saving.
         </p>
@@ -1576,11 +1734,99 @@ function PlanPreview({
 function PreviewRow({ label, value, color }: { label: string; value: string; color: string }) {
   return (
     <div className="flex items-center justify-between gap-3 rounded-2xl bg-white/10 px-3 py-2">
-      <div className="flex items-center gap-2">
-        <span className={cn("h-2.5 w-2.5 rounded-full", color)} />
-        <span className="text-sm font-bold text-white/75">{label}</span>
+      <div className="flex min-w-0 items-center gap-2">
+        <span aria-hidden="true" className={cn("h-2.5 w-2.5 shrink-0 rounded-full", color)} />
+        <span className="truncate text-sm font-bold text-white/75">{label}</span>
       </div>
-      <span className="text-sm font-black tabular-nums text-white">{value}</span>
+      <span className="shrink-0 text-sm font-black tabular-nums text-white">{value}</span>
+    </div>
+  );
+}
+
+/**
+ * Share-of-calories bar for the dark plan panel. Every segment comes from the
+ * calculated macro targets (4/4/9 kcal per gram) — nothing here is decorative.
+ */
+function PreviewSplitBar({ macros }: { macros: MacroTargets }) {
+  const split = macroCalorieSplit(macros);
+  if (!split) return null;
+
+  return (
+    <div
+      role="img"
+      aria-label={`Calorie split: ${split.proteinPct}% protein, ${split.carbsPct}% carbs, ${split.fatPct}% fat.`}
+    >
+      <div className="flex h-2 gap-0.5 overflow-hidden rounded-full bg-white/10">
+        <span
+          className="bg-sky-200 transition-[width] duration-700 ease-out-soft"
+          style={{ width: `${split.proteinPct}%` }}
+        />
+        <span
+          className="bg-lemon-200 transition-[width] duration-700 ease-out-soft"
+          style={{ width: `${split.carbsPct}%` }}
+        />
+        <span
+          className="bg-accent-300 transition-[width] duration-700 ease-out-soft"
+          style={{ width: `${split.fatPct}%` }}
+        />
+      </div>
+      <p className="mt-2 text-[0.6875rem] font-bold tabular-nums text-white/60">
+        {split.proteinPct}% protein · {split.carbsPct}% carbs · {split.fatPct}% fat
+      </p>
+    </div>
+  );
+}
+
+/** Light-surface twin of PreviewSplitBar, for the plan review + celebration. */
+function MacroSplitMeter({
+  macros,
+  className,
+}: {
+  macros: MacroTargets;
+  className?: string;
+}) {
+  const split = macroCalorieSplit(macros);
+  if (!split) return null;
+
+  const legend = [
+    { label: "Protein", pct: split.proteinPct, dot: "bg-sky-500" },
+    { label: "Carbs", pct: split.carbsPct, dot: "bg-lemon-500" },
+    { label: "Fat", pct: split.fatPct, dot: "bg-accent-500" },
+  ];
+
+  return (
+    <div className={cn("rounded-[1.35rem] bg-surface-muted p-4 ring-1 ring-inset ring-hairline", className)}>
+      <p className="text-left text-[0.6875rem] font-black uppercase tracking-[0.14em] text-ink-subtle">
+        Share of calories
+      </p>
+      <div
+        role="img"
+        aria-label={`Calorie split: ${split.proteinPct}% protein, ${split.carbsPct}% carbs, ${split.fatPct}% fat.`}
+        className="mt-2 flex h-2.5 gap-0.5 overflow-hidden rounded-full bg-surface-sunken"
+      >
+        <span
+          className="bg-sky-500 transition-[width] duration-700 ease-out-soft"
+          style={{ width: `${split.proteinPct}%` }}
+        />
+        <span
+          className="bg-lemon-500 transition-[width] duration-700 ease-out-soft"
+          style={{ width: `${split.carbsPct}%` }}
+        />
+        <span
+          className="bg-accent-500 transition-[width] duration-700 ease-out-soft"
+          style={{ width: `${split.fatPct}%` }}
+        />
+      </div>
+      <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1">
+        {legend.map((entry) => (
+          <span key={entry.label} className="flex items-center gap-1.5">
+            <span aria-hidden="true" className={cn("h-2 w-2 rounded-full", entry.dot)} />
+            <span className="text-xs font-bold text-ink-muted">
+              {entry.label} <span className="tabular-nums text-ink">{entry.pct}%</span>
+            </span>
+          </span>
+        ))}
+      </div>
     </div>
   );
 }
@@ -1591,8 +1837,8 @@ function SummaryChip({ label, pending = false }: { label: string; pending?: bool
       className={cn(
         "rounded-full px-3 py-1.5 text-xs font-black",
         pending
-          ? "border border-dashed border-white/25 bg-transparent text-white/45"
-          : "bg-white/10 text-white/70"
+          ? "border border-dashed border-white/25 bg-transparent text-white/50"
+          : "bg-white/10 text-white/75 ring-1 ring-inset ring-white/10"
       )}
     >
       {label}
@@ -1603,12 +1849,12 @@ function SummaryChip({ label, pending = false }: { label: string; pending?: bool
 function InsightRow({ icon: Icon, title, body }: { icon: LucideIcon; title: string; body: string }) {
   return (
     <div className="fw-soft-row flex gap-4 p-4">
-      <div className="fw-icon-chip h-11 w-11 rounded-[1rem]">
-        <Icon className="h-5 w-5" />
+      <div className="fw-icon-chip h-11 w-11 shrink-0 rounded-[1rem] ring-1 ring-inset ring-primary-200/70">
+        <Icon className="h-5 w-5" strokeWidth={2} />
       </div>
-      <div>
-        <p className="font-black text-[#16302a]">{title}</p>
-        <p className="mt-1 text-sm font-semibold leading-6 text-muted-foreground">{body}</p>
+      <div className="min-w-0">
+        <p className="font-black text-ink">{title}</p>
+        <p className="mt-1 text-sm font-semibold leading-6 text-ink-muted">{body}</p>
       </div>
     </div>
   );
@@ -1617,26 +1863,37 @@ function InsightRow({ icon: Icon, title, body }: { icon: LucideIcon; title: stri
 function MiniMetric({ icon: Icon, label, value }: { icon: LucideIcon; label: string; value: string }) {
   return (
     <div className="fw-soft-row flex items-center gap-3 p-4">
-      <div className="fw-icon-chip h-10 w-10 rounded-[0.95rem]">
-        <Icon className="h-5 w-5" />
+      <div className="fw-icon-chip h-10 w-10 shrink-0 rounded-[0.95rem] ring-1 ring-inset ring-primary-200/70">
+        <Icon className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
       </div>
       <div className="min-w-0">
-        <p className="text-xs font-black uppercase tracking-[0.14em] text-muted-foreground">{label}</p>
-        <p className="text-base font-black leading-tight text-[#16302a]">{value}</p>
+        <p className="text-[0.6875rem] font-black uppercase tracking-[0.14em] text-ink-subtle">{label}</p>
+        <p className="truncate text-base font-black leading-tight text-ink">{value}</p>
       </div>
     </div>
   );
 }
 
-function MacroTile({ color, label, value }: { color: "protein" | "carbs" | "fat"; label: string; value: string }) {
+function MacroTile({
+  color,
+  label,
+  value,
+}: {
+  color: "protein" | "carbs" | "fat";
+  label: string;
+  value: number;
+}) {
   const styles = {
-    protein: "bg-sky-50 text-sky-700 border-sky-100",
-    carbs: "bg-lemon-50 text-lemon-700 border-lemon-100",
-    fat: "bg-accent-50 text-accent-700 border-accent-100",
+    protein: "bg-sky-50 text-sky-700 ring-sky-100",
+    carbs: "bg-lemon-50 text-lemon-700 ring-lemon-100",
+    fat: "bg-accent-50 text-accent-700 ring-accent-100",
   };
   return (
-    <div className={cn("rounded-[1.35rem] border p-4", styles[color])}>
-      <p className="text-2xl font-black tabular-nums md:text-3xl">{value}</p>
+    <div className={cn("rounded-[1.35rem] p-4 text-left ring-1 ring-inset", styles[color])}>
+      <p className="flex items-baseline gap-1 text-2xl font-black md:text-3xl">
+        <span className="tabular-nums">{value}</span>
+        <span className="text-base font-black opacity-70">g</span>
+      </p>
       <p className="mt-1 text-sm font-black">{label}</p>
     </div>
   );
@@ -1645,8 +1902,8 @@ function MacroTile({ color, label, value }: { color: "protein" | "carbs" | "fat"
 function SummaryPill({ label, value }: { label: string; value: string }) {
   return (
     <div className="fw-soft-row p-4">
-      <p className="text-xs font-black uppercase tracking-[0.14em] text-muted-foreground">{label}</p>
-      <p className="mt-1 text-base font-black capitalize text-[#16302a]">{value}</p>
+      <p className="text-[0.6875rem] font-black uppercase tracking-[0.14em] text-ink-subtle">{label}</p>
+      <p className="mt-1 text-base font-black capitalize text-ink">{value}</p>
     </div>
   );
 }

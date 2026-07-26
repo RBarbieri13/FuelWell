@@ -1,6 +1,7 @@
 "use client";
 
-import { Check, X } from "lucide-react";
+import { ArrowRight, Check, Target, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import type { MacroTargets } from "@/lib/fuelwell-data";
 import type { ArtifactCardProps } from "./contract";
 
@@ -13,35 +14,102 @@ type TargetChangeProposalArtifact = {
   evidence: string[];
 };
 
+const ROWS: Array<{ key: keyof MacroTargets; label: string; unit: string }> = [
+  { key: "calories", label: "Calories", unit: "kcal" },
+  { key: "protein", label: "Protein", unit: "g" },
+  { key: "carbs", label: "Carbs", unit: "g" },
+  { key: "fat", label: "Fat", unit: "g" },
+];
+
 export function TargetChangeProposalCard({
   artifact,
   onAction,
 }: ArtifactCardProps<TargetChangeProposalArtifact>) {
-  return (
-    <div className="max-w-full rounded-2xl border border-sky-100 bg-sky-50/70 p-4 shadow-sm">
-      <p className="text-xs font-black uppercase tracking-wider text-sky-700">
-        Target change proposal
-      </p>
-      <p className="mt-2 text-sm font-bold leading-5 text-neutral-800">
-        {artifact.reason}
-      </p>
+  const rows = ROWS.map(({ key, label, unit }) => {
+    const current = Math.round(artifact.currentTargets?.[key] ?? 0);
+    const proposed = Math.round(artifact.proposedTargets?.[key] ?? 0);
+    return { key, label, unit, current, proposed, delta: proposed - current };
+  });
 
-      <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
-        <TargetColumn label="Current" targets={artifact.currentTargets} />
-        <TargetColumn label="Proposed" targets={artifact.proposedTargets} />
+  return (
+    <div className="max-w-full rounded-[24px] border border-sky-100 bg-sky-50/60 p-4 shadow-e2">
+      <div className="flex items-start gap-3">
+        <span
+          aria-hidden="true"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.9rem] bg-sky-100 text-sky-700 ring-1 ring-inset ring-sky-200"
+        >
+          <Target className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
+        </span>
+        <div className="min-w-0">
+          <div className="text-[0.6875rem] font-black uppercase tracking-[0.14em] text-sky-700">
+            Target change proposal
+          </div>
+          <p className="mt-1 text-sm font-bold leading-6 text-ink [overflow-wrap:anywhere]">
+            {artifact.reason}
+          </p>
+        </div>
       </div>
 
+      <ul className="mt-3 overflow-hidden rounded-[1rem] bg-surface ring-1 ring-inset ring-hairline">
+        <li className="flex items-center justify-between gap-2 bg-surface-muted px-3 py-2">
+          <div className="text-[10px] font-black uppercase tracking-[0.1em] text-ink-muted">
+            Target
+          </div>
+          <div className="text-[10px] font-black uppercase tracking-[0.1em] text-ink-muted">
+            Current → Proposed
+          </div>
+        </li>
+        {rows.map((row) => (
+          <li
+            key={row.key}
+            className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 border-t border-hairline px-3 py-2.5"
+          >
+            <div className="min-w-0 text-xs font-black uppercase tracking-[0.08em] text-ink-muted">
+              {row.label}
+            </div>
+            <span
+              className="flex flex-wrap items-baseline gap-x-1.5 gap-y-1"
+              role="img"
+              aria-label={`${row.label}: ${row.current} ${row.unit} now, ${row.proposed} ${row.unit} proposed`}
+            >
+              <span className="text-sm font-bold tabular-nums text-ink-muted">
+                {row.current}
+              </span>
+              <ArrowRight aria-hidden="true" className="h-3.5 w-3.5 shrink-0 text-ink-subtle" />
+              <span className="text-sm font-black tabular-nums text-ink">{row.proposed}</span>
+              <span className="text-[0.6875rem] font-bold text-ink-muted">{row.unit}</span>
+              {row.delta !== 0 && (
+                <span className="rounded-full bg-surface-sunken px-1.5 py-0.5 text-[0.6875rem] font-black tabular-nums text-ink-muted ring-1 ring-inset ring-hairline">
+                  {row.delta > 0 ? "+" : "−"}
+                  {Math.abs(row.delta)}
+                </span>
+              )}
+            </span>
+          </li>
+        ))}
+      </ul>
+
       {artifact.evidence.length > 0 && (
-        <ul className="mt-3 list-disc space-y-1 pl-4 text-xs font-medium leading-5 text-neutral-600">
+        <ul className="mt-3 space-y-1.5">
           {artifact.evidence.map((item) => (
-            <li key={item}>{item}</li>
+            <li
+              key={item}
+              className="flex gap-2 text-xs font-semibold leading-5 text-ink-muted"
+            >
+              <span
+                aria-hidden="true"
+                className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-sky-500"
+              />
+              <span className="min-w-0">{item}</span>
+            </li>
           ))}
         </ul>
       )}
 
-      <div className="fw-artifact-actions mt-3 flex flex-wrap gap-2">
-        <button
+      <div className="fw-artifact-actions mt-4 flex flex-wrap gap-2">
+        <Button
           type="button"
+          size="sm"
           onClick={() =>
             onAction({
               kind: "invoke_tool",
@@ -55,37 +123,25 @@ export function TargetChangeProposalCard({
               },
             })
           }
-          className="inline-flex min-h-10 items-center gap-1.5 rounded-full bg-sky-700 px-4 py-2 text-xs font-black text-white transition hover:bg-sky-600"
         >
-          <Check className="h-3.5 w-3.5" />
+          <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
           Accept
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
+          variant="secondary"
+          size="sm"
           onClick={() =>
             onAction({
               kind: "send_message",
               text: "Decline that target change proposal. Keep my current targets.",
             })
           }
-          className="inline-flex min-h-10 items-center gap-1.5 rounded-full border border-sky-200 bg-white px-4 py-2 text-xs font-black text-sky-700 transition hover:bg-sky-100"
         >
-          <X className="h-3.5 w-3.5" />
+          <X className="h-3.5 w-3.5" strokeWidth={2.5} />
           Decline
-        </button>
+        </Button>
       </div>
-    </div>
-  );
-}
-
-function TargetColumn({ label, targets }: { label: string; targets: MacroTargets }) {
-  return (
-    <div className="rounded-2xl bg-white p-3">
-      <p className="font-black uppercase tracking-wide text-neutral-400">{label}</p>
-      <p className="mt-1 font-black text-neutral-950">{targets.calories} kcal</p>
-      <p className="mt-0.5 font-medium text-neutral-500">
-        {targets.protein}p · {targets.carbs}c · {targets.fat}f
-      </p>
     </div>
   );
 }

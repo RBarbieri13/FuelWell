@@ -1,6 +1,7 @@
 "use client";
 
 import { Settings2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import type { ArtifactSpec, CoachDaySnapshot } from "@/lib/coach/types";
 import type { ArtifactCardProps } from "./contract";
 
@@ -35,24 +36,41 @@ export function PreferencesUpdatedCard({ artifact }: ArtifactCardProps<Preferenc
   }
 
   return (
-    <div className="mt-3 rounded-2xl border border-neutral-200 bg-white p-4">
-      <div className="flex items-center gap-2.5">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-primary-50 text-primary-700">
-          <Settings2 className="h-4 w-4" />
-        </span>
-        <p className="text-sm font-black text-neutral-900">Preferences updated</p>
+    <div className="max-w-full rounded-[24px] border border-hairline bg-surface p-4 shadow-e2">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-3">
+          <span
+            aria-hidden="true"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100"
+          >
+            <Settings2 className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
+          </span>
+          <p className="min-w-0 text-sm font-black text-ink [overflow-wrap:anywhere]">
+            Preferences updated
+          </p>
+        </div>
+        {rows.length > 0 && (
+          <Badge variant="success" size="sm" dot className="shrink-0">
+            Saved
+          </Badge>
+        )}
       </div>
 
       {rows.length === 0 ? (
-        <p className="mt-3 text-sm font-medium text-neutral-500">No changes applied</p>
+        <p className="mt-3 rounded-[1rem] bg-surface-muted px-3 py-2.5 text-sm font-semibold text-ink-muted ring-1 ring-inset ring-hairline">
+          No changes applied
+        </p>
       ) : (
-        <ul className="mt-3 space-y-1.5">
+        <ul className="mt-3 overflow-hidden rounded-[1rem] bg-surface-muted ring-1 ring-inset ring-hairline">
           {rows.map((row) => (
-            <li key={row.label} className="flex items-baseline gap-3 text-sm">
-              <span className="w-20 shrink-0 text-[10px] font-black uppercase tracking-wide text-neutral-400">
+            <li
+              key={row.label}
+              className="grid grid-cols-[4.75rem_minmax(0,1fr)] items-baseline gap-3 border-t border-hairline px-3 py-2.5 first:border-t-0"
+            >
+              <div className="text-[10px] font-black uppercase tracking-[0.08em] text-ink-muted">
                 {row.label}
-              </span>
-              <span className="min-w-0 break-words font-bold capitalize text-neutral-700">
+              </div>
+              <span className="min-w-0 break-words text-sm font-bold capitalize text-ink">
                 {row.value}
               </span>
             </li>

@@ -31,8 +31,12 @@ import {
   Wheat,
   type LucideIcon,
 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ProgressMeter } from "@/components/ui/progress-meter";
+import { SectionHeader } from "@/components/ui/section-header";
 import {
   CalorieBalanceChart,
   type ActivityOutputSignal,
@@ -223,44 +227,70 @@ function activityOutputSignal(activity: ActivityRecord): ActivityOutputSignal {
 const estimatedSteps = 6420;
 const recoveryReadiness = 72;
 
+/**
+ * One tone = one icon plate, one pill, one meter colour, one stat chip. The
+ * plate and pill both carry a hairline ring rather than a heavier border so
+ * tinted chips read as one family across nutrition and fitness.
+ */
 const toneStyles = {
   primary: {
-    chip: "bg-primary-100 text-primary-600",
-    pill: "bg-primary-100 text-primary-700",
-    bar: "bg-primary-500",
-    macro: "bg-primary-100 text-primary-700",
+    chip: "bg-primary-50 text-primary-700 ring-primary-100",
+    pill: "bg-primary-50 text-primary-800 ring-primary-100",
+    meter: "var(--color-macro-calories)",
+    macro: "bg-primary-50 text-primary-800 ring-primary-100",
   },
   sky: {
-    chip: "bg-sky-100 text-sky-600",
-    pill: "bg-sky-100 text-sky-700",
-    bar: "bg-sky-500",
-    macro: "bg-sky-100 text-sky-700",
+    chip: "bg-sky-50 text-sky-700 ring-sky-100",
+    pill: "bg-sky-50 text-sky-700 ring-sky-100",
+    meter: "var(--color-macro-protein)",
+    macro: "bg-sky-50 text-sky-700 ring-sky-100",
   },
   lemon: {
-    chip: "bg-lemon-50 text-lemon-700",
-    pill: "bg-lemon-100 text-lemon-700",
-    bar: "bg-lemon-500",
-    macro: "bg-lemon-100 text-lemon-700",
+    chip: "bg-lemon-50 text-lemon-700 ring-lemon-100",
+    pill: "bg-lemon-50 text-lemon-700 ring-lemon-100",
+    meter: "var(--color-macro-carbs)",
+    macro: "bg-lemon-50 text-lemon-700 ring-lemon-100",
   },
   accent: {
-    chip: "bg-accent-100 text-accent-600",
-    pill: "bg-accent-100 text-accent-700",
-    bar: "bg-accent-400",
-    macro: "bg-accent-100 text-accent-700",
+    chip: "bg-accent-50 text-accent-700 ring-accent-100",
+    pill: "bg-accent-50 text-accent-700 ring-accent-100",
+    meter: "var(--color-macro-fat)",
+    macro: "bg-accent-50 text-accent-700 ring-accent-100",
   },
   teal: {
-    chip: "bg-teal-500/12 text-teal-600",
-    pill: "bg-teal-500/12 text-teal-600",
-    bar: "bg-teal-500",
-    macro: "bg-teal-500/12 text-teal-600",
+    chip: "bg-teal-500/10 text-teal-600 ring-teal-500/20",
+    pill: "bg-teal-500/10 text-teal-600 ring-teal-500/20",
+    meter: "var(--color-teal-500)",
+    macro: "bg-teal-500/10 text-teal-600 ring-teal-500/20",
   },
   neutral: {
-    chip: "bg-[#f4f8f6] text-[#54635d]",
-    pill: "bg-[#f4f8f6] text-[#54635d]",
-    bar: "bg-primary-300",
-    macro: "bg-[#f4f8f6] text-[#16302a]",
+    chip: "bg-surface-muted text-ink-muted ring-hairline-strong",
+    pill: "bg-surface-muted text-ink-muted ring-hairline-strong",
+    meter: "var(--color-primary-300)",
+    macro: "bg-surface-muted text-ink ring-hairline-strong",
   },
 } as const;
+
+/**
+ * Single recipe for the pill-shaped links and buttons that repeat across these
+ * surfaces. They previously drifted apart on radius, target size, and hover,
+ * so every row now shares one size scale, one inset hairline, and one focus
+ * treatment.
+ */
+function pillLinkClass(
+  tone: "primary" | "neutral" | "danger" = "primary",
+  size: "sm" | "md" = "md"
+) {
+  return cn(
+    "fw-press inline-flex min-h-11 items-center justify-center gap-2 rounded-full font-black ring-1 ring-inset focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 md:min-h-0",
+    size === "sm" ? "px-3.5 py-2 text-xs" : "px-4 py-2 text-sm",
+    tone === "primary" && "bg-primary-50 text-primary-700 ring-primary-100 hover:bg-primary-100",
+    tone === "neutral" &&
+      "bg-surface-muted text-ink-muted ring-hairline-strong hover:bg-primary-50 hover:text-primary-700",
+    tone === "danger" &&
+      "bg-surface-muted text-accent-700 ring-hairline-strong hover:bg-accent-50 hover:text-accent-700"
+  );
+}
 
 export function FitnessDetailSurface() {
   const { workouts } = useWorkoutLog();
@@ -300,52 +330,45 @@ export function FitnessDetailSurface() {
           <FitnessWorkoutManager />
         </div>
 
-        <Card className="rounded-[1.5rem] border-primary-100 bg-white/85 px-6 py-5 shadow-[0_10px_26px_rgba(20,90,75,0.05)]">
+        <Card className="rounded-[1.5rem] px-5 py-5 md:px-6">
           <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-center">
-            <div className="flex gap-3">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-100 text-primary-700">
-                <Info className="h-5 w-5" />
-              </span>
-              <div>
-                <h2 className="font-heading text-lg font-black text-[#16302a]">
-                  Activity source check
-                </h2>
-                <p className="mt-1 text-sm font-semibold leading-6 text-[#6e8981]">
-                  {workouts.length > 0
-                    ? `${workouts.length} logged workout${workouts.length === 1 ? "" : "s"} count first. Planned movement stays visible so you can compare what happened with what the coach expected.`
-                    : "Logged workouts count first. Planned movement stays visible so you can compare what happened with what the coach expected."}
-                </p>
-              </div>
-            </div>
+            <SectionHeader
+              as="h2"
+              icon={Info}
+              title="Activity source check"
+              description={
+                workouts.length > 0
+                  ? `${workouts.length} logged workout${workouts.length === 1 ? "" : "s"} count first. Planned movement stays visible so you can compare what happened with what the coach expected.`
+                  : "Logged workouts count first. Planned movement stays visible so you can compare what happened with what the coach expected."
+              }
+              className="min-w-0"
+            />
             <div className="flex flex-wrap gap-2">
-              <Link
-                href="/app/daily-review"
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-sm font-black text-primary-700 transition hover:bg-primary-100 md:min-h-0"
-              >
+              <Link href="/app/daily-review" className={pillLinkClass("primary")}>
                 View full day
-                <ArrowRight className="h-4 w-4" />
+                <ArrowRight className="h-4 w-4" strokeWidth={2.25} />
               </Link>
-              <Link
-                href="/app/activity"
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-[#f4f8f6] px-4 py-2 text-sm font-black text-[#54635d] transition hover:bg-primary-50 hover:text-primary-700 md:min-h-0"
-              >
+              <Link href="/app/activity" className={pillLinkClass("neutral")}>
                 Fuel timing verdict
-                <ArrowRight className="h-4 w-4" />
+                <ArrowRight className="h-4 w-4" strokeWidth={2.25} />
               </Link>
             </div>
           </div>
         </Card>
 
-        <Card className="rounded-[1.5rem] border-lemon-200 bg-lemon-50/80 px-6 py-5 shadow-none">
+        <Card
+          variant="outlined"
+          className="rounded-[1.5rem] border-lemon-200 bg-lemon-50/80 px-5 py-5 md:px-6"
+        >
           <div className="flex gap-3">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-lemon-700">
-              <ShieldCheck className="h-5 w-5" />
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[0.9rem] bg-surface text-lemon-700 ring-1 ring-inset ring-lemon-200">
+              <ShieldCheck className="h-5 w-5" strokeWidth={2} />
             </span>
-            <div>
+            <div className="min-w-0">
               <h2 className="font-heading text-lg font-black text-lemon-800">
                 Data honesty
               </h2>
-              <p className="mt-1 text-sm font-semibold leading-6 text-lemon-800/78">
+              <p className="mt-1 text-sm font-semibold leading-6 text-lemon-700">
                 Workout plans and recovery are user-entered examples. Steps and active calories are deterministic estimates until a wearable connection is added.
               </p>
             </div>
@@ -381,7 +404,7 @@ export function NutritionDetailSurface({
       </header>
 
       <div className="fw-page-inner pb-28 md:pb-8">
-        <div className="space-y-4 rounded-[1.75rem] bg-white/68 p-3 shadow-[0_22px_58px_rgba(20,90,75,0.08)] md:p-4">
+        <div className="space-y-4 rounded-[1.75rem] bg-surface/70 p-3 shadow-e3 md:p-4">
           <DetailHero
             icon={Salad}
             label="Today's plate"
@@ -416,19 +439,22 @@ export function NutritionDetailSurface({
                 />
               ))}
               {!meals.some((meal) => meal.mealType === "dinner") && (
-                <Card className="flex flex-col gap-4 rounded-[1.5rem] border-dashed border-primary-200 bg-white px-6 py-6 shadow-none md:flex-row md:items-center md:justify-between">
-                  <div className="flex items-center gap-4">
+                <Card
+                  variant="outlined"
+                  className="flex flex-col gap-4 rounded-[1.5rem] border-2 border-dashed border-primary-200 bg-surface/60 md:flex-row md:items-center md:justify-between"
+                >
+                  <div className="flex min-w-0 items-center gap-4">
                     <MealIcon mealType="dinner" muted />
-                    <div>
-                      <h2 className="text-xl font-black text-[#54635d]">Dinner</h2>
-                      <p className="text-sm font-semibold text-muted-foreground">
+                    <div className="min-w-0">
+                      <h2 className="text-lg font-black text-ink-muted md:text-xl">Dinner</h2>
+                      <p className="text-sm font-semibold text-ink-subtle">
                         Not logged yet · {remaining(totals.calories, targets.calories).toLocaleString()} kcal of room left
                       </p>
                     </div>
                   </div>
-                  <Link href="/app/log" className="inline-flex">
-                    <Button variant="secondary" className="rounded-full bg-primary-100 px-5 text-primary-700">
-                      <Plus className="h-4 w-4" />
+                  <Link href="/app/log" className="inline-flex shrink-0">
+                    <Button variant="tonal" className="rounded-full px-5">
+                      <Plus className="h-4 w-4" strokeWidth={2.25} />
                       Add dinner
                     </Button>
                   </Link>
@@ -588,11 +614,8 @@ export function DailyReviewSurface({
                 href={calorieRoom > 0 ? "/app/log" : "/app/coach"}
               />
             </section>
-            <Link
-              href="/app/coach"
-              className="inline-flex min-h-11 items-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-sm font-black text-primary-700 transition hover:bg-primary-100 md:min-h-0"
-            >
-              <Sparkles className="h-4 w-4" />
+            <Link href="/app/coach" className={pillLinkClass("primary")}>
+              <Sparkles className="h-4 w-4" strokeWidth={2.25} />
               Ask coach what to do next
             </Link>
           </div>
@@ -865,12 +888,13 @@ function TargetTile({
       {footnote ? (
         <p className="text-xs font-semibold text-muted-foreground/80">{footnote}</p>
       ) : null}
-      <div className="h-[7px] overflow-hidden rounded-full bg-[#edf3f0]">
-        <div
-          className={`h-full rounded-full ${styles.bar}`}
-          style={{ width: `${Math.min(percentOf(current, target), 100)}%` }}
-        />
-      </div>
+      <ProgressMeter
+        value={current}
+        target={target}
+        color={styles.meter}
+        size="sm"
+        label={`${label}: ${current.toLocaleString()}${unitSuffix} of ${target.toLocaleString()}${unitSuffix}`}
+      />
     </Card>
   );
 

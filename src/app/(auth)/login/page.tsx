@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { OAuthButtons } from "@/components/auth/oauth-buttons";
 import { AuthLink, AuthShell } from "@/components/auth/auth-shell";
-import { BarChart3, Brain, LogIn, Utensils } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { AlertCircle, BarChart3, Brain, LogIn, Utensils } from "lucide-react";
 
 function LoginForm() {
   const router = useRouter();
@@ -71,33 +72,34 @@ function LoginForm() {
       <div className="space-y-6">
             {authError && (
               <p
-                className="rounded-[1rem] bg-red-50 px-3.5 py-2.5 text-sm font-bold text-red-600"
+                className="flex items-start gap-2 rounded-2xl bg-red-50 px-3.5 py-2.5 text-sm font-bold leading-5 text-red-700 ring-1 ring-inset ring-red-100"
                 role="alert"
               >
-                {authError}
+                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" strokeWidth={2.25} />
+                <span className="min-w-0">{authError}</span>
               </p>
             )}
 
             <OAuthButtons next={redirectTo} />
 
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-primary-100" />
-              </div>
-              <div className="relative flex justify-center">
-                <span className="bg-white px-3 text-xs font-black uppercase tracking-[0.16em] text-muted-foreground">
-                  or email
-                </span>
-              </div>
+            {/* Two hairlines instead of a chip floated over a rule — the chip
+                needed an opaque fill that never quite matched the card. */}
+            <div className="flex items-center gap-3" aria-hidden="true">
+              <span className="h-px flex-1 bg-gradient-to-r from-transparent to-hairline-strong" />
+              <span className="text-[0.6875rem] font-black uppercase tracking-[0.16em] text-ink-subtle">
+                or email
+              </span>
+              <span className="h-px flex-1 bg-gradient-to-l from-transparent to-hairline-strong" />
             </div>
 
             <form onSubmit={handleEmailLogin} className="space-y-4">
               {error && !isCredentialError && (
                 <p
-                  className="rounded-[1rem] bg-red-50 px-3.5 py-2.5 text-sm font-bold text-red-600"
+                  className="flex items-start gap-2 rounded-2xl bg-red-50 px-3.5 py-2.5 text-sm font-bold leading-5 text-red-700 ring-1 ring-inset ring-red-100"
                   role="alert"
                 >
-                  {error}
+                  <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" strokeWidth={2.25} />
+                  <span className="min-w-0">{error}</span>
                 </p>
               )}
               <Input
@@ -120,10 +122,10 @@ function LoginForm() {
                   autoComplete="current-password"
                   error={isCredentialError ? error || undefined : undefined}
                 />
-                <div className="mt-1.5 text-right">
+                <div className="mt-1 flex justify-end">
                   <Link
                     href="/forgot-password"
-                    className="-mx-2 -my-2.5 inline-block px-2 py-3.5 text-xs font-bold text-primary-700 transition-colors hover:text-primary-800"
+                    className="-mr-2 inline-flex min-h-11 items-center rounded-full px-2 text-xs font-bold text-primary-700 underline-offset-4 transition-colors hover:text-primary-800 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 focus-visible:ring-offset-2"
                   >
                     Forgot password?
                   </Link>
@@ -131,7 +133,7 @@ function LoginForm() {
               </div>
 
               <Button type="submit" size="lg" className="w-full" loading={loading}>
-                <LogIn className="h-4 w-4" />
+                {!loading && <LogIn className="h-4 w-4 shrink-0" strokeWidth={2.25} />}
                 Sign in
               </Button>
             </form>
@@ -144,8 +146,25 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="fw-app-surface flex min-h-screen items-center justify-center">
-          <div className="animate-pulse font-bold text-muted-foreground">Loading...</div>
+        // Shape-matched to the real card so the swap doesn't jump the layout.
+        <div className="fw-app-surface flex min-h-screen items-center justify-center px-4 py-8">
+          <div
+            className="w-full max-w-md rounded-[2rem] border border-hairline-strong bg-surface/95 p-5 shadow-e2 sm:p-7"
+            role="status"
+            aria-label="Loading sign-in"
+          >
+            <div className="space-y-3">
+              <Skeleton className="h-3 w-20" />
+              <Skeleton className="h-7 w-48" />
+              <Skeleton className="h-4 w-full max-w-xs" />
+            </div>
+            <div className="mt-7 space-y-2.5">
+              <Skeleton className="h-12 w-full rounded-[1.15rem]" />
+              <Skeleton className="h-12 w-full rounded-[1.15rem]" />
+              <Skeleton className="h-12 w-full rounded-[1.15rem]" />
+            </div>
+            <span className="sr-only">Loading…</span>
+          </div>
         </div>
       }
     >

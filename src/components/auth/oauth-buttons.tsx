@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { AlertCircle } from "lucide-react";
 import type { Provider } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -41,28 +42,37 @@ export function OAuthButtons({ next }: { next: string }) {
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2.5">
       {PROVIDERS.map(({ id, label, Icon }) => (
         <Button
           key={id}
           type="button"
           variant="secondary"
           size="lg"
-          className="w-full"
+          // justify-start + a fixed glyph slot keeps all three labels on the
+          // same optical baseline instead of re-centring per icon width.
+          className="w-full justify-start gap-4 px-5 text-[0.9375rem]"
           onClick={() => signIn(id)}
           loading={pending === id}
           disabled={pending !== null}
         >
-          {pending !== id && <Icon className="w-5 h-5" />}
-          {label}
+          {/* Slot is always reserved so the label never shifts when the
+              spinner replaces the mark. */}
+          {pending !== id && (
+            <span className="flex h-5 w-5 shrink-0 items-center justify-center">
+              <Icon className="h-5 w-5" />
+            </span>
+          )}
+          <span className="min-w-0 truncate">{label}</span>
         </Button>
       ))}
       {error && (
         <p
-          className="text-sm text-red-600 bg-red-50 px-3.5 py-2.5 rounded-xl"
+          className="flex items-start gap-2 rounded-2xl bg-red-50 px-3.5 py-2.5 text-sm font-bold leading-5 text-red-700 ring-1 ring-inset ring-red-100"
           role="alert"
         >
-          {error}
+          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" strokeWidth={2.25} />
+          <span className="min-w-0">{error}</span>
         </p>
       )}
     </div>

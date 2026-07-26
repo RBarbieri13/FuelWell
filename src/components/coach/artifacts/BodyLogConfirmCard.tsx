@@ -1,6 +1,7 @@
 "use client";
 
-import { Droplet, Scale, Smile } from "lucide-react";
+import { Check, Droplet, Scale, Smile, type LucideIcon } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import type { ArtifactSpec } from "@/lib/coach/types";
 import type { ArtifactCardProps } from "./contract";
 
@@ -18,34 +19,61 @@ function kgToLb(value: number) {
 export function BodyLogConfirmCard({ artifact }: ArtifactCardProps<BodyLogConfirmArtifact>) {
   const { kind, value } = artifact;
 
-  let icon = <Scale className="h-4 w-4" />;
-  let line: string;
+  let Icon: LucideIcon = Check;
+  let label = "Logged";
+  let figure = "";
+  let unit = "";
+
   switch (kind) {
     case "weight":
-      icon = <Scale className="h-4 w-4" />;
-      line =
-        artifact.unit === "lb"
-          ? `Weight logged: ${Math.round(value * 10) / 10} lb`
-          : `Weight logged: ${kgToLb(value)} lb`;
+      Icon = Scale;
+      label = "Weight logged";
+      figure = String(
+        artifact.unit === "lb" ? Math.round(value * 10) / 10 : kgToLb(value)
+      );
+      unit = "lb";
       break;
     case "mood":
-      icon = <Smile className="h-4 w-4" />;
-      line = `Mood logged: ${Math.round(value)}/5`;
+      Icon = Smile;
+      label = "Mood logged";
+      figure = `${Math.round(value)}/5`;
       break;
     case "water":
-      icon = <Droplet className="h-4 w-4" />;
-      line = `Water logged: ${Math.round(value)} ml`;
+      Icon = Droplet;
+      label = "Water logged";
+      figure = String(Math.round(value));
+      unit = "ml";
       break;
     default:
-      line = "Logged";
+      break;
   }
 
   return (
-    <div className="mt-3 flex items-center gap-3 rounded-2xl border border-neutral-200 bg-white px-4 py-3">
-      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-primary-50 text-primary-700">
-        {icon}
+    <div className="flex max-w-full items-center gap-3 rounded-[24px] border border-hairline bg-surface px-4 py-3 shadow-e1">
+      <span
+        aria-hidden="true"
+        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100"
+      >
+        <Icon className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
       </span>
-      <p className="min-w-0 truncate text-sm font-bold text-neutral-700">{line}</p>
+
+      <div className="min-w-0 flex-1">
+        <div className="text-[0.6875rem] font-black uppercase tracking-[0.14em] text-ink-muted">
+          {label}
+        </div>
+        {figure && (
+          <p className="mt-0.5 text-base font-black leading-6 text-ink [overflow-wrap:anywhere]">
+            <span className="tabular-nums">{figure}</span>
+            {unit && (
+              <span className="ml-1 text-xs font-bold text-ink-muted">{unit}</span>
+            )}
+          </p>
+        )}
+      </div>
+
+      <Badge variant="success" size="sm" dot className="shrink-0">
+        Saved
+      </Badge>
     </div>
   );
 }

@@ -1,5 +1,11 @@
 "use client";
 
+import { UtensilsCrossed } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ProgressMeter } from "@/components/ui/progress-meter";
+import { SectionHeader } from "@/components/ui/section-header";
 import type { ArtifactCardProps } from "./contract";
 
 type PlateMeal = {
@@ -28,17 +34,29 @@ export function TodaysPlateCard({
   const targets = artifact.targets ?? { calories: 0, protein: 0, carbs: 0, fat: 0 };
 
   return (
-    <div className="max-w-full rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm">
-      <p className="text-xs font-black uppercase tracking-wider text-neutral-400">
-        Today&apos;s plate
-      </p>
+    <Card padding="sm" className="max-w-full">
+      <SectionHeader
+        as="h3"
+        icon={UtensilsCrossed}
+        title="Today's plate"
+        action={
+          meals.length > 0 ? (
+            <Badge variant="neutral" size="sm" className="tabular-nums">
+              {`${meals.length} logged`}
+            </Badge>
+          ) : undefined
+        }
+      />
 
       {meals.length === 0 ? (
-        <p className="mt-2 text-sm font-medium text-neutral-500">
-          Nothing logged yet today.
-        </p>
+        <EmptyState
+          size="inline"
+          icon={UtensilsCrossed}
+          title="Nothing logged yet today."
+          description="Log a meal and it lands here with its macros."
+        />
       ) : (
-        <ul className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
           {meals.map((meal) => (
             <li key={meal.id} className="min-w-0">
               <button
@@ -50,16 +68,16 @@ export function TodaysPlateCard({
                     text: `Tell me about my ${meal.slot}`,
                   })
                 }
-                className="flex min-h-10 w-full min-w-0 flex-col items-start rounded-2xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-left transition hover:border-primary-300 hover:bg-primary-50/60"
+                className="fw-press flex min-h-11 w-full min-w-0 flex-col items-start rounded-[1.15rem] bg-surface-muted px-3 py-2.5 text-left ring-1 ring-inset ring-hairline hover:bg-primary-50 hover:ring-primary-200 active:bg-primary-100"
               >
-                <span className="text-[10px] font-black uppercase tracking-wide text-neutral-400">
+                <span className="text-[0.625rem] font-black uppercase text-ink-subtle">
                   {meal.slot}
                 </span>
-                <span className="w-full truncate text-sm font-bold text-neutral-900">
+                <span className="mt-0.5 w-full truncate text-sm font-bold text-ink">
                   {meal.name}
                 </span>
-                <span className="text-xs font-medium text-neutral-500">
-                  {Math.round(meal.macros.calories)} kcal · {grams(meal.macros.protein)} P
+                <span className="w-full truncate text-xs font-semibold tabular-nums text-ink-muted">
+                  {`${Math.round(meal.macros.calories)} kcal · ${grams(meal.macros.protein)} P`}
                 </span>
               </button>
             </li>
@@ -67,37 +85,37 @@ export function TodaysPlateCard({
         </ul>
       )}
 
-      <div className="mt-4 space-y-2">
+      <div className="mt-4 space-y-3 border-t border-hairline pt-4">
         <BudgetBar
-          label="kcal"
+          label="Calories"
           unit=" kcal"
           current={totals.calories}
           target={targets.calories}
-          barClass="bg-primary-500"
+          color="var(--color-macro-calories)"
         />
         <BudgetBar
           label="Protein"
           unit="g"
           current={totals.protein}
           target={targets.protein}
-          barClass="bg-macro-protein"
+          color="var(--color-macro-protein)"
         />
         <BudgetBar
           label="Carbs"
           unit="g"
           current={totals.carbs}
           target={targets.carbs}
-          barClass="bg-macro-carbs"
+          color="var(--color-macro-carbs)"
         />
         <BudgetBar
           label="Fat"
           unit="g"
           current={totals.fat}
           target={targets.fat}
-          barClass="bg-red-500"
+          color="var(--color-macro-fat)"
         />
       </div>
-    </div>
+    </Card>
   );
 }
 
@@ -106,32 +124,39 @@ function BudgetBar({
   unit,
   current,
   target,
-  barClass,
+  color,
 }: {
   label: string;
   unit: string;
   current: number;
   target: number;
-  barClass: string;
+  color: string;
 }) {
-  const pct = target > 0 ? Math.min(100, Math.round((current / target) * 100)) : 0;
   const fmt = (n: number) =>
     unit === "g" ? `${Math.round(n * 10) / 10}` : `${Math.round(n)}`;
+  const over = target > 0 && current > target;
   return (
-    <div
-      role="img"
-      aria-label={`${label}: ${fmt(current)}${unit} of ${fmt(target)}${unit}`}
-    >
-      <div className="flex items-center justify-between text-[10px] font-bold text-neutral-500">
-        <span className="uppercase tracking-wide">{label}</span>
-        <span>
-          {fmt(current)} / {fmt(target)}
-          {unit}
+    <div>
+      <div className="flex items-baseline justify-between gap-2 text-[0.6875rem]">
+        <span className="min-w-0 truncate font-black uppercase text-ink-subtle">{label}</span>
+        <span
+          className={
+            over
+              ? "shrink-0 font-black tabular-nums text-accent-700"
+              : "shrink-0 font-bold tabular-nums text-ink"
+          }
+        >
+          {`${fmt(current)} / ${fmt(target)}${unit}`}
         </span>
       </div>
-      <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-neutral-100">
-        <div className={`h-full rounded-full ${barClass}`} style={{ width: `${pct}%` }} />
-      </div>
+      <ProgressMeter
+        className="mt-1.5"
+        size="sm"
+        value={current}
+        target={target}
+        color={color}
+        label={`${label}: ${fmt(current)}${unit} of ${fmt(target)}${unit}${over ? ", over target" : ""}`}
+      />
     </div>
   );
 }

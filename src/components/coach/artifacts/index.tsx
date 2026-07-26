@@ -1,5 +1,7 @@
 "use client";
 
+import { CircleAlert } from "lucide-react";
+
 import type { ArtifactSpec } from "@/lib/coach/types";
 import type { CoachCardAction } from "./contract";
 
@@ -108,8 +110,13 @@ export function ArtifactRenderer({ artifact, onAction }: ArtifactRendererProps) 
       return <QuickReplyChips artifact={a} onAction={onAction} />;
     default:
       return (
-        <div className="mt-3 rounded-2xl border border-dashed border-neutral-200 bg-neutral-50 px-4 py-3 text-xs font-medium text-neutral-400">
-          Unsupported card: {artifact.type}
+        <div className="flex items-center gap-2.5 rounded-2xl border border-dashed border-hairline-strong bg-surface-muted px-4 py-3 text-xs font-bold text-ink-subtle">
+          <CircleAlert
+            aria-hidden="true"
+            strokeWidth={2}
+            className="h-4 w-4 shrink-0 text-ink-faint"
+          />
+          <span className="min-w-0">Unsupported card: {artifact.type}</span>
         </div>
       );
   }

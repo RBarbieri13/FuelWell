@@ -2,9 +2,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Check, Pencil, Trash2, UtensilsCrossed, X } from "lucide-react";
+import { ArrowRight, Check, ClipboardList, Pencil, Trash2, UtensilsCrossed, X } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
+import { SectionHeader } from "@/components/ui/section-header";
 import { cn } from "@/lib/utils/cn";
 import { formatMealType, type MealItem, type MealRecord } from "@/lib/fuelwell-data";
 
@@ -42,65 +45,95 @@ export function LoggedMeals({
 }) {
   if (meals.length === 0) {
     return (
-      <Card className="space-y-2">
-        <h2 className="text-lg font-black text-[#16302a]">Logged today</h2>
-        <div className="rounded-[1.35rem] border border-dashed border-primary-200 bg-primary-50/60 p-5 text-center">
-          <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-[1rem] bg-white text-primary-700 shadow-sm">
-            <UtensilsCrossed className="h-5 w-5" />
-          </div>
-          <p className="mt-3 font-black text-[#16302a]">Nothing logged yet.</p>
-          <p className="mt-1 text-sm font-semibold text-muted-foreground">
-            Add a food from search or your own meal. It will appear here, and
-            totals update as you go.
-          </p>
+      <Card className="space-y-3">
+        <SectionHeader as="h2" icon={ClipboardList} title="Logged today" />
+        <div className="rounded-[1.35rem] border border-dashed border-primary-200 bg-primary-50/60">
+          <EmptyState
+            size="inline"
+            icon={UtensilsCrossed}
+            title="Nothing logged yet."
+            description="Add a food from search or your own meal. It will appear here, and totals update as you go."
+          />
         </div>
       </Card>
     );
   }
 
+  const mealCount = meals.length;
+  const itemCount = meals.reduce((sum, meal) => sum + meal.items.length, 0);
+
   return (
     <Card className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <h2 className="text-lg font-black text-[#16302a]">Logged today</h2>
-        <Link
-          href="/app/nutrition"
-          className="inline-flex min-h-11 items-center gap-1 rounded-full bg-primary-50 px-3.5 py-1.5 text-xs font-black text-primary-700 transition hover:bg-primary-100 md:min-h-0"
-        >
-          Nutrition detail
-          <ArrowRight className="h-3.5 w-3.5" />
-        </Link>
-      </div>
-      <div className="space-y-4">
-        {meals.map((meal) => (
-          <div key={meal.id} className="rounded-[1.35rem] border border-primary-100/80 bg-white/70 p-3 shadow-sm">
-            <div className="flex items-center justify-between">
-              <div className="min-w-0">
-                <p className="text-xs font-black uppercase tracking-[0.14em] text-primary-600">
-                  {formatMealType(meal.mealType)}
-                </p>
-                <p className="truncate text-sm font-black text-[#16302a]">{meal.name}</p>
+      <SectionHeader
+        as="h2"
+        icon={ClipboardList}
+        title="Logged today"
+        description={`${mealCount} ${mealCount === 1 ? "meal" : "meals"} · ${itemCount} ${
+          itemCount === 1 ? "item" : "items"
+        }`}
+        action={
+          <Link
+            href="/app/nutrition"
+            className="fw-press inline-flex min-h-11 items-center gap-1 rounded-full bg-primary-50 px-3.5 py-1.5 text-xs font-black text-primary-700 ring-1 ring-inset ring-primary-100 hover:bg-primary-100 hover:ring-primary-200 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2 md:min-h-9"
+          >
+            Nutrition detail
+            <ArrowRight className="h-3.5 w-3.5" strokeWidth={2.5} aria-hidden="true" />
+          </Link>
+        }
+      />
+      <div className="space-y-3">
+        {meals.map((meal) => {
+          const mealCalories = meal.items.reduce(
+            (sum, item) => sum + item.calories,
+            0
+          );
+          return (
+            // Nested one level inside the card — inset ring, no second shadow.
+            <div
+              key={meal.id}
+              className="rounded-[1.35rem] bg-surface-subtle p-3 ring-1 ring-inset ring-hairline"
+            >
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                    <p className="text-xs font-black uppercase tracking-[0.14em] text-primary-700">
+                      {formatMealType(meal.mealType)}
+                    </p>
+                    <Badge variant="neutral" size="sm">
+                      <span className="tabular-nums">
+                        {Math.round(mealCalories).toLocaleString()}
+                      </span>{" "}
+                      kcal
+                    </Badge>
+                  </div>
+                  <p className="mt-0.5 truncate text-sm font-black text-ink">
+                    {meal.name}
+                  </p>
+                </div>
+                <Button
+                  type="button"
+                  variant="danger"
+                  size="sm"
+                  onClick={() => onRemoveMeal(meal.id)}
+                  aria-label={`Remove ${meal.name}`}
+                  className="shrink-0"
+                >
+                  <Trash2 className="h-3.5 w-3.5" strokeWidth={2} aria-hidden="true" />
+                  Remove
+                </Button>
               </div>
-              <button
-                type="button"
-                onClick={() => onRemoveMeal(meal.id)}
-                aria-label={`Remove ${meal.name}`}
-                className="flex min-h-11 shrink-0 items-center gap-1 rounded-[0.9rem] p-3 text-xs font-bold text-muted-foreground transition hover:bg-red-50 hover:text-red-600 md:min-h-0"
-              >
-                <Trash2 className="h-3.5 w-3.5" />
-                Remove
-              </button>
+              <div className="mt-3 space-y-2">
+                {meal.items.map((item) => (
+                  <LoggedItem
+                    key={item.id}
+                    item={item}
+                    onSave={(patch) => onUpdateItem(meal.id, item.id, patch)}
+                  />
+                ))}
+              </div>
             </div>
-            <div className="mt-3 space-y-2">
-              {meal.items.map((item) => (
-                <LoggedItem
-                  key={item.id}
-                  item={item}
-                  onSave={(patch) => onUpdateItem(meal.id, item.id, patch)}
-                />
-              ))}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </Card>
   );
@@ -157,47 +190,53 @@ function LoggedItem({
 
   if (!editing) {
     return (
-      <div className="flex items-center justify-between gap-3 rounded-[1.15rem] border border-primary-100/70 bg-[#f7faf8] p-3">
+      <div className="flex items-center justify-between gap-2 rounded-[1.15rem] bg-surface px-3 py-2.5 ring-1 ring-inset ring-hairline">
         <div className="min-w-0">
-          <p className="truncate font-black text-[#16302a]">{item.name}</p>
-          <p className="text-xs font-bold text-muted-foreground">
-            {item.calories} kcal &middot; {item.protein}p &middot; {item.carbs}c
-            &middot; {item.fat}f
+          <p className="truncate font-black text-ink">{item.name}</p>
+          <p className="mt-0.5 text-xs font-bold text-ink-muted">
+            <span className="tabular-nums">{item.calories}</span> kcal &middot;{" "}
+            <span className="tabular-nums">{item.protein}</span>p &middot;{" "}
+            <span className="tabular-nums">{item.carbs}</span>c &middot;{" "}
+            <span className="tabular-nums">{item.fat}</span>f
           </p>
         </div>
         <button
           type="button"
           onClick={startEdit}
           aria-label={`Edit ${item.name}`}
-          className="-m-1.5 rounded-[0.9rem] p-3.5 text-muted-foreground transition hover:bg-white hover:text-primary-600 md:-m-0 md:p-3"
+          className="fw-press inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-[0.9rem] text-ink-subtle ring-1 ring-inset ring-transparent hover:bg-primary-50 hover:text-primary-700 hover:ring-primary-100 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2 md:h-9 md:w-9"
         >
-          <Pencil className="h-4 w-4" />
+          <Pencil className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
         </button>
       </div>
     );
   }
 
   return (
-    <div className="space-y-2 rounded-[1.15rem] border border-primary-200 bg-primary-50/50 p-3">
+    <div className="space-y-2.5 rounded-[1.15rem] bg-primary-50/60 p-3 ring-2 ring-inset ring-primary-300">
       <input
         type="text"
         value={name}
         onChange={(event) => setName(event.target.value)}
+        aria-label="Item name"
+        aria-invalid={!nameValid ? "true" : undefined}
         className={cn(
-          "w-full rounded-[0.9rem] border bg-white px-3 py-2 text-sm font-bold text-[#16302a] focus:outline-none focus:ring-2 focus:ring-primary-500",
-          !nameValid ? "border-red-300" : "border-neutral-200"
+          "w-full rounded-[0.9rem] bg-surface px-3 py-2.5 text-sm font-bold text-ink ring-1 ring-inset transition focus:outline-none focus:ring-[3px] focus:ring-primary-500",
+          !nameValid ? "ring-red-400" : "ring-hairline-strong"
         )}
       />
       <div className="grid grid-cols-4 gap-2">
         {MACRO_FIELDS.map((field) => (
-          <div key={field.key}>
-            <label className="mb-1 block text-[10px] font-black uppercase tracking-[0.12em] text-muted-foreground">
+          <div key={field.key} className="min-w-0">
+            <label className="mb-1 block text-[0.625rem] font-black uppercase tracking-[0.12em] text-ink-subtle">
               {field.label}
             </label>
             <input
               type="number"
               inputMode="decimal"
               min={0}
+              aria-label={`${field.label} amount`}
+              aria-invalid={parsed[field.key] === null ? "true" : undefined}
               value={values[field.key]}
               onChange={(event) =>
                 setValues((current) => ({
@@ -206,15 +245,20 @@ function LoggedItem({
                 }))
               }
               className={cn(
-                "w-full rounded-[0.9rem] border bg-white px-2 py-2 text-sm font-semibold tabular-nums text-[#16302a] focus:outline-none focus:ring-2 focus:ring-primary-500",
-                parsed[field.key] === null
-                  ? "border-red-300"
-                  : "border-neutral-200"
+                "w-full min-w-0 rounded-[0.9rem] bg-surface px-2 py-2.5 text-sm font-semibold tabular-nums text-ink ring-1 ring-inset transition focus:outline-none focus:ring-[3px] focus:ring-primary-500",
+                parsed[field.key] === null ? "ring-red-400" : "ring-hairline-strong"
               )}
             />
           </div>
         ))}
       </div>
+      {!canSave && (
+        <p className="text-xs font-bold text-red-600" role="alert">
+          {!nameValid
+            ? "Add an item name."
+            : "Enter a number of 0 or more in every macro field."}
+        </p>
+      )}
       <div className="flex gap-2">
         <Button
           type="button"
@@ -223,7 +267,7 @@ function LoggedItem({
           disabled={!canSave}
           onClick={handleSave}
         >
-          <Check className="h-4 w-4" />
+          <Check className="h-4 w-4" strokeWidth={2.5} aria-hidden="true" />
           Save
         </Button>
         <Button
@@ -232,7 +276,7 @@ function LoggedItem({
           variant="secondary"
           onClick={() => setEditing(false)}
         >
-          <X className="h-4 w-4" />
+          <X className="h-4 w-4" strokeWidth={2.5} aria-hidden="true" />
           Cancel
         </Button>
       </div>

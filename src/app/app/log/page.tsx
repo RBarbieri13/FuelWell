@@ -5,7 +5,9 @@ import { useRouter, useSearchParams } from "next/navigation";
 import {
   Barcode,
   Camera,
+  Check,
   CheckCircle2,
+  History,
   MapPinned,
   Moon,
   Salad,
@@ -15,8 +17,11 @@ import {
   UtensilsCrossed,
   X,
 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { SectionHeader } from "@/components/ui/section-header";
+import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils/cn";
 import { formatMealType, type MacroTotals, type MealType } from "@/lib/fuelwell-data";
 import {
@@ -76,6 +81,10 @@ const MODE_HELP: Record<LogMode, { title: string; detail: string }> = {
     detail: "Scan or type a barcode, then confirm the serving size.",
   },
 };
+
+/** Shared pill chrome for the meal-slot selectors, so both copies match. */
+const SLOT_PILL_BASE =
+  "fw-press inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-black ring-1 ring-inset focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2 md:min-h-9";
 
 // Default the selector to the meal people are most likely logging right now;
 // it stays a starting point the user can switch freely.
@@ -234,17 +243,17 @@ function LogContent() {
   return (
     <div className="mx-auto w-full max-w-6xl min-w-0 space-y-4 p-4 pb-28 md:space-y-5 md:p-8">
       <Card variant="elevated" className="fw-dark-panel min-w-0 overflow-hidden text-white">
-        <div className="flex items-center justify-between gap-4">
-          <div>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="min-w-0">
             <p className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-primary-100">
-              <Sparkles className="h-4 w-4" />
+              <Sparkles className="h-4 w-4" strokeWidth={2.5} aria-hidden="true" />
               Fast logging
             </p>
             <h1 className="mt-2 text-2xl font-black leading-tight tracking-normal md:text-3xl">Log a meal</h1>
           </div>
           <Button
             variant="secondary"
-            className="shrink-0 border-white/15 bg-white/10 text-white shadow-none hover:bg-white/15"
+            className="shrink-0 border-white/15 bg-white/10 text-white shadow-none ring-1 ring-inset ring-white/15 hover:border-white/25 hover:bg-white/15 focus-visible:ring-white"
             onClick={() => router.push("/app/nutrition")}
           >
             View today&apos;s plate
@@ -254,27 +263,38 @@ function LogContent() {
 
       <div className="grid min-w-0 gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.72fr)]">
         <div className="min-w-0 space-y-5">
-          <div className="grid min-w-0 grid-cols-2 gap-2 rounded-[1.5rem] border border-primary-100/80 bg-white/86 p-2 shadow-[0_18px_48px_rgba(22,48,42,0.07)] sm:grid-cols-4">
-            {modes.map((modeOption) => (
-              <button
-                key={modeOption.key}
-                onClick={() => setMode(modeOption.key)}
-                aria-pressed={mode === modeOption.key}
-                className={cn(
-                  "flex min-h-12 min-w-0 items-center justify-center gap-1.5 rounded-[1.15rem] px-2 py-3 text-sm font-black transition-all duration-150 sm:gap-2 sm:px-3",
-                  mode === modeOption.key
-                    ? "bg-primary-600 text-white shadow-[0_14px_32px_rgba(21,145,108,0.22)]"
-                    : "text-[#60776f] hover:bg-primary-50 hover:text-primary-800"
-                )}
-              >
-                <modeOption.icon className="h-4 w-4" />
-                {modeOption.label}
-              </button>
-            ))}
+          <div
+            role="group"
+            aria-label="Logging method"
+            className="grid min-w-0 grid-cols-2 gap-2 rounded-[1.5rem] bg-surface/86 p-2 shadow-e2 ring-1 ring-inset ring-hairline sm:grid-cols-4"
+          >
+            {modes.map((modeOption) => {
+              const isOn = mode === modeOption.key;
+              return (
+                <button
+                  key={modeOption.key}
+                  onClick={() => setMode(modeOption.key)}
+                  aria-pressed={isOn}
+                  className={cn(
+                    "fw-press flex min-h-12 min-w-0 items-center justify-center gap-1.5 rounded-[1.15rem] px-2 py-3 text-sm font-black focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2 sm:gap-2 sm:px-3",
+                    isOn
+                      ? "bg-primary-600 text-white shadow-glow ring-1 ring-inset ring-primary-700"
+                      : "text-ink-muted hover:bg-primary-50 hover:text-primary-800 active:bg-primary-100"
+                  )}
+                >
+                  <modeOption.icon
+                    className="h-4 w-4 shrink-0"
+                    strokeWidth={isOn ? 2.5 : 2}
+                    aria-hidden="true"
+                  />
+                  <span className="min-w-0 truncate">{modeOption.label}</span>
+                </button>
+              );
+            })}
           </div>
 
-          <p className="px-1 text-sm font-semibold leading-6 text-primary-900/65">
-            <span className="font-black text-primary-900">{modeHelp.title}.</span>{" "}
+          <p className="rounded-[1.15rem] bg-surface/70 px-4 py-3 text-sm font-semibold leading-6 text-ink-muted ring-1 ring-inset ring-hairline">
+            <span className="font-black text-ink">{modeHelp.title}.</span>{" "}
             {modeHelp.detail}
           </p>
 
@@ -318,44 +338,44 @@ function LogContent() {
           {(selectedFood || confirmation || goalImpact) && (
             <div ref={addToPlateRef}>
             <Card variant="elevated" className="space-y-5">
-              <div className="flex items-center gap-3">
-                <div className="rounded-2xl bg-primary-50 p-3 text-primary-700">
-                  <UtensilsCrossed className="h-6 w-6" />
-                </div>
-                <div>
-                  <h2 className="text-lg font-black text-neutral-900">
-                    Add to Today&apos;s Plate
-                  </h2>
-                  <p className="text-sm font-medium text-neutral-500">
-                    {selectedFood
-                      ? "Tap a portion or enter a custom amount."
-                      : "Saved. Keep logging or review the day."}
-                  </p>
-                </div>
-              </div>
+              <SectionHeader
+                icon={UtensilsCrossed}
+                title="Add to Today's Plate"
+                description={
+                  selectedFood
+                    ? "Tap a portion or enter a custom amount."
+                    : "Saved. Keep logging or review the day."
+                }
+              />
 
               {/* The active meal slot repeats here so a save never lands in an
                   unseen slot picked far away in the right rail (audit L7). */}
               <div className="flex flex-wrap items-center gap-1.5">
-                <span className="text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">
+                <span className="text-xs font-black uppercase tracking-[0.12em] text-ink-subtle">
                   Adding to
                 </span>
-                {MEAL_TYPES.map((type) => (
-                  <button
-                    key={type}
-                    type="button"
-                    onClick={() => setMealType(type)}
-                    aria-pressed={mealType === type}
-                    className={cn(
-                      "min-h-11 rounded-full px-3 py-1.5 text-xs font-black transition md:min-h-0",
-                      mealType === type
-                        ? "bg-primary-600 text-white"
-                        : "bg-primary-50 text-primary-800 hover:bg-primary-100"
-                    )}
-                  >
-                    {formatMealType(type)}
-                  </button>
-                ))}
+                {MEAL_TYPES.map((type) => {
+                  const isOn = mealType === type;
+                  return (
+                    <button
+                      key={type}
+                      type="button"
+                      onClick={() => setMealType(type)}
+                      aria-pressed={isOn}
+                      className={cn(
+                        SLOT_PILL_BASE,
+                        isOn
+                          ? "bg-primary-600 text-white shadow-e1 ring-primary-700"
+                          : "bg-primary-50 text-primary-800 ring-primary-100 hover:bg-primary-100 hover:ring-primary-200"
+                      )}
+                    >
+                      {isOn && (
+                        <Check aria-hidden="true" className="h-3 w-3" strokeWidth={3} />
+                      )}
+                      {formatMealType(type)}
+                    </button>
+                  );
+                })}
               </div>
 
               {selectedFood && (
@@ -368,15 +388,22 @@ function LogContent() {
               {confirmation && (
                 <div
                   role="status"
-                  className="flex flex-wrap items-center gap-2 rounded-[1.25rem] border border-primary-100 bg-primary-50 px-4 py-3 text-sm font-black text-primary-800"
+                  className="flex flex-wrap items-center gap-2 rounded-[1.25rem] bg-primary-50 px-4 py-3 text-sm font-black text-primary-800 ring-1 ring-inset ring-primary-200"
                 >
-                  <CheckCircle2 className="h-4 w-4 shrink-0" />
+                  <CheckCircle2
+                    className="h-4 w-4 shrink-0 text-primary-600"
+                    strokeWidth={2.5}
+                    aria-hidden="true"
+                  />
                   <span className="min-w-0 flex-1">{confirmation}</span>
                   {lastLogged && (
                     <button
                       type="button"
                       onClick={() => void undoLastLog()}
-                      className="min-h-11 rounded-full bg-white px-3.5 py-1.5 text-xs font-black text-primary-700 transition hover:bg-primary-100 md:min-h-0"
+                      className={cn(
+                        SLOT_PILL_BASE,
+                        "bg-surface text-primary-700 shadow-e1 ring-primary-100 hover:bg-primary-100 hover:ring-primary-200"
+                      )}
                     >
                       Undo
                     </button>
@@ -385,7 +412,10 @@ function LogContent() {
                     <button
                       type="button"
                       onClick={() => setDrawerOpen(true)}
-                      className="min-h-11 rounded-full bg-white px-3.5 py-1.5 text-xs font-black text-primary-700 transition hover:bg-primary-100 md:min-h-0"
+                      className={cn(
+                        SLOT_PILL_BASE,
+                        "bg-surface text-primary-700 shadow-e1 ring-primary-100 hover:bg-primary-100 hover:ring-primary-200"
+                      )}
                     >
                       Current meal ({sessionIngredients.length})
                     </button>
@@ -451,12 +481,11 @@ function RecentMeals({
   if (recent.length === 0) return null;
   return (
     <Card className="space-y-3">
-      <div>
-        <h2 className="text-lg font-black text-[#16302a]">Recent meals</h2>
-        <p className="mt-1 text-sm font-semibold text-muted-foreground">
-          One tap repeats a meal and updates today&apos;s goal math.
-        </p>
-      </div>
+      <SectionHeader
+        icon={History}
+        title="Recent meals"
+        description="One tap repeats a meal and updates today's goal math."
+      />
       <div className="grid gap-2 md:grid-cols-3">
         {recent.map((meal) => {
           const mealTotals = meal.items.reduce(
@@ -473,12 +502,15 @@ function RecentMeals({
               key={meal.id}
               type="button"
               onClick={() => onLog(meal.name, mealTotals)}
-              className="min-h-16 rounded-[1.2rem] border border-primary-100/80 bg-[#f7faf8] px-4 py-3 text-left transition hover:-translate-y-0.5 hover:border-primary-200 hover:bg-white hover:shadow-md hover:shadow-primary-900/10"
+              className="fw-press min-h-16 rounded-[1.2rem] bg-surface-muted px-4 py-3 text-left ring-1 ring-inset ring-hairline hover:-translate-y-0.5 hover:bg-surface hover:shadow-e2 hover:ring-primary-200 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2"
             >
-              <p className="line-clamp-2 text-sm font-black text-[#16302a]">{meal.name}</p>
-              <p className="mt-0.5 text-xs font-bold text-muted-foreground">
-                {mealTotals.calories} kcal · {mealTotals.protein}g protein
-              </p>
+              <span className="line-clamp-2 block text-sm font-black text-ink">
+                {meal.name}
+              </span>
+              <span className="mt-1 block text-xs font-bold text-ink-muted">
+                <span className="tabular-nums">{mealTotals.calories.toLocaleString()}</span>{" "}
+                kcal · <span className="tabular-nums">{mealTotals.protein}</span>g protein
+              </span>
             </button>
           );
         })}
@@ -515,65 +547,80 @@ function SessionIngredientDrawer({
     { calories: 0, protein: 0, carbs: 0, fat: 0 }
   );
 
+  const tiles: { label: string; value: string }[] = [
+    { label: "kcal", value: totals.calories.toLocaleString() },
+    { label: "Pro", value: `${totals.protein}g` },
+    { label: "Carb", value: `${totals.carbs}g` },
+    { label: "Fat", value: `${totals.fat}g` },
+  ];
+
   return (
     <aside
       className={cn(
-        "fixed bottom-0 right-0 top-0 z-40 w-full max-w-md transform border-l border-primary-100 bg-white shadow-[0_24px_80px_rgba(22,48,42,0.22)] transition-transform duration-300 md:top-0",
+        "fixed bottom-0 right-0 top-0 z-40 w-full max-w-md transform bg-surface shadow-e4 ring-1 ring-inset ring-hairline transition-transform duration-300 ease-out-soft md:top-0",
         open ? "translate-x-0" : "hidden translate-x-full"
       )}
       aria-hidden={!open}
     >
       <div className="flex h-full flex-col">
-        <div className="flex items-start justify-between gap-4 border-b border-primary-100 bg-primary-50/80 px-5 py-5">
-          <div>
+        <div className="flex items-start justify-between gap-4 border-b border-hairline bg-primary-50/80 px-5 py-5">
+          <div className="min-w-0">
             <p className="text-xs font-black uppercase tracking-[0.16em] text-primary-700">
               Current meal
             </p>
-            <h2 className="mt-1 font-heading text-2xl font-black text-[#16302a]">
+            <h2 className="mt-1 font-heading text-2xl font-black text-ink">
               Ingredient drawer
             </h2>
-            <p className="mt-1 text-sm font-semibold text-muted-foreground">
+            <p className="mt-1 text-sm font-semibold text-ink-muted">
               Same-session ingredients and macro totals.
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full bg-white p-3 text-muted-foreground shadow-sm transition hover:bg-primary-50 hover:text-primary-700"
+            className="fw-press inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-surface text-ink-subtle shadow-e1 ring-1 ring-inset ring-hairline hover:bg-primary-50 hover:text-primary-700 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2"
             aria-label="Close ingredient drawer"
           >
-            <X className="h-5 w-5" />
+            <X className="h-5 w-5" strokeWidth={2.5} aria-hidden="true" />
           </button>
         </div>
 
         <div className="grid grid-cols-4 gap-2 px-5 py-4">
-          {[
-            ["kcal", totals.calories],
-            ["Pro", `${totals.protein}g`],
-            ["Carb", `${totals.carbs}g`],
-            ["Fat", `${totals.fat}g`],
-          ].map(([label, value]) => (
-            <div key={label} className="rounded-[1rem] bg-[#f4f8f6] px-3 py-3 text-center">
-              <p className="text-lg font-black text-[#16302a]">{value}</p>
-              <p className="text-[10px] font-black uppercase tracking-[0.12em] text-muted-foreground">
-                {label}
+          {tiles.map((tile) => (
+            <div
+              key={tile.label}
+              className="min-w-0 rounded-[1rem] bg-surface-muted px-2 py-3 text-center ring-1 ring-inset ring-hairline"
+            >
+              <p className="truncate text-lg font-black tabular-nums text-ink">
+                {tile.value}
+              </p>
+              <p className="mt-0.5 text-[10px] font-black uppercase tracking-[0.12em] text-ink-subtle">
+                {tile.label}
               </p>
             </div>
           ))}
         </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto px-5 pb-6">
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 pb-6">
           {ingredients.length === 0 ? (
-            <div className="rounded-[1.25rem] border border-dashed border-primary-200 bg-primary-50/70 p-5 text-sm font-semibold text-primary-900/70">
+            <div className="rounded-[1.25rem] border border-dashed border-primary-200 bg-primary-50/70 p-5 text-sm font-semibold leading-6 text-primary-900/70">
               Add foods and they will appear here for this meal-building session.
             </div>
           ) : (
-            <div className="divide-y divide-primary-100/70 rounded-[1.25rem] border border-primary-100 bg-white">
+            <div className="space-y-1.5">
               {ingredients.map((ingredient) => (
-                <div key={ingredient.id} className="px-4 py-3">
-                  <p className="text-sm font-black text-[#16302a]">{ingredient.name}</p>
-                  <p className="mt-1 text-xs font-semibold text-muted-foreground">
-                    {ingredient.totals.calories} kcal · {ingredient.totals.protein}g protein · {ingredient.totals.carbs}g carbs · {ingredient.totals.fat}g fat
+                <div
+                  key={ingredient.id}
+                  className="rounded-[1rem] bg-surface-muted px-4 py-3 ring-1 ring-inset ring-hairline"
+                >
+                  <p className="text-sm font-black text-ink">{ingredient.name}</p>
+                  <p className="mt-1 text-xs font-semibold leading-5 text-ink-muted">
+                    <span className="tabular-nums">
+                      {ingredient.totals.calories.toLocaleString()}
+                    </span>{" "}
+                    kcal · <span className="tabular-nums">{ingredient.totals.protein}</span>g
+                    protein · <span className="tabular-nums">{ingredient.totals.carbs}</span>g
+                    carbs · <span className="tabular-nums">{ingredient.totals.fat}</span>g fat
                   </p>
                 </div>
               ))}
@@ -594,24 +641,37 @@ function MealTypeSelector({
 }) {
   return (
     <Card className="space-y-3 md:space-y-4">
-      <h2 className="text-lg font-black text-[#16302a]">Logging for</h2>
+      <SectionHeader
+        as="h3"
+        title="Logging for"
+        action={
+          <Badge variant="default" size="sm">
+            {formatMealType(mealType)}
+          </Badge>
+        }
+      />
       <div className="grid grid-cols-2 gap-2">
         {MEAL_TYPES.map((type) => {
           const Icon = MEAL_ICONS[type];
+          const isOn = mealType === type;
           return (
             <button
               key={type}
               onClick={() => onSelect(type)}
-              aria-pressed={mealType === type}
+              aria-pressed={isOn}
               className={cn(
-                "flex items-center justify-center gap-2 rounded-[1.15rem] border px-4 py-3 text-sm font-black transition",
-                mealType === type
-                  ? "border-primary-300 bg-primary-50 text-primary-800 shadow-sm"
-                  : "border-primary-100 bg-white text-[#60776f] hover:border-primary-200 hover:bg-primary-50/60"
+                "fw-press flex min-h-12 items-center justify-center gap-2 rounded-[1.15rem] px-3 py-3 text-sm font-black ring-1 ring-inset focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2",
+                isOn
+                  ? "bg-primary-50 text-primary-800 shadow-e1 ring-2 ring-primary-400"
+                  : "bg-surface text-ink-muted ring-hairline hover:bg-primary-50/60 hover:ring-primary-200"
               )}
             >
-              <Icon className="h-4 w-4 shrink-0" />
-              {formatMealType(type)}
+              <Icon
+                className="h-4 w-4 shrink-0"
+                strokeWidth={isOn ? 2.5 : 2}
+                aria-hidden="true"
+              />
+              <span className="min-w-0 truncate">{formatMealType(type)}</span>
             </button>
           );
         })}
@@ -624,8 +684,16 @@ export default function LogPage() {
   return (
     <Suspense
       fallback={
-        <div className="p-4 md:p-8">
-          <div className="h-8 w-32 animate-pulse rounded-lg bg-neutral-200" />
+        <div
+          className="mx-auto w-full max-w-6xl min-w-0 space-y-4 p-4 pb-28 md:space-y-5 md:p-8"
+          role="status"
+          aria-label="Loading meal logging"
+        >
+          <Skeleton className="h-28 rounded-[24px] bg-[#123d32]/85 md:h-32" />
+          <div className="grid min-w-0 gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.72fr)]">
+            <Skeleton className="h-72 rounded-[24px] bg-surface/80" />
+            <Skeleton className="h-72 rounded-[24px] bg-surface/80" />
+          </div>
         </div>
       }
     >

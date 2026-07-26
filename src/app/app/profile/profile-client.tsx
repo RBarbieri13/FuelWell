@@ -6,6 +6,9 @@ import { createClient } from "@/lib/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SectionHeader } from "@/components/ui/section-header";
+import { EmptyState } from "@/components/ui/empty-state";
+import { cn } from "@/lib/utils/cn";
 import {
   User,
   LogOut,
@@ -17,7 +20,10 @@ import {
   Ruler,
   Check,
   Pencil,
+  ShieldQuestion,
+  UserCog,
   X,
+  type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { useUnits } from "@/components/settings/use-units";
@@ -157,18 +163,21 @@ export function ProfileClient({
           </div>
           <Link
             href="/app/settings"
-            className="inline-flex min-h-11 items-center justify-center gap-2 self-start rounded-full border border-primary-100 bg-white px-5 py-3 text-sm font-black text-primary-700 transition hover:border-primary-200 hover:bg-primary-50 md:self-auto"
+            className="fw-press inline-flex min-h-11 items-center justify-center gap-2 self-start rounded-full bg-surface px-5 py-3 text-sm font-black text-primary-800 shadow-e1 ring-1 ring-inset ring-primary-100 hover:bg-primary-50 hover:ring-primary-200 md:self-auto"
           >
             Settings
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-4 w-4" strokeWidth={2.5} />
           </Link>
         </div>
       </header>
 
       <div className="fw-page-inner space-y-4 md:space-y-6">
         {isPreview && (
-          <Card className="border-primary-100 bg-primary-50/80">
-            <p className="text-sm font-black text-primary-900">
+          <Card variant="tinted" padding="sm" className="flex gap-3 bg-primary-50/80">
+            <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-[0.8rem] bg-surface text-primary-700 ring-1 ring-inset ring-primary-100">
+              <ShieldQuestion className="h-4 w-4" strokeWidth={2} />
+            </span>
+            <p className="min-w-0 text-sm font-bold leading-6 text-primary-900">
               Preview mode is using a sample user. Edits are local-only for this demo.
             </p>
           </Card>
@@ -177,11 +186,11 @@ export function ProfileClient({
         <section className="grid min-w-0 gap-6 xl:grid-cols-[1.08fr_0.92fr]">
           <Card className="fw-dark-panel min-w-0 px-5 py-5 sm:px-8 sm:py-8">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:gap-6">
-              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[1.35rem] bg-white/12 md:h-24 md:w-24 md:rounded-[2rem] text-white shadow-inner shadow-white/10">
-                <User className="h-8 w-8 md:h-11 md:w-11" />
+              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[1.35rem] bg-white/12 text-white ring-1 ring-inset ring-white/15 md:h-24 md:w-24 md:rounded-[2rem]">
+                <User className="h-8 w-8 md:h-11 md:w-11" strokeWidth={1.75} />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-black uppercase tracking-[0.16em] text-primary-200">
+                <p className="text-[0.6875rem] font-black uppercase tracking-[0.18em] text-primary-200">
                   Account profile
                 </p>
                 {editingName ? (
@@ -221,10 +230,10 @@ export function ProfileClient({
                         setNameValue(effectiveDisplayName);
                         setEditingName(true);
                       }}
-                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/10 text-white/75 transition hover:bg-white/15 hover:text-white"
+                      className="fw-press flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/10 text-white/80 ring-1 ring-inset ring-white/15 hover:bg-white/20 hover:text-white"
                       aria-label="Edit name"
                     >
-                      <Pencil className="h-4 w-4" />
+                      <Pencil className="h-4 w-4" strokeWidth={2} />
                     </button>
                   </div>
                 )}
@@ -233,7 +242,7 @@ export function ProfileClient({
                     {nameError}
                   </p>
                 )}
-                <p className="mt-2 truncate text-sm font-semibold text-white/66 md:mt-3 md:text-base">{email}</p>
+                <p className="mt-2 truncate text-sm font-semibold text-white/70 md:mt-3 md:text-base">{email}</p>
               </div>
             </div>
 
@@ -245,25 +254,39 @@ export function ProfileClient({
           </Card>
 
           <Card variant="elevated" className="min-w-0 space-y-5">
-            <div className="flex items-start gap-4">
-              <span className="fw-icon-chip">
-                <Target className="h-6 w-6" />
-              </span>
-              <div>
-                <h2 className="text-2xl font-black text-neutral-900">Daily targets</h2>
-                <p className="mt-1 text-sm font-semibold leading-6 text-neutral-500">
-                  Current plan values used across dashboard, coach, recipes, and logging.
-                </p>
-              </div>
-            </div>
+            <SectionHeader
+              icon={Target}
+              title="Daily targets"
+              description="Current plan values used across dashboard, coach, recipes, and logging."
+            />
 
             {onboardingComplete ? (
               <div className="space-y-3">
                 <div className="grid grid-cols-2 gap-3">
-                  <TargetCard label="Calories" value={`${effectiveCalorieTarget}`} unit="kcal" color="bg-primary-50 text-primary-700" />
-                  <TargetCard label="Protein" value={`${effectiveProteinTarget}`} unit="g" color="bg-sky-50 text-sky-700" />
-                  <TargetCard label="Carbs" value={`${effectiveCarbsTarget}`} unit="g" color="bg-lemon-50 text-lemon-700" />
-                  <TargetCard label="Fat" value={`${effectiveFatTarget}`} unit="g" color="bg-accent-50 text-accent-700" />
+                  <TargetCard
+                    label="Calories"
+                    value={effectiveCalorieTarget}
+                    unit="kcal"
+                    color="bg-primary-50 text-primary-700 ring-primary-100"
+                  />
+                  <TargetCard
+                    label="Protein"
+                    value={effectiveProteinTarget}
+                    unit="g"
+                    color="bg-sky-50 text-sky-700 ring-sky-100"
+                  />
+                  <TargetCard
+                    label="Carbs"
+                    value={effectiveCarbsTarget}
+                    unit="g"
+                    color="bg-lemon-50 text-lemon-700 ring-lemon-100"
+                  />
+                  <TargetCard
+                    label="Fat"
+                    value={effectiveFatTarget}
+                    unit="g"
+                    color="bg-accent-50 text-accent-700 ring-accent-100"
+                  />
                 </div>
                 <MacroSplitBar
                   protein={effectiveProteinTarget}
@@ -272,11 +295,14 @@ export function ProfileClient({
                 />
               </div>
             ) : (
-              <div className="rounded-[1.35rem] border border-dashed border-primary-200 bg-primary-50/60 p-5">
-                <p className="font-black text-neutral-900">Targets are not finalized yet.</p>
-                <p className="mt-1 text-sm font-semibold text-neutral-500">
-                  Finish setup to calculate the targets FuelWell uses for every daily decision.
-                </p>
+              <div className="rounded-[1.35rem] bg-surface-muted ring-1 ring-inset ring-hairline">
+                <EmptyState
+                  size="inline"
+                  icon={Target}
+                  title="Targets are not finalized yet."
+                  description="Finish setup to calculate the targets FuelWell uses for every daily decision."
+                  action={{ label: "Finish setup", href: "/app/onboarding" }}
+                />
               </div>
             )}
 
@@ -299,17 +325,21 @@ export function ProfileClient({
 
         <section className="grid min-w-0 gap-4 xl:grid-cols-[1fr_0.85fr]">
           <Card className="min-w-0 px-5 py-6 sm:px-6">
-            <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-2xl font-black text-neutral-900">Body context</h2>
-              <Link
-                href="/app/settings#health-profile"
-                className="inline-flex min-h-11 items-center gap-1 rounded-full bg-primary-50 px-3 py-1 text-xs font-black text-primary-700 transition hover:bg-primary-100"
-              >
-                Edit in Settings
-                <ChevronRight className="h-3.5 w-3.5" />
-              </Link>
-            </div>
-            <div className="divide-y divide-primary-100/70">
+            <SectionHeader
+              icon={Ruler}
+              title="Body context"
+              className="mb-4"
+              action={
+                <Link
+                  href="/app/settings#health-profile"
+                  className="fw-press inline-flex min-h-11 items-center gap-1 rounded-full bg-primary-50 px-3.5 py-2 text-xs font-black text-primary-800 ring-1 ring-inset ring-primary-100 hover:bg-primary-100"
+                >
+                  Edit in Settings
+                  <ChevronRight className="h-3.5 w-3.5" strokeWidth={2.5} />
+                </Link>
+              }
+            />
+            <div className="divide-y divide-hairline overflow-hidden rounded-[1.35rem] bg-surface-muted ring-1 ring-inset ring-hairline">
               <InfoRow icon={Target} label="Goal" value={formatGoal(goal)} />
               <InfoRow icon={Activity} label="Activity" value={formatActivity(activityLevel)} />
               {weightKg && (
@@ -321,6 +351,7 @@ export function ProfileClient({
                       ? `${Math.round(weightKg)} kg`
                       : `${weightLb ?? Math.round(weightKg * 2.20462)} lb`
                   }
+                  numeric
                 />
               )}
               {heightCm && (
@@ -332,28 +363,31 @@ export function ProfileClient({
                       ? `${Math.round(heightCm)} cm`
                       : `${heightIn ?? Math.round(heightCm / 2.54)} in`
                   }
+                  numeric
                 />
               )}
             </div>
           </Card>
 
           <Card className="min-w-0 self-start">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <h2 className="text-base font-black text-neutral-900">Account actions</h2>
-                <p className="mt-1 text-sm font-semibold text-neutral-500">Manage setup and session state.</p>
-              </div>
-              {!showSignOutConfirm && (
-                <Button variant="danger" onClick={() => setShowSignOutConfirm(true)}>
-                  <LogOut className="h-4 w-4" />
-                  Sign out
-                </Button>
-              )}
-            </div>
+            <SectionHeader
+              as="h3"
+              icon={UserCog}
+              title="Account actions"
+              description="Manage setup and session state."
+              action={
+                !showSignOutConfirm ? (
+                  <Button variant="danger" size="sm" onClick={() => setShowSignOutConfirm(true)}>
+                    <LogOut className="h-4 w-4" />
+                    Sign out
+                  </Button>
+                ) : undefined
+              }
+            />
 
             {showSignOutConfirm && (
-              <div className="mt-4 rounded-[1.35rem] border border-red-200 bg-red-50/70 p-4">
-                <p className="text-sm font-black text-neutral-900">
+              <div className="mt-4 rounded-[1.35rem] bg-red-50/70 p-4 ring-1 ring-inset ring-red-200">
+                <p className="text-sm font-black text-ink">
                   Are you sure you want to sign out?
                 </p>
                 <div className="mt-3 flex flex-wrap items-center gap-2">
@@ -376,9 +410,11 @@ export function ProfileClient({
 
 function HeroStat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-[1.25rem] border border-white/12 bg-white/10 px-3 py-3 backdrop-blur md:px-4 md:py-4">
+    <div className="rounded-[1.25rem] bg-white/10 px-3 py-3 ring-1 ring-inset ring-white/15 backdrop-blur md:px-4 md:py-4">
       <p className="truncate text-base font-black text-white md:text-lg">{value}</p>
-      <p className="mt-1 text-xs font-black uppercase tracking-[0.12em] text-white/58">{label}</p>
+      <p className="mt-1 text-[0.6875rem] font-black uppercase tracking-[0.12em] text-white/65">
+        {label}
+      </p>
     </div>
   );
 }
@@ -390,22 +426,24 @@ function TargetCard({
   color,
 }: {
   label: string;
-  value: string;
+  value: number;
   unit: string;
   color: string;
 }) {
   return (
-    <Card padding="sm" className={color}>
-      <div className="px-3 py-2 text-center">
-        <p className="text-2xl font-bold tabular-nums">{value}</p>
-        <p className="text-xs font-medium opacity-70">
-          {unit} {label.toLowerCase()}
-        </p>
-      </div>
-    </Card>
+    <div className={cn("rounded-[1.35rem] px-4 py-4 text-center ring-1 ring-inset", color)}>
+      <p className="text-3xl font-black leading-none tabular-nums">{value}</p>
+      <p className="mt-1.5 text-xs font-bold uppercase tracking-[0.08em] opacity-75">
+        {unit} {label.toLowerCase()}
+      </p>
+    </div>
   );
 }
 
+/**
+ * Share-of-calories split for the saved macro targets. Values are derived from
+ * the targets themselves (4/4/9 kcal per gram) — there is no separate series.
+ */
 function MacroSplitBar({
   protein,
   carbs,
@@ -421,16 +459,45 @@ function MacroSplitBar({
   const total = proteinKcal + carbsKcal + fatKcal;
   if (total <= 0) return null;
   const pct = (kcal: number) => Math.round((kcal / total) * 100);
+  const segments = [
+    { label: "Protein", pct: pct(proteinKcal), bar: "bg-sky-500", dot: "bg-sky-500" },
+    { label: "Carbs", pct: pct(carbsKcal), bar: "bg-lemon-500", dot: "bg-lemon-500" },
+    { label: "Fat", pct: pct(fatKcal), bar: "bg-accent-500", dot: "bg-accent-500" },
+  ];
+
   return (
-    <div>
-      <div className="flex h-2 overflow-hidden rounded-full">
-        <div className="bg-sky-500" style={{ width: `${pct(proteinKcal)}%` }} />
-        <div className="bg-lemon-500" style={{ width: `${pct(carbsKcal)}%` }} />
-        <div className="bg-accent-500" style={{ width: `${pct(fatKcal)}%` }} />
+    <div className="rounded-[1.35rem] bg-surface-muted p-4 ring-1 ring-inset ring-hairline">
+      <div className="flex items-baseline justify-between gap-3">
+        <p className="text-[0.6875rem] font-black uppercase tracking-[0.14em] text-ink-subtle">
+          Share of calories
+        </p>
+        <p className="text-[0.6875rem] font-bold tabular-nums text-ink-faint">
+          {Math.round(total)} kcal from macros
+        </p>
       </div>
-      <p className="mt-2 text-xs font-semibold text-neutral-500">
-        {pct(proteinKcal)}% protein · {pct(carbsKcal)}% carbs · {pct(fatKcal)}% fat of calories
-      </p>
+      <div
+        role="img"
+        aria-label={`Calorie split: ${segments[0].pct}% protein, ${segments[1].pct}% carbs, ${segments[2].pct}% fat.`}
+        className="mt-2 flex h-2.5 gap-0.5 overflow-hidden rounded-full bg-surface-sunken"
+      >
+        {segments.map((segment) => (
+          <span
+            key={segment.label}
+            className={cn("transition-[width] duration-700 ease-out-soft", segment.bar)}
+            style={{ width: `${segment.pct}%` }}
+          />
+        ))}
+      </div>
+      <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1">
+        {segments.map((segment) => (
+          <span key={segment.label} className="flex items-center gap-1.5">
+            <span aria-hidden="true" className={cn("h-2 w-2 rounded-full", segment.dot)} />
+            <span className="text-xs font-bold text-ink-muted">
+              {segment.label} <span className="tabular-nums text-ink">{segment.pct}%</span>
+            </span>
+          </span>
+        ))}
+      </div>
     </div>
   );
 }
@@ -439,18 +506,29 @@ function InfoRow({
   icon: Icon,
   label,
   value,
+  numeric = false,
 }: {
-  icon: typeof Target;
+  icon: LucideIcon;
   label: string;
   value: string;
+  numeric?: boolean;
 }) {
   return (
-    <div className="flex items-center justify-between px-4 py-3">
-      <div className="flex items-center gap-3">
-        <Icon className="w-4 h-4 text-neutral-400" />
-        <span className="text-sm text-neutral-500">{label}</span>
+    <div className="flex min-h-14 items-center justify-between gap-4 px-4 py-3">
+      <div className="flex min-w-0 items-center gap-3">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.9rem] bg-surface text-primary-700 ring-1 ring-inset ring-hairline">
+          <Icon className="h-4 w-4" strokeWidth={2} />
+        </span>
+        <span className="truncate text-sm font-bold text-ink-muted">{label}</span>
       </div>
-      <span className="text-sm font-medium text-neutral-900">{value}</span>
+      <span
+        className={cn(
+          "shrink-0 text-sm font-black text-ink",
+          numeric && "tabular-nums"
+        )}
+      >
+        {value}
+      </span>
     </div>
   );
 }

@@ -22,6 +22,9 @@ import { MacroBar } from "@/components/dashboard/macro-bar";
 import { QuickActions } from "@/components/dashboard/quick-actions";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty-state";
+import { SectionHeader } from "@/components/ui/section-header";
 import type { MacroTargets, MacroTotals, MealRecord } from "@/lib/fuelwell-data";
 import { usePreviewOnboardingOverride } from "@/lib/preview-onboarding";
 import {
@@ -35,6 +38,10 @@ import {
   sumMeals,
 } from "@/lib/fuelwell-data";
 import { useDayLog } from "@/lib/use-day-log";
+
+/** One glyph plate treatment for every icon that sits alone on this surface. */
+const ICON_PLATE =
+  "flex h-11 w-11 shrink-0 items-center justify-center rounded-[1rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100 transition-colors";
 
 function getTimeGreeting(now: Date) {
   const hour = now.getHours();
@@ -116,12 +123,13 @@ export function DashboardClient({
   const healthScore = calculateHealthScore(contributors);
   const coachVerdict = buildCoachVerdict(totals, effectiveTargets, todaysMeals.length);
   const { salutation, tagline } = getTimeGreeting(new Date());
+  const caloriePercent = percentOf(totals.calories, effectiveTargets.calories);
 
   return (
     <div className="fw-app-surface">
       <header className="fw-page-header">
         <div className="fw-page-inner flex flex-col gap-3 py-4 md:gap-4 md:py-6 md:flex-row md:items-center md:justify-between">
-          <div>
+          <div className="min-w-0">
             <h1 className="fw-heading text-2xl md:text-[1.7rem]" suppressHydrationWarning>
               {salutation}, {effectiveDisplayName}
             </h1>
@@ -134,67 +142,85 @@ export function DashboardClient({
 
       <div className="fw-page-inner space-y-4 md:space-y-6">
       {setupCompleteBanner && (
-        <Card className="border-primary-200 bg-primary-50/80">
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-600 text-white">
-                <Sparkles className="h-4 w-4" />
+        <Card
+          padding="sm"
+          className="border-primary-200 bg-primary-50/80 shadow-e1"
+          role="status"
+        >
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex min-w-0 items-center gap-3">
+              <span
+                aria-hidden="true"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-600 text-white shadow-glow"
+              >
+                <Sparkles className="h-4 w-4" strokeWidth={2} />
               </span>
-              <p className="text-sm font-black text-[#16302a]">
+              <p className="min-w-0 text-sm font-black text-ink">
                 Setup complete — your plan and targets are live.
               </p>
             </div>
-            <button
-              type="button"
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={() => setSetupCompleteBanner(false)}
-              className="shrink-0 rounded-full px-3 py-1.5 text-sm font-black text-primary-700 transition hover:bg-primary-100"
+              className="shrink-0 text-primary-700"
             >
               Done
-            </button>
+            </Button>
           </div>
         </Card>
       )}
       {!effectiveOnboardingComplete && (
-        <Link href="/app/onboarding" className="block group">
+        <Link
+          href="/app/onboarding"
+          className="group block rounded-[24px] focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2"
+        >
           <Card
             variant="elevated"
-            className="border-primary-200 bg-gradient-to-r from-primary-50/90 to-white transition-colors group-hover:border-primary-300"
+            className="fw-press border-primary-200 bg-gradient-to-r from-primary-50/90 to-surface group-hover:-translate-y-0.5 group-hover:border-primary-300 group-hover:shadow-e4"
           >
             <div className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-4">
-                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-600 text-white shadow-[0_10px_24px_rgba(21,145,108,0.35)]">
-                  <Sparkles className="h-6 w-6" />
+              <div className="flex min-w-0 items-center gap-4">
+                <span
+                  aria-hidden="true"
+                  className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-600 text-white shadow-glow"
+                >
+                  <Sparkles className="h-6 w-6" strokeWidth={2} />
                 </span>
-                <div>
-                  <p className="text-base font-black text-[#16302a]">
+                <div className="min-w-0">
+                  <p className="text-base font-black text-ink">
                     Take the 3-minute setup quiz
                   </p>
-                  <p className="mt-0.5 text-sm font-semibold text-[#6f8981]">
+                  <p className="mt-0.5 text-sm font-semibold text-ink-muted">
                     Targets, coach context, and meal suggestions all start here.
                   </p>
                 </div>
               </div>
-              <span className="hidden shrink-0 items-center gap-1 rounded-full bg-primary-600 px-4 py-2 text-sm font-black text-white transition group-hover:bg-primary-700 sm:inline-flex">
+              <span className="hidden shrink-0 items-center gap-1 rounded-full bg-primary-600 px-4 py-2 text-sm font-black text-white shadow-e1 transition group-hover:bg-primary-700 sm:inline-flex">
                 Start
-                <ArrowRight className="h-4 w-4" />
+                <ArrowRight className="h-4 w-4" strokeWidth={2} />
               </span>
-              <ArrowRight className="h-5 w-5 shrink-0 text-primary-600 sm:hidden" />
+              <ArrowRight
+                aria-hidden="true"
+                className="h-5 w-5 shrink-0 text-primary-600 sm:hidden"
+                strokeWidth={2}
+              />
             </div>
           </Card>
         </Link>
       )}
 
-      <section className="grid gap-[18px] lg:grid-cols-[1.32fr_1fr]">
+      <section className="grid gap-4 md:gap-5 lg:grid-cols-[1.32fr_1fr]">
         <Card
           variant="elevated"
-          className="fw-dark-panel overflow-hidden rounded-[24px] p-0 shadow-[0_24px_50px_rgba(16,48,40,0.34)]"
+          className="fw-dark-panel overflow-hidden p-0 shadow-e4"
         >
           <div className="relative p-5 md:p-[30px]">
             <div className="relative z-10">
               <div className="mb-4 flex flex-wrap items-start justify-between gap-4">
-                <div>
+                <div className="min-w-0">
                   <p className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.12em] text-primary-200">
-                    <Sparkles className="h-4 w-4" />
+                    <Sparkles className="h-4 w-4" strokeWidth={2} />
                     Today&apos;s decision
                   </p>
                   <h2 className="mt-3 max-w-[24rem] text-[1.6rem] font-black leading-[1.15] md:leading-[1.08] tracking-normal text-white md:text-[2.45rem]">
@@ -217,48 +243,47 @@ export function DashboardClient({
                 )}
               </div>
 
-              <p className="max-w-[26rem] text-sm font-semibold leading-6 text-white/75">
+              <p className="max-w-[26rem] text-sm font-semibold leading-6 text-white/80">
                 {hasLoggedToday
                   ? coachVerdict.body
                   : "No meals, workouts, or recovery inputs are logged yet. FuelWell will show the missing pieces instead of inventing green progress."}
               </p>
 
               <div className="mt-5 flex flex-wrap items-center gap-3">
-                <Link href={coachVerdict.href}>
+                <Link href={coachVerdict.href} className="rounded-full">
                   <Button size="lg" className="rounded-full px-6 py-3 text-sm">
-                    <Sparkles className="h-4 w-4" />
+                    <Sparkles className="h-4 w-4" strokeWidth={2} />
                     {coachVerdict.action}
                   </Button>
                 </Link>
                 <Link
                   href="/app/dashboard/score"
-                  className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-5 py-3 text-sm font-black text-white backdrop-blur transition hover:bg-white/15"
+                  className="fw-press inline-flex min-h-11 items-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-3 text-sm font-black text-white backdrop-blur hover:border-white/30 hover:bg-white/20 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-primary-950"
                 >
-                  <span className="text-white/80">Health score</span>
+                  <span className="text-white/85">Health score</span>
                   <span className="tabular-nums text-primary-200">
                     {healthScore !== null ? `${healthScore}/100` : "--"}
                   </span>
-                  <ChevronRight className="h-3.5 w-3.5 text-white/70" />
+                  <ChevronRight className="h-3.5 w-3.5 text-white/70" strokeWidth={2.25} />
                 </Link>
               </div>
             </div>
           </div>
         </Card>
 
-        <Card className="flex flex-col rounded-[24px] px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
-          <div className="flex items-center justify-between gap-4">
-            <div>
-              <h2 className="text-base font-black text-neutral-900">
-                Today&apos;s plate
-              </h2>
-              <p className="mt-1 max-w-[14rem] text-xs font-semibold leading-5 text-neutral-500">
-                Calculated from {todaysMeals.length} logged {todaysMeals.length === 1 ? "meal" : "meals"} only.
-              </p>
-            </div>
-            <span className="shrink-0 rounded-full bg-primary-50 px-3.5 py-1.5 text-xs font-black text-primary-700">
-              {percentOf(totals.calories, effectiveTargets.calories)}% of calories eaten
-            </span>
-          </div>
+        <Card className="flex flex-col">
+          <SectionHeader
+            as="h3"
+            title={"Today's plate"}
+            description={`Calculated from ${todaysMeals.length} logged ${
+              todaysMeals.length === 1 ? "meal" : "meals"
+            } only.`}
+            action={
+              <Badge variant={caloriePercent > 100 ? "warning" : "default"} className="tabular-nums">
+                {caloriePercent}% of calories eaten
+              </Badge>
+            }
+          />
 
           <div className="my-2 flex justify-center">
             <MealMakeupHover meals={todaysMeals}>
@@ -266,52 +291,63 @@ export function DashboardClient({
             </MealMakeupHover>
           </div>
 
-          <div className="mt-auto space-y-4">
+          <div className="mt-auto space-y-4 rounded-[1.25rem] bg-surface-subtle p-4 ring-1 ring-inset ring-hairline">
             <MacroBar label="Protein" current={totals.protein} target={effectiveTargets.protein} color="var(--color-macro-protein)" />
             <MacroBar label="Carbs" current={totals.carbs} target={effectiveTargets.carbs} color="var(--color-macro-carbs)" />
             <MacroBar label="Fat" current={totals.fat} target={effectiveTargets.fat} color="var(--color-macro-fat)" />
-            <Link href="/app/nutrition" className="block">
-              <Button variant="secondary" className="w-full rounded-[0.9rem]">
-                Open meal breakdown
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
           </div>
+          <Link href="/app/nutrition" className="mt-4 block rounded-[1.15rem]">
+            <Button variant="secondary" className="w-full">
+              Open meal breakdown
+              <ArrowRight className="h-4 w-4" strokeWidth={2} />
+            </Button>
+          </Link>
         </Card>
       </section>
 
       <section>
-        <h2 className="mb-3 text-xs font-bold uppercase tracking-wider text-neutral-400">
-          Quick actions
-        </h2>
+        <SectionHeader as="h3" title="Quick actions" className="mb-3" />
         <QuickActions />
       </section>
 
-      <section className="grid gap-[18px] lg:grid-cols-2">
-        <Card className="space-y-4 rounded-[1.5rem] px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-neutral-900">Today&apos;s focus</h2>
-          </div>
+      <section className="grid gap-4 md:gap-5 lg:grid-cols-2">
+        <Card className="space-y-4">
+          <SectionHeader as="h3" title={"Today's focus"} />
           <div className="grid gap-3">
             {contributors.map((contributor) => (
               <Link
                 href={contributor.href}
                 key={contributor.key}
-                    className="group fw-soft-row block p-4 transition hover:-translate-y-0.5 hover:border-primary-200 hover:bg-white hover:shadow-md hover:shadow-primary-900/10"
+                className="fw-press group fw-soft-row block p-4 hover:-translate-y-0.5 hover:border-primary-200 hover:bg-surface hover:shadow-e1 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2"
               >
                 <div className="flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-3">
-                    <div className="rounded-[1rem] bg-primary-100 p-3 text-primary-700 group-hover:bg-primary-200 group-hover:text-primary-800">
-                      {contributor.key === "nutrition" && <Salad className="h-5 w-5" />}
-                      {contributor.key === "activity" && <Activity className="h-5 w-5" />}
-                      {contributor.key === "recovery" && <HeartPulse className="h-5 w-5" />}
-                    </div>
-                    <div>
-                      <p className="font-bold text-neutral-900">{contributor.label}</p>
-                      <p className="text-sm font-medium text-neutral-500">{contributor.status}</p>
+                  <div className="flex min-w-0 items-center gap-3">
+                    <span aria-hidden="true" className={cn(ICON_PLATE, "group-hover:bg-primary-100")}>
+                      {contributor.key === "nutrition" && <Salad className="h-5 w-5" strokeWidth={2} />}
+                      {contributor.key === "activity" && <Activity className="h-5 w-5" strokeWidth={2} />}
+                      {contributor.key === "recovery" && <HeartPulse className="h-5 w-5" strokeWidth={2} />}
+                    </span>
+                    <div className="min-w-0">
+                      <p className="font-bold text-ink">{contributor.label}</p>
+                      <p className="text-sm font-medium text-ink-muted">{contributor.status}</p>
                     </div>
                   </div>
-                  <ChevronRight className="h-5 w-5 shrink-0 text-neutral-300 transition group-hover:translate-x-0.5 group-hover:text-primary-500" />
+                  <div className="flex shrink-0 items-center gap-2">
+                    {contributor.score !== null ? (
+                      <span className="text-lg font-black tabular-nums text-ink">
+                        {contributor.score}
+                      </span>
+                    ) : (
+                      <Badge variant="neutral" size="sm">
+                        No inputs
+                      </Badge>
+                    )}
+                    <ChevronRight
+                      aria-hidden="true"
+                      className="h-5 w-5 shrink-0 text-ink-faint transition-transform duration-150 ease-out-soft group-hover:translate-x-0.5 group-hover:text-primary-600"
+                      strokeWidth={2}
+                    />
+                  </div>
                 </div>
               </Link>
             ))}
@@ -319,28 +355,22 @@ export function DashboardClient({
         </Card>
 
         <Card className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-lg font-bold text-neutral-900">Logged today</h2>
-              <p className="text-sm text-neutral-500">
-                Tap Nutrition for full macro detail by meal.
-              </p>
-            </div>
-            <UtensilsCrossed className="h-6 w-6 text-primary-600" />
-          </div>
+          <SectionHeader
+            as="h3"
+            title="Logged today"
+            description="Tap Nutrition for full macro detail by meal."
+            icon={UtensilsCrossed}
+          />
 
           {todaysMeals.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-primary-200 bg-primary-50/60 p-5">
-              <p className="font-bold text-neutral-900">No meals logged yet.</p>
-              <p className="mt-1 text-sm text-neutral-500">
-                Add your first meal to unlock today&apos;s nutrition detail and plate.
-              </p>
-              <Link href="/app/log" className="mt-4 inline-flex">
-                <Button>
-                  <UtensilsCrossed className="h-4 w-4" />
-                  Log a meal
-                </Button>
-              </Link>
+            <div className="rounded-[1.25rem] border border-dashed border-primary-200 bg-primary-50/50">
+              <EmptyState
+                size="inline"
+                icon={UtensilsCrossed}
+                title="No meals logged yet."
+                description="Add your first meal to unlock today's nutrition detail and plate."
+                action={{ label: "Log a meal", href: "/app/log" }}
+              />
             </div>
           ) : (
             <div className="space-y-2">
@@ -350,19 +380,19 @@ export function DashboardClient({
                   <Link
                     href="/app/nutrition"
                     key={meal.id}
-                    className="flex items-center justify-between rounded-[1.25rem] bg-neutral-50/85 p-4 transition hover:bg-primary-50/80"
+                    className="fw-press flex min-h-[3.75rem] items-center justify-between gap-3 rounded-[1.25rem] bg-surface-muted p-4 ring-1 ring-inset ring-hairline hover:bg-primary-50/80 hover:ring-primary-200 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600"
                   >
-                    <div>
-                      <p className="font-bold text-neutral-900">
+                    <div className="min-w-0">
+                      <p className="font-bold text-ink">
                         {formatMealType(meal.mealType)}
                       </p>
-                      <p className="text-sm text-neutral-500">{meal.name}</p>
+                      <p className="truncate text-sm text-ink-muted">{meal.name}</p>
                     </div>
-                    <div className="text-right">
-                      <p className="font-black tabular-nums text-neutral-900">
+                    <div className="shrink-0 text-right">
+                      <p className="font-black tabular-nums text-ink">
                         {mealTotals.calories.toLocaleString()} kcal
                       </p>
-                      <p className="text-xs font-bold text-neutral-500">
+                      <p className="text-xs font-bold tabular-nums text-ink-muted">
                         {mealTotals.protein}g protein
                       </p>
                     </div>
@@ -372,14 +402,14 @@ export function DashboardClient({
               {!todaysMeals.some((meal) => meal.mealType === "dinner") && (
                 <Link
                   href="/app/log"
-                  className="flex items-center justify-between rounded-[1.25rem] border border-dashed border-primary-200 bg-primary-50/50 p-4 transition hover:border-primary-300 hover:bg-primary-50"
+                  className="fw-press flex min-h-[3.75rem] items-center justify-between gap-3 rounded-[1.25rem] border border-dashed border-primary-200 bg-primary-50/50 p-4 hover:border-primary-300 hover:bg-primary-50 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2"
                 >
-                  <div>
-                    <p className="font-bold text-neutral-900">Dinner</p>
-                    <p className="text-sm text-neutral-500">Not logged yet</p>
+                  <div className="min-w-0">
+                    <p className="font-bold text-ink">Dinner</p>
+                    <p className="text-sm text-ink-muted">Not logged yet</p>
                   </div>
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-600 px-3.5 py-1.5 text-xs font-black text-white">
-                    <Plus className="h-3.5 w-3.5" />
+                  <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-primary-600 px-3.5 py-1.5 text-xs font-black text-white shadow-e1">
+                    <Plus className="h-3.5 w-3.5" strokeWidth={2.5} />
                     Log dinner
                   </span>
                 </Link>
@@ -389,37 +419,37 @@ export function DashboardClient({
         </Card>
       </section>
 
-      <Card className="space-y-4 rounded-[1.5rem] px-6 py-6 shadow-[0_12px_30px_rgba(20,90,75,0.07)]">
-        <h2 className="text-lg font-bold text-neutral-900">Go deeper</h2>
+      <Card className="space-y-4">
+        <SectionHeader as="h3" title="Go deeper" />
         <div className="grid gap-3 sm:grid-cols-2">
           <DeepLinkRow
             href="/app/daily-review"
-            icon={<ClipboardList className="h-5 w-5" />}
+            icon={<ClipboardList className="h-5 w-5" strokeWidth={2} />}
             title="Review the full day"
             body="Nutrition, activity, and energy in one ledger."
           />
           <DeepLinkRow
             href="/app/workouts"
-            icon={<Dumbbell className="h-5 w-5" />}
+            icon={<Dumbbell className="h-5 w-5" strokeWidth={2} />}
             title="Plan movement"
             body="Match a workout to today's energy."
           />
           <DeepLinkRow
             href="/app/recipes"
-            icon={<BookOpen className="h-5 w-5" />}
+            icon={<BookOpen className="h-5 w-5" strokeWidth={2} />}
             title="Find food that fits"
             body="Choose dinner from remaining macros."
           />
           <DeepLinkRow
             href="/app/progress"
-            icon={<Activity className="h-5 w-5" />}
+            icon={<Activity className="h-5 w-5" strokeWidth={2} />}
             title="Check trajectory"
             body="What today changes for the week."
           />
         </div>
       </Card>
 
-      <p className="text-xs font-medium text-neutral-500">
+      <p className="text-xs font-semibold leading-5 text-ink-muted">
         Profile context: goal {effectiveGoal}, diet {effectiveDietaryPreference}
         {effectiveAllergies.length > 0 ? `, allergies ${effectiveAllergies.join(", ")}` : ""}.
       </p>
@@ -445,28 +475,31 @@ function MealMakeupHover({
         onClick={() => setOpen((value) => !value)}
         aria-expanded={open}
         aria-label="Show meal makeup breakdown"
-        className="rounded-full focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+        className="fw-press rounded-full focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2"
       >
         {children}
       </button>
-      <p className="mt-1 text-[11px] font-bold text-neutral-400">
+      <p className="mt-1 text-[11px] font-bold text-ink-subtle">
         Tap the ring for meal makeup
       </p>
       <div
         className={cn(
-          "absolute left-1/2 top-[calc(100%+0.5rem)] z-20 w-[min(24rem,calc(100vw-3rem))] -translate-x-1/2 rounded-[1.35rem] border border-primary-100 bg-white p-4 text-left shadow-[0_24px_70px_rgba(22,48,42,0.16)] transition duration-150",
+          "absolute left-1/2 top-[calc(100%+0.5rem)] z-20 w-[min(24rem,calc(100vw-3rem))] -translate-x-1/2 rounded-[1.35rem] border border-hairline-strong bg-surface p-4 text-left shadow-e4 transition duration-150 ease-out-soft",
           open
             ? "pointer-events-auto translate-y-0 opacity-100"
             : "pointer-events-none translate-y-3 opacity-0 group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:translate-y-0 group-focus-within:opacity-100"
         )}
       >
         <div className="mb-3 flex items-center gap-2">
-          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-100 text-primary-700">
-            <Info className="h-4 w-4" />
+          <span
+            aria-hidden="true"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100"
+          >
+            <Info className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
           </span>
-          <div>
-            <p className="text-sm font-black text-neutral-900">Meal makeup</p>
-            <p className="text-xs font-semibold text-neutral-500">Breakfast, lunch, and dinner counted today</p>
+          <div className="min-w-0">
+            <p className="text-sm font-black text-ink">Meal makeup</p>
+            <p className="text-xs font-semibold text-ink-muted">Breakfast, lunch, and dinner counted today</p>
           </div>
         </div>
 
@@ -476,32 +509,40 @@ function MealMakeupHover({
             const mealTotals = meal ? sumMealItems(meal.items) : null;
 
             return (
-              <div key={mealType} className="rounded-[1rem] border border-neutral-100 bg-neutral-50/80 p-3">
+              <div
+                key={mealType}
+                className={cn(
+                  "rounded-[1rem] p-3 ring-1 ring-inset",
+                  mealTotals
+                    ? "bg-surface-muted ring-hairline"
+                    : "bg-surface-subtle ring-hairline-strong"
+                )}
+              >
                 <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="font-black text-neutral-900">{formatMealType(mealType)}</p>
-                    <p className="mt-0.5 text-xs font-semibold text-neutral-500">
+                  <div className="min-w-0">
+                    <p className="font-black text-ink">{formatMealType(mealType)}</p>
+                    <p className="mt-0.5 text-xs font-semibold text-ink-muted">
                       {meal ? meal.items.map((item) => item.name).join(", ") : "Not logged yet"}
                     </p>
                   </div>
                   <div className="shrink-0 text-right">
-                    <p className="text-sm font-black tabular-nums text-neutral-900">
+                    <p className="text-sm font-black tabular-nums text-ink">
                       {mealTotals ? `${mealTotals.calories.toLocaleString()} kcal` : "--"}
                     </p>
-                    <p className="text-xs font-bold text-primary-600">
+                    <p className="text-xs font-bold tabular-nums text-primary-700">
                       {mealTotals ? `${mealTotals.protein}g protein` : "open"}
                     </p>
                   </div>
                 </div>
                 {mealTotals && (
-                  <div className="mt-3 grid grid-cols-3 gap-1 text-center text-[11px] font-black">
-                    <span className="rounded-full bg-sky-100 px-2 py-1 text-sky-700">
+                  <div className="mt-3 grid grid-cols-3 gap-1.5 text-center text-[11px] font-black tabular-nums">
+                    <span className="rounded-full bg-sky-50 px-2 py-1 text-sky-700 ring-1 ring-inset ring-sky-100">
                       {mealTotals.protein}g pro
                     </span>
-                    <span className="rounded-full bg-lemon-100 px-2 py-1 text-lemon-700">
+                    <span className="rounded-full bg-lemon-50 px-2 py-1 text-lemon-700 ring-1 ring-inset ring-lemon-100">
                       {mealTotals.carbs}g carb
                     </span>
-                    <span className="rounded-full bg-accent-100 px-2 py-1 text-accent-700">
+                    <span className="rounded-full bg-accent-50 px-2 py-1 text-accent-700 ring-1 ring-inset ring-accent-100">
                       {mealTotals.fat}g fat
                     </span>
                   </div>
@@ -520,12 +561,12 @@ function EnergyStat({ label, value, href }: { label: string; value: string; href
     <Link
       href={href}
       aria-label={`${label}: ${value}. Open nutrition detail.`}
-      className="group min-w-[7.5rem] flex-1 rounded-2xl border border-white/14 bg-white/10 px-4 py-2.5 text-left backdrop-blur transition hover:border-white/30 hover:bg-white/15"
+      className="fw-press group min-h-11 min-w-[7.5rem] flex-1 rounded-2xl border border-white/20 bg-white/10 px-4 py-2.5 text-left backdrop-blur hover:border-white/30 hover:bg-white/20 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-primary-950"
     >
       <p className="text-[1.45rem] font-black leading-none tabular-nums text-white">{value}</p>
-      <p className="mt-1.5 flex items-center gap-1 whitespace-nowrap text-xs font-bold uppercase tracking-[0.06em] text-white/60">
+      <p className="mt-1.5 flex items-center gap-1 whitespace-nowrap text-xs font-bold uppercase tracking-[0.06em] text-white/70">
         {label}
-        <ChevronRight className="h-3 w-3 text-white/50 transition group-hover:translate-x-0.5 group-hover:text-white/80" />
+        <ChevronRight className="h-3 w-3 text-white/60 transition-transform duration-150 ease-out-soft group-hover:translate-x-0.5 group-hover:text-white/90" />
       </p>
     </Link>
   );
@@ -545,19 +586,23 @@ function DeepLinkRow({
   return (
     <Link
       href={href}
-      className="group fw-soft-row block p-4 transition hover:-translate-y-0.5 hover:border-primary-200 hover:bg-white hover:shadow-md hover:shadow-primary-900/10"
+      className="fw-press group fw-soft-row block p-4 hover:-translate-y-0.5 hover:border-primary-200 hover:bg-surface hover:shadow-e1 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2"
     >
       <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div className="shrink-0 rounded-[1rem] bg-primary-100 p-3 text-primary-700 group-hover:bg-primary-200 group-hover:text-primary-800">
+        <div className="flex min-w-0 items-center gap-3">
+          <span aria-hidden="true" className={cn(ICON_PLATE, "group-hover:bg-primary-100")}>
             {icon}
-          </div>
-          <div>
-            <p className="font-bold text-neutral-900">{title}</p>
-            <p className="text-sm font-medium text-neutral-500">{body}</p>
+          </span>
+          <div className="min-w-0">
+            <p className="font-bold text-ink">{title}</p>
+            <p className="text-sm font-medium text-ink-muted">{body}</p>
           </div>
         </div>
-        <ChevronRight className="h-5 w-5 shrink-0 text-neutral-300 transition group-hover:translate-x-0.5 group-hover:text-primary-500" />
+        <ChevronRight
+          aria-hidden="true"
+          className="h-5 w-5 shrink-0 text-ink-faint transition-transform duration-150 ease-out-soft group-hover:translate-x-0.5 group-hover:text-primary-600"
+          strokeWidth={2}
+        />
       </div>
     </Link>
   );

@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import {
   ArrowLeft,
+  Check,
   Compass,
   ExternalLink,
   LocateFixed,
@@ -18,6 +19,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { SectionHeader } from "@/components/ui/section-header";
 import {
   ALL_RESTAURANTS,
   menuItemTotals,
@@ -117,6 +119,11 @@ function resultMacros(result: RestaurantMenuSearchResult) {
   return `${item.calories} kcal · ${item.protein}g P · ${item.carbs}g C · ${item.fat}g F`;
 }
 
+/** Ranking score badge tone — the same mapping used in both result surfaces. */
+function scoreTone(tone: RestaurantMenuSearchResult["insight"]["tone"]) {
+  return tone === "success" ? "success" : tone === "warning" ? "warning" : "info";
+}
+
 function BrandLogo({
   restaurant,
   className,
@@ -130,13 +137,15 @@ function BrandLogo({
   return (
     <span
       className={cn(
-        "inline-flex shrink-0 items-center justify-center rounded-full border-2 text-[10px] font-black shadow-sm",
+        "inline-flex shrink-0 items-center justify-center rounded-full text-[10px] font-black",
         className
       )}
       style={{
         backgroundColor: brand.bg,
-        borderColor: brand.ring,
         color: brand.fg,
+        // Inset ring instead of a 2px border: same brand edge, no layout shift
+        // and no competing box-shadow on the parent.
+        boxShadow: `inset 0 0 0 2px ${brand.ring}`,
       }}
       aria-hidden="true"
     >
@@ -294,94 +303,98 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
 
   const previewPins = fallbackRestaurantIds.length > 0 ? fallbackRestaurantIds : FEATURED_LOCAL_PINS.map((pin) => pin.id);
 
+  const mapControlButton =
+    "fw-press flex h-11 w-11 items-center justify-center text-ink-muted hover:bg-primary-50 hover:text-primary-700 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-primary-600 md:h-9 md:w-9";
+
   return (
     <Card className="space-y-5">
-      <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="flex h-10 w-10 items-center justify-center rounded-[1rem] bg-primary-100 text-primary-700">
-              <Store className="h-5 w-5" />
-            </span>
-            <h2 className="text-lg font-black text-[#16302a]">Restaurants nearby</h2>
-          </div>
-          <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 text-muted-foreground">
-            Browse nearby restaurants and fast food, search menu items, and preview how each order fits today&apos;s macro plan.
-          </p>
-        </div>
-        <div className="flex flex-col gap-2 sm:flex-row">
+      <SectionHeader
+        as="h2"
+        icon={Store}
+        title="Restaurants nearby"
+        description="Browse nearby restaurants and fast food, search menu items, and preview how each order fits today's macro plan."
+        action={
           <Button onClick={useLocation} loading={locationStatus === "loading"} variant="secondary">
-            <LocateFixed className="h-4 w-4" />
+            <LocateFixed className="h-4 w-4" strokeWidth={2.5} aria-hidden="true" />
             Use my location
           </Button>
-        </div>
-      </div>
+        }
+      />
 
       <div className="grid gap-4 2xl:grid-cols-[0.94fr_1.06fr]">
-        <div className="space-y-4">
-          <form onSubmit={lookupZip} className="flex flex-col gap-2 rounded-[1.35rem] border border-primary-100/80 bg-primary-50/55 p-3 sm:flex-row">
-            <div className="relative flex-1">
-              <MapPin className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-primary-600" />
+        <div className="min-w-0 space-y-4">
+          <form
+            onSubmit={lookupZip}
+            className="flex flex-col gap-2 rounded-[1.35rem] bg-surface-muted p-3 ring-1 ring-inset ring-hairline sm:flex-row"
+          >
+            <div className="relative min-w-0 flex-1">
+              <MapPin
+                aria-hidden="true"
+                className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-primary-600"
+                strokeWidth={2}
+              />
               <input
                 value={zipQuery}
                 onChange={(event) => setZipQuery(event.target.value)}
                 placeholder="ZIP or city"
                 aria-label="Search restaurants by ZIP or city"
-                className="min-h-11 w-full rounded-[1.15rem] border border-primary-100 bg-white pl-10 pr-4 text-sm font-bold text-[#16302a] placeholder:text-[#91a7a0] focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="min-h-11 w-full min-w-0 rounded-[1.15rem] bg-surface pl-10 pr-4 text-sm font-bold text-ink ring-1 ring-inset ring-hairline-strong transition placeholder:font-semibold placeholder:text-ink-faint hover:ring-primary-200 focus:outline-none focus:ring-[3px] focus:ring-primary-500"
               />
             </div>
-            <Button type="submit" variant="secondary" loading={locationStatus === "loading"} className="sm:min-w-28">
-              <Search className="h-4 w-4" />
+            <Button type="submit" variant="secondary" loading={locationStatus === "loading"} className="shrink-0 sm:min-w-28">
+              <Search className="h-4 w-4" strokeWidth={2.5} aria-hidden="true" />
               Search area
             </Button>
           </form>
 
           <div
-            className="relative min-h-80 overflow-hidden rounded-[1.5rem] border border-primary-100 bg-[#e8eee9] shadow-[0_18px_48px_rgba(22,48,42,0.08)]"
+            className="relative min-h-80 overflow-hidden rounded-[1.5rem] bg-surface-sunken ring-1 ring-inset ring-hairline-strong"
             role="region"
             aria-label="Restaurant map with current location, nearby places, and FuelWell menu database picks"
+            aria-busy={locationStatus === "loading" || undefined}
             data-testid="restaurant-map"
           >
-            <div className="absolute inset-0 opacity-80">
-              <div className="absolute left-0 top-1/4 h-10 w-full -rotate-12 bg-white/65" />
-              <div className="absolute left-1/4 top-0 h-full w-8 rotate-12 bg-white/55" />
-              <div className="absolute bottom-10 left-0 h-8 w-full rotate-6 bg-white/45" />
-              <div className="absolute right-0 top-12 h-7 w-3/4 -rotate-3 bg-white/45" />
-              <div className="absolute left-12 top-12 h-24 w-28 rounded-full border border-primary-200/60 bg-primary-100/40" />
-              <div className="absolute bottom-8 right-10 h-28 w-36 rounded-full border border-sky-200/60 bg-sky-100/30" />
+            <div aria-hidden="true" className="absolute inset-0 opacity-80">
+              <div className="absolute left-0 top-1/4 h-10 w-full -rotate-12 bg-surface/65" />
+              <div className="absolute left-1/4 top-0 h-full w-8 rotate-12 bg-surface/55" />
+              <div className="absolute bottom-10 left-0 h-8 w-full rotate-6 bg-surface/45" />
+              <div className="absolute right-0 top-12 h-7 w-3/4 -rotate-3 bg-surface/45" />
+              <div className="absolute left-12 top-12 h-24 w-28 rounded-full bg-primary-100/40 ring-1 ring-inset ring-primary-200/60" />
+              <div className="absolute bottom-8 right-10 h-28 w-36 rounded-full bg-sky-100/30 ring-1 ring-inset ring-sky-200/60" />
             </div>
 
-            <div className="absolute right-3 top-3 z-20 flex flex-col overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-lg">
+            <div className="absolute right-3 top-3 z-20 flex flex-col divide-y divide-hairline overflow-hidden rounded-[0.9rem] bg-surface shadow-e2 ring-1 ring-inset ring-hairline">
               <button
                 type="button"
                 onClick={() => setZoom((value) => Math.min(16, value + 1))}
-                className="flex h-9 w-9 items-center justify-center text-neutral-700 hover:bg-neutral-50"
+                className={mapControlButton}
                 aria-label="Zoom in restaurant map"
               >
-                <Plus className="h-4 w-4" />
+                <Plus className="h-4 w-4" strokeWidth={2.5} aria-hidden="true" />
               </button>
               <button
                 type="button"
                 onClick={() => setZoom((value) => Math.max(10, value - 1))}
-                className="flex h-9 w-9 items-center justify-center border-t border-neutral-100 text-neutral-700 hover:bg-neutral-50"
+                className={mapControlButton}
                 aria-label="Zoom out restaurant map"
               >
-                <Minus className="h-4 w-4" />
+                <Minus className="h-4 w-4" strokeWidth={2.5} aria-hidden="true" />
               </button>
               <button
                 type="button"
                 onClick={() => setZoom(12)}
-                className="flex h-9 w-9 items-center justify-center border-t border-neutral-100 text-neutral-700 hover:bg-neutral-50"
+                className={mapControlButton}
                 aria-label="Recenter restaurant map"
               >
-                <RotateCcw className="h-4 w-4" />
+                <RotateCcw className="h-4 w-4" strokeWidth={2.5} aria-hidden="true" />
               </button>
             </div>
 
             <div
-              className="absolute left-1/2 top-1/2 z-10 flex -translate-x-1/2 -translate-y-1/2 items-center gap-2 rounded-full bg-neutral-950 px-3 py-2 text-xs font-black text-white shadow-xl"
+              className="absolute left-1/2 top-1/2 z-10 flex -translate-x-1/2 -translate-y-1/2 items-center gap-2 rounded-full bg-ink px-3 py-2 text-xs font-black text-white shadow-e3"
               aria-label={mapCenter ? `Current location: ${mapCenter.label}` : "Current location preview"}
             >
-              <Navigation className="h-3.5 w-3.5" />
+              <Navigation className="h-3.5 w-3.5" strokeWidth={2.5} aria-hidden="true" />
               You
             </div>
 
@@ -399,20 +412,23 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
                       data-testid={`restaurant-map-pin-${place.id}`}
                       onClick={() => pickPlace(place)}
                       className={cn(
-                        "absolute z-10 flex -translate-x-1/2 -translate-y-1/2 items-center gap-1.5 rounded-full border px-1.5 py-1 text-[10px] font-black shadow-lg transition hover:z-20 hover:scale-105",
+                        "fw-press absolute z-10 flex -translate-x-1/2 -translate-y-1/2 items-center gap-1.5 rounded-full px-1.5 py-1 text-[10px] font-black shadow-e2 ring-1 ring-inset hover:z-20 hover:scale-105 hover:shadow-e3 focus-visible:z-30 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600",
                         selectedPlaceId === place.id
-                          ? "border-neutral-950 bg-white text-neutral-950 ring-4 ring-primary-200"
+                          ? "bg-surface text-ink ring-2 ring-ink"
                           : matched
-                            ? "border-white bg-white text-neutral-800 shadow-primary-700/20"
-                            : "border-neutral-200 bg-white/90 text-neutral-500 shadow-neutral-400/20"
+                            ? "bg-surface text-ink-muted ring-hairline-strong"
+                            : "bg-surface/90 text-ink-faint ring-hairline"
                       )}
                       style={{ left: `${position.left}%`, top: `${position.top}%` }}
                     >
                       {restaurant ? (
                         <BrandLogo restaurant={restaurant} className="h-7 w-7" />
                       ) : (
-                        <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-neutral-100 text-neutral-500">
-                          <Store className="h-3.5 w-3.5" />
+                        <span
+                          aria-hidden="true"
+                          className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-surface-muted text-ink-faint"
+                        >
+                          <Store className="h-3.5 w-3.5" strokeWidth={2} />
                         </span>
                       )}
                       <span className="hidden max-w-24 truncate md:inline">{restaurant?.name ?? place.name}</span>
@@ -429,8 +445,8 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
                       onClick={() => pickRestaurant(pin.id)}
                       aria-label={`Open ${restaurant.name} menu page`}
                       className={cn(
-                        "absolute z-10 flex -translate-x-1/2 -translate-y-1/2 items-center gap-1.5 rounded-full border border-white bg-white px-1.5 py-1 text-[10px] font-black text-neutral-700 shadow-lg shadow-neutral-400/20 transition hover:z-20 hover:scale-105 hover:bg-primary-50",
-                        selectedRestaurantId === restaurant.id && "ring-4 ring-primary-200"
+                        "fw-press absolute z-10 flex -translate-x-1/2 -translate-y-1/2 items-center gap-1.5 rounded-full bg-surface px-1.5 py-1 text-[10px] font-black text-ink-muted shadow-e2 ring-1 ring-inset ring-hairline-strong hover:z-20 hover:scale-105 hover:bg-primary-50 hover:shadow-e3 focus-visible:z-30 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600",
+                        selectedRestaurantId === restaurant.id && "ring-2 ring-ink"
                       )}
                       style={{ left: `${pin.left}%`, top: `${pin.top}%` }}
                     >
@@ -458,7 +474,7 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
                     type="button"
                     onClick={() => pickRestaurant(id)}
                     aria-label={`Open ${restaurant.name} FuelWell database pick`}
-                    className="absolute z-10 flex -translate-x-1/2 -translate-y-1/2 items-center gap-1.5 rounded-full border border-white bg-white px-1.5 py-1 text-[10px] font-black text-neutral-700 shadow-lg transition hover:z-20 hover:scale-105"
+                    className="fw-press absolute z-10 flex -translate-x-1/2 -translate-y-1/2 items-center gap-1.5 rounded-full bg-surface px-1.5 py-1 text-[10px] font-black text-ink-muted shadow-e2 ring-1 ring-inset ring-hairline-strong hover:z-20 hover:scale-105 hover:shadow-e3 focus-visible:z-30 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600"
                     style={{ left: `${position.left}%`, top: `${position.top}%` }}
                   >
                     <BrandLogo restaurant={restaurant} className="h-7 w-7" />
@@ -467,33 +483,65 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
                 );
               })}
 
-            <div className="absolute bottom-3 left-3 right-3 z-20 rounded-[1.25rem] bg-white/92 p-3 shadow-lg shadow-neutral-500/10 backdrop-blur">
+            <div className="absolute bottom-3 left-3 right-3 z-20 rounded-[1.25rem] bg-surface/92 p-3 shadow-e2 ring-1 ring-inset ring-hairline backdrop-blur">
               <div className="flex items-center justify-between gap-3">
-                <div>
-                  <p className="text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">
+                <div className="min-w-0">
+                  <p className="text-xs font-black uppercase tracking-[0.12em] text-ink-subtle">
                     {locationStatus === "ready" ? "Local map" : "Preview map"}
                   </p>
-                  <p className="text-sm font-black text-[#16302a]">
+                  <p className="text-sm font-black text-ink">
                     {matchedPlaces.length > 0
                       ? `${matchedPlaces.length} local places matched to menu nutrition`
                       : `${stats.restaurantCount} chains · ${stats.itemCount} menu items`}
                   </p>
                   {mapCenter && (
-                    <p className="mt-0.5 truncate text-xs font-semibold text-muted-foreground">
+                    <p className="mt-0.5 truncate text-xs font-semibold text-ink-muted">
                       Centered on {mapCenter.label} · zoom {zoom}
                     </p>
                   )}
                 </div>
-                <Compass className="h-5 w-5 text-primary-700" />
+                <Compass
+                  className="h-5 w-5 shrink-0 text-primary-700"
+                  strokeWidth={2}
+                  aria-hidden="true"
+                />
               </div>
             </div>
           </div>
 
-          <div className="rounded-[1.25rem] border border-primary-100 bg-primary-50/55 p-3" role="status" aria-live="polite" data-testid="restaurant-source-note">
-            <p className="text-xs font-bold leading-5 text-[#60776f]">{sourceNote}</p>
+          {/* Legend: a pin map with two pin states needs a key, or the muted
+              pins read as broken rather than as "no menu match yet". */}
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 px-1 text-[0.6875rem] font-bold text-ink-muted">
+            <span className="inline-flex items-center gap-1.5">
+              <span
+                aria-hidden="true"
+                className="h-2.5 w-2.5 rounded-full bg-surface ring-1 ring-inset ring-hairline-strong"
+              />
+              Matched menu
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span
+                aria-hidden="true"
+                className="h-2.5 w-2.5 rounded-full bg-surface/90 ring-1 ring-inset ring-hairline"
+              />
+              No menu match yet
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span aria-hidden="true" className="h-2.5 w-2.5 rounded-full bg-ink" />
+              You
+            </span>
           </div>
 
-          <div className="grid max-h-80 gap-2 overflow-y-auto pr-1">
+          <div
+            className="rounded-[1.25rem] bg-primary-50/55 p-3 ring-1 ring-inset ring-primary-100"
+            role="status"
+            aria-live="polite"
+            data-testid="restaurant-source-note"
+          >
+            <p className="text-xs font-bold leading-5 text-ink-muted">{sourceNote}</p>
+          </div>
+
+          <div className="grid max-h-80 gap-2 overflow-y-auto overscroll-contain pr-1">
             {places.length > 0 ? (
               places.slice(0, 18).map((place) => {
                 const restaurant = restaurantById(place.matchedRestaurantId);
@@ -504,30 +552,38 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
                     onClick={() => pickPlace(place)}
                     data-testid={`nearby-place-${place.id}`}
                     className={cn(
-                      "flex min-h-14 items-center justify-between gap-3 rounded-2xl border px-3 py-2 text-left transition",
+                      "fw-press flex min-h-14 items-center justify-between gap-3 rounded-2xl px-3 py-2 text-left ring-1 ring-inset focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2",
                       selectedPlaceId === place.id
-                        ? "border-primary-300 bg-primary-50"
+                        ? "bg-primary-50 ring-2 ring-primary-400"
                         : restaurant
-                          ? "border-neutral-200 bg-white hover:border-primary-300 hover:bg-primary-50/60"
-                          : "border-dashed border-neutral-200 bg-white/70 text-neutral-500 hover:border-neutral-300"
+                          ? "bg-surface ring-hairline hover:bg-primary-50/60 hover:ring-primary-200"
+                          : "bg-surface/70 ring-hairline hover:ring-hairline-strong"
                     )}
                   >
                     <div className="flex min-w-0 items-center gap-3">
                       {restaurant ? (
                         <BrandLogo restaurant={restaurant} className="h-9 w-9" />
                       ) : (
-                        <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-neutral-500">
-                          <Store className="h-4 w-4" />
+                        <span
+                          aria-hidden="true"
+                          className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-surface-muted text-ink-faint"
+                        >
+                          <Store className="h-4 w-4" strokeWidth={2} />
                         </span>
                       )}
                       <div className="min-w-0">
-                        <p className="truncate text-sm font-black text-neutral-900">{place.name}</p>
-                        <p className="mt-0.5 text-xs font-medium text-neutral-500">
-                          {place.distanceMiles} mi · {restaurant?.name ?? "Local place; use database picks below"}
+                        <p className="truncate text-sm font-black text-ink">{place.name}</p>
+                        <p className="mt-0.5 text-xs font-semibold text-ink-muted">
+                          <span className="tabular-nums">{place.distanceMiles}</span> mi ·{" "}
+                          {restaurant?.name ?? "Local place; use database picks below"}
                         </p>
                       </div>
                     </div>
-                    {restaurant ? <Badge variant="success">Menu</Badge> : <Badge>Nearby</Badge>}
+                    {restaurant ? (
+                      <Badge variant="success" size="sm">Menu</Badge>
+                    ) : (
+                      <Badge variant="neutral" size="sm">Nearby</Badge>
+                    )}
                   </button>
                 );
               })
@@ -539,10 +595,10 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
                     type="button"
                     onClick={() => pickRestaurant(restaurant.id)}
                     className={cn(
-                      "flex min-h-12 items-center gap-2 rounded-2xl border px-3 py-2 text-left text-sm font-black transition",
+                      "fw-press flex min-h-12 items-center gap-2 rounded-2xl px-3 py-2 text-left text-sm font-black ring-1 ring-inset focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2",
                       selectedRestaurantId === restaurant.id
-                        ? "border-primary-300 bg-primary-50 text-primary-800"
-                        : "border-neutral-200 bg-white text-neutral-700 hover:border-primary-200"
+                        ? "bg-primary-50 text-primary-800 ring-2 ring-primary-400"
+                        : "bg-surface text-ink-muted ring-hairline hover:bg-primary-50/50 hover:ring-primary-200"
                     )}
                   >
                     <BrandLogo restaurant={restaurant} className="h-7 w-7" />
@@ -553,15 +609,17 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
             )}
 
             {fallbackRestaurants.length > 0 && (
-              <div className="mt-1 rounded-2xl border border-primary-100 bg-primary-50/50 p-3">
-                <p className="text-xs font-black uppercase text-primary-700">Always actionable</p>
+              <div className="mt-1 rounded-2xl bg-primary-50/50 p-3 ring-1 ring-inset ring-primary-100">
+                <p className="text-xs font-black uppercase tracking-[0.12em] text-primary-700">
+                  Always actionable
+                </p>
                 <div className="mt-2 grid grid-cols-2 gap-2">
                   {fallbackRestaurants.map((restaurant) => (
                     <button
                       key={restaurant.id}
                       type="button"
                       onClick={() => pickRestaurant(restaurant.id)}
-                      className="flex min-h-11 items-center gap-2 rounded-xl border border-white bg-white px-2.5 py-2 text-left text-xs font-black text-neutral-800 shadow-sm"
+                      className="fw-press flex min-h-11 items-center gap-2 rounded-xl bg-surface px-2.5 py-2 text-left text-xs font-black text-ink ring-1 ring-inset ring-hairline hover:ring-primary-200 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2"
                     >
                       <BrandLogo restaurant={restaurant} className="h-7 w-7" />
                       <span className="min-w-0 truncate">{restaurant.name}</span>
@@ -573,24 +631,29 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
           </div>
         </div>
 
-        <div className="space-y-4">
+        <div className="min-w-0 space-y-4">
           {(selectedRestaurant || selectedPlace) && (
-            <div className="rounded-2xl border border-neutral-100 bg-white p-4 shadow-sm shadow-neutral-200/60">
+            <div className="rounded-2xl bg-surface-subtle p-4 ring-1 ring-inset ring-hairline-strong">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex min-w-0 items-center gap-3">
                   {selectedRestaurant ? (
                     <BrandLogo restaurant={selectedRestaurant} className="h-12 w-12 text-sm" />
                   ) : (
-                    <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-neutral-500">
-                      <Store className="h-5 w-5" />
+                    <span
+                      aria-hidden="true"
+                      className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-surface-muted text-ink-faint"
+                    >
+                      <Store className="h-5 w-5" strokeWidth={2} />
                     </span>
                   )}
                   <div className="min-w-0">
-                    <p className="text-xs font-black uppercase text-primary-700">Restaurant page</p>
-                    <h3 className="truncate text-lg font-black text-neutral-900">
+                    <p className="text-xs font-black uppercase tracking-[0.12em] text-primary-700">
+                      Restaurant page
+                    </p>
+                    <h3 className="truncate text-lg font-black text-ink">
                       {selectedRestaurant?.name ?? selectedPlace?.name}
                     </h3>
-                    <p className="text-xs font-medium text-neutral-500">
+                    <p className="text-xs font-semibold text-ink-muted">
                       {selectedPlace
                         ? `${selectedPlace.distanceMiles} mi from ${mapCenter?.label ?? "you"}`
                         : "FuelWell menu database pick"}
@@ -600,36 +663,41 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
                 <button
                   type="button"
                   onClick={() => pickRestaurant(null)}
-                  className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-neutral-500 hover:bg-neutral-100"
+                  className="fw-press inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-ink-subtle ring-1 ring-inset ring-transparent hover:bg-surface-muted hover:text-ink hover:ring-hairline focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2 md:h-9 md:w-9"
                   aria-label="Close restaurant page"
                 >
-                  <ArrowLeft className="h-4 w-4" />
+                  <ArrowLeft className="h-4 w-4" strokeWidth={2.5} aria-hidden="true" />
                 </button>
               </div>
 
               {selectedRestaurant ? (
-                <div className="mt-4 grid gap-3">
+                <div className="mt-4 grid gap-2">
                   {detailResults.map((result) => (
-                    <div key={result.item.id} className="rounded-xl border border-neutral-100 bg-neutral-50 p-3">
+                    <div
+                      key={result.item.id}
+                      className="rounded-xl bg-surface p-3 ring-1 ring-inset ring-hairline"
+                    >
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
-                          <p className="text-sm font-black text-neutral-900">{result.item.name}</p>
-                          <p className="mt-0.5 text-xs font-bold text-neutral-500">{resultMacros(result)}</p>
+                          <p className="text-sm font-black text-ink">{result.item.name}</p>
+                          <p className="mt-0.5 text-xs font-bold tabular-nums text-ink-muted">
+                            {resultMacros(result)}
+                          </p>
                         </div>
-                        <Badge variant={result.insight.tone === "success" ? "success" : result.insight.tone === "warning" ? "warning" : "info"}>
-                          {Math.round(result.score * 100)}
+                        <Badge variant={scoreTone(result.insight.tone)} size="sm" className="shrink-0">
+                          <span className="tabular-nums">{Math.round(result.score * 100)}</span> fit
                         </Badge>
                       </div>
-                      <p className="mt-2 text-xs font-bold leading-5 text-neutral-600">
+                      <p className="mt-2 text-xs font-bold leading-5 text-ink-muted">
                         {result.insight.headline}. {result.insight.proteinLine}.
                       </p>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="mt-4 rounded-xl border border-dashed border-neutral-200 bg-neutral-50 p-3">
-                  <p className="text-sm font-bold text-neutral-800">FuelWell has this local place on the map, but no published menu match yet.</p>
-                  <p className="mt-1 text-xs font-medium leading-5 text-neutral-500">
+                <div className="mt-4 rounded-xl border border-dashed border-hairline-strong bg-surface-muted p-3">
+                  <p className="text-sm font-bold text-ink">FuelWell has this local place on the map, but no published menu match yet.</p>
+                  <p className="mt-1 text-xs font-semibold leading-5 text-ink-muted">
                     Use the database picks below for exact macros, or search a similar chain/item and log it with lower confidence later.
                   </p>
                 </div>
@@ -637,58 +705,70 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
             </div>
           )}
 
-          <div className="flex flex-col gap-3 rounded-[1.35rem] border border-primary-100/80 bg-primary-50/55 p-3">
+          <div className="flex flex-col gap-3 rounded-[1.35rem] bg-surface-muted p-3 ring-1 ring-inset ring-hairline">
             <div className="relative">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-primary-600" />
+              <Search
+                aria-hidden="true"
+                className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-primary-600"
+                strokeWidth={2}
+              />
               <input
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="Search menu items or restaurants"
                 aria-label="Search restaurant menu items"
-                className="min-h-12 w-full rounded-[1.15rem] border border-primary-100 bg-white pl-10 pr-4 text-base font-bold text-[#16302a] placeholder:text-[#91a7a0] focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="min-h-12 w-full min-w-0 rounded-[1.15rem] bg-surface pl-10 pr-4 text-base font-bold text-ink ring-1 ring-inset ring-hairline-strong transition placeholder:font-semibold placeholder:text-ink-faint hover:ring-primary-200 focus:outline-none focus:ring-[3px] focus:ring-primary-500"
               />
             </div>
 
             <div className="flex flex-wrap gap-2" aria-label="Quick menu filters" role="group">
-              {QUICK_FILTERS.map((filter) => (
-                <button
-                  key={filter.value}
-                  type="button"
-                  onClick={() => setPreference(preference === filter.value ? "" : filter.value)}
-                  aria-pressed={preference === filter.value}
-                  className={cn(
-                    "rounded-full border px-3 py-2 text-xs font-black transition",
-                    preference === filter.value
-                      ? "border-primary-600 bg-primary-600 text-white shadow-sm"
-                      : "border-primary-100 bg-white text-[#60776f] hover:border-primary-300 hover:text-primary-700"
-                  )}
-                >
-                  {filter.label}
-                </button>
-              ))}
+              {QUICK_FILTERS.map((filter) => {
+                const isOn = preference === filter.value;
+                return (
+                  <button
+                    key={filter.value}
+                    type="button"
+                    onClick={() => setPreference(isOn ? "" : filter.value)}
+                    aria-pressed={isOn}
+                    className={cn(
+                      "fw-press inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 py-2 text-xs font-black ring-1 ring-inset focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2 md:min-h-9",
+                      isOn
+                        ? "bg-primary-600 text-white shadow-e1 ring-primary-700"
+                        : "bg-surface text-ink-muted ring-hairline hover:bg-primary-50 hover:text-primary-700 hover:ring-primary-200"
+                    )}
+                  >
+                    {isOn && (
+                      <Check aria-hidden="true" className="h-3 w-3" strokeWidth={3} />
+                    )}
+                    {filter.label}
+                  </button>
+                );
+              })}
             </div>
 
             <div className="flex items-center justify-between gap-3">
-              <p className="min-w-0 truncate text-sm font-black text-[#60776f]">
+              <p className="min-w-0 truncate text-sm font-black text-ink-muted">
                 {selectedRestaurant ? selectedRestaurant.name : "Searching all restaurants"}
               </p>
               {selectedRestaurant && (
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="shrink-0"
                   onClick={() => pickRestaurant(null)}
-                  className="text-xs font-black text-primary-700"
                 >
                   Clear
-                </button>
+                </Button>
               )}
             </div>
           </div>
 
-          <div className="grid max-h-[34rem] gap-3 overflow-y-auto pr-1">
+          <div className="grid max-h-[34rem] gap-3 overflow-y-auto overscroll-contain pr-1">
             {results.length === 0 ? (
               <div className="rounded-[1.35rem] border border-dashed border-primary-200 bg-primary-50/60 p-5">
-                <p className="font-black text-[#16302a]">No menu matches yet.</p>
-                <p className="mt-1 text-sm font-semibold text-muted-foreground">
+                <p className="font-black text-ink">No menu matches yet.</p>
+                <p className="mt-1 text-sm font-semibold text-ink-muted">
                   Try a restaurant name, item name, or a quick filter like chicken.
                 </p>
               </div>
@@ -696,48 +776,48 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
               results.map((result) => (
                 <article
                   key={result.item.id}
-                  className="rounded-[1.35rem] border border-primary-100/80 bg-white p-4 shadow-[0_18px_48px_rgba(22,48,42,0.07)]"
+                  className="rounded-[1.35rem] bg-surface p-4 ring-1 ring-inset ring-hairline"
                   data-testid={`restaurant-menu-result-${result.item.id}`}
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex min-w-0 gap-3">
                       <BrandLogo restaurant={result.restaurant} className="mt-0.5 h-9 w-9" />
                       <div className="min-w-0">
-                        <p className="text-xs font-black uppercase text-primary-700">
+                        <p className="truncate text-xs font-black uppercase tracking-[0.12em] text-primary-700">
                           {result.restaurant.name}
                         </p>
-                        <h3 className="mt-1 text-base font-black leading-5 text-neutral-900">
+                        <h3 className="mt-1 text-base font-black leading-5 text-ink">
                           {result.item.name}
                         </h3>
-                        <p className="mt-1 text-xs font-bold text-neutral-500">
+                        <p className="mt-1 text-xs font-bold tabular-nums text-ink-muted">
                           {result.item.serving} · {resultMacros(result)}
                         </p>
                       </div>
                     </div>
-                    <Badge variant={result.insight.tone === "success" ? "success" : result.insight.tone === "warning" ? "warning" : "info"}>
-                      {Math.round(result.score * 100)}
+                    <Badge variant={scoreTone(result.insight.tone)} size="sm" className="shrink-0">
+                      <span className="tabular-nums">{Math.round(result.score * 100)}</span> fit
                     </Badge>
                   </div>
 
-                  <div className="mt-3 grid gap-2 rounded-xl bg-neutral-50 px-3 py-2 sm:grid-cols-2">
-                    <p className="text-xs font-bold leading-5 text-neutral-700">
+                  <div className="mt-3 grid gap-2 rounded-xl bg-surface-muted px-3 py-2.5 ring-1 ring-inset ring-hairline sm:grid-cols-2">
+                    <p className="text-xs font-bold leading-5 text-ink">
                       {result.insight.headline}
                     </p>
-                    <p className="text-xs font-bold leading-5 text-neutral-600">
+                    <p className="text-xs font-bold leading-5 text-ink-muted">
                       {result.insight.proteinLine}
                     </p>
-                    <p className="text-xs font-medium leading-5 text-neutral-500">
+                    <p className="text-xs font-semibold leading-5 text-ink-muted">
                       {result.insight.carbLine}
                     </p>
-                    <p className="text-xs font-medium leading-5 text-neutral-500">
+                    <p className="text-xs font-semibold leading-5 text-ink-muted">
                       {result.insight.fatLine}
                     </p>
-                    <p className="sm:col-span-2 text-xs font-bold leading-5 text-primary-800">
+                    <p className="sm:col-span-2 border-t border-hairline pt-2 text-xs font-bold leading-5 text-primary-800">
                       {result.insight.nextMove}
                     </p>
                   </div>
 
-                  <p className="mt-2 text-xs font-medium leading-5 text-neutral-400">
+                  <p className="mt-2 text-xs font-semibold leading-5 text-ink-subtle">
                     {result.sourceLabel}
                   </p>
 
@@ -746,13 +826,13 @@ export function RestaurantFinder({ totals, targets, onLogItem }: Props) {
                       href={result.item.sourceUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center gap-1.5 text-xs font-bold text-neutral-400 hover:text-neutral-700"
+                      className="inline-flex min-h-11 items-center gap-1.5 rounded-full text-xs font-bold text-ink-subtle underline-offset-2 hover:text-ink hover:underline focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2 md:min-h-0"
                     >
                       Nutrition source
-                      <ExternalLink className="h-3.5 w-3.5" />
+                      <ExternalLink className="h-3.5 w-3.5" strokeWidth={2} aria-hidden="true" />
                     </a>
-                    <Button size="sm" onClick={() => logRestaurantItem(result, onLogItem)}>
-                      <UtensilsCrossed className="h-4 w-4" />
+                    <Button size="sm" className="shrink-0" onClick={() => logRestaurantItem(result, onLogItem)}>
+                      <UtensilsCrossed className="h-4 w-4" strokeWidth={2.5} aria-hidden="true" />
                       Log menu item
                     </Button>
                   </div>

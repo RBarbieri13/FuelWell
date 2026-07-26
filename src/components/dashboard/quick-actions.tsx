@@ -6,6 +6,7 @@ import {
   Barcode,
   ClipboardList,
   CalendarDays,
+  ChevronRight,
 } from "lucide-react";
 
 const actions = [
@@ -14,41 +15,47 @@ const actions = [
     label: "Log meal",
     icon: UtensilsCrossed,
     iconBg: "bg-primary-50",
-    iconColor: "text-primary-600",
+    iconRing: "ring-primary-100",
+    iconColor: "text-primary-700",
   },
   {
     href: "/app/log?mode=photo",
     label: "Snap photo",
     icon: Camera,
     iconBg: "bg-accent-50",
-    iconColor: "text-accent-600",
+    iconRing: "ring-accent-100",
+    iconColor: "text-accent-700",
   },
   {
     href: "/app/coach",
     label: "Ask coach",
     icon: MessageSquare,
     iconBg: "bg-sky-50",
-    iconColor: "text-sky-600",
+    iconRing: "ring-sky-100",
+    iconColor: "text-sky-700",
   },
   {
     href: "/app/log?mode=scan",
     label: "Scan barcode",
     icon: Barcode,
     iconBg: "bg-sky-50",
-    iconColor: "text-sky-600",
+    iconRing: "ring-sky-100",
+    iconColor: "text-sky-700",
   },
   {
     href: "/app/daily-review",
     label: "Daily review",
     icon: ClipboardList,
     iconBg: "bg-primary-50",
-    iconColor: "text-primary-600",
+    iconRing: "ring-primary-100",
+    iconColor: "text-primary-700",
   },
   {
     href: "/app/meal-plan",
     label: "Meal plan",
     icon: CalendarDays,
     iconBg: "bg-lemon-50",
+    iconRing: "ring-lemon-100",
     iconColor: "text-lemon-700",
   },
 ];
@@ -60,14 +67,21 @@ export function QuickActions() {
         <Link
           key={action.label}
           href={action.href}
-          className="group flex items-center gap-4 rounded-[1.4rem] border border-primary-100/80 bg-white p-5 shadow-[0_18px_48px_rgba(22,48,42,0.07)] transition-all duration-150 hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-lg"
+          className="fw-press group flex min-h-[4.5rem] items-center gap-3 rounded-[1.4rem] border border-hairline bg-surface p-4 shadow-e1 hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-e2 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2 sm:gap-4 sm:p-5"
         >
-          <div className={`p-3 rounded-[1rem] ${action.iconBg} transition-transform duration-150 group-hover:scale-105`}>
-            <action.icon className={`w-5 h-5 ${action.iconColor}`} />
-          </div>
-          <span className="text-base font-black text-neutral-800 transition-colors group-hover:text-primary-800">
+          <span
+            aria-hidden="true"
+            className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-[1rem] ring-1 ring-inset ${action.iconBg} ${action.iconRing} ${action.iconColor}`}
+          >
+            <action.icon className="h-5 w-5" strokeWidth={2} />
+          </span>
+          <span className="min-w-0 flex-1 truncate text-[0.9375rem] font-black text-ink transition-colors group-hover:text-primary-800 sm:text-base">
             {action.label}
           </span>
+          <ChevronRight
+            aria-hidden="true"
+            className="hidden h-4 w-4 shrink-0 text-ink-faint transition-transform duration-150 ease-out-soft group-hover:translate-x-0.5 group-hover:text-primary-600 sm:block"
+          />
         </Link>
       ))}
     </div>

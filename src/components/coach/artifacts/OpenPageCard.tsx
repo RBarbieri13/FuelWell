@@ -1,6 +1,7 @@
 "use client";
 
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ExternalLink } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import type { ArtifactCardProps } from "./contract";
 
 type OpenPageArtifact = {
@@ -15,19 +16,36 @@ export function OpenPageCard({
   onAction,
 }: ArtifactCardProps<OpenPageArtifact>) {
   return (
-    <div className="fw-artifact-mobile-stack flex max-w-full items-center justify-between gap-3 rounded-2xl border border-neutral-200 bg-white px-4 py-3 shadow-sm">
-      <p className="min-w-0 text-sm font-medium leading-5 text-neutral-700">
-        {artifact.reason || "There is a page for this."}
-      </p>
-      <button
+    <div className="fw-artifact-mobile-stack flex max-w-full items-center justify-between gap-3 rounded-[24px] border border-hairline bg-surface px-4 py-3 shadow-e1">
+      <div className="flex min-w-0 items-start gap-3">
+        <span
+          aria-hidden="true"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100"
+        >
+          <ExternalLink className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
+        </span>
+        <div className="min-w-0">
+          <p className="text-sm font-semibold leading-5 text-ink [overflow-wrap:anywhere]">
+            {artifact.reason || "There is a page for this."}
+          </p>
+          {artifact.route && (
+            <span className="mt-1.5 inline-flex max-w-full rounded-full bg-surface-muted px-2 py-0.5 font-mono text-[0.6875rem] font-bold text-ink-muted ring-1 ring-inset ring-hairline">
+              <span className="min-w-0 truncate">{artifact.route}</span>
+            </span>
+          )}
+        </div>
+      </div>
+      <Button
         type="button"
+        variant="tonal"
+        size="sm"
         aria-label={`Open ${artifact.route}`}
         onClick={() => onAction({ kind: "open_route", route: artifact.route })}
-        className="inline-flex min-h-10 shrink-0 items-center gap-1 rounded-full bg-primary-50 px-4 py-2 text-xs font-black text-primary-700 transition hover:bg-primary-100"
+        className="shrink-0 text-xs"
       >
         Open
-        <ArrowRight className="h-3.5 w-3.5" />
-      </button>
+        <ArrowRight className="h-3.5 w-3.5" strokeWidth={2.25} />
+      </Button>
     </div>
   );
 }

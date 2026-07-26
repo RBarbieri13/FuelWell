@@ -1,6 +1,10 @@
 "use client";
 
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ClipboardList } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
+import { ProgressMeter } from "@/components/ui/progress-meter";
+import { SectionHeader } from "@/components/ui/section-header";
 import type { ArtifactSpec } from "@/lib/coach/types";
 import type { ArtifactCardProps } from "./contract";
 
@@ -32,47 +36,58 @@ export function DailyRecapCard({ artifact, onAction }: ArtifactCardProps<DailyRe
   const highlights = artifact.highlights ?? [];
 
   return (
-    <div className="mt-3 rounded-2xl border border-primary-100 bg-white p-4">
-      <div className="flex items-baseline justify-between gap-3">
-        <p className="text-sm font-black text-neutral-900">Daily recap</p>
-        <span className="shrink-0 text-xs font-bold text-neutral-400">
-          {artifact.mealCount ?? 0} meals · {artifact.workoutCount ?? 0} workouts
-        </span>
-      </div>
+    <Card padding="sm" className="mt-3">
+      <SectionHeader
+        as="h3"
+        icon={ClipboardList}
+        title="Daily recap"
+        action={
+          <Badge variant="neutral" size="sm" className="tabular-nums">
+            {`${artifact.mealCount ?? 0} meals · ${artifact.workoutCount ?? 0} workouts`}
+          </Badge>
+        }
+      />
 
-      <div className="mt-3 space-y-2">
+      <div className="mt-4 space-y-3">
         {BARS.map(({ key, label, color, unit }) => {
           const value = totals[key];
           const target = targets[key];
-          const pct = target > 0 ? Math.min(100, Math.round((value / target) * 100)) : 0;
+          const over = target > 0 && value > target;
           return (
             <div key={key}>
-              <div className="flex items-baseline justify-between text-xs">
-                <span className="font-bold text-neutral-500">{label}</span>
-                <span className="font-bold text-neutral-700">
-                  {formatValue(value, unit)}/{formatValue(target, unit)} {unit}
+              <div className="flex items-baseline justify-between gap-2 text-xs">
+                <span className="min-w-0 truncate font-bold text-ink-muted">{label}</span>
+                <span
+                  className={
+                    over
+                      ? "shrink-0 font-black tabular-nums text-accent-700"
+                      : "shrink-0 font-bold tabular-nums text-ink"
+                  }
+                >
+                  {`${formatValue(value, unit)}/${formatValue(target, unit)} ${unit}`}
                 </span>
               </div>
-              <div
-                className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-neutral-100"
-                role="img"
-                aria-label={`${label}: ${formatValue(value, unit)} of ${formatValue(target, unit)} ${unit}`}
-              >
-                <div
-                  className="h-full rounded-full"
-                  style={{ width: `${pct}%`, backgroundColor: color }}
-                />
-              </div>
+              <ProgressMeter
+                className="mt-1.5"
+                size="sm"
+                value={value}
+                target={target}
+                color={color}
+                label={`${label}: ${formatValue(value, unit)} of ${formatValue(target, unit)} ${unit}${over ? ", over target" : ""}`}
+              />
             </div>
           );
         })}
       </div>
 
       {highlights.length > 0 && (
-        <ul className="mt-3 space-y-1 border-t border-neutral-100 pt-3">
+        <ul className="mt-4 space-y-1.5 border-t border-hairline pt-3">
           {highlights.map((h, i) => (
-            <li key={i} className="flex gap-2 text-xs font-medium text-neutral-600">
-              <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-neutral-300" />
+            <li key={i} className="flex gap-2 text-xs font-semibold leading-5 text-ink-muted">
+              <span
+                aria-hidden="true"
+                className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary-300"
+              />
               <span className="min-w-0">{h}</span>
             </li>
           ))}
@@ -84,17 +99,19 @@ export function DailyRecapCard({ artifact, onAction }: ArtifactCardProps<DailyRe
           type="button"
           aria-label="Ask the coach about this next move"
           onClick={() => onAction({ kind: "send_message", text: artifact.nextMove })}
-          className="mt-3 flex min-h-10 w-full items-center justify-between gap-3 rounded-2xl bg-primary-50 px-4 py-3 text-left transition hover:bg-primary-100"
+          className="fw-press mt-4 flex min-h-11 w-full items-center justify-between gap-3 rounded-[1.15rem] bg-primary-50 px-4 py-3 text-left ring-1 ring-inset ring-primary-100 hover:bg-primary-100 hover:ring-primary-200 active:bg-primary-200"
         >
           <span className="min-w-0">
-            <span className="block text-[10px] font-black uppercase tracking-wide text-primary-700">
+            <span className="block text-[0.625rem] font-black uppercase text-primary-700">
               Next move
             </span>
-            <span className="block text-sm font-bold text-primary-900">{artifact.nextMove}</span>
+            <span className="mt-0.5 block text-sm font-bold leading-5 text-primary-900">
+              {artifact.nextMove}
+            </span>
           </span>
-          <ArrowRight className="h-4 w-4 shrink-0 text-primary-700" />
+          <ArrowRight aria-hidden="true" className="h-4 w-4 shrink-0 text-primary-700" />
         </button>
       )}
-    </div>
+    </Card>
   );
 }

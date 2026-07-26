@@ -32,11 +32,13 @@ export function MobileHeader({ session = "anonymous" }: { session?: UserMenuSess
     "FuelWell";
 
   return (
-    <header className="md:hidden sticky top-0 z-40 bg-white/92 backdrop-blur-xl border-b border-primary-100/80 px-4 py-2 shadow-sm shadow-primary-900/5">
-      <div className="flex items-center justify-between">
+    // The shell runs with viewport-fit=cover and a translucent status bar, so
+    // the header owns the top inset — without it the logo sits under the clock.
+    <header className="sticky top-0 z-40 border-b border-hairline bg-surface/90 px-4 pb-2 pt-[max(env(safe-area-inset-top),0.5rem)] shadow-e1 backdrop-blur-xl md:hidden">
+      <div className="flex min-h-11 items-center justify-between gap-2">
         <Logo href="/app/dashboard" size="md" />
         <div className="flex min-w-0 items-center gap-2">
-          <span className="min-w-0 max-w-[12rem] truncate rounded-full bg-primary-50 px-3 py-1 text-xs font-black text-primary-700">
+          <span className="min-w-0 max-w-[11rem] truncate rounded-full bg-primary-50 px-3 py-1.5 text-xs font-black text-primary-700 ring-1 ring-inset ring-primary-100">
             {title}
           </span>
           <UserMenu session={session} />
