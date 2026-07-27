@@ -47,6 +47,27 @@
   --color-lemon-500: #c7a91e;
   --color-lemon-600: #a98d18;
   --color-lemon-700: #7a650d;
+  /* Tinted-surface steps the accent families were missing, so a coloured card
+     can sit on white without the tint reading as a different material. */
+  --color-sky-300: #7cc3e4;
+  --color-sky-400: #55a9d4;
+  --color-teal-50: #eaf7f7;
+  --color-teal-100: #cceceb;
+  --color-teal-700: #0f7079;
+
+  /* Violet carries sleep and recovery; rose carries soreness and alert. Both
+     are data roles, not decoration — see src/lib/design/tones.ts. */
+  --color-violet-50: #f4f1fa;
+  --color-violet-100: #e6dff5;
+  --color-violet-500: #8e73bd;
+  --color-violet-600: #7358a6;
+  --color-violet-700: #5b4485;
+  --color-rose-50: #fdf0f1;
+  --color-rose-100: #fbdcdf;
+  --color-rose-500: #e05563;
+  --color-rose-600: #c53f4d;
+  --color-rose-700: #9e2f3b;
+
   --color-sage-50: #f8fbf9;
   --color-sage-100: #f4f8f6;
   --color-sage-400: #91a7a0;

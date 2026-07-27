@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils/cn";
+import { toneStyles, type Tone } from "@/lib/design/tones";
 
 interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
@@ -6,6 +7,12 @@ interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   padding?: "none" | "sm" | "md" | "lg";
   /** Hover lift + press feedback. Only when the whole card is one target. */
   interactive?: boolean;
+  /**
+   * Tints the whole card to a semantic tone. Use only when the card's subject
+   * IS that concept (a soreness panel, a protein breakdown) — never to
+   * decorate. Overrides the variant's surface and border.
+   */
+  tone?: Tone;
 }
 
 const paddingMap = {
@@ -28,14 +35,15 @@ export function Card({
   variant = "default",
   padding = "md",
   interactive = false,
+  tone,
   className,
   ...props
 }: CardProps) {
   return (
     <div
       className={cn(
-        "rounded-[24px] border",
-        variantMap[variant],
+        "rounded-[24px]",
+        tone ? toneStyles[tone].surface : cn("border", variantMap[variant]),
         paddingMap[padding],
         interactive &&
           "fw-press cursor-pointer hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-e3",
