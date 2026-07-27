@@ -35,3 +35,21 @@ INFOPLIST_KEY_* settings are silently dropped), setup_ci keychain for signing,
 Xcode 26 selection (Apple requires the iOS 26 SDK), npm/Playwright install in
 the workflow, coverage floor tracks the shipping test bundle, candidate gates
 verified against a live public deployment with a resolving release manifest.
+
+## 5. TestFlight upload blocked on AI Gateway credit — 2026-07-27
+
+Run 30235420827 (candidate 722341a / dpl_CcrusBaFKJSwhwwWAQJjDSMEFA3R) failed at
+`Verify candidate through the iOS shell`. The gate requires
+`/api/launch-preflight?live=1` to report `liveReady: true`. All five live
+Supabase table probes pass; the single failure is `live-coach-provider`
+classified as `billing_credit` (HTTP 402 / credit-balance message) — the Vercel
+AI Gateway account backing Coach inference is out of credit.
+
+The candidate itself is valid: public HTTP 200, manifest gitSha/deploymentId/
+environment/packageVersion all match, productionReady true. Nothing in the
+visual-polish work caused this, and the gate is behaving correctly by refusing
+to ship a build whose Coach cannot answer.
+
+Unblock: fund the Vercel AI Gateway account (or point AI_GATEWAY_API_KEY at a
+funded one), then re-dispatch ios-testflight.yml with the same four candidate
+inputs. No code change required. Do NOT weaken the liveReady gate.
