@@ -1,15 +1,17 @@
 {
-  "generatedAt": "2026-06-01T16:22:32.785Z",
+  "generatedAt": "2026-08-09T23:54:53.372Z",
   "status": "externally_blocked",
   "counts": {
-    "pass": 17,
+    "pass": 24,
     "blocker": 7,
     "fail": 0
   },
   "paths": {
     "metadata": "ios/fastlane/metadata/en-US",
     "screenshots": "ios/fastlane/screenshots/en-US",
-    "privacyManifest": "ios/FuelWellApp/Resources/PrivacyInfo.xcprivacy"
+    "screenshotConfig": "ios/fastlane/Snapfile",
+    "privacyManifest": "ios/FuelWellApp/Resources/PrivacyInfo.xcprivacy",
+    "healthKitEntitlements": "ios/FuelWellApp/FuelWellApp.entitlements"
   },
   "results": [
     {
@@ -23,7 +25,7 @@
       "area": "metadata",
       "status": "pass",
       "label": "Subtitle ready",
-      "detail": "21/30 characters.",
+      "detail": "29/30 characters.",
       "file": "ios/fastlane/metadata/en-US/subtitle.txt"
     },
     {
@@ -130,6 +132,55 @@
       "label": "Required API type: NSPrivacyAccessedAPICategoryUserDefaults",
       "detail": "Declared in privacy manifest.",
       "file": "ios/FuelWellApp/Resources/PrivacyInfo.xcprivacy"
+    },
+    {
+      "area": "signing",
+      "status": "pass",
+      "label": "HealthKit entitlement enabled",
+      "detail": "The app entitlements declare HealthKit access.",
+      "file": "ios/FuelWellApp/FuelWellApp.entitlements"
+    },
+    {
+      "area": "signing",
+      "status": "pass",
+      "label": "XcodeGen source wires HealthKit entitlements",
+      "detail": "ios/project.yml points FuelWellApp at the committed entitlements file.",
+      "file": "ios/project.yml"
+    },
+    {
+      "area": "signing",
+      "status": "pass",
+      "label": "Generated Xcode project wires HealthKit entitlements",
+      "detail": "FuelWellApp.xcodeproj carries the entitlements build setting.",
+      "file": "ios/FuelWellApp.xcodeproj/project.pbxproj"
+    },
+    {
+      "area": "screenshots",
+      "status": "pass",
+      "label": "Fastlane screenshot config present",
+      "detail": "Snapfile is committed.",
+      "file": "ios/fastlane/Snapfile"
+    },
+    {
+      "area": "screenshots",
+      "status": "pass",
+      "label": "Required screenshot devices configured",
+      "detail": "Snapfile covers the required App Store iPhone families.",
+      "file": "ios/fastlane/Snapfile"
+    },
+    {
+      "area": "screenshots",
+      "status": "pass",
+      "label": "Snapshot helper committed",
+      "detail": "FuelWellUITests includes Fastlane's SnapshotHelper.swift.",
+      "file": "ios/FuelWellUITests/SnapshotHelper.swift"
+    },
+    {
+      "area": "screenshots",
+      "status": "pass",
+      "label": "UI tests emit fastlane snapshots",
+      "detail": "Candidate UI tests call setupSnapshot(app) and snapshot(...).",
+      "file": "ios/FuelWellUITests/FuelWellCriticalPathUITests.swift"
     },
     {
       "area": "screenshots",

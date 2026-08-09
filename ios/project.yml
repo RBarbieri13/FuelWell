@@ -89,6 +89,7 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.fuelwell.app
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        CODE_SIGN_ENTITLEMENTS: FuelWellApp/FuelWellApp.entitlements
         GENERATE_INFOPLIST_FILE: NO
         TARGETED_DEVICE_FAMILY: "1,2"
   FuelWellAppTests:

@@ -88,7 +88,8 @@ final class FuelWellCriticalPathUITests: XCTestCase {
 
     private func launchBoundRelease() -> XCUIApplication {
         let app = XCUIApplication()
-        app.launchArguments = ["--fuelwell-candidate-ui-test"]
+        setupSnapshot(app)
+        app.launchArguments += ["--fuelwell-candidate-ui-test"]
         app.launch()
 
         XCTAssertTrue(
@@ -153,6 +154,7 @@ final class FuelWellCriticalPathUITests: XCTestCase {
     }
 
     private func capture(_ name: String, in app: XCUIApplication) {
+        snapshot(name, timeWaitingForIdle: 0)
         let attachment = XCTAttachment(screenshot: app.screenshot())
         attachment.name = name
         attachment.lifetime = .keepAlways

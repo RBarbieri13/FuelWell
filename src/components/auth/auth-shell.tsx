@@ -46,7 +46,7 @@ export function AuthShell({
       <div className="grid min-h-dvh lg:grid-cols-[0.88fr_1fr]">
         <aside className="fw-dark-panel relative hidden overflow-hidden rounded-none border-0 p-10 lg:flex lg:flex-col lg:justify-between xl:p-12">
           <div className="relative z-10 flex items-center justify-between gap-4">
-            <Logo href="/" size="lg" className="[&_span]:text-white" />
+            <Logo href="/" size="lg" tone="inverse" />
             <Link
               href="/"
               className="inline-flex min-h-11 items-center rounded-full border border-white/15 bg-white/10 px-4 text-xs font-black text-white/80 transition-colors duration-150 hover:bg-white/20 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300 focus-visible:ring-offset-2 focus-visible:ring-offset-primary-950"

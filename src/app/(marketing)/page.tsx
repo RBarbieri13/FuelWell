@@ -72,7 +72,7 @@ export default function HomePage() {
             horizontal scroll. */}
         <nav className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-4 py-3 sm:gap-3 sm:px-6 lg:px-8">
           <span className="min-w-0 shrink">
-            <Logo size="lg" href="/" className="text-xl sm:text-2xl" />
+            <Logo size="lg" href="/" />
           </span>
           {/* Nav CTAs step down to ghost/tonal so the hero owns the page's one
               primary action. */}

@@ -78,11 +78,26 @@ require_file ".github/workflows/ios-testflight.yml" "manual TestFlight workflow 
 require_file "ios/fastlane/metadata/en-US/description.txt" "App Store description metadata exists"
 require_file "ios/fastlane/metadata/en-US/release_notes.txt" "release notes metadata exists"
 require_file "ios/FuelWellApp/Resources/PrivacyInfo.xcprivacy" "privacy manifest exists"
+require_file "ios/FuelWellApp/FuelWellApp.entitlements" "HealthKit entitlements file exists"
 
 run_check "repository diff has no whitespace errors" git diff --check
 run_check "privacy manifest is valid plist" plutil -lint ios/FuelWellApp/Resources/PrivacyInfo.xcprivacy
+run_check "HealthKit entitlements plist is valid" plutil -lint ios/FuelWellApp/FuelWellApp.entitlements
 run_check "release scripts parse" bash -n tools/release/check-phase4-readiness.sh
 run_check "TestFlight helper parses" bash -n tools/release/run-testflight-beta.sh
+
+if grep -q "<key>com.apple.developer.healthkit</key>" ios/FuelWellApp/FuelWellApp.entitlements; then
+  pass "HealthKit entitlement is enabled"
+else
+  fail "HealthKit entitlement is missing from ios/FuelWellApp/FuelWellApp.entitlements"
+fi
+
+if rg -q "CODE_SIGN_ENTITLEMENTS: FuelWellApp/FuelWellApp.entitlements" ios/project.yml && \
+  rg -q "CODE_SIGN_ENTITLEMENTS = FuelWellApp/FuelWellApp.entitlements;" ios/FuelWellApp.xcodeproj/project.pbxproj; then
+  pass "FuelWellApp signs with the committed HealthKit entitlements file"
+else
+  fail "FuelWellApp signing does not point at the committed HealthKit entitlements file"
+fi
 
 if grep -q "app_store_connect_api_key" ios/fastlane/Fastfile; then
   pass "Fastlane beta lane supports App Store Connect API key auth"

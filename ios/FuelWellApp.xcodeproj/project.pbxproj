@@ -47,6 +47,7 @@
 		C2D1F6674CF2F408203B5825 /* AnthropicClient in Frameworks */ = {isa = PBXBuildFile; productRef = D7977175BB469F04F6B14D50 /* AnthropicClient */; };
 		C5595E55CDF1FE9BBA5220FF /* DMSans-Variable.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FFB767E37D1AE0BB1D37EB2C /* DMSans-Variable.ttf */; };
 		CABFC8C5FBF761742B3D36EF /* HealthKitClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF042C3459C06538638038CC /* HealthKitClientTests.swift */; };
+		CC2DCC1FBFDB70A72EC9964F /* SnapshotHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2756A167A199BF4C90F1BF /* SnapshotHelper.swift */; };
 		CC47A7F9A56D63067082A79A /* NutritionDomain in Frameworks */ = {isa = PBXBuildFile; productRef = A4A62AF2AE14D6A785815F5F /* NutritionDomain */; };
 		CDBA6B5EA4250DF41490DAA2 /* HealthKitClient in Frameworks */ = {isa = PBXBuildFile; productRef = 2EF8408FBB5A9D5CE9404D7B /* HealthKitClient */; };
 		CEA676DAAFF8793964D8A9A7 /* ThemeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B121203B5A518889F220416 /* ThemeTests.swift */; };
@@ -82,6 +83,7 @@
 		0A277A0A924638199BF69B4E /* Nutrition */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Nutrition; path = Features/Nutrition; sourceTree = SOURCE_ROOT; };
 		0F1922BF3BEBD3C27002F2D7 /* CoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreTests.swift; sourceTree = "<group>"; };
 		165F0021ABA3E00997286AAC /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		1E2756A167A199BF4C90F1BF /* SnapshotHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotHelper.swift; sourceTree = "<group>"; };
 		231F591E67A99C4846848A4B /* NutritionFeatureTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = NutritionFeatureTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2419642363D1E40A99EB66C7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2BFE4A0D114885235E740870 /* AnthropicClientTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = AnthropicClientTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -281,6 +283,7 @@
 			isa = PBXGroup;
 			children = (
 				3C59EC9F7EF8615D79F83B7C /* FuelWellCriticalPathUITests.swift */,
+				1E2756A167A199BF4C90F1BF /* SnapshotHelper.swift */,
 			);
 			path = FuelWellUITests;
 			sourceTree = "<group>";
@@ -910,6 +913,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A7904882610726BE6544C61B /* FuelWellCriticalPathUITests.swift in Sources */,
+				CC2DCC1FBFDB70A72EC9964F /* SnapshotHelper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1049,6 +1053,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = FuelWellApp/FuelWellApp.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = FuelWellApp/Info.plist;
@@ -1552,6 +1557,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = FuelWellApp/FuelWellApp.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = FuelWellApp/Info.plist;

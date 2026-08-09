@@ -1,29 +1,46 @@
+import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils/cn";
 
 interface LogoProps {
   href?: string;
   size?: "sm" | "md" | "lg";
+  tone?: "default" | "inverse";
   className?: string;
 }
 
 const sizeStyles = {
-  sm: "text-lg",
-  md: "text-xl",
-  lg: "text-2xl",
+  sm: "h-8 w-[8.75rem]",
+  md: "h-9 w-[9.75rem]",
+  lg: "h-11 w-[11.75rem]",
 };
 
-export function Logo({ href = "/", size = "md", className }: LogoProps) {
+export function Logo({
+  href = "/",
+  size = "md",
+  tone = "default",
+  className,
+}: LogoProps) {
   const content = (
     <span
       className={cn(
-        "font-heading font-black tracking-tight",
+        "relative block shrink-0",
         sizeStyles[size],
         className
       )}
     >
-      <span className="text-neutral-900">Fuel</span>
-      <span className="text-primary-600">Well</span>
+      <Image
+        src={
+          tone === "inverse"
+            ? "/brand/fuelwell-lockup-ondark.png"
+            : "/brand/fuelwell-lockup.png"
+        }
+        alt="FuelWell"
+        fill
+        sizes="(max-width: 768px) 156px, 188px"
+        className="object-contain object-left"
+        priority={size === "lg"}
+      />
     </span>
   );
 

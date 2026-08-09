@@ -7,7 +7,13 @@ import process from "node:process";
 const root = process.cwd();
 const metadataRoot = path.join(root, "ios/fastlane/metadata/en-US");
 const screenshotsRoot = path.join(root, "ios/fastlane/screenshots/en-US");
+const screenshotConfigPath = path.join(root, "ios/fastlane/Snapfile");
+const snapshotHelperPath = path.join(root, "ios/FuelWellUITests/SnapshotHelper.swift");
+const uiTestCapturePath = path.join(root, "ios/FuelWellUITests/FuelWellCriticalPathUITests.swift");
 const privacyManifestPath = path.join(root, "ios/FuelWellApp/Resources/PrivacyInfo.xcprivacy");
+const healthKitEntitlementsPath = path.join(root, "ios/FuelWellApp/FuelWellApp.entitlements");
+const projectSpecPath = path.join(root, "ios/project.yml");
+const xcodeProjectPath = path.join(root, "ios/FuelWellApp.xcodeproj/project.pbxproj");
 const jsonOutputPath = path.join(root, "tools/release/data/app-store-readiness.json");
 const markdownOutputPath = path.join(root, "docs/APP-STORE-READINESS.md");
 
@@ -53,6 +59,9 @@ const requiredScreenshotFamilies = [
   { label: "iPhone 6.5-inch", patterns: [/iphone.*6\.5/i, /iphone.*11.*pro.*max/i, /iphone.*xs.*max/i] }
 ];
 
+const requiredScreenshotDevices = ["iPhone 16 Pro Max", "iPhone 11 Pro Max"];
+const screenshotExtensions = new Set([".png", ".jpg", ".jpeg"]);
+
 function rel(filePath) {
   return path.relative(root, filePath);
 }
@@ -61,14 +70,14 @@ function readTrimmed(filePath) {
   return readFileSync(filePath, "utf8").trim();
 }
 
-function countFiles(dir) {
+function listFiles(dir) {
   if (!existsSync(dir)) {
-    return 0;
+    return [];
   }
 
   return readdirSync(dir, { recursive: true, withFileTypes: true })
     .filter((entry) => entry.isFile())
-    .length;
+    .map((entry) => path.join(dir, entry.parentPath ?? "", entry.name));
 }
 
 function addResult(results, area, status, label, detail, filePath = null) {
@@ -110,8 +119,8 @@ function validateMetadata(results) {
   }
 }
 
-function parsePrivacyManifest() {
-  const json = execFileSync("plutil", ["-convert", "json", "-o", "-", privacyManifestPath], {
+function parsePlistJson(filePath) {
+  const json = execFileSync("plutil", ["-convert", "json", "-o", "-", filePath], {
     cwd: root,
     encoding: "utf8"
   });
@@ -127,7 +136,7 @@ function validatePrivacyManifest(results) {
 
   let manifest;
   try {
-    manifest = parsePrivacyManifest();
+    manifest = parsePlistJson(privacyManifestPath);
   } catch (error) {
     addResult(results, "privacy", "fail", "Privacy manifest invalid", error.message, privacyManifestPath);
     return;
@@ -164,14 +173,121 @@ function validatePrivacyManifest(results) {
   }
 }
 
+function validateHealthKitSigning(results) {
+  if (!existsSync(healthKitEntitlementsPath)) {
+    addResult(
+      results,
+      "signing",
+      "fail",
+      "HealthKit entitlements missing",
+      "Commit the app entitlements file before signing a build that requests HealthKit data.",
+      healthKitEntitlementsPath
+    );
+    return;
+  }
+
+  let entitlements;
+  try {
+    entitlements = parsePlistJson(healthKitEntitlementsPath);
+  } catch (error) {
+    addResult(results, "signing", "fail", "HealthKit entitlements invalid", error.message, healthKitEntitlementsPath);
+    return;
+  }
+
+  addResult(
+    results,
+    "signing",
+    entitlements["com.apple.developer.healthkit"] === true ? "pass" : "fail",
+    "HealthKit entitlement enabled",
+    entitlements["com.apple.developer.healthkit"] === true
+      ? "The app entitlements declare HealthKit access."
+      : "Set com.apple.developer.healthkit=true in the app entitlements file.",
+    healthKitEntitlementsPath
+  );
+
+  const projectSpec = existsSync(projectSpecPath) ? readTrimmed(projectSpecPath) : "";
+  const xcodeProject = existsSync(xcodeProjectPath) ? readTrimmed(xcodeProjectPath) : "";
+  const entitlementsSetting = "FuelWellApp/FuelWellApp.entitlements";
+  addResult(
+    results,
+    "signing",
+    projectSpec.includes(`CODE_SIGN_ENTITLEMENTS: ${entitlementsSetting}`) ? "pass" : "fail",
+    "XcodeGen source wires HealthKit entitlements",
+    projectSpec.includes(`CODE_SIGN_ENTITLEMENTS: ${entitlementsSetting}`)
+      ? "ios/project.yml points FuelWellApp at the committed entitlements file."
+      : "Add CODE_SIGN_ENTITLEMENTS to ios/project.yml for FuelWellApp.",
+    projectSpecPath
+  );
+  addResult(
+    results,
+    "signing",
+    xcodeProject.includes(`CODE_SIGN_ENTITLEMENTS = ${entitlementsSetting};`) ? "pass" : "fail",
+    "Generated Xcode project wires HealthKit entitlements",
+    xcodeProject.includes(`CODE_SIGN_ENTITLEMENTS = ${entitlementsSetting};`)
+      ? "FuelWellApp.xcodeproj carries the entitlements build setting."
+      : "Regenerate and commit FuelWellApp.xcodeproj after wiring entitlements.",
+    xcodeProjectPath
+  );
+}
+
 function validateScreenshots(results) {
-  const screenshotCount = countFiles(screenshotsRoot);
+  if (!existsSync(screenshotConfigPath)) {
+    addResult(
+      results,
+      "screenshots",
+      "fail",
+      "Fastlane screenshot config missing",
+      "Commit ios/fastlane/Snapfile so screenshot capture stays repeatable.",
+      screenshotConfigPath
+    );
+  } else {
+    const snapfile = readTrimmed(screenshotConfigPath);
+    addResult(results, "screenshots", "pass", "Fastlane screenshot config present", "Snapfile is committed.", screenshotConfigPath);
+    addResult(
+      results,
+      "screenshots",
+      requiredScreenshotDevices.every((device) => snapfile.includes(device)) ? "pass" : "fail",
+      "Required screenshot devices configured",
+      requiredScreenshotDevices.every((device) => snapfile.includes(device))
+        ? "Snapfile covers the required App Store iPhone families."
+        : "Snapfile must name both 6.7-inch and 6.5-inch screenshot simulators.",
+      screenshotConfigPath
+    );
+  }
+
+  addResult(
+    results,
+    "screenshots",
+    existsSync(snapshotHelperPath) ? "pass" : "fail",
+    "Snapshot helper committed",
+    existsSync(snapshotHelperPath)
+      ? "FuelWellUITests includes Fastlane's SnapshotHelper.swift."
+      : "Add SnapshotHelper.swift to the UI test target so fastlane can write screenshots.",
+    snapshotHelperPath
+  );
+
+  const uiTestSource = existsSync(uiTestCapturePath) ? readTrimmed(uiTestCapturePath) : "";
+  addResult(
+    results,
+    "screenshots",
+    uiTestSource.includes("setupSnapshot(app)") && uiTestSource.includes("snapshot(") ? "pass" : "fail",
+    "UI tests emit fastlane snapshots",
+    uiTestSource.includes("setupSnapshot(app)") && uiTestSource.includes("snapshot(")
+      ? "Candidate UI tests call setupSnapshot(app) and snapshot(...)."
+      : "Candidate UI tests must call setupSnapshot(app) plus snapshot(...) to generate store assets.",
+    uiTestCapturePath
+  );
+
+  const screenshotFiles = listFiles(screenshotsRoot).filter((filePath) =>
+    screenshotExtensions.has(path.extname(filePath).toLowerCase())
+  );
+  const screenshotCount = screenshotFiles.length;
   if (screenshotCount === 0) {
     addResult(results, "screenshots", "blocker", "App Store screenshots missing", "No screenshots are present under ios/fastlane/screenshots/en-US.", screenshotsRoot);
     return;
   }
 
-  const files = readdirSync(screenshotsRoot, { recursive: true }).map(String);
+  const files = screenshotFiles.map((filePath) => path.relative(screenshotsRoot, filePath));
   addResult(results, "screenshots", "pass", "Screenshot files present", `${screenshotCount} screenshot file(s) found.`, screenshotsRoot);
 
   for (const family of requiredScreenshotFamilies) {
@@ -256,7 +372,7 @@ function renderMarkdown(report) {
     "",
     "## Next Actions",
     "",
-    "- Add final App Store screenshots under `ios/fastlane/screenshots/en-US/` once the pilot build UI is locked.",
+    "- Run `bundle exec fastlane ios screenshots` from `ios/` after the immutable candidate, App Store Connect env vars, and a Bundler 2.6.9-compatible Ruby environment are ready.",
     "- Configure Apple/Fastlane environment variables locally or in CI secrets before running `fastlane beta`.",
     "- Keep App Review submission manual; Robert must approve before any public submission."
   );
@@ -267,17 +383,21 @@ function renderMarkdown(report) {
 const results = [];
 validateMetadata(results);
 validatePrivacyManifest(results);
+validateHealthKitSigning(results);
 validateScreenshots(results);
 validateHumanGates(results);
 
+const summary = summarize(results);
 const report = {
   generatedAt: new Date().toISOString(),
-  status: summarize(results).status,
-  counts: summarize(results).counts,
+  status: summary.status,
+  counts: summary.counts,
   paths: {
     metadata: rel(metadataRoot),
     screenshots: rel(screenshotsRoot),
-    privacyManifest: rel(privacyManifestPath)
+    screenshotConfig: rel(screenshotConfigPath),
+    privacyManifest: rel(privacyManifestPath),
+    healthKitEntitlements: rel(healthKitEntitlementsPath)
   },
   results
 };

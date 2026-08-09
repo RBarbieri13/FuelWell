@@ -1,0 +1,26 @@
+scheme("CandidateUITests")
+
+devices([
+  "iPhone 16 Pro Max",
+  "iPhone 11 Pro Max"
+])
+
+languages([
+  "en-US"
+])
+
+launch_arguments([
+  "--fuelwell-candidate-ui-test"
+])
+
+output_directory("./fastlane/screenshots")
+buildlog_path("./fastlane/test_output")
+clear_previous_screenshots(true)
+override_status_bar(true)
+localize_simulator(true)
+reinstall_app(true)
+erase_simulator(true)
+stop_after_first_error(true)
+number_of_retries(0)
+result_bundle(true)
+app_identifier("com.fuelwell.app")

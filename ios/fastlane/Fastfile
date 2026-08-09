@@ -80,6 +80,7 @@ platform :ios do
 
   desc "Prepare App Store submission metadata and upload the reviewed build"
   lane :release do
+    ensure_app_store_screenshots!
     beta
     upload_to_app_store(
       submit_for_review: false,
@@ -90,6 +91,20 @@ platform :ios do
       screenshots_path: "fastlane/screenshots"
     )
     sentry_release_tag
+  end
+
+  desc "Capture App Store screenshots from the verified immutable candidate"
+  lane :screenshots do
+    release_settings = testflight_release_settings
+    sh("cd #{repo_root}/ios && xcodegen generate --spec project.yml")
+    snapshot(
+      xcargs: [
+        "CODE_SIGNING_ALLOWED=NO",
+        release_settings.fetch(:xcargs),
+        "-skipMacroValidation",
+        "-skipPackagePluginValidation"
+      ].join(" ")
+    )
   end
 
   desc "Create the initial App Store signing assets for TestFlight"
@@ -166,6 +181,16 @@ platform :ios do
 
   def repo_root
     File.expand_path("../..", __dir__)
+  end
+
+  private_lane :ensure_app_store_screenshots! do
+    screenshots = Dir.glob(File.join(__dir__, "screenshots", "en-US", "*.{png,jpg,jpeg}"))
+    return unless screenshots.empty?
+
+    UI.user_error!(
+      "App Store screenshots are missing. Run `bundle exec fastlane ios screenshots` " \
+      "after verifying the immutable candidate and before `fastlane ios release`."
+    )
   end
 
   private_lane :sentry_release_tag do
