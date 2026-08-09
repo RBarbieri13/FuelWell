@@ -592,27 +592,32 @@ export function SettingsClient({
           <div>
             <h1 className="fw-heading text-2xl md:text-4xl">Settings</h1>
             <p className="fw-muted mt-1 text-sm md:text-base">Account, preferences, integrations, and data controls</p>
-            <nav
-              aria-label="Settings sections"
-              className="-mx-1 mt-3 flex gap-2 overflow-x-auto px-1 pb-1 md:hidden"
-            >
-              {[
-                ["#account", "Account"],
-                ["#preferences", "Preferences"],
-                ["#health-profile", "Health"],
-                ["#coach-preferences", "Intake"],
-                ["#data", "Data"],
-                ["#session", "Session"],
-              ].map(([href, label]) => (
-                <a
-                  key={href}
-                  href={href}
-                  className="fw-press inline-flex min-h-11 shrink-0 items-center rounded-full bg-surface/85 px-3.5 py-1.5 text-xs font-black text-primary-800 ring-1 ring-inset ring-primary-100 hover:bg-primary-50 hover:ring-primary-200"
-                >
-                  {label}
-                </a>
-              ))}
-            </nav>
+            <label className="relative mt-3 block md:hidden">
+              <span className="sr-only">Jump to a settings section</span>
+              <select
+                defaultValue=""
+                aria-label="Settings sections"
+                onChange={(event) => {
+                  const target = document.querySelector(event.currentTarget.value);
+                  target?.scrollIntoView({
+                    behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+                      ? "auto"
+                      : "smooth",
+                    block: "start",
+                  });
+                }}
+                className="min-h-11 w-full appearance-none rounded-[1rem] bg-surface/90 px-4 py-2.5 pr-10 text-sm font-black text-primary-800 outline-none ring-1 ring-inset ring-primary-100 focus:ring-2 focus:ring-primary-500"
+              >
+                <option value="" disabled>Jump to a section</option>
+                <option value="#account">Account</option>
+                <option value="#preferences">Preferences</option>
+                <option value="#health-profile">Health profile</option>
+                <option value="#coach-preferences">Coach intake</option>
+                <option value="#data">Data and privacy</option>
+                <option value="#session">Session</option>
+              </select>
+              <span aria-hidden="true" className="pointer-events-none absolute inset-y-0 right-4 flex items-center text-primary-700">⌄</span>
+            </label>
           </div>
           <Badge className="shrink-0 px-4 py-2 text-sm tabular-nums">v{appVersion}</Badge>
         </div>

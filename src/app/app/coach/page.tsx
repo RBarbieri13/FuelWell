@@ -319,7 +319,7 @@ export default function CoachPage() {
               {/* The subtitle doubles as the live status line, so the busy
                   state gets a pulsing dot rather than only a word change. */}
               <p
-                className="flex items-center gap-1.5 truncate text-xs font-bold text-ink-muted"
+                className="flex items-center gap-1.5 text-xs font-bold text-ink-muted"
                 aria-live="polite"
               >
                 {busy && (
@@ -328,7 +328,10 @@ export default function CoachPage() {
                     className="h-1.5 w-1.5 shrink-0 animate-pulse rounded-full bg-primary-500 motion-reduce:animate-none"
                   />
                 )}
-                <span className="truncate">
+                <span className="min-[640px]:hidden">
+                  {busy ? "Working..." : "Plan, log, and review"}
+                </span>
+                <span className="hidden min-[640px]:inline">
                   {busy ? "Working..." : "Logs meals, plans workouts, answers — right here"}
                 </span>
               </p>

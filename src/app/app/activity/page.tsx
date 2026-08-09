@@ -169,14 +169,16 @@ export default function ActivityPage() {
                 <p className="mt-4 max-w-3xl text-base font-semibold leading-7 text-white/74">
                   {activitySummary.verdictDetail}
                 </p>
-                <div className="mt-6 grid grid-cols-3 gap-2 md:gap-3">
-                  {metrics.slice(0, 3).map((metric) => (
+                <div className="mt-6 grid grid-cols-2 gap-2 min-[390px]:grid-cols-3 md:gap-3">
+                  {metrics.slice(0, 3).map((metric, index) => (
                     <div
                       key={metric.label}
-                      className="min-w-0 rounded-[1.05rem] bg-white/10 px-3 py-3 ring-1 ring-inset ring-white/12 backdrop-blur md:rounded-[1.25rem] md:px-5 md:py-4"
+                      className={`min-w-0 rounded-[1.05rem] bg-white/10 px-3 py-3 ring-1 ring-inset ring-white/12 backdrop-blur md:rounded-[1.25rem] md:px-5 md:py-4 ${
+                        index === 2 ? "col-span-2 min-[390px]:col-span-1" : ""
+                      }`}
                     >
-                      <p className="truncate font-heading text-xl font-black tabular-nums text-white md:text-2xl">{metric.value}</p>
-                      <p className="mt-1 truncate text-[10px] font-black uppercase tracking-[0.08em] text-white/58 md:text-xs md:tracking-[0.12em]">{metric.label}</p>
+                      <p className="font-heading text-xl font-black tabular-nums leading-tight text-white md:text-2xl">{metric.value}</p>
+                      <p className="mt-1 text-[10px] font-black uppercase leading-tight tracking-[0.08em] text-white/58 md:text-xs md:tracking-[0.12em]">{metric.label}</p>
                     </div>
                   ))}
                 </div>

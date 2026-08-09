@@ -17,6 +17,8 @@ struct FuelWellApp: SwiftUI.App {
 }
 
 private struct FuelWellWebAppView: View {
+    @Environment(\.theme) private var theme
+
     private let releaseBinding: ReleaseBinding?
 
     @State private var isLoading: Bool
@@ -45,29 +47,50 @@ private struct FuelWellWebAppView: View {
                     isLoading: $isLoading,
                     errorMessage: $errorMessage
                 )
-                .ignoresSafeArea(.keyboard)
             }
 
             if isLoading {
-                VStack(spacing: 14) {
+                VStack(spacing: self.theme.spacing.sm) {
                     ProgressView()
-                        .tint(Color(red: 0.06, green: 0.61, blue: 0.44))
-                    Text("Loading FuelWell")
-                        .font(.headline)
-                        .foregroundStyle(.secondary)
+                        .controlSize(.large)
+                        .tint(self.theme.color.primary.accent.color)
+                    Text("Preparing FuelWell")
+                        .font(.headline.weight(.bold))
+                        .foregroundStyle(self.theme.color.text.primary.color)
+                    Text("Verifying this build and opening your dashboard.")
+                        .font(.subheadline)
+                        .multilineTextAlignment(.center)
+                        .foregroundStyle(self.theme.color.text.secondary.color)
                 }
-                .padding(24)
-                .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+                .padding(self.theme.spacing.lg)
+                .frame(maxWidth: 320)
+                .background(
+                    self.theme.color.bg.surface.color,
+                    in: RoundedRectangle(cornerRadius: self.theme.radius.lg, style: .continuous)
+                )
+                .overlay {
+                    RoundedRectangle(cornerRadius: self.theme.radius.lg, style: .continuous)
+                        .stroke(self.theme.color.bg.borderSoft.color, lineWidth: 1)
+                }
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel("Loading FuelWell")
+                .accessibilityValue("Verifying this build and opening your dashboard.")
+                .accessibilityAddTraits(.updatesFrequently)
             }
 
             if let errorMessage {
-                VStack(spacing: 16) {
-                    Text("FuelWell could not load")
-                        .font(.headline)
+                VStack(spacing: self.theme.spacing.md) {
+                    Image(systemName: "wifi.exclamationmark")
+                        .font(.title2.weight(.semibold))
+                        .foregroundStyle(self.theme.color.semantic.warning.color)
+                        .accessibilityHidden(true)
+                    Text("FuelWell couldn’t open")
+                        .font(.headline.weight(.bold))
+                        .foregroundStyle(self.theme.color.text.primary.color)
                     Text(errorMessage)
                         .font(.subheadline)
                         .multilineTextAlignment(.center)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(self.theme.color.text.secondary.color)
                     if releaseBinding != nil {
                         Button {
                             self.errorMessage = nil
@@ -75,21 +98,31 @@ private struct FuelWellWebAppView: View {
                             releaseIsVerified = false
                             reloadToken = UUID()
                         } label: {
-                            Text("Try again")
-                                .fontWeight(.bold)
+                            Label("Try again", systemImage: "arrow.clockwise")
+                                .font(.headline.weight(.bold))
                                 .frame(maxWidth: .infinity)
+                                .frame(minHeight: 44)
                         }
                         .buttonStyle(.borderedProminent)
-                        .tint(Color(red: 0.06, green: 0.61, blue: 0.44))
+                        .tint(self.theme.color.bg.elevated.color)
+                        .accessibilityHint("Checks this build again and reloads FuelWell.")
                     }
                 }
-                .padding(24)
+                .padding(self.theme.spacing.lg)
                 .frame(maxWidth: 320)
-                .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
-                .padding()
+                .background(
+                    self.theme.color.bg.surface.color,
+                    in: RoundedRectangle(cornerRadius: self.theme.radius.lg, style: .continuous)
+                )
+                .overlay {
+                    RoundedRectangle(cornerRadius: self.theme.radius.lg, style: .continuous)
+                        .stroke(self.theme.color.bg.border.color, lineWidth: 1)
+                }
+                .padding(self.theme.spacing.md)
+                .accessibilityElement(children: .contain)
             }
         }
-        .background(Color(red: 0.91, green: 0.98, blue: 0.96))
+        .background(self.theme.color.bg.base.color)
         .task(id: reloadToken) {
             await verifyRelease()
         }
@@ -136,6 +169,10 @@ private struct FuelWellWebView: UIViewRepresentable {
         webView.uiDelegate = context.coordinator
         webView.allowsBackForwardNavigationGestures = true
         webView.scrollView.contentInsetAdjustmentBehavior = .never
+        webView.scrollView.keyboardDismissMode = .interactive
+        webView.scrollView.alwaysBounceHorizontal = false
+        webView.scrollView.isDirectionalLockEnabled = true
+        webView.scrollView.automaticallyAdjustsScrollIndicatorInsets = true
         webView.load(URLRequest(url: url, cachePolicy: .reloadRevalidatingCacheData, timeoutInterval: 30))
         context.coordinator.lastReloadToken = reloadToken
         return webView

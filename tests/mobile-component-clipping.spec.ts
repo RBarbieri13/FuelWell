@@ -277,6 +277,77 @@ test.describe("dashboard decision metrics", () => {
   }
 });
 
+test("320px uses compact, readable controls instead of clipped desktop patterns", async ({ page }, testInfo) => {
+  test.setTimeout(120_000);
+
+  const activityPage = await openRoute(page, "/app/activity", 320);
+  const activityPanel = activityPage.locator(".fw-dark-panel").first();
+  for (const text of ["6,420", "Active calories", "7h 10m"]) {
+    await expect(activityPanel.getByText(text, { exact: true })).toBeVisible();
+  }
+  await activityPage.screenshot({
+    path: testInfo.outputPath("320-activity-readable-metrics.png"),
+    fullPage: false,
+  });
+  await activityPage.close();
+
+  const recipesPage = await openRoute(page, "/app/recipes", 320);
+  await expect(recipesPage.getByRole("combobox", { name: "Recipe meal type" })).toBeVisible();
+  await recipesPage.screenshot({
+    path: testInfo.outputPath("320-recipes-native-filter.png"),
+    fullPage: false,
+  });
+  await recipesPage.close();
+
+  const settingsPage = await openRoute(page, "/app/settings", 320);
+  await expect(settingsPage.getByRole("combobox", { name: "Settings sections" })).toBeVisible();
+  await settingsPage.screenshot({
+    path: testInfo.outputPath("320-settings-native-section-picker.png"),
+    fullPage: false,
+  });
+  await settingsPage.close();
+
+  const coachPage = await openRoute(page, "/app/coach", 320);
+  await expect(coachPage.getByText("Plan, log, and review", { exact: true })).toBeVisible();
+  await expect(coachPage.getByRole("link", { name: "Move", exact: true })).toBeVisible();
+  await coachPage.screenshot({
+    path: testInfo.outputPath("320-coach-compact-header.png"),
+    fullPage: false,
+  });
+  await coachPage.close();
+
+  const workoutsPage = await openRoute(page, "/app/workouts", 320);
+  const recommendationCard = workoutsPage.locator(".fw-dark-panel").first();
+  const recommendationBox = await recommendationCard.boundingBox();
+  expect(recommendationBox, "coach recommendation is missing").toBeTruthy();
+  expect(
+    recommendationBox!.height,
+    "coach recommendation still consumes nearly the entire phone viewport"
+  ).toBeLessThan(600);
+  await workoutsPage.screenshot({
+    path: testInfo.outputPath("320-workouts-progressive-recommendation.png"),
+    fullPage: false,
+  });
+  await workoutsPage.close();
+
+  const workoutPage = await openRoute(page, "/app/workouts/low-impact-strength", 320);
+  const workoutTitle = workoutPage.getByRole("heading", { level: 1 });
+  await expect(workoutTitle).toBeVisible();
+  const titleBox = await workoutTitle.boundingBox();
+  const heroBox = await workoutPage.locator(".fw-dark-panel").first().boundingBox();
+  expect(titleBox, "workout title is missing").toBeTruthy();
+  expect(heroBox, "workout hero is missing").toBeTruthy();
+  expect(
+    titleBox!.width / heroBox!.width,
+    "workout title is still squeezed into a narrow desktop-style column"
+  ).toBeGreaterThan(0.72);
+  await workoutPage.screenshot({
+    path: testInfo.outputPath("320-workout-detail-readable-hero.png"),
+    fullPage: false,
+  });
+  await workoutPage.close();
+});
+
 test.describe("keyboard-open states", () => {
   // iOS resizes the WKWebView viewport when the keyboard opens. Approximate
   // that by focusing the screen's primary input at a compressed viewport

@@ -239,7 +239,23 @@ export default function RecipesPage() {
             />
           </div>
           <div className="relative min-w-0">
-            <div className="flex gap-1 overflow-x-auto rounded-[1.35rem] bg-surface-sunken p-1 ring-1 ring-inset ring-hairline">
+            <label className="block sm:hidden">
+              <span className="sr-only">Recipe meal type</span>
+              <select
+                value={mealFilter}
+                onChange={(event) => setMealFilter(event.currentTarget.value as "All" | Recipe["meal"])}
+                aria-label="Recipe meal type"
+                className="min-h-12 w-full appearance-none rounded-[1.15rem] bg-surface-sunken px-4 py-3 pr-10 text-sm font-black text-ink outline-none ring-1 ring-inset ring-hairline-strong focus:bg-surface focus:ring-2 focus:ring-primary-500"
+              >
+                {mealFilters.map((meal) => (
+                  <option key={meal} value={meal}>
+                    {meal} ({mealCounts[meal] ?? 0})
+                  </option>
+                ))}
+              </select>
+              <span aria-hidden="true" className="pointer-events-none absolute inset-y-0 right-4 flex items-center text-primary-700">⌄</span>
+            </label>
+            <div className="hidden gap-1 overflow-x-auto rounded-[1.35rem] bg-surface-sunken p-1 ring-1 ring-inset ring-hairline sm:flex">
               {mealFilters.map((meal) => {
                 const count = mealCounts[meal] ?? 0;
                 const active = mealFilter === meal;
@@ -269,11 +285,6 @@ export default function RecipesPage() {
                 );
               })}
             </div>
-            {/* Cue that the chip row scrolls — Snack sits off-screen at phone widths. */}
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-y-1 right-1 w-8 rounded-r-[1.35rem] bg-gradient-to-l from-surface-sunken to-transparent sm:hidden"
-            />
           </div>
         </div>
 

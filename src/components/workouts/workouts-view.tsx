@@ -572,7 +572,7 @@ export function WorkoutsView({
           className="fw-dark-panel relative col-span-2 overflow-hidden border-primary-500/30 px-5 py-6 shadow-e4 ring-1 ring-inset ring-primary-300/25 sm:px-7 sm:py-7"
         >
           <div className="pointer-events-none absolute -right-8 -top-10 h-40 w-40 rounded-full bg-primary-500/25 blur-2xl" />
-          <div className="relative space-y-5">
+          <div className="relative space-y-4 sm:space-y-5">
           <div className="flex items-start gap-3">
             <div className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[0.9rem] bg-gradient-to-br from-primary-500 to-teal-500 text-white shadow-e2 ring-1 ring-inset ring-white/20">
               <Sparkles className="h-[1.125rem] w-[1.125rem]" strokeWidth={2.25} />
@@ -582,11 +582,14 @@ export function WorkoutsView({
                 <h2 className="font-heading text-[22px] font-black tracking-tight text-white">
                   Coach recommends
                 </h2>
-                <span className="rounded-full bg-white/12 px-2.5 py-1 text-[0.6875rem] font-black uppercase tracking-[0.12em] text-primary-100 ring-1 ring-inset ring-white/15">
+                <span className="hidden rounded-full bg-white/12 px-2.5 py-1 text-[0.6875rem] font-black uppercase tracking-[0.12em] text-primary-100 ring-1 ring-inset ring-white/15 sm:inline-flex">
                   Start here
                 </span>
               </div>
-              <p className="mt-2 text-[15px] font-semibold leading-6 text-white/72">
+              <p className="mt-2 text-sm font-semibold leading-5 text-white/72 sm:hidden">
+                Built from recent workouts, goals, and recovery.
+              </p>
+              <p className="mt-2 hidden text-[15px] font-semibold leading-6 text-white/72 sm:block">
                 Built from your recent workout pattern, current goals, soreness cost, and available body context.
               </p>
             </div>
@@ -626,10 +629,10 @@ export function WorkoutsView({
                     </div>
                   </div>
                 </div>
-                <p className="mt-3 text-sm font-semibold leading-6 text-white/72">
+                <p className="mt-3 line-clamp-2 text-sm font-semibold leading-5 text-white/72 sm:line-clamp-none sm:leading-6">
                   {coachRecommendation.reason}
                 </p>
-                <div className="mt-3 grid gap-2">
+                <div className="mt-3 hidden gap-2 sm:grid">
                   {coachRecommendation.options.slice(0, 2).map((option) => (
                     <Link
                       key={option.id}
@@ -643,6 +646,24 @@ export function WorkoutsView({
                     </Link>
                   ))}
                 </div>
+                <details className="group mt-3 sm:hidden">
+                  <summary className="fw-press flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 rounded-[0.95rem] bg-white/10 px-3 py-2 text-xs font-black text-primary-50 ring-1 ring-inset ring-white/10 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-300">
+                    Other options
+                    <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200 ease-out-soft group-open:rotate-180" strokeWidth={2.25} />
+                  </summary>
+                  <div className="mt-2 grid gap-2">
+                    {coachRecommendation.options.slice(0, 2).map((option) => (
+                      <Link
+                        key={option.id}
+                        href={workoutHref(option.id)}
+                        className="fw-press flex min-h-11 items-center justify-between gap-3 rounded-[0.95rem] bg-white/10 px-3 py-2 text-xs font-black text-primary-50 ring-1 ring-inset ring-white/10 hover:bg-white/18 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-300"
+                      >
+                        <span className="min-w-0 truncate">{option.title}</span>
+                        <span className="shrink-0 tabular-nums text-primary-100/80">{option.duration}</span>
+                      </Link>
+                    ))}
+                  </div>
+                </details>
               </div>
               <Link
                 href={workoutHref(recommended.id)}
@@ -657,7 +678,8 @@ export function WorkoutsView({
             href="/app/coach?prompt=Help%20me%20customize%20today%27s%20workout%20recommendation."
             className="fw-press inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-[1.15rem] bg-white/10 px-4 py-3 text-sm font-bold text-primary-50 ring-1 ring-inset ring-white/15 hover:bg-white/18 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-300"
           >
-            Customize with Coach
+            <span className="sm:hidden">Customize</span>
+            <span className="hidden sm:inline">Customize with Coach</span>
             <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.25} />
           </Link>
           </div>

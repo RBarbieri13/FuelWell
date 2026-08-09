@@ -329,27 +329,25 @@ export default async function WorkoutDetailPage({
               <div className="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full bg-primary-500/25 blur-3xl" />
               <div className="relative flex flex-col gap-6">
                 <div className="flex flex-col gap-5">
-                  <div className="flex min-w-0 gap-3 sm:gap-4">
-                    <div className="flex h-16 w-16 shrink-0 flex-col items-center justify-center rounded-[1.35rem] bg-primary-400 text-primary-950 ring-1 ring-inset ring-primary-300/60">
+                  <div className="grid min-w-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 gap-y-3 sm:items-start sm:gap-x-4">
+                    <div className="flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-[1.25rem] bg-primary-400 text-primary-950 ring-1 ring-inset ring-primary-300/60 sm:row-span-3 sm:h-16 sm:w-16 sm:rounded-[1.35rem]">
                       <span className="text-lg font-black tabular-nums">{exercisePlan.length}</span>
                       <span className="text-[10px] font-black uppercase tracking-[0.12em]">moves</span>
                     </div>
-                    <div className="min-w-0">
-                      <div className="flex min-w-0 flex-wrap items-center gap-2">
-                        <span className="rounded-full bg-white/10 px-3 py-1 text-[0.6875rem] font-black uppercase tracking-[0.12em] text-primary-100 ring-1 ring-inset ring-white/15">
-                          Preview before logging
-                        </span>
-                        <span className="max-w-full truncate rounded-full bg-primary-400/20 px-3 py-1 text-xs font-black text-primary-100 ring-1 ring-inset ring-primary-300/25">
-                          {workout.verdict}
-                        </span>
-                      </div>
-                      <h1 className="mt-2 font-heading text-[1.7rem] font-black tracking-tight text-white md:mt-3 md:text-4xl">
-                        {workout.title}
-                      </h1>
-                      <p className="mt-4 max-w-3xl text-base font-semibold leading-7 text-white/72">
-                        {workout.summary}
-                      </p>
+                    <div className="flex min-w-0 flex-wrap items-center gap-2">
+                      <span className="rounded-full bg-white/10 px-3 py-1 text-[0.6875rem] font-black uppercase tracking-[0.12em] text-primary-100 ring-1 ring-inset ring-white/15">
+                        Preview before logging
+                      </span>
+                      <span className="max-w-full truncate rounded-full bg-primary-400/20 px-3 py-1 text-xs font-black text-primary-100 ring-1 ring-inset ring-primary-300/25">
+                        {workout.verdict}
+                      </span>
                     </div>
+                    <h1 className="col-span-2 font-heading text-[1.7rem] font-black tracking-tight text-white sm:col-span-1 sm:col-start-2 md:text-4xl">
+                      {workout.title}
+                    </h1>
+                    <p className="col-span-2 max-w-3xl text-base font-semibold leading-7 text-white/72 sm:col-span-1 sm:col-start-2">
+                      {workout.summary}
+                    </p>
                   </div>
                   <div className="flex flex-col gap-2 sm:flex-row">
                     <StartWorkoutLink href={`${workoutHref(workout.id)}/live`} />

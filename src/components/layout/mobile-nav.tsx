@@ -42,7 +42,7 @@ const mobileNavItems = [
   },
   {
     href: "/app/workouts",
-    label: "Workouts",
+    label: "Move",
     icon: Dumbbell,
     color: "text-primary-700",
     plate: "bg-primary-50 ring-primary-100",

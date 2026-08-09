@@ -765,25 +765,23 @@ function DailyReviewSection({
           onClick={onToggle}
           aria-expanded={expanded}
           aria-controls={contentId}
-          className="group flex w-full items-start justify-between gap-3 rounded-[1rem] text-left transition-colors duration-200 ease-out-soft hover:bg-primary-50/50 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2"
+          className="group relative block w-full rounded-[1rem] pr-12 text-left transition-colors duration-200 ease-out-soft hover:bg-primary-50/50 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2 sm:flex sm:items-start sm:justify-between sm:gap-3 sm:pr-0"
         >
-          <span className="flex min-w-0 gap-3">
-            <span className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100">
+          <span className="grid min-w-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-x-2 sm:items-start sm:gap-x-3">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100 sm:row-span-3 sm:mt-1 sm:h-10 sm:w-10">
               <Icon className="h-5 w-5" strokeWidth={2} />
             </span>
-            <span className="min-w-0">
-              <span className="block text-[0.6875rem] font-black uppercase tracking-[0.14em] text-primary-700">
-                {eyebrow}
-              </span>
-              <span className="mt-0.5 block font-heading text-xl font-black tracking-tight text-ink md:text-3xl">
-                {title}
-              </span>
-              <span className="mt-1 block max-w-3xl text-sm font-semibold leading-6 text-ink-muted md:text-base">
-                {description}
-              </span>
+            <span className="min-w-0 text-[0.6875rem] font-black uppercase tracking-[0.14em] text-primary-700">
+              {eyebrow}
+            </span>
+            <span className="col-span-2 mt-2 block font-heading text-xl font-black tracking-tight text-ink sm:col-span-1 sm:col-start-2 sm:mt-0.5 md:text-3xl">
+              {title}
+            </span>
+            <span className="col-span-2 mt-1 block max-w-3xl text-sm font-semibold leading-6 text-ink-muted sm:col-span-1 sm:col-start-2 md:text-base">
+              {description}
             </span>
           </span>
-          <span className="mt-1 inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full bg-surface px-4 py-2.5 text-sm font-black text-primary-700 shadow-e1 ring-1 ring-inset ring-primary-100 transition-colors duration-200 ease-out-soft group-hover:bg-primary-50">
+          <span className="absolute right-0 top-0 inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full bg-surface px-3 py-2.5 text-sm font-black text-primary-700 shadow-e1 ring-1 ring-inset ring-primary-100 transition-colors duration-200 ease-out-soft group-hover:bg-primary-50 sm:static sm:mt-1 sm:px-4">
             <ChevronDown
               className={cn(
                 "h-4 w-4 transition-transform duration-200 ease-out-soft",
@@ -824,22 +822,26 @@ function DetailHero({
 }) {
   return (
     <Card padding="none" className="rounded-[1.35rem] px-5 py-4 md:px-6 md:py-5">
-      <SectionHeader
-        as="h2"
-        icon={Icon}
-        eyebrow={label}
-        title={title}
-        description={copy}
-        className="items-center"
-        action={
-          <Link href={href} className="block">
-            <Button size="lg" className="w-full whitespace-nowrap rounded-full px-6 sm:w-auto">
-              <Plus className="h-4 w-4" strokeWidth={2.25} />
-              {action}
-            </Button>
-          </Link>
-        }
-      />
+      <div className="grid min-w-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-x-2 gap-y-2 sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:items-start sm:gap-x-3">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100 sm:row-span-3 sm:mt-0.5">
+          <Icon className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
+        </span>
+        <p className="min-w-0 text-[0.6875rem] font-black uppercase tracking-[0.14em] text-primary-700">
+          {label}
+        </p>
+        <h2 className="col-span-2 font-heading text-xl font-black tracking-tight text-ink sm:col-span-1 sm:col-start-2">
+          {title}
+        </h2>
+        <p className="col-span-2 text-sm font-semibold leading-6 text-ink-muted sm:col-span-1 sm:col-start-2">
+          {copy}
+        </p>
+        <Link href={href} className="col-span-2 mt-1 block sm:col-span-1 sm:col-start-3 sm:row-span-3 sm:row-start-1 sm:mt-0 sm:self-center">
+          <Button size="lg" className="w-full whitespace-nowrap rounded-full px-6 sm:w-auto">
+            <Plus className="h-4 w-4" strokeWidth={2.25} />
+            {action}
+          </Button>
+        </Link>
+      </div>
     </Card>
   );
 }
