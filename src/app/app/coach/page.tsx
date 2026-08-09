@@ -145,6 +145,7 @@ type CoachActionDrawerState = {
     toolName: string;
     input: unknown;
     prompt: string;
+    token: string;
   };
 } | null;
 
@@ -157,6 +158,7 @@ function latestActionDrawer(
       toolName: string;
       input: unknown;
       prompt: string;
+      token: string;
     } | null;
   }>,
 ): CoachActionDrawerState {
@@ -625,6 +627,7 @@ export default function CoachPage() {
                         toolName={item.confirm.toolName}
                         input={item.confirm.input}
                         prompt={item.confirm.prompt}
+                        token={item.confirm.token}
                         onAction={handleCardAction}
                       />
                     )}
@@ -770,6 +773,7 @@ function CoachActionDrawer({
       toolName: string;
       input: unknown;
       prompt: string;
+      token: string;
     };
   };
   collapsed: boolean;
@@ -860,6 +864,7 @@ function CoachActionDrawer({
                 toolName={drawer.confirm.toolName}
                 input={drawer.confirm.input}
                 prompt={drawer.confirm.prompt}
+                token={drawer.confirm.token}
                 onAction={onAction}
               />
             ) : null}

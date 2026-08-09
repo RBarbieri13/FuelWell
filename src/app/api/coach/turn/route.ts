@@ -3,6 +3,7 @@ import { z } from "zod";
 import { headers } from "next/headers";
 import { hasSupabaseConfig, isPreviewHost, SAMPLE_USER } from "@/lib/preview-session";
 import { createClient } from "@/lib/supabase/server";
+import { loadServerDailyGoalContext } from "@/lib/server-goal-context";
 import { buildSystemPrompt } from "@/lib/coach/system-prompt";
 import {
   buildCoachKnowledgeBase,
@@ -49,6 +50,10 @@ import { parseDirectWorkoutLog } from "@/lib/coach/direct-workout-log";
 import { enforceVoice, redactPii } from "@/lib/coach/voice-filter";
 import { writeAudit } from "@/lib/coach/audit";
 import { normalizeGroceryInput } from "@/lib/grocery-normalization";
+import {
+  issueCoachConfirmationToken,
+  verifyCoachConfirmationToken,
+} from "@/lib/coach/confirmation";
 import {
   ensureConversation,
   getSupabaseDayCents,
@@ -239,7 +244,7 @@ const requestSchema = z.object({
     .max(60),
   snapshot: z.record(z.string(), z.unknown()),
   confirmedTool: z
-    .object({ name: z.string(), input: z.unknown() })
+    .object({ name: z.string(), input: z.unknown(), token: z.string().optional() })
     .optional(),
 });
 
@@ -392,6 +397,24 @@ export async function POST(request: Request) {
   }
 
   const snapshot = body.snapshot as CoachDaySnapshot;
+  if (user) {
+    try {
+      const goalContext = await loadServerDailyGoalContext(storageClient, {
+        userId,
+        date: snapshot.date,
+        meals: snapshot.meals,
+        totals: snapshot.totals,
+        targets: snapshot.targets,
+        profile: { goal: snapshot.profile.goal ?? null },
+      });
+      snapshot.goalPlan = goalContext.goalPlan;
+      snapshot.integration = goalContext.integration;
+      snapshot.goalContext = goalContext;
+      snapshot.targets = goalContext.targets;
+    } catch {
+      // Preserve the client snapshot if the server goal context cannot be loaded.
+    }
+  }
   const lastUserText = body.messages
     .slice()
     .reverse()
@@ -579,6 +602,22 @@ export async function POST(request: Request) {
           } else {
             try {
               const input = def.schema.parse(body.confirmedTool.input);
+              if (def.destructive) {
+                const confirmation = verifyCoachConfirmationToken({
+                  token: body.confirmedTool.token,
+                  userId,
+                  conversationId: conversationId ?? body.conversationId,
+                  toolName: def.name,
+                  input,
+                });
+                if (!confirmation.ok) {
+                  assistantText =
+                    "I couldn't verify that confirmation. Ask me to do it again so I can issue a fresh confirmation card.";
+                  emit({ type: "text_delta", text: assistantText });
+                  await audit(def.name, { input, reason: confirmation.reason }, "rejected-confirmed-tool");
+                  throw new Error("confirmation rejected");
+                }
+              }
               const result = await def.run(input, toolCtx);
               result.mutations?.forEach(toolCtx.applyMutation);
               turnMutations.push(...(result.mutations ?? []));
@@ -593,10 +632,12 @@ export async function POST(request: Request) {
               turnToolCalls.push({ name: def.name, input });
               await audit(def.name, input, "confirmed-tool");
             } catch (err) {
-              assistantText = `I couldn't apply that action: ${
-                err instanceof Error ? err.message.slice(0, 220) : "invalid input"
-              }.`;
-              emit({ type: "text_delta", text: assistantText });
+              if (assistantText.length === 0) {
+                assistantText = `I couldn't apply that action: ${
+                  err instanceof Error ? err.message.slice(0, 220) : "invalid input"
+                }.`;
+                emit({ type: "text_delta", text: assistantText });
+              }
             }
           }
 
@@ -750,11 +791,39 @@ export async function POST(request: Request) {
 
             // E2: destructive tools pause for an explicit user yes.
             if (def.destructive) {
+              let parsedInput: unknown;
+              try {
+                parsedInput = def.schema.parse(tu.input);
+              } catch {
+                toolResults.push({
+                  type: "tool_result",
+                  tool_use_id: tu.id,
+                  content: "The destructive action could not be validated.",
+                  is_error: true,
+                });
+                continue;
+              }
+              const token = issueCoachConfirmationToken({
+                userId,
+                conversationId: conversationId ?? body.conversationId,
+                toolName: tu.name,
+                input: parsedInput,
+              });
+              if (!token) {
+                toolResults.push({
+                  type: "tool_result",
+                  tool_use_id: tu.id,
+                  content: "Confirmation is temporarily unavailable for this action.",
+                  is_error: true,
+                });
+                continue;
+              }
               emit({
                 type: "confirm_required",
                 toolName: tu.name,
-                input: tu.input,
+                input: parsedInput,
                 prompt: `Confirm: ${tu.name.replaceAll("_", " ")}?`,
+                token,
               });
               toolResults.push({
                 type: "tool_result",

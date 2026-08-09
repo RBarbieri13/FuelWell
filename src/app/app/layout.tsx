@@ -3,6 +3,7 @@ import { Sidebar } from "@/components/layout/sidebar";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { MobileHeader } from "@/components/layout/mobile-header";
 import type { UserMenuSession } from "@/components/layout/user-menu";
+import { GoalContextSync } from "@/lib/goal-context-sync";
 import { PreferencesSync } from "@/lib/preferences-sync";
 import { ensureCoachKnowledgeForUser } from "@/lib/coach/persistence";
 import { createClient } from "@/lib/supabase/server";
@@ -34,6 +35,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   return (
     <div className="flex h-dvh overflow-hidden bg-background">
       <PreferencesSync />
+      <GoalContextSync />
       {/* Keyboard users otherwise tab through the whole sidebar (11 rows) on
           every navigation before reaching page content. Invisible until it
           takes focus, then it lands as a normal raised pill. */}

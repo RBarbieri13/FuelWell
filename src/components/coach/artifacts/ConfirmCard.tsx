@@ -8,6 +8,7 @@ export type ConfirmCardProps = {
   toolName: string;
   input: unknown;
   prompt: string;
+  token: string;
   onAction: (action: CoachCardAction) => void;
 };
 
@@ -35,7 +36,7 @@ function summarizeInput(input: unknown): Array<{ key: string; value: string }> {
  * rather than the caution role so it never reads like the constructive
  * receipts it sits next to in the transcript.
  */
-export function ConfirmCard({ toolName, input, prompt, onAction }: ConfirmCardProps) {
+export function ConfirmCard({ toolName, input, prompt, token, onAction }: ConfirmCardProps) {
   const actionLabel = toolName.replaceAll("_", " ");
   const details = summarizeInput(input);
 
@@ -91,7 +92,7 @@ export function ConfirmCard({ toolName, input, prompt, onAction }: ConfirmCardPr
             type="button"
             variant="danger"
             aria-label={`Confirm ${actionLabel}`}
-            onClick={() => onAction({ kind: "confirm_tool", name: toolName, input })}
+            onClick={() => onAction({ kind: "confirm_tool", name: toolName, input, token })}
             className="w-full bg-red-600 text-white shadow-e2 hover:bg-red-700 hover:text-white active:bg-red-800 sm:w-auto"
           >
             Yes, do it

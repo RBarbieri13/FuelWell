@@ -32,6 +32,7 @@ import { normalizeGroceryInput } from "@/lib/grocery-normalization";
 import {
   setGoalPlan,
   setIntegrationSummary,
+  getGoalContextSnapshot,
   useGoalContextStore,
 } from "@/lib/use-goal-context";
 import type {
@@ -44,6 +45,13 @@ import type {
 } from "@/lib/coach/types";
 import type { CoachCardAction } from "@/components/coach/artifacts/contract";
 import { describeProviderHealthForUser } from "@/lib/coach/provider-health";
+import {
+  clearCoachChatForUser,
+  coachChatStorageKey,
+  getCoachChatScope,
+  PREVIEW_COACH_CHAT_SCOPE,
+  setCoachChatScope,
+} from "@/lib/coach/chat-storage";
 
 export type ChatItem = {
   id: string;
@@ -51,7 +59,7 @@ export type ChatItem = {
   text: string;
   attachments?: Array<Pick<CoachAttachment, "id" | "name" | "mediaType" | "size" | "kind">>;
   artifacts: ArtifactSpec[];
-  confirm?: { toolName: string; input: unknown; prompt: string } | null;
+  confirm?: { toolName: string; input: unknown; prompt: string; token: string } | null;
   streaming?: boolean;
   error?: boolean;
 };
@@ -65,8 +73,6 @@ export type CoachProfile = {
   heightCm?: number;
 };
 
-const CHAT_KEY = "fuelwell-coach-chat-v1";
-
 // Abort a turn when the SSE stream goes silent for this long. The server's
 // maxDuration is 120s; a stalled reader would otherwise leave the composer
 // disabled and the typing indicator spinning forever.
@@ -76,6 +82,7 @@ type StoredChat = { date: string; items: ChatItem[]; conversationId?: string };
 
 type HistoryResponse = {
   signedIn: boolean;
+  userId: string | null;
   conversationId: string | null;
   messages: Array<{ role: "user" | "assistant"; content: string; artifacts: ArtifactSpec[] }>;
   hasMore?: boolean;
@@ -107,7 +114,7 @@ function nextItemId() {
 function loadStoredChat(): StoredChat | null {
   if (typeof window === "undefined") return null;
   try {
-    const raw = window.localStorage.getItem(CHAT_KEY);
+    const raw = window.localStorage.getItem(coachChatStorageKey(getCoachChatScope()));
     if (!raw) return null;
     const parsed = JSON.parse(raw) as StoredChat;
     if (parsed.date === todayIsoDate() && Array.isArray(parsed.items)) return parsed;
@@ -115,6 +122,55 @@ function loadStoredChat(): StoredChat | null {
     // ignore
   }
   return null;
+}
+
+export function resolveCoachHistoryHydration(
+  history: HistoryResponse | null,
+  stored: StoredChat | null,
+): {
+  scope: string;
+  items: ChatItem[];
+  conversationId?: string;
+  hasEarlier: boolean;
+  nextBefore: string | null;
+  source: "server" | "local" | "empty";
+} {
+  if (history?.signedIn && history.userId) {
+    return {
+      scope: history.userId,
+      items: history.messages.map((message) => ({
+        id: nextItemId(),
+        role: message.role,
+        text: message.content,
+        artifacts: message.artifacts ?? [],
+        streaming: false,
+      })),
+      conversationId: history.conversationId ?? undefined,
+      hasEarlier: Boolean(history.hasMore && history.nextBefore),
+      nextBefore: history.nextBefore ?? null,
+      source: "server",
+    };
+  }
+
+  if (stored?.items?.length) {
+    return {
+      scope: PREVIEW_COACH_CHAT_SCOPE,
+      items: stored.items.map((item) => ({ ...item, streaming: false })),
+      conversationId: stored.conversationId,
+      hasEarlier: false,
+      nextBefore: null,
+      source: "local",
+    };
+  }
+
+  return {
+    scope: PREVIEW_COACH_CHAT_SCOPE,
+    items: [],
+    conversationId: undefined,
+    hasEarlier: false,
+    nextBefore: null,
+    source: "empty",
+  };
 }
 
 /** Replace coach mutations into the real client stores. */
@@ -211,7 +267,7 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
   useWorkoutLog();
   useGroceryList();
   useBodyLog();
-  const { goalPlan, integrationSummary } = useGoalContextStore();
+  useGoalContextStore();
 
   // Start from the SSR-safe empty state and hydrate the stored chat after
   // mount — reading localStorage in the initializer causes a hydration
@@ -227,14 +283,14 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
   const queuedTurnRef = useRef<{
     userText: string;
     attachments?: CoachAttachment[];
-    confirmedTool?: { name: string; input: unknown };
+    confirmedTool?: { name: string; input: unknown; token?: string };
   } | null>(null);
   // The most recent turn request plus the transcript items it created, so a
   // failed turn can be retried without duplicating the user message.
   const lastTurnRef = useRef<{
     userText: string;
     attachments?: CoachAttachment[];
-    confirmedTool?: { name: string; input: unknown };
+    confirmedTool?: { name: string; input: unknown; token?: string };
     userItemId: string;
     assistantItemId: string;
   } | null>(null);
@@ -246,38 +302,22 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
     // localStorage replay. Async fetch also keeps the setState out of the
     // synchronous effect body (react-hooks/set-state-in-effect).
     void (async () => {
-      let hydratedFromServer = false;
+      let history: HistoryResponse | null = null;
       try {
         const res = await fetch("/api/coach/history");
         if (res.ok) {
-          const data = (await res.json()) as HistoryResponse;
-          if (!cancelled && data.signedIn && data.messages.length > 0) {
-            setItems(
-              data.messages.map((m) => ({
-                id: nextItemId(),
-                role: m.role,
-                text: m.content,
-                artifacts: m.artifacts ?? [],
-                streaming: false,
-              }))
-            );
-            if (data.conversationId) conversationIdRef.current = data.conversationId;
-            historyCursorRef.current = data.nextBefore ?? null;
-            setHasEarlier(Boolean(data.hasMore && data.nextBefore));
-            hydratedFromServer = true;
-          }
+          history = (await res.json()) as HistoryResponse;
         }
       } catch {
         // fall back to local replay
       }
       if (cancelled) return;
-      if (!hydratedFromServer) {
-        const stored = loadStoredChat();
-        if (stored?.items?.length) {
-          setItems(stored.items.map((i) => ({ ...i, streaming: false })));
-        }
-        if (stored?.conversationId) conversationIdRef.current = stored.conversationId;
-      }
+      const hydration = resolveCoachHistoryHydration(history, loadStoredChat());
+      setCoachChatScope(hydration.scope);
+      setItems(hydration.items);
+      conversationIdRef.current = hydration.conversationId;
+      historyCursorRef.current = hydration.nextBefore;
+      setHasEarlier(hydration.hasEarlier);
       setHydrated(true);
     })();
     return () => {
@@ -291,7 +331,7 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
     if (!hydrated) return;
     try {
       window.localStorage.setItem(
-        CHAT_KEY,
+        coachChatStorageKey(getCoachChatScope()),
         JSON.stringify({
           date: todayIsoDate(),
           items: items.slice(-60),
@@ -312,14 +352,15 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
     const liveWorkouts = getWorkoutLogSnapshot().workouts;
     const liveGrocery = getGrocerySnapshot().items;
     const liveBodyLog = getBodyLogSnapshot().entries;
+    const liveGoalState = getGoalContextSnapshot();
     const goalContext = buildDailyGoalContext({
       date: todayIsoDate(),
       meals: liveMeals,
       totals: liveTotals,
       targets,
       profile,
-      goalPlan,
-      integration: integrationSummary,
+      goalPlan: liveGoalState.goalPlan,
+      integration: liveGoalState.integrationSummary,
     });
     return {
       date: todayIsoDate(),
@@ -337,16 +378,16 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
       },
       profile,
       goalPlan: goalContext.goalPlan,
-      integration: integrationSummary,
+      integration: liveGoalState.integrationSummary,
       goalContext,
     };
-  }, [targets, prefs, profile, goalPlan, integrationSummary]);
+  }, [targets, prefs, profile]);
 
   const runTurn = useCallback(
     async (
       userText: string,
       attachments?: CoachAttachment[],
-      confirmedTool?: { name: string; input: unknown },
+      confirmedTool?: { name: string; input: unknown; token?: string },
       replaceIds?: string[]
     ): Promise<void> => {
       // The snapshot must never carry the pre-hydration sample seed, so wait
@@ -499,7 +540,12 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
                 break;
               case "confirm_required":
                 patchAssistant({
-                  confirm: { toolName: event.toolName, input: event.input, prompt: event.prompt },
+                  confirm: {
+                    toolName: event.toolName,
+                    input: event.input,
+                    prompt: event.prompt,
+                    token: event.token,
+                  },
                 });
                 break;
               case "turn_done":
@@ -627,7 +673,11 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
           break;
         }
         case "confirm_tool":
-          void runTurn("Yes — go ahead.", undefined, { name: action.name, input: action.input });
+          void runTurn("Yes — go ahead.", undefined, {
+            name: action.name,
+            input: action.input,
+            token: action.token,
+          });
           break;
         case "cancel_confirm":
           void runTurn("No, cancel that.");
@@ -647,7 +697,7 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
     setHasEarlier(false);
     setItems([]);
     try {
-      window.localStorage.removeItem(CHAT_KEY);
+      clearCoachChatForUser(getCoachChatScope());
     } catch {
       // ignore
     }

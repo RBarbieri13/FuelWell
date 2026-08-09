@@ -148,7 +148,7 @@ export type CoachSseEvent =
   | { type: "tool_start"; name: string; toolUseId: string }
   | { type: "artifact"; artifact: ArtifactSpec; toolName: string }
   | { type: "mutation"; mutations: CoachMutation[] }
-  | { type: "confirm_required"; toolName: string; input: unknown; prompt: string }
+  | { type: "confirm_required"; toolName: string; input: unknown; prompt: string; token: string }
   | {
       type: "turn_done";
       usage: { inputTokens: number; outputTokens: number; costUsdCents: number; model: string };
@@ -179,5 +179,5 @@ export type CoachTurnRequest = {
   messages: CoachTurnMessage[];
   snapshot: CoachDaySnapshot;
   /** Set when the user explicitly confirmed a pending destructive action. */
-  confirmedTool?: { name: string; input: unknown };
+  confirmedTool?: { name: string; input: unknown; token?: string };
 };

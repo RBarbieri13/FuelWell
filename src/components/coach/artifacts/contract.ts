@@ -10,7 +10,7 @@ import type { ArtifactSpec } from "@/lib/coach/types";
 export type CoachCardAction =
   | { kind: "send_message"; text: string }
   | { kind: "invoke_tool"; name: string; input: Record<string, unknown> }
-  | { kind: "confirm_tool"; name: string; input: unknown }
+  | { kind: "confirm_tool"; name: string; input: unknown; token: string }
   | { kind: "cancel_confirm" }
   | { kind: "open_route"; route: string };
 

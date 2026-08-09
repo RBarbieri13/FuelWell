@@ -23,6 +23,14 @@ const REQUIRED_TABLES = [
   "workout_sessions",
   "grocery_lists",
   "body_log_entries",
+  "goal_plans",
+  "integration_daily_summaries",
+  "daily_goal_contexts",
+  "coach_conversations",
+  "coach_messages",
+  "coach_usage",
+  "coach_audit",
+  "coach_knowledge_bases",
 ] as const;
 
 type Dependencies = {

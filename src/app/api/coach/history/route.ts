@@ -11,14 +11,14 @@ import { hasSupabaseConfig } from "@/lib/preview-session";
  */
 export async function GET(request: Request) {
   if (!hasSupabaseConfig()) {
-    return Response.json({ signedIn: false, conversationId: null, messages: [] });
+    return Response.json({ signedIn: false, userId: null, conversationId: null, messages: [] });
   }
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) {
-    return Response.json({ signedIn: false, conversationId: null, messages: [] });
+    return Response.json({ signedIn: false, userId: null, conversationId: null, messages: [] });
   }
 
   const url = new URL(request.url);
@@ -31,7 +31,7 @@ export async function GET(request: Request) {
     user.id,
     { before, limit }
   );
-  return Response.json({ signedIn: true, conversationId, messages, hasMore, nextBefore });
+  return Response.json({ signedIn: true, userId: user.id, conversationId, messages, hasMore, nextBefore });
 }
 
 /**

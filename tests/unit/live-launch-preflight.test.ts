@@ -16,9 +16,10 @@ describe("live launch preflight", () => {
     const result = await getLiveLaunchPreflight({ fetcher, probeProvider, env });
 
     expect(result.liveReady).toBe(true);
-    expect(result.liveChecks).toHaveLength(6);
-    expect(fetcher).toHaveBeenCalledTimes(5);
+    expect(result.liveChecks).toHaveLength(14);
+    expect(fetcher).toHaveBeenCalledTimes(13);
     expect(probeProvider).toHaveBeenCalledOnce();
+    expect(result.liveChecks.map((check) => check.id)).toContain("live-table-coach_knowledge_bases");
   });
 
   it("fails closed when a required table is absent", async () => {

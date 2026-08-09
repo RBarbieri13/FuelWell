@@ -1,14 +1,30 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { coachChatStorageKey } from "@/lib/coach/chat-storage";
+import { goalPlanStorageKey, integrationSummaryStorageKey } from "@/lib/use-goal-context";
 import {
+  clearUserScopedIdentityCaches,
   combineHeightParts,
   normalizeAllergies,
   normalizeDisplayName,
+  onboardingDraftStorageKey,
+  preferenceStorageKey,
   normalizeGoalTimeline,
   splitHeightInches,
   toggleAllergySelection,
   updateProfileAndVerify,
   type ProfileUpdateClient,
 } from "@/lib/profile-preferences";
+
+class MemoryStorage {
+  private values = new Map<string, string>();
+  getItem(key: string) { return this.values.get(key) ?? null; }
+  setItem(key: string, value: string) { this.values.set(key, value); }
+  removeItem(key: string) { this.values.delete(key); }
+}
+
+afterEach(() => {
+  vi.unstubAllGlobals();
+});
 
 function makeProfileClient(result: {
   data: Record<string, unknown> | null;
@@ -68,5 +84,23 @@ describe("verified profile saves", () => {
     await expect(
       updateProfileAndVerify(client, "user-1", { display_name: "Robby" })
     ).rejects.toThrow("Write denied");
+  });
+
+  it("clears coach and goal caches alongside the identity-scoped profile caches", () => {
+    const storage = new MemoryStorage();
+    vi.stubGlobal("window", { localStorage: storage });
+    storage.setItem(onboardingDraftStorageKey("user-1"), "draft");
+    storage.setItem(preferenceStorageKey("user-1"), "prefs");
+    storage.setItem(coachChatStorageKey("user-1"), "chat");
+    storage.setItem(goalPlanStorageKey("user-1"), "goal");
+    storage.setItem(integrationSummaryStorageKey("user-1"), "integration");
+
+    clearUserScopedIdentityCaches("user-1");
+
+    expect(storage.getItem(onboardingDraftStorageKey("user-1"))).toBeNull();
+    expect(storage.getItem(preferenceStorageKey("user-1"))).toBeNull();
+    expect(storage.getItem(coachChatStorageKey("user-1"))).toBeNull();
+    expect(storage.getItem(goalPlanStorageKey("user-1"))).toBeNull();
+    expect(storage.getItem(integrationSummaryStorageKey("user-1"))).toBeNull();
   });
 });

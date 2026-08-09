@@ -1,3 +1,6 @@
+import { clearCoachChatForUser } from "@/lib/coach/chat-storage";
+import { clearGoalContextForUser } from "@/lib/use-goal-context";
+
 export const PREVIEW_IDENTITY_SCOPE = "preview";
 
 const ONBOARDING_DRAFT_PREFIX = "fuelwell:onboarding:v2";
@@ -93,6 +96,8 @@ export function clearUserScopedIdentityCaches(userId: string): void {
   try {
     window.localStorage.removeItem(onboardingDraftStorageKey(userId));
     window.localStorage.removeItem(preferenceStorageKey(userId));
+    clearCoachChatForUser(userId);
+    clearGoalContextForUser(userId);
   } catch {
     // Cache cleanup must never prevent sign-out.
   }
