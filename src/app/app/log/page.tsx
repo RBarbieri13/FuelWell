@@ -1,6 +1,7 @@
 "use client";
 
-import { Suspense, useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState, type RefObject } from "react";
+import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   Barcode,
@@ -125,6 +126,7 @@ function LogContent() {
   const [recentlyAddedFoodId, setRecentlyAddedFoodId] = useState<string | null>(null);
   const [lastLogged, setLastLogged] = useState<{ mealId: string; label: string } | null>(null);
   const addToPlateRef = useRef<HTMLDivElement | null>(null);
+  const drawerTriggerRef = useRef<HTMLButtonElement | null>(null);
 
   // Selecting a food from a long results list must reveal the portion picker;
   // on phones the card can otherwise land outside the visible viewport.
@@ -429,8 +431,11 @@ function LogContent() {
                   )}
                   {sessionIngredients.length > 0 && (
                     <button
+                      ref={drawerTriggerRef}
                       type="button"
                       onClick={() => setDrawerOpen(true)}
+                      aria-haspopup="dialog"
+                      aria-expanded={drawerOpen}
                       className={cn(
                         SLOT_PILL_BASE,
                         "bg-surface text-primary-700 shadow-e1 ring-primary-100 hover:bg-primary-100 hover:ring-primary-200"
@@ -473,6 +478,7 @@ function LogContent() {
       <SessionIngredientDrawer
         open={drawerOpen}
         ingredients={sessionIngredients}
+        triggerRef={drawerTriggerRef}
         onClose={() => setDrawerOpen(false)}
       />
     </div>
@@ -558,20 +564,23 @@ function RecentMeals({
 function SessionIngredientDrawer({
   open,
   ingredients,
+  triggerRef,
   onClose,
 }: {
   open: boolean;
   ingredients: SessionIngredient[];
+  triggerRef: RefObject<HTMLButtonElement | null>;
   onClose: () => void;
 }) {
+  const closeRef = useRef<HTMLButtonElement | null>(null);
+  const wasOpenRef = useRef(open);
+
   useEffect(() => {
-    if (!open) return;
-    function onKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") onClose();
+    if (!open && wasOpenRef.current) {
+      triggerRef.current?.focus({ preventScroll: true });
     }
-    document.addEventListener("keydown", onKeyDown);
-    return () => document.removeEventListener("keydown", onKeyDown);
-  }, [open, onClose]);
+    wasOpenRef.current = open;
+  }, [open, triggerRef]);
 
   const totals = ingredients.reduce(
     (sum, ingredient) => ({
@@ -591,109 +600,106 @@ function SessionIngredientDrawer({
   ];
 
   return (
-    <>
-      {/* Scrim: a full-height panel with nothing behind it dimmed reads as a
-          layout bug rather than a layer. Clicking it closes, matching Escape. */}
-      {open && (
-        <div
-          aria-hidden="true"
-          onClick={onClose}
-          className="fixed inset-0 z-30 bg-ink/25 backdrop-blur-[2px]"
+    <DialogPrimitive.Root open={open} onOpenChange={(nextOpen) => !nextOpen && onClose()}>
+      <DialogPrimitive.Portal>
+        <DialogPrimitive.Backdrop
+          className="fixed inset-0 z-30 bg-ink/25 backdrop-blur-[2px] transition-opacity duration-200 motion-reduce:transition-none data-closed:opacity-0 data-open:opacity-100"
         />
-      )}
-      <aside
-      className={cn(
-        "fixed bottom-0 right-0 top-0 z-40 w-full max-w-md transform bg-surface shadow-e4 ring-1 ring-inset ring-hairline transition-transform duration-300 ease-out-soft md:top-0",
-        open ? "translate-x-0" : "hidden translate-x-full"
-      )}
-      aria-hidden={!open}
-    >
-      <div className="flex h-full flex-col">
-        <div className="flex items-start justify-between gap-4 border-b border-hairline bg-primary-50/80 px-5 py-5">
-          <div className="min-w-0">
-            <p className="text-xs font-black uppercase tracking-[0.16em] text-primary-700">
-              Current meal
-            </p>
-            <h2 className="mt-1 font-heading text-2xl font-black text-ink">
-              Ingredient drawer
-            </h2>
-            <p className="mt-1 text-sm font-semibold text-ink-muted">
-              Same-session ingredients and macro totals.
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="fw-press inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-surface text-ink-subtle shadow-e1 ring-1 ring-inset ring-hairline hover:bg-primary-50 hover:text-primary-700 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2"
-            aria-label="Close ingredient drawer"
-          >
-            <X className="h-5 w-5" strokeWidth={2.5} aria-hidden="true" />
-          </button>
-        </div>
-
-        {/* 2×2 below 400px: four columns clip a four-digit calorie figure on a
-            320px screen, and a clipped metric is worse than a taller panel. */}
-        <div className="grid grid-cols-2 gap-2 px-5 py-4 min-[400px]:grid-cols-4">
-          {tiles.map((tile) => (
-            <div
-              key={tile.label}
-              className="min-w-0 rounded-[1rem] bg-surface-muted px-2 py-3 text-center ring-1 ring-inset ring-hairline"
-            >
-              <p className="truncate text-lg font-black tabular-nums text-ink">
-                {tile.value}
-              </p>
-              <p className="mt-0.5 text-[10px] font-black uppercase tracking-[0.12em] text-ink-subtle">
-                {tile.label}
-              </p>
+        <DialogPrimitive.Popup
+          initialFocus={closeRef}
+          aria-modal="true"
+          className="fixed bottom-0 right-0 top-0 z-40 flex w-full max-w-md outline-none transition-transform duration-300 ease-out-soft motion-reduce:transition-none data-closed:translate-x-full data-open:translate-x-0"
+        >
+          <aside className="flex h-full w-full flex-col bg-surface shadow-e4 ring-1 ring-inset ring-hairline">
+            <div className="flex items-start justify-between gap-4 border-b border-hairline bg-primary-50/80 px-5 py-5">
+              <div className="min-w-0">
+                <p className="text-xs font-black uppercase tracking-[0.16em] text-primary-700">
+                  Current meal
+                </p>
+                <DialogPrimitive.Title className="mt-1 font-heading text-2xl font-black text-ink">
+                  Ingredient drawer
+                </DialogPrimitive.Title>
+                <DialogPrimitive.Description className="mt-1 text-sm font-semibold text-ink-muted">
+                  Same-session ingredients and macro totals.
+                </DialogPrimitive.Description>
+              </div>
+              <DialogPrimitive.Close
+                render={
+                  <button
+                    ref={closeRef}
+                    className="fw-press inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-surface text-ink-subtle shadow-e1 ring-1 ring-inset ring-hairline hover:bg-primary-50 hover:text-primary-700 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2"
+                    aria-label="Close ingredient drawer"
+                  />
+                }
+              >
+                <X className="h-5 w-5" strokeWidth={2.5} aria-hidden="true" />
+              </DialogPrimitive.Close>
             </div>
-          ))}
-        </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 pb-6">
-          {ingredients.length === 0 ? (
-            <div className="rounded-[1.25rem] border border-dashed border-primary-200 bg-primary-50/70 p-5 text-sm font-semibold leading-6 text-primary-900/70">
-              Add foods and they will appear here for this meal-building session.
-            </div>
-          ) : (
-            <div className="space-y-1.5">
-              {ingredients.map((ingredient) => (
+            {/* 2×2 below 400px: four columns clip a four-digit calorie figure on a
+                320px screen, and a clipped metric is worse than a taller panel. */}
+            <div className="grid grid-cols-2 gap-2 px-5 py-4 min-[400px]:grid-cols-4">
+              {tiles.map((tile) => (
                 <div
-                  key={ingredient.id}
-                  className="rounded-[1rem] bg-surface-muted px-4 py-3 ring-1 ring-inset ring-hairline"
+                  key={tile.label}
+                  className="min-w-0 rounded-[1rem] bg-surface-muted px-2 py-3 text-center ring-1 ring-inset ring-hairline"
                 >
-                  <p className="text-sm font-black text-ink">{ingredient.name}</p>
-                  <p className="mt-1 flex flex-wrap items-center gap-x-2.5 gap-y-0.5 text-xs font-semibold leading-5 text-ink-muted">
-                    <span className="whitespace-nowrap font-black text-ink">
-                      <span className="tabular-nums">
-                        {ingredient.totals.calories.toLocaleString()}
-                      </span>{" "}
-                      kcal
-                    </span>
-                    {DRAWER_MACROS.map((macro) => (
-                      <span
-                        key={macro.key}
-                        className="inline-flex items-center gap-1 whitespace-nowrap"
-                      >
-                        <span
-                          aria-hidden="true"
-                          className="h-1.5 w-1.5 shrink-0 rounded-full"
-                          style={{ backgroundColor: macro.color }}
-                        />
-                        <span className="tabular-nums">
-                          {ingredient.totals[macro.key]}
-                        </span>
-                        g {macro.label}
-                      </span>
-                    ))}
+                  <p className="truncate text-lg font-black tabular-nums text-ink">
+                    {tile.value}
+                  </p>
+                  <p className="mt-0.5 text-[10px] font-black uppercase tracking-[0.12em] text-ink-subtle">
+                    {tile.label}
                   </p>
                 </div>
               ))}
             </div>
-          )}
-        </div>
-      </div>
-      </aside>
-    </>
+
+            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 pb-6">
+              {ingredients.length === 0 ? (
+                <div className="rounded-[1.25rem] border border-dashed border-primary-200 bg-primary-50/70 p-5 text-sm font-semibold leading-6 text-primary-900/70">
+                  Add foods and they will appear here for this meal-building session.
+                </div>
+              ) : (
+                <div className="space-y-1.5">
+                  {ingredients.map((ingredient) => (
+                    <div
+                      key={ingredient.id}
+                      className="rounded-[1rem] bg-surface-muted px-4 py-3 ring-1 ring-inset ring-hairline"
+                    >
+                      <p className="text-sm font-black text-ink">{ingredient.name}</p>
+                      <p className="mt-1 flex flex-wrap items-center gap-x-2.5 gap-y-0.5 text-xs font-semibold leading-5 text-ink-muted">
+                        <span className="whitespace-nowrap font-black text-ink">
+                          <span className="tabular-nums">
+                            {ingredient.totals.calories.toLocaleString()}
+                          </span>{" "}
+                          kcal
+                        </span>
+                        {DRAWER_MACROS.map((macro) => (
+                          <span
+                            key={macro.key}
+                            className="inline-flex items-center gap-1 whitespace-nowrap"
+                          >
+                            <span
+                              aria-hidden="true"
+                              className="h-1.5 w-1.5 shrink-0 rounded-full"
+                              style={{ backgroundColor: macro.color }}
+                            />
+                            <span className="tabular-nums">
+                              {ingredient.totals[macro.key]}
+                            </span>
+                            g {macro.label}
+                          </span>
+                        ))}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </aside>
+        </DialogPrimitive.Popup>
+      </DialogPrimitive.Portal>
+    </DialogPrimitive.Root>
   );
 }
 
