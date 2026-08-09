@@ -7,6 +7,14 @@ import { createClient } from "@/lib/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { SectionHeader } from "@/components/ui/section-header";
 import { cn } from "@/lib/utils/cn";
 import {
@@ -343,6 +351,18 @@ export function SettingsClient({
   const [savedHealth, setSavedHealth] = useState(false);
   const [intakeError, setIntakeError] = useState<string | null>(null);
   const [healthError, setHealthError] = useState<string | null>(null);
+  const [exportingData, setExportingData] = useState(false);
+  const [exportMessage, setExportMessage] = useState<string | null>(null);
+  const [exportError, setExportError] = useState<string | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deletePreparing, setDeletePreparing] = useState(false);
+  const [deleteChallenge, setDeleteChallenge] = useState<{
+    confirmationPhrase: string;
+    expiresAt: string;
+  } | null>(null);
+  const [deleteConfirmation, setDeleteConfirmation] = useState("");
+  const [deleteSubmitting, setDeleteSubmitting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   useEffect(() => {
     if (initialUnits) setUnits(initialUnits);
@@ -584,6 +604,132 @@ export function SettingsClient({
       setSavingIntake(false);
     }
   }
+
+  async function handleExportData() {
+    if (isPreview) {
+      setExportError("Sign in to download a real account export.");
+      setExportMessage(null);
+      return;
+    }
+
+    setExportingData(true);
+    setExportMessage(null);
+    setExportError(null);
+
+    try {
+      const response = await fetch("/api/account/export", {
+        method: "GET",
+        cache: "no-store",
+      });
+      const contentType = response.headers.get("content-type") ?? "";
+      if (!response.ok) {
+        const message = contentType.includes("application/json")
+          ? ((await response.json()) as { error?: string }).error
+          : null;
+        throw new Error(message ?? "Account export failed.");
+      }
+
+      const blob = await response.blob();
+      const fileName =
+        response.headers
+          .get("content-disposition")
+          ?.match(/filename="([^"]+)"/)?.[1] ?? "fuelwell-account-export.json";
+      const downloadUrl = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.download = fileName;
+      link.click();
+      URL.revokeObjectURL(downloadUrl);
+      setExportMessage(`Downloaded ${fileName}.`);
+    } catch (error) {
+      setExportError(error instanceof Error ? error.message : "Account export failed.");
+    } finally {
+      setExportingData(false);
+    }
+  }
+
+  async function openDeleteDialog() {
+    if (isPreview) {
+      setDeleteError("Sign in to delete a real FuelWell account.");
+      return;
+    }
+
+    setDeleteDialogOpen(true);
+    setDeletePreparing(true);
+    setDeleteConfirmation("");
+    setDeleteChallenge(null);
+    setDeleteError(null);
+
+    try {
+      const response = await fetch("/api/account/delete", {
+        method: "POST",
+        cache: "no-store",
+      });
+      const payload = (await response.json()) as {
+        error?: string;
+        confirmationPhrase?: string;
+        expiresAt?: string;
+      };
+      if (!response.ok || !payload.confirmationPhrase || !payload.expiresAt) {
+        throw new Error(payload.error ?? "Could not start account deletion.");
+      }
+      setDeleteChallenge({
+        confirmationPhrase: payload.confirmationPhrase,
+        expiresAt: payload.expiresAt,
+      });
+    } catch (error) {
+      setDeleteError(
+        error instanceof Error ? error.message : "Could not start account deletion."
+      );
+    } finally {
+      setDeletePreparing(false);
+    }
+  }
+
+  async function confirmDeleteAccount() {
+    if (!deleteChallenge) return;
+
+    setDeleteSubmitting(true);
+    setDeleteError(null);
+    const supabase = createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    try {
+      const response = await fetch("/api/account/delete", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ confirmation: deleteConfirmation }),
+      });
+      const payload = (await response.json()) as { error?: string; deleted?: boolean };
+      if (!response.ok || !payload.deleted) {
+        throw new Error(payload.error ?? "Account deletion failed.");
+      }
+
+      if (user) {
+        clearUserScopedIdentityCaches(user.id);
+        clearPreferencesForUser(user.id);
+      }
+      await supabase.auth.signOut().catch(() => undefined);
+      router.replace("/login?accountDeleted=1");
+      router.refresh();
+    } catch (error) {
+      setDeleteError(error instanceof Error ? error.message : "Account deletion failed.");
+      setDeleteSubmitting(false);
+    }
+  }
+
+  const deletePhraseMatches =
+    deleteChallenge !== null &&
+    deleteConfirmation.trim().toLowerCase() ===
+      deleteChallenge.confirmationPhrase.trim().toLowerCase();
+  const deleteExpiresLabel = deleteChallenge
+    ? new Date(deleteChallenge.expiresAt).toLocaleString([], {
+        dateStyle: "medium",
+        timeStyle: "short",
+      })
+    : null;
 
   return (
     <div className="fw-app-surface">
@@ -1193,7 +1339,26 @@ export function SettingsClient({
           <div className="grid gap-4 xl:grid-cols-2">
             <div id="data" className="min-w-0 scroll-mt-24">
               <ActionCard icon={Download} title="Export your data" detail="Download your logs and preferences as a file.">
-                <Badge variant="neutral">Coming soon</Badge>
+                <div className="flex max-w-[14rem] flex-col items-end gap-2 text-right">
+                  <Badge variant={isPreview ? "neutral" : exportMessage ? "success" : "info"}>
+                    {isPreview ? "Sign in required" : exportMessage ? "Ready" : "JSON download"}
+                  </Badge>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={handleExportData}
+                    loading={exportingData}
+                    disabled={isPreview}
+                  >
+                    Export data
+                  </Button>
+                  {exportMessage && (
+                    <p className="text-xs font-semibold leading-5 text-primary-800">{exportMessage}</p>
+                  )}
+                  {exportError && (
+                    <p className="text-xs font-semibold leading-5 text-red-700">{exportError}</p>
+                  )}
+                </div>
               </ActionCard>
             </div>
             <div id="privacy" className="min-w-0 scroll-mt-24">
@@ -1259,17 +1424,113 @@ export function SettingsClient({
                 <div className="min-w-0">
                   <p className="text-base font-black text-red-700">Delete account</p>
                   <p className="mt-1 text-sm font-semibold leading-6 text-ink-muted">
-                    Permanently removes your account, logs, preferences, and coach history.
-                    Self-serve deletion and the support contact to request it arrive with the
-                    public release.
+                    Permanently removes your account, logs, preferences, coach history,
+                    connected integrations, and private coach attachments.
                   </p>
                 </div>
               </div>
-              <Badge variant="error">Coming soon</Badge>
+              <div className="flex max-w-[14rem] flex-col items-end gap-2 text-right">
+                <Badge variant={isPreview ? "neutral" : "error"}>
+                  {isPreview ? "Sign in required" : "Destructive"}
+                </Badge>
+                <Button variant="danger" size="sm" onClick={openDeleteDialog} disabled={isPreview}>
+                  <Trash2 className="h-4 w-4" />
+                  Delete account
+                </Button>
+                {deleteError && !deleteDialogOpen && (
+                  <p className="text-xs font-semibold leading-5 text-red-700">{deleteError}</p>
+                )}
+              </div>
             </div>
           </Card>
         </Section>
       </div>
+
+      <Dialog
+        open={deleteDialogOpen}
+        onOpenChange={(open) => {
+          setDeleteDialogOpen(open);
+          if (!open) {
+            setDeleteConfirmation("");
+            setDeleteChallenge(null);
+            setDeletePreparing(false);
+            setDeleteSubmitting(false);
+            setDeleteError(null);
+          }
+        }}
+      >
+        <DialogContent
+          aria-label="Delete FuelWell account"
+          className="max-w-lg rounded-[1.75rem] bg-surface p-0 text-ink shadow-e4 ring-1 ring-inset ring-hairline"
+        >
+          <div className="p-5 md:p-6">
+            <DialogHeader className="gap-3">
+              <div className="flex items-start gap-3">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[1rem] bg-red-50 text-red-600 ring-1 ring-inset ring-red-100">
+                  <Trash2 className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
+                </span>
+                <div className="min-w-0">
+                  <DialogTitle className="text-lg font-black text-red-700">
+                    Delete account
+                  </DialogTitle>
+                  <DialogDescription className="mt-1 text-sm font-semibold leading-6 text-ink-muted">
+                    This immediately removes your FuelWell account, stored logs, goals,
+                    coach history, and private coach attachments.
+                  </DialogDescription>
+                </div>
+              </div>
+            </DialogHeader>
+
+            <div className="mt-5 space-y-4">
+              <div className="rounded-[1.15rem] bg-red-50 px-4 py-3 ring-1 ring-inset ring-red-100">
+                <p className="text-sm font-semibold leading-6 text-red-700">
+                  Type the exact phrase below to confirm deletion. This confirmation expires
+                  at {deleteExpiresLabel ?? " shortly"}.
+                </p>
+                <p className="mt-2 rounded-[0.95rem] bg-surface px-3 py-2 text-sm font-black text-red-700 ring-1 ring-inset ring-red-100">
+                  {deleteChallenge?.confirmationPhrase ?? "Preparing confirmation…"}
+                </p>
+              </div>
+
+              <TextField
+                label="Delete confirmation phrase"
+                value={deleteConfirmation}
+                onChange={setDeleteConfirmation}
+                placeholder="Type the phrase exactly"
+                disabled={deletePreparing || deleteSubmitting || !deleteChallenge}
+              />
+
+              {deleteError && (
+                <p
+                  role="alert"
+                  className="rounded-[1rem] bg-red-50 px-4 py-3 text-sm font-semibold leading-6 text-red-700 ring-1 ring-inset ring-red-100"
+                >
+                  {deleteError}
+                </p>
+              )}
+            </div>
+          </div>
+
+          <DialogFooter className="rounded-b-[1.75rem] border-hairline bg-surface-muted/80">
+            <Button
+              variant="danger"
+              onClick={confirmDeleteAccount}
+              loading={deleteSubmitting}
+              disabled={deletePreparing || !deletePhraseMatches}
+            >
+              <Trash2 className="h-4 w-4" />
+              Permanently delete
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={() => setDeleteDialogOpen(false)}
+              disabled={deleteSubmitting}
+            >
+              Cancel
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
@@ -1514,6 +1775,7 @@ function TextField({
   type = "text",
   placeholder,
   hideLabel = false,
+  disabled = false,
 }: {
   label: string;
   value: string;
@@ -1521,6 +1783,7 @@ function TextField({
   type?: string;
   placeholder?: string;
   hideLabel?: boolean;
+  disabled?: boolean;
 }) {
   return (
     <label className="block">
@@ -1537,6 +1800,7 @@ function TextField({
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
+        disabled={disabled}
         className={cn(
           "w-full rounded-2xl border border-hairline-strong bg-surface px-4 py-3 text-sm font-bold text-ink outline-none transition-colors duration-200 ease-out-soft placeholder:text-ink-faint hover:border-primary-200 focus:border-primary-300 focus:ring-2 focus:ring-primary-200",
           !hideLabel && "mt-2"
