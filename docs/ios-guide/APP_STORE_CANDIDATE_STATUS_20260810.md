@@ -20,7 +20,8 @@ The live FuelWell Supabase project `xzsftuxvnkgxtbiibvac` is currently `INACTIVE
 - Unsigned iOS Release archive: passed as version `1.4.0`, build `202608100001`, bound to the production candidate environment.
 - Export compliance: archived app declares `ITSAppUsesNonExemptEncryption=false`.
 - Public App Store listing surfaces: `/privacy` and `/support` are implemented, mobile-contained, referenced by Fastlane metadata, and required to return HTTP 200 by the immutable candidate gate.
-- Repository App Store readiness with the private Apple environment loaded: 46 checks passed, 3 external blockers, 0 code failures.
+- Repository App Store readiness with the private Apple environment loaded: 47 checks passed, 2 external blockers, 0 code failures.
+- Local screenshot tooling: required iPhone simulators are installed, Bundler 2.6.9 is available through Homebrew Ruby, and the private screenshot-attestation key is configured with owner-only permissions.
 - Authenticated state: server-authoritative repository implementation and account-switch guards passed independent review, 457 unit tests, and adversarial PostgreSQL RLS verification.
 
 ## Required before TestFlight
@@ -32,6 +33,11 @@ The live FuelWell Supabase project `xzsftuxvnkgxtbiibvac` is currently `INACTIVE
 5. Run two-account isolation/persistence, live OAuth, live Coach text/image/PDF, universal-link, and compact/large iPhone candidate tests against that exact deployment.
 6. Obtain Robert's separate approval to push the exact candidate, merge it to `main`, and upload its signed build to TestFlight.
 7. Confirm the processed TestFlight build works for Robert and Max before promoting it toward App Review.
+
+## Remaining App Store blockers
+
+1. Capture and attest the real App Store screenshots from the approved immutable Vercel candidate.
+2. Obtain Robert's explicit approval before submitting the reviewed build to App Review.
 
 ## Required before public App Store release
 

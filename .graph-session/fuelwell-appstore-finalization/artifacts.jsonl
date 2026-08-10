@@ -1,3 +1,4 @@
 {"id": "9fa7515218ec", "path": "tools/release/test-ios-candidate-ui.sh", "run": "21ed00afc981", "supersedes": null, "ts": "2026-08-10T03:59:20.867658+00:00", "version": "bb47319"}
 {"id": "c73eb0548877", "path": "tests/unit/ci-release-gates.test.ts", "run": "21ed00afc981", "supersedes": null, "ts": "2026-08-10T03:59:21.139210+00:00", "version": "bb47319"}
 {"id": "9422b4bfc41a", "path": "docs/ios-guide/APP_STORE_CANDIDATE_STATUS_20260810.md", "run": "22f171d9009e", "supersedes": null, "ts": "2026-08-10T06:39:19.740680+00:00", "version": "8f59d3c157d727ffb57d991ca8fcc70736511a87"}
+{"id": "3a4c1388aef4", "path": "docs/ios-guide/APP_STORE_CANDIDATE_STATUS_20260810.md", "run": "22f171d9009e", "supersedes": "9422b4bfc41a", "ts": "2026-08-10T06:47:23.986561+00:00", "version": "8f59d3c157d727ffb57d991ca8fcc70736511a87"}
