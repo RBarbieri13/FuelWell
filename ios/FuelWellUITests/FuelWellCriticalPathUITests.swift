@@ -1,6 +1,7 @@
 import XCTest
 
 @MainActor
+// swiftlint:disable type_body_length
 final class FuelWellCriticalPathUITests: XCTestCase {
     private let launchTimeout: TimeInterval = 45
     private let routeTimeout: TimeInterval = 20
@@ -381,6 +382,7 @@ final class FuelWellCriticalPathUITests: XCTestCase {
         add(attachment)
     }
 }
+// swiftlint:enable type_body_length
 
 private struct Route {
     let navLabel: String
