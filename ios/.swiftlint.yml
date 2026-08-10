@@ -11,6 +11,7 @@ excluded:
   - DerivedData
   - fastlane
   - docs
+  - FuelWellUITests/SnapshotHelper.swift
   - Packages/**/.build
 
 opt_in_rules:
