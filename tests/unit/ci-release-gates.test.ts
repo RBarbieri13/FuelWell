@@ -21,6 +21,8 @@ describe("release CI workflow contracts", () => {
     expect(script).toContain("tests/mobile-component-clipping.spec.ts");
     expect(script).toContain("FUELWELL_PLAYWRIGHT_MOBILE_WEBKIT=1");
     expect(script).toContain("FUELWELL_PLAYWRIGHT_SERVER_COMMAND='npm run start:test'");
+    expect(script).toContain("FUELWELL_PLAYWRIGHT_REUSE_SERVER=0");
+    expect(script).toContain("FUELWELL_PLAYWRIGHT_PORT=3107");
     expect(script).toContain("--project=chromium");
     expect(script).toContain("--project=mobile-webkit");
   });

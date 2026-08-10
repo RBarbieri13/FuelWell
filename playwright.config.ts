@@ -4,6 +4,9 @@ const candidateBaseURL = process.env.FUELWELL_PLAYWRIGHT_BASE_URL;
 const browserChannel = process.env.FUELWELL_PLAYWRIGHT_BROWSER_CHANNEL;
 const includeMobileWebKit = process.env.FUELWELL_PLAYWRIGHT_MOBILE_WEBKIT === "1";
 const serverCommand = process.env.FUELWELL_PLAYWRIGHT_SERVER_COMMAND ?? "npm run dev";
+const serverPort = process.env.FUELWELL_PLAYWRIGHT_PORT ?? "3000";
+const localBaseURL = `http://localhost:${serverPort}`;
+const reuseExistingServer = process.env.FUELWELL_PLAYWRIGHT_REUSE_SERVER !== "0";
 
 /**
  * Smoke-test config. Runs against the local dev server in preview mode
@@ -20,7 +23,7 @@ export default defineConfig({
   outputDir: process.env.FUELWELL_PLAYWRIGHT_OUTPUT_DIR ?? "test-results",
   preserveOutput: process.env.FUELWELL_PLAYWRIGHT_OUTPUT_DIR ? "always" : "failures-only",
   use: {
-    baseURL: candidateBaseURL ?? "http://localhost:3000",
+    baseURL: candidateBaseURL ?? localBaseURL,
     trace: "on-first-retry",
   },
   projects: [
@@ -46,8 +49,8 @@ export default defineConfig({
     ? undefined
     : {
         command: serverCommand,
-        url: "http://localhost:3000",
-        reuseExistingServer: true,
+        url: localBaseURL,
+        reuseExistingServer,
         timeout: 120_000,
       },
 });
