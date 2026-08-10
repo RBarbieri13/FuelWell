@@ -115,6 +115,9 @@ platform :ios do
     ensure_screenshot_candidate_source!
     sh("cd #{repo_root}/ios && xcodegen generate --spec project.yml")
     snapshot(
+      # Fastlane normally derives this from the SDK, which can differ from the
+      # installed Simulator runtime by a patch version on release machines.
+      ios_version: ENV["FUELWELL_SNAPSHOT_IOS_VERSION"].to_s.strip.empty? ? nil : ENV["FUELWELL_SNAPSHOT_IOS_VERSION"].to_s.strip,
       xcargs: [
         "CODE_SIGNING_ALLOWED=NO",
         release_settings.fetch(:xcargs),
