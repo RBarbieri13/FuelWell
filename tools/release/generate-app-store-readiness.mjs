@@ -21,6 +21,7 @@ const shellWebViewPath = path.join(root, "ios/FuelWellApp/Sources/FuelWellWebVie
 const projectSpecPath = path.join(root, "ios/project.yml");
 const xcodeProjectPath = path.join(root, "ios/FuelWellApp.xcodeproj/project.pbxproj");
 const candidateUiGatePath = path.join(root, "tools/release/test-ios-candidate-ui.sh");
+const fastfilePath = path.join(root, "ios/fastlane/Fastfile");
 const storageAuthorityTestPath = path.join(root, "tests/unit/authenticated-storage-authority.test.ts");
 const accountIsolationTestPath = path.join(root, "tests/unit/account-switch-isolation.test.ts");
 const brandReleaseTestPath = path.join(root, "tests/unit/release/fuelwell-brand-release.test.ts");
@@ -568,6 +569,44 @@ function validateRepositoryReleaseGates(results) {
       ? "The iOS shell separates OAuth/external navigation from trusted in-app routes."
       : "The iOS shell must use a native authentication session, enforce trusted navigation, and validate relative routes.",
     shellWebViewPath
+  );
+
+  const fastfile = existsSync(fastfilePath) ? readTrimmed(fastfilePath) : "";
+  const releaseLaneStart = fastfile.indexOf("lane :release do");
+  const screenshotLaneStart = fastfile.indexOf('desc "Capture App Store screenshots');
+  const releaseLane = releaseLaneStart >= 0 && screenshotLaneStart > releaseLaneStart
+    ? fastfile.slice(releaseLaneStart, screenshotLaneStart)
+    : "";
+  const uploadCall = releaseLane.match(/upload_to_app_store\(\n([\s\S]*?)^\s{4}\)/m)?.[1] ?? "";
+  const reviewedBuildHelper = fastfile.match(
+    /def ensure_reviewed_build_ready!\(app_version:, build_number:\)\n([\s\S]*?)^\s{2}end$/m
+  )?.[1] ?? "";
+  const buildLookup = reviewedBuildHelper.match(
+    /builds = Spaceship::ConnectAPI::Build\.all\(\n([\s\S]*?)^\s{4}\)/m
+  )?.[1] ?? "";
+  const promotesReviewedBuild = releaseLane.includes('required_release_value("FUELWELL_REVIEWED_BUILD_NUMBER")')
+    && releaseLane.includes("ensure_reviewed_build_ready!(")
+    && uploadCall.includes("app_version: release_settings.fetch(:package_version)")
+    && uploadCall.includes("build_number: reviewed_build_number")
+    && uploadCall.includes("skip_binary_upload: true")
+    && uploadCall.includes("submit_for_review: false")
+    && !/^\s*beta\s*$/m.test(releaseLane)
+    && !releaseLane.includes("build_app(")
+    && !releaseLane.includes("upload_to_testflight(")
+    && buildLookup.includes("app_id: app.id")
+    && buildLookup.includes("version: app_version")
+    && buildLookup.includes("build_number: build_number")
+    && reviewedBuildHelper.includes('build.processing_state == "VALID"')
+    && reviewedBuildHelper.includes("build.expired != true");
+  addResult(
+    results,
+    "repository-gates",
+    promotesReviewedBuild ? "pass" : "fail",
+    "Reviewed TestFlight build promotion",
+    promotesReviewedBuild
+      ? "The App Store lane selects an explicit valid TestFlight build without rebuilding or re-uploading it."
+      : "Require and validate an exact reviewed TestFlight build before preparing the App Store version.",
+    fastfilePath
   );
 
   const infoPlist = existsSync(infoPlistPath) ? readTrimmed(infoPlistPath) : "";

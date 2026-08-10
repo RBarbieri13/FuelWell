@@ -85,8 +85,17 @@ platform :ios do
   desc "Prepare App Store submission metadata and upload the reviewed build"
   lane :release do
     ensure_app_store_screenshots!
-    beta
+    release_settings = testflight_release_settings
+    reviewed_build_number = required_release_value("FUELWELL_REVIEWED_BUILD_NUMBER")
+    ensure_reviewed_build_ready!(
+      app_version: release_settings.fetch(:package_version),
+      build_number: reviewed_build_number
+    )
     upload_to_app_store(
+      api_key: lane_context[SharedValues::APP_STORE_CONNECT_API_KEY],
+      app_version: release_settings.fetch(:package_version),
+      build_number: reviewed_build_number,
+      skip_binary_upload: true,
       submit_for_review: false,
       automatic_release: false,
       phased_release: true,
@@ -189,6 +198,31 @@ platform :ios do
     value = ENV[key].to_s.strip
     UI.user_error!("#{key} is required for a TestFlight candidate") if value.empty?
     value
+  end
+
+  def ensure_reviewed_build_ready!(app_version:, build_number:)
+    app = Spaceship::ConnectAPI::App.find(ENV.fetch("FUELWELL_APP_IDENTIFIER"))
+    UI.user_error!("FuelWell is not available to this App Store Connect API key.") unless app
+
+    builds = Spaceship::ConnectAPI::Build.all(
+      app_id: app.id,
+      version: app_version,
+      build_number: build_number,
+      limit: 2
+    )
+    build = builds.find { |candidate| candidate.version == build_number }
+    unless build
+      UI.user_error!(
+        "Reviewed TestFlight build #{app_version} (#{build_number}) was not found in App Store Connect."
+      )
+    end
+    unless build.processing_state == "VALID" && build.expired != true
+      UI.user_error!(
+        "Reviewed TestFlight build #{app_version} (#{build_number}) is not valid and available for App Review."
+      )
+    end
+
+    UI.success("Promoting reviewed TestFlight build #{app_version} (#{build_number}) without rebuilding it.")
   end
 
   def repo_root

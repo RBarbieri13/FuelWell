@@ -58,6 +58,36 @@ describe("App Store foundations", () => {
     expect(uiTests).toContain("snapshot(name, timeWaitingForIdle: 0)");
   });
 
+  it("promotes only the explicitly reviewed TestFlight build to App Review", () => {
+    const fastfile = readFileSync(path.join(root, "ios/fastlane/Fastfile"), "utf8");
+    const releaseLane = fastfile.slice(
+      fastfile.indexOf('lane :release do'),
+      fastfile.indexOf('desc "Capture App Store screenshots')
+    );
+    const uploadCall = releaseLane.match(/upload_to_app_store\(\n([\s\S]*?)^\s{4}\)/m)?.[1] ?? "";
+    const reviewedBuildHelper = fastfile.match(
+      /def ensure_reviewed_build_ready!\(app_version:, build_number:\)\n([\s\S]*?)^\s{2}end$/m
+    )?.[1] ?? "";
+    const buildLookup = reviewedBuildHelper.match(
+      /builds = Spaceship::ConnectAPI::Build\.all\(\n([\s\S]*?)^\s{4}\)/m
+    )?.[1] ?? "";
+
+    expect(releaseLane).toContain('required_release_value("FUELWELL_REVIEWED_BUILD_NUMBER")');
+    expect(releaseLane).toContain("ensure_reviewed_build_ready!(");
+    expect(uploadCall).toContain("app_version: release_settings.fetch(:package_version)");
+    expect(uploadCall).toContain("build_number: reviewed_build_number");
+    expect(uploadCall).toContain("skip_binary_upload: true");
+    expect(uploadCall).toContain("submit_for_review: false");
+    expect(releaseLane).not.toMatch(/^\s*beta\s*$/m);
+    expect(releaseLane).not.toContain("build_app(");
+    expect(releaseLane).not.toContain("upload_to_testflight(");
+    expect(buildLookup).toContain("app_id: app.id");
+    expect(buildLookup).toContain("version: app_version");
+    expect(buildLookup).toContain("build_number: build_number");
+    expect(reviewedBuildHelper).toContain('build.processing_state == "VALID"');
+    expect(reviewedBuildHelper).toContain("build.expired != true");
+  });
+
   it("rejects screenshot manifests whose candidate fields or image hashes are changed", () => {
     const secret = "test-only-screenshot-attestation-secret-123456";
     const manifest = {
