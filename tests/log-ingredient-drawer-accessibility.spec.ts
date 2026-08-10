@@ -56,6 +56,8 @@ async function openIngredientDrawer(page: Page): Promise<{
 }
 
 test.describe("meal log ingredient drawer accessibility", () => {
+  test.describe.configure({ mode: "serial" });
+
   test("acts as a keyboard-correct modal sheet on mobile", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.setViewportSize({ width: 390, height: 844 });
