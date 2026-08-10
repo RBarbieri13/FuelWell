@@ -23,6 +23,44 @@ import {
 
 const WRITE_DEBOUNCE_MS = 800;
 
+type PreferenceDocument = Record<string, unknown>;
+
+function stringArray(value: unknown): string[] {
+  return Array.isArray(value)
+    ? value.filter((item): item is string => typeof item === "string")
+    : [];
+}
+
+export function preferenceStateFromDocument(
+  document: PreferenceDocument,
+): PreferenceState {
+  return {
+    likes: stringArray(document.likes),
+    dislikes: stringArray(document.dislikes),
+    diets: stringArray(document.diets) as PreferenceState["diets"],
+    allergies: stringArray(document.allergies),
+  };
+}
+
+export function mergePreferenceStateIntoDocument(
+  document: PreferenceDocument,
+  preferences: PreferenceState,
+): PreferenceDocument {
+  return {
+    ...document,
+    likes: [...preferences.likes],
+    dislikes: [...preferences.dislikes],
+    diets: [...preferences.diets],
+    allergies: [...preferences.allergies],
+  };
+}
+
+function asPreferenceDocument(value: unknown): PreferenceDocument {
+  return value !== null && typeof value === "object" && !Array.isArray(value)
+    ? (value as PreferenceDocument)
+    : {};
+}
+
 export function PreferencesSync() {
   useEffect(() => {
     let cancelled = false;
@@ -38,28 +76,42 @@ export function PreferencesSync() {
       if (!user || cancelled) return;
       setPreferencesScope(user.id);
 
-      const { data } = await supabase
+      const { data, error: readError } = await supabase
         .from("profiles")
         .select("preferences_jsonb")
         .eq("id", user.id)
         .maybeSingle();
       if (cancelled) return;
 
-      const server = (data?.preferences_jsonb ?? {}) as Partial<PreferenceState>;
+      // A failed read must not turn into a destructive whole-document write.
+      if (readError || !data) {
+        console.error(
+          "preferences sync read failed",
+          readError?.message ?? "profile row was unavailable",
+        );
+        return;
+      }
+
+      const serverDocument = asPreferenceDocument(data.preferences_jsonb);
+      const server = preferenceStateFromDocument(serverDocument);
       const local = getPreferences();
-      const serverHasData = Object.values(server).some(
-        (v) => Array.isArray(v) ? v.length > 0 : Boolean(v)
-      );
+      const serverHasData = Object.values(server).some((value) => value.length > 0);
       const localHasData =
         local.likes.length + local.dislikes.length + local.diets.length + local.allergies.length > 0;
 
       if (serverHasData) {
         mergePreferences(server);
       } else if (localHasData) {
-        await supabase
+        const { error: seedError } = await supabase
           .from("profiles")
-          .update({ preferences_jsonb: local })
+          .update({
+            preferences_jsonb: mergePreferenceStateIntoDocument(serverDocument, local),
+          })
           .eq("id", user.id);
+        if (seedError) {
+          console.error("preferences sync seed failed", seedError.message);
+          return;
+        }
       }
       if (cancelled) return;
 
@@ -68,13 +120,31 @@ export function PreferencesSync() {
       unsubscribe = subscribePreferences(() => {
         clearTimeout(timer);
         timer = setTimeout(() => {
-          void supabase
-            .from("profiles")
-            .update({ preferences_jsonb: getPreferences() })
-            .eq("id", user.id)
-            .then(({ error }) => {
-              if (error) console.error("preferences sync failed", error.message);
-            });
+          void (async () => {
+            const { data: latest, error: latestReadError } = await supabase
+              .from("profiles")
+              .select("preferences_jsonb")
+              .eq("id", user.id)
+              .maybeSingle();
+            if (cancelled) return;
+            if (latestReadError || !latest) {
+              console.error(
+                "preferences sync read failed",
+                latestReadError?.message ?? "profile row was unavailable",
+              );
+              return;
+            }
+
+            const nextDocument = mergePreferenceStateIntoDocument(
+              asPreferenceDocument(latest.preferences_jsonb),
+              getPreferences(),
+            );
+            const { error } = await supabase
+              .from("profiles")
+              .update({ preferences_jsonb: nextDocument })
+              .eq("id", user.id);
+            if (error) console.error("preferences sync failed", error.message);
+          })();
         }, WRITE_DEBOUNCE_MS);
       });
     }

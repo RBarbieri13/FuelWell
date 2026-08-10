@@ -98,11 +98,13 @@ export function serializeSetCookie(name: string, value: string, options?: {
   httpOnly?: boolean;
   path?: string;
   sameSite?: "Strict" | "Lax" | "None";
+  secure?: boolean;
 }) {
   const parts = [`${name}=${value}`];
   parts.push(`Path=${options?.path ?? "/"}`);
   if (typeof options?.maxAge === "number") parts.push(`Max-Age=${Math.max(0, Math.floor(options.maxAge))}`);
   if (options?.httpOnly ?? true) parts.push("HttpOnly");
+  if (options?.secure ?? true) parts.push("Secure");
   parts.push(`SameSite=${options?.sameSite ?? "Strict"}`);
   return parts.join("; ");
 }

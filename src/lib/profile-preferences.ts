@@ -6,6 +6,12 @@ export const PREVIEW_IDENTITY_SCOPE = "preview";
 
 const ONBOARDING_DRAFT_PREFIX = "fuelwell:onboarding:v2";
 const PREFERENCES_PREFIX = "fuelwell:preferences:v2";
+const USER_HEALTH_CACHE_PREFIXES = [
+  "fuelwell-day-log-user-v1",
+  "fuelwell-workout-log-user-v2",
+  "fuelwell-body-log-user-v2",
+  "fuelwell-grocery-user-v2",
+] as const;
 
 export type HeightParts = {
   feet: number | "";
@@ -97,6 +103,15 @@ export function clearUserScopedIdentityCaches(userId: string): void {
   try {
     window.localStorage.removeItem(onboardingDraftStorageKey(userId));
     window.localStorage.removeItem(preferenceStorageKey(userId));
+    const healthPrefixes = USER_HEALTH_CACHE_PREFIXES.map(
+      (prefix) => `${prefix}:${userId}:`,
+    );
+    for (let index = window.localStorage.length - 1; index >= 0; index -= 1) {
+      const key = window.localStorage.key(index);
+      if (key && healthPrefixes.some((prefix) => key.startsWith(prefix))) {
+        window.localStorage.removeItem(key);
+      }
+    }
     clearCoachChatForUser(userId);
     clearMealPlanCacheForUser(userId);
     clearGoalContextForUser(userId);

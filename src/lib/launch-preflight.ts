@@ -59,6 +59,7 @@ export function getLaunchPreflight(): LaunchPreflight {
     present(process.env.NEXT_PUBLIC_FUELWELL_PREVIEW_MODE) ||
     process.env.VERCEL_ENV === "preview";
   const hasBaseRls = migrationExists("20260611180000_base_schema.sql");
+  const hasProfilePreferences = migrationExists("20260612120000_profiles_preferences_jsonb.sql");
   const hasCoachRls = migrationExists("20260611180100_coach_tables.sql");
   const hasKnowledgeRls = migrationExists("20260620170000_coach_knowledge_bases.sql");
   const hasArtifactStorage = migrationExists("20260627042014_coach_uploaded_artifacts.sql");
@@ -104,6 +105,16 @@ export function getLaunchPreflight(): LaunchPreflight {
         ? "Base schema migration with user-scoped nutrition/profile policies is present in the repo."
         : "Base schema migration was not found. User data isolation cannot be proven from this checkout.",
       state: hasBaseRls ? "pass" : "fail",
+      requiredForPreview: false,
+      requiredForProduction: true,
+    },
+    {
+      id: "profile-preferences-schema",
+      label: "Profile preferences persistence",
+      detail: hasProfilePreferences
+        ? "The profile preference document used by onboarding and Settings is defined in a tracked migration."
+        : "The profile preferences migration is missing. Onboarding and Settings cannot be declared durable.",
+      state: hasProfilePreferences ? "pass" : "fail",
       requiredForPreview: false,
       requiredForProduction: true,
     },

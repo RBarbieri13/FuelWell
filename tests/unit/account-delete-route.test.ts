@@ -52,6 +52,8 @@ describe("/api/account/delete", () => {
     expect(body.expiresAt).toBe("2026-08-09T12:10:00.000Z");
     expect(response.headers.get("set-cookie")).toContain("fuelwell-delete-confirmation=");
     expect(response.headers.get("set-cookie")).toContain("HttpOnly");
+    expect(response.headers.get("set-cookie")).toContain("Secure");
+    expect(response.headers.get("set-cookie")).toContain("SameSite=Strict");
   });
 
   it("rejects replay of a consumed delete confirmation", async () => {
@@ -134,6 +136,7 @@ describe("/api/account/delete", () => {
     }));
     expect(mocks.rpc).toHaveBeenCalledWith("delete_own_account");
     expect(response.headers.get("set-cookie")).toContain("Max-Age=0");
+    expect(response.headers.get("set-cookie")).toContain("Secure");
     await expect(response.json()).resolves.toEqual({ signedIn: true, deleted: true });
   });
 

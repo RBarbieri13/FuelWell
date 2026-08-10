@@ -97,6 +97,11 @@ describe("verified profile saves", () => {
     storage.setItem(goalPlanStorageKey("user-1"), "goal");
     storage.setItem(integrationSummaryStorageKey("user-1"), "integration");
     storage.setItem("fuelwell-meal-plan-user-v2:user-1:2026-08-10", "meal plan");
+    storage.setItem("fuelwell-day-log-user-v1:user-1:2026-08-09", "meals");
+    storage.setItem("fuelwell-workout-log-user-v2:user-1:2026-08-09", "workouts");
+    storage.setItem("fuelwell-body-log-user-v2:user-1:2026-08-09", "body");
+    storage.setItem("fuelwell-grocery-user-v2:user-1:2026-08-09", "groceries");
+    storage.setItem("fuelwell-day-log-preview-v1:2026-08-09", "preview");
 
     clearUserScopedIdentityCaches("user-1");
 
@@ -106,5 +111,10 @@ describe("verified profile saves", () => {
     expect(storage.getItem(goalPlanStorageKey("user-1"))).toBeNull();
     expect(storage.getItem(integrationSummaryStorageKey("user-1"))).toBeNull();
     expect(storage.getItem("fuelwell-meal-plan-user-v2:user-1:2026-08-10")).toBeNull();
+    expect(storage.getItem("fuelwell-day-log-user-v1:user-1:2026-08-09")).toBeNull();
+    expect(storage.getItem("fuelwell-workout-log-user-v2:user-1:2026-08-09")).toBeNull();
+    expect(storage.getItem("fuelwell-body-log-user-v2:user-1:2026-08-09")).toBeNull();
+    expect(storage.getItem("fuelwell-grocery-user-v2:user-1:2026-08-09")).toBeNull();
+    expect(storage.getItem("fuelwell-day-log-preview-v1:2026-08-09")).toBe("preview");
   });
 });
