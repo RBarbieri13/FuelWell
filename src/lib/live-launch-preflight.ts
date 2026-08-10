@@ -75,7 +75,7 @@ export async function getLiveLaunchPreflight(
 
     try {
       const response = await fetcher(
-        `${supabaseUrl}/rest/v1/${table}?select=id&limit=0`,
+        `${supabaseUrl}/rest/v1/${table}?select=*&limit=0`,
         {
           headers: {
             apikey: anonKey,

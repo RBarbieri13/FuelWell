@@ -18,6 +18,9 @@ describe("live launch preflight", () => {
     expect(result.liveReady).toBe(true);
     expect(result.liveChecks).toHaveLength(15);
     expect(fetcher).toHaveBeenCalledTimes(14);
+    for (const [url] of fetcher.mock.calls) {
+      expect(url).toContain("?select=*&limit=0");
+    }
     expect(probeProvider).toHaveBeenCalledOnce();
     expect(result.liveChecks.map((check) => check.id)).toContain("live-table-coach_knowledge_bases");
     expect(result.liveChecks.map((check) => check.id)).toContain("live-table-coach_confirmation_uses");
