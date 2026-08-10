@@ -1,6 +1,11 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { todayIsoDate } from "@/lib/fuelwell-data";
 import { resolveCoachHistoryHydration } from "@/lib/coach/client-store";
+import {
+  clearCoachChatScope,
+  getCoachChatScope,
+  setCoachChatScope,
+} from "@/lib/coach/chat-storage";
 
 afterEach(() => {
   vi.restoreAllMocks();
@@ -39,5 +44,11 @@ describe("coach client-store hydration", () => {
       nextBefore: null,
     });
     expect(result.items).toEqual([]);
+  });
+
+  it("keeps the authenticated storage scope after starting a new conversation", () => {
+    setCoachChatScope("user-b");
+    clearCoachChatScope(getCoachChatScope());
+    expect(getCoachChatScope()).toBe("user-b");
   });
 });

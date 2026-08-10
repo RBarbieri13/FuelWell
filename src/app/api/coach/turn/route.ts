@@ -51,6 +51,8 @@ import { enforceVoice, redactPii } from "@/lib/coach/voice-filter";
 import { writeAudit } from "@/lib/coach/audit";
 import { normalizeGroceryInput } from "@/lib/grocery-normalization";
 import {
+  consumePreviewCoachConfirmationNonce,
+  hashCoachConfirmationNonce,
   issueCoachConfirmationToken,
   verifyCoachConfirmationToken,
 } from "@/lib/coach/confirmation";
@@ -616,6 +618,27 @@ export async function POST(request: Request) {
                   emit({ type: "text_delta", text: assistantText });
                   await audit(def.name, { input, reason: confirmation.reason }, "rejected-confirmed-tool");
                   throw new Error("confirmation rejected");
+                }
+                const consumed = user
+                  ? !(
+                      await storageClient.from("coach_confirmation_uses").insert({
+                        nonce_hash: hashCoachConfirmationNonce(confirmation.nonce),
+                        user_id: userId,
+                        conversation_id: conversationId ?? body.conversationId ?? null,
+                        tool: def.name,
+                        expires_at: new Date(confirmation.expiresAt).toISOString(),
+                      })
+                    ).error
+                  : consumePreviewCoachConfirmationNonce(
+                      confirmation.nonce,
+                      confirmation.expiresAt,
+                    );
+                if (!consumed) {
+                  assistantText =
+                    "That confirmation was already used or is no longer available. Ask me to do it again for a fresh confirmation card.";
+                  emit({ type: "text_delta", text: assistantText });
+                  await audit(def.name, { input }, "rejected-replayed-confirmation");
+                  throw new Error("confirmation replay rejected");
                 }
               }
               const result = await def.run(input, toolCtx);

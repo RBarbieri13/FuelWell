@@ -18,14 +18,18 @@ export function setCoachChatScope(scope: string): void {
   activeCoachChatScope = scope || PREVIEW_COACH_CHAT_SCOPE;
 }
 
-export function clearCoachChatForUser(userId: string): void {
+export function clearCoachChatScope(scope: string): void {
   if (typeof window !== "undefined") {
     try {
-      window.localStorage.removeItem(coachChatStorageKey(userId));
+      window.localStorage.removeItem(coachChatStorageKey(scope));
     } catch {
-      // Cache cleanup must never prevent sign-out.
+      // Cache cleanup must never prevent the caller's primary action.
     }
   }
+}
+
+export function clearCoachChatForUser(userId: string): void {
+  clearCoachChatScope(userId);
 
   if (activeCoachChatScope === userId) {
     activeCoachChatScope = PREVIEW_COACH_CHAT_SCOPE;

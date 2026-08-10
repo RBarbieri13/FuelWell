@@ -2,6 +2,7 @@ import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 
 const CONFIRMATION_WINDOW_MS = 10 * 60_000;
 const DEV_FALLBACK_SECRET = randomBytes(32).toString("hex");
+const previewConsumedNonces = new Map<string, number>();
 
 type ConfirmationPayload = {
   v: 1;
@@ -71,6 +72,25 @@ export function hashCoachConfirmationInput(input: unknown): string {
     .digest("hex");
 }
 
+export function hashCoachConfirmationNonce(nonce: string): string {
+  return createHmac("sha256", "fuelwell-coach-confirmation-nonce")
+    .update(nonce)
+    .digest("hex");
+}
+
+export function consumePreviewCoachConfirmationNonce(
+  nonce: string,
+  expiresAt: number,
+  now = Date.now(),
+): boolean {
+  for (const [storedNonce, storedExpiry] of previewConsumedNonces) {
+    if (storedExpiry <= now) previewConsumedNonces.delete(storedNonce);
+  }
+  if (previewConsumedNonces.has(nonce)) return false;
+  previewConsumedNonces.set(nonce, expiresAt);
+  return true;
+}
+
 export function issueCoachConfirmationToken(params: {
   userId: string;
   conversationId?: string | null;
@@ -104,7 +124,9 @@ export function verifyCoachConfirmationToken(params: {
   input: unknown;
   now?: number;
   env?: Record<string, string | undefined>;
-}): { ok: true } | { ok: false; reason: string } {
+}):
+  | { ok: true; nonce: string; expiresAt: number }
+  | { ok: false; reason: string } {
   if (!params.token) return { ok: false, reason: "missing_token" };
 
   const secret = resolveCoachConfirmationSecret(params.env);
@@ -142,5 +164,9 @@ export function verifyCoachConfirmationToken(params: {
     return { ok: false, reason: "wrong_input" };
   }
 
-  return { ok: true };
+  if (typeof payload.nonce !== "string" || payload.nonce.length < 8) {
+    return { ok: false, reason: "invalid_nonce" };
+  }
+
+  return { ok: true, nonce: payload.nonce, expiresAt: payload.exp };
 }

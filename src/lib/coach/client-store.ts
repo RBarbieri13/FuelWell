@@ -46,7 +46,7 @@ import type {
 import type { CoachCardAction } from "@/components/coach/artifacts/contract";
 import { describeProviderHealthForUser } from "@/lib/coach/provider-health";
 import {
-  clearCoachChatForUser,
+  clearCoachChatScope,
   coachChatStorageKey,
   getCoachChatScope,
   PREVIEW_COACH_CHAT_SCOPE,
@@ -697,7 +697,7 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
     setHasEarlier(false);
     setItems([]);
     try {
-      clearCoachChatForUser(getCoachChatScope());
+      clearCoachChatScope(getCoachChatScope());
     } catch {
       // ignore
     }

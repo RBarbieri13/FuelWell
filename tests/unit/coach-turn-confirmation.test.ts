@@ -11,6 +11,7 @@ const mocks = vi.hoisted(() => ({
   persistCoachMutations: vi.fn(),
   insertSupabaseAudit: vi.fn(),
   loadServerDailyGoalContext: vi.fn(),
+  consumedConfirmationNonces: new Set<string>(),
 }));
 
 vi.mock("next/headers", () => ({
@@ -61,11 +62,26 @@ beforeEach(() => {
   mocks.createClient.mockReset();
   mocks.createClient.mockResolvedValue({
     auth: { getUser: vi.fn(async () => ({ data: { user: mocks.currentUser } })) },
+    from: vi.fn((table: string) => {
+      if (table !== "coach_confirmation_uses") {
+        throw new Error(`Unexpected table: ${table}`);
+      }
+      return {
+        insert: vi.fn(async (row: { nonce_hash: string }) => {
+          if (mocks.consumedConfirmationNonces.has(row.nonce_hash)) {
+            return { error: { code: "23505", message: "duplicate" } };
+          }
+          mocks.consumedConfirmationNonces.add(row.nonce_hash);
+          return { error: null };
+        }),
+      };
+    }),
   });
   mocks.getTool.mockReset();
   mocks.persistCoachMutations.mockReset();
   mocks.insertSupabaseAudit.mockReset();
   mocks.loadServerDailyGoalContext.mockReset();
+  mocks.consumedConfirmationNonces.clear();
   mocks.loadServerDailyGoalContext.mockImplementation(async (_supabase, input) => {
     const serverPlan = {
       ...buildDefaultGoalPlan({ goal: "gain" }),
@@ -176,5 +192,24 @@ describe("coach turn confirmation integrity", () => {
     expect(mocks.persistCoachMutations.mock.calls[0][3]).toMatchObject({
       goalPlan: { id: "server-goal-plan" },
     });
+
+    const replay = await POST(
+      new Request("https://fuelwell.test/api/coach/turn", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          conversationId: "conversation-1",
+          messages: [{ role: "user", content: "Yes, delete it again." }],
+          snapshot: makeSnapshot(),
+          confirmedTool: {
+            name: "delete_meal",
+            input: { mealId: "meal-1" },
+            token,
+          },
+        }),
+      }),
+    );
+    expect(await replay.text()).toContain("confirmation was already used");
+    expect(run).toHaveBeenCalledOnce();
   });
 });
