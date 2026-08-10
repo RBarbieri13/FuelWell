@@ -27,6 +27,12 @@ The graph campaign used 20 independent auditors, reduced 57 findings to 15 high-
 - Added immutable release binding, App Store screenshot foundations, candidate-to-screenshot provenance, and HMAC-attested screenshot evidence.
 - Added App Store metadata/privacy/readiness checks while retaining the explicit human gate for TestFlight upload and App Review submission.
 - Repaired the candidate-bound release verifier so it signs the dedicated UI-test account into Supabase and calls the protected live preflight with a bearer session. The endpoint remains private while the workflow can now prove live schema and provider health before any upload.
+- Persisted weekly meal plans by authenticated user and week through a Supabase-backed API with row-level security, while retaining an isolated preview-only fallback and clearing signed-in meal-plan state on account changes.
+- Protected paid photo-nutrition inference with authenticated-user checks, input validation, daily AI-budget enforcement, usage recording, and sanitized unavailable/error states.
+- Reworked preference synchronization as a merge into the latest server document. Food likes, dislikes, diets, and allergies can no longer overwrite onboarding, units, coaching tone, or other profile namespaces when a stale client writes.
+- Cleared signed-in day, workout, body, grocery, Coach, meal-plan, goal, and integration caches on logout while deliberately preserving the separate preview persona.
+- Made account-confirmation cookies secure by default and added the profile-preferences migration to the production launch preflight.
+- Polished the iPhone shell with bounded native errors and privacy-safe logging, calmer Daily Review progressive disclosure on phones, and semantic link controls across the primary routes.
 
 ## Key iOS decisions
 
@@ -36,30 +42,36 @@ The graph campaign used 20 independent auditors, reduced 57 findings to 15 high-
 - Release-bound UI, authenticated persistence, and live Coach inference are tested only against an immutable candidate carrying matching Git SHA, Vercel deployment ID, deployment URL, package version, and environment.
 - Account export uses the native iOS share sheet, and the SwiftUI loading state clears for download handoff, completion, and failure.
 - Security-sensitive confirmations are server-consumed once. Preview mode cannot delete or replace persisted user data.
+- Phone layouts default to the highest-value overview while dense Daily Review ledgers stay collapsed until requested. This reduces dashboard-style density without deleting functionality.
+- Navigation links are represented by one semantic interactive control rather than nested link/button elements, improving VoiceOver order, keyboard focus, and tap reliability.
+- Profile writes are namespace-preserving read/merge/write operations and fail closed when the current server document cannot be read.
 
 ## Verification evidence
 
 | Gate | Result |
 | --- | --- |
 | ESLint | PASS |
-| Next.js production build | PASS: 799 static pages generated |
-| Web unit tests | PASS: 48 files, 365 tests |
+| Next.js production build | PASS: 800 static pages generated |
+| Web unit tests | PASS: 54 files, 394 tests |
 | Production mobile containment | PASS: 38/38 across Chromium and WebKit |
 | Compact 320-point rerun | PASS: 14/14 across Chromium and WebKit |
 | Ingredient drawer accessibility | PASS: 4/4 across Chromium and WebKit |
+| Semantic navigation + Daily Review disclosure | PASS: 19/19 targeted Playwright checks |
 | Feature import direction | PASS |
 | Theme drift | PASS |
 | Git whitespace validation | PASS |
-| Native iPhone 16e tests | PASS: 89/89 |
+| FuelWell native iPhone 16e tests | PASS: 88/88 |
+| Networking Swift package iPhone 16e tests | PASS: 1/1 |
 | Native iPhone 17 Pro Max build | PASS |
 | Repository App Store readiness | PASS: 25 checks, 0 repository failures |
 | Immutable candidate UI + live Coach | BLOCKED: candidate provenance and test credentials are not present |
 | Live Supabase migration/OAuth persistence | BLOCKED: project `xzsftuxvnkgxtbiibvac` is confirmed `INACTIVE` |
 | App Store screenshots | BLOCKED: must be captured from the approved immutable candidate |
 
-Native test result:
+Native test results:
 
-`~/Library/Developer/Xcode/DerivedData/FuelWellApp-azkgfxbtrqnjkpdiburxsnifjsxa/Logs/Test/Test-FuelWellApp-2026.08.09_19-53-00--0500.xcresult`
+- `ios/build/reports/FuelWellApp-combined.xcresult`
+- `ios/build/reports/Networking-combined-package.xcresult`
 
 Representative compact screenshots:
 
@@ -74,7 +86,7 @@ Representative compact screenshots:
 The repository is locally green, but a release candidate cannot be honestly declared until all of these are satisfied:
 
 1. Obtain Robert's approval to restore Supabase project `xzsftuxvnkgxtbiibvac`. The management API reports the Free-plan project as `INACTIVE`, and its API hostname does not currently resolve.
-2. After restoration, apply the three new Supabase migrations and verify their tables, RLS, OAuth providers, and dedicated test account. Migration state cannot be queried while the project is inactive.
+2. After restoration, apply every pending Supabase migration and verify the profile-preferences, meal-plan, Coach, activity, grocery, account-security, and release-readiness tables and policies with two-user isolation checks. Migration state cannot be queried while the project is inactive.
 3. Obtain Robert's approval to push the reviewed candidate branch. It is ahead of `origin/main`; no remote branch or pull request was created during this pass.
 4. Create an immutable Vercel deployment from the exact reviewed commit and record its Git SHA, deployment ID, deployment origin, and environment. The current public production deployment is `dpl_CcrusBaFKJSwhwwWAQJjDSMEFA3R` from July 26 and predates the release manifest routes.
 5. Run `tools/release/test-ios-candidate-ui.sh`; GitHub already has the dedicated UI-test and Supabase secrets needed by the workflow. This gate verifies live Coach inference, fresh-sign-in persistence, mobile containment, and the actual bound `WKWebView` shell.
@@ -93,9 +105,11 @@ The repository is locally green, but a release candidate cannot be honestly decl
 
 - The candidate-bound UI target is not a local fallback test. Without immutable deployment metadata and authenticated credentials it correctly fails closed, so no live Coach, OAuth, Supabase, TestFlight, or App Store claim is made here.
 - The embedded product currently uses FuelWell's light surface; dark mode is not claimed.
+- Live two-user row-level-security denial, OAuth persistence, and provider-backed Coach inference remain external-environment checks; local mocks and repository contracts do not substitute for those proofs.
+- HealthKit runtime behavior is not claimed because the current shipping shell embeds the responsive web product and does not yet expose a production HealthKit integration.
 - `ios/build/` and `test-results/` are generated evidence and must not be committed.
 - The 21 lower-priority graph claims that lacked a fresh verifier should be revisited in a later polish campaign after the release-critical gates are complete.
 
 ## Review boundary
 
-Review the commits on `release/fuelwell-appstore-20260809` plus the final compact auth-header change. Do not include generated `ios/build/` output. The next outward-facing action is an explicit human-gated immutable preview deployment, not a direct TestFlight or App Store upload.
+Review commits `ed5cd39`, `8fbd954`, `08843bf`, `f2d5d9b`, `f92ba76`, and `3b3dc91` on `release/fuelwell-appstore-20260809`, along with the preceding compact-iPhone candidate work already on that branch. Do not include generated `ios/build/` output. The next outward-facing action is an explicit human-gated Supabase restoration and immutable preview deployment, not a direct TestFlight or App Store upload.
