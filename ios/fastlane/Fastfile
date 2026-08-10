@@ -1,5 +1,8 @@
 require "json"
+require "digest"
+require "pathname"
 require "shellwords"
+require "time"
 require "uri"
 
 opt_out_usage
@@ -105,6 +108,7 @@ platform :ios do
         "-skipPackagePluginValidation"
       ].join(" ")
     )
+    write_screenshot_manifest!
   end
 
   desc "Create the initial App Store signing assets for TestFlight"
@@ -185,12 +189,64 @@ platform :ios do
 
   private_lane :ensure_app_store_screenshots! do
     screenshots = Dir.glob(File.join(__dir__, "screenshots", "en-US", "*.{png,jpg,jpeg}"))
-    return unless screenshots.empty?
+    if screenshots.empty?
+      UI.user_error!(
+        "App Store screenshots are missing. Run `bundle exec fastlane ios screenshots` " \
+        "after verifying the immutable candidate and before `fastlane ios release`."
+      )
+    end
 
-    UI.user_error!(
-      "App Store screenshots are missing. Run `bundle exec fastlane ios screenshots` " \
-      "after verifying the immutable candidate and before `fastlane ios release`."
-    )
+    manifest_path = screenshot_manifest_path
+    UI.user_error!("Screenshot candidate manifest is missing; recapture screenshots.") unless File.exist?(manifest_path)
+
+    manifest = JSON.parse(File.read(manifest_path))
+    settings = testflight_release_settings
+    expected = {
+      "git_sha" => ENV.fetch("FUELWELL_CANDIDATE_GIT_SHA"),
+      "deployment_id" => ENV.fetch("FUELWELL_CANDIDATE_DEPLOYMENT_ID"),
+      "deployment_url" => required_release_value("FUELWELL_CANDIDATE_URL").sub(%r{/+\z}, ""),
+      "environment" => ENV.fetch("FUELWELL_CANDIDATE_ENVIRONMENT"),
+      "package_version" => settings.fetch(:package_version)
+    }
+    expected.each do |key, value|
+      UI.user_error!("Screenshot manifest #{key} does not match the release candidate; recapture screenshots.") unless manifest[key] == value
+    end
+
+    hashes = manifest.fetch("screenshots", {})
+    screenshots.each do |file|
+      relative = Pathname.new(file).relative_path_from(Pathname.new(File.join(__dir__, "screenshots"))).to_s
+      expected_hash = hashes[relative]
+      actual_hash = Digest::SHA256.file(file).hexdigest
+      UI.user_error!("Screenshot #{relative} is missing from the candidate manifest.") if expected_hash.to_s.empty?
+      UI.user_error!("Screenshot #{relative} changed after capture; recapture screenshots.") unless expected_hash == actual_hash
+    end
+    UI.user_error!("Screenshot candidate manifest contains stale files; recapture screenshots.") unless hashes.keys.sort == screenshots.map { |file| Pathname.new(file).relative_path_from(Pathname.new(File.join(__dir__, "screenshots"))).to_s }.sort
+  end
+
+  private_lane :write_screenshot_manifest! do
+    screenshots_root = File.join(__dir__, "screenshots")
+    screenshots = Dir.glob(File.join(screenshots_root, "en-US", "*.{png,jpg,jpeg}"))
+    UI.user_error!("Snapshot finished without producing App Store screenshots.") if screenshots.empty?
+
+    settings = testflight_release_settings
+    manifest = {
+      "schema_version" => 1,
+      "captured_at" => Time.now.utc.iso8601,
+      "git_sha" => ENV.fetch("FUELWELL_CANDIDATE_GIT_SHA"),
+      "deployment_id" => ENV.fetch("FUELWELL_CANDIDATE_DEPLOYMENT_ID"),
+      "deployment_url" => required_release_value("FUELWELL_CANDIDATE_URL").sub(%r{/+\z}, ""),
+      "environment" => ENV.fetch("FUELWELL_CANDIDATE_ENVIRONMENT"),
+      "package_version" => settings.fetch(:package_version),
+      "screenshots" => screenshots.to_h do |file|
+        relative = Pathname.new(file).relative_path_from(Pathname.new(screenshots_root)).to_s
+        [relative, Digest::SHA256.file(file).hexdigest]
+      end
+    }
+    File.write(screenshot_manifest_path, JSON.pretty_generate(manifest) + "\n")
+  end
+
+  def screenshot_manifest_path
+    File.join(__dir__, "screenshots", "candidate-manifest.json")
   end
 
   private_lane :sentry_release_tag do

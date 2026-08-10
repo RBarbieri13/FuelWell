@@ -1,8 +1,8 @@
 scheme("CandidateUITests")
 
 devices([
-  "iPhone 16 Pro Max",
-  "iPhone 11 Pro Max"
+  "iPhone 17 Pro Max",
+  "iPhone 15"
 ])
 
 languages([

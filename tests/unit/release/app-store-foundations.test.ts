@@ -28,11 +28,14 @@ describe("App Store foundations", () => {
 
     expect(snapfile).toContain('scheme("CandidateUITests")');
     expect(snapfile).toContain('output_directory("./fastlane/screenshots")');
-    expect(snapfile).toContain('"iPhone 16 Pro Max"');
-    expect(snapfile).toContain('"iPhone 11 Pro Max"');
+    expect(snapfile).toContain('"iPhone 17 Pro Max"');
+    expect(snapfile).toContain('"iPhone 15"');
     expect(existsSync(helperPath)).toBe(true);
     expect(fastfile).toContain("lane :screenshots do");
     expect(fastfile).toContain("ensure_app_store_screenshots!");
+    expect(fastfile).toContain("write_screenshot_manifest!");
+    expect(fastfile).toContain("Digest::SHA256.file(file).hexdigest");
+    expect(fastfile).toContain("Screenshot manifest #{key} does not match the release candidate");
     expect(uiTests).toContain("setupSnapshot(app)");
     expect(uiTests).toContain("snapshot(name, timeWaitingForIdle: 0)");
   });

@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import process from "node:process";
@@ -7,6 +8,7 @@ import process from "node:process";
 const root = process.cwd();
 const metadataRoot = path.join(root, "ios/fastlane/metadata/en-US");
 const screenshotsRoot = path.join(root, "ios/fastlane/screenshots/en-US");
+const screenshotManifestPath = path.join(root, "ios/fastlane/screenshots/candidate-manifest.json");
 const screenshotConfigPath = path.join(root, "ios/fastlane/Snapfile");
 const snapshotHelperPath = path.join(root, "ios/FuelWellUITests/SnapshotHelper.swift");
 const uiTestCapturePath = path.join(root, "ios/FuelWellUITests/FuelWellCriticalPathUITests.swift");
@@ -55,11 +57,11 @@ const requiredEnv = [
 ];
 
 const requiredScreenshotFamilies = [
-  { label: "iPhone 6.7-inch", patterns: [/iphone.*6\.7/i, /iphone.*15.*pro.*max/i, /iphone.*16.*pro.*max/i] },
-  { label: "iPhone 6.5-inch", patterns: [/iphone.*6\.5/i, /iphone.*11.*pro.*max/i, /iphone.*xs.*max/i] }
+  { label: "Large iPhone", patterns: [/iphone.*17.*pro.*max/i] },
+  { label: "Standard iPhone", patterns: [/iphone.*15/i] }
 ];
 
-const requiredScreenshotDevices = ["iPhone 16 Pro Max", "iPhone 11 Pro Max"];
+const requiredScreenshotDevices = ["iPhone 17 Pro Max", "iPhone 15"];
 const screenshotExtensions = new Set([".png", ".jpg", ".jpeg"]);
 
 function rel(filePath) {
@@ -253,6 +255,33 @@ function validateScreenshots(results) {
         : "Snapfile must name both 6.7-inch and 6.5-inch screenshot simulators.",
       screenshotConfigPath
     );
+
+    try {
+      const availableDevices = execFileSync("xcrun", ["simctl", "list", "devices", "available"], {
+        cwd: root,
+        encoding: "utf8"
+      });
+      const missingDevices = requiredScreenshotDevices.filter((device) => !availableDevices.includes(device));
+      addResult(
+        results,
+        "screenshots",
+        missingDevices.length === 0 ? "pass" : "blocker",
+        "Screenshot simulators installed",
+        missingDevices.length === 0
+          ? "Every Snapfile device is available in the installed Xcode runtime."
+          : `Install or select runnable simulators for: ${missingDevices.join(", ")}.`,
+        screenshotConfigPath
+      );
+    } catch (error) {
+      addResult(
+        results,
+        "screenshots",
+        "blocker",
+        "Screenshot simulators unverified",
+        `Could not query the installed Xcode simulator runtime: ${error.message}`,
+        screenshotConfigPath
+      );
+    }
   }
 
   addResult(
@@ -300,6 +329,37 @@ function validateScreenshots(results) {
       matched ? "Required screenshot family appears present." : "Add screenshots named for this App Store device family.",
       screenshotsRoot
     );
+  }
+
+
+  if (!existsSync(screenshotManifestPath)) {
+    addResult(results, "screenshots", "blocker", "Candidate screenshot manifest missing", "Recapture screenshots from the immutable candidate so provenance and hashes can be verified.", screenshotManifestPath);
+    return;
+  }
+
+  try {
+    const manifest = JSON.parse(readTrimmed(screenshotManifestPath));
+    const manifestScreenshots = manifest.screenshots ?? {};
+    const expectedFiles = screenshotFiles.map((filePath) => path.relative(path.dirname(screenshotsRoot), filePath)).sort();
+    const manifestFiles = Object.keys(manifestScreenshots).sort();
+    const hashesMatch = expectedFiles.length === manifestFiles.length && expectedFiles.every((file, index) => {
+      if (file !== manifestFiles[index]) return false;
+      const digest = createHash("sha256").update(readFileSync(path.join(path.dirname(screenshotsRoot), file))).digest("hex");
+      return manifestScreenshots[file] === digest;
+    });
+    const requiredProvenance = ["git_sha", "deployment_id", "deployment_url", "environment", "package_version"];
+    const provenancePresent = requiredProvenance.every((key) => typeof manifest[key] === "string" && manifest[key].trim());
+    addResult(
+      results,
+      hashesMatch && provenancePresent ? "pass" : "blocker",
+      "Screenshot candidate provenance",
+      hashesMatch && provenancePresent
+        ? "Every screenshot hash is bound to an immutable candidate manifest."
+        : "The screenshot manifest is incomplete, stale, or does not match every captured image.",
+      screenshotManifestPath
+    );
+  } catch (error) {
+    addResult(results, "screenshots", "blocker", "Candidate screenshot manifest invalid", error.message, screenshotManifestPath);
   }
 }
 
