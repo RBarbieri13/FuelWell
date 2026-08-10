@@ -1345,8 +1345,13 @@ export function SettingsClient({
               </ActionCard>
             </div>
             <div id="support" className="min-w-0 scroll-mt-24">
-              <ActionCard icon={HelpCircle} title="Get help" detail="A support contact and coach-data review path arrive with the public release.">
-                <Badge variant="neutral">Coming soon</Badge>
+              <ActionCard icon={HelpCircle} title="Get help" detail="Troubleshoot account, Coach, logging, privacy, or access problems and prepare a useful issue report.">
+                <Link
+                  href="/support"
+                  className="fw-press inline-flex min-h-11 items-center justify-center rounded-2xl bg-primary-50 px-4 py-2 text-sm font-black text-primary-800 ring-1 ring-inset ring-primary-100 hover:bg-primary-100 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600"
+                >
+                  Open support
+                </Link>
               </ActionCard>
             </div>
           </div>

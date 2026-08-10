@@ -110,4 +110,33 @@ describe("App Store foundations", () => {
     expect(readFileSync(manifestPath, "utf8")).toContain("/icon-192.png");
     expect(readFileSync(manifestPath, "utf8")).toContain("/icon-512.png");
   });
+
+  it("ships public App Store marketing, privacy, and support destinations", () => {
+    const metadataRoot = path.join(root, "ios/fastlane/metadata/en-US");
+    const expectedOrigin = "https://fuelwell-preview.vercel.app";
+    const candidateGate = readFileSync(
+      path.join(root, "tools/release/test-ios-candidate-ui.sh"),
+      "utf8"
+    );
+    const readinessGenerator = readFileSync(
+      path.join(root, "tools/release/generate-app-store-readiness.mjs"),
+      "utf8"
+    );
+
+    expect(readFileSync(path.join(metadataRoot, "marketing_url.txt"), "utf8").trim()).toBe(
+      expectedOrigin
+    );
+    expect(readFileSync(path.join(metadataRoot, "privacy_url.txt"), "utf8").trim()).toBe(
+      `${expectedOrigin}/privacy`
+    );
+    expect(readFileSync(path.join(metadataRoot, "support_url.txt"), "utf8").trim()).toBe(
+      `${expectedOrigin}/support`
+    );
+    expect(existsSync(path.join(root, "src/app/privacy/page.tsx"))).toBe(true);
+    expect(existsSync(path.join(root, "src/app/support/page.tsx"))).toBe(true);
+    expect(candidateGate).toContain("for public_path in /privacy /support");
+    expect(candidateGate).toContain("public page ${public_path} returned HTTP");
+    expect(readinessGenerator).toContain("validatePublicListingSurfaces(results)");
+    expect(readinessGenerator).toContain("Immutable candidate public-page gate");
+  });
 });

@@ -83,6 +83,13 @@ environment="$(read_manifest '.environment' 'environment')"
 [[ "${package_version}" == "$(node -p "require('${repo_root}/package.json').version")" ]] || \
   fail "manifest package version does not match package.json"
 
+for public_path in /privacy /support; do
+  public_status="$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' --max-time 20 \
+    "${candidate_origin}${public_path}")" || fail "candidate public page ${public_path} is unavailable"
+  [[ "${public_status}" == "200" ]] || \
+    fail "candidate public page ${public_path} returned HTTP ${public_status}"
+done
+
 preflight_url="${candidate_origin}/api/launch-preflight?live=1"
 
 [[ "${FUELWELL_UI_TEST_ALLOW_ANONYMOUS:-0}" != "1" ]] || \

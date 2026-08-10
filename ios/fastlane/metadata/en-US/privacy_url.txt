@@ -1,1 +1,1 @@
-https://fuelwell.app/privacy
+https://fuelwell-preview.vercel.app/privacy

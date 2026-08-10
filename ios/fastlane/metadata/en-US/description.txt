@@ -10,6 +10,6 @@ FuelWell can help you:
 - Plan groceries and recipes
 - Get restaurant guidance
 - Connect activity and recovery context
-- Send feedback during the pilot
+- Review and manage account data from Settings
 
-The pilot version is focused on clarity, habit-building, and fast feedback.
+FuelWell is focused on clarity, habit-building, and practical next steps.

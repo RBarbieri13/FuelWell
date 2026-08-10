@@ -27,8 +27,11 @@ const brandReleaseTestPath = path.join(root, "tests/unit/release/fuelwell-brand-
 const liveCoachTestPath = path.join(root, "tests/testflight-live-coach.spec.ts");
 const authenticatedPersistenceTestPath = path.join(root, "tests/testflight-authenticated-persistence.spec.ts");
 const mobileContainmentTestPath = path.join(root, "tests/mobile-component-clipping.spec.ts");
+const privacyPagePath = path.join(root, "src/app/privacy/page.tsx");
+const supportPagePath = path.join(root, "src/app/support/page.tsx");
 const jsonOutputPath = path.join(root, "tools/release/data/app-store-readiness.json");
 const markdownOutputPath = path.join(root, "docs/APP-STORE-READINESS.md");
+const publicListingOrigin = "https://fuelwell-preview.vercel.app";
 
 const args = new Set(process.argv.slice(2));
 const writeOutputs = args.has("--write");
@@ -129,6 +132,68 @@ function validateMetadata(results) {
 
     addResult(results, "metadata", "pass", `${item.label} ready`, `${value.length}${item.max ? `/${item.max}` : ""} characters.`, filePath);
   }
+}
+
+function validatePublicListingSurfaces(results) {
+  const publicPages = [
+    { label: "Privacy", route: "/privacy", filePath: privacyPagePath, metadataFile: "privacy_url.txt" },
+    { label: "Support", route: "/support", filePath: supportPagePath, metadataFile: "support_url.txt" }
+  ];
+
+  for (const page of publicPages) {
+    addResult(
+      results,
+      "public-listing",
+      existsSync(page.filePath) ? "pass" : "fail",
+      `${page.label} page source`,
+      existsSync(page.filePath)
+        ? `${page.route} is implemented as a public App Router page.`
+        : `Add a public ${page.route} page before App Review.`,
+      page.filePath
+    );
+
+    const metadataPath = path.join(metadataRoot, page.metadataFile);
+    const expectedUrl = `${publicListingOrigin}${page.route}`;
+    const actualUrl = existsSync(metadataPath) ? readTrimmed(metadataPath) : "";
+    addResult(
+      results,
+      "public-listing",
+      actualUrl === expectedUrl ? "pass" : "fail",
+      `${page.label} metadata destination`,
+      actualUrl === expectedUrl
+        ? `Fastlane metadata points to ${expectedUrl}.`
+        : `${page.metadataFile} must point to ${expectedUrl}.`,
+      metadataPath
+    );
+  }
+
+  const marketingUrlPath = path.join(metadataRoot, "marketing_url.txt");
+  const marketingUrl = existsSync(marketingUrlPath) ? readTrimmed(marketingUrlPath) : "";
+  addResult(
+    results,
+    "public-listing",
+    marketingUrl === publicListingOrigin ? "pass" : "fail",
+    "Marketing metadata destination",
+    marketingUrl === publicListingOrigin
+      ? `Fastlane metadata points to ${publicListingOrigin}.`
+      : `marketing_url.txt must point to ${publicListingOrigin}.`,
+    marketingUrlPath
+  );
+
+  const candidateGate = existsSync(candidateUiGatePath) ? readTrimmed(candidateUiGatePath) : "";
+  const checksPublicPages = candidateGate.includes("for public_path in /privacy /support")
+    && candidateGate.includes("${candidate_origin}${public_path}")
+    && candidateGate.includes("public page ${public_path} returned HTTP");
+  addResult(
+    results,
+    "public-listing",
+    checksPublicPages ? "pass" : "fail",
+    "Immutable candidate public-page gate",
+    checksPublicPages
+      ? "The immutable candidate gate requires HTTP 200 from Privacy and Support."
+      : "The immutable candidate gate must reject missing Privacy or Support pages.",
+    candidateUiGatePath
+  );
 }
 
 function parsePlistJson(filePath) {
@@ -592,6 +657,7 @@ function renderMarkdown(report) {
 
 const results = [];
 validateMetadata(results);
+validatePublicListingSurfaces(results);
 validatePrivacyManifest(results);
 validateHealthKitSigning(results);
 validateScreenshots(results);

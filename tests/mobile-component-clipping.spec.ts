@@ -28,6 +28,8 @@ const ROUTES = [
   "/ios-preview",
   "/signup",
   "/signup?preview=new-user",
+  "/privacy",
+  "/support",
   "/app/dashboard",
   "/app/daily-review",
   "/app/log",
