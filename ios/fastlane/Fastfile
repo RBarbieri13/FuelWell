@@ -114,10 +114,12 @@ platform :ios do
     release_settings = testflight_release_settings
     ensure_screenshot_candidate_source!
     sh("cd #{repo_root}/ios && xcodegen generate --spec project.yml")
+    snapshot_runtime_version = ENV["FUELWELL_SNAPSHOT_IOS_VERSION"].to_s.strip
+    normalize_snapshot_runtime_version!(snapshot_runtime_version) unless snapshot_runtime_version.empty?
     snapshot(
       # Fastlane normally derives this from the SDK, which can differ from the
       # installed Simulator runtime by a patch version on release machines.
-      ios_version: ENV["FUELWELL_SNAPSHOT_IOS_VERSION"].to_s.strip.empty? ? nil : ENV["FUELWELL_SNAPSHOT_IOS_VERSION"].to_s.strip,
+      ios_version: snapshot_runtime_version.empty? ? nil : snapshot_runtime_version,
       xcargs: [
         "CODE_SIGNING_ALLOWED=NO",
         release_settings.fetch(:xcargs),
@@ -351,6 +353,25 @@ platform :ios do
       log: false
     ).strip
     UI.user_error!("Screenshot capture requires a clean candidate source tree.") unless source_diff.empty?
+  end
+
+  def normalize_snapshot_runtime_version!(exact_version)
+    # `simctl list devices` can omit the patch component even though xcodebuild
+    # requires it. Normalize Fastlane's in-memory devices to the runtime value.
+    abbreviated_version = exact_version.split(".").first(2).join(".")
+    exact_runtime_version = exact_version
+    abbreviated_runtime_version = abbreviated_version
+    override = Module.new do
+      define_method(:simulators) do |requested_os_type = ""|
+        super(requested_os_type).each do |device|
+          next unless device.os_type == "iOS" && device.os_version == abbreviated_runtime_version
+
+          device.os_version = exact_runtime_version
+          device.ios_version = exact_runtime_version
+        end
+      end
+    end
+    FastlaneCore::DeviceManager.singleton_class.prepend(override)
   end
 
   def screenshot_attestation_key
