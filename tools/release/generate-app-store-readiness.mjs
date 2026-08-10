@@ -15,8 +15,17 @@ const snapshotHelperPath = path.join(root, "ios/FuelWellUITests/SnapshotHelper.s
 const uiTestCapturePath = path.join(root, "ios/FuelWellUITests/FuelWellCriticalPathUITests.swift");
 const privacyManifestPath = path.join(root, "ios/FuelWellApp/Resources/PrivacyInfo.xcprivacy");
 const healthKitEntitlementsPath = path.join(root, "ios/FuelWellApp/FuelWellApp.entitlements");
+const infoPlistPath = path.join(root, "ios/FuelWellApp/Info.plist");
+const shellRoutingPath = path.join(root, "ios/FuelWellApp/Sources/FuelWellShellRouting.swift");
 const projectSpecPath = path.join(root, "ios/project.yml");
 const xcodeProjectPath = path.join(root, "ios/FuelWellApp.xcodeproj/project.pbxproj");
+const candidateUiGatePath = path.join(root, "tools/release/test-ios-candidate-ui.sh");
+const storageAuthorityTestPath = path.join(root, "tests/unit/authenticated-storage-authority.test.ts");
+const accountIsolationTestPath = path.join(root, "tests/unit/account-switch-isolation.test.ts");
+const brandReleaseTestPath = path.join(root, "tests/unit/release/fuelwell-brand-release.test.ts");
+const liveCoachTestPath = path.join(root, "tests/testflight-live-coach.spec.ts");
+const authenticatedPersistenceTestPath = path.join(root, "tests/testflight-authenticated-persistence.spec.ts");
+const mobileContainmentTestPath = path.join(root, "tests/mobile-component-clipping.spec.ts");
 const jsonOutputPath = path.join(root, "tools/release/data/app-store-readiness.json");
 const markdownOutputPath = path.join(root, "docs/APP-STORE-READINESS.md");
 
@@ -390,6 +399,99 @@ function validateHumanGates(results) {
   );
 }
 
+function validateRepositoryReleaseGates(results) {
+  const requiredEvidence = [
+    {
+      label: "Authenticated storage authority regression",
+      filePath: storageAuthorityTestPath,
+      detail: "A repository test must reject browser-authoritative signed-in state."
+    },
+    {
+      label: "Account-switch isolation regression",
+      filePath: accountIsolationTestPath,
+      detail: "A repository test must cover user A signing out before user B signs in."
+    },
+    {
+      label: "Release brand regression",
+      filePath: brandReleaseTestPath,
+      detail: "A repository test must protect the approved web and native logo assets."
+    },
+    {
+      label: "Authenticated persistence journey",
+      filePath: authenticatedPersistenceTestPath,
+      detail: "The immutable candidate gate must prove signed-in data survives navigation and reload."
+    },
+    {
+      label: "Live Coach journey",
+      filePath: liveCoachTestPath,
+      detail: "The immutable candidate gate must prove real Coach inference instead of a fallback response."
+    },
+    {
+      label: "Phone containment journey",
+      filePath: mobileContainmentTestPath,
+      detail: "The candidate gate must reject whole-page horizontal overflow at supported phone widths."
+    }
+  ];
+
+  for (const evidence of requiredEvidence) {
+    addResult(
+      results,
+      "repository-gates",
+      existsSync(evidence.filePath) ? "pass" : "fail",
+      evidence.label,
+      existsSync(evidence.filePath) ? "Required verifier is committed." : evidence.detail,
+      evidence.filePath
+    );
+  }
+
+  const candidateGate = existsSync(candidateUiGatePath) ? readTrimmed(candidateUiGatePath) : "";
+  const coversCompactAndLarge = candidateGate.includes("iPhone 16e")
+    && candidateGate.includes("iPhone 17 Pro Max")
+    && candidateGate.includes("FUELWELL_CANDIDATE_GIT_SHA")
+    && candidateGate.includes("testflight-live-coach.spec.ts")
+    && candidateGate.includes("testflight-authenticated-persistence.spec.ts");
+  addResult(
+    results,
+    "repository-gates",
+    coversCompactAndLarge ? "pass" : "fail",
+    "Immutable candidate device and live-service gate",
+    coversCompactAndLarge
+      ? "The candidate script binds an exact Git SHA and runs live Coach and persistence journeys on compact and large iPhones."
+      : "The candidate script must bind an exact Git SHA, test live Coach and persistence, and run on compact and large iPhones.",
+    candidateUiGatePath
+  );
+
+  const shellRouting = existsSync(shellRoutingPath) ? readTrimmed(shellRoutingPath) : "";
+  const nativeShellCovered = shellRouting.includes("ASWebAuthenticationSession")
+    && shellRouting.includes("WKNavigationAction")
+    && shellRouting.includes("safeRelativePath")
+    && shellRouting.includes("openExternal");
+  addResult(
+    results,
+    "repository-gates",
+    nativeShellCovered ? "pass" : "fail",
+    "Native OAuth and trusted navigation shell",
+    nativeShellCovered
+      ? "The iOS shell separates OAuth/external navigation from trusted in-app routes."
+      : "The iOS shell must use a native authentication session, enforce trusted navigation, and validate relative routes.",
+    shellRoutingPath
+  );
+
+  const infoPlist = existsSync(infoPlistPath) ? readTrimmed(infoPlistPath) : "";
+  const permissionAndCallbackCoverage = infoPlist.includes("NSLocationWhenInUseUsageDescription")
+    && infoPlist.includes("CFBundleURLTypes");
+  addResult(
+    results,
+    "repository-gates",
+    permissionAndCallbackCoverage ? "pass" : "fail",
+    "iOS permission and OAuth callback declarations",
+    permissionAndCallbackCoverage
+      ? "Location purpose text and an app callback URL type are declared."
+      : "Declare location purpose text and a callback URL type before shipping the signed app.",
+    infoPlistPath
+  );
+}
+
 function summarize(results) {
   const counts = { pass: 0, blocker: 0, fail: 0 };
   for (const result of results) {
@@ -450,6 +552,7 @@ validateMetadata(results);
 validatePrivacyManifest(results);
 validateHealthKitSigning(results);
 validateScreenshots(results);
+validateRepositoryReleaseGates(results);
 validateHumanGates(results);
 
 const summary = summarize(results);
