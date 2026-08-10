@@ -23,6 +23,8 @@ Required release gate:
   FUELWELL_CANDIDATE_ENVIRONMENT=preview \
   FUELWELL_UI_TEST_EMAIL=<dedicated-test-user> \
   FUELWELL_UI_TEST_PASSWORD=<dedicated-test-password> \
+  FUELWELL_UI_TEST_SECOND_EMAIL=<second-dedicated-test-user> \
+  FUELWELL_UI_TEST_SECOND_PASSWORD=<second-dedicated-test-password> \
   tools/release/test-ios-candidate-ui.sh
 
 The script rejects the mutable fuelwell-preview.vercel.app alias, validates the
@@ -96,6 +98,8 @@ preflight_url="${candidate_origin}/api/launch-preflight?live=1"
   fail "anonymous candidates cannot be uploaded to TestFlight"
 [[ -n "${FUELWELL_UI_TEST_EMAIL:-}" ]] || fail "FUELWELL_UI_TEST_EMAIL is required"
 [[ -n "${FUELWELL_UI_TEST_PASSWORD:-}" ]] || fail "FUELWELL_UI_TEST_PASSWORD is required"
+[[ -n "${FUELWELL_UI_TEST_SECOND_EMAIL:-}" ]] || fail "FUELWELL_UI_TEST_SECOND_EMAIL is required"
+[[ -n "${FUELWELL_UI_TEST_SECOND_PASSWORD:-}" ]] || fail "FUELWELL_UI_TEST_SECOND_PASSWORD is required"
 [[ -n "${supabase_url}" ]] || fail "NEXT_PUBLIC_SUPABASE_URL or FUELWELL_SUPABASE_URL is required"
 [[ -n "${supabase_anon_key}" ]] || fail "NEXT_PUBLIC_SUPABASE_ANON_KEY or FUELWELL_SUPABASE_ANON_KEY is required"
 
@@ -110,6 +114,52 @@ auth_response="$(curl --fail --silent --show-error --max-time 20 \
   fail "dedicated UI-test user could not authenticate with Supabase"
 access_token="$(jq -er '.access_token' <<<"${auth_response}")" || \
   fail "Supabase authentication did not return an access token"
+
+auth_settings="$(curl --fail --silent --show-error --max-time 20 \
+  -H "apikey: ${supabase_anon_key}" \
+  -H 'Accept: application/json' \
+  "${supabase_url%/}/auth/v1/settings")" || \
+  fail "Supabase Auth settings are unavailable"
+for provider in google facebook apple; do
+  jq -e --arg provider "${provider}" '.external[$provider] == true' \
+    <<<"${auth_settings}" >/dev/null || \
+    fail "Supabase ${provider} OAuth is not enabled for the release candidate"
+done
+
+oauth_redirect="${candidate_origin}/callback?next=/app/dashboard"
+for provider in google facebook apple; do
+  oauth_result="$(curl --silent --show-error --output /dev/null \
+    --write-out '%{http_code}\t%{redirect_url}' \
+    --max-time 20 \
+    -H "apikey: ${supabase_anon_key}" \
+    --get \
+    --data-urlencode "provider=${provider}" \
+    --data-urlencode "redirect_to=${oauth_redirect}" \
+    "${supabase_url%/}/auth/v1/authorize")" || \
+    fail "Supabase ${provider} OAuth authorization could not start"
+  IFS=$'\t' read -r oauth_status oauth_location <<<"${oauth_result}"
+  [[ "${oauth_status}" =~ ^30[2378]$ ]] || \
+    fail "Supabase ${provider} OAuth authorization returned HTTP ${oauth_status}"
+  oauth_host="$(node -e 'const u = new URL(process.argv[1]); console.log(u.hostname)' "${oauth_location}")" || \
+    fail "Supabase ${provider} OAuth returned an invalid provider URL"
+  case "${provider}" in
+    google)
+      [[ "${oauth_host}" == "accounts.google.com" ]] || \
+        fail "Google OAuth redirected to unexpected host ${oauth_host}"
+      ;;
+    facebook)
+      [[ "${oauth_host}" == "facebook.com" || "${oauth_host}" == *.facebook.com ]] || \
+        fail "Facebook OAuth redirected to unexpected host ${oauth_host}"
+      ;;
+    apple)
+      [[ "${oauth_host}" == "appleid.apple.com" ]] || \
+        fail "Apple OAuth redirected to unexpected host ${oauth_host}"
+      ;;
+  esac
+done
+
+echo "Proving two-account Supabase isolation"
+node "${repo_root}/tools/release/verify-supabase-account-isolation.mjs"
 
 preflight="$(curl --fail --silent --show-error --max-time 20 \
   -H 'Accept: application/json' \

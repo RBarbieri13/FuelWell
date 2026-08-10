@@ -214,7 +214,11 @@ private struct FuelWellWebAppView: View {
                         Text("Preparing FuelWell")
                             .font(.headline.weight(.bold))
                             .foregroundStyle(self.theme.color.text.primary.color)
-                        Text(shellTestMode ? "Opening shell verification." : "Verifying this build and opening your dashboard.")
+                        Text(
+                            shellTestMode
+                                ? "Opening shell verification."
+                                : "Verifying this build and opening your dashboard."
+                        )
                             .font(.subheadline)
                             .multilineTextAlignment(.center)
                             .foregroundStyle(self.theme.color.text.secondary.color)

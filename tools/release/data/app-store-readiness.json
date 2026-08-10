@@ -1,13 +1,15 @@
 {
-  "generatedAt": "2026-08-10T00:43:17.398Z",
+  "generatedAt": "2026-08-10T17:33:50.979Z",
   "status": "externally_blocked",
   "counts": {
-    "pass": 25,
-    "blocker": 8,
+    "pass": 62,
+    "blocker": 3,
     "fail": 0
   },
   "paths": {
     "metadata": "ios/fastlane/metadata/en-US",
+    "submissionMetadata": "tools/release/data/app-store-submission.json",
+    "privacyInventory": "tools/release/data/app-privacy-inventory.json",
     "screenshots": "ios/fastlane/screenshots/en-US",
     "screenshotConfig": "ios/fastlane/Snapfile",
     "privacyManifest": "ios/FuelWellApp/Resources/PrivacyInfo.xcprivacy",
@@ -39,7 +41,7 @@
       "area": "metadata",
       "status": "pass",
       "label": "Description ready",
-      "detail": "615/4000 characters.",
+      "detail": "627/4000 characters.",
       "file": "ios/fastlane/metadata/en-US/description.txt"
     },
     {
@@ -53,71 +55,204 @@
       "area": "metadata",
       "status": "pass",
       "label": "Release notes ready",
-      "detail": "117/4000 characters.",
+      "detail": "134/4000 characters.",
       "file": "ios/fastlane/metadata/en-US/release_notes.txt"
     },
     {
       "area": "metadata",
       "status": "pass",
       "label": "Marketing URL ready",
-      "detail": "20 characters.",
+      "detail": "35 characters.",
       "file": "ios/fastlane/metadata/en-US/marketing_url.txt"
     },
     {
       "area": "metadata",
       "status": "pass",
       "label": "Privacy URL ready",
-      "detail": "28 characters.",
+      "detail": "43 characters.",
       "file": "ios/fastlane/metadata/en-US/privacy_url.txt"
     },
     {
       "area": "metadata",
       "status": "pass",
       "label": "Support URL ready",
-      "detail": "28 characters.",
+      "detail": "43 characters.",
       "file": "ios/fastlane/metadata/en-US/support_url.txt"
     },
     {
+      "area": "submission-metadata",
+      "status": "pass",
+      "label": "Categories and copyright recorded",
+      "detail": "Health & Fitness / Food & Drink; 2026 FuelWell.",
+      "file": "tools/release/data/app-store-submission.json"
+    },
+    {
+      "area": "submission-metadata",
+      "status": "pass",
+      "label": "Age rating questionnaire reconciled",
+      "detail": "Every current answer is recorded and derives the declared 9+ global rating.",
+      "file": "tools/release/data/app-store-submission.json"
+    },
+    {
+      "area": "submission-metadata",
+      "status": "pass",
+      "label": "Free pricing and availability recorded",
+      "detail": "Free public distribution in all supported storefronts with manual release control.",
+      "file": "tools/release/data/app-store-submission.json"
+    },
+    {
+      "area": "submission-metadata",
+      "status": "pass",
+      "label": "Content rights confirmed",
+      "detail": "FuelWell will surface only content it owns, licenses, or is otherwise authorized to use in each available storefront.",
+      "file": "tools/release/data/app-store-submission.json"
+    },
+    {
+      "area": "submission-metadata",
+      "status": "pass",
+      "label": "App Review fields use secret-free references",
+      "detail": "Contact fields and the required non-expiring demo account use environment-variable references; review notes are populated.",
+      "file": "tools/release/data/app-store-submission.json"
+    },
+    {
+      "area": "human-gates",
+      "status": "blocker",
+      "label": "App Review contact values configured",
+      "detail": "Set the referenced contact values outside the repository: FUELWELL_APP_REVIEW_CONTACT_FIRST_NAME, FUELWELL_APP_REVIEW_CONTACT_LAST_NAME, FUELWELL_APP_REVIEW_CONTACT_EMAIL, FUELWELL_APP_REVIEW_CONTACT_PHONE.",
+      "file": null
+    },
+    {
+      "area": "human-gates",
+      "status": "pass",
+      "label": "App Review demo account configured",
+      "detail": "The referenced non-expiring App Review demo credentials are present in the environment.",
+      "file": null
+    },
+    {
+      "area": "public-listing",
+      "status": "pass",
+      "label": "Privacy page source",
+      "detail": "/privacy is implemented as a public App Router page.",
+      "file": "src/app/privacy/page.tsx"
+    },
+    {
+      "area": "public-listing",
+      "status": "pass",
+      "label": "Privacy metadata destination",
+      "detail": "Fastlane metadata points to https://fuelwell-preview.vercel.app/privacy.",
+      "file": "ios/fastlane/metadata/en-US/privacy_url.txt"
+    },
+    {
+      "area": "public-listing",
+      "status": "pass",
+      "label": "Support page source",
+      "detail": "/support is implemented as a public App Router page.",
+      "file": "src/app/support/page.tsx"
+    },
+    {
+      "area": "public-listing",
+      "status": "pass",
+      "label": "Support metadata destination",
+      "detail": "Fastlane metadata points to https://fuelwell-preview.vercel.app/support.",
+      "file": "ios/fastlane/metadata/en-US/support_url.txt"
+    },
+    {
+      "area": "public-listing",
+      "status": "pass",
+      "label": "Marketing metadata destination",
+      "detail": "Fastlane metadata points to https://fuelwell-preview.vercel.app.",
+      "file": "ios/fastlane/metadata/en-US/marketing_url.txt"
+    },
+    {
+      "area": "public-listing",
+      "status": "pass",
+      "label": "Immutable candidate public-page gate",
+      "detail": "The immutable candidate gate requires HTTP 200 from Privacy and Support.",
+      "file": "tools/release/test-ios-candidate-ui.sh"
+    },
+    {
       "area": "privacy",
       "status": "pass",
-      "label": "Tracking disabled",
-      "detail": "Manifest declares no tracking domains.",
+      "label": "App Privacy inventory complete",
+      "detail": "10 required data types are inventoried with product contexts and processors.",
+      "file": "tools/release/data/app-privacy-inventory.json"
+    },
+    {
+      "area": "privacy",
+      "status": "pass",
+      "label": "Privacy manifest reconciled",
+      "detail": "Every inventory type exactly matches PrivacyInfo.xcprivacy purposes, linked-to-user, and tracking flags.",
       "file": "ios/FuelWellApp/Resources/PrivacyInfo.xcprivacy"
     },
     {
       "area": "privacy",
       "status": "pass",
-      "label": "Privacy data type: NSPrivacyCollectedDataTypeHealth",
-      "detail": "Declared in privacy manifest.",
-      "file": "ios/FuelWellApp/Resources/PrivacyInfo.xcprivacy"
+      "label": "App Privacy: Name",
+      "detail": "Linked; not used for tracking; NSPrivacyCollectedDataTypePurposeAppFunctionality, NSPrivacyCollectedDataTypePurposeProductPersonalization.",
+      "file": "tools/release/data/app-privacy-inventory.json"
     },
     {
       "area": "privacy",
       "status": "pass",
-      "label": "Privacy data type: NSPrivacyCollectedDataTypePhotosorVideos",
-      "detail": "Declared in privacy manifest.",
-      "file": "ios/FuelWellApp/Resources/PrivacyInfo.xcprivacy"
+      "label": "App Privacy: Email Address",
+      "detail": "Linked; not used for tracking; NSPrivacyCollectedDataTypePurposeAppFunctionality.",
+      "file": "tools/release/data/app-privacy-inventory.json"
     },
     {
       "area": "privacy",
       "status": "pass",
-      "label": "Privacy data type: NSPrivacyCollectedDataTypeFitness",
-      "detail": "Declared in privacy manifest.",
-      "file": "ios/FuelWellApp/Resources/PrivacyInfo.xcprivacy"
+      "label": "App Privacy: User ID",
+      "detail": "Linked; not used for tracking; NSPrivacyCollectedDataTypePurposeAppFunctionality.",
+      "file": "tools/release/data/app-privacy-inventory.json"
     },
     {
       "area": "privacy",
       "status": "pass",
-      "label": "Privacy data type: NSPrivacyCollectedDataTypeCrashData",
-      "detail": "Declared in privacy manifest.",
-      "file": "ios/FuelWellApp/Resources/PrivacyInfo.xcprivacy"
+      "label": "App Privacy: Other User Content",
+      "detail": "Linked; not used for tracking; NSPrivacyCollectedDataTypePurposeAppFunctionality, NSPrivacyCollectedDataTypePurposeProductPersonalization.",
+      "file": "tools/release/data/app-privacy-inventory.json"
     },
     {
       "area": "privacy",
       "status": "pass",
-      "label": "Privacy data type: NSPrivacyCollectedDataTypeProductInteraction",
-      "detail": "Declared in privacy manifest.",
-      "file": "ios/FuelWellApp/Resources/PrivacyInfo.xcprivacy"
+      "label": "App Privacy: Health",
+      "detail": "Linked; not used for tracking; NSPrivacyCollectedDataTypePurposeAppFunctionality, NSPrivacyCollectedDataTypePurposeProductPersonalization.",
+      "file": "tools/release/data/app-privacy-inventory.json"
+    },
+    {
+      "area": "privacy",
+      "status": "pass",
+      "label": "App Privacy: Fitness",
+      "detail": "Linked; not used for tracking; NSPrivacyCollectedDataTypePurposeAppFunctionality, NSPrivacyCollectedDataTypePurposeProductPersonalization.",
+      "file": "tools/release/data/app-privacy-inventory.json"
+    },
+    {
+      "area": "privacy",
+      "status": "pass",
+      "label": "App Privacy: Photos or Videos",
+      "detail": "Linked; not used for tracking; NSPrivacyCollectedDataTypePurposeAppFunctionality, NSPrivacyCollectedDataTypePurposeProductPersonalization.",
+      "file": "tools/release/data/app-privacy-inventory.json"
+    },
+    {
+      "area": "privacy",
+      "status": "pass",
+      "label": "App Privacy: Precise Location",
+      "detail": "Linked; not used for tracking; NSPrivacyCollectedDataTypePurposeAppFunctionality.",
+      "file": "tools/release/data/app-privacy-inventory.json"
+    },
+    {
+      "area": "privacy",
+      "status": "pass",
+      "label": "App Privacy: Product Interaction",
+      "detail": "Not linked; not used for tracking; NSPrivacyCollectedDataTypePurposeAnalytics.",
+      "file": "tools/release/data/app-privacy-inventory.json"
+    },
+    {
+      "area": "privacy",
+      "status": "pass",
+      "label": "App Privacy: Crash Data",
+      "detail": "Not linked; not used for tracking; NSPrivacyCollectedDataTypePurposeAppFunctionality.",
+      "file": "tools/release/data/app-privacy-inventory.json"
     },
     {
       "area": "privacy",
@@ -197,45 +332,136 @@
       "file": "ios/fastlane/screenshots/en-US"
     },
     {
+      "area": "repository-gates",
+      "status": "pass",
+      "label": "Authenticated storage authority regression",
+      "detail": "Required verifier is committed.",
+      "file": "tests/unit/authenticated-storage-authority.test.ts"
+    },
+    {
+      "area": "repository-gates",
+      "status": "pass",
+      "label": "Account-switch isolation regression",
+      "detail": "Required verifier is committed.",
+      "file": "tests/unit/account-switch-isolation.test.ts"
+    },
+    {
+      "area": "repository-gates",
+      "status": "pass",
+      "label": "Release brand regression",
+      "detail": "Required verifier is committed.",
+      "file": "tests/unit/release/fuelwell-brand-release.test.ts"
+    },
+    {
+      "area": "repository-gates",
+      "status": "pass",
+      "label": "Authenticated persistence journey",
+      "detail": "Required verifier is committed.",
+      "file": "tests/testflight-authenticated-persistence.spec.ts"
+    },
+    {
+      "area": "repository-gates",
+      "status": "pass",
+      "label": "Live account-isolation journey",
+      "detail": "Required verifier is committed.",
+      "file": "tools/release/verify-supabase-account-isolation.mjs"
+    },
+    {
+      "area": "repository-gates",
+      "status": "pass",
+      "label": "Live Coach journey",
+      "detail": "Required verifier is committed.",
+      "file": "tests/testflight-live-coach.spec.ts"
+    },
+    {
+      "area": "repository-gates",
+      "status": "pass",
+      "label": "Phone containment journey",
+      "detail": "Required verifier is committed.",
+      "file": "tests/mobile-component-clipping.spec.ts"
+    },
+    {
+      "area": "repository-gates",
+      "status": "pass",
+      "label": "Immutable candidate device and live-service gate",
+      "detail": "The candidate script binds an exact Git SHA and runs live Coach and persistence journeys on compact and large iPhones.",
+      "file": "tools/release/test-ios-candidate-ui.sh"
+    },
+    {
+      "area": "repository-gates",
+      "status": "pass",
+      "label": "Social OAuth provider handoff gate",
+      "detail": "The candidate gate requires enabled Google, Facebook, and Apple providers and validates each provider handoff. Completed provider sessions remain a live acceptance requirement.",
+      "file": "tools/release/test-ios-candidate-ui.sh"
+    },
+    {
+      "area": "repository-gates",
+      "status": "pass",
+      "label": "Native OAuth and trusted navigation shell",
+      "detail": "The iOS shell separates OAuth/external navigation from trusted in-app routes.",
+      "file": "ios/FuelWellApp/Sources/FuelWellWebView.swift"
+    },
+    {
+      "area": "repository-gates",
+      "status": "pass",
+      "label": "Reviewed TestFlight build promotion",
+      "detail": "The App Store lane selects an explicit valid TestFlight build whose live provenance metadata matches the immutable candidate, without rebuilding or re-uploading it.",
+      "file": "ios/fastlane/Fastfile"
+    },
+    {
+      "area": "repository-gates",
+      "status": "pass",
+      "label": "iOS permission and OAuth callback declarations",
+      "detail": "Location, callback, exact OAuth origin, and build-version substitutions are declared.",
+      "file": "ios/FuelWellApp/Info.plist"
+    },
+    {
+      "area": "repository-gates",
+      "status": "pass",
+      "label": "App Store export-compliance declaration",
+      "detail": "The app declares that it only uses exempt platform encryption, avoiding a redundant processing hold.",
+      "file": "ios/FuelWellApp/Info.plist"
+    },
+    {
       "area": "human-gates",
-      "status": "blocker",
+      "status": "pass",
       "label": "FUELWELL_APP_IDENTIFIER configured",
-      "detail": "Required for Fastlane beta/release, but should not be committed.",
+      "detail": "Environment variable is present.",
       "file": null
     },
     {
       "area": "human-gates",
-      "status": "blocker",
+      "status": "pass",
       "label": "FUELWELL_APPLE_ID configured",
-      "detail": "Required for Fastlane beta/release, but should not be committed.",
+      "detail": "Environment variable is present.",
       "file": null
     },
     {
       "area": "human-gates",
-      "status": "blocker",
+      "status": "pass",
       "label": "FUELWELL_APPLE_TEAM_ID configured",
-      "detail": "Required for Fastlane beta/release, but should not be committed.",
+      "detail": "Environment variable is present.",
       "file": null
     },
     {
       "area": "human-gates",
-      "status": "blocker",
-      "label": "FUELWELL_APP_STORE_CONNECT_TEAM_ID configured",
-      "detail": "Required for Fastlane beta/release, but should not be committed.",
-      "file": null
-    },
-    {
-      "area": "human-gates",
-      "status": "blocker",
+      "status": "pass",
       "label": "FUELWELL_MATCH_GIT_URL configured",
-      "detail": "Required for Fastlane beta/release, but should not be committed.",
+      "detail": "Environment variable is present.",
       "file": null
     },
     {
       "area": "human-gates",
-      "status": "blocker",
+      "status": "pass",
+      "label": "App Store Connect provider selection",
+      "detail": "The team ID is optional; Fastlane will use the App Store Connect API key's default provider.",
+      "file": null
+    },
+    {
+      "area": "human-gates",
+      "status": "pass",
       "label": "FUELWELL_SCREENSHOT_ATTESTATION_KEY configured",
-      "detail": "Required for Fastlane beta/release, but should not be committed.",
+      "detail": "The private screenshot provenance key is present.",
       "file": null
     },
     {

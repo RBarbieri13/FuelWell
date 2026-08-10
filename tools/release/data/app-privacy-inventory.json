@@ -1,0 +1,222 @@
+{
+  "schemaVersion": 1,
+  "lastReviewed": "2026-08-10",
+  "collectsData": true,
+  "tracking": false,
+  "trackingDomains": [],
+  "dataTypes": [
+    {
+      "id": "account-name",
+      "appPrivacyCategory": "Contact Info",
+      "appPrivacyDataType": "Name",
+      "privacyManifestType": "NSPrivacyCollectedDataTypeName",
+      "purposes": [
+        "NSPrivacyCollectedDataTypePurposeAppFunctionality",
+        "NSPrivacyCollectedDataTypePurposeProductPersonalization"
+      ],
+      "linkedToUser": true,
+      "tracking": false,
+      "contexts": [
+        "Optional profile display name",
+        "Account-specific Coach personalization"
+      ],
+      "processors": [
+        "FuelWell",
+        "Supabase"
+      ]
+    },
+    {
+      "id": "account-email",
+      "appPrivacyCategory": "Contact Info",
+      "appPrivacyDataType": "Email Address",
+      "privacyManifestType": "NSPrivacyCollectedDataTypeEmailAddress",
+      "purposes": [
+        "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+      ],
+      "linkedToUser": true,
+      "tracking": false,
+      "contexts": [
+        "Authentication",
+        "Account recovery and account management"
+      ],
+      "processors": [
+        "FuelWell",
+        "Supabase"
+      ]
+    },
+    {
+      "id": "account-user-id",
+      "appPrivacyCategory": "Identifiers",
+      "appPrivacyDataType": "User ID",
+      "privacyManifestType": "NSPrivacyCollectedDataTypeUserID",
+      "purposes": [
+        "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+      ],
+      "linkedToUser": true,
+      "tracking": false,
+      "contexts": [
+        "Authenticated account identifier",
+        "Per-user data isolation and ownership"
+      ],
+      "processors": [
+        "FuelWell",
+        "Supabase"
+      ]
+    },
+    {
+      "id": "coach-free-form-and-documents",
+      "appPrivacyCategory": "User Content",
+      "appPrivacyDataType": "Other User Content",
+      "privacyManifestType": "NSPrivacyCollectedDataTypeOtherUserContent",
+      "purposes": [
+        "NSPrivacyCollectedDataTypePurposeAppFunctionality",
+        "NSPrivacyCollectedDataTypePurposeProductPersonalization"
+      ],
+      "linkedToUser": true,
+      "tracking": false,
+      "contexts": [
+        "Private Coach messages",
+        "User-selected PDF, email, and text attachments",
+        "Recipes, grocery items, goals, and other user-entered planning content"
+      ],
+      "processors": [
+        "FuelWell",
+        "Supabase",
+        "Anthropic when Coach is enabled"
+      ]
+    },
+    {
+      "id": "nutrition-and-health",
+      "appPrivacyCategory": "Health & Fitness",
+      "appPrivacyDataType": "Health",
+      "privacyManifestType": "NSPrivacyCollectedDataTypeHealth",
+      "purposes": [
+        "NSPrivacyCollectedDataTypePurposeAppFunctionality",
+        "NSPrivacyCollectedDataTypePurposeProductPersonalization"
+      ],
+      "linkedToUser": true,
+      "tracking": false,
+      "contexts": [
+        "Meals, calories, macros, nutrition history, dietary preferences, and allergies",
+        "Body measurements, goals, recovery, sleep, and other health-profile context",
+        "HealthKit health data the user authorizes"
+      ],
+      "processors": [
+        "FuelWell",
+        "Supabase",
+        "Anthropic when Coach is enabled"
+      ]
+    },
+    {
+      "id": "fitness-activity",
+      "appPrivacyCategory": "Health & Fitness",
+      "appPrivacyDataType": "Fitness",
+      "privacyManifestType": "NSPrivacyCollectedDataTypeFitness",
+      "purposes": [
+        "NSPrivacyCollectedDataTypePurposeAppFunctionality",
+        "NSPrivacyCollectedDataTypePurposeProductPersonalization"
+      ],
+      "linkedToUser": true,
+      "tracking": false,
+      "contexts": [
+        "Workout logs, activity history, exercise preferences, and equipment",
+        "HealthKit fitness and activity data the user authorizes"
+      ],
+      "processors": [
+        "FuelWell",
+        "Supabase",
+        "Anthropic when Coach is enabled"
+      ]
+    },
+    {
+      "id": "photos-and-videos",
+      "appPrivacyCategory": "User Content",
+      "appPrivacyDataType": "Photos or Videos",
+      "privacyManifestType": "NSPrivacyCollectedDataTypePhotosorVideos",
+      "purposes": [
+        "NSPrivacyCollectedDataTypePurposeAppFunctionality",
+        "NSPrivacyCollectedDataTypePurposeProductPersonalization"
+      ],
+      "linkedToUser": true,
+      "tracking": false,
+      "contexts": [
+        "User-selected meal photos",
+        "User-selected Coach image attachments"
+      ],
+      "processors": [
+        "FuelWell",
+        "Supabase when an account attachment is saved",
+        "Anthropic when image analysis is enabled"
+      ]
+    },
+    {
+      "id": "precise-location",
+      "appPrivacyCategory": "Location",
+      "appPrivacyDataType": "Precise Location",
+      "privacyManifestType": "NSPrivacyCollectedDataTypePreciseLocation",
+      "purposes": [
+        "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+      ],
+      "linkedToUser": true,
+      "tracking": false,
+      "contexts": [
+        "Optional latitude and longitude submitted for a nearby restaurant search",
+        "Processed for the requested lookup and not persisted as profile history by FuelWell"
+      ],
+      "processors": [
+        "FuelWell",
+        "OpenStreetMap Overpass for the requested nearby lookup"
+      ]
+    },
+    {
+      "id": "product-interaction",
+      "appPrivacyCategory": "Usage Data",
+      "appPrivacyDataType": "Product Interaction",
+      "privacyManifestType": "NSPrivacyCollectedDataTypeProductInteraction",
+      "purposes": [
+        "NSPrivacyCollectedDataTypePurposeAnalytics"
+      ],
+      "linkedToUser": false,
+      "tracking": false,
+      "contexts": [
+        "Limited app launches, tab selections, feature events, and recommendation interactions"
+      ],
+      "processors": [
+        "FuelWell",
+        "PostHog when analytics is enabled"
+      ]
+    },
+    {
+      "id": "crash-data",
+      "appPrivacyCategory": "Diagnostics",
+      "appPrivacyDataType": "Crash Data",
+      "privacyManifestType": "NSPrivacyCollectedDataTypeCrashData",
+      "purposes": [
+        "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+      ],
+      "linkedToUser": false,
+      "tracking": false,
+      "contexts": [
+        "Crash reports and limited error context used to diagnose reliability issues"
+      ],
+      "processors": [
+        "FuelWell",
+        "Sentry when crash reporting is enabled"
+      ]
+    }
+  ],
+  "explicitlyNotCollected": [
+    {
+      "appPrivacyDataType": "Phone Number",
+      "reason": "FuelWell does not collect an end-user phone number; the separate App Review contact phone is submission metadata."
+    },
+    {
+      "appPrivacyDataType": "Advertising Data",
+      "reason": "FuelWell contains no advertising and does not collect advertising data."
+    },
+    {
+      "appPrivacyDataType": "Device ID",
+      "reason": "FuelWell does not collect an advertising identifier or other device-level identifier."
+    }
+  ]
+}

@@ -26,5 +26,6 @@ describe("launch preflight", () => {
     expect(ids).toContain("fitness-grocery-schema");
     expect(ids).toContain("body-log-schema");
     expect(ids).toContain("profile-preferences-schema");
+    expect(ids).toContain("server-authoritative-state-schema");
   });
 });

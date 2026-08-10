@@ -8,33 +8,44 @@ func privacyManifestMatchesCurrentReleaseSurface() throws {
     let collectedTypes = try privacyDataTypes(in: manifest)
     #expect(collectedTypes == [
         "NSPrivacyCollectedDataTypeCrashData",
+        "NSPrivacyCollectedDataTypeEmailAddress",
         "NSPrivacyCollectedDataTypeFitness",
         "NSPrivacyCollectedDataTypeHealth",
+        "NSPrivacyCollectedDataTypeName",
+        "NSPrivacyCollectedDataTypeOtherUserContent",
         "NSPrivacyCollectedDataTypePhotosorVideos",
+        "NSPrivacyCollectedDataTypePreciseLocation",
+        "NSPrivacyCollectedDataTypeProductInteraction",
+        "NSPrivacyCollectedDataTypeUserID"
+    ])
+
+    let functionality = "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+    let personalization = "NSPrivacyCollectedDataTypePurposeProductPersonalization"
+    let expectedPurposes = [
+        "NSPrivacyCollectedDataTypeName": [functionality, personalization],
+        "NSPrivacyCollectedDataTypeEmailAddress": [functionality],
+        "NSPrivacyCollectedDataTypeUserID": [functionality],
+        "NSPrivacyCollectedDataTypeOtherUserContent": [functionality, personalization],
+        "NSPrivacyCollectedDataTypeHealth": [functionality, personalization],
+        "NSPrivacyCollectedDataTypeFitness": [functionality, personalization],
+        "NSPrivacyCollectedDataTypePhotosorVideos": [functionality, personalization],
+        "NSPrivacyCollectedDataTypePreciseLocation": [functionality],
+        "NSPrivacyCollectedDataTypeProductInteraction": [
+            "NSPrivacyCollectedDataTypePurposeAnalytics"
+        ],
+        "NSPrivacyCollectedDataTypeCrashData": [functionality]
+    ]
+    for (dataType, purposes) in expectedPurposes {
+        #expect(try purpose(for: dataType, in: manifest) == purposes.sorted())
+    }
+
+    let notLinked = [
+        "NSPrivacyCollectedDataTypeCrashData",
         "NSPrivacyCollectedDataTypeProductInteraction"
-    ])
-
-    #expect(try purpose(for: "NSPrivacyCollectedDataTypeHealth", in: manifest) == [
-        "NSPrivacyCollectedDataTypePurposeAppFunctionality"
-    ])
-    #expect(try purpose(for: "NSPrivacyCollectedDataTypeFitness", in: manifest) == [
-        "NSPrivacyCollectedDataTypePurposeAppFunctionality"
-    ])
-    #expect(try purpose(for: "NSPrivacyCollectedDataTypePhotosorVideos", in: manifest) == [
-        "NSPrivacyCollectedDataTypePurposeAppFunctionality"
-    ])
-    #expect(try purpose(for: "NSPrivacyCollectedDataTypeCrashData", in: manifest) == [
-        "NSPrivacyCollectedDataTypePurposeAppFunctionality"
-    ])
-    #expect(try purpose(for: "NSPrivacyCollectedDataTypeProductInteraction", in: manifest) == [
-        "NSPrivacyCollectedDataTypePurposeAnalytics"
-    ])
-
-    #expect(try linkedFlag(for: "NSPrivacyCollectedDataTypeHealth", in: manifest) == true)
-    #expect(try linkedFlag(for: "NSPrivacyCollectedDataTypeFitness", in: manifest) == true)
-    #expect(try linkedFlag(for: "NSPrivacyCollectedDataTypePhotosorVideos", in: manifest) == true)
-    #expect(try linkedFlag(for: "NSPrivacyCollectedDataTypeCrashData", in: manifest) == false)
-    #expect(try linkedFlag(for: "NSPrivacyCollectedDataTypeProductInteraction", in: manifest) == false)
+    ]
+    for dataType in collectedTypes {
+        #expect(try linkedFlag(for: dataType, in: manifest) == !notLinked.contains(dataType))
+    }
 
     #expect(manifest["NSPrivacyTracking"] as? Bool == false)
     #expect((manifest["NSPrivacyTrackingDomains"] as? [String]) == [])

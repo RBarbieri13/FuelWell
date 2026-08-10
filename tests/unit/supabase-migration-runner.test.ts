@@ -14,15 +14,34 @@ describe("Supabase migration runner", () => {
     expect(script).not.toContain('${repo_root}/ios/supabase/migrations');
   });
 
-  it("upserts an immutable version ledger after each successful apply", () => {
-    expect(script).toContain("insert into public.schema_migrations (version, name, checksum)");
-    expect(script).toContain("on conflict (version) do update");
-    expect(script).toContain('record_checksum "${version}" "${filename}" "${expected_checksum}"');
+  it("uses Supabase's canonical migration ledger and never creates a shadow ledger", () => {
+    expect(script).toContain("supabase_migrations.schema_migrations");
+    expect(script).not.toContain("public.schema_migrations");
+    expect(script).not.toContain("create table if not exists");
   });
 
-  it("backfills missing checksums without replaying an applied migration", () => {
-    expect(script).toContain('if [[ -z "${current_checksum}" ]]');
-    expect(script).toContain('if [[ "${command_name}" == "apply" ]]');
-    expect(script).toContain('record_checksum "${version}" "${filename}" "${expected_checksum}"');
+  it("applies each migration and its canonical ledger entry in one transaction", () => {
+    expect(script).toContain("insert into supabase_migrations.schema_migrations (version, name, statements)");
+    expect(script).toContain("on conflict (version) do nothing");
+    expect(script).toContain("--single-transaction");
+    expect(script).toContain('apply_migration_atomically "${migration}" "${canonical_version}" "${migration_name}"');
+  });
+
+  it("uses durable canonical names across environments and aliases the renamed migration", () => {
+    expect(script).toContain("canonical_name_for");
+    expect(script).toContain('20260612120000_profiles_preferences_jsonb.sql) echo "add_profiles_preferences_jsonb"');
+    expect(script).toContain("applied_version_for_name");
+    expect(script).toContain("canonical migration name '${canonical_name}' is duplicated");
+  });
+
+  it("fails closed when the canonical ledger is absent", () => {
+    expect(script).toContain("canonical_ledger_exists");
+    expect(script).toContain("Refusing to continue because supabase_migrations.schema_migrations is missing");
+  });
+
+  it("fails both plan and apply when files differ from the reviewed checksum manifest", () => {
+    expect(script).toContain('manifest_mismatch=1');
+    expect(script).toContain('if [[ "${manifest_mismatch}" == "1" ]]');
+    expect(script).toContain("Refusing to continue because migration files differ from the reviewed manifest");
   });
 });

@@ -61,6 +61,8 @@ env:
   FUELWELL_CANDIDATE_ENVIRONMENT: ${{ inputs.candidate_environment }}
   FUELWELL_UI_TEST_EMAIL: ${{ secrets.FUELWELL_UI_TEST_EMAIL }}
   FUELWELL_UI_TEST_PASSWORD: ${{ secrets.FUELWELL_UI_TEST_PASSWORD }}
+  FUELWELL_UI_TEST_SECOND_EMAIL: ${{ secrets.FUELWELL_UI_TEST_SECOND_EMAIL }}
+  FUELWELL_UI_TEST_SECOND_PASSWORD: ${{ secrets.FUELWELL_UI_TEST_SECOND_PASSWORD }}
   NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
   NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
   FUELWELL_RELEASE_TEST_DEVICE: "iPhone 17"
@@ -120,6 +122,7 @@ jobs:
         working-directory: .
         run: |
           npm ci
+          npm audit --omit=dev --audit-level=high
           npx playwright install chromium webkit
 
       - name: Install Ruby dependencies

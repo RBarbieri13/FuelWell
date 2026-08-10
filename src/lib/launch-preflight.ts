@@ -66,6 +66,7 @@ export function getLaunchPreflight(): LaunchPreflight {
   const hasGoalContext = migrationExists("20260612170000_goal_loop_integrations.sql");
   const hasFitnessGrocery = migrationExists("20260712200713_fitness_grocery_foundation.sql");
   const hasBodyLog = migrationExists("20260712213000_body_log_entries.sql");
+  const hasServerAuthoritativeState = migrationExists("20260810040034_server_authoritative_user_app_state.sql");
 
   const checks: PreflightCheck[] = [
     {
@@ -165,6 +166,16 @@ export function getLaunchPreflight(): LaunchPreflight {
         ? "Weight, mood, and water check-ins are defined with one user-owned entry per day."
         : "Body check-in persistence migration is missing.",
       state: hasBodyLog ? "pass" : "fail",
+      requiredForPreview: false,
+      requiredForProduction: true,
+    },
+    {
+      id: "server-authoritative-state-schema",
+      label: "Server-authoritative user state",
+      detail: hasServerAuthoritativeState
+        ? "Authenticated app state is defined in a tracked, user-owned migration instead of relying on browser storage."
+        : "The server-authoritative user state migration is missing. Signed-in state cannot be declared durable or isolated.",
+      state: hasServerAuthoritativeState ? "pass" : "fail",
       requiredForPreview: false,
       requiredForProduction: true,
     },

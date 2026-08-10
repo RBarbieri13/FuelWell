@@ -118,7 +118,11 @@ open class Snapshot: NSObject {
         do {
             let launchArguments = try String(contentsOf: path, encoding: .utf8)
             let regex = try NSRegularExpression(pattern: "(\\\".+?\\\"|\\S+)", options: [])
-            let matches = regex.matches(in: launchArguments, options: [], range: NSRange(location: 0, length: launchArguments.count))
+            let matches = regex.matches(
+                in: launchArguments,
+                options: [],
+                range: NSRange(location: 0, length: launchArguments.count)
+            )
             let results = matches.map { result -> String in
                 (launchArguments as NSString).substring(with: result.range)
             }
@@ -145,9 +149,14 @@ open class Snapshot: NSObject {
         }
 
         let screenshot = XCUIScreen.main.screenshot()
-        let image = XCUIDevice.shared.orientation.isLandscape ? fixLandscapeOrientation(image: screenshot.image) : screenshot.image
+        let image = XCUIDevice.shared.orientation.isLandscape
+            ? fixLandscapeOrientation(image: screenshot.image)
+            : screenshot.image
 
-        guard var simulator = ProcessInfo().environment["SIMULATOR_DEVICE_NAME"], let screenshotsDir = screenshotsDirectory else {
+        guard
+            var simulator = ProcessInfo().environment["SIMULATOR_DEVICE_NAME"],
+            let screenshotsDir = screenshotsDirectory
+        else {
             return
         }
 
@@ -197,23 +206,24 @@ open class Snapshot: NSObject {
     }
 }
 
-private extension XCUIElementAttributes {
-    var isNetworkLoadingIndicator: Bool {
+extension XCUIElementAttributes {
+    fileprivate var isNetworkLoadingIndicator: Bool {
         if hasAllowListedIdentifier {
             return false
         }
 
         let hasOldLoadingIndicatorSize = frame.size == CGSize(width: 10, height: 20)
-        let hasNewLoadingIndicatorSize = frame.size.width.isBetween(46, and: 47) && frame.size.height.isBetween(2, and: 3)
+        let hasNewLoadingIndicatorSize = frame.size.width.isBetween(46, and: 47)
+            && frame.size.height.isBetween(2, and: 3)
 
         return hasOldLoadingIndicatorSize || hasNewLoadingIndicatorSize
     }
 
-    var hasAllowListedIdentifier: Bool {
+    fileprivate var hasAllowListedIdentifier: Bool {
         ["GeofenceLocationTrackingOn", "StandardLocationTrackingOn"].contains(identifier)
     }
 
-    func isStatusBar(_ deviceWidth: CGFloat) -> Bool {
+    fileprivate func isStatusBar(_ deviceWidth: CGFloat) -> Bool {
         if elementType == .statusBar {
             return true
         }
@@ -228,8 +238,8 @@ private extension XCUIElementAttributes {
     }
 }
 
-private extension XCUIElementQuery {
-    var networkLoadingIndicators: XCUIElementQuery {
+extension XCUIElementQuery {
+    fileprivate var networkLoadingIndicators: XCUIElementQuery {
         let isNetworkLoadingIndicator = NSPredicate { evaluatedObject, _ in
             guard let element = evaluatedObject as? XCUIElementAttributes else {
                 return false
@@ -241,7 +251,7 @@ private extension XCUIElementQuery {
     }
 
     @MainActor
-    var deviceStatusBars: XCUIElementQuery {
+    fileprivate var deviceStatusBars: XCUIElementQuery {
         guard let app = Snapshot.app else {
             fatalError("XCUIApplication is not set. Please call setupSnapshot(app) before snapshot().")
         }
@@ -259,8 +269,8 @@ private extension XCUIElementQuery {
     }
 }
 
-private extension CGFloat {
-    func isBetween(_ numberA: CGFloat, and numberB: CGFloat) -> Bool {
+extension CGFloat {
+    fileprivate func isBetween(_ numberA: CGFloat, and numberB: CGFloat) -> Bool {
         numberA...numberB ~= self
     }
 }

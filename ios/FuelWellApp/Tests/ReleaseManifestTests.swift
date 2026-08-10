@@ -80,7 +80,12 @@ final class ReleaseManifestTests: XCTestCase {
             "FuelWell is taking longer than expected. Check your connection and try again."
         )
         XCTAssertEqual(
-            FuelWellDisplayError.message(for: NSError(domain: WKError.errorDomain, code: WKError.webContentProcessTerminated.rawValue)),
+            FuelWellDisplayError.message(
+                for: NSError(
+                    domain: WKError.errorDomain,
+                    code: WKError.webContentProcessTerminated.rawValue
+                )
+            ),
             "FuelWell is temporarily unavailable. Try again in a moment."
         )
     }

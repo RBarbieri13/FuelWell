@@ -3,14 +3,16 @@ import Foundation
 import XCTest
 
 final class FuelWellShellRoutingTests: XCTestCase {
-    private var policy: FuelWellURLPolicy {
+    private func makePolicy() throws -> FuelWellURLPolicy {
         FuelWellURLPolicy(
-            appURL: URL(string: "https://fuelwell-build-123.vercel.app/app/dashboard")!,
-            supabaseURL: URL(string: "https://project-ref.supabase.co")!
+            appURL: try XCTUnwrap(URL(string: "https://fuelwell-build-123.vercel.app/app/dashboard")),
+            supabaseURL: try XCTUnwrap(URL(string: "https://project-ref.supabase.co"))
         )
     }
 
     func testOnlyImmutableFuelWellOriginStaysInternal() throws {
+        let policy = try makePolicy()
+
         XCTAssertEqual(
             policy.disposition(for: try url("https://fuelwell-build-123.vercel.app/app/coach")),
             .allowInternal
@@ -26,11 +28,14 @@ final class FuelWellShellRoutingTests: XCTestCase {
     }
 
     func testUntrustedAndNonHTTPSDestinationsLeaveTheWebView() throws {
+        let policy = try makePolicy()
+
         XCTAssertEqual(policy.disposition(for: try url("https://www.apple.com/")), .openExternal)
         XCTAssertEqual(policy.disposition(for: try url("mailto:support@fuelwell.app")), .openExternal)
     }
 
     func testCustomAuthCallbackReturnsToNativeCallbackRoute() throws {
+        let policy = try makePolicy()
         let incoming = try url("fuelwell://auth/callback?code=abc123&next=%2Fapp%2Fcoach")
         let destination = try XCTUnwrap(policy.webDestination(for: incoming))
 
@@ -41,6 +46,7 @@ final class FuelWellShellRoutingTests: XCTestCase {
     }
 
     func testUniversalCallbackReturnsToImmutableReleaseOrigin() throws {
+        let policy = try makePolicy()
         let incoming = try url("https://fuelwell-preview.vercel.app/callback?code=abc123")
         let destination = try XCTUnwrap(policy.webDestination(for: incoming))
 
@@ -50,6 +56,7 @@ final class FuelWellShellRoutingTests: XCTestCase {
     }
 
     func testDeepLinkPathCannotEscapeTheBoundFuelWellOrigin() throws {
+        let policy = try makePolicy()
         let safe = try XCTUnwrap(policy.webDestination(for: try url("fuelwell://open?path=%2Fapp%2Fworkouts")))
         XCTAssertEqual(safe.absoluteString, "https://fuelwell-build-123.vercel.app/app/workouts")
 
@@ -64,6 +71,7 @@ final class FuelWellShellRoutingTests: XCTestCase {
     }
 
     func testNativeOAuthRequestAcceptsOnlySupportedProvidersAndTrustedSupabaseAuthorization() throws {
+        let policy = try makePolicy()
         let request = try FuelWellNativeOAuthRequest(
             messageBody: [
                 "authorizationURL": "https://project-ref.supabase.co/auth/v1/authorize?provider=google&redirect_to=fuelwell%3A%2F%2Fauth%2Fcallback",
@@ -112,7 +120,9 @@ final class FuelWellShellRoutingTests: XCTestCase {
         }
     }
 
-    func testOAuthBridgeRequiresTheExactImmutableMainFrameOrigin() {
+    func testOAuthBridgeRequiresTheExactImmutableMainFrameOrigin() throws {
+        let policy = try makePolicy()
+
         XCTAssertTrue(
             policy.isTrustedBridgeOrigin(
                 scheme: "https",

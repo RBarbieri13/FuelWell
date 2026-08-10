@@ -3,6 +3,9 @@ import SwiftUI
 import UIKit
 import WebKit
 
+// The native shell and its tightly coupled delegates stay together so routing,
+// OAuth, downloads, and shell-test behavior remain auditable in one bridge.
+// swiftlint:disable file_length type_body_length
 struct FuelWellWebView: UIViewRepresentable {
     static let oauthMessageName = "fuelwellOAuth"
     static let shellTestMessageName = "fuelwellShellTest"
@@ -474,18 +477,21 @@ private final class FuelWellTestSchemeHandler: NSObject, WKURLSchemeHandler {
         if url.path == "/second" {
             return page(title: "Second screen", body: "<p>Native web history is active.</p>")
         }
-        if url.path == "/deep-link" {
+        if url.path == "/app/deep-link" {
             return page(title: "Deep link received", body: "<p>The link returned to the FuelWell web session.</p>")
         }
         if url.path == FuelWellURLPolicy.nativeCallbackPath {
-            return page(title: "Authentication callback received", body: "<p>The secure callback returned to FuelWell.</p>")
+            return page(
+                title: "Authentication callback received",
+                body: "<p>The secure callback returned to FuelWell.</p>"
+            )
         }
 
         let body = """
         <nav aria-label="Shell verification">
           <a href="fuelwell-test://app/second" aria-label="Open internal test page">Internal page</a>
           <a href="https://www.apple.com/" target="_blank" aria-label="Open external test link">External link</a>
-          <a href="fuelwell://open?path=/deep-link" aria-label="Open FuelWell deep link">Deep link</a>
+          <a href="fuelwell://open?path=/app/deep-link" aria-label="Open FuelWell deep link">Deep link</a>
           <button aria-label="Start native Google sign in" onclick="startOAuth()">Google sign in</button>
           <label class="button" for="upload">Choose a file</label>
           <input id="upload" aria-label="Choose a file to upload" type="file" />
@@ -495,7 +501,7 @@ private final class FuelWellTestSchemeHandler: NSObject, WKURLSchemeHandler {
         <script>
           function startOAuth() {
             window.webkit.messageHandlers.fuelwellOAuth.postMessage({
-              authorizationURL: 'https://project.supabase.co/auth/v1/authorize?provider=google&redirect_to=fuelwell%3A%2F%2Fauth%2Fcallback%3Fnext%3D%252Fapp%252Fdashboard',
+              authorizationURL: 'https://project-ref.supabase.co/auth/v1/authorize?provider=google&redirect_to=fuelwell%3A%2F%2Fauth%2Fcallback%3Fnext%3D%252Fapp%252Fdashboard',
               provider: 'google',
               next: '/app/dashboard'
             });
@@ -519,10 +525,29 @@ private final class FuelWellTestSchemeHandler: NSObject, WKURLSchemeHandler {
           <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
           <style>
             * { box-sizing: border-box; }
-            body { margin: 0; padding: 24px; font: 18px -apple-system, system-ui; color: CanvasText; background: Canvas; }
+            body {
+              margin: 0;
+              padding: 24px;
+              font: 18px -apple-system, system-ui;
+              color: CanvasText;
+              background: Canvas;
+            }
             h1 { font-size: 28px; }
             nav { display: grid; gap: 12px; }
-            a, button, .button { display: flex; min-height: 48px; align-items: center; justify-content: center; border: 1px solid ButtonText; border-radius: 12px; padding: 10px 14px; color: LinkText; background: ButtonFace; font: inherit; font-weight: 700; text-decoration: none; }
+            a, button, .button {
+              display: flex;
+              min-height: 48px;
+              align-items: center;
+              justify-content: center;
+              border: 1px solid ButtonText;
+              border-radius: 12px;
+              padding: 10px 14px;
+              color: LinkText;
+              background: ButtonFace;
+              font: inherit;
+              font-weight: 700;
+              text-decoration: none;
+            }
             input[type=file] { position: absolute; inline-size: 1px; block-size: 1px; opacity: 0; }
           </style>
         </head>
@@ -531,3 +556,4 @@ private final class FuelWellTestSchemeHandler: NSObject, WKURLSchemeHandler {
         """
     }
 }
+// swiftlint:enable file_length type_body_length

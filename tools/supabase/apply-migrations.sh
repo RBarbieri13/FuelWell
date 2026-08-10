@@ -4,6 +4,7 @@ set -euo pipefail
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 env_file="${FUELWELL_SUPABASE_ENV_FILE:-${HOME}/.fuelwell/supabase-staging.env}"
 migrations_dir="${FUELWELL_SUPABASE_MIGRATIONS_DIR:-${repo_root}/supabase/migrations}"
+manifest_file="${FUELWELL_SUPABASE_MANIFEST_FILE:-${repo_root}/tools/supabase/data/migration-manifest.json}"
 command_name="${1:-plan}"
 
 usage() {
@@ -17,7 +18,9 @@ Environment:
 
 Safety:
   apply refuses production unless FUELWELL_SUPABASE_ALLOW_PRODUCTION_APPLY=1.
-  This script never prompts for secrets and never writes production without the explicit flag above.
+  The canonical supabase_migrations.schema_migrations ledger must already exist.
+  Repository files must match the reviewed SHA-256 migration manifest.
+  This script never creates or trusts a parallel public migration ledger.
 USAGE
 }
 
@@ -35,8 +38,39 @@ if [[ ! -d "${migrations_dir}" ]]; then
   exit 2
 fi
 
+if [[ ! -f "${manifest_file}" ]]; then
+  echo "Missing reviewed migration manifest: ${manifest_file}" >&2
+  echo "Run tools/supabase/generate-migration-manifest.mjs --write and review the result." >&2
+  exit 2
+fi
+
 checksum_for() {
   shasum -a 256 "$1" | awk '{print $1}'
+}
+
+manifest_checksum_for() {
+  local filename="$1"
+  node -e '
+    const fs = require("node:fs");
+    const manifest = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
+    const migration = manifest.migrations.find((entry) => entry.file === process.argv[2]);
+    if (!migration) process.exit(3);
+    process.stdout.write(migration.sha256);
+  ' "${manifest_file}" "${filename}"
+}
+
+# Supabase's migration APIs assign their own timestamps. Names are the durable
+# identity across staging, production, and local history. One old migration was
+# renamed before this manifest was introduced, so its canonical alias is explicit.
+canonical_name_for() {
+  local filename="$1"
+  case "${filename}" in
+    20260612120000_profiles_preferences_jsonb.sql) echo "add_profiles_preferences_jsonb" ;;
+    *)
+      local name="${filename#*_}"
+      echo "${name%.sql}"
+      ;;
+  esac
 }
 
 if [[ -f "${env_file}" ]]; then
@@ -77,75 +111,85 @@ fi
 
 psql_base=(psql "${db_url}" -v ON_ERROR_STOP=1 -X -q)
 
-ensure_tracking_table() {
-  "${psql_base[@]}" -c "create table if not exists public.schema_migrations (version text primary key, name text not null, checksum text, applied_at timestamptz not null default now());" >/dev/null
-  "${psql_base[@]}" -c "alter table public.schema_migrations add column if not exists checksum text;" >/dev/null
-}
-
-is_applied() {
-  local version="$1"
+canonical_ledger_exists() {
   local result
-  result="$("${psql_base[@]}" -At -c "select 1 from public.schema_migrations where version = '${version}' limit 1;" 2>/dev/null || true)"
-  [[ "${result}" == "1" ]]
+  result="$("${psql_base[@]}" -At -c "select to_regclass('supabase_migrations.schema_migrations') is not null;" 2>/dev/null || true)"
+  [[ "${result}" == "t" ]]
 }
 
-applied_checksum() {
-  local version="$1"
-  "${psql_base[@]}" -At -c "select coalesce(checksum, '') from public.schema_migrations where version = '${version}' limit 1;" 2>/dev/null || true
+applied_version_for_name() {
+  local canonical_name="$1"
+  local result
+  result="$("${psql_base[@]}" -At -c "select coalesce(string_agg(version, ',' order by version), '') from supabase_migrations.schema_migrations where name = '${canonical_name}';" 2>/dev/null || true)"
+  if [[ "${result}" == *,* ]]; then
+    echo "Refusing to continue because canonical migration name '${canonical_name}' is duplicated: ${result}" >&2
+    exit 6
+  fi
+  printf '%s' "${result}"
 }
 
-record_checksum() {
-  local version="$1"
-  local name="$2"
-  local checksum="$3"
-  "${psql_base[@]}" -c "
-    insert into public.schema_migrations (version, name, checksum)
-    values ('${version}', '${name}', '${checksum}')
-    on conflict (version) do update
-      set name = excluded.name,
-          checksum = excluded.checksum;
-  " >/dev/null
+apply_migration_atomically() {
+  local migration="$1"
+  local version="$2"
+  local name="$3"
+
+  "${psql_base[@]}" --single-transaction \
+    -f "${migration}" \
+    -c "
+      insert into supabase_migrations.schema_migrations (version, name, statements)
+      values ('${version}', '${name}', array['Applied from reviewed FuelWell migration ${name}'])
+      on conflict (version) do nothing;
+    " >/dev/null
 }
 
 echo "Supabase target: ${target}"
 echo "Migration directory: ${migrations_dir}"
+echo "Canonical ledger: supabase_migrations.schema_migrations"
 echo
+
+manifest_mismatch=0
+for migration in "${migrations[@]}"; do
+  filename="$(basename "${migration}")"
+  expected_checksum="$(checksum_for "${migration}")"
+  reviewed_checksum="$(manifest_checksum_for "${filename}" 2>/dev/null || true)"
+  if [[ -z "${reviewed_checksum}" || "${expected_checksum}" != "${reviewed_checksum}" ]]; then
+    printf 'unreviewed  %s  repository=%s  manifest=%s\n' "${filename}" "${expected_checksum}" "${reviewed_checksum:-missing}"
+    manifest_mismatch=1
+  fi
+done
+
+if [[ "${manifest_mismatch}" == "1" ]]; then
+  echo "Refusing to continue because migration files differ from the reviewed manifest." >&2
+  exit 4
+fi
 
 if [[ -z "${db_url}" ]]; then
   for migration in "${migrations[@]}"; do
-    printf 'planned  %s  checksum=%s\n' "$(basename "${migration}")" "$(checksum_for "${migration}")"
+    filename="$(basename "${migration}")"
+    printf 'reviewed  %s  canonical-name=%s  checksum=%s\n' "${filename}" "$(canonical_name_for "${filename}")" "$(checksum_for "${migration}")"
   done
   echo
-  echo "Plan only. Set FUELWELL_SUPABASE_DB_URL to compare against schema_migrations or apply."
+  echo "Plan only. Set FUELWELL_SUPABASE_DB_URL to compare against the canonical Supabase migration ledger."
   exit 0
 fi
 
-ensure_tracking_table
+if ! canonical_ledger_exists; then
+  echo "Refusing to continue because supabase_migrations.schema_migrations is missing." >&2
+  echo "Use the Supabase CLI or Management API to initialize canonical migration history." >&2
+  exit 5
+fi
 
 pending=()
 for migration in "${migrations[@]}"; do
   filename="$(basename "${migration}")"
-  version="${filename%%_*}"
+  canonical_name="$(canonical_name_for "${filename}")"
   expected_checksum="$(checksum_for "${migration}")"
-  if is_applied "${version}"; then
-    current_checksum="$(applied_checksum "${version}")"
-    if [[ -z "${current_checksum}" ]]; then
-      printf 'applied  %s  checksum=%s  tracked=missing\n' "${filename}" "${expected_checksum}"
-      if [[ "${command_name}" == "apply" ]]; then
-        record_checksum "${version}" "${filename}" "${expected_checksum}"
-      fi
-    elif [[ "${current_checksum}" == "${expected_checksum}" ]]; then
-      printf 'applied  %s  checksum=%s\n' "${filename}" "${expected_checksum}"
-    else
-      printf 'changed  %s  expected=%s  database=%s\n' "${filename}" "${expected_checksum}" "${current_checksum}"
-      if [[ "${command_name}" == "apply" ]]; then
-        echo "Refusing apply because an already-applied migration checksum differs from the repository file." >&2
-        exit 4
-      fi
-    fi
+  applied_version="$(applied_version_for_name "${canonical_name}")"
+  if [[ -n "${applied_version}" ]]; then
+    printf 'applied  %s  canonical-name=%s  live-version=%s  checksum=%s\n' "${filename}" "${canonical_name}" "${applied_version}" "${expected_checksum}"
   else
     pending+=("${migration}")
-    printf 'pending  %s  checksum=%s\n' "${filename}" "${expected_checksum}"
+    printf 'pending  %s  canonical-name=%s  checksum=%s\n' "${filename}" "${canonical_name}" "${expected_checksum}"
   fi
 done
 
@@ -166,11 +210,11 @@ echo "Applying ${#pending[@]} pending migration(s)."
 
 for migration in "${pending[@]}"; do
   filename="$(basename "${migration}")"
-  version="${filename%%_*}"
-  expected_checksum="$(checksum_for "${migration}")"
-  echo "Applying ${filename}"
-  "${psql_base[@]}" -f "${migration}"
-  record_checksum "${version}" "${filename}" "${expected_checksum}"
+  canonical_version="${filename%%_*}"
+  migration_name="${filename#*_}"
+  migration_name="${migration_name%.sql}"
+  echo "Applying ${filename} as canonical version ${canonical_version}"
+  apply_migration_atomically "${migration}" "${canonical_version}" "${migration_name}"
 done
 
 echo

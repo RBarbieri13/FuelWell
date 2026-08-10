@@ -11,6 +11,31 @@ final class FuelWellCriticalPathUITests: XCTestCase {
         continueAfterFailure = false
     }
 
+    func testAppStoreCustomerScreenshots() {
+        XCUIDevice.shared.orientation = .portrait
+
+        let app = launchBoundRelease()
+        defer { app.terminate() }
+
+        let screenshots = [
+            AppStoreScreenshot(name: "01-today", navLabel: "Home", destinationLabel: "Today"),
+            AppStoreScreenshot(name: "02-log-meal", navLabel: "Log", destinationLabel: "Log a meal"),
+            AppStoreScreenshot(name: "03-coach", navLabel: "Coach", destinationLabel: "Message Coach"),
+            AppStoreScreenshot(name: "04-workouts", navLabel: "Move", destinationLabel: "Workouts"),
+            AppStoreScreenshot(name: "05-grocery-list", navLabel: "Groceries", destinationLabel: "Grocery list"),
+            AppStoreScreenshot(name: "06-daily-review", navLabel: "Review", destinationLabel: "Daily detail"),
+        ]
+
+        for screenshot in screenshots {
+            tap(label: screenshot.navLabel, in: app)
+            XCTAssertTrue(
+                element(in: app, label: screenshot.destinationLabel).waitForExistence(timeout: routeTimeout),
+                "\(screenshot.navLabel) did not reach \(screenshot.destinationLabel)."
+            )
+            captureAppStoreSnapshot(screenshot.name, in: app)
+        }
+    }
+
     func testBoundWebReleaseLaunchesDashboard() {
         let app = launchBoundRelease()
         defer { app.terminate() }
@@ -18,7 +43,7 @@ final class FuelWellCriticalPathUITests: XCTestCase {
         XCTAssertTrue(app.webViews.firstMatch.exists, "FuelWell must launch its release-bound WKWebView.")
         XCTAssertTrue(element(in: app, label: "Home").exists, "The bound web release did not reach the dashboard.")
         assertNoLoadFailure(in: app)
-        capture("bound-dashboard", in: app)
+        attachTestEvidence("bound-dashboard", in: app)
     }
 
     func testPrimaryRoutesNavigateWithoutDeadLinks() {
@@ -41,7 +66,7 @@ final class FuelWellCriticalPathUITests: XCTestCase {
                 "\(route.navLabel) did not reach \(route.destinationLabel)."
             )
             assertNoLoadFailure(in: app)
-            capture("route-\(route.navLabel.lowercased())", in: app)
+            attachTestEvidence("route-\(route.navLabel.lowercased())", in: app)
         }
     }
 
@@ -83,7 +108,7 @@ final class FuelWellCriticalPathUITests: XCTestCase {
             )
         }
         assertNoLoadFailure(in: app)
-        capture("coach-live-answer", in: app)
+        attachTestEvidence("coach-live-answer", in: app)
     }
 
     func testAccessibilityTextSizeKeepsPrimaryNavigationUsable() {
@@ -102,7 +127,7 @@ final class FuelWellCriticalPathUITests: XCTestCase {
         }
 
         assertNoLoadFailure(in: app)
-        capture("accessibility-text-primary-navigation", in: app)
+        attachTestEvidence("accessibility-text-primary-navigation", in: app)
     }
 
     func testNativeBackControlReturnsThroughWebHistory() {
@@ -119,7 +144,7 @@ final class FuelWellCriticalPathUITests: XCTestCase {
 
         XCTAssertTrue(element(in: app, label: "Shell test home").waitForExistence(timeout: routeTimeout))
         XCTAssertFalse(back.exists, "Back must disappear when no web history remains.")
-        capture("shell-native-back", in: app)
+        attachTestEvidence("shell-native-back", in: app)
     }
 
     func testExternalLinksAreRoutedOutsideTheFuelWellWebView() {
@@ -133,7 +158,7 @@ final class FuelWellCriticalPathUITests: XCTestCase {
             "External HTTPS links must be intercepted instead of loading in FuelWell."
         )
         XCTAssertTrue(element(in: app, label: "Shell test home").exists)
-        capture("shell-external-link", in: app)
+        attachTestEvidence("shell-external-link", in: app)
     }
 
     func testDeepLinkCallbackReturnsIntoTheBoundWebSession() {
@@ -145,7 +170,7 @@ final class FuelWellCriticalPathUITests: XCTestCase {
             element(in: app, label: "Deep link received").waitForExistence(timeout: routeTimeout),
             "FuelWell deep links must return to a trusted route in the existing WKWebView."
         )
-        capture("shell-deep-link-handoff", in: app)
+        attachTestEvidence("shell-deep-link-handoff", in: app)
     }
 
     func testNativeOAuthRequestLeavesTheEmbeddedWebView() {
@@ -159,7 +184,7 @@ final class FuelWellCriticalPathUITests: XCTestCase {
             "OAuth must hand off to the native authentication session bridge."
         )
         XCTAssertTrue(element(in: app, label: "Shell test home").exists)
-        capture("shell-native-oauth-handoff", in: app)
+        attachTestEvidence("shell-native-oauth-handoff", in: app)
     }
 
     func testFileUploadControlOpensTheSystemPicker() {
@@ -173,7 +198,7 @@ final class FuelWellCriticalPathUITests: XCTestCase {
         )
         XCTAssertTrue(app.buttons["Photo Library"].exists, "The upload control must retain photo-library access.")
         XCTAssertTrue(app.buttons["Take Photo or Video"].exists, "The upload control must retain camera access.")
-        capture("shell-file-upload-picker", in: app)
+        attachTestEvidence("shell-file-upload-picker", in: app)
     }
 
     func testDownloadUsesTheNativeDownloadPath() {
@@ -186,7 +211,7 @@ final class FuelWellCriticalPathUITests: XCTestCase {
                 .waitForExistence(timeout: routeTimeout),
             "Download responses must enter WKDownload instead of rendering as a web page."
         )
-        capture("shell-native-download", in: app)
+        attachTestEvidence("shell-native-download", in: app)
     }
 
     func testCameraAndLocationPermissionPurposesAreConfigured() {
@@ -199,7 +224,7 @@ final class FuelWellCriticalPathUITests: XCTestCase {
                 .waitForExistence(timeout: routeTimeout),
             "The shipping app must declare camera and location purpose strings."
         )
-        capture("shell-permission-purposes", in: app)
+        attachTestEvidence("shell-permission-purposes", in: app)
     }
 
     private func launchBoundRelease(additionalLaunchArguments: [String] = []) -> XCUIApplication {
@@ -292,8 +317,32 @@ final class FuelWellCriticalPathUITests: XCTestCase {
         return "The release-bound WKWebView did not become ready."
     }
 
-    private func capture(_ name: String, in app: XCUIApplication) {
+    private func captureAppStoreSnapshot(_ name: String, in app: XCUIApplication) {
+        let excludedLabels = [
+            "Welcome back",
+            "Sign in",
+            "Create your account",
+            "Shell test home",
+            "FuelWell could not load",
+            "Internal Server Error",
+            "This site can't be reached",
+            "Choose File",
+            "Photo Library",
+            "Take Photo or Video",
+        ]
+
+        for label in excludedLabels {
+            XCTAssertFalse(
+                element(in: app, label: label).exists,
+                "App Store screenshot \(name) contains excluded UI: \(label)."
+            )
+        }
+        assertNoLoadFailure(in: app)
         snapshot(name, timeWaitingForIdle: 0)
+        attachTestEvidence(name, in: app)
+    }
+
+    private func attachTestEvidence(_ name: String, in app: XCUIApplication) {
         let attachment = XCTAttachment(screenshot: app.screenshot())
         attachment.name = name
         attachment.lifetime = .keepAlways
@@ -302,6 +351,12 @@ final class FuelWellCriticalPathUITests: XCTestCase {
 }
 
 private struct Route {
+    let navLabel: String
+    let destinationLabel: String
+}
+
+private struct AppStoreScreenshot {
+    let name: String
     let navLabel: String
     let destinationLabel: String
 }

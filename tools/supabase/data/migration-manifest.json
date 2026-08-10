@@ -1,72 +1,71 @@
 {
-  "generatedAt": "2026-06-01T17:22:50.492Z",
-  "source": "ios/supabase/migrations",
-  "migrationCount": 6,
+  "generatedAt": "2026-08-10T17:10:29.282Z",
+  "source": "supabase/migrations",
+  "migrationCount": 16,
   "duplicateVersions": [],
   "migrations": [
     {
       "order": 1,
-      "file": "202605230001_schema_migrations.sql",
-      "version": "202605230001",
-      "name": "schema_migrations",
-      "sha256": "aa69581d3c3fd2ee31a793c67b8dc020c9d40019afb26fcdad79eaa71baeb6a9",
-      "bytes": 543,
-      "hasTrackingInsert": true,
+      "file": "20260611180000_base_schema.sql",
+      "version": "20260611180000",
+      "name": "base_schema",
+      "sha256": "ba27607b31e22601608cc734edcb64e56e347a2a3f4814e256531464b7239b46",
+      "bytes": 11497,
+      "hasTrackingInsert": false,
       "hasIdempotencySignals": true,
       "riskNotes": [
-        "alters table"
+        "alters table",
+        "security definer function"
       ]
     },
     {
       "order": 2,
-      "file": "202605240001_phase2_architecture.sql",
-      "version": "202605240001",
-      "name": "phase2_architecture",
-      "sha256": "0fb547448c7ca92b9990e08dde35f147715cee0101ef34a6ac17c7388ea0fb84",
-      "bytes": 7798,
-      "hasTrackingInsert": true,
+      "file": "20260611180100_coach_tables.sql",
+      "version": "20260611180100",
+      "name": "coach_tables",
+      "sha256": "713a5fe34810159f04051d42320d836851533c89984f2a6a3e61f690fa541d17",
+      "bytes": 2943,
+      "hasTrackingInsert": false,
       "hasIdempotencySignals": true,
       "riskNotes": [
+        "destructive statement present",
         "alters table"
       ]
     },
     {
       "order": 3,
-      "file": "202605260001_phase7_founding100.sql",
-      "version": "202605260001",
-      "name": "phase7_founding100",
-      "sha256": "cc326228f073f9bf688e4c4933adbc03c056389eca344b00dcf3af30054b45cc",
-      "bytes": 4120,
-      "hasTrackingInsert": true,
+      "file": "20260612120000_profiles_preferences_jsonb.sql",
+      "version": "20260612120000",
+      "name": "profiles_preferences_jsonb",
+      "sha256": "9cd42166829408bec6ec83b320fa6d32e83b43e878d51a39bd6792480ebbecb3",
+      "bytes": 563,
+      "hasTrackingInsert": false,
       "hasIdempotencySignals": true,
       "riskNotes": [
-        "alters table",
-        "security definer function"
+        "alters table"
       ]
     },
     {
       "order": 4,
-      "file": "202605260002_phase7_account_linkage.sql",
-      "version": "202605260002",
-      "name": "phase7_account_linkage",
-      "sha256": "c5a56985fda57d6a5d3c2396adbb10b3b0ee3d7b235aee05c29ead9d201f331a",
-      "bytes": 8708,
-      "hasTrackingInsert": true,
+      "file": "20260612170000_goal_loop_integrations.sql",
+      "version": "20260612170000",
+      "name": "goal_loop_integrations",
+      "sha256": "e852074f07b31a6ff1b028f51567a47148ff5fc6ca4ee1bd6770200bd7e83016",
+      "bytes": 5315,
+      "hasTrackingInsert": false,
       "hasIdempotencySignals": true,
       "riskNotes": [
-        "touches founders_100",
-        "alters table",
-        "security definer function"
+        "alters table"
       ]
     },
     {
       "order": 5,
-      "file": "202605310001_w2_coach_usage.sql",
-      "version": "202605310001",
-      "name": "w2_coach_usage",
-      "sha256": "521e44c288c1cc6d2aae78cd1ed7bbfeb3cff8f67d2e14c91c97c39cd60d571e",
-      "bytes": 1431,
-      "hasTrackingInsert": true,
+      "file": "20260620170000_coach_knowledge_bases.sql",
+      "version": "20260620170000",
+      "name": "coach_knowledge_bases",
+      "sha256": "91feb284c548d3b48ab665648b742d7815f00bc2f5fcc8583e01794ab4611c07",
+      "bytes": 941,
+      "hasTrackingInsert": false,
       "hasIdempotencySignals": true,
       "riskNotes": [
         "alters table"
@@ -74,17 +73,153 @@
     },
     {
       "order": 6,
-      "file": "202605310002_w4_auth_profile_onboarding.sql",
-      "version": "202605310002",
-      "name": "w4_auth_profile_onboarding",
-      "sha256": "37053b64aac34ccfd8b21f79483c2ca7259964dd68b17d9825823c3c47060cfc",
-      "bytes": 1209,
-      "hasTrackingInsert": true,
+      "file": "20260627042014_coach_uploaded_artifacts.sql",
+      "version": "20260627042014",
+      "name": "coach_uploaded_artifacts",
+      "sha256": "0a83add2a2a42894d00db4b8303091b28fcfaf01d508abb2d479e5a70949ade4",
+      "bytes": 2911,
+      "hasTrackingInsert": false,
       "hasIdempotencySignals": true,
       "riskNotes": [
+        "destructive statement present",
+        "alters table"
+      ]
+    },
+    {
+      "order": 7,
+      "file": "20260627043000_tighten_coach_artifact_privileges.sql",
+      "version": "20260627043000",
+      "name": "tighten_coach_artifact_privileges",
+      "sha256": "d6da40a0c21f87b3c8f41cdbae4cc2e925345310225eebe4f7176b18c6ab270a",
+      "bytes": 324,
+      "hasTrackingInsert": false,
+      "hasIdempotencySignals": false,
+      "riskNotes": [
+        "standard schema migration"
+      ]
+    },
+    {
+      "order": 8,
+      "file": "20260712200713_fitness_grocery_foundation.sql",
+      "version": "20260712200713",
+      "name": "fitness_grocery_foundation",
+      "sha256": "b23ff108c61585570ac29c58b7f2df54c9b15a2d1cc207e6883bfcb4b29262db",
+      "bytes": 17656,
+      "hasTrackingInsert": false,
+      "hasIdempotencySignals": false,
+      "riskNotes": [
+        "destructive statement present",
+        "alters table"
+      ]
+    },
+    {
+      "order": 9,
+      "file": "20260712213000_body_log_entries.sql",
+      "version": "20260712213000",
+      "name": "body_log_entries",
+      "sha256": "34ae386cb76d832b157a9b751ddb80cab5593e5b2cb109045791782730cc10cb",
+      "bytes": 2199,
+      "hasTrackingInsert": false,
+      "hasIdempotencySignals": false,
+      "riskNotes": [
+        "destructive statement present",
+        "alters table"
+      ]
+    },
+    {
+      "order": 10,
+      "file": "20260715210000_grant_anon_select_for_live_probe.sql",
+      "version": "20260715210000",
+      "name": "grant_anon_select_for_live_probe",
+      "sha256": "241f77924fa38d10a198c384df68e6c787a8d4045ae77fb50510e3abb299339c",
+      "bytes": 1190,
+      "hasTrackingInsert": false,
+      "hasIdempotencySignals": false,
+      "riskNotes": [
+        "standard schema migration"
+      ]
+    },
+    {
+      "order": 11,
+      "file": "20260809173000_account_controls_and_authenticated_grants.sql",
+      "version": "20260809173000",
+      "name": "account_controls_and_authenticated_grants",
+      "sha256": "d1ff2f03f31e09211f4e4788e189845c798ea45130c1a37bee079ba5ba903f26",
+      "bytes": 5408,
+      "hasTrackingInsert": false,
+      "hasIdempotencySignals": false,
+      "riskNotes": [
         "delete statement present",
-        "alters table",
         "security definer function"
+      ]
+    },
+    {
+      "order": 12,
+      "file": "20260809174000_coach_confirmation_uses.sql",
+      "version": "20260809174000",
+      "name": "coach_confirmation_uses",
+      "sha256": "8e336cc87bafcaa017b1636d7e020305814bf5d7c54d4be937dbbdf8f6cb550f",
+      "bytes": 1016,
+      "hasTrackingInsert": false,
+      "hasIdempotencySignals": true,
+      "riskNotes": [
+        "destructive statement present",
+        "alters table"
+      ]
+    },
+    {
+      "order": 13,
+      "file": "20260809174500_account_delete_confirmation_uses.sql",
+      "version": "20260809174500",
+      "name": "account_delete_confirmation_uses",
+      "sha256": "3ef77c6c6f996fa41f2cf256b32e9a83f9b52b753eb7fefb2c5a78325d5a7c40",
+      "bytes": 756,
+      "hasTrackingInsert": false,
+      "hasIdempotencySignals": true,
+      "riskNotes": [
+        "destructive statement present",
+        "alters table"
+      ]
+    },
+    {
+      "order": 14,
+      "file": "20260810014631_user_weekly_meal_plans.sql",
+      "version": "20260810014631",
+      "name": "user_weekly_meal_plans",
+      "sha256": "78fff108b5a71a5c5ab75d8c3c50217f2262c72f2195e6c0042398598b7b6ca2",
+      "bytes": 2499,
+      "hasTrackingInsert": false,
+      "hasIdempotencySignals": false,
+      "riskNotes": [
+        "destructive statement present",
+        "alters table"
+      ]
+    },
+    {
+      "order": 15,
+      "file": "20260810040034_server_authoritative_user_app_state.sql",
+      "version": "20260810040034",
+      "name": "server_authoritative_user_app_state",
+      "sha256": "d043d58620005b85b4e605f1718ed2a2a581f39b3fbb3c540dcb87ff47bc68c8",
+      "bytes": 2971,
+      "hasTrackingInsert": false,
+      "hasIdempotencySignals": false,
+      "riskNotes": [
+        "destructive statement present",
+        "alters table"
+      ]
+    },
+    {
+      "order": 16,
+      "file": "20260810172000_release_security_hardening.sql",
+      "version": "20260810172000",
+      "name": "release_security_hardening",
+      "sha256": "a7aab17a6c0f6a7e315717f898aa58db107b58b21a7f92de983b8ebfafd86d4f",
+      "bytes": 807,
+      "hasTrackingInsert": false,
+      "hasIdempotencySignals": true,
+      "riskNotes": [
+        "standard schema migration"
       ]
     }
   ]

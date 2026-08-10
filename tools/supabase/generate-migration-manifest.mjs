@@ -5,7 +5,7 @@ import path from "node:path";
 import process from "node:process";
 
 const root = process.cwd();
-const migrationsDir = path.join(root, "ios/supabase/migrations");
+const migrationsDir = path.join(root, "supabase/migrations");
 const jsonOutputPath = path.join(root, "tools/supabase/data/migration-manifest.json");
 const markdownOutputPath = path.join(root, "docs/SUPABASE-MIGRATION-MANIFEST.md");
 const args = new Set(process.argv.slice(2));
@@ -90,7 +90,7 @@ function buildManifest() {
 
   return {
     generatedAt: new Date().toISOString(),
-    source: "ios/supabase/migrations",
+    source: "supabase/migrations",
     migrationCount: migrations.length,
     duplicateVersions: [...new Set(duplicateVersions)],
     migrations,

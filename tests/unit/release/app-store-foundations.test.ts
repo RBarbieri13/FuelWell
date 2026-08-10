@@ -86,6 +86,53 @@ describe("App Store foundations", () => {
     expect(buildLookup).toContain("build_number: build_number");
     expect(reviewedBuildHelper).toContain('build.processing_state == "VALID"');
     expect(reviewedBuildHelper).toContain("build.expired != true");
+    expect(fastfile).toContain("testflight_candidate_changelog(release_settings)");
+    expect(reviewedBuildHelper).toContain("build.get_beta_build_localizations");
+    expect(reviewedBuildHelper).toContain("testflight_candidate_markers(testflight_release_settings)");
+    expect(reviewedBuildHelper).toContain('whats_new.include?("#{key}: #{value}")');
+    expect(reviewedBuildHelper).toContain("Reviewed TestFlight build provenance does not match");
+  });
+
+  it("ships repository-owned App Store category and copyright metadata", () => {
+    const metadataRoot = path.join(root, "ios/fastlane/metadata");
+
+    expect(readFileSync(path.join(metadataRoot, "primary_category.txt"), "utf8").trim()).toBe(
+      "Health & Fitness"
+    );
+    expect(readFileSync(path.join(metadataRoot, "secondary_category.txt"), "utf8").trim()).toBe(
+      "Food & Drink"
+    );
+    expect(readFileSync(path.join(metadataRoot, "copyright.txt"), "utf8").trim()).toBe(
+      "2026 FuelWell"
+    );
+  });
+
+  it("tags Sentry with the exact reviewed package version and build", () => {
+    const fastfile = readFileSync(path.join(root, "ios/fastlane/Fastfile"), "utf8");
+    const releaseLane = fastfile.slice(
+      fastfile.indexOf('lane :release do'),
+      fastfile.indexOf('desc "Capture App Store screenshots')
+    );
+    const sentryCall = releaseLane.match(/sentry_release_tag\(\n([\s\S]*?)^\s{4}\)/m)?.[1] ?? "";
+    const releaseIdentifierHelper = fastfile.match(
+      /def sentry_release_identifier\(app_version:, build_number:\)\n([\s\S]*?)^\s{2}end$/m
+    )?.[1] ?? "";
+    const sentryTagHelper = fastfile.match(
+      /private_lane :sentry_release_tag do \|options\|\n([\s\S]*?)^\s{2}end$/m
+    )?.[1] ?? "";
+
+    expect(sentryCall).toContain("app_version: release_settings.fetch(:package_version)");
+    expect(sentryCall).toContain("build_number: reviewed_build_number");
+    expect(releaseIdentifierHelper).toContain('ENV.fetch("FUELWELL_APP_IDENTIFIER")');
+    expect(releaseIdentifierHelper).toContain("@#{app_version}+#{build_number}");
+    expect(sentryTagHelper).toContain("app_version: options.fetch(:app_version)");
+    expect(sentryTagHelper).toContain("build_number: options.fetch(:build_number)");
+    expect(sentryTagHelper).toContain("Shellwords.escape(release_identifier)");
+    expect(sentryTagHelper).toContain('Shellwords.escape(ENV.fetch("SENTRY_ORG"))');
+    expect(sentryTagHelper).toContain('Shellwords.escape(ENV.fetch("SENTRY_PROJECT"))');
+    expect(sentryTagHelper).not.toContain("SharedValues::BUILD_NUMBER");
+    expect(releaseLane).not.toContain("build_app(");
+    expect(releaseLane).not.toContain("upload_to_testflight(");
   });
 
   it("rejects screenshot manifests whose candidate fields or image hashes are changed", () => {
@@ -168,5 +215,24 @@ describe("App Store foundations", () => {
     expect(candidateGate).toContain("public page ${public_path} returned HTTP");
     expect(readinessGenerator).toContain("validatePublicListingSurfaces(results)");
     expect(readinessGenerator).toContain("Immutable candidate public-page gate");
+  });
+
+  it("blocks TestFlight when Google, Facebook, or Apple OAuth is unavailable", () => {
+    const candidateGate = readFileSync(
+      path.join(root, "tools/release/test-ios-candidate-ui.sh"),
+      "utf8"
+    );
+
+    expect(candidateGate).toContain('"${supabase_url%/}/auth/v1/settings"');
+    expect(candidateGate).toContain("for provider in google facebook apple");
+    expect(candidateGate).toContain(".external[$provider] == true");
+    expect(candidateGate).toContain('"${supabase_url%/}/auth/v1/authorize"');
+    expect(candidateGate).toContain('oauth_redirect="${candidate_origin}/callback?next=/app/dashboard"');
+    expect(candidateGate).toContain('"${oauth_host}" == "accounts.google.com"');
+    expect(candidateGate).toContain('"${oauth_host}" == *.facebook.com');
+    expect(candidateGate).toContain('"${oauth_host}" == "appleid.apple.com"');
+    expect(candidateGate).toContain("FUELWELL_UI_TEST_SECOND_EMAIL");
+    expect(candidateGate).toContain("FUELWELL_UI_TEST_SECOND_PASSWORD");
+    expect(candidateGate).toContain("verify-supabase-account-isolation.mjs");
   });
 });

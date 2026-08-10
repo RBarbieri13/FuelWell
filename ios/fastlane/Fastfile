@@ -78,7 +78,7 @@ platform :ios do
       skip_waiting_for_build_processing: false,
       distribute_external: false,
       notify_external_testers: false,
-      changelog: ENV.fetch("FUELWELL_TESTFLIGHT_CHANGELOG", "FuelWell pilot build.")
+      changelog: testflight_candidate_changelog(release_settings)
     )
   end
 
@@ -103,7 +103,10 @@ platform :ios do
       metadata_path: "fastlane/metadata",
       screenshots_path: "fastlane/screenshots"
     )
-    sentry_release_tag
+    sentry_release_tag(
+      app_version: release_settings.fetch(:package_version),
+      build_number: reviewed_build_number
+    )
   end
 
   desc "Capture App Store screenshots from the verified immutable candidate"
@@ -175,19 +178,26 @@ platform :ios do
     unless parsed_supabase_url.is_a?(URI::HTTPS) && parsed_supabase_url.host && parsed_supabase_url.path.to_s.empty? && parsed_supabase_url.query.nil?
       UI.user_error!("NEXT_PUBLIC_SUPABASE_URL or FUELWELL_SUPABASE_URL must be an HTTPS origin")
     end
+    git_sha = required_release_value("FUELWELL_CANDIDATE_GIT_SHA")
+    deployment_id = required_release_value("FUELWELL_CANDIDATE_DEPLOYMENT_ID")
+    environment = required_release_value("FUELWELL_CANDIDATE_ENVIRONMENT")
     settings = {
       "FUELWELL_START_URL" => "#{candidate_url}/app/dashboard",
       "FUELWELL_EXPECTED_PACKAGE_VERSION" => package_version,
-      "FUELWELL_EXPECTED_GIT_SHA" => required_release_value("FUELWELL_CANDIDATE_GIT_SHA"),
-      "FUELWELL_EXPECTED_DEPLOYMENT_ID" => required_release_value("FUELWELL_CANDIDATE_DEPLOYMENT_ID"),
+      "FUELWELL_EXPECTED_GIT_SHA" => git_sha,
+      "FUELWELL_EXPECTED_DEPLOYMENT_ID" => deployment_id,
       "FUELWELL_EXPECTED_DEPLOYMENT_URL" => candidate_url,
-      "FUELWELL_EXPECTED_ENVIRONMENT" => required_release_value("FUELWELL_CANDIDATE_ENVIRONMENT"),
+      "FUELWELL_EXPECTED_ENVIRONMENT" => environment,
       "FUELWELL_RELEASE_SCHEMA_VERSION" => "1",
       "FUELWELL_SUPABASE_URL" => supabase_url
     }
 
     {
       package_version: package_version,
+      git_sha: git_sha,
+      deployment_id: deployment_id,
+      deployment_url: candidate_url,
+      environment: environment,
       xcargs: settings.map { |key, value| "#{key}=#{Shellwords.escape(value)}" }.join(" ")
     }
   rescue JSON::ParserError, KeyError, URI::InvalidURIError => error
@@ -198,6 +208,22 @@ platform :ios do
     value = ENV[key].to_s.strip
     UI.user_error!("#{key} is required for a TestFlight candidate") if value.empty?
     value
+  end
+
+  def testflight_candidate_markers(settings)
+    {
+      "FuelWell-Candidate-Git-SHA" => settings.fetch(:git_sha),
+      "FuelWell-Candidate-Deployment-ID" => settings.fetch(:deployment_id),
+      "FuelWell-Candidate-URL" => settings.fetch(:deployment_url),
+      "FuelWell-Candidate-Environment" => settings.fetch(:environment),
+      "FuelWell-Package-Version" => settings.fetch(:package_version)
+    }
+  end
+
+  def testflight_candidate_changelog(settings)
+    summary = ENV.fetch("FUELWELL_TESTFLIGHT_CHANGELOG", "FuelWell pilot build.").to_s.strip
+    markers = testflight_candidate_markers(settings).map { |key, value| "#{key}: #{value}" }
+    ([summary] + markers).join("\n")
   end
 
   def ensure_reviewed_build_ready!(app_version:, build_number:)
@@ -222,7 +248,23 @@ platform :ios do
       )
     end
 
-    UI.success("Promoting reviewed TestFlight build #{app_version} (#{build_number}) without rebuilding it.")
+
+    localizations = build.get_beta_build_localizations
+    whats_new = localizations.map { |localization| localization.whats_new.to_s }.join("\n")
+    expected_markers = testflight_candidate_markers(testflight_release_settings)
+    missing_markers = expected_markers.reject do |key, value|
+      whats_new.include?("#{key}: #{value}")
+    end
+    unless missing_markers.empty?
+      UI.user_error!(
+        "Reviewed TestFlight build provenance does not match the immutable candidate: " \
+        "#{missing_markers.keys.join(', ')}."
+      )
+    end
+
+    UI.success(
+      "Promoting provenance-verified TestFlight build #{app_version} (#{build_number}) without rebuilding it."
+    )
   end
 
   def repo_root
@@ -354,16 +396,25 @@ platform :ios do
     File.join(__dir__, "screenshots", "candidate-manifest.json")
   end
 
-  private_lane :sentry_release_tag do
+  def sentry_release_identifier(app_version:, build_number:)
+    "#{ENV.fetch("FUELWELL_APP_IDENTIFIER")}@#{app_version}+#{build_number}"
+  end
+
+  private_lane :sentry_release_tag do |options|
     if ENV["SENTRY_AUTH_TOKEN"].to_s.empty?
       UI.important("Skipping Sentry release tagging because SENTRY_AUTH_TOKEN is not set.")
       next
     end
 
+    release_identifier = sentry_release_identifier(
+      app_version: options.fetch(:app_version),
+      build_number: options.fetch(:build_number)
+    )
     sh("which sentry-cli")
     sh(
-      "sentry-cli releases new #{lane_context[SharedValues::BUILD_NUMBER]} " \
-      "--org #{ENV.fetch('SENTRY_ORG')} --project #{ENV.fetch('SENTRY_PROJECT')}"
+      "sentry-cli releases new #{Shellwords.escape(release_identifier)} " \
+      "--org #{Shellwords.escape(ENV.fetch("SENTRY_ORG"))} " \
+      "--project #{Shellwords.escape(ENV.fetch("SENTRY_PROJECT"))}"
     )
   end
 end

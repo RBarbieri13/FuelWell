@@ -53,6 +53,30 @@
       "job": "Require the immutable candidate UI test lane to run on compact and large iPhone simulators and preserve separate xcresult evidence.",
       "status": "pending",
       "ts": "2026-08-10T03:59:20.413891+00:00"
+    },
+    {
+      "id": "N10",
+      "job": "Make Supabase migration planning read-only, apply migrations atomically from one canonical history, and enforce a destructive-safe two-account live RLS verifier.",
+      "status": "pending",
+      "ts": "2026-08-10T16:03:04.296264+00:00"
+    },
+    {
+      "id": "N11",
+      "job": "Gate the immutable candidate on current Google, Facebook, and Apple provider enablement, correct provider redirects, and live web/native acceptance evidence.",
+      "status": "pending",
+      "ts": "2026-08-10T16:03:04.364685+00:00"
+    },
+    {
+      "id": "N12",
+      "job": "Complete App Store submission metadata, privacy data-inventory reconciliation, iPhone device-family decision, curated store screenshot plan, and exact reviewed-build release tagging.",
+      "status": "pending",
+      "ts": "2026-08-10T16:03:04.427604+00:00"
+    },
+    {
+      "id": "N13",
+      "job": "Independently verify the frozen repository candidate and all release controls before approved live infrastructure and upload actions.",
+      "status": "pending",
+      "ts": "2026-08-10T16:03:04.490211+00:00"
     }
   ],
   "edges": [
@@ -114,6 +138,46 @@
     {
       "from": "N07",
       "to": "N08",
+      "type": "DEPENDS_ON"
+    },
+    {
+      "from": "N01",
+      "to": "N10",
+      "type": "DEPENDS_ON"
+    },
+    {
+      "from": "N02",
+      "to": "N10",
+      "type": "DEPENDS_ON"
+    },
+    {
+      "from": "N03",
+      "to": "N11",
+      "type": "DEPENDS_ON"
+    },
+    {
+      "from": "N04",
+      "to": "N12",
+      "type": "DEPENDS_ON"
+    },
+    {
+      "from": "N05",
+      "to": "N12",
+      "type": "DEPENDS_ON"
+    },
+    {
+      "from": "N10",
+      "to": "N13",
+      "type": "DEPENDS_ON"
+    },
+    {
+      "from": "N11",
+      "to": "N13",
+      "type": "DEPENDS_ON"
+    },
+    {
+      "from": "N12",
+      "to": "N13",
       "type": "DEPENDS_ON"
     }
   ]

@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "lastReviewed": "2026-08-10",
+  "app": {
+    "name": "FuelWell",
+    "bundleId": "com.fuelwell.app",
+    "version": "1.4.0",
+    "primaryLanguage": "en-US",
+    "categories": {
+      "primary": "Health & Fitness",
+      "secondary": "Food & Drink"
+    },
+    "copyright": "2026 FuelWell"
+  },
+  "ageRating": {
+    "questionnaireVersion": "ios-26-and-later",
+    "answers": {
+      "inAppControls": {
+        "parentalControls": false,
+        "ageAssurance": false
+      },
+      "capabilities": {
+        "unrestrictedWebAccess": false,
+        "userGeneratedContent": false,
+        "socialMedia": false,
+        "socialMediaDisabledForUsersUnder13": false,
+        "messagingAndChat": false,
+        "advertising": false
+      },
+      "matureThemes": {
+        "profanityOrCrudeHumor": "none",
+        "horrorOrFearThemes": "none",
+        "alcoholTobaccoOrDrugUseOrReferences": "none"
+      },
+      "medicalOrWellness": {
+        "medicalOrTreatmentInformation": "none",
+        "healthOrWellnessTopics": "frequent"
+      },
+      "sexualityOrNudity": {
+        "matureOrSuggestiveThemes": "none",
+        "sexualContentOrNudity": "none",
+        "graphicSexualContentAndNudity": "none"
+      },
+      "violence": {
+        "cartoonOrFantasyViolence": "none",
+        "realisticViolence": "none",
+        "prolongedGraphicOrSadisticRealisticViolence": "none",
+        "gunsOrOtherWeapons": "none"
+      },
+      "chanceBasedActivities": {
+        "gambling": false,
+        "simulatedGambling": "none",
+        "contests": "none",
+        "lootBoxes": false
+      }
+    },
+    "result": {
+      "calculatedGlobal": "9+",
+      "override": "not_applicable",
+      "finalGlobal": "9+",
+      "madeForKids": false
+    }
+  },
+  "pricingAndAvailability": {
+    "price": "free",
+    "availability": "all_supported_storefronts",
+    "distribution": "public",
+    "preorder": false,
+    "releaseMode": "manual"
+  },
+  "contentRights": {
+    "containsThirdPartyContent": true,
+    "rightsConfirmed": true,
+    "declaration": "FuelWell will surface only content it owns, licenses, or is otherwise authorized to use in each available storefront."
+  },
+  "regulatedMedicalDevice": {
+    "euEea": false,
+    "unitedKingdom": false,
+    "unitedStates": false,
+    "declaration": "FuelWell is a wellness and nutrition decision-support product, not a regulated medical device."
+  },
+  "review": {
+    "contact": {
+      "firstNameRef": "FUELWELL_APP_REVIEW_CONTACT_FIRST_NAME",
+      "lastNameRef": "FUELWELL_APP_REVIEW_CONTACT_LAST_NAME",
+      "emailRef": "FUELWELL_APP_REVIEW_CONTACT_EMAIL",
+      "phoneRef": "FUELWELL_APP_REVIEW_CONTACT_PHONE"
+    },
+    "signInRequired": true,
+    "demoAccount": {
+      "required": true,
+      "usernameRef": "FUELWELL_APP_REVIEW_DEMO_USERNAME",
+      "passwordRef": "FUELWELL_APP_REVIEW_DEMO_PASSWORD",
+      "mustRemainActive": true,
+      "mustNotRequireOneTimeCode": true
+    },
+    "notes": "FuelWell requires sign-in. Use the non-expiring email/password demo account supplied through the referenced release environment variables; do not use a personal account. The initial dashboard may take a moment while account-specific data loads. Coach accepts private free-form messages and user-selected image, PDF, and text attachments for health, nutrition, fitness, and recovery guidance. Coach is not user-to-user chat, does not publish user content, and does not diagnose or provide emergency medical care. Camera/photo access is optional for meal and Coach images. Precise location is optional and requested only when the reviewer chooses a nearby restaurant search. Health access is optional. Account export and permanent deletion are available in Settings. The app is free, contains no advertising, and does not use data for tracking."
+  }
+}

@@ -1,8 +1,13 @@
 scheme("CandidateUITests")
 
 devices([
-  "iPhone 17 Pro Max",
-  "iPhone 15"
+  "iPhone 17 Pro Max", # 6.9-inch App Store family
+  "iPhone 13 Pro Max", # 6.5-inch App Store family
+  "iPhone 15" # Additional standard-size coverage retained by the readiness gate
+])
+
+only_testing([
+  "FuelWellUITests/FuelWellCriticalPathUITests/testAppStoreCustomerScreenshots"
 ])
 
 languages([
