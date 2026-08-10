@@ -242,6 +242,7 @@ final class FuelWellCriticalPathUITests: XCTestCase {
             launchFailureMessage(in: app)
         )
         authenticateIfNeeded(in: app)
+        dismissKeyboardIntroductionIfNeeded(in: app)
         XCTAssertTrue(
             element(in: app, label: "Home").waitForExistence(timeout: launchTimeout),
             launchFailureMessage(in: app)
@@ -298,19 +299,32 @@ final class FuelWellCriticalPathUITests: XCTestCase {
     private func tap(label: String, in app: XCUIApplication) {
         let target = element(in: app, label: label)
         XCTAssertTrue(target.waitForExistence(timeout: routeTimeout), "Missing navigation control: \(label)")
-        XCTAssertTrue(target.isHittable, "Navigation control is not tappable: \(label)")
 
         let bottomNavigationLabels = ["Home", "Log", "Coach", "Move", "Groceries", "Review"]
         if let index = bottomNavigationLabels.firstIndex(of: label) {
+            dismissKeyboardIntroductionIfNeeded(in: app)
             // Concurrent WebKit screenshot runs can expose a visible link with a
             // transiently invalid accessibility activation point. Tap the stable
-            // bottom-nav slot after proving the semantic control is hittable.
+            // bottom-nav slot after proving the semantic control exists.
             let x = (CGFloat(index) + 0.5) / CGFloat(bottomNavigationLabels.count)
             app.coordinate(withNormalizedOffset: CGVector(dx: x, dy: 0.93)).tap()
             return
         }
 
+        XCTAssertTrue(target.isHittable, "Navigation control is not tappable: \(label)")
         target.tap()
+    }
+
+    private func dismissKeyboardIntroductionIfNeeded(in app: XCUIApplication) {
+        let continueButton = app.buttons["Continue"]
+        guard continueButton.waitForExistence(timeout: 2) else { return }
+
+        XCTAssertTrue(continueButton.isHittable, "The iOS keyboard introduction must be dismissible.")
+        continueButton.tap()
+        XCTAssertFalse(
+            continueButton.waitForExistence(timeout: 3),
+            "The iOS keyboard introduction obscured the candidate after dismissal."
+        )
     }
 
     private func element(in app: XCUIApplication, label: String) -> XCUIElement {
