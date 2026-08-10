@@ -145,8 +145,16 @@ jobs:
         run: scripts/check-theme-drift.sh
 
       - name: Run Networking package tests
-        working-directory: .
-        run: swift test --package-path ios/Packages/Networking
+        working-directory: ios/Packages/Networking
+        run: |
+          mkdir -p ../../build/reports
+          rm -rf ../../build/reports/Networking.xcresult
+          xcodebuild test \
+            -scheme Networking \
+            -destination "platform=iOS Simulator,name=${FUELWELL_RELEASE_TEST_DEVICE}" \
+            -skipMacroValidation \
+            -skipPackagePluginValidation \
+            -resultBundlePath ../../build/reports/Networking.xcresult
 
       - name: Run full test suite
         # FuelWellUITests require candidate-bound build settings and are

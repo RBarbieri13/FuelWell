@@ -119,8 +119,11 @@ describe("release CI workflow contracts", () => {
     );
 
     expect(networkingIndex).toBeGreaterThan(-1);
+    expect(workflow).toContain("working-directory: ios/Packages/Networking");
+    expect(workflow).toContain("xcodebuild test \\");
+    expect(workflow).toContain("-scheme Networking \\");
     expect(workflow).toContain(
-      "run: swift test --package-path ios/Packages/Networking",
+      "-resultBundlePath ../../build/reports/Networking.xcresult",
     );
     expect(uploadIndex).toBeGreaterThan(networkingIndex);
   });
