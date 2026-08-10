@@ -30,6 +30,9 @@ export async function POST() {
   }
 
   const challenge = createDeleteChallenge(user);
+  if (!challenge) {
+    return createJsonError("Account deletion confirmation is not configured.", 503);
+  }
 
   return Response.json(
     {

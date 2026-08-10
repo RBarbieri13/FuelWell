@@ -34,6 +34,7 @@ function LoginForm() {
     searchParams.get("error") === "auth_failed"
       ? "Sign-in could not be completed. Please try again."
       : null;
+  const accountDeleted = searchParams.get("accountDeleted") === "1";
 
   async function handleEmailLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -75,6 +76,14 @@ function LoginForm() {
       }
     >
       <div className="space-y-6">
+            {accountDeleted && (
+              <p
+                className="rounded-2xl bg-primary-50 px-3.5 py-2.5 text-sm font-bold leading-5 text-primary-800 ring-1 ring-inset ring-primary-100"
+                role="status"
+              >
+                Your FuelWell account and stored data were deleted.
+              </p>
+            )}
             {authError && (
               <p
                 className="flex items-start gap-2 rounded-2xl bg-red-50 px-3.5 py-2.5 text-sm font-bold leading-5 text-red-700 ring-1 ring-inset ring-red-100"

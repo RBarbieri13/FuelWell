@@ -616,36 +616,9 @@ export function SettingsClient({
     setExportMessage(null);
     setExportError(null);
 
-    try {
-      const response = await fetch("/api/account/export", {
-        method: "GET",
-        cache: "no-store",
-      });
-      const contentType = response.headers.get("content-type") ?? "";
-      if (!response.ok) {
-        const message = contentType.includes("application/json")
-          ? ((await response.json()) as { error?: string }).error
-          : null;
-        throw new Error(message ?? "Account export failed.");
-      }
-
-      const blob = await response.blob();
-      const fileName =
-        response.headers
-          .get("content-disposition")
-          ?.match(/filename="([^"]+)"/)?.[1] ?? "fuelwell-account-export.json";
-      const downloadUrl = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = downloadUrl;
-      link.download = fileName;
-      link.click();
-      URL.revokeObjectURL(downloadUrl);
-      setExportMessage(`Downloaded ${fileName}.`);
-    } catch (error) {
-      setExportError(error instanceof Error ? error.message : "Account export failed.");
-    } finally {
-      setExportingData(false);
-    }
+    setExportMessage("Your export is opening. On iPhone, choose where to save or share it.");
+    window.location.assign("/api/account/export");
+    window.setTimeout(() => setExportingData(false), 800);
   }
 
   async function openDeleteDialog() {

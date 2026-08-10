@@ -184,10 +184,11 @@ private struct FuelWellWebView: UIViewRepresentable {
         webView.load(URLRequest(url: url, cachePolicy: .reloadRevalidatingCacheData, timeoutInterval: 30))
     }
 
-    final class Coordinator: NSObject, WKNavigationDelegate, WKUIDelegate {
+    final class Coordinator: NSObject, WKNavigationDelegate, WKUIDelegate, WKDownloadDelegate {
         @Binding var isLoading: Bool
         @Binding var errorMessage: String?
         var lastReloadToken: UUID?
+        private var pendingDownloadURL: URL?
 
         init(isLoading: Binding<Bool>, errorMessage: Binding<String?>) {
             _isLoading = isLoading
@@ -237,6 +238,77 @@ private struct FuelWellWebView: UIViewRepresentable {
             }
 
             return .allow
+        }
+
+        func webView(
+            _ webView: WKWebView,
+            decidePolicyFor navigationResponse: WKNavigationResponse
+        ) async -> WKNavigationResponsePolicy {
+            guard let response = navigationResponse.response as? HTTPURLResponse else {
+                return .allow
+            }
+            let disposition = response.value(forHTTPHeaderField: "Content-Disposition")?.lowercased()
+            return disposition?.contains("attachment") == true ? .download : .allow
+        }
+
+        func webView(
+            _ webView: WKWebView,
+            navigationResponse: WKNavigationResponse,
+            didBecome download: WKDownload
+        ) {
+            download.delegate = self
+        }
+
+        func webView(
+            _ webView: WKWebView,
+            navigationAction: WKNavigationAction,
+            didBecome download: WKDownload
+        ) {
+            download.delegate = self
+        }
+
+        func download(
+            _ download: WKDownload,
+            decideDestinationUsing response: URLResponse,
+            suggestedFilename: String
+        ) async -> URL? {
+            let safeName = suggestedFilename.replacingOccurrences(of: "/", with: "-")
+            let destination = FileManager.default.temporaryDirectory.appendingPathComponent(safeName)
+            try? FileManager.default.removeItem(at: destination)
+            pendingDownloadURL = destination
+            return destination
+        }
+
+        func downloadDidFinish(_ download: WKDownload) {
+            guard let url = pendingDownloadURL else { return }
+            pendingDownloadURL = nil
+            Task { @MainActor in
+                guard let windowScene = UIApplication.shared.connectedScenes
+                    .compactMap({ $0 as? UIWindowScene })
+                    .first(where: { $0.activationState == .foregroundActive }),
+                    let root = windowScene.windows.first(where: { $0.isKeyWindow })?.rootViewController
+                else { return }
+                var presenter = root
+                while let presented = presenter.presentedViewController {
+                    presenter = presented
+                }
+                let share = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+                if let popover = share.popoverPresentationController {
+                    popover.sourceView = presenter.view
+                    popover.sourceRect = CGRect(
+                        x: presenter.view.bounds.midX,
+                        y: presenter.view.bounds.midY,
+                        width: 1,
+                        height: 1
+                    )
+                }
+                presenter.present(share, animated: true)
+            }
+        }
+
+        func download(_ download: WKDownload, didFailWithError error: Error, resumeData: Data?) {
+            pendingDownloadURL = nil
+            errorMessage = "The account export could not be downloaded. Please try again."
         }
     }
 }

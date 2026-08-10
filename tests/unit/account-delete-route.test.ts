@@ -25,12 +25,14 @@ describe("/api/account/delete", () => {
     mocks.user = { id: "user-1", email: "Member@FuelWell.test" };
     mocks.rpc.mockReset();
     mocks.rpc.mockResolvedValue({ error: null });
+    process.env.ACCOUNT_DELETE_CONFIRMATION_SECRET = "test-delete-confirmation-secret";
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-08-09T12:00:00.000Z"));
   });
 
   afterEach(() => {
     vi.useRealTimers();
+    delete process.env.ACCOUNT_DELETE_CONFIRMATION_SECRET;
   });
 
   it("issues a fresh destructive confirmation phrase and cookie", async () => {
@@ -90,6 +92,30 @@ describe("/api/account/delete", () => {
     expect(mocks.rpc).not.toHaveBeenCalled();
     await expect(response.json()).resolves.toEqual({
       error: "Type the exact confirmation phrase to delete this account.",
+    });
+  });
+
+  it("rejects a tampered delete confirmation cookie", async () => {
+    const route = await import("@/app/api/account/delete/route");
+    const challenge = await route.POST();
+    const cookie = challenge.headers.get("set-cookie") ?? "";
+    const tampered = cookie.replace(
+      /(fuelwell-delete-confirmation=[^.;]+)(\.[^;]+)/,
+      "$1.invalid-signature",
+    );
+
+    const response = await route.DELETE(
+      new Request("http://fuelwell.test/api/account/delete", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json", cookie: tampered },
+        body: JSON.stringify({ confirmation: "DELETE member@fuelwell.test" }),
+      }),
+    );
+
+    expect(response.status).toBe(400);
+    expect(mocks.rpc).not.toHaveBeenCalled();
+    await expect(response.json()).resolves.toEqual({
+      error: "Start a fresh account deletion confirmation first.",
     });
   });
 

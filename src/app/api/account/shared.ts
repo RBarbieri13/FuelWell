@@ -1,8 +1,10 @@
+import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 import { version } from "../../../../package.json";
 import type { SupabaseClient, User } from "@supabase/supabase-js";
 
 const DELETE_CONFIRM_COOKIE = "fuelwell-delete-confirmation";
 const DELETE_CONFIRM_TTL_MS = 10 * 60 * 1000;
+const DEV_DELETE_SECRET = randomBytes(32).toString("hex");
 
 type TableRow = Record<string, unknown>;
 type SupabaseLike = Pick<SupabaseClient, "from" | "rpc">;
@@ -48,7 +50,23 @@ export function buildDeleteConfirmationPhrase(user: Pick<User, "email" | "id">) 
   return `DELETE ${(user.email ?? user.id).trim().toLowerCase()}`;
 }
 
-export function createDeleteChallenge(user: Pick<User, "id" | "email">) {
+export function resolveAccountDeleteSecret(
+  env: Record<string, string | undefined> = process.env,
+): string | null {
+  return (
+    env.ACCOUNT_DELETE_CONFIRMATION_SECRET?.trim() ||
+    env.SUPABASE_SERVICE_ROLE_KEY?.trim() ||
+    env.COACH_CONFIRMATION_SECRET?.trim() ||
+    (env.NODE_ENV === "production" ? null : DEV_DELETE_SECRET)
+  );
+}
+
+export function createDeleteChallenge(
+  user: Pick<User, "id" | "email">,
+  env: Record<string, string | undefined> = process.env,
+) {
+  const secret = resolveAccountDeleteSecret(env);
+  if (!secret) return null;
   const expiresAt = new Date(Date.now() + DELETE_CONFIRM_TTL_MS).toISOString();
   const phrase = buildDeleteConfirmationPhrase(user);
   return {
@@ -58,7 +76,7 @@ export function createDeleteChallenge(user: Pick<User, "id" | "email">) {
       userId: user.id,
       phrase,
       expiresAt,
-    }),
+    }, secret),
   };
 }
 
@@ -84,7 +102,10 @@ export function clearDeleteChallengeCookie() {
   return serializeSetCookie(DELETE_CONFIRM_COOKIE, "", { maxAge: 0 });
 }
 
-export function readDeleteChallengeFromCookieHeader(cookieHeader: string | null) {
+export function readDeleteChallengeFromCookieHeader(
+  cookieHeader: string | null,
+  env: Record<string, string | undefined> = process.env,
+) {
   if (!cookieHeader) return null;
 
   const raw = cookieHeader
@@ -93,16 +114,28 @@ export function readDeleteChallengeFromCookieHeader(cookieHeader: string | null)
     .find((part) => part.startsWith(`${DELETE_CONFIRM_COOKIE}=`))
     ?.slice(DELETE_CONFIRM_COOKIE.length + 1);
 
-  return raw ? decodeDeleteChallengeCookie(raw) : null;
+  const secret = resolveAccountDeleteSecret(env);
+  return raw && secret ? decodeDeleteChallengeCookie(raw, secret) : null;
 }
 
-function encodeDeleteChallengeCookie(payload: DeleteChallengeCookie) {
-  return Buffer.from(JSON.stringify(payload), "utf8").toString("base64url");
+function signDeleteChallenge(encodedPayload: string, secret: string) {
+  return createHmac("sha256", secret).update(encodedPayload).digest();
 }
 
-function decodeDeleteChallengeCookie(encoded: string) {
+function encodeDeleteChallengeCookie(payload: DeleteChallengeCookie, secret: string) {
+  const encodedPayload = Buffer.from(JSON.stringify(payload), "utf8").toString("base64url");
+  const signature = signDeleteChallenge(encodedPayload, secret).toString("base64url");
+  return `${encodedPayload}.${signature}`;
+}
+
+function decodeDeleteChallengeCookie(encoded: string, secret: string) {
   try {
-    const parsed = JSON.parse(Buffer.from(encoded, "base64url").toString("utf8")) as Partial<DeleteChallengeCookie>;
+    const [encodedPayload, encodedSignature] = encoded.split(".");
+    if (!encodedPayload || !encodedSignature) return null;
+    const expected = signDeleteChallenge(encodedPayload, secret);
+    const actual = Buffer.from(encodedSignature, "base64url");
+    if (expected.length !== actual.length || !timingSafeEqual(expected, actual)) return null;
+    const parsed = JSON.parse(Buffer.from(encodedPayload, "base64url").toString("utf8")) as Partial<DeleteChallengeCookie>;
     if (
       typeof parsed.userId === "string" &&
       typeof parsed.phrase === "string" &&
