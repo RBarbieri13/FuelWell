@@ -82,4 +82,32 @@ describe("launch-preflight route", () => {
     });
     expect(mocks.getLiveLaunchPreflight).toHaveBeenCalledOnce();
   });
+
+  it("allows live probes with a verified Supabase bearer session", async () => {
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "https://project.supabase.co");
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY", "anon-key");
+    const fetchMock = vi.fn(async () => new Response(JSON.stringify({ id: "user-1" }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    const { GET } = await import("@/app/api/launch-preflight/route");
+    const response = await GET(new Request("https://fuelwell.test/api/launch-preflight?live=1", {
+      headers: { Authorization: "Bearer verified-access-token" },
+    }));
+
+    expect(response.status).toBe(200);
+    expect(fetchMock).toHaveBeenCalledWith(
+      "https://project.supabase.co/auth/v1/user",
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          apikey: "anon-key",
+          Authorization: "Bearer verified-access-token",
+        }),
+      }),
+    );
+    expect(mocks.createClient).not.toHaveBeenCalled();
+    expect(mocks.getLiveLaunchPreflight).toHaveBeenCalledOnce();
+  });
 });

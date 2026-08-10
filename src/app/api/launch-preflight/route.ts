@@ -22,6 +22,27 @@ async function canAccessLiveLaunchPreflight(request: Request): Promise<boolean> 
 
   if (!hasSupabaseConfig()) return false;
 
+  const authorization = request.headers.get("authorization");
+  const accessToken = authorization?.match(/^Bearer\s+(.+)$/i)?.[1]?.trim();
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim().replace(/\/$/, "");
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim();
+  if (accessToken && supabaseUrl && anonKey) {
+    try {
+      const response = await fetch(`${supabaseUrl}/auth/v1/user`, {
+        headers: {
+          apikey: anonKey,
+          Authorization: `Bearer ${accessToken}`,
+          Accept: "application/json",
+        },
+        cache: "no-store",
+        signal: AbortSignal.timeout(10_000),
+      });
+      if (response.ok) return true;
+    } catch {
+      // Fall through to the cookie-backed session check.
+    }
+  }
+
   const supabase = await createClient();
   const {
     data: { user },

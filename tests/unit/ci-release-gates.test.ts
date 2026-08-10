@@ -70,4 +70,15 @@ describe("release CI workflow contracts", () => {
     );
     expect(workflow).toContain("ref: ${{ steps.target.outputs.sha }}");
   });
+
+  it("authenticates the protected live preflight before TestFlight upload", () => {
+    const workflow = readRepoFile(".github/workflows/ios-testflight.yml");
+    const verifier = readRepoFile("tools/release/test-ios-candidate-ui.sh");
+
+    expect(workflow).toContain("NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}");
+    expect(workflow).toContain("NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}");
+    expect(verifier).toContain("/auth/v1/token?grant_type=password");
+    expect(verifier).toContain('Authorization: Bearer ${access_token}');
+    expect(verifier).toContain(".productionReady == true and .liveReady == true");
+  });
 });

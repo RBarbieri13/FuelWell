@@ -6,6 +6,8 @@ candidate_url="${FUELWELL_CANDIDATE_URL:-}"
 expected_git_sha="${FUELWELL_CANDIDATE_GIT_SHA:-}"
 expected_deployment_id="${FUELWELL_CANDIDATE_DEPLOYMENT_ID:-}"
 expected_environment="${FUELWELL_CANDIDATE_ENVIRONMENT:-}"
+supabase_url="${NEXT_PUBLIC_SUPABASE_URL:-${FUELWELL_SUPABASE_URL:-}}"
+supabase_anon_key="${NEXT_PUBLIC_SUPABASE_ANON_KEY:-${FUELWELL_SUPABASE_ANON_KEY:-}}"
 device="${FUELWELL_RELEASE_TEST_DEVICE:-iPhone 15}"
 result_path="${FUELWELL_UI_TEST_RESULT_PATH:-${repo_root}/ios/build/reports/FuelWellCandidateUITests.xcresult}"
 overflow_result_path="${FUELWELL_MOBILE_OVERFLOW_RESULT_PATH:-${repo_root}/ios/build/reports/coach-mobile-overflow}"
@@ -80,15 +82,32 @@ environment="$(read_manifest '.environment' 'environment')"
   fail "manifest package version does not match package.json"
 
 preflight_url="${candidate_origin}/api/launch-preflight?live=1"
-preflight="$(curl --fail --silent --show-error --max-time 20 \
-  -H 'Accept: application/json' "${preflight_url}")" || fail "candidate launch preflight is unavailable"
-jq -e '.productionReady == true and .liveReady == true' <<<"${preflight}" >/dev/null || \
-  fail "candidate is not live production-ready for TestFlight: $(jq -c '{previewReady, productionReady, liveReady, checks}' <<<"${preflight}")"
 
 [[ "${FUELWELL_UI_TEST_ALLOW_ANONYMOUS:-0}" != "1" ]] || \
   fail "anonymous candidates cannot be uploaded to TestFlight"
 [[ -n "${FUELWELL_UI_TEST_EMAIL:-}" ]] || fail "FUELWELL_UI_TEST_EMAIL is required"
 [[ -n "${FUELWELL_UI_TEST_PASSWORD:-}" ]] || fail "FUELWELL_UI_TEST_PASSWORD is required"
+[[ -n "${supabase_url}" ]] || fail "NEXT_PUBLIC_SUPABASE_URL or FUELWELL_SUPABASE_URL is required"
+[[ -n "${supabase_anon_key}" ]] || fail "NEXT_PUBLIC_SUPABASE_ANON_KEY or FUELWELL_SUPABASE_ANON_KEY is required"
+
+auth_response="$(curl --fail --silent --show-error --max-time 20 \
+  -H "apikey: ${supabase_anon_key}" \
+  -H 'Content-Type: application/json' \
+  --data "$(jq -nc \
+    --arg email "${FUELWELL_UI_TEST_EMAIL}" \
+    --arg password "${FUELWELL_UI_TEST_PASSWORD}" \
+    '{email: $email, password: $password}')" \
+  "${supabase_url%/}/auth/v1/token?grant_type=password")" || \
+  fail "dedicated UI-test user could not authenticate with Supabase"
+access_token="$(jq -er '.access_token' <<<"${auth_response}")" || \
+  fail "Supabase authentication did not return an access token"
+
+preflight="$(curl --fail --silent --show-error --max-time 20 \
+  -H 'Accept: application/json' \
+  -H "Authorization: Bearer ${access_token}" \
+  "${preflight_url}")" || fail "authenticated candidate launch preflight is unavailable"
+jq -e '.productionReady == true and .liveReady == true' <<<"${preflight}" >/dev/null || \
+  fail "candidate is not live production-ready for TestFlight: $(jq -c '{previewReady, productionReady, liveReady, checks, liveChecks}' <<<"${preflight}")"
 
 if [[ ! -x "${repo_root}/node_modules/.bin/playwright" ]]; then
   echo "Installing locked web test dependencies"

@@ -4,7 +4,7 @@ Date: 2026-08-09
 
 Branch: `release/fuelwell-appstore-20260809`
 
-Status: **PASS for local candidate quality; externally blocked for immutable-candidate and store verification**
+Status: **PASS for local candidate quality; externally blocked by inactive Supabase and release approval gates**
 
 No branch was pushed, no deployment was created, and nothing was uploaded to TestFlight or App Store Connect during this pass.
 
@@ -26,6 +26,7 @@ The graph campaign used 20 independent auditors, reduced 57 findings to 15 high-
 - Replaced app/web brand assets with the current FuelWell logo family and wired complete iOS AppIcon sizes.
 - Added immutable release binding, App Store screenshot foundations, candidate-to-screenshot provenance, and HMAC-attested screenshot evidence.
 - Added App Store metadata/privacy/readiness checks while retaining the explicit human gate for TestFlight upload and App Review submission.
+- Repaired the candidate-bound release verifier so it signs the dedicated UI-test account into Supabase and calls the protected live preflight with a bearer session. The endpoint remains private while the workflow can now prove live schema and provider health before any upload.
 
 ## Key iOS decisions
 
@@ -53,7 +54,7 @@ The graph campaign used 20 independent auditors, reduced 57 findings to 15 high-
 | Native iPhone 17 Pro Max build | PASS |
 | Repository App Store readiness | PASS: 25 checks, 0 repository failures |
 | Immutable candidate UI + live Coach | BLOCKED: candidate provenance and test credentials are not present |
-| Live Supabase migration/OAuth persistence | BLOCKED: deployment configuration is not present in this worktree |
+| Live Supabase migration/OAuth persistence | BLOCKED: project `xzsftuxvnkgxtbiibvac` is confirmed `INACTIVE` |
 | App Store screenshots | BLOCKED: must be captured from the approved immutable candidate |
 
 Native test result:
@@ -72,13 +73,21 @@ Representative compact screenshots:
 
 The repository is locally green, but a release candidate cannot be honestly declared until all of these are satisfied:
 
-1. Apply the three new Supabase migrations and verify their tables/RLS against the target project.
-2. Configure Google and Facebook OAuth in Supabase and their provider consoles, then verify new registration and returning sign-in with dedicated test accounts.
-3. Create an immutable Vercel deployment from the exact reviewed commit and record its Git SHA, deployment ID, deployment origin, and environment.
-4. Provide dedicated authenticated UI-test credentials and run `tools/release/test-ios-candidate-ui.sh`; this gate verifies live Coach inference, fresh-sign-in persistence, mobile containment, and the actual bound `WKWebView` shell.
-5. Configure the Apple/Fastlane secrets listed in `docs/APP-STORE-READINESS.md`.
+1. Obtain Robert's approval to restore Supabase project `xzsftuxvnkgxtbiibvac`. The management API reports the Free-plan project as `INACTIVE`, and its API hostname does not currently resolve.
+2. After restoration, apply the three new Supabase migrations and verify their tables, RLS, OAuth providers, and dedicated test account. Migration state cannot be queried while the project is inactive.
+3. Obtain Robert's approval to push the reviewed candidate branch. It is ahead of `origin/main`; no remote branch or pull request was created during this pass.
+4. Create an immutable Vercel deployment from the exact reviewed commit and record its Git SHA, deployment ID, deployment origin, and environment. The current public production deployment is `dpl_CcrusBaFKJSwhwwWAQJjDSMEFA3R` from July 26 and predates the release manifest routes.
+5. Run `tools/release/test-ios-candidate-ui.sh`; GitHub already has the dedicated UI-test and Supabase secrets needed by the workflow. This gate verifies live Coach inference, fresh-sign-in persistence, mobile containment, and the actual bound `WKWebView` shell.
 6. Capture and attest App Store screenshots from that same immutable candidate.
 7. Obtain Robert's explicit approval before TestFlight upload, and separate explicit approval before App Review submission.
+
+## Verified release configuration
+
+- GitHub authentication is active for `RBarbieri13`, and the repository has Apple signing, App Store Connect, Match, Supabase public-key, and dedicated UI-test secrets configured.
+- The last successful TestFlight workflow was run `29476657493` on July 16 against commit `6d108fdc0b7bc063626d006d212812847a5ff238`.
+- The July 27 TestFlight workflow `30235420827` correctly stopped before upload because the bound candidate failed its live readiness gate.
+- Vercel project `fuelwell-preview` is reachable, but the public alias still points to the older July 26 deployment and returns 404 for the new immutable release manifest and launch-preflight routes.
+- Supabase organization `RBarbieri13's Org` is on the Free plan. FuelWell is the `INACTIVE` project; this matches Supabase's documented automatic pausing behavior for low-activity Free-plan projects.
 
 ## Remaining limitations
 
