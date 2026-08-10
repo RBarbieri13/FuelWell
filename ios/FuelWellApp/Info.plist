@@ -49,6 +49,8 @@
 	<string>$(FUELWELL_START_URL)</string>
 	<key>FuelWellSupabaseURL</key>
 	<string>$(FUELWELL_SUPABASE_URL)</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>NSCameraUsageDescription</key>
 	<string>FuelWell uses the camera to log meal photos for nutrition tracking.</string>
 	<key>NSHealthShareUsageDescription</key>

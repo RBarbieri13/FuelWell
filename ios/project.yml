@@ -76,6 +76,7 @@ targets:
         FuelWellReleaseSchemaVersion: "$(FUELWELL_RELEASE_SCHEMA_VERSION)"
         FuelWellStartURL: "$(FUELWELL_START_URL)"
         FuelWellSupabaseURL: "$(FUELWELL_SUPABASE_URL)"
+        ITSAppUsesNonExemptEncryption: false
         NSCameraUsageDescription: FuelWell uses the camera to log meal photos for nutrition tracking.
         NSHealthShareUsageDescription: FuelWell reads workouts, sleep, steps, energy, and body measurements to personalize coaching.
         NSHealthUpdateUsageDescription: FuelWell does not write Health data in this phase.

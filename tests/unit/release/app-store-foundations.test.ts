@@ -22,6 +22,16 @@ describe("App Store foundations", () => {
     );
   });
 
+  it("declares that FuelWell only uses exempt platform encryption", () => {
+    const infoPlist = readFileSync(path.join(root, "ios/FuelWellApp/Info.plist"), "utf8");
+    const projectSpec = readFileSync(path.join(root, "ios/project.yml"), "utf8");
+
+    expect(infoPlist).toMatch(
+      /<key>ITSAppUsesNonExemptEncryption<\/key>\s*<false\/>/
+    );
+    expect(projectSpec).toContain("ITSAppUsesNonExemptEncryption: false");
+  });
+
   it("checks in repeatable Fastlane screenshot automation", () => {
     const snapfilePath = path.join(root, "ios/fastlane/Snapfile");
     const fastfilePath = path.join(root, "ios/fastlane/Fastfile");

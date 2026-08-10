@@ -63,9 +63,7 @@ const requiredEnv = [
   "FUELWELL_APP_IDENTIFIER",
   "FUELWELL_APPLE_ID",
   "FUELWELL_APPLE_TEAM_ID",
-  "FUELWELL_APP_STORE_CONNECT_TEAM_ID",
-  "FUELWELL_MATCH_GIT_URL",
-  "FUELWELL_SCREENSHOT_ATTESTATION_KEY"
+  "FUELWELL_MATCH_GIT_URL"
 ];
 
 const requiredScreenshotFamilies = [
@@ -393,6 +391,28 @@ function validateHumanGates(results) {
   addResult(
     results,
     "human-gates",
+    "pass",
+    "App Store Connect provider selection",
+    process.env.FUELWELL_APP_STORE_CONNECT_TEAM_ID
+      ? "FUELWELL_APP_STORE_CONNECT_TEAM_ID is present."
+      : "The team ID is optional; Fastlane will use the App Store Connect API key's default provider.",
+    null
+  );
+
+  addResult(
+    results,
+    "human-gates",
+    process.env.FUELWELL_SCREENSHOT_ATTESTATION_KEY ? "pass" : "blocker",
+    "FUELWELL_SCREENSHOT_ATTESTATION_KEY configured",
+    process.env.FUELWELL_SCREENSHOT_ATTESTATION_KEY
+      ? "The private screenshot provenance key is present."
+      : "Required to sign the immutable candidate screenshot manifest before App Store release.",
+    null
+  );
+
+  addResult(
+    results,
+    "human-gates",
     "blocker",
     "App Store submission requires Robert",
     "The release lane intentionally sets submit_for_review=false; App Review submission is a Vital Question.",
@@ -499,6 +519,18 @@ function validateRepositoryReleaseGates(results) {
     permissionAndCallbackCoverage
       ? "Location, callback, exact OAuth origin, and build-version substitutions are declared."
       : "Declare location, callback, exact OAuth origin, and build-version substitutions before shipping the signed app.",
+    infoPlistPath
+  );
+
+  const exportComplianceCovered = /<key>ITSAppUsesNonExemptEncryption<\/key>\s*<false\/>/.test(infoPlist);
+  addResult(
+    results,
+    "repository-gates",
+    exportComplianceCovered ? "pass" : "fail",
+    "App Store export-compliance declaration",
+    exportComplianceCovered
+      ? "The app declares that it only uses exempt platform encryption, avoiding a redundant processing hold."
+      : "Declare ITSAppUsesNonExemptEncryption=false when the app uses only Apple's standard encrypted transports.",
     infoPlistPath
   );
 }
