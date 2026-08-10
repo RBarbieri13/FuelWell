@@ -27,9 +27,12 @@ final class FuelWellCriticalPathUITests: XCTestCase {
         ]
 
         for screenshot in screenshots {
-            tap(label: screenshot.navLabel, in: app)
+            let destination = element(in: app, label: screenshot.destinationLabel)
+            if !destination.exists {
+                tap(label: screenshot.navLabel, in: app)
+            }
             XCTAssertTrue(
-                element(in: app, label: screenshot.destinationLabel).waitForExistence(timeout: routeTimeout),
+                destination.waitForExistence(timeout: routeTimeout),
                 "\(screenshot.navLabel) did not reach \(screenshot.destinationLabel)."
             )
             captureAppStoreSnapshot(screenshot.name, in: app)
