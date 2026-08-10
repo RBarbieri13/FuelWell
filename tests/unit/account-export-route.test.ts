@@ -107,6 +107,7 @@ describe("/api/account/export", () => {
       grocery_items: [{ id: "item-1", grocery_list_id: "list-1" }],
       body_log_entries: [{ id: "body-1", user_id: "user-1" }],
       coach_uploaded_artifacts: [{ id: "artifact-1", user_id: "user-1" }],
+      user_weekly_meal_plans: [{ id: "meal-plan-1", user_id: "user-1", week_start: "2026-08-10" }],
     };
   });
 
@@ -140,6 +141,9 @@ describe("/api/account/export", () => {
       { id: "item-1", grocery_list_id: "list-1" },
     ]);
     expect(payload.tables.body_log_entries).toEqual([{ id: "body-1", user_id: "user-1" }]);
+    expect(payload.tables.user_weekly_meal_plans).toEqual([
+      { id: "meal-plan-1", user_id: "user-1", week_start: "2026-08-10" },
+    ]);
   });
 
   it("requires a signed-in user", async () => {

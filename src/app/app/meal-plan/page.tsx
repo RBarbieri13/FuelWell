@@ -103,7 +103,7 @@ function SlotStrip({
 }
 
 export default function MealPlanPage() {
-  const { days, setPlanMeal } = useMealPlan();
+  const { days, persistence, setPlanMeal, createStarterMealPlan } = useMealPlan();
   const { addMeal } = useDayLog();
   const today = todayIsoDate();
   const [selectedDayId, setSelectedDayId] = useState(
@@ -115,7 +115,9 @@ export default function MealPlanPage() {
   const [actionNote, setActionNote] = useState("");
 
   const selectedDay = days.find((day) => day.id === selectedDayId) ?? days[0];
-  const selectedTotals = dayTotals(selectedDay);
+  const selectedTotals = selectedDay
+    ? dayTotals(selectedDay)
+    : { calories: 0, protein: 0, planned: 0 };
   const weekTotals = days.reduce(
     (totals, day) => {
       const current = dayTotals(day);
@@ -128,7 +130,9 @@ export default function MealPlanPage() {
     { calories: 0, protein: 0, planned: 0 }
   );
   const slotCount = days.reduce((count, day) => count + day.meals.length, 0);
-  const weekPlannedPercent = Math.round((weekTotals.planned / slotCount) * 100);
+  const weekPlannedPercent = slotCount > 0
+    ? Math.round((weekTotals.planned / slotCount) * 100)
+    : 0;
   const openSlotCount = slotCount - weekTotals.planned;
   const firstOpenSlot = days
     .flatMap((day) => day.meals.map((meal) => ({ day, meal })))
@@ -145,6 +149,56 @@ export default function MealPlanPage() {
     }
     return names.size;
   }, [days]);
+
+  if (!selectedDay) {
+    return (
+      <div className="fw-app-surface">
+        <header className="fw-page-header">
+          <div className="fw-page-inner py-5 md:py-7">
+            <h1 className="fw-heading text-2xl md:text-4xl">Meal plan</h1>
+            <p className="fw-muted mt-1 text-sm md:text-base">
+              Plan the next few days around protein, prep time, and grocery needs.
+            </p>
+          </div>
+        </header>
+        <main className="fw-page-inner py-6 md:py-8">
+          <Card className="mx-auto max-w-2xl p-6 text-center md:p-10">
+            <span className="mx-auto flex size-12 items-center justify-center rounded-2xl bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100">
+              <CalendarDays className="size-6" aria-hidden="true" />
+            </span>
+            <h2 className="fw-heading mt-4 text-xl md:text-2xl">Plan this week</h2>
+            <p className="fw-muted mx-auto mt-2 max-w-md text-sm md:text-base">
+              {persistence.mode === "authenticated"
+                ? "Your account does not have a meal plan for this week yet. Start one without importing another account or preview plan."
+                : "Start a weekly plan, then adjust each meal around your schedule."}
+            </p>
+            {actionNote && (
+              <p className="mt-3 text-sm font-bold text-primary-800" role="status">
+                {actionNote}
+              </p>
+            )}
+            <Button
+              type="button"
+              className="mt-5 min-h-11"
+              disabled={persistence.status === "saving"}
+              onClick={async () => {
+                const result = await createStarterMealPlan();
+                if (result.ok) {
+                  setSelectedDayId(result.value[0]?.id ?? "");
+                  setActionNote("This week's starter plan is saved.");
+                } else {
+                  setActionNote(`Meal plan was not saved: ${result.error}`);
+                }
+              }}
+            >
+              <Plus className="size-4" aria-hidden="true" />
+              Start this week
+            </Button>
+          </Card>
+        </main>
+      </div>
+    );
+  }
 
   function fillOpenSlot(day: PlanDay, meal: PlannedMeal) {
     const sameDayTitles = day.meals
@@ -309,11 +363,12 @@ export default function MealPlanPage() {
               </div>
             </div>
             <div className="space-y-2">
-              <Link href="/app/grocery-list" className="block">
-                <Button type="button" className="w-full">
-                  Build grocery list
-                  <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.25} />
-                </Button>
+              <Link
+                href="/app/grocery-list"
+                className="fw-press inline-flex min-h-11 w-full select-none items-center justify-center gap-2 rounded-[1.15rem] bg-gradient-to-b from-primary-500 to-teal-600 px-4 py-3 text-sm font-bold text-white shadow-glow hover:from-primary-400 hover:to-teal-500 hover:shadow-e3 active:from-primary-700 active:to-primary-800 active:shadow-e1 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2"
+              >
+                Build grocery list
+                <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.25} />
               </Link>
               <Link
                 href="/app/recipes"

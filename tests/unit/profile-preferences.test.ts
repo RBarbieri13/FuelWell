@@ -20,6 +20,8 @@ class MemoryStorage {
   getItem(key: string) { return this.values.get(key) ?? null; }
   setItem(key: string, value: string) { this.values.set(key, value); }
   removeItem(key: string) { this.values.delete(key); }
+  key(index: number) { return [...this.values.keys()][index] ?? null; }
+  get length() { return this.values.size; }
 }
 
 afterEach(() => {
@@ -94,6 +96,7 @@ describe("verified profile saves", () => {
     storage.setItem(coachChatStorageKey("user-1"), "chat");
     storage.setItem(goalPlanStorageKey("user-1"), "goal");
     storage.setItem(integrationSummaryStorageKey("user-1"), "integration");
+    storage.setItem("fuelwell-meal-plan-user-v2:user-1:2026-08-10", "meal plan");
 
     clearUserScopedIdentityCaches("user-1");
 
@@ -102,5 +105,6 @@ describe("verified profile saves", () => {
     expect(storage.getItem(coachChatStorageKey("user-1"))).toBeNull();
     expect(storage.getItem(goalPlanStorageKey("user-1"))).toBeNull();
     expect(storage.getItem(integrationSummaryStorageKey("user-1"))).toBeNull();
+    expect(storage.getItem("fuelwell-meal-plan-user-v2:user-1:2026-08-10")).toBeNull();
   });
 });

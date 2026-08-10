@@ -21,7 +21,21 @@ export async function GET() {
   }
 
   try {
-    const payload = await buildAccountExportPayload(supabase, user);
+    const basePayload = await buildAccountExportPayload(supabase, user);
+    const { data: mealPlans, error: mealPlansError } = await supabase
+      .from("user_weekly_meal_plans")
+      .select("*")
+      .eq("user_id", user.id);
+    if (mealPlansError) {
+      throw new Error(`Failed to export user_weekly_meal_plans: ${mealPlansError.message}`);
+    }
+    const payload = {
+      ...basePayload,
+      tables: {
+        ...basePayload.tables,
+        user_weekly_meal_plans: mealPlans ?? [],
+      },
+    };
     return new Response(JSON.stringify(payload, null, 2), {
       status: 200,
       headers: createExportHeaders(),

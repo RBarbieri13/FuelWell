@@ -1,4 +1,5 @@
 import { clearCoachChatForUser } from "@/lib/coach/chat-storage";
+import { clearMealPlanCacheForUser } from "@/lib/use-meal-plan";
 import { clearGoalContextForUser } from "@/lib/use-goal-context";
 
 export const PREVIEW_IDENTITY_SCOPE = "preview";
@@ -97,6 +98,7 @@ export function clearUserScopedIdentityCaches(userId: string): void {
     window.localStorage.removeItem(onboardingDraftStorageKey(userId));
     window.localStorage.removeItem(preferenceStorageKey(userId));
     clearCoachChatForUser(userId);
+    clearMealPlanCacheForUser(userId);
     clearGoalContextForUser(userId);
   } catch {
     // Cache cleanup must never prevent sign-out.
