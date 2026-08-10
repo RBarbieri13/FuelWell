@@ -4,6 +4,7 @@ import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import process from "node:process";
+import { verifyScreenshotManifestAttestation } from "./screenshot-attestation.mjs";
 
 const root = process.cwd();
 const metadataRoot = path.join(root, "ios/fastlane/metadata/en-US");
@@ -53,7 +54,8 @@ const requiredEnv = [
   "FUELWELL_APPLE_ID",
   "FUELWELL_APPLE_TEAM_ID",
   "FUELWELL_APP_STORE_CONNECT_TEAM_ID",
-  "FUELWELL_MATCH_GIT_URL"
+  "FUELWELL_MATCH_GIT_URL",
+  "FUELWELL_SCREENSHOT_ATTESTATION_KEY"
 ];
 
 const requiredScreenshotFamilies = [
@@ -349,13 +351,16 @@ function validateScreenshots(results) {
     });
     const requiredProvenance = ["git_sha", "deployment_id", "deployment_url", "environment", "package_version"];
     const provenancePresent = requiredProvenance.every((key) => typeof manifest[key] === "string" && manifest[key].trim());
+    const attestationKey = process.env.FUELWELL_SCREENSHOT_ATTESTATION_KEY ?? "";
+    const attestationValid = verifyScreenshotManifestAttestation(manifest, attestationKey);
     addResult(
       results,
-      hashesMatch && provenancePresent ? "pass" : "blocker",
+      "screenshots",
+      hashesMatch && provenancePresent && attestationValid ? "pass" : "blocker",
       "Screenshot candidate provenance",
-      hashesMatch && provenancePresent
-        ? "Every screenshot hash is bound to an immutable candidate manifest."
-        : "The screenshot manifest is incomplete, stale, or does not match every captured image.",
+      hashesMatch && provenancePresent && attestationValid
+        ? "Every screenshot hash and candidate field is covered by a protected attestation."
+        : "The screenshot manifest is unsigned, incomplete, stale, or does not match every captured image.",
       screenshotManifestPath
     );
   } catch (error) {

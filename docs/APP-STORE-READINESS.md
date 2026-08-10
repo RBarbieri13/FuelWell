@@ -1,14 +1,14 @@
 # FuelWell App Store Readiness
 
-Generated: 2026-08-09T23:54:53.372Z
+Generated: 2026-08-10T00:43:17.398Z
 Status: Externally Blocked
 
 This snapshot checks repository-owned TestFlight and App Store evidence. It does not perform Apple Developer, TestFlight, paid-account, or App Review actions.
 
 ## Summary
 
-- Passed: 24
-- Human/external blockers: 7
+- Passed: 25
+- Human/external blockers: 8
 - Failures: 0
 
 ## Checks
@@ -37,6 +37,7 @@ This snapshot checks repository-owned TestFlight and App Store evidence. It does
 | signing | pass | Generated Xcode project wires HealthKit entitlements | FuelWellApp.xcodeproj carries the entitlements build setting. | ios/FuelWellApp.xcodeproj/project.pbxproj |
 | screenshots | pass | Fastlane screenshot config present | Snapfile is committed. | ios/fastlane/Snapfile |
 | screenshots | pass | Required screenshot devices configured | Snapfile covers the required App Store iPhone families. | ios/fastlane/Snapfile |
+| screenshots | pass | Screenshot simulators installed | Every Snapfile device is available in the installed Xcode runtime. | ios/fastlane/Snapfile |
 | screenshots | pass | Snapshot helper committed | FuelWellUITests includes Fastlane's SnapshotHelper.swift. | ios/FuelWellUITests/SnapshotHelper.swift |
 | screenshots | pass | UI tests emit fastlane snapshots | Candidate UI tests call setupSnapshot(app) and snapshot(...). | ios/FuelWellUITests/FuelWellCriticalPathUITests.swift |
 | screenshots | blocker | App Store screenshots missing | No screenshots are present under ios/fastlane/screenshots/en-US. | ios/fastlane/screenshots/en-US |
@@ -45,6 +46,7 @@ This snapshot checks repository-owned TestFlight and App Store evidence. It does
 | human-gates | blocker | FUELWELL_APPLE_TEAM_ID configured | Required for Fastlane beta/release, but should not be committed. |  |
 | human-gates | blocker | FUELWELL_APP_STORE_CONNECT_TEAM_ID configured | Required for Fastlane beta/release, but should not be committed. |  |
 | human-gates | blocker | FUELWELL_MATCH_GIT_URL configured | Required for Fastlane beta/release, but should not be committed. |  |
+| human-gates | blocker | FUELWELL_SCREENSHOT_ATTESTATION_KEY configured | Required for Fastlane beta/release, but should not be committed. |  |
 | human-gates | blocker | App Store submission requires Robert | The release lane intentionally sets submit_for_review=false; App Review submission is a Vital Question. | ios/fastlane/Fastfile |
 
 ## Next Actions

@@ -1,6 +1,12 @@
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
+import {
+  SCREENSHOT_ATTESTATION_ALGORITHM,
+  SCREENSHOT_ATTESTATION_KEY_ID,
+  signScreenshotManifest,
+  verifyScreenshotManifestAttestation
+} from "../../../tools/release/screenshot-attestation.mjs";
 
 const root = process.cwd();
 
@@ -35,9 +41,51 @@ describe("App Store foundations", () => {
     expect(fastfile).toContain("ensure_app_store_screenshots!");
     expect(fastfile).toContain("write_screenshot_manifest!");
     expect(fastfile).toContain("Digest::SHA256.file(file).hexdigest");
+    expect(fastfile).toContain("verify_screenshot_attestation!");
+    expect(fastfile).toContain("ensure_screenshot_candidate_source!");
     expect(fastfile).toContain("Screenshot manifest #{key} does not match the release candidate");
     expect(uiTests).toContain("setupSnapshot(app)");
     expect(uiTests).toContain("snapshot(name, timeWaitingForIdle: 0)");
+  });
+
+  it("rejects screenshot manifests whose candidate fields or image hashes are changed", () => {
+    const secret = "test-only-screenshot-attestation-secret-123456";
+    const manifest = {
+      schema_version: 1,
+      captured_at: "2026-08-09T12:00:00Z",
+      git_sha: "abc123",
+      deployment_id: "dpl_123",
+      deployment_url: "https://candidate.example.com",
+      environment: "preview",
+      package_version: "1.0.0",
+      screenshots: { "en-US/iPhone-17-Pro-Max-dashboard.png": "a".repeat(64) },
+      attestation: {
+        algorithm: SCREENSHOT_ATTESTATION_ALGORITHM,
+        key_id: SCREENSHOT_ATTESTATION_KEY_ID,
+        value: ""
+      }
+    };
+    manifest.attestation.value = signScreenshotManifest(manifest, secret);
+
+    expect(verifyScreenshotManifestAttestation(manifest, secret)).toBe(true);
+    expect(
+      verifyScreenshotManifestAttestation({ ...manifest, git_sha: "different" }, secret)
+    ).toBe(false);
+    expect(
+      verifyScreenshotManifestAttestation(
+        {
+          ...manifest,
+          screenshots: {
+            ...manifest.screenshots,
+            "en-US/iPhone-17-Pro-Max-dashboard.png": "b".repeat(64)
+          }
+        },
+        secret
+      )
+    ).toBe(false);
+    expect(
+      verifyScreenshotManifestAttestation(manifest, "wrong-secret-with-at-least-32-characters")
+    ).toBe(false);
   });
 
   it("uses the checked-in revised brand artwork for the web logo and PWA icons", () => {

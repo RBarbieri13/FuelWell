@@ -1,5 +1,6 @@
 require "json"
 require "digest"
+require "openssl"
 require "pathname"
 require "shellwords"
 require "time"
@@ -99,6 +100,7 @@ platform :ios do
   desc "Capture App Store screenshots from the verified immutable candidate"
   lane :screenshots do
     release_settings = testflight_release_settings
+    ensure_screenshot_candidate_source!
     sh("cd #{repo_root}/ios && xcodegen generate --spec project.yml")
     snapshot(
       xcargs: [
@@ -200,6 +202,7 @@ platform :ios do
     UI.user_error!("Screenshot candidate manifest is missing; recapture screenshots.") unless File.exist?(manifest_path)
 
     manifest = JSON.parse(File.read(manifest_path))
+    verify_screenshot_attestation!(manifest)
     settings = testflight_release_settings
     expected = {
       "git_sha" => ENV.fetch("FUELWELL_CANDIDATE_GIT_SHA"),
@@ -242,7 +245,69 @@ platform :ios do
         [relative, Digest::SHA256.file(file).hexdigest]
       end
     }
+    manifest["attestation"] = {
+      "algorithm" => "HMAC-SHA256",
+      "key_id" => "fuelwell-appstore-screenshots-v1",
+      "value" => screenshot_manifest_signature(manifest)
+    }
     File.write(screenshot_manifest_path, JSON.pretty_generate(manifest) + "\n")
+  end
+
+  def ensure_screenshot_candidate_source!
+    expected_sha = required_release_value("FUELWELL_CANDIDATE_GIT_SHA")
+    actual_sha = sh("git -C #{Shellwords.escape(repo_root)} rev-parse HEAD", log: false).strip
+    unless actual_sha == expected_sha
+      UI.user_error!("Screenshot capture must run from candidate commit #{expected_sha}, not #{actual_sha}.")
+    end
+
+    source_diff = sh(
+      "git -C #{Shellwords.escape(repo_root)} status --porcelain --untracked-files=no -- . " \
+      "':(exclude)ios/fastlane/screenshots'",
+      log: false
+    ).strip
+    UI.user_error!("Screenshot capture requires a clean candidate source tree.") unless source_diff.empty?
+  end
+
+  def screenshot_attestation_key
+    key = required_release_value("FUELWELL_SCREENSHOT_ATTESTATION_KEY")
+    if key.length < 32
+      UI.user_error!("FUELWELL_SCREENSHOT_ATTESTATION_KEY must contain at least 32 characters.")
+    end
+    key
+  end
+
+  def canonicalize_json_value(value)
+    case value
+    when Hash
+      value.keys.sort.to_h { |key| [key, canonicalize_json_value(value.fetch(key))] }
+    when Array
+      value.map { |item| canonicalize_json_value(item) }
+    else
+      value
+    end
+  end
+
+  def screenshot_manifest_signature(manifest)
+    payload = manifest.reject { |key, _value| key == "attestation" }
+    serialized = JSON.generate(canonicalize_json_value(payload))
+    OpenSSL::HMAC.hexdigest("SHA256", screenshot_attestation_key, serialized)
+  end
+
+  def verify_screenshot_attestation!(manifest)
+    attestation = manifest["attestation"]
+    valid_shape = attestation.is_a?(Hash) &&
+      attestation["algorithm"] == "HMAC-SHA256" &&
+      attestation["key_id"] == "fuelwell-appstore-screenshots-v1" &&
+      attestation["value"].to_s.match?(/\A[0-9a-f]{64}\z/i)
+    unless valid_shape
+      UI.user_error!("Screenshot manifest attestation is missing or unsupported; recapture screenshots.")
+    end
+
+    expected = screenshot_manifest_signature(manifest)
+    actual = attestation.fetch("value")
+    unless expected.bytesize == actual.bytesize && OpenSSL.fixed_length_secure_compare(expected, actual)
+      UI.user_error!("Screenshot manifest attestation is invalid; recapture screenshots from the protected candidate workflow.")
+    end
   end
 
   def screenshot_manifest_path

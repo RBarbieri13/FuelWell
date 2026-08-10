@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-08-09T23:54:53.372Z",
+  "generatedAt": "2026-08-10T00:43:17.398Z",
   "status": "externally_blocked",
   "counts": {
-    "pass": 24,
-    "blocker": 7,
+    "pass": 25,
+    "blocker": 8,
     "fail": 0
   },
   "paths": {
@@ -171,6 +171,13 @@
     {
       "area": "screenshots",
       "status": "pass",
+      "label": "Screenshot simulators installed",
+      "detail": "Every Snapfile device is available in the installed Xcode runtime.",
+      "file": "ios/fastlane/Snapfile"
+    },
+    {
+      "area": "screenshots",
+      "status": "pass",
       "label": "Snapshot helper committed",
       "detail": "FuelWellUITests includes Fastlane's SnapshotHelper.swift.",
       "file": "ios/FuelWellUITests/SnapshotHelper.swift"
@@ -221,6 +228,13 @@
       "area": "human-gates",
       "status": "blocker",
       "label": "FUELWELL_MATCH_GIT_URL configured",
+      "detail": "Required for Fastlane beta/release, but should not be committed.",
+      "file": null
+    },
+    {
+      "area": "human-gates",
+      "status": "blocker",
+      "label": "FUELWELL_SCREENSHOT_ATTESTATION_KEY configured",
       "detail": "Required for Fastlane beta/release, but should not be committed.",
       "file": null
     },
