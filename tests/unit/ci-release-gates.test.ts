@@ -81,4 +81,47 @@ describe("release CI workflow contracts", () => {
     expect(verifier).toContain('Authorization: Bearer ${access_token}');
     expect(verifier).toContain(".productionReady == true and .liveReady == true");
   });
+
+  it("builds the exact candidate SHA requested by the TestFlight dispatch", () => {
+    const workflow = readRepoFile(".github/workflows/ios-testflight.yml");
+    const checkoutIndex = workflow.indexOf("ref: ${{ inputs.candidate_git_sha }}");
+    const verificationIndex = workflow.indexOf("git rev-parse HEAD");
+    const buildIndex = workflow.indexOf("- name: Select Xcode");
+
+    expect(checkoutIndex).toBeGreaterThan(-1);
+    expect(workflow).toContain(
+      'if [ "${actual_sha}" != "${FUELWELL_CANDIDATE_GIT_SHA}" ]; then',
+    );
+    expect(verificationIndex).toBeGreaterThan(checkoutIndex);
+    expect(buildIndex).toBeGreaterThan(verificationIndex);
+  });
+
+  it("uses an existing root web test command in the W7 aggregate", () => {
+    const readiness = readRepoFile("tools/release/check-w7-readiness.sh");
+    const packageJson = JSON.parse(readRepoFile("package.json")) as {
+      scripts?: Record<string, string>;
+    };
+
+    expect(packageJson.scripts?.["test:unit"]).toBeTruthy();
+    expect(readiness).toContain(
+      'run_gate "Root web unit tests" npm run test:unit',
+    );
+    expect(readiness).not.toContain("npm run test:website");
+  });
+
+  it("runs Networking package tests as a required TestFlight gate", () => {
+    const workflow = readRepoFile(".github/workflows/ios-testflight.yml");
+    const networkingIndex = workflow.indexOf(
+      "- name: Run Networking package tests",
+    );
+    const uploadIndex = workflow.indexOf(
+      "- name: Upload internal TestFlight build",
+    );
+
+    expect(networkingIndex).toBeGreaterThan(-1);
+    expect(workflow).toContain(
+      "run: swift test --package-path ios/Packages/Networking",
+    );
+    expect(uploadIndex).toBeGreaterThan(networkingIndex);
+  });
 });

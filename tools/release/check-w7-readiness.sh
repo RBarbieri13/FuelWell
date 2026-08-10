@@ -41,7 +41,7 @@ run_gate "Phase 4 release gate quick" tools/release/check-phase4-readiness.sh
 run_gate "Phase 7 Founding 100 local contracts" tools/release/check-phase7-founding100.sh
 run_gate "Phase 7 commerce/account linkage local contracts" tools/release/check-phase7-commerce-linkage.sh
 run_gate "Phase 6 operate readiness local contracts" tools/operate/check-operate-readiness.sh
-run_gate "Coach proxy website tests" npm run test:website
+run_gate "Root web unit tests" npm run test:unit
 
 echo
 echo "Summary: ${passes} passed, ${blockers} blocked, ${failures} failed"

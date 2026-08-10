@@ -75,6 +75,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.candidate_git_sha }}
+          fetch-depth: 1
+
+      - name: Verify checked out candidate SHA
+        working-directory: .
+        run: |
+          actual_sha="$(git rev-parse HEAD)"
+          if [ "${actual_sha}" != "${FUELWELL_CANDIDATE_GIT_SHA}" ]; then
+            echo "Checked out ${actual_sha}, expected candidate ${FUELWELL_CANDIDATE_GIT_SHA}" >&2
+            exit 1
+          fi
 
       - name: Select Xcode
         # App Store Connect requires the iOS 26 SDK; versioned installs are
@@ -131,6 +143,10 @@ jobs:
 
       - name: Check theme drift
         run: scripts/check-theme-drift.sh
+
+      - name: Run Networking package tests
+        working-directory: .
+        run: swift test --package-path ios/Packages/Networking
 
       - name: Run full test suite
         # FuelWellUITests require candidate-bound build settings and are
