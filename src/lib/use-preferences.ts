@@ -1,20 +1,11 @@
 "use client";
 
-/**
- * usePreferences — persisted food/recipe preferences (meeting decision
- * 2026-06-09: like/dislike, diet filters, allergy-aware).
- *
- * Likes and dislikes are stored as id lists in localStorage. Diet filters and
- * allergies drive list filtering. Built on a module-level store +
- * useSyncExternalStore so Log and Recipes share one preference brain and stay
- * in sync. Helpers let any list downrank disliked items and hide allergens.
- */
-
 import { useSyncExternalStore } from "react";
 import {
   PREVIEW_IDENTITY_SCOPE,
   preferenceStorageKey,
 } from "@/lib/profile-preferences";
+import { isPreviewHost } from "@/lib/preview-session";
 
 export type DietFilter = "high-protein" | "low-carb" | "low-fat" | "vegan";
 
@@ -32,36 +23,72 @@ export type PreferenceState = {
   allergies: string[];
 };
 
-const EMPTY: PreferenceState = { likes: [], dislikes: [], diets: [], allergies: [] };
+type PreferenceWriter = (next: PreferenceState) => Promise<PreferenceState>;
+type PreferenceOperation = {
+  apply: (value: PreferenceState) => PreferenceState;
+  resolve: (saved: boolean) => void;
+  generation: number;
+  scope: string;
+};
+type StoreMode = "preview" | "signed-in" | "signed-out";
 
-function loadInitial(scope: string): PreferenceState {
+const EMPTY: PreferenceState = { likes: [], dislikes: [], diets: [], allergies: [] };
+const SERVER_SNAPSHOT: PreferenceState & {
+  persistenceError: string | null;
+  pending: boolean;
+} = {
+  ...EMPTY,
+  persistenceError: null,
+  pending: false,
+};
+
+function normalizeStoredAllergies(allergies: string[]): string[] {
+  return allergies.filter((allergy) => allergy.trim().toLocaleLowerCase() !== "none");
+}
+
+function normalize(value: PreferenceState): PreferenceState {
+  return {
+    likes: [...value.likes],
+    dislikes: [...value.dislikes],
+    diets: [...value.diets],
+    allergies: normalizeStoredAllergies(value.allergies),
+  };
+}
+
+function loadPreview(): PreferenceState {
   if (typeof window === "undefined") return EMPTY;
   try {
-    const raw = window.localStorage.getItem(preferenceStorageKey(scope));
-    if (raw) {
-      const loaded = { ...EMPTY, ...(JSON.parse(raw) as Partial<PreferenceState>) };
-      return { ...loaded, allergies: normalizeStoredAllergies(loaded.allergies) };
-    }
+    const raw = window.localStorage.getItem(preferenceStorageKey(PREVIEW_IDENTITY_SCOPE));
+    if (raw) return normalize({ ...EMPTY, ...(JSON.parse(raw) as Partial<PreferenceState>) });
   } catch {
-    // fall through
+    // Preview storage is best effort and never used for authenticated state.
   }
   return EMPTY;
 }
 
-let activeScope = PREVIEW_IDENTITY_SCOPE;
-let state: PreferenceState = loadInitial(activeScope);
+function startsInPreview(): boolean {
+  return typeof window !== "undefined" && isPreviewHost(window.location?.host);
+}
+
+let mode: StoreMode = startsInPreview() ? "preview" : "signed-out";
+let activeScope = mode === "preview" ? PREVIEW_IDENTITY_SCOPE : "signed-out";
+let acknowledgedState: PreferenceState = mode === "preview" ? loadPreview() : EMPTY;
+let state: PreferenceState = acknowledgedState;
+let persistenceError: string | null = null;
+let writer: PreferenceWriter | null = null;
+let processing = false;
+let identityGeneration = 0;
+const queue: PreferenceOperation[] = [];
+let storeSnapshot: PreferenceState & { persistenceError: string | null; pending: boolean } = {
+  ...state,
+  persistenceError,
+  pending: false,
+};
 const listeners = new Set<() => void>();
 
-function persist(next: PreferenceState) {
-  state = next;
-  if (typeof window !== "undefined") {
-    try {
-      window.localStorage.setItem(preferenceStorageKey(activeScope), JSON.stringify(next));
-    } catch {
-      // best-effort
-    }
-  }
-  listeners.forEach((l) => l());
+function notify() {
+  storeSnapshot = { ...state, persistenceError, pending: processing || queue.length > 0 };
+  listeners.forEach((listener) => listener());
 }
 
 function subscribe(listener: () => void) {
@@ -69,91 +96,212 @@ function subscribe(listener: () => void) {
   return () => listeners.delete(listener);
 }
 
-/** Current state, for non-React consumers (server sync, coach store). */
+function replayPending() {
+  state = queue.reduce((value, operation) => normalize(operation.apply(value)), acknowledgedState);
+}
+
+function persistPreview(next: PreferenceState) {
+  state = normalize(next);
+  acknowledgedState = state;
+  persistenceError = null;
+  if (typeof window !== "undefined") {
+    try {
+      window.localStorage.setItem(
+        preferenceStorageKey(PREVIEW_IDENTITY_SCOPE),
+        JSON.stringify(state),
+      );
+    } catch {
+      // Preview remains usable when browser storage is unavailable.
+    }
+  }
+  notify();
+}
+
+async function processQueue() {
+  if (processing || mode !== "signed-in" || !writer) return;
+  processing = true;
+  notify();
+  while (queue.length > 0 && mode === "signed-in" && writer) {
+    const operation = queue[0];
+    const operationWriter = writer;
+    const candidate = normalize(operation.apply(acknowledgedState));
+    try {
+      const saved = normalize(await operationWriter(candidate));
+      if (
+        operation.generation !== identityGeneration ||
+        operation.scope !== activeScope ||
+        queue[0] !== operation
+      ) break;
+      acknowledgedState = saved;
+      persistenceError = null;
+      queue.shift();
+      operation.resolve(true);
+    } catch (error) {
+      if (
+        operation.generation !== identityGeneration ||
+        operation.scope !== activeScope ||
+        queue[0] !== operation
+      ) break;
+      queue.shift();
+      persistenceError = error instanceof Error
+        ? `${error.message} Your preference change was rolled back. Try again.`
+        : "Your preference change was not saved and was rolled back. Try again.";
+      operation.resolve(false);
+    }
+    replayPending();
+    notify();
+  }
+  processing = false;
+  notify();
+  if (queue.length > 0) void processQueue();
+}
+
+function enqueue(apply: (value: PreferenceState) => PreferenceState): Promise<boolean> {
+  if (mode === "preview") {
+    persistPreview(apply(state));
+    return Promise.resolve(true);
+  }
+  if (mode !== "signed-in" || !writer) {
+    persistenceError = "Sign in again before changing preferences.";
+    notify();
+    return Promise.resolve(false);
+  }
+  const result = new Promise<boolean>((resolve) => queue.push({
+    apply,
+    resolve,
+    generation: identityGeneration,
+    scope: activeScope,
+  }));
+  replayPending();
+  persistenceError = null;
+  notify();
+  void processQueue();
+  return result;
+}
+
 export function getPreferences(): PreferenceState {
   return state;
 }
 
-export function setPreferencesScope(scope: string) {
-  if (scope === activeScope) return;
+export function getPreferencesStoreSnapshot() {
+  return storeSnapshot;
+}
+
+export function configurePreviewPreferences() {
+  identityGeneration += 1;
+  mode = "preview";
+  activeScope = PREVIEW_IDENTITY_SCOPE;
+  writer = null;
+  queue.splice(0).forEach((operation) => operation.resolve(false));
+  acknowledgedState = loadPreview();
+  state = acknowledgedState;
+  persistenceError = null;
+  notify();
+}
+
+export function configureSignedOutPreferences() {
+  identityGeneration += 1;
+  mode = "signed-out";
+  activeScope = "signed-out";
+  writer = null;
+  queue.splice(0).forEach((operation) => operation.resolve(false));
+  acknowledgedState = EMPTY;
+  state = EMPTY;
+  persistenceError = null;
+  notify();
+}
+
+export function configurePreferencesPersistence(scope: string, nextWriter: PreferenceWriter) {
+  identityGeneration += 1;
+  mode = "signed-in";
   activeScope = scope;
-  state = loadInitial(scope);
-  listeners.forEach((listener) => listener());
+  writer = nextWriter;
+  queue.splice(0).forEach((operation) => operation.resolve(false));
+  acknowledgedState = EMPTY;
+  state = EMPTY;
+  persistenceError = null;
+  notify();
+}
+
+export function hydratePreferencesFromServer(next: PreferenceState, expectedScope?: string) {
+  if (mode !== "signed-in" || (expectedScope && expectedScope !== activeScope)) return;
+  acknowledgedState = normalize(next);
+  replayPending();
+  persistenceError = null;
+  notify();
+}
+
+export function acknowledgePreferencePatch(patch: Partial<PreferenceState>) {
+  acknowledgedState = normalize({ ...acknowledgedState, ...patch });
+  replayPending();
+  notify();
+}
+
+export function reportPreferencesPersistenceError(message: string) {
+  persistenceError = message;
+  notify();
+}
+
+export function setPreferencesScope(scope: string) {
+  if (scope === PREVIEW_IDENTITY_SCOPE) configurePreviewPreferences();
+  else activeScope = scope;
 }
 
 export function clearPreferencesForUser(userId: string) {
   if (typeof window !== "undefined") {
     try {
+      // Remove legacy per-user cache if one exists. Authenticated state is no
+      // longer loaded from or written to this key.
       window.localStorage.removeItem(preferenceStorageKey(userId));
     } catch {
       // Cache cleanup must never prevent sign-out.
     }
   }
-  if (activeScope === userId) {
-    activeScope = PREVIEW_IDENTITY_SCOPE;
-    state = loadInitial(activeScope);
-    listeners.forEach((listener) => listener());
-  }
+  if (activeScope === userId) configureSignedOutPreferences();
 }
 
-/** Subscribe outside React (server sync). Returns an unsubscribe fn. */
 export function subscribePreferences(listener: () => void): () => void {
-  listeners.add(listener);
-  return () => {
-    listeners.delete(listener);
-  };
+  return subscribe(listener);
 }
 
-/**
- * Merge a partial state into the store (server hydration on sign-in, or a
- * coach set_preferences mutation). Persists and notifies like any toggle.
- */
-export function mergePreferences(patch: Partial<PreferenceState>) {
-  persist({
-    ...state,
+export function mergePreferences(patch: Partial<PreferenceState>): Promise<boolean> {
+  return enqueue((current) => ({
+    ...current,
     ...patch,
-    allergies: normalizeStoredAllergies(patch.allergies ?? state.allergies),
-  });
-}
-
-function normalizeStoredAllergies(allergies: string[]): string[] {
-  return allergies.filter((allergy) => allergy.trim().toLocaleLowerCase() !== "none");
+    allergies: normalizeStoredAllergies(patch.allergies ?? current.allergies),
+  }));
 }
 
 function toggle(list: string[], id: string): string[] {
-  return list.includes(id) ? list.filter((x) => x !== id) : [...list, id];
+  return list.includes(id) ? list.filter((value) => value !== id) : [...list, id];
 }
 
-export function toggleLike(id: string) {
-  persist({
-    ...state,
-    likes: toggle(state.likes, id),
-    dislikes: state.dislikes.filter((x) => x !== id),
-  });
+export function toggleLike(id: string): Promise<boolean> {
+  return enqueue((current) => ({
+    ...current,
+    likes: toggle(current.likes, id),
+    dislikes: current.dislikes.filter((value) => value !== id),
+  }));
 }
 
-export function toggleDislike(id: string) {
-  persist({
-    ...state,
-    dislikes: toggle(state.dislikes, id),
-    likes: state.likes.filter((x) => x !== id),
-  });
+export function toggleDislike(id: string): Promise<boolean> {
+  return enqueue((current) => ({
+    ...current,
+    dislikes: toggle(current.dislikes, id),
+    likes: current.likes.filter((value) => value !== id),
+  }));
 }
 
-export function toggleDiet(id: DietFilter) {
-  persist({ ...state, diets: toggle(state.diets, id) as DietFilter[] });
+export function toggleDiet(id: DietFilter): Promise<boolean> {
+  return enqueue((current) => ({ ...current, diets: toggle(current.diets, id) as DietFilter[] }));
 }
 
-/**
- * usePreferences — reactive view of the shared preference store plus mutators.
- */
 export function usePreferences() {
   const current = useSyncExternalStore(
     subscribe,
-    () => state,
-    () => EMPTY
+    () => storeSnapshot,
+    () => SERVER_SNAPSHOT,
   );
-
   return {
     ...current,
     toggleLike,
@@ -164,14 +312,10 @@ export function usePreferences() {
   };
 }
 
-/**
- * rankByPreference — sort a list so liked items rise and disliked items sink,
- * preserving original order within each tier. Pure; UI-agnostic.
- */
 export function rankByPreference<T>(
   items: T[],
   getId: (item: T) => string,
-  prefs: Pick<PreferenceState, "likes" | "dislikes">
+  prefs: Pick<PreferenceState, "likes" | "dislikes">,
 ): T[] {
   const weight = (item: T) => {
     const id = getId(item);
@@ -180,7 +324,7 @@ export function rankByPreference<T>(
     return 0;
   };
   return items
-    .map((item, index) => ({ item, index, w: weight(item) }))
-    .sort((a, b) => a.w - b.w || a.index - b.index)
-    .map((x) => x.item);
+    .map((item, index) => ({ item, index, weight: weight(item) }))
+    .sort((a, b) => a.weight - b.weight || a.index - b.index)
+    .map(({ item }) => item);
 }

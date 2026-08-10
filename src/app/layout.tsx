@@ -18,6 +18,14 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const appName = "FuelWell — AI Nutrition Coach";
+const appDescription =
+  "Your personal AI-powered nutrition coach. Track meals, hit macros, and reach your goals.";
+const publicAppUrl =
+  process.env.NEXT_PUBLIC_APP_URL ??
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  "https://fuelwell-preview.vercel.app";
+
 // viewport-fit=cover makes env(safe-area-inset-*) resolve to real insets in
 // the iOS WKWebView shell; without it the safe-area padding in the app layout
 // and mobile nav is always 0 on device.
@@ -34,9 +42,28 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "FuelWell — AI Nutrition Coach",
-  description:
-    "Your personal AI-powered nutrition coach. Track meals, hit macros, and reach your goals.",
+  metadataBase: new URL(publicAppUrl),
+  title: appName,
+  description: appDescription,
+  openGraph: {
+    type: "website",
+    title: appName,
+    description: appDescription,
+    images: [
+      {
+        url: "/brand/fuelwell-social-card.png",
+        width: 1200,
+        height: 630,
+        alt: "FuelWell Health",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: appName,
+    description: appDescription,
+    images: ["/brand/fuelwell-social-card.png"],
+  },
   appleWebApp: {
     capable: true,
     title: "FuelWell",

@@ -29,16 +29,10 @@ This single sentence drives every creative decision. It positions FuelWell in a 
 - **Accent:** Subtle AI-forward glow ONLY during the Coach chat moment
 - **Color Grade:** Warm, slightly desaturated, consistent across all footage
 
-### Brand Palette (match exactly in all assets)
-| Token | Hex | Use |
-|-------|-----|-----|
-| Primary | #22c55e | Calorie ring, CTA buttons, logo "Fuel" |
-| Accent | #f97316 | Secondary actions, photo mode bg |
-| Neutral-900 | #171717 | Text, logo "Well" |
-| Protein | #3b82f6 | Macro bar (blue) |
-| Carbs | #f59e0b | Macro bar (amber) |
-| Fat | #ef4444 | Macro bar (red) |
-| Background | #fafafa | App backgrounds |
+### Brand and Interface Color Authority
+- **Logo:** Use the committed revised light or inverse raster lockup exactly as supplied. Never recolor, retrace, typeset, or rebuild either half of the wordmark.
+- **Interface:** Read semantic interface and macro colors from the current FuelWell design tokens. Do not sample colors from the logo or reproduce obsolete hex guidance in production assets.
+- **Contrast:** Use the light lockup on light surfaces and the inverse lockup on dark surfaces; verify the final frame at delivery size.
 
 ### Typography
 - **Font:** Geist (sans-serif) — used throughout app and all text overlays
@@ -130,7 +124,7 @@ Camera LINGERS here. This is the ad.
 ---
 
 ### CTA — Close (48–60s)
-**[VISUAL]** FuelWell logo lockup — "Fuel" in green, "Well" in dark — centered. App store badges (Apple + Google Play) appear below. QR code fades in on the right. Final tagline appears: "Eat smarter. Feel better."
+**[VISUAL]** Approved FuelWell raster lockup centered, using the light or inverse derivative that matches the final-frame surface. App store badges (Apple + Google Play) appear below. QR code fades in on the right. Final tagline appears: "Eat smarter. Feel better."
 
 **[VO]** "Download FuelWell. Your free trial starts today."
 
@@ -279,7 +273,7 @@ Camera LINGERS here. This is the ad.
 | "Free trial" | CTA frame | Geist font, neutral-400, smaller |
 
 **Logo Assets:**
-- FuelWell logo: "Fuel" in #22c55e + "Well" in #171717
+- Use the committed revised light or inverse FuelWell lockup without recoloring, retracing, or rebuilding it from interface color tokens
 - Animated intro: Logo assembles from left, 1.5s duration
 - Logo lockup with tagline for final frame
 

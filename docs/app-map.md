@@ -3,15 +3,15 @@
 ## App Info
 - **App Name:** FuelWell
 - **Type:** AI-powered nutrition & fitness mobile app (Next.js PWA)
-- **Primary Color Palette:** Greens (#22c55e primary), warm orange accent (#f97316), neutral grays
-- **Macro Colors:** Protein #3b82f6 (blue), Carbs #f59e0b (amber), Fat #ef4444 (red), Calories #22c55e (green)
+- **Primary Color Palette:** Use the current design tokens for interface surfaces and the supplied revised raster masters for logo artwork
+- **Macro Colors:** Use the current semantic macro tokens; never derive interface colors from the logo artwork
 - **Design Vibe:** Clean/modern, warm/approachable, premium health companion — not clinical
 - **Typography:** Geist (sans), Geist Mono (mono); tabular-nums for data
 - **Target User:** Health-conscious adults who want AI-guided nutrition coaching
 - **Target Device:** iPhone 15 Pro dimensions (393 x 852) — mobile-first, responsive to desktop
 
 ## Design Decisions Already Made
-- Green primary (#22c55e) + orange accent (#f97316) — established in design tokens
+- Interface colors come from the current design tokens; logo colors come only from the revised supplied assets
 - Geist font family throughout
 - Dark mode support via CSS custom properties
 - Bottom nav on mobile (5 tabs: Home, Coach, Log, Progress, Profile)

@@ -105,6 +105,103 @@ final class FuelWellCriticalPathUITests: XCTestCase {
         capture("accessibility-text-primary-navigation", in: app)
     }
 
+    func testNativeBackControlReturnsThroughWebHistory() {
+        let app = launchShellFixture()
+        defer { app.terminate() }
+
+        tap(label: "Open internal test page", in: app)
+        XCTAssertTrue(element(in: app, label: "Second screen").waitForExistence(timeout: routeTimeout))
+
+        let back = element(in: app, label: "FuelWell Back")
+        XCTAssertTrue(back.waitForExistence(timeout: routeTimeout), "Web history must expose a native Back control.")
+        XCTAssertTrue(back.isHittable, "The native Back control must be accessible and tappable.")
+        back.tap()
+
+        XCTAssertTrue(element(in: app, label: "Shell test home").waitForExistence(timeout: routeTimeout))
+        XCTAssertFalse(back.exists, "Back must disappear when no web history remains.")
+        capture("shell-native-back", in: app)
+    }
+
+    func testExternalLinksAreRoutedOutsideTheFuelWellWebView() {
+        let app = launchShellFixture()
+        defer { app.terminate() }
+
+        tap(label: "Open external test link", in: app)
+        XCTAssertTrue(
+            shellStatus(in: app, containing: "External link opened outside FuelWell")
+                .waitForExistence(timeout: routeTimeout),
+            "External HTTPS links must be intercepted instead of loading in FuelWell."
+        )
+        XCTAssertTrue(element(in: app, label: "Shell test home").exists)
+        capture("shell-external-link", in: app)
+    }
+
+    func testDeepLinkCallbackReturnsIntoTheBoundWebSession() {
+        let app = launchShellFixture()
+        defer { app.terminate() }
+
+        tap(label: "Open FuelWell deep link", in: app)
+        XCTAssertTrue(
+            element(in: app, label: "Deep link received").waitForExistence(timeout: routeTimeout),
+            "FuelWell deep links must return to a trusted route in the existing WKWebView."
+        )
+        capture("shell-deep-link-handoff", in: app)
+    }
+
+    func testNativeOAuthRequestLeavesTheEmbeddedWebView() {
+        let app = launchShellFixture()
+        defer { app.terminate() }
+
+        tap(label: "Start native Google sign in", in: app)
+        XCTAssertTrue(
+            shellStatus(in: app, containing: "Native OAuth requested for Google")
+                .waitForExistence(timeout: routeTimeout),
+            "OAuth must hand off to the native authentication session bridge."
+        )
+        XCTAssertTrue(element(in: app, label: "Shell test home").exists)
+        capture("shell-native-oauth-handoff", in: app)
+    }
+
+    func testFileUploadControlOpensTheSystemPicker() {
+        let app = launchShellFixture()
+        defer { app.terminate() }
+
+        tap(label: "Choose a file", in: app)
+        XCTAssertTrue(
+            app.buttons["Choose File"].waitForExistence(timeout: routeTimeout),
+            "The WKWebView file input must expose the iOS file picker option."
+        )
+        XCTAssertTrue(app.buttons["Photo Library"].exists, "The upload control must retain photo-library access.")
+        XCTAssertTrue(app.buttons["Take Photo or Video"].exists, "The upload control must retain camera access.")
+        capture("shell-file-upload-picker", in: app)
+    }
+
+    func testDownloadUsesTheNativeDownloadPath() {
+        let app = launchShellFixture()
+        defer { app.terminate() }
+
+        tap(label: "Download account export", in: app)
+        XCTAssertTrue(
+            shellStatus(in: app, containing: "Download")
+                .waitForExistence(timeout: routeTimeout),
+            "Download responses must enter WKDownload instead of rendering as a web page."
+        )
+        capture("shell-native-download", in: app)
+    }
+
+    func testCameraAndLocationPermissionPurposesAreConfigured() {
+        let app = launchShellFixture()
+        defer { app.terminate() }
+
+        tap(label: "Inspect permission configuration", in: app)
+        XCTAssertTrue(
+            shellStatus(in: app, containing: "Camera and location permissions configured")
+                .waitForExistence(timeout: routeTimeout),
+            "The shipping app must declare camera and location purpose strings."
+        )
+        capture("shell-permission-purposes", in: app)
+    }
+
     private func launchBoundRelease(additionalLaunchArguments: [String] = []) -> XCUIApplication {
         let app = XCUIApplication()
         setupSnapshot(app)
@@ -123,6 +220,28 @@ final class FuelWellCriticalPathUITests: XCTestCase {
         )
         assertNoLoadFailure(in: app)
         return app
+    }
+
+    private func launchShellFixture() -> XCUIApplication {
+        let app = XCUIApplication()
+        setupSnapshot(app)
+        app.launchArguments += ["--fuelwell-shell-ui-test"]
+        app.launch()
+
+        XCTAssertTrue(
+            app.webViews.firstMatch.waitForExistence(timeout: launchTimeout),
+            "The deterministic WKWebView shell fixture did not launch."
+        )
+        XCTAssertTrue(
+            element(in: app, label: "Shell test home").waitForExistence(timeout: launchTimeout),
+            "The deterministic WKWebView shell fixture did not become ready."
+        )
+        return app
+    }
+
+    private func shellStatus(in app: XCUIApplication, containing text: String) -> XCUIElement {
+        let predicate = NSPredicate(format: "label CONTAINS[c] %@ OR value CONTAINS[c] %@", text, text)
+        return app.descendants(matching: .any).matching(predicate).firstMatch
     }
 
     private func authenticateIfNeeded(in app: XCUIApplication) {

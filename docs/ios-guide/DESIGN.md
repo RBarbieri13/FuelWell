@@ -2,7 +2,7 @@
 
 > **Format:** Google Labs DESIGN.md (Apache 2.0). This file is the canonical source of truth for FuelWell's design system. Every AI agent in the loop (Claude Code, Claude Design, ChatGPT Images 2.0, Figma for Agents) reads this file. The Swift `Theme` struct in `Packages/DesignSystem` is generated from it, not hand-maintained.
 >
-> **Brand green resolved (May '26, Robert + Max):** the canonical brand green is `#47E7B0` (per commit `63419cb`). The deeper `#3D9B2F` is retired — `src/lib/design-tokens.ts` must be updated and the CI drift check will fail until it is. The action/success green `#00D278` is a *separate* token (semantic + macro use); it is not the brand mark color and is not affected by this resolution.
+> **Logo authority (August '26, Robert):** the revised raster masters in `FuelWell logo color update.zip` are the sole source of truth for logo artwork and logo colors. Product color tokens still govern interface surfaces and controls, but must never be used to recolor, rebuild, or approximate the supplied logo. Use the committed light or inverse derivative that matches the surface.
 >
 > **Surfaces note (May '26 review, Robert + Max):** the in-product palette is **light-mode native**. The Core Dashboard, Macro Tracking and Workout Detail screens are all rendered on light surfaces — verdict-led, information-dense, with semantic and macro accents at full saturation so they pop against `#F4F5F7`. A dark variant is documented at the end of the Color section but is **opt-in**, not the default. The marketing site (`fuelwellhealth.com`, in `RBarbieri13/FuelWell`) is a separate light system with its own emerald `#34D399` + warm orange `#F4945E` palette — keep them distinct in code (`Theme.app` vs `Theme.marketing`).
 
@@ -46,7 +46,7 @@ Color tokens are **light-mode native** (May '26 review). Surfaces are bright by 
 | Token | Hex | Use |
 |---|---|---|
 | `color.primary.orange` | `#E87A1D` | Brand warm accent, CTAs in marketing context, fuel / pre-workout chips |
-| `color.primary.green` | `#47E7B0` | **Canonical brand mark** — logo, splash, brand-mention treatments. Resolved May '26 (was `#3D9B2F`). |
+| `color.primary.green` | `#47E7B0` | Historical brand-mention token for interface treatments. The supplied raster artwork, not this token, owns logo colors. |
 | `color.primary.accent` | `#00D278` | Action / success green — verdicts, macros, on-track chips. Distinct from the brand mark above; they coexist by role, not by accident. |
 
 ### Background — light (canonical)
@@ -387,7 +387,7 @@ Imagery never carries information that isn't also in text.
 
 ## Open questions
 
-- [x] ~~Reconcile primary green: `#3D9B2F` (tokens) vs `#47E7B0` (logo).~~ Resolved May '26: `#47E7B0` is canonical.
+- [x] Logo color authority moved to the August '26 supplied raster masters. Interface tokens remain semantic UI values and do not recolor the logo.
 - [x] ~~Light mode timing — Pilot is dark-only. When does light mode enter the plan?~~ Resolved May '26: apps are light-mode native; dark is opt-in.
 - [x] ~~Custom icon set — needed for 7 features, or stay SF-Symbols-only at Pilot?~~ Resolved May '26: SF-Symbols-only. Lucide on web for parity.
 - [x] ~~Haptics — this document doesn't yet specify a haptic vocabulary. Add before Phase 3.~~ Resolved May '26: see § Haptics.

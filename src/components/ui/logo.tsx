@@ -15,6 +15,12 @@ const sizeStyles = {
   lg: "h-11 w-[11.75rem]",
 };
 
+const imageSizes = {
+  sm: "140px",
+  md: "156px",
+  lg: "188px",
+};
+
 export function Logo({
   href = "/",
   size = "md",
@@ -37,7 +43,7 @@ export function Logo({
         }
         alt="FuelWell"
         fill
-        sizes="(max-width: 768px) 156px, 188px"
+        sizes={imageSizes[size]}
         className="object-contain object-left"
         priority={size === "lg"}
       />

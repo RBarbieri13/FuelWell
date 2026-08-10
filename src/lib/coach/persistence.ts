@@ -12,6 +12,7 @@ import { deleteWorkoutEntry, saveWorkoutEntry } from "@/lib/workout-log-reposito
 import { replaceGroceryList } from "@/lib/grocery-repository";
 import { normalizeGroceryInput } from "@/lib/grocery-normalization";
 import { saveBodyLogEntry } from "@/lib/body-log-repository";
+import { mergeOwnProfilePreferences } from "@/lib/authenticated-storage-repository";
 
 /**
  * Server-side Supabase persistence for signed-in users. Preview users skip
@@ -26,12 +27,13 @@ export async function ensureConversation(
   conversationId?: string
 ): Promise<string | null> {
   if (conversationId) {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("coach_conversations")
       .select("id")
       .eq("id", conversationId)
       .eq("user_id", userId)
       .maybeSingle();
+    if (error) throw new Error(`Unable to verify Coach conversation: ${error.message}`);
     if (data) return data.id;
   }
   const { data, error } = await supabase
@@ -40,8 +42,7 @@ export async function ensureConversation(
     .select("id")
     .single();
   if (error) {
-    console.error("coach_conversations insert failed", error.message);
-    return null;
+    throw new Error(`Unable to create Coach conversation: ${error.message}`);
   }
   return data.id;
 }
@@ -71,7 +72,7 @@ export async function saveMessages(
       tokens_out: r.tokensOut ?? 0,
     }))
   );
-  if (error) console.error("coach_messages insert failed", error.message);
+  if (error) throw new Error(`Unable to save Coach messages: ${error.message}`);
 }
 
 export async function loadRecentMessages(
@@ -85,7 +86,7 @@ export async function loadRecentMessages(
   nextBefore: string | null;
 }> {
   const limit = Math.min(Math.max(Math.trunc(options?.limit ?? 30), 1), 100);
-  const { data: convo } = await supabase
+  const { data: convo, error: conversationError } = await supabase
     .from("coach_conversations")
     .select("id")
     .eq("user_id", userId)
@@ -93,6 +94,7 @@ export async function loadRecentMessages(
     .order("started_at", { ascending: false })
     .limit(1)
     .maybeSingle();
+  if (conversationError) throw new Error(`Unable to load Coach conversation: ${conversationError.message}`);
   if (!convo) return { conversationId: null, messages: [], hasMore: false, nextBefore: null };
 
   let query = supabase
@@ -101,7 +103,8 @@ export async function loadRecentMessages(
     .eq("conversation_id", convo.id);
   if (options?.before) query = query.lt("created_at", options.before);
   // Fetch one extra row so hasMore reflects reality, not a guess.
-  const { data: rows } = await query.order("created_at", { ascending: false }).limit(limit + 1);
+  const { data: rows, error: messagesError } = await query.order("created_at", { ascending: false }).limit(limit + 1);
+  if (messagesError) throw new Error(`Unable to load Coach messages: ${messagesError.message}`);
 
   const hasMore = (rows ?? []).length > limit;
   const page = (rows ?? []).slice(0, limit);
@@ -165,7 +168,7 @@ export async function saveCoachUploadedArtifacts(
         });
 
       if (uploadError) {
-        console.error("coach artifact upload failed", uploadError.message);
+        throw new Error(`Unable to save Coach attachment: ${uploadError.message}`);
       } else {
         uploadedPath = storagePath;
       }
@@ -191,7 +194,7 @@ export async function saveCoachUploadedArtifacts(
       { onConflict: "user_id,attachment_id" },
     );
 
-    if (error) console.error("coach_uploaded_artifacts upsert failed", error.message);
+    if (error) throw new Error(`Unable to save Coach attachment metadata: ${error.message}`);
   }
 }
 
@@ -217,8 +220,7 @@ export async function loadRecentCoachUploadedArtifacts(
     .limit(50);
 
   if (error) {
-    console.error("coach_uploaded_artifacts select failed", error.message);
-    return [];
+    throw new Error(`Unable to load Coach attachments: ${error.message}`);
   }
 
   return (data ?? []).map((artifact) => ({
@@ -242,8 +244,7 @@ export async function loadCoachKnowledge(
     .eq("user_id", userId)
     .maybeSingle();
   if (error) {
-    console.error("coach_knowledge_bases select failed", error.message);
-    return null;
+    throw new Error(`Unable to load Coach knowledge: ${error.message}`);
   }
   return (data?.knowledge_jsonb as CoachKnowledgeBase | null) ?? null;
 }
@@ -260,7 +261,7 @@ export async function persistCoachKnowledge(
     },
     { onConflict: "user_id" },
   );
-  if (error) console.error("coach_knowledge_bases upsert failed", error.message);
+  if (error) throw new Error(`Unable to save Coach knowledge: ${error.message}`);
 }
 
 export async function ensureCoachKnowledgeForUser(
@@ -279,8 +280,7 @@ export async function ensureCoachKnowledgeForUser(
     .maybeSingle();
 
   if (error) {
-    console.error("profiles coach knowledge bootstrap select failed", error.message);
-    return;
+    throw new Error(`Unable to load the profile for Coach: ${error.message}`);
   }
 
   if (!profile) return;
@@ -293,24 +293,15 @@ export async function ensureCoachKnowledgeForUser(
 /**
  * Merge a coach set_preferences patch into profiles.preferences_jsonb so
  * preference changes made in chat survive across devices and sessions.
- * Read-merge-write (no concurrent-writer hazard: one user, one turn at a time).
+ * The security-invoker RPC merges against the current authenticated user's
+ * row atomically, avoiding lost updates from concurrent tabs or Coach turns.
  */
 export async function mergeProfilePreferences(
   supabase: SupabaseClient,
-  userId: string,
+  _userId: string,
   patch: Record<string, unknown>
 ): Promise<void> {
-  const { data } = await supabase
-    .from("profiles")
-    .select("preferences_jsonb")
-    .eq("id", userId)
-    .maybeSingle();
-  const current = (data?.preferences_jsonb ?? {}) as Record<string, unknown>;
-  const { error } = await supabase
-    .from("profiles")
-    .update({ preferences_jsonb: { ...current, ...patch } })
-    .eq("id", userId);
-  if (error) console.error("profiles preferences merge failed", error.message);
+  await mergeOwnProfilePreferences(supabase, patch);
 }
 
 export async function getSupabaseDayCents(
@@ -393,8 +384,7 @@ export async function persistGoalPlan(
     .select("id")
     .single();
   if (error) {
-    console.error("goal_plans upsert failed", error.message);
-    return;
+    throw new Error(`Unable to save goal plan: ${error.message}`);
   }
   const { error: eventError } = await supabase.from("goal_events").insert({
     user_id: userId,
@@ -403,7 +393,7 @@ export async function persistGoalPlan(
     reason,
     after_jsonb: plan,
   });
-  if (eventError) console.error("goal_events insert failed", eventError.message);
+  if (eventError) throw new Error(`Unable to save goal history: ${eventError.message}`);
 }
 
 export async function persistIntegrationSummary(
@@ -427,8 +417,7 @@ export async function persistIntegrationSummary(
     .select("id")
     .single();
   if (accountError) {
-    console.error("connected_accounts upsert failed", accountError.message);
-    return;
+    throw new Error(`Unable to save connected account: ${accountError.message}`);
   }
   const { error } = await supabase.from("integration_daily_summaries").upsert(
     {
@@ -449,7 +438,7 @@ export async function persistIntegrationSummary(
     },
     { onConflict: "user_id,provider,summary_date" },
   );
-  if (error) console.error("integration_daily_summaries upsert failed", error.message);
+  if (error) throw new Error(`Unable to save integration summary: ${error.message}`);
 }
 
 export async function persistDailyGoalContext(
@@ -471,7 +460,7 @@ export async function persistDailyGoalContext(
     },
     { onConflict: "user_id,context_date" },
   );
-  if (error) console.error("daily_goal_contexts upsert failed", error.message);
+  if (error) throw new Error(`Unable to save daily goal context: ${error.message}`);
 }
 
 export async function persistCoachMutations(

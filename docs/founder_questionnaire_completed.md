@@ -455,7 +455,7 @@ This is lean but sufficient for a high-quality launch video. The biggest cost sa
 ```
 [X] App screenshots (current, high-res) — YES, the built screens are production-quality
 [X] Screen recordings of the app in use — YES, the running app can be screen-recorded
-[X] Logo files (SVG/PNG, various lockups) — YES, the Logo component renders "FuelWell" in the brand font with proper colors
+[X] Logo files (approved raster PNG lockups) — YES, the Logo component and native launch/loading surfaces consume the committed light and inverse raster assets directly
 [X] Brand guidelines document — YES, design-tokens.ts + app-map.md serve as the living brand guide
 [ ] Existing promotional photos or video clips — NO
 [ ] User testimonials — NO (pre-launch)
@@ -507,7 +507,7 @@ The nightmare scenario:
 
 5. THE MARKETING LANDING PAGE HAS APPROVED COPY: Use the exact messaging from the marketing site as a foundation. "Eat smarter. Feel better." is the approved tagline. "FuelWell learns your habits and goals to deliver personalized meal coaching" is the approved value proposition.
 
-6. MOCKUPS FOR UNBUILT FEATURES MUST MATCH EXACTLY: If we generate mockup screens for recipes, progress charts, or meal plans, they MUST use the exact same design tokens — green primary (#22c55e), orange accent (#f97316), Geist font, same card/button/layout patterns. They should be indistinguishable from the real screens. Use Stitch MCP or Figma to generate them in the app's design language.
+6. MOCKUPS FOR UNBUILT FEATURES MUST MATCH EXACTLY: If we generate mockup screens for recipes, progress charts, or meal plans, they MUST use the current tokens in `docs/ios-guide/DESIGN.md` and `design-tokens.css`, the committed FuelWell raster lockups for all logo artwork, Geist font, and the same card/button/layout patterns. Never reconstruct or hardcode logo colors. Mockups should be indistinguishable from the real screens. Use the available design tooling to generate them in the app's design language.
 ```
 
 ---

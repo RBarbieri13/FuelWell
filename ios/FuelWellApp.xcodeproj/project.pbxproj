@@ -17,6 +17,7 @@
 		23275F307DF68E53AF774B23 /* HealthKitClient in Frameworks */ = {isa = PBXBuildFile; productRef = 5275277C2654D6AE1D8F8C09 /* HealthKitClient */; };
 		24FE11C46090BD2F0F3DE4E8 /* FuelWellApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CA9C6656CAB7C1C83089C72 /* FuelWellApp.swift */; };
 		2FA15D44276AA995E9F03582 /* SupabaseClient in Frameworks */ = {isa = PBXBuildFile; productRef = 43851B7DC17A7E4975E5DF8B /* SupabaseClient */; };
+		3087E9DB4907FA92A213D65F /* FuelWellShellRouting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5CD504478F9615EA70FB8A /* FuelWellShellRouting.swift */; };
 		308EA91C167DD40A31E8016E /* AnthropicClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C74CC19984E3437AF5CCE0C /* AnthropicClientTests.swift */; };
 		32FC6A022D1A5E690887AF10 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = B5B5543DED540909B09D1EDC /* Core */; };
 		46DCE2683117D957327FC93F /* AppFeatureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47ED229A15FF76E83E8AE703 /* AppFeatureTests.swift */; };
@@ -38,6 +39,7 @@
 		92F494003A3D9A020E442A07 /* PersistenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61512A7A4DAA2D43BD804368 /* PersistenceTests.swift */; };
 		95F8932467529BBBCB266CDF /* ReleaseManifestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FEC7B2F55BECF23A61C7337 /* ReleaseManifestTests.swift */; };
 		96B84DF5876AE3B8619608DC /* testComponentGalleryAccessibilitySnapshot.1.png in Resources */ = {isa = PBXBuildFile; fileRef = A6B65369A6BA9DE8A2C3B364 /* testComponentGalleryAccessibilitySnapshot.1.png */; };
+		98CA566CBEB6669124A77256 /* FuelWellWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA02A9EB3BB6C2A4E48A2ABF /* FuelWellWebView.swift */; };
 		9BD4AB79B855F1F5D294BB66 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 165F0021ABA3E00997286AAC /* PrivacyInfo.xcprivacy */; };
 		9EBB2892A49EEFAA57D0998E /* App in Frameworks */ = {isa = PBXBuildFile; productRef = C9717509AAA91CD741114D46 /* App */; };
 		A2645D1B22477907E6C56D91 /* Persistence in Frameworks */ = {isa = PBXBuildFile; productRef = 0AE45C2A0E182ACE99B2A8CB /* Persistence */; };
@@ -51,6 +53,7 @@
 		CC47A7F9A56D63067082A79A /* NutritionDomain in Frameworks */ = {isa = PBXBuildFile; productRef = A4A62AF2AE14D6A785815F5F /* NutritionDomain */; };
 		CDBA6B5EA4250DF41490DAA2 /* HealthKitClient in Frameworks */ = {isa = PBXBuildFile; productRef = 2EF8408FBB5A9D5CE9404D7B /* HealthKitClient */; };
 		CEA676DAAFF8793964D8A9A7 /* ThemeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B121203B5A518889F220416 /* ThemeTests.swift */; };
+		D3ECC62E359C441B8C730E5A /* FuelWellShellRoutingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAFA519EDF9F1569AC61D12D /* FuelWellShellRoutingTests.swift */; };
 		E03AB3DAD079A556D956AFA2 /* BrandFontTestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA880CBB610408730DED8C0 /* BrandFontTestSupport.swift */; };
 		E430105DEB14FA1DF5361AC3 /* testComponentGalleryCompactSnapshot.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 92F937B0FC7D1B03570C7AA7 /* testComponentGalleryCompactSnapshot.1.png */; };
 		E452520C8E3688317A97CD65 /* AnthropicClient in Frameworks */ = {isa = PBXBuildFile; productRef = FF0357DB14B82BEF78F23A72 /* AnthropicClient */; };
@@ -84,6 +87,7 @@
 		0F1922BF3BEBD3C27002F2D7 /* CoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreTests.swift; sourceTree = "<group>"; };
 		165F0021ABA3E00997286AAC /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		1E2756A167A199BF4C90F1BF /* SnapshotHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotHelper.swift; sourceTree = "<group>"; };
+		1F5CD504478F9615EA70FB8A /* FuelWellShellRouting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FuelWellShellRouting.swift; sourceTree = "<group>"; };
 		231F591E67A99C4846848A4B /* NutritionFeatureTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = NutritionFeatureTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2419642363D1E40A99EB66C7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2BFE4A0D114885235E740870 /* AnthropicClientTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = AnthropicClientTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -117,7 +121,9 @@
 		A28F2F0ABD1EE46F9986AD86 /* ReleaseReadinessTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReleaseReadinessTests.swift; sourceTree = "<group>"; };
 		A6B65369A6BA9DE8A2C3B364 /* testComponentGalleryAccessibilitySnapshot.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = testComponentGalleryAccessibilitySnapshot.1.png; sourceTree = "<group>"; };
 		A9292407F92F27B4005A2E8B /* SubscriptionClient */ = {isa = PBXFileReference; lastKnownFileType = folder; name = SubscriptionClient; path = Packages/SubscriptionClient; sourceTree = SOURCE_ROOT; };
+		AA02A9EB3BB6C2A4E48A2ABF /* FuelWellWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FuelWellWebView.swift; sourceTree = "<group>"; };
 		AA8195CED831D47B85B2D1A0 /* Outfit-Variable.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Outfit-Variable.ttf"; sourceTree = "<group>"; };
+		AAFA519EDF9F1569AC61D12D /* FuelWellShellRoutingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FuelWellShellRoutingTests.swift; sourceTree = "<group>"; };
 		AD17B4ABA97C270B763FF1CD /* NutritionDomainTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = NutritionDomainTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AE88D7C304B0C1BA0647DE4D /* ComponentGalleryRenderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComponentGalleryRenderTests.swift; sourceTree = "<group>"; };
 		B1EAC66EFCFC2CB8A89481FA /* FuelWellUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = FuelWellUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -319,6 +325,8 @@
 			isa = PBXGroup;
 			children = (
 				6CA9C6656CAB7C1C83089C72 /* FuelWellApp.swift */,
+				1F5CD504478F9615EA70FB8A /* FuelWellShellRouting.swift */,
+				AA02A9EB3BB6C2A4E48A2ABF /* FuelWellWebView.swift */,
 				D93348F6009DC371BE98EA83 /* ReleaseManifest.swift */,
 			);
 			name = Sources;
@@ -450,6 +458,7 @@
 		B4BE7FB87E4501692A22CECB /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				AAFA519EDF9F1569AC61D12D /* FuelWellShellRoutingTests.swift */,
 				8FEC7B2F55BECF23A61C7337 /* ReleaseManifestTests.swift */,
 			);
 			name = Tests;
@@ -938,6 +947,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D3ECC62E359C441B8C730E5A /* FuelWellShellRoutingTests.swift in Sources */,
 				95F8932467529BBBCB266CDF /* ReleaseManifestTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1012,6 +1022,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				24FE11C46090BD2F0F3DE4E8 /* FuelWellApp.swift in Sources */,
+				3087E9DB4907FA92A213D65F /* FuelWellShellRouting.swift in Sources */,
+				98CA566CBEB6669124A77256 /* FuelWellWebView.swift in Sources */,
 				50682046127C2D03AB0BB719 /* ReleaseManifest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1055,6 +1067,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = FuelWellApp/FuelWellApp.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = FuelWellApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -1062,6 +1075,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.4.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.fuelwell.app;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1559,6 +1573,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = FuelWellApp/FuelWellApp.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = FuelWellApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -1566,6 +1581,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.4.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.fuelwell.app;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";

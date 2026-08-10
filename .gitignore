@@ -50,6 +50,7 @@ test-results/
 playwright-report/
 .playwright-cli/
 output/
+ios/build/
 ios/FuelWellApp.xcodeproj/xcshareddata/xcschemes/CandidateUITests.xcscheme
 ios/FuelWellApp.xcodeproj/xcshareddata/xcschemes/ReleaseBindingTests.xcscheme
 blob-report/

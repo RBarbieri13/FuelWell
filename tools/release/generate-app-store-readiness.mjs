@@ -17,6 +17,7 @@ const privacyManifestPath = path.join(root, "ios/FuelWellApp/Resources/PrivacyIn
 const healthKitEntitlementsPath = path.join(root, "ios/FuelWellApp/FuelWellApp.entitlements");
 const infoPlistPath = path.join(root, "ios/FuelWellApp/Info.plist");
 const shellRoutingPath = path.join(root, "ios/FuelWellApp/Sources/FuelWellShellRouting.swift");
+const shellWebViewPath = path.join(root, "ios/FuelWellApp/Sources/FuelWellWebView.swift");
 const projectSpecPath = path.join(root, "ios/project.yml");
 const xcodeProjectPath = path.join(root, "ios/FuelWellApp.xcodeproj/project.pbxproj");
 const candidateUiGatePath = path.join(root, "tools/release/test-ios-candidate-ui.sh");
@@ -448,6 +449,7 @@ function validateRepositoryReleaseGates(results) {
   const coversCompactAndLarge = candidateGate.includes("iPhone 16e")
     && candidateGate.includes("iPhone 17 Pro Max")
     && candidateGate.includes("FUELWELL_CANDIDATE_GIT_SHA")
+    && candidateGate.includes("FUELWELL_SUPABASE_URL")
     && candidateGate.includes("testflight-live-coach.spec.ts")
     && candidateGate.includes("testflight-authenticated-persistence.spec.ts");
   addResult(
@@ -462,10 +464,16 @@ function validateRepositoryReleaseGates(results) {
   );
 
   const shellRouting = existsSync(shellRoutingPath) ? readTrimmed(shellRoutingPath) : "";
-  const nativeShellCovered = shellRouting.includes("ASWebAuthenticationSession")
-    && shellRouting.includes("WKNavigationAction")
+  const shellWebView = existsSync(shellWebViewPath) ? readTrimmed(shellWebViewPath) : "";
+  const nativeShellCovered = shellWebView.includes("ASWebAuthenticationSession")
+    && shellWebView.includes("WKNavigationAction")
+    && shellWebView.includes("message.frameInfo.isMainFrame")
+    && shellWebView.includes("message.frameInfo.securityOrigin")
     && shellRouting.includes("safeRelativePath")
-    && shellRouting.includes("openExternal");
+    && shellRouting.includes("oauthOrigin")
+    && shellRouting.includes("sameOrigin")
+    && shellRouting.includes("openExternal")
+    && shellWebView.includes("openExternally");
   addResult(
     results,
     "repository-gates",
@@ -474,20 +482,23 @@ function validateRepositoryReleaseGates(results) {
     nativeShellCovered
       ? "The iOS shell separates OAuth/external navigation from trusted in-app routes."
       : "The iOS shell must use a native authentication session, enforce trusted navigation, and validate relative routes.",
-    shellRoutingPath
+    shellWebViewPath
   );
 
   const infoPlist = existsSync(infoPlistPath) ? readTrimmed(infoPlistPath) : "";
   const permissionAndCallbackCoverage = infoPlist.includes("NSLocationWhenInUseUsageDescription")
-    && infoPlist.includes("CFBundleURLTypes");
+    && infoPlist.includes("CFBundleURLTypes")
+    && infoPlist.includes("FuelWellSupabaseURL")
+    && infoPlist.includes("$(MARKETING_VERSION)")
+    && infoPlist.includes("$(CURRENT_PROJECT_VERSION)");
   addResult(
     results,
     "repository-gates",
     permissionAndCallbackCoverage ? "pass" : "fail",
     "iOS permission and OAuth callback declarations",
     permissionAndCallbackCoverage
-      ? "Location purpose text and an app callback URL type are declared."
-      : "Declare location purpose text and a callback URL type before shipping the signed app.",
+      ? "Location, callback, exact OAuth origin, and build-version substitutions are declared."
+      : "Declare location, callback, exact OAuth origin, and build-version substitutions before shipping the signed app.",
     infoPlistPath
   );
 }

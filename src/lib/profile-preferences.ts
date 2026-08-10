@@ -1,6 +1,13 @@
 import { clearCoachChatForUser } from "@/lib/coach/chat-storage";
 import { clearMealPlanCacheForUser } from "@/lib/use-meal-plan";
 import { clearGoalContextForUser } from "@/lib/use-goal-context";
+import {
+  resetDayLogForIdentity,
+  type IdentityScope,
+} from "@/lib/use-day-log";
+import { resetWorkoutLogForIdentity } from "@/lib/use-workout-log";
+import { resetBodyLogForIdentity } from "@/lib/use-body-log";
+import { resetGroceryListForIdentity } from "@/lib/use-grocery-list";
 
 export const PREVIEW_IDENTITY_SCOPE = "preview";
 
@@ -98,7 +105,15 @@ export function preferenceStorageKey(scope: string): string {
   return `${PREFERENCES_PREFIX}:${scope}`;
 }
 
+export function synchronizeIdentityScope(identity: IdentityScope): void {
+  resetDayLogForIdentity(identity);
+  resetWorkoutLogForIdentity(identity);
+  resetBodyLogForIdentity(identity);
+  resetGroceryListForIdentity(identity);
+}
+
 export function clearUserScopedIdentityCaches(userId: string): void {
+  synchronizeIdentityScope({ mode: "anonymous" });
   if (typeof window === "undefined") return;
   try {
     window.localStorage.removeItem(onboardingDraftStorageKey(userId));

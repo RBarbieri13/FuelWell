@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -33,6 +33,15 @@ import type { LucideIcon } from "lucide-react";
 import { RECIPES } from "@/lib/recipes-data";
 import { usePreferences } from "@/lib/use-preferences";
 import { useMealPlan } from "@/lib/use-meal-plan";
+import { createClient } from "@/lib/supabase/client";
+import { hasSupabaseConfig, isPreviewHost } from "@/lib/preview-session";
+import {
+  assertAuthenticatedResponseOwner,
+  createIdentityRequestGate,
+  resolveStorageAuthorityMode,
+  type GroceryHistoryEntry as GroceryHistoryDocument,
+} from "@/lib/authenticated-storage-types";
+import { subscribeAuthenticatedUserIds } from "@/lib/preferences-sync";
 
 import {
   useGroceryList,
@@ -43,15 +52,8 @@ import {
   type RichGroceryItem,
 } from "@/lib/use-grocery-list";
 
-const HISTORY_KEY = "fuelwell-grocery-history-v1";
-
-type GroceryHistoryEntry = {
-  id: string;
-  savedAt: string;
-  itemCount: number;
-  checkedCount: number;
-  items: RichGroceryItem[];
-};
+const HISTORY_KEY = "fuelwell-grocery-history-v2:preview";
+type GroceryHistoryEntry = GroceryHistoryDocument<RichGroceryItem>;
 
 function loadGroceryHistory(): GroceryHistoryEntry[] {
   if (typeof window === "undefined") return [];
@@ -126,7 +128,11 @@ export default function GroceryListPage() {
   const { likes } = usePreferences();
   const [newItemName, setNewItemName] = useState("");
   const [newItemAmount, setNewItemAmount] = useState("");
-  const [history, setHistory] = useState<GroceryHistoryEntry[]>(loadGroceryHistory);
+  const [history, setHistory] = useState<GroceryHistoryEntry[]>([]);
+  const [historyMode, setHistoryMode] = useState<"loading" | "preview" | "server" | "signed-out">("loading");
+  const [historyError, setHistoryError] = useState<string | null>(null);
+  const historyUserIdRef = useRef<string | null>(null);
+  const historyIdentityGenerationRef = useRef(0);
   const [selectedSources, setSelectedSources] = useState<string[]>([]);
   const [expandedItemId, setExpandedItemId] = useState<string | null>(null);
   const [storeMode, setStoreMode] = useState({
@@ -141,6 +147,84 @@ export default function GroceryListPage() {
     | null
   >(null);
   const { days: planDays } = useMealPlan();
+
+  useEffect(() => {
+    let cancelled = false;
+    let readController: AbortController | null = null;
+    const identityGate = createIdentityRequestGate();
+    const preview = typeof window !== "undefined" && isPreviewHost(window.location?.host);
+    const authorityMode = resolveStorageAuthorityMode(preview, hasSupabaseConfig());
+
+    if (authorityMode === "preview") {
+      historyIdentityGenerationRef.current += 1;
+      historyUserIdRef.current = null;
+      setHistory(loadGroceryHistory());
+      setHistoryMode("preview");
+      setHistoryError(null);
+      return undefined;
+    }
+    if (authorityMode === "unavailable") {
+      historyIdentityGenerationRef.current += 1;
+      historyUserIdRef.current = null;
+      setHistory([]);
+      setHistoryMode("signed-out");
+      setHistoryError("Secure grocery history is unavailable. Refresh after the connection is restored.");
+      return undefined;
+    }
+
+    const supabase = createClient();
+    async function syncUser(userId: string | null) {
+      const token = identityGate.transition(userId);
+      historyIdentityGenerationRef.current += 1;
+      readController?.abort();
+      readController = new AbortController();
+      historyUserIdRef.current = userId;
+      setHistory([]);
+      setHistoryError(null);
+      if (!userId) {
+        setHistoryMode("signed-out");
+        return;
+      }
+      setHistoryMode("loading");
+      try {
+        const response = await fetch("/api/user-state/grocery-history", {
+          cache: "no-store",
+          signal: readController.signal,
+        });
+        const body = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(body.error ?? "Unable to load grocery history.");
+        assertAuthenticatedResponseOwner(body, userId);
+        if (!cancelled && identityGate.isCurrent(token)) {
+          setHistory(Array.isArray(body.history) ? body.history.slice(0, 4) : []);
+          setHistoryMode("server");
+          setHistoryError(null);
+        }
+      } catch (loadError) {
+        if (
+          !cancelled &&
+          identityGate.isCurrent(token) &&
+          !(loadError instanceof Error && loadError.name === "AbortError")
+        ) {
+          setHistoryMode("server");
+          setHistoryError(
+            `${loadError instanceof Error ? loadError.message : "Unable to load grocery history."} Refresh to retry.`,
+          );
+        }
+      }
+    }
+
+    const unsubscribe = subscribeAuthenticatedUserIds(
+      supabase as unknown as Parameters<typeof subscribeAuthenticatedUserIds>[0],
+      (userId) => { void syncUser(userId); },
+    );
+    return () => {
+      cancelled = true;
+      identityGate.transition(null);
+      historyIdentityGenerationRef.current += 1;
+      readController?.abort();
+      unsubscribe();
+    };
+  }, []);
 
   const checkedCount = items.filter((item) => item.checked).length;
   const remainingCount = items.length - checkedCount;
@@ -198,12 +282,55 @@ export default function GroceryListPage() {
     return inferGroceryCategory(name);
   }
 
-  function persistHistory(next: GroceryHistoryEntry[]) {
+  async function persistHistory(next: GroceryHistoryEntry[]): Promise<boolean> {
+    const previous = history;
+    const generation = historyIdentityGenerationRef.current;
     setHistory(next);
+    setHistoryError(null);
+    if (historyMode === "preview") {
+      try {
+        window.localStorage.setItem(HISTORY_KEY, JSON.stringify(next));
+      } catch {
+        // Preview archive remains in memory if browser storage is blocked.
+      }
+      return true;
+    }
+    if (historyMode !== "server") {
+      setHistory(previous);
+      setHistoryError("Sign in again before changing grocery history.");
+      return false;
+    }
+    const expectedUserId = historyUserIdRef.current;
+    if (!expectedUserId) {
+      setHistory(previous);
+      setHistoryError("Sign in again before changing grocery history.");
+      return false;
+    }
     try {
-      window.localStorage.setItem(HISTORY_KEY, JSON.stringify(next));
-    } catch {
-      // Best-effort local archive.
+      const response = await fetch("/api/user-state/grocery-history", {
+        method: "PUT",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ history: next, expectedUserId }),
+      });
+      const body = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(body.error ?? "Unable to save grocery history.");
+      assertAuthenticatedResponseOwner(body, expectedUserId);
+      if (
+        historyUserIdRef.current !== expectedUserId ||
+        historyIdentityGenerationRef.current !== generation
+      ) return false;
+      setHistory(Array.isArray(body.history) ? body.history.slice(0, 4) : next);
+      return true;
+    } catch (saveError) {
+      if (
+        historyUserIdRef.current !== expectedUserId ||
+        historyIdentityGenerationRef.current !== generation
+      ) return false;
+      setHistory(previous);
+      setHistoryError(
+        `${saveError instanceof Error ? saveError.message : "Unable to save grocery history."} The archive was rolled back; try again.`,
+      );
+      return false;
     }
   }
 
@@ -274,8 +401,8 @@ export default function GroceryListPage() {
     setNewItemAmount("");
   }
 
-  function clearAndArchiveList() {
-    if (items.length === 0) return;
+  async function clearAndArchiveList() {
+    if (items.length === 0) return false;
     const entry: GroceryHistoryEntry = {
       id: `list-${Date.now().toString(36)}`,
       savedAt: new Date().toISOString(),
@@ -283,8 +410,10 @@ export default function GroceryListPage() {
       checkedCount,
       items,
     };
-    persistHistory([entry, ...history].slice(0, 4));
+    const archived = await persistHistory([entry, ...history].slice(0, 4));
+    if (!archived) return false;
     setGroceryItems([]);
+    return true;
   }
 
   function restoreList(entry: GroceryHistoryEntry) {
@@ -300,9 +429,12 @@ export default function GroceryListPage() {
     setConfirmAction({ type: "restore", entry });
   }
 
-  function runConfirmedAction() {
+  async function runConfirmedAction() {
     if (!confirmAction) return;
-    if (confirmAction.type === "clear") clearAndArchiveList();
+    if (confirmAction.type === "clear") {
+      const cleared = await clearAndArchiveList();
+      if (!cleared) return;
+    }
     if (confirmAction.type === "markAll") {
       setGroceryItems(items.map((item) => ({ ...item, checked: true })));
     }
@@ -547,9 +679,16 @@ export default function GroceryListPage() {
               }
             />
             <div className="mt-4 space-y-2">
+              {historyError && (
+                <p role="alert" className="rounded-[1.15rem] bg-coral-50 px-4 py-3 text-sm font-bold leading-6 text-coral-800 ring-1 ring-inset ring-coral-200">
+                  {historyError}
+                </p>
+              )}
               {history.length === 0 ? (
                 <p className="rounded-[1.15rem] bg-surface-muted px-4 py-3 text-sm font-semibold leading-6 text-ink-muted ring-1 ring-inset ring-hairline">
-                  Cleared lists will appear here so you can review or restore what you bought before.
+                  {historyMode === "loading"
+                    ? "Loading your saved grocery history…"
+                    : "Cleared lists will appear here so you can review or restore what you bought before."}
                 </p>
               ) : (
                 history.map((entry) => {

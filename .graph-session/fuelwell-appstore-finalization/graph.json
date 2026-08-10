@@ -1,0 +1,120 @@
+{
+  "nodes": [
+    {
+      "id": "N01",
+      "job": "Make onboarding drafts, preferences, units, Coach/goal state, and grocery history server-authoritative per authenticated Supabase user with rollback/error behavior; add migrations/APIs/tests. Write only assigned web/data files.",
+      "status": "pending",
+      "ts": "2026-08-10T03:50:31.337007+00:00"
+    },
+    {
+      "id": "N02",
+      "job": "Eliminate same-tab cross-account state leakage by user-keying or resetting day/workout/body/grocery and related module stores on auth identity changes; add isolation tests. Write only assigned state/auth files.",
+      "status": "pending",
+      "ts": "2026-08-10T03:50:31.547013+00:00"
+    },
+    {
+      "id": "N03",
+      "job": "Complete the shipping iOS shell with secure internal-host policy, external browser handling, explicit back behavior, deep-link/auth callback handoff, ASWebAuthenticationSession-compatible OAuth bridge, location permission, and candidate tests. Write only ios/ and native-bridge web files if required.",
+      "status": "pending",
+      "ts": "2026-08-10T03:50:31.773824+00:00"
+    },
+    {
+      "id": "N04",
+      "job": "Correct revised FuelWell branding and release presentation: usable padded horizontal lockups, launch/loading branding, preview/social metadata, stale docs, and asset tests. Write only brand assets, logo/layout/preview metadata, launch branding, and docs/tests assigned.",
+      "status": "pending",
+      "ts": "2026-08-10T03:50:31.948727+00:00"
+    },
+    {
+      "id": "N05",
+      "job": "Integrate N01-N04 and run complete local web/native regression; fix only integration failures.",
+      "status": "pending",
+      "ts": "2026-08-10T03:50:32.171593+00:00"
+    },
+    {
+      "id": "N06",
+      "job": "Restore live Supabase, apply migrations, configure auth providers, and prove two-user RLS/OAuth/Coach live behavior.",
+      "status": "pending",
+      "ts": "2026-08-10T03:50:32.358094+00:00"
+    },
+    {
+      "id": "N07",
+      "job": "Deploy exact immutable Vercel candidate and run real-device-style browser/XCUITest acceptance.",
+      "status": "pending",
+      "ts": "2026-08-10T03:50:32.563062+00:00"
+    },
+    {
+      "id": "N08",
+      "job": "Push/merge approved candidate, upload TestFlight, verify tester access, and submit App Store release after per-action approval.",
+      "status": "pending",
+      "ts": "2026-08-10T03:50:32.755382+00:00"
+    },
+    {
+      "id": "N09",
+      "job": "Require the immutable candidate UI test lane to run on compact and large iPhone simulators and preserve separate xcresult evidence.",
+      "status": "pending",
+      "ts": "2026-08-10T03:59:20.413891+00:00"
+    }
+  ],
+  "edges": [
+    {
+      "from": "N01",
+      "to": "N05",
+      "type": "DEPENDS_ON"
+    },
+    {
+      "from": "N02",
+      "to": "N05",
+      "type": "DEPENDS_ON"
+    },
+    {
+      "from": "N03",
+      "to": "N05",
+      "type": "DEPENDS_ON"
+    },
+    {
+      "from": "N04",
+      "to": "N05",
+      "type": "DEPENDS_ON"
+    },
+    {
+      "from": "N01",
+      "to": "N06",
+      "type": "DEPENDS_ON"
+    },
+    {
+      "from": "N02",
+      "to": "N06",
+      "type": "DEPENDS_ON"
+    },
+    {
+      "from": "N05",
+      "to": "N06",
+      "type": "DEPENDS_ON"
+    },
+    {
+      "from": "N03",
+      "to": "N07",
+      "type": "DEPENDS_ON"
+    },
+    {
+      "from": "N04",
+      "to": "N07",
+      "type": "DEPENDS_ON"
+    },
+    {
+      "from": "N05",
+      "to": "N07",
+      "type": "DEPENDS_ON"
+    },
+    {
+      "from": "N06",
+      "to": "N07",
+      "type": "DEPENDS_ON"
+    },
+    {
+      "from": "N07",
+      "to": "N08",
+      "type": "DEPENDS_ON"
+    }
+  ]
+}

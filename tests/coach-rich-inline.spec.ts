@@ -130,7 +130,7 @@ async function openStubbedCoach(page: Page) {
       body: sseBody(),
     })
   );
-  await page.addInitScript(() => localStorage.removeItem("fuelwell-coach-chat-v1"));
+  await page.addInitScript(() => localStorage.removeItem("fuelwell-coach-chat-v1:preview"));
   await page.goto("/app/coach");
   await expect(page.getByLabel("Message Coach")).toBeVisible();
 }

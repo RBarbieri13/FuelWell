@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 import { Sidebar } from "@/components/layout/sidebar";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { MobileHeader } from "@/components/layout/mobile-header";
+import { IdentityStoreBoundary } from "@/components/auth/identity-store-boundary";
 import type { UserMenuSession } from "@/components/layout/user-menu";
 import { GoalContextSync } from "@/lib/goal-context-sync";
 import { PreferencesSync } from "@/lib/preferences-sync";
@@ -9,10 +10,24 @@ import { ensureCoachKnowledgeForUser } from "@/lib/coach/persistence";
 import { createClient } from "@/lib/supabase/server";
 import { hasSupabaseConfig, isPreviewHost } from "@/lib/preview-session";
 
-async function resolveSession(): Promise<UserMenuSession> {
+type ResolvedIdentity = {
+  session: UserMenuSession;
+  userId: string | null;
+  signedOutMode: "preview" | "anonymous";
+  observeAuth: boolean;
+};
+
+async function resolveIdentity(): Promise<ResolvedIdentity> {
+  const host = (await headers()).get("host");
+  const signedOutMode = isPreviewHost(host) ? "preview" : "anonymous";
+
   if (!hasSupabaseConfig()) {
-    const host = (await headers()).get("host");
-    return isPreviewHost(host) ? "preview" : "anonymous";
+    return {
+      session: signedOutMode,
+      userId: null,
+      signedOutMode,
+      observeAuth: false,
+    };
   }
 
   const supabase = await createClient();
@@ -22,15 +37,24 @@ async function resolveSession(): Promise<UserMenuSession> {
 
   if (user) {
     await ensureCoachKnowledgeForUser(supabase, user.id);
-    return "authenticated";
+    return {
+      session: "authenticated",
+      userId: user.id,
+      signedOutMode,
+      observeAuth: true,
+    };
   }
 
-  const host = (await headers()).get("host");
-  return isPreviewHost(host) ? "preview" : "anonymous";
+  return {
+    session: signedOutMode,
+    userId: null,
+    signedOutMode,
+    observeAuth: true,
+  };
 }
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
-  const session = await resolveSession();
+  const identity = await resolveIdentity();
 
   return (
     <div className="flex h-dvh overflow-hidden bg-background">
@@ -49,7 +73,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       {/* min-w-0 stops a wide child (tables, chart rows) from forcing the whole
           shell wider than the viewport on 320px devices. */}
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-        <MobileHeader session={session} />
+        <MobileHeader session={identity.session} />
         <main
           id="fw-main-content"
           // scrollbar-gutter keeps the content column from shifting sideways
@@ -59,7 +83,13 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           // sticky mobile header.
           style={{ scrollPaddingTop: "4rem" }}
         >
-          {children}
+          <IdentityStoreBoundary
+            initialUserId={identity.userId}
+            signedOutMode={identity.signedOutMode}
+            observeAuth={identity.observeAuth}
+          >
+            {children}
+          </IdentityStoreBoundary>
         </main>
         <MobileNav />
       </div>

@@ -22,7 +22,7 @@ import {
   replaceMeal,
   removeMeal as storeRemoveMeal,
 } from "@/lib/use-day-log";
-import { mergePreferences, usePreferences, type PreferenceState } from "@/lib/use-preferences";
+import { acknowledgePreferencePatch, usePreferences, type PreferenceState } from "@/lib/use-preferences";
 import { useWorkoutLog, initializeWorkoutLog, getWorkoutLogSnapshot, addWorkout, removeWorkout } from "@/lib/use-workout-log";
 import { useGroceryList, initializeGroceryList, getGrocerySnapshot, applyCoachGrocery, toCoachGrocery } from "@/lib/use-grocery-list";
 import { useBodyLog, initializeBodyLog, getBodyLogSnapshot, addBodyLogEntry } from "@/lib/use-body-log";
@@ -30,8 +30,8 @@ import { sumMeals, todayIsoDate } from "@/lib/fuelwell-data";
 import { buildDailyGoalContext } from "@/lib/goal-context";
 import { normalizeGroceryInput } from "@/lib/grocery-normalization";
 import {
-  setGoalPlan,
-  setIntegrationSummary,
+  acknowledgeGoalPlanFromServer,
+  acknowledgeIntegrationSummaryFromServer,
   getGoalContextSnapshot,
   useGoalContextStore,
 } from "@/lib/use-goal-context";
@@ -52,6 +52,10 @@ import {
   PREVIEW_COACH_CHAT_SCOPE,
   setCoachChatScope,
 } from "@/lib/coach/chat-storage";
+import { createClient } from "@/lib/supabase/client";
+import { hasSupabaseConfig, isPreviewHost } from "@/lib/preview-session";
+import { subscribeAuthenticatedUserIds } from "@/lib/preferences-sync";
+import { resolveStorageAuthorityMode } from "@/lib/authenticated-storage-types";
 
 export type ChatItem = {
   id: string;
@@ -127,13 +131,14 @@ function loadStoredChat(): StoredChat | null {
 export function resolveCoachHistoryHydration(
   history: HistoryResponse | null,
   stored: StoredChat | null,
+  authenticatedUserId?: string | null,
 ): {
   scope: string;
   items: ChatItem[];
   conversationId?: string;
   hasEarlier: boolean;
   nextBefore: string | null;
-  source: "server" | "local" | "empty";
+  source: "server" | "local" | "empty" | "error";
 } {
   if (history?.signedIn && history.userId) {
     return {
@@ -149,6 +154,24 @@ export function resolveCoachHistoryHydration(
       hasEarlier: Boolean(history.hasMore && history.nextBefore),
       nextBefore: history.nextBefore ?? null,
       source: "server",
+    };
+  }
+
+  if (authenticatedUserId) {
+    return {
+      scope: authenticatedUserId,
+      items: [{
+        id: nextItemId(),
+        role: "assistant",
+        text: "Coach history could not be loaded from the server. Refresh to retry; local browser history was not substituted.",
+        artifacts: [],
+        error: true,
+        streaming: false,
+      }],
+      conversationId: undefined,
+      hasEarlier: false,
+      nextBefore: null,
+      source: "error",
     };
   }
 
@@ -203,23 +226,84 @@ function applyMutationToStores(m: CoachMutation) {
       applyPreferencePatch(m.patch);
       break;
     case "set_goal_plan":
-      setGoalPlan(m.plan);
+      acknowledgeGoalPlanFromServer(m.plan);
       break;
     case "set_integration_summary":
-      setIntegrationSummary(m.summary);
+      acknowledgeIntegrationSummaryFromServer(m.summary);
       break;
   }
 }
 
 function applyPreferencePatch(patch: Partial<CoachDaySnapshot["preferences"]>) {
-  // Route through the shared store so Log/Recipes/Settings re-render and the
-  // signed-in server sync (PreferencesSync) picks it up.
-  mergePreferences({
+  // turn_done means the server already persisted this patch. Hydrate the
+  // acknowledged snapshot without issuing a second write.
+  acknowledgePreferencePatch({
     ...(patch.diets ? { diets: patch.diets } : {}),
     ...(patch.allergies ? { allergies: patch.allergies } : {}),
     ...(patch.likes ? { likes: patch.likes } : {}),
     ...(patch.dislikes ? { dislikes: patch.dislikes } : {}),
   } as Partial<PreferenceState>);
+}
+
+export function createCoachMutationAckBuffer(apply: (mutation: CoachMutation) => void) {
+  let pending: CoachMutation[] = [];
+  return {
+    stage(mutations: CoachMutation[]) {
+      pending.push(...mutations);
+    },
+    acknowledge() {
+      const accepted = pending;
+      pending = [];
+      accepted.forEach(apply);
+    },
+    discard() {
+      pending = [];
+    },
+    size() {
+      return pending.length;
+    },
+  };
+}
+
+export type CoachTurnIdentity = { scope: string; generation: number };
+
+export function createCoachTurnIdentityGuard(initialScope = "signed-out") {
+  let scope = initialScope;
+  let generation = 0;
+  let activeController: AbortController | null = null;
+  const isCurrent = (identity: CoachTurnIdentity) =>
+    identity.scope === scope && identity.generation === generation;
+  return {
+    capture(): CoachTurnIdentity {
+      return { scope, generation };
+    },
+    isCurrent,
+    attach(identity: CoachTurnIdentity, controller: AbortController) {
+      if (!isCurrent(identity)) {
+        controller.abort();
+        return false;
+      }
+      activeController?.abort();
+      activeController = controller;
+      return true;
+    },
+    changeScope(nextScope: string) {
+      if (nextScope === scope) return false;
+      scope = nextScope;
+      generation += 1;
+      activeController?.abort();
+      activeController = null;
+      return true;
+    },
+    invalidate() {
+      generation += 1;
+      activeController?.abort();
+      activeController = null;
+    },
+    release(identity: CoachTurnIdentity) {
+      if (isCurrent(identity)) activeController = null;
+    },
+  };
 }
 
 function toToolActionLabel(name: string, input: unknown): string {
@@ -278,12 +362,15 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
   const [hasEarlier, setHasEarlier] = useState(false);
   const [loadingEarlier, setLoadingEarlier] = useState(false);
   const historyCursorRef = useRef<string | null>(null);
+  const mutationAckBufferRef = useRef(createCoachMutationAckBuffer(applyMutationToStores));
+  const identityGuardRef = useRef(createCoachTurnIdentityGuard());
   const conversationIdRef = useRef<string | undefined>(initialConversationId);
   const busyRef = useRef(false);
   const queuedTurnRef = useRef<{
     userText: string;
     attachments?: CoachAttachment[];
     confirmedTool?: { name: string; input: unknown; token?: string };
+    identity: CoachTurnIdentity;
   } | null>(null);
   // The most recent turn request plus the transcript items it created, so a
   // failed turn can be retried without duplicating the user message.
@@ -297,38 +384,133 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
 
   useEffect(() => {
     let cancelled = false;
-    // Signed-in users replay their latest conversation from Supabase (survives
-    // devices and days); preview/signed-out users fall back to the same-day
-    // localStorage replay. Async fetch also keeps the setState out of the
-    // synchronous effect body (react-hooks/set-state-in-effect).
-    void (async () => {
-      let history: HistoryResponse | null = null;
-      try {
-        const res = await fetch("/api/coach/history");
-        if (res.ok) {
-          history = (await res.json()) as HistoryResponse;
-        }
-      } catch {
-        // fall back to local replay
+    let authGeneration = 0;
+    let activeUserId: string | null | undefined;
+    const guard = identityGuardRef.current;
+    const mutationAckBuffer = mutationAckBufferRef.current;
+
+    function resetForIdentity(scope: string) {
+      if (!guard.changeScope(scope)) return;
+      mutationAckBuffer.discard();
+      queuedTurnRef.current = null;
+      lastTurnRef.current = null;
+      conversationIdRef.current = undefined;
+      historyCursorRef.current = null;
+      busyRef.current = false;
+      setBusy(false);
+      setHydrated(false);
+      setLoadingEarlier(false);
+      setHasEarlier(false);
+      setItems([]);
+    }
+
+    async function hydrateAuthenticatedUser(userId: string | null) {
+      if (userId === activeUserId) return;
+      activeUserId = userId;
+      const generation = ++authGeneration;
+      const scope = userId ?? "signed-out";
+      resetForIdentity(scope);
+      setCoachChatScope(scope);
+      if (!userId) {
+        if (!cancelled && generation === authGeneration) setHydrated(true);
+        return;
       }
-      if (cancelled) return;
-      const hydration = resolveCoachHistoryHydration(history, loadStoredChat());
-      setCoachChatScope(hydration.scope);
-      setItems(hydration.items);
-      conversationIdRef.current = hydration.conversationId;
-      historyCursorRef.current = hydration.nextBefore;
-      setHasEarlier(hydration.hasEarlier);
-      setHydrated(true);
-    })();
+      const identity = guard.capture();
+      const controller = new AbortController();
+      if (!guard.attach(identity, controller)) return;
+      try {
+        const res = await fetch("/api/coach/history", {
+          cache: "no-store",
+          signal: controller.signal,
+        });
+        if (!res.ok) throw new Error("Coach history request failed");
+        const history = (await res.json()) as HistoryResponse;
+        if (
+          cancelled ||
+          generation !== authGeneration ||
+          !guard.isCurrent(identity) ||
+          history.userId !== userId
+        ) return;
+        const hydration = resolveCoachHistoryHydration(history, null, userId);
+        setItems(hydration.items);
+        conversationIdRef.current = hydration.conversationId;
+        historyCursorRef.current = hydration.nextBefore;
+        setHasEarlier(hydration.hasEarlier);
+      } catch {
+        if (cancelled || generation !== authGeneration || !guard.isCurrent(identity)) return;
+        const hydration = resolveCoachHistoryHydration(null, null, userId);
+        setItems(hydration.items);
+        conversationIdRef.current = undefined;
+        historyCursorRef.current = null;
+        setHasEarlier(false);
+      } finally {
+        guard.release(identity);
+      }
+      if (!cancelled && generation === authGeneration && guard.isCurrent(identity)) setHydrated(true);
+    }
+
+    const preview = typeof window !== "undefined" && isPreviewHost(window.location?.host);
+    const authorityMode = resolveStorageAuthorityMode(preview, hasSupabaseConfig());
+    if (authorityMode === "preview") {
+      void Promise.resolve().then(() => {
+        if (cancelled) return;
+        resetForIdentity(PREVIEW_COACH_CHAT_SCOPE);
+        const hydration = resolveCoachHistoryHydration(null, loadStoredChat(), null);
+        setCoachChatScope(PREVIEW_COACH_CHAT_SCOPE);
+        setItems(hydration.items);
+        conversationIdRef.current = hydration.conversationId;
+        setHydrated(true);
+      });
+      return () => {
+        cancelled = true;
+        authGeneration += 1;
+        guard.invalidate();
+        mutationAckBuffer.discard();
+        queuedTurnRef.current = null;
+      };
+    }
+    if (authorityMode === "unavailable") {
+      void Promise.resolve().then(() => {
+        if (cancelled) return;
+        resetForIdentity("signed-out");
+        setCoachChatScope("signed-out");
+        setItems([{
+          id: nextItemId(),
+          role: "assistant",
+          text: "Secure Coach storage is unavailable. Refresh after the connection is restored.",
+          artifacts: [],
+          error: true,
+        }]);
+        setHydrated(true);
+      });
+      return () => {
+        cancelled = true;
+        authGeneration += 1;
+        guard.invalidate();
+        mutationAckBuffer.discard();
+        queuedTurnRef.current = null;
+      };
+    }
+
+    const supabase = createClient();
+    const unsubscribe = subscribeAuthenticatedUserIds(
+      supabase as unknown as Parameters<typeof subscribeAuthenticatedUserIds>[0],
+      (userId) => { void hydrateAuthenticatedUser(userId); },
+    );
     return () => {
       cancelled = true;
+      authGeneration += 1;
+      unsubscribe();
+      guard.invalidate();
+      mutationAckBuffer.discard();
+      queuedTurnRef.current = null;
     };
   }, []);
 
-  // Persist chat (preview replay; harmless for signed-in too). Waits for
-  // hydration so the stored replay isn't clobbered by the initial empty state.
+  // Only preview replay is browser persisted. Signed-in conversation history
+  // is server-authoritative and never written to localStorage.
   useEffect(() => {
-    if (!hydrated) return;
+    if (!hydrated || getCoachChatScope() !== PREVIEW_COACH_CHAT_SCOPE) return;
     try {
       window.localStorage.setItem(
         coachChatStorageKey(getCoachChatScope()),
@@ -390,6 +572,7 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
       confirmedTool?: { name: string; input: unknown; token?: string },
       replaceIds?: string[]
     ): Promise<void> => {
+      const turnIdentity = identityGuardRef.current.capture();
       // The snapshot must never carry the pre-hydration sample seed, so wait
       // for every store to finish its initial load (idempotent, usually
       // already resolved by the time a human can type).
@@ -399,14 +582,18 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
         initializeGroceryList(),
         initializeBodyLog(),
       ]);
+      if (!identityGuardRef.current.isCurrent(turnIdentity)) return;
       // Taps that land mid-stream queue instead of vanishing (e.g. hitting
       // "Start workout" the moment the plan card renders).
       if (busyRef.current) {
-        queuedTurnRef.current = { userText, attachments, confirmedTool };
+        queuedTurnRef.current = { userText, attachments, confirmedTool, identity: turnIdentity };
         return;
       }
+      const controller = new AbortController();
+      if (!identityGuardRef.current.attach(turnIdentity, controller)) return;
       busyRef.current = true;
       setBusy(true);
+      mutationAckBufferRef.current.discard();
 
       const userItem: ChatItem = {
         id: nextItemId(),
@@ -453,6 +640,7 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
       ];
 
       const patchAssistant = (patch: Partial<ChatItem> | ((cur: ChatItem) => Partial<ChatItem>)) => {
+        if (!identityGuardRef.current.isCurrent(turnIdentity)) return;
         setItems((prev) =>
           prev.map((i) =>
             i.id === assistantItem.id ? { ...i, ...(typeof patch === "function" ? patch(i) : patch) } : i
@@ -463,7 +651,6 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
       // Idle watchdog: if the SSE stream (or the initial response) goes
       // silent, abort so the user gets a readable error + retry instead of a
       // permanently disabled composer.
-      const controller = new AbortController();
       let idleTimer: ReturnType<typeof setTimeout> | undefined;
       const armIdleTimeout = () => {
         clearTimeout(idleTimer);
@@ -471,6 +658,7 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
       };
 
       try {
+        let turnAcknowledged = false;
         armIdleTimeout();
         const res = await fetch("/api/coach/turn", {
           method: "POST",
@@ -483,10 +671,12 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
             confirmedTool,
           }),
         });
+        if (!identityGuardRef.current.isCurrent(turnIdentity)) return;
 
         if (!res.ok || !res.body) {
           const err = await res.json().catch(() => null);
           const healthNotice = err?.budgetExceeded ? null : await fetchProviderHealthNotice();
+          if (!identityGuardRef.current.isCurrent(turnIdentity)) return;
           patchAssistant({
             streaming: false,
             error: !err?.budgetExceeded,
@@ -509,6 +699,10 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
 
         while (true) {
           const { done, value } = await reader.read();
+          if (!identityGuardRef.current.isCurrent(turnIdentity)) {
+            await reader.cancel();
+            return;
+          }
           armIdleTimeout();
           if (done) break;
           buffer += decoder.decode(value, { stream: true });
@@ -536,7 +730,9 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
                 }));
                 break;
               case "mutation":
-                event.mutations.forEach(applyMutationToStores);
+                if (identityGuardRef.current.isCurrent(turnIdentity)) {
+                  mutationAckBufferRef.current.stage(event.mutations);
+                }
                 break;
               case "confirm_required":
                 patchAssistant({
@@ -549,9 +745,16 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
                 });
                 break;
               case "turn_done":
+                if (!identityGuardRef.current.isCurrent(turnIdentity)) {
+                  mutationAckBufferRef.current.discard();
+                  return;
+                }
                 if (event.conversationId) conversationIdRef.current = event.conversationId;
+                mutationAckBufferRef.current.acknowledge();
+                turnAcknowledged = true;
                 break;
               case "error":
+                mutationAckBufferRef.current.discard();
                 patchAssistant((cur) => ({
                   error: true,
                   // A confirm chip from a failed turn must not stay actionable
@@ -566,7 +769,16 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
             }
           }
         }
+        if (!turnAcknowledged && mutationAckBufferRef.current.size() > 0) {
+          mutationAckBufferRef.current.discard();
+          patchAssistant((cur) => ({
+            error: true,
+            text: cur.text || "Coach did not confirm that your changes were saved. Nothing was changed; try again.",
+          }));
+        }
       } catch {
+        mutationAckBufferRef.current.discard();
+        if (!identityGuardRef.current.isCurrent(turnIdentity)) return;
         const timedOut = controller.signal.aborted;
         const healthNotice = await fetchProviderHealthNotice();
         patchAssistant((cur) => ({
@@ -585,8 +797,10 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
         }));
       } finally {
         clearTimeout(idleTimer);
+        identityGuardRef.current.release(turnIdentity);
       }
 
+      if (!identityGuardRef.current.isCurrent(turnIdentity)) return;
       patchAssistant({ streaming: false });
       busyRef.current = false;
       setBusy(false);
@@ -614,12 +828,17 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
   const loadEarlier = useCallback(async () => {
     const cursor = historyCursorRef.current;
     if (!cursor || loadingEarlier) return;
+    const identity = identityGuardRef.current.capture();
     setLoadingEarlier(true);
     try {
       const res = await fetch(`/api/coach/history?before=${encodeURIComponent(cursor)}`);
       if (!res.ok) return;
       const data = (await res.json()) as HistoryResponse;
-      if (!data.signedIn) return;
+      if (
+        !data.signedIn ||
+        data.userId !== identity.scope ||
+        !identityGuardRef.current.isCurrent(identity)
+      ) return;
       if (data.messages.length > 0) {
         setItems((prev) => [
           ...data.messages.map((m) => ({
@@ -637,7 +856,7 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
     } catch {
       // keep the button; the user can try again
     } finally {
-      setLoadingEarlier(false);
+      if (identityGuardRef.current.isCurrent(identity)) setLoadingEarlier(false);
     }
   }, [loadingEarlier]);
 
@@ -646,7 +865,9 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
     if (!busy && queuedTurnRef.current) {
       const next = queuedTurnRef.current;
       queuedTurnRef.current = null;
-      void runTurn(next.userText, next.attachments, next.confirmedTool);
+      if (identityGuardRef.current.isCurrent(next.identity)) {
+        void runTurn(next.userText, next.attachments, next.confirmedTool);
+      }
     }
   }, [busy, runTurn]);
 
@@ -690,20 +911,38 @@ export function useCoachChat(profile: CoachProfile, initialItems?: ChatItem[], i
     [runTurn]
   );
 
-  const newConversation = useCallback(() => {
+  const newConversation = useCallback(async () => {
+    const identity = identityGuardRef.current.capture();
+    const scope = getCoachChatScope();
+    if (scope !== PREVIEW_COACH_CHAT_SCOPE) {
+      try {
+        const response = await fetch("/api/coach/history", { method: "DELETE" });
+        if (!response.ok) {
+          const body = await response.json().catch(() => ({}));
+          throw new Error(body.error ?? "Unable to archive this conversation.");
+        }
+        if (!identityGuardRef.current.isCurrent(identity)) return;
+      } catch (error) {
+        if (!identityGuardRef.current.isCurrent(identity)) return;
+        setItems((current) => [...current, {
+          id: nextItemId(),
+          role: "assistant",
+          text: `${error instanceof Error ? error.message : "Unable to archive this conversation."} Your current conversation was kept. Try again.`,
+          artifacts: [],
+          error: true,
+        }]);
+        return;
+      }
+    } else {
+      clearCoachChatScope(scope);
+    }
+    if (!identityGuardRef.current.isCurrent(identity)) return;
     conversationIdRef.current = undefined;
     lastTurnRef.current = null;
     historyCursorRef.current = null;
+    mutationAckBufferRef.current.discard();
     setHasEarlier(false);
     setItems([]);
-    try {
-      clearCoachChatScope(getCoachChatScope());
-    } catch {
-      // ignore
-    }
-    // Signed-in: archive the server conversation so a reload doesn't replay
-    // it. Fire-and-forget; no-op for preview users.
-    void fetch("/api/coach/history", { method: "DELETE" }).catch(() => {});
   }, []);
 
   return {

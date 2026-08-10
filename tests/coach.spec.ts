@@ -10,7 +10,7 @@ import { test, expect, type Page } from "@playwright/test";
  */
 
 const STORAGE_KEYS = [
-  "fuelwell-coach-chat-v1",
+  "fuelwell-coach-chat-v1:preview",
   "fuelwell-day-log-v1",
   "fuelwell-workout-log-v1",
   "fuelwell-grocery-list-v1",
@@ -88,11 +88,10 @@ test("Coach contains rich responses and stacks artifacts from 320px through 430p
     });
   });
   await page.setViewportSize({ width: 320, height: 812 });
-  await page.goto("/app/coach");
-  await page.evaluate(
+  await page.addInitScript(
     ({ content, seededArtifacts }) => {
       localStorage.setItem(
-        "fuelwell-coach-chat-v1",
+        "fuelwell-coach-chat-v1:preview",
         JSON.stringify({
           date: new Date().toISOString().split("T")[0],
           items: [
@@ -108,11 +107,14 @@ test("Coach contains rich responses and stacks artifacts from 320px through 430p
     },
     { content: text, seededArtifacts: artifacts }
   );
+  await page.goto("/app/coach");
 
   for (const width of [320, 430]) {
     await page.setViewportSize({ width, height: 812 });
     await page.reload();
-    await page.getByRole("button", { name: "Close coach action panel" }).click();
+    const closeDrawer = page.getByRole("button", { name: "Close coach action panel" });
+    await expect(closeDrawer).toBeVisible();
+    await closeDrawer.click();
     await expect(page.getByTestId("artifact-todays_plate")).toBeVisible();
 
     const layout = await page.evaluate(() => {
@@ -120,7 +122,9 @@ test("Coach contains rich responses and stacks artifacts from 320px through 430p
       const attach = document.querySelector<HTMLElement>('[aria-label^="Attach screenshot"]')?.closest("label");
       const send = document.querySelector<HTMLElement>('[aria-label="Send"]');
       const mealCards = Array.from(
-        document.querySelectorAll<HTMLElement>('[data-testid="artifact-todays_plate"] li')
+        document.querySelectorAll<HTMLElement>(
+          '[data-testid="artifact-todays_plate"] button[aria-label^="Tell me about my "]'
+        )
       ).map((item) => item.getBoundingClientRect());
       const actions = Array.from(
         document.querySelectorAll<HTMLElement>('[data-testid="artifact-quick_replies"] button')

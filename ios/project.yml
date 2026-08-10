@@ -61,6 +61,13 @@ targets:
       path: FuelWellApp/Info.plist
       properties:
         CFBundleIconName: AppIcon
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
+        CFBundleURLTypes:
+          - CFBundleTypeRole: Editor
+            CFBundleURLName: com.fuelwell.app.auth
+            CFBundleURLSchemes:
+              - fuelwell
         FuelWellExpectedDeploymentID: "$(FUELWELL_EXPECTED_DEPLOYMENT_ID)"
         FuelWellExpectedDeploymentURL: "$(FUELWELL_EXPECTED_DEPLOYMENT_URL)"
         FuelWellExpectedEnvironment: "$(FUELWELL_EXPECTED_ENVIRONMENT)"
@@ -68,13 +75,17 @@ targets:
         FuelWellExpectedPackageVersion: "$(FUELWELL_EXPECTED_PACKAGE_VERSION)"
         FuelWellReleaseSchemaVersion: "$(FUELWELL_RELEASE_SCHEMA_VERSION)"
         FuelWellStartURL: "$(FUELWELL_START_URL)"
+        FuelWellSupabaseURL: "$(FUELWELL_SUPABASE_URL)"
         NSCameraUsageDescription: FuelWell uses the camera to log meal photos for nutrition tracking.
         NSHealthShareUsageDescription: FuelWell reads workouts, sleep, steps, energy, and body measurements to personalize coaching.
         NSHealthUpdateUsageDescription: FuelWell does not write Health data in this phase.
+        NSLocationWhenInUseUsageDescription: FuelWell uses your location while the app is open to improve outdoor activity and nearby grocery guidance.
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: false
         UIApplicationSupportsIndirectInputEvents: true
-        UILaunchScreen: {}
+        UILaunchScreen:
+          UIImageName: FuelWellLaunchLogo
+          UIImageRespectsSafeAreaInsets: true
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
           - UIInterfaceOrientationPortraitUpsideDown
@@ -91,6 +102,8 @@ targets:
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         CODE_SIGN_ENTITLEMENTS: FuelWellApp/FuelWellApp.entitlements
         GENERATE_INFOPLIST_FILE: NO
+        MARKETING_VERSION: "1.4.0"
+        CURRENT_PROJECT_VERSION: "1"
         TARGETED_DEVICE_FAMILY: "1,2"
   FuelWellAppTests:
     type: bundle.unit-test

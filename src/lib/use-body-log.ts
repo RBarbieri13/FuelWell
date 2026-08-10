@@ -3,13 +3,13 @@
 import { useEffect, useSyncExternalStore } from "react";
 import type { BodyLogEntry } from "@/lib/coach/types";
 import { todayIsoDate } from "@/lib/fuelwell-data";
-import type { MutationResult } from "@/lib/use-day-log";
+import type { IdentityScope, MutationResult } from "@/lib/use-day-log";
 
 const LEGACY_STORAGE_KEY = "fuelwell-body-log-v1";
 const PREVIEW_CACHE_PREFIX = "fuelwell-body-log-preview-v2";
 const USER_CACHE_PREFIX = "fuelwell-body-log-user-v2";
 
-type BodyLogMode = "unknown" | "preview" | "authenticated";
+type BodyLogMode = "unknown" | "preview" | "authenticated" | "anonymous";
 type PersistenceStatus = "idle" | "loading" | "saving" | "saved" | "error";
 
 export type BodyLogPersistence = {
@@ -36,7 +36,11 @@ const date = todayIsoDate();
 const listeners = new Set<() => void>();
 const EMPTY: BodyLogEntry[] = [];
 let initialized = false;
+let activeIdentity: IdentityScope | null = null;
+let identityGeneration = 0;
+let initializedIdentityKey: string | null = null;
 let initializePromise: Promise<boolean> | null = null;
+let initializePromiseKey: string | null = null;
 let mutationQueue: Promise<unknown> = Promise.resolve();
 let snapshot: BodyLogSnapshot = {
   entries: EMPTY,
@@ -52,6 +56,28 @@ function userCacheKey(userId: string, day: string) {
   return `${USER_CACHE_PREFIX}:${userId}:${day}`;
 }
 
+function identityKey(identity: IdentityScope | null) {
+  if (!identity) return "unknown";
+  return identity.mode === "authenticated"
+    ? `authenticated:${identity.userId}`
+    : identity.mode;
+}
+
+function responseMatchesIdentity(body: BodyLogResponse, identity: IdentityScope | null) {
+  if (!identity) return true;
+  if (identity.mode === "authenticated") {
+    return body.signedIn && body.userId === identity.userId;
+  }
+  return !body.signedIn;
+}
+
+function adoptResponseIdentity(body: BodyLogResponse) {
+  if (activeIdentity) return;
+  activeIdentity = body.signedIn && body.userId
+    ? { mode: "authenticated", userId: body.userId }
+    : { mode: "preview" };
+}
+
 function emit(next: BodyLogSnapshot) {
   snapshot = next;
   listeners.forEach((listener) => listener());
@@ -59,6 +85,23 @@ function emit(next: BodyLogSnapshot) {
 
 function setEntries(entries: BodyLogEntry[], persistence: Partial<BodyLogPersistence> = {}) {
   emit({ entries, persistence: { ...snapshot.persistence, ...persistence } });
+}
+
+export function resetBodyLogForIdentity(identity: IdentityScope) {
+  if (identityKey(activeIdentity) === identityKey(identity)) return;
+  activeIdentity = identity;
+  identityGeneration += 1;
+  initialized = false;
+  initializedIdentityKey = null;
+  initializePromise = null;
+  initializePromiseKey = null;
+  mutationQueue = Promise.resolve();
+  setEntries([], {
+    mode: "unknown",
+    status: "idle",
+    userId: identity.mode === "authenticated" ? identity.userId : null,
+    error: null,
+  });
 }
 
 function readCache(key: string): BodyLogEntry[] | null {
@@ -105,15 +148,24 @@ async function readResponse(response: Response): Promise<BodyLogResponse> {
 }
 
 export async function initializeBodyLog(): Promise<boolean> {
-  if (initialized) return true;
-  if (initializePromise) return initializePromise;
+  const requestKey = identityKey(activeIdentity);
+  if (initialized && initializedIdentityKey === requestKey) return true;
+  if (initializePromise && initializePromiseKey === requestKey) return initializePromise;
   setEntries(snapshot.entries, { status: "loading", error: null });
-  initializePromise = (async () => {
+  const requestGeneration = identityGeneration;
+  const requestIdentity = activeIdentity;
+  const request = (async () => {
     try {
       const body = await readResponse(await fetch("/api/body-log", { cache: "no-store" }));
+      if (requestGeneration !== identityGeneration) return false;
+      if (!responseMatchesIdentity(body, requestIdentity)) {
+        throw new Error("Body log response did not match the active account.");
+      }
+      adoptResponseIdentity(body);
       if (body.signedIn) {
         if (!body.userId) throw new Error("Authenticated body log response omitted the user.");
         initialized = true;
+        initializedIdentityKey = identityKey(activeIdentity);
         writeCache(userCacheKey(body.userId, date), body.entries);
         setEntries(body.entries, {
           mode: "authenticated",
@@ -125,29 +177,47 @@ export async function initializeBodyLog(): Promise<boolean> {
       }
 
       initialized = true;
-      const previewEntries =
-        readCache(previewCacheKey(date)) ?? readCache(LEGACY_STORAGE_KEY) ?? EMPTY;
-      writeCache(previewCacheKey(date), previewEntries);
-      setEntries(previewEntries, {
-        mode: "preview",
+      initializedIdentityKey = identityKey(activeIdentity);
+      const isPreview = activeIdentity?.mode !== "anonymous";
+      const signedOutEntries = isPreview
+        ? readCache(previewCacheKey(date)) ?? readCache(LEGACY_STORAGE_KEY) ?? EMPTY
+        : EMPTY;
+      if (isPreview) writeCache(previewCacheKey(date), signedOutEntries);
+      setEntries(signedOutEntries, {
+        mode: isPreview ? "preview" : "anonymous",
         status: "saved",
         userId: null,
         error: null,
       });
       return true;
     } catch (error) {
+      if (requestGeneration !== identityGeneration) return false;
       setEntries(snapshot.entries, {
         mode: "unknown",
         status: "error",
-        userId: null,
+        userId: requestIdentity?.mode === "authenticated" ? requestIdentity.userId : null,
         error: errorText(error),
       });
       return false;
-    } finally {
-      initializePromise = null;
     }
   })();
-  return initializePromise;
+  initializePromise = request;
+  initializePromiseKey = requestKey;
+  void request.then(
+    () => {
+      if (initializePromise === request) {
+        initializePromise = null;
+        initializePromiseKey = null;
+      }
+    },
+    () => {
+      if (initializePromise === request) {
+        initializePromise = null;
+        initializePromiseKey = null;
+      }
+    },
+  );
+  return request;
 }
 
 function subscribe(listener: () => void) {
@@ -163,10 +233,19 @@ function enqueue<T>(operation: () => Promise<MutationResult<T>>): Promise<Mutati
 
 export function addBodyLogEntry(entry: BodyLogEntry): Promise<MutationResult<BodyLogEntry>> {
   const idempotencyKey = crypto.randomUUID();
+  const queuedGeneration = identityGeneration;
   return enqueue(async () => {
+    if (queuedGeneration !== identityGeneration) {
+      return { ok: false, error: "The active account changed before the body log was saved." };
+    }
     if (!(await initializeBodyLog())) {
       return { ok: false, error: snapshot.persistence.error || "Body log did not initialize." };
     }
+    if (queuedGeneration !== identityGeneration) {
+      return { ok: false, error: "The active account changed before the body log was saved." };
+    }
+    const operationGeneration = queuedGeneration;
+    const operationUserId = snapshot.persistence.userId;
     const before = snapshot.entries;
     const optimisticEntries = mergeEntry(before, entry);
     setEntries(optimisticEntries, { status: "saving", error: null });
@@ -188,7 +267,10 @@ export function addBodyLogEntry(entry: BodyLogEntry): Promise<MutationResult<Bod
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ idempotencyKey, entry }),
       }));
-      if (!body.signedIn || body.userId !== snapshot.persistence.userId) {
+      if (operationGeneration !== identityGeneration) {
+        return { ok: false, error: "The active account changed before the body log was saved." };
+      }
+      if (!body.signedIn || body.userId !== operationUserId) {
         throw new Error("Authenticated body log response did not match the current user.");
       }
       writeCache(userCacheKey(body.userId, date), body.entries);
@@ -196,6 +278,9 @@ export function addBodyLogEntry(entry: BodyLogEntry): Promise<MutationResult<Bod
       return { ok: true, value: entry };
     } catch (error) {
       const message = errorText(error);
+      if (operationGeneration !== identityGeneration) {
+        return { ok: false, error: "The active account changed before the body log was saved." };
+      }
       setEntries(before, { status: "error", error: message });
       return { ok: false, error: message };
     }

@@ -34,6 +34,13 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { hasSupabaseConfig, isPreviewHost } from "@/lib/preview-session";
+import {
+  assertAuthenticatedResponseOwner,
+  createIdentityRequestGate,
+  resolveStorageAuthorityMode,
+} from "@/lib/authenticated-storage-types";
+import { subscribeAuthenticatedUserIds } from "@/lib/preferences-sync";
 import {
   GOAL_AGGRESSIVENESS_OPTIONS,
   calculateAge,
@@ -294,7 +301,10 @@ export default function OnboardingPage() {
   const [resumed, setResumed] = useState(false);
   const [isNewUserPreview, setIsNewUserPreview] = useState(false);
   const [draftStorageKey, setDraftStorageKey] = useState<string | null>(null);
+  const [draftMode, setDraftMode] = useState<"loading" | "preview" | "server" | "signed-out">("loading");
   const hydrated = useRef(false);
+  const draftWriteVersion = useRef(0);
+  const draftUserIdRef = useRef<string | null>(null);
 
   const totalSteps = STEP_META.length;
   const progress = ((step + 1) / totalSteps) * 100;
@@ -307,97 +317,240 @@ export default function OnboardingPage() {
 
   useEffect(() => {
     let cancelled = false;
+    let resetRequested = new URLSearchParams(window.location.search).get("reset") === "1";
+    let readController: AbortController | null = null;
+    const identityGate = createIdentityRequestGate();
+    const params = new URLSearchParams(window.location.search);
+    const preview = isBrowserPreviewRuntime();
+    const newUserPreview = preview && (
+      params.get("preview") === "new-user" ||
+      window.localStorage.getItem(PREVIEW_KIND_STORAGE_KEY) === "new-user"
+    );
+    const authorityMode = resolveStorageAuthorityMode(preview, hasSupabaseConfig());
+    const storageKey = onboardingDraftStorageKey(PREVIEW_IDENTITY_SCOPE);
 
-    async function hydrateDraft() {
-      try {
-        const params = new URLSearchParams(window.location.search);
-        const newUserPreview =
-          params.get("preview") === "new-user" ||
-          window.localStorage.getItem(PREVIEW_KIND_STORAGE_KEY) === "new-user";
-        setIsNewUserPreview(newUserPreview);
+    function clearVisibleDraft() {
+      draftWriteVersion.current += 1;
+      hydrated.current = false;
+      setStep(0);
+      setMaxStepReached(0);
+      setData(INITIAL_DATA);
+      setResumed(false);
+      setCelebration(null);
+    }
 
-        const scope = newUserPreview
-          ? PREVIEW_IDENTITY_SCOPE
-          : (await createClient().auth.getUser()).data.user?.id;
-        if (!scope || cancelled) return;
-
-        const storageKey = onboardingDraftStorageKey(scope);
-        window.localStorage.removeItem(LEGACY_STORAGE_KEY);
-        if (params.get("reset") === "1") {
-          window.localStorage.removeItem(storageKey);
-          if (newUserPreview) {
-            window.localStorage.setItem(PREVIEW_KIND_STORAGE_KEY, "new-user");
-            window.history.replaceState(null, "", "/app/onboarding?preview=new-user");
-          }
-          setDraftStorageKey(storageKey);
-          return;
+    function applySavedDraft(saved: PersistedProgress | null, previewMode: boolean) {
+      if (saved?.data) {
+        setData({
+          ...INITIAL_DATA,
+          ...saved.data,
+          goalTimeline: normalizeGoalTimeline(saved.data.goalTimeline),
+          allergies: normalizeAllergies(saved.data.allergies),
+        });
+      }
+      if (saved && typeof saved.step === "number") {
+        const restoredStep = Math.min(Math.max(saved.step, 0), totalSteps - 1);
+        setStep(restoredStep);
+        setMaxStepReached(restoredStep);
+        setResumed(true);
+      } else if (previewMode) {
+        const completed = readPreviewOnboardingOverride()?.data;
+        if (completed) {
+          setData((previous) => ({
+            ...previous,
+            ...(completed.displayName ? { displayName: completed.displayName } : {}),
+            ...(completed.dateOfBirth ? { dateOfBirth: completed.dateOfBirth } : {}),
+          }));
         }
-
-        const raw = window.localStorage.getItem(storageKey);
-        if (raw) {
-          const saved = JSON.parse(raw) as PersistedProgress;
-          if (saved.data) {
-            setData({
-              ...INITIAL_DATA,
-              ...saved.data,
-              goalTimeline: normalizeGoalTimeline(saved.data.goalTimeline),
-              allergies: normalizeAllergies(saved.data.allergies),
-            });
-          }
-          if (typeof saved.step === "number") {
-            const restoredStep = Math.min(Math.max(saved.step, 0), totalSteps - 1);
-            setStep(restoredStep);
-            setMaxStepReached((reached) => Math.max(reached, restoredStep));
-          }
-          setResumed(true);
-        } else {
-          // Retakes start from the last completed intake instead of blanks so
-          // the saved name and answers are visibly carried forward.
-          const completed = readPreviewOnboardingOverride()?.data;
-          if (completed) {
-            setData((previous) => ({
-              ...previous,
-              ...(completed.displayName ? { displayName: completed.displayName } : {}),
-              ...(completed.dateOfBirth ? { dateOfBirth: completed.dateOfBirth } : {}),
-            }));
-          }
-        }
-        setDraftStorageKey(storageKey);
-      } catch {
-        // Corrupt or blocked storage starts a clean, in-memory intake.
-      } finally {
-        hydrated.current = true;
       }
     }
 
-    void hydrateDraft();
+    setIsNewUserPreview(newUserPreview);
+    window.localStorage.removeItem(LEGACY_STORAGE_KEY);
+
+    if (authorityMode === "preview") {
+      clearVisibleDraft();
+      if (resetRequested) {
+        window.localStorage.removeItem(storageKey);
+        if (newUserPreview) {
+          window.localStorage.setItem(PREVIEW_KIND_STORAGE_KEY, "new-user");
+          window.history.replaceState(null, "", "/app/onboarding?preview=new-user");
+        }
+      }
+      const raw = resetRequested ? null : window.localStorage.getItem(storageKey);
+      applySavedDraft(raw ? (JSON.parse(raw) as PersistedProgress) : null, true);
+      setDraftStorageKey(storageKey);
+      setDraftMode("preview");
+      setError(null);
+      hydrated.current = true;
+      return undefined;
+    }
+
+    if (authorityMode === "unavailable") {
+      clearVisibleDraft();
+      draftUserIdRef.current = null;
+      setDraftStorageKey(null);
+      setDraftMode("signed-out");
+      setError("Secure onboarding storage is unavailable. Refresh after the connection is restored.");
+      hydrated.current = true;
+      return undefined;
+    }
+
+    const supabase = createClient();
+    async function syncUser(userId: string | null) {
+      const token = identityGate.transition(userId);
+      readController?.abort();
+      readController = new AbortController();
+      clearVisibleDraft();
+      draftUserIdRef.current = userId;
+      setDraftStorageKey(null);
+      setError(null);
+
+      if (!userId) {
+        setDraftMode("signed-out");
+        setError("Your session expired. Sign in again to save onboarding progress.");
+        hydrated.current = true;
+        return;
+      }
+
+      setDraftMode("loading");
+      try {
+        let saved: PersistedProgress | null = null;
+        if (resetRequested) {
+          const response = await fetch("/api/user-state/onboarding-draft", {
+            method: "DELETE",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ expectedUserId: userId }),
+            signal: readController.signal,
+          });
+          const body = await response.json().catch(() => ({}));
+          if (!response.ok) throw new Error(body.error ?? "Unable to reset saved onboarding progress.");
+          assertAuthenticatedResponseOwner(body, userId);
+          resetRequested = false;
+        } else {
+          const response = await fetch("/api/user-state/onboarding-draft", {
+            cache: "no-store",
+            signal: readController.signal,
+          });
+          const body = await response.json().catch(() => ({}));
+          if (!response.ok) throw new Error(body.error ?? "Unable to load onboarding progress.");
+          assertAuthenticatedResponseOwner(body, userId);
+          saved = (body.draft as PersistedProgress | null | undefined) ?? null;
+        }
+        if (cancelled || !identityGate.isCurrent(token)) return;
+        applySavedDraft(saved, false);
+        setDraftMode("server");
+      } catch (hydrateError) {
+        if (
+          cancelled ||
+          !identityGate.isCurrent(token) ||
+          (hydrateError instanceof Error && hydrateError.name === "AbortError")
+        ) return;
+        setDraftMode("server");
+        setError(
+          hydrateError instanceof Error
+            ? `${hydrateError.message} Refresh to retry before continuing.`
+            : "Unable to load onboarding progress. Refresh to retry before continuing.",
+        );
+      } finally {
+        if (!cancelled && identityGate.isCurrent(token)) hydrated.current = true;
+      }
+    }
+
+    const unsubscribe = subscribeAuthenticatedUserIds(
+      supabase as unknown as Parameters<typeof subscribeAuthenticatedUserIds>[0],
+      (userId) => { void syncUser(userId); },
+    );
     return () => {
       cancelled = true;
+      identityGate.transition(null);
+      draftWriteVersion.current += 1;
+      readController?.abort();
+      unsubscribe();
     };
   }, [totalSteps]);
 
-  // Persist progress so it survives a refresh or leaving the page.
+  // Preview progress stays browser-only. Authenticated progress is saved
+  // through the user-scoped API and never falls back to localStorage.
   useEffect(() => {
-    if (!hydrated.current || !draftStorageKey) return;
-    try {
-      const payload: PersistedProgress = { step, data };
-      window.localStorage.setItem(draftStorageKey, JSON.stringify(payload));
-    } catch {
-      // Storage unavailable - progress simply won't persist this session.
+    if (!hydrated.current) return;
+    const payload: PersistedProgress = { step, data };
+    if (draftMode === "preview" && draftStorageKey) {
+      try {
+        window.localStorage.setItem(draftStorageKey, JSON.stringify(payload));
+      } catch {
+        // Preview can continue in memory when storage is blocked.
+      }
+      return;
     }
-  }, [step, data, draftStorageKey]);
+    if (draftMode !== "server") return;
+    const version = ++draftWriteVersion.current;
+    const timer = setTimeout(() => {
+      void saveServerDraft(payload).then((saved) => {
+        if (!saved && draftWriteVersion.current === version) {
+          setError("Your latest onboarding change was not saved. Check your connection and try again.");
+        }
+      });
+    }, 450);
+    return () => clearTimeout(timer);
+  }, [step, data, draftStorageKey, draftMode]);
 
   const previewMacros = useMemo(() => getPreviewMacros(data), [data]);
 
-  function clearProgress() {
+  async function saveServerDraft(payload: PersistedProgress): Promise<boolean> {
+    const expectedUserId = draftUserIdRef.current;
+    if (!expectedUserId) return false;
     try {
-      if (draftStorageKey) window.localStorage.removeItem(draftStorageKey);
+      const response = await fetch("/api/user-state/onboarding-draft", {
+        method: "PUT",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ draft: payload, expectedUserId }),
+      });
+      const body = await response.json().catch(() => ({}));
+      if (!response.ok) return false;
+      assertAuthenticatedResponseOwner(body, expectedUserId);
+      return draftUserIdRef.current === expectedUserId;
     } catch {
-      // ignore
+      return false;
     }
   }
 
-  function handleSkip() {
+  async function clearProgress(): Promise<boolean> {
+    draftWriteVersion.current += 1;
+    if (draftMode === "preview") {
+      try {
+        if (draftStorageKey) window.localStorage.removeItem(draftStorageKey);
+      } catch {
+        // Preview storage cleanup is best effort.
+      }
+      return true;
+    }
+    if (draftMode !== "server") return false;
+    const expectedUserId = draftUserIdRef.current;
+    if (!expectedUserId) return false;
+    try {
+      const response = await fetch("/api/user-state/onboarding-draft", {
+        method: "DELETE",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ expectedUserId }),
+      });
+      const body = await response.json().catch(() => ({}));
+      if (!response.ok) return false;
+      assertAuthenticatedResponseOwner(body, expectedUserId);
+      return draftUserIdRef.current === expectedUserId;
+    } catch {
+      return false;
+    }
+  }
+
+  async function handleSkip() {
+    if (draftMode === "server") {
+      const saved = await saveServerDraft({ step, data });
+      if (!saved) {
+        setError("We couldn't save your progress. Try again before leaving setup.");
+        return;
+      }
+    }
     router.push("/app/dashboard");
   }
 
@@ -483,10 +636,19 @@ export default function OnboardingPage() {
     }
   }
 
-  function next() {
+  async function next() {
     if (step < totalSteps - 1 && canProceed()) {
-      setStep(step + 1);
-      setMaxStepReached((reached) => Math.max(reached, step + 1));
+      const nextStep = step + 1;
+      if (draftMode === "server") {
+        const saved = await saveServerDraft({ step: nextStep, data });
+        if (!saved) {
+          setError("We couldn't save this step. Check your connection and try again.");
+          return;
+        }
+      }
+      setError(null);
+      setStep(nextStep);
+      setMaxStepReached((reached) => Math.max(reached, nextStep));
     }
   }
 
@@ -528,7 +690,7 @@ export default function OnboardingPage() {
       } catch {
         // Local-only preview completion can still continue without storage.
       }
-      clearProgress();
+      await clearProgress();
       setSaving(false);
       setCelebration({ macros });
       return;
@@ -590,7 +752,12 @@ export default function OnboardingPage() {
       console.error("coach knowledge bootstrap failed", knowledgeError.message);
     }
 
-    clearProgress();
+    const cleared = await clearProgress();
+    if (!cleared) {
+      setError("Your profile was saved, but setup cleanup failed. Try again before leaving this page.");
+      setSaving(false);
+      return;
+    }
     router.push("/app/dashboard?setup=complete");
     router.refresh();
   }
@@ -2193,9 +2360,5 @@ function buildInitialOnboardingCoachKnowledge(
 
 function isBrowserPreviewRuntime() {
   if (typeof window === "undefined") return false;
-  return (
-    window.location.hostname.includes("localhost") ||
-    window.location.hostname.includes("127.0.0.1") ||
-    window.location.hostname.includes("fuelwell-preview.vercel.app")
-  );
+  return isPreviewHost(window.location.host);
 }

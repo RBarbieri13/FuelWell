@@ -16,8 +16,13 @@ import {
 const PREVIEW_CACHE_PREFIX = "fuelwell-day-log-preview-v1";
 const USER_CACHE_PREFIX = "fuelwell-day-log-user-v1";
 
-type DayLogMode = "unknown" | "preview" | "authenticated";
+type DayLogMode = "unknown" | "preview" | "authenticated" | "anonymous";
 type PersistenceStatus = "idle" | "loading" | "saving" | "saved" | "error";
+
+export type IdentityScope =
+  | { mode: "authenticated"; userId: string }
+  | { mode: "preview" }
+  | { mode: "anonymous" };
 
 export type DayLogPersistence = {
   mode: DayLogMode;
@@ -54,8 +59,11 @@ const listeners = new Set<() => void>();
 const idAliases = new Map<string, string>();
 const date = todayIsoDate();
 let pendingSeed: MealRecord[] = SAMPLE_MEALS;
-let initialized = false;
+let activeIdentity: IdentityScope | null = null;
+let identityGeneration = 0;
+let initializedIdentityKey: string | null = null;
 let initializePromise: Promise<boolean> | null = null;
+let initializePromiseKey: string | null = null;
 let mutationQueue: Promise<unknown> = Promise.resolve();
 let snapshot: DayLogSnapshot = {
   meals: SAMPLE_MEALS,
@@ -71,6 +79,28 @@ function userCacheKey(userId: string, day: string) {
   return `${USER_CACHE_PREFIX}:${userId}:${day}`;
 }
 
+function identityKey(identity: IdentityScope | null) {
+  if (!identity) return "unknown";
+  return identity.mode === "authenticated"
+    ? `authenticated:${identity.userId}`
+    : identity.mode;
+}
+
+function responseMatchesIdentity(body: DayLogResponse, identity: IdentityScope | null) {
+  if (!identity) return true;
+  if (identity.mode === "authenticated") {
+    return body.signedIn && body.userId === identity.userId;
+  }
+  return !body.signedIn;
+}
+
+function adoptResponseIdentity(body: DayLogResponse) {
+  if (activeIdentity) return;
+  activeIdentity = body.signedIn && body.userId
+    ? { mode: "authenticated", userId: body.userId }
+    : { mode: "preview" };
+}
+
 function emit(next: DayLogSnapshot) {
   snapshot = next;
   listeners.forEach((listener) => listener());
@@ -83,6 +113,27 @@ function setMeals(
   emit({
     meals,
     persistence: { ...snapshot.persistence, ...persistence },
+  });
+}
+
+export function resetDayLogForIdentity(identity: IdentityScope) {
+  if (identityKey(activeIdentity) === identityKey(identity)) return;
+  activeIdentity = identity;
+  identityGeneration += 1;
+  initializedIdentityKey = null;
+  initializePromise = null;
+  initializePromiseKey = null;
+  mutationQueue = Promise.resolve();
+  idAliases.clear();
+  emit({
+    meals: [],
+    persistence: {
+      mode: "unknown",
+      status: "idle",
+      userId: identity.mode === "authenticated" ? identity.userId : null,
+      date,
+      error: null,
+    },
   });
 }
 
@@ -119,20 +170,28 @@ async function readResponse(response: Response): Promise<DayLogResponse> {
 }
 
 export async function initializeDayLog(): Promise<boolean> {
-  if (initialized) return true;
-  if (initializePromise) return initializePromise;
+  const requestKey = identityKey(activeIdentity);
+  if (initializedIdentityKey === requestKey) return true;
+  if (initializePromise && initializePromiseKey === requestKey) return initializePromise;
 
   setMeals(snapshot.meals, { status: "loading", error: null });
-  initializePromise = (async () => {
+  const requestGeneration = identityGeneration;
+  const requestIdentity = activeIdentity;
+  const request = (async () => {
     try {
       const response = await fetch(`/api/day-log?date=${encodeURIComponent(date)}`, {
         cache: "no-store",
       });
       const body = await readResponse(response);
 
+      if (requestGeneration !== identityGeneration) return false;
+      if (!responseMatchesIdentity(body, requestIdentity)) {
+        throw new Error("Day log response did not match the active account.");
+      }
+      adoptResponseIdentity(body);
+
       if (body.signedIn) {
         if (!body.userId) throw new Error("Authenticated day log response omitted the user.");
-        initialized = true;
         writeCache(userCacheKey(body.userId, date), body.meals);
         setMeals(body.meals, {
           mode: "authenticated",
@@ -140,32 +199,51 @@ export async function initializeDayLog(): Promise<boolean> {
           userId: body.userId,
           error: null,
         });
+        initializedIdentityKey = identityKey(activeIdentity);
         return true;
       }
 
-      initialized = true;
-      const previewMeals = readCache(previewCacheKey(date)) ?? pendingSeed;
-      writeCache(previewCacheKey(date), previewMeals);
-      setMeals(previewMeals, {
-        mode: "preview",
+      const isPreview = activeIdentity?.mode !== "anonymous";
+      const signedOutMeals = isPreview
+        ? readCache(previewCacheKey(date)) ?? pendingSeed
+        : [];
+      if (isPreview) writeCache(previewCacheKey(date), signedOutMeals);
+      setMeals(signedOutMeals, {
+        mode: isPreview ? "preview" : "anonymous",
         status: "saved",
         userId: null,
         error: null,
       });
+      initializedIdentityKey = identityKey(activeIdentity);
       return true;
     } catch (error) {
+      if (requestGeneration !== identityGeneration) return false;
       setMeals(snapshot.meals, {
         mode: "unknown",
         status: "error",
-        userId: null,
+        userId: requestIdentity?.mode === "authenticated" ? requestIdentity.userId : null,
         error: errorText(error),
       });
       return false;
-    } finally {
-      initializePromise = null;
     }
   })();
-  return initializePromise;
+  initializePromise = request;
+  initializePromiseKey = requestKey;
+  void request.then(
+    () => {
+      if (initializePromise === request) {
+        initializePromise = null;
+        initializePromiseKey = null;
+      }
+    },
+    () => {
+      if (initializePromise === request) {
+        initializePromise = null;
+        initializePromiseKey = null;
+      }
+    },
+  );
+  return request;
 }
 
 function subscribe(listener: () => void) {
@@ -215,11 +293,20 @@ async function mutate<T>(
   request: () => Promise<Response>,
   value: T,
 ): Promise<MutationResult<T>> {
+  const queuedGeneration = identityGeneration;
   return enqueue(async () => {
+    if (queuedGeneration !== identityGeneration) {
+      return { ok: false, error: "The active account changed before the meal was saved." };
+    }
     if (!(await initializeDayLog())) {
       return { ok: false, error: snapshot.persistence.error || "Day log did not initialize." };
     }
+    if (queuedGeneration !== identityGeneration) {
+      return { ok: false, error: "The active account changed before the meal was saved." };
+    }
 
+    const operationGeneration = queuedGeneration;
+    const operationUserId = snapshot.persistence.userId;
     const before = snapshot.meals;
     const optimisticMeals = optimistic(before);
     setMeals(optimisticMeals, { status: "saving", error: null });
@@ -238,7 +325,10 @@ async function mutate<T>(
 
     try {
       const body = await readResponse(await request());
-      if (!body.signedIn || body.userId !== snapshot.persistence.userId) {
+      if (operationGeneration !== identityGeneration) {
+        return { ok: false, error: "The active account changed before the meal was saved." };
+      }
+      if (!body.signedIn || body.userId !== operationUserId) {
         throw new Error("Authenticated day log response did not match the current user.");
       }
       writeCache(userCacheKey(body.userId, date), body.meals);
@@ -246,6 +336,9 @@ async function mutate<T>(
       return { ok: true, value };
     } catch (error) {
       const message = errorText(error);
+      if (operationGeneration !== identityGeneration) {
+        return { ok: false, error: "The active account changed before the meal was saved." };
+      }
       setMeals(before, { status: "error", error: message });
       return { ok: false, error: message };
     }
@@ -277,7 +370,11 @@ export function addMeal(input: NewMealInput): Promise<MutationResult<MealRecord>
 
 export function hydrateDayLog(seedMeals: MealRecord[]) {
   pendingSeed = seedMeals;
-  if (!initialized && snapshot.persistence.mode === "unknown") {
+  if (
+    !initializedIdentityKey
+    && snapshot.persistence.mode === "unknown"
+    && activeIdentity?.mode !== "anonymous"
+  ) {
     setMeals(seedMeals, { status: snapshot.persistence.status });
   }
 }

@@ -1,0 +1,20 @@
+{
+  "slug": "fuelwell-appstore-finalization",
+  "objective": "Finalize FuelWell as a production-capable, Supabase-authoritative web and iPhone app and prepare one exact verified candidate for Vercel, TestFlight, and App Store release.",
+  "definition_of_done": "npm test and npm run build pass; mobile containment passes at 320/375/390/430; native unit and candidate XCUITests pass on compact and large iPhones; two authenticated users remain isolated across logout/login and fresh sessions; Google and Facebook auth callbacks work through the iOS shell; Coach live text and attachment journeys pass; release readiness has zero failures before any approved deployment.",
+  "anchors": [
+    "Actual web build, unit, Playwright, Swift package, Xcode unit, and candidate XCUITest results"
+  ],
+  "frozen_rules": [
+    "Do not weaken tests, release gates, RLS, health safety boundaries, or user isolation to make the candidate pass"
+  ],
+  "budget": {
+    "work_units": 20,
+    "concurrent_workers": 4,
+    "total_agents_max": 40,
+    "wall_clock_min": 600,
+    "retries_per_node": 2,
+    "min_evidence_per_claim": 1
+  },
+  "created": "2026-08-10T03:50:02.325762+00:00"
+}

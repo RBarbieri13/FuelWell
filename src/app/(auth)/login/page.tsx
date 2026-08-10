@@ -15,6 +15,7 @@ import {
 } from "@/components/auth/auth-shell";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AlertCircle, BarChart3, Brain, LogIn, Utensils } from "lucide-react";
+import { safeNativeAuthNextPath } from "@/components/auth/native-oauth-bridge";
 
 function LoginForm() {
   const router = useRouter();
@@ -24,7 +25,7 @@ function LoginForm() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const redirectTo = searchParams.get("redirect") || "/app/dashboard";
+  const redirectTo = safeNativeAuthNextPath(searchParams.get("redirect"));
   // Only genuine credential mistakes belong on the password field; outages,
   // rate limits, and other server errors render at the form level instead.
   const isCredentialError = Boolean(

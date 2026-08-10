@@ -1,39 +1,74 @@
 "use client";
 
-/**
- * PreferencesSync — bridges the usePreferences client store to
- * profiles.preferences_jsonb for signed-in users.
- *
- * On mount: if signed in, hydrate the store from the server (server wins when
- * it has data; otherwise seed the server from local so first-device prefs
- * aren't lost). Then write-through on every store change, debounced.
- * Preview/signed-out users skip all of this — localStorage remains the store.
- */
-
 import { useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { hasSupabaseConfig } from "@/lib/preview-session";
+import { hasSupabaseConfig, isPreviewHost } from "@/lib/preview-session";
 import {
-  getPreferences,
-  mergePreferences,
-  setPreferencesScope,
-  subscribePreferences,
+  configurePreferencesPersistence,
+  configurePreviewPreferences,
+  configureSignedOutPreferences,
+  hydratePreferencesFromServer,
+  reportPreferencesPersistenceError,
+  usePreferences,
   type PreferenceState,
 } from "@/lib/use-preferences";
-
-const WRITE_DEBOUNCE_MS = 800;
+import {
+  configurePreviewUnits,
+  configureSignedOutUnits,
+  configureUnitsPersistence,
+  hydrateUnitsFromServer,
+  reportUnitsPersistenceError,
+  useUnits,
+  type UnitSystem,
+} from "@/components/settings/use-units";
+import {
+  assertAuthenticatedResponseOwner,
+  resolveStorageAuthorityMode,
+} from "@/lib/authenticated-storage-types";
 
 type PreferenceDocument = Record<string, unknown>;
+type AuthUserSource = {
+  auth: {
+    getUser: () => Promise<{ data: { user: { id: string } | null } }>;
+    onAuthStateChange: (
+      callback: (event: string, session: { user: { id: string } } | null) => void,
+    ) => { data: { subscription: { unsubscribe: () => void } } };
+  };
+};
 
-function stringArray(value: unknown): string[] {
-  return Array.isArray(value)
-    ? value.filter((item): item is string => typeof item === "string")
-    : [];
+export function subscribeAuthenticatedUserIds(
+  source: AuthUserSource,
+  onUserId: (userId: string | null) => void,
+) {
+  let active = true;
+  let authEventSeen = false;
+  let lastUserId: string | null | undefined;
+  const publish = (userId: string | null) => {
+    if (!active || userId === lastUserId) return;
+    lastUserId = userId;
+    onUserId(userId);
+  };
+  const { data: { subscription } } = source.auth.onAuthStateChange((_event, session) => {
+    if (!active) return;
+    authEventSeen = true;
+    publish(session?.user.id ?? null);
+  });
+  void source.auth.getUser().then(({ data: { user } }) => {
+    if (active && !authEventSeen) publish(user?.id ?? null);
+  }).catch(() => {
+    if (active && !authEventSeen) publish(null);
+  });
+  return () => {
+    active = false;
+    subscription.unsubscribe();
+  };
 }
 
-export function preferenceStateFromDocument(
-  document: PreferenceDocument,
-): PreferenceState {
+function stringArray(value: unknown): string[] {
+  return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : [];
+}
+
+export function preferenceStateFromDocument(document: PreferenceDocument): PreferenceState {
   return {
     likes: stringArray(document.likes),
     dislikes: stringArray(document.dislikes),
@@ -55,107 +90,114 @@ export function mergePreferenceStateIntoDocument(
   };
 }
 
-function asPreferenceDocument(value: unknown): PreferenceDocument {
-  return value !== null && typeof value === "object" && !Array.isArray(value)
-    ? (value as PreferenceDocument)
-    : {};
+async function responseJson<T>(response: Response): Promise<T> {
+  const body = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(typeof body.error === "string" ? body.error : "Server could not save this change.");
+  }
+  return body as T;
 }
 
 export function PreferencesSync() {
+  const preferences = usePreferences();
+  const units = useUnits();
+
   useEffect(() => {
     let cancelled = false;
-    let timer: ReturnType<typeof setTimeout> | undefined;
-    let unsubscribe: (() => void) | undefined;
-    if (!hasSupabaseConfig()) return undefined;
-    const supabase = createClient();
-
-    async function start() {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user || cancelled) return;
-      setPreferencesScope(user.id);
-
-      const { data, error: readError } = await supabase
-        .from("profiles")
-        .select("preferences_jsonb")
-        .eq("id", user.id)
-        .maybeSingle();
-      if (cancelled) return;
-
-      // A failed read must not turn into a destructive whole-document write.
-      if (readError || !data) {
-        console.error(
-          "preferences sync read failed",
-          readError?.message ?? "profile row was unavailable",
-        );
-        return;
-      }
-
-      const serverDocument = asPreferenceDocument(data.preferences_jsonb);
-      const server = preferenceStateFromDocument(serverDocument);
-      const local = getPreferences();
-      const serverHasData = Object.values(server).some((value) => value.length > 0);
-      const localHasData =
-        local.likes.length + local.dislikes.length + local.diets.length + local.allergies.length > 0;
-
-      if (serverHasData) {
-        mergePreferences(server);
-      } else if (localHasData) {
-        const { error: seedError } = await supabase
-          .from("profiles")
-          .update({
-            preferences_jsonb: mergePreferenceStateIntoDocument(serverDocument, local),
-          })
-          .eq("id", user.id);
-        if (seedError) {
-          console.error("preferences sync seed failed", seedError.message);
-          return;
-        }
-      }
-      if (cancelled) return;
-
-      // Subscribe after hydration so the hydration merge itself doesn't
-      // immediately echo back to the server.
-      unsubscribe = subscribePreferences(() => {
-        clearTimeout(timer);
-        timer = setTimeout(() => {
-          void (async () => {
-            const { data: latest, error: latestReadError } = await supabase
-              .from("profiles")
-              .select("preferences_jsonb")
-              .eq("id", user.id)
-              .maybeSingle();
-            if (cancelled) return;
-            if (latestReadError || !latest) {
-              console.error(
-                "preferences sync read failed",
-                latestReadError?.message ?? "profile row was unavailable",
-              );
-              return;
-            }
-
-            const nextDocument = mergePreferenceStateIntoDocument(
-              asPreferenceDocument(latest.preferences_jsonb),
-              getPreferences(),
-            );
-            const { error } = await supabase
-              .from("profiles")
-              .update({ preferences_jsonb: nextDocument })
-              .eq("id", user.id);
-            if (error) console.error("preferences sync failed", error.message);
-          })();
-        }, WRITE_DEBOUNCE_MS);
-      });
+    let syncGeneration = 0;
+    let readController: AbortController | null = null;
+    let activeUserId: string | null | undefined;
+    const preview = typeof window !== "undefined" && isPreviewHost(window.location?.host);
+    const authorityMode = resolveStorageAuthorityMode(preview, hasSupabaseConfig());
+    if (authorityMode === "preview") {
+      configurePreviewPreferences();
+      configurePreviewUnits();
+      return undefined;
+    }
+    if (authorityMode === "unavailable") {
+      configureSignedOutPreferences();
+      configureSignedOutUnits();
+      reportPreferencesPersistenceError("Secure preference storage is unavailable. Refresh after the connection is restored.");
+      reportUnitsPersistenceError("Secure unit storage is unavailable. Refresh after the connection is restored.");
+      return undefined;
     }
 
-    void start();
+    const supabase = createClient();
+    async function syncUser(userId: string | null) {
+      if (userId === activeUserId) return;
+      activeUserId = userId;
+      const generation = ++syncGeneration;
+      readController?.abort();
+      readController = new AbortController();
+      if (!userId) {
+        configureSignedOutPreferences();
+        configureSignedOutUnits();
+        return;
+      }
+      configurePreferencesPersistence(userId, async (next) => {
+        const response = await fetch("/api/user-state/preferences", {
+          method: "PUT",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ preferences: next, expectedUserId: userId }),
+        });
+        const document = await responseJson<{ preferences: PreferenceState; userId: string }>(response);
+        assertAuthenticatedResponseOwner(document, userId);
+        return document.preferences;
+      });
+      configureUnitsPersistence(userId, async (next) => {
+        const response = await fetch("/api/user-state/preferences", {
+          method: "PUT",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ units: next, expectedUserId: userId }),
+        });
+        const document = await responseJson<{ units: UnitSystem; userId: string }>(response);
+        assertAuthenticatedResponseOwner(document, userId);
+        return document.units;
+      });
+      try {
+        const response = await fetch("/api/user-state/preferences", {
+          cache: "no-store",
+          signal: readController.signal,
+        });
+        const document = await responseJson<{
+          preferences: PreferenceState;
+          units: UnitSystem;
+          userId: string;
+        }>(response);
+        if (cancelled || generation !== syncGeneration) return;
+        assertAuthenticatedResponseOwner(document, userId);
+        hydratePreferencesFromServer(document.preferences, userId);
+        hydrateUnitsFromServer(document.units, userId);
+      } catch (error) {
+        if (cancelled || generation !== syncGeneration || (error instanceof Error && error.name === "AbortError")) return;
+        const message = error instanceof Error ? error.message : "Unable to load your saved preferences.";
+        reportPreferencesPersistenceError(`${message} Refresh to retry.`);
+        reportUnitsPersistenceError(`${message} Refresh to retry.`);
+      }
+    }
+
+    const unsubscribe = subscribeAuthenticatedUserIds(
+      supabase as unknown as AuthUserSource,
+      (userId) => { void syncUser(userId); },
+    );
     return () => {
       cancelled = true;
-      clearTimeout(timer);
-      unsubscribe?.();
+      syncGeneration += 1;
+      readController?.abort();
+      unsubscribe();
+      configureSignedOutPreferences();
+      configureSignedOutUnits();
     };
   }, []);
 
-  return null;
+  const message = preferences.persistenceError ?? units.persistenceError;
+  if (!message) return null;
+  return (
+    <div
+      role="alert"
+      className="fixed bottom-24 right-4 z-50 max-w-sm rounded-xl border border-coral-200 bg-coral-50 px-4 py-3 text-sm font-bold text-coral-800 shadow-e3"
+    >
+      {message}
+    </div>
+  );
 }

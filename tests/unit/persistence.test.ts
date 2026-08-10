@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import {
   ensureCoachKnowledgeForUser,
@@ -37,50 +37,45 @@ function makeSupabase(responses: Record<string, Resp[]>, calls: Array<{ table: s
     c.then = (resolve: (r: Resp) => unknown) => Promise.resolve(next()).then(resolve);
     return c;
   }
-  return { from: (table: string) => chain(table) } as unknown as SupabaseClient;
+  return {
+    from: (table: string) => chain(table),
+    rpc: async (name: string, args: unknown) => {
+      calls.push({ table: "rpc", op: name, args });
+      return responses[`rpc.${name}`]?.shift() ?? { data: null, error: null };
+    },
+  } as unknown as SupabaseClient;
 }
 
 describe("mergeProfilePreferences", () => {
-  it("shallow-merges the patch over the existing jsonb and updates the row", async () => {
+  it("uses the atomic current-user preference merge RPC", async () => {
     const calls: Array<{ table: string; op: string; args: unknown }> = [];
     const supabase = makeSupabase(
       {
-        "profiles.select": [
-          { data: { preferences_jsonb: { likes: ["a"], diets: ["keto"] } }, error: null },
+        "rpc.merge_own_profile_preferences": [
+          { data: { likes: ["a"], diets: ["vegan"], allergies: ["peanuts"] }, error: null },
         ],
-        "profiles.update": [{ data: null, error: null }],
       },
       calls
     );
 
     await mergeProfilePreferences(supabase, "user-1", { diets: ["vegan"], allergies: ["peanuts"] });
 
-    const update = calls.find((c) => c.op === "update");
-    expect(update).toBeDefined();
-    expect((update!.args as unknown[])[0]).toEqual({
-      preferences_jsonb: { likes: ["a"], diets: ["vegan"], allergies: ["peanuts"] },
+    expect(calls).toContainEqual({
+      table: "rpc",
+      op: "merge_own_profile_preferences",
+      args: { patch: { diets: ["vegan"], allergies: ["peanuts"] } },
     });
+    expect(calls.some((call) => call.table === "profiles")).toBe(false);
   });
 
-  it("treats a missing profile row as empty preferences", async () => {
-    const calls: Array<{ table: string; op: string; args: unknown }> = [];
-    const supabase = makeSupabase({ "profiles.update": [{ data: null, error: null }] }, calls);
-
-    await mergeProfilePreferences(supabase, "user-1", { likes: ["x"] });
-
-    const update = calls.find((c) => c.op === "update");
-    expect((update!.args as unknown[])[0]).toEqual({ preferences_jsonb: { likes: ["x"] } });
-  });
-
-  it("logs instead of throwing when the update fails", async () => {
+  it("throws when the authoritative atomic merge fails", async () => {
     const calls: Array<{ table: string; op: string; args: unknown }> = [];
     const supabase = makeSupabase(
-      { "profiles.update": [{ data: null, error: { message: "nope" } }] },
+      { "rpc.merge_own_profile_preferences": [{ data: null, error: { message: "nope" } }] },
       calls
     );
-    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
-    await expect(mergeProfilePreferences(supabase, "user-1", { likes: [] })).resolves.toBeUndefined();
-    spy.mockRestore();
+    await expect(mergeProfilePreferences(supabase, "user-1", { likes: [] }))
+      .rejects.toThrow("nope");
   });
 });
 

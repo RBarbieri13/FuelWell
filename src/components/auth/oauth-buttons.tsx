@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AlertCircle } from "lucide-react";
 import type { Provider } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
@@ -8,6 +8,10 @@ import { Button } from "@/components/ui/button";
 import { GoogleIcon } from "@/components/ui/google-icon";
 import { FacebookIcon, AppleIcon } from "@/components/auth/provider-icons";
 import { cn } from "@/lib/utils/cn";
+import {
+  getNativeOAuthMessageHandler,
+  safeNativeAuthNextPath,
+} from "@/components/auth/native-oauth-bridge";
 
 const PROVIDERS: {
   id: Provider;
@@ -23,22 +27,48 @@ export function OAuthButtons({ next }: { next: string }) {
   const [pending, setPending] = useState<Provider | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    function handleNativeResult(event: Event) {
+      const detail = (event as CustomEvent<{ error?: string }>).detail;
+      if (detail?.error) setError(detail.error);
+      setPending(null);
+    }
+
+    window.addEventListener("fuelwell:native-auth-result", handleNativeResult);
+    return () => window.removeEventListener("fuelwell:native-auth-result", handleNativeResult);
+  }, []);
+
   async function signIn(provider: Provider) {
     setError(null);
     setPending(provider);
 
     const supabase = createClient();
-    const { error } = await supabase.auth.signInWithOAuth({
+    const nativeHandler = getNativeOAuthMessageHandler();
+    const safeNext = safeNativeAuthNextPath(next);
+    const redirectTo = nativeHandler
+      ? `fuelwell://auth/callback?next=${encodeURIComponent(safeNext)}`
+      : `${window.location.origin}/callback?next=${encodeURIComponent(safeNext)}`;
+    const { data, error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: `${window.location.origin}/callback?next=${encodeURIComponent(next)}`,
+        redirectTo,
+        skipBrowserRedirect: nativeHandler !== null,
       },
     });
 
-    // On success the browser is redirected away, so we only reach here on error.
     if (error) {
       setError(error.message);
       setPending(null);
+      return;
+    }
+
+    if (nativeHandler) {
+      if (!data.url) {
+        setError("FuelWell could not open secure sign in. Please try again.");
+        setPending(null);
+        return;
+      }
+      nativeHandler.postMessage({ authorizationURL: data.url, provider, next: safeNext });
     }
   }
 

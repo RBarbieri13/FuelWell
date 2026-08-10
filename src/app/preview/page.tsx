@@ -2,6 +2,7 @@ import Link from "next/link";
 import { version } from "../../../package.json";
 import { getLaunchPreflight } from "@/lib/launch-preflight";
 import { RouteHealthConsole } from "@/components/preview/route-health-console";
+import { Logo } from "@/components/ui/logo";
 import { cn } from "@/lib/utils/cn";
 import {
   ArrowUpRight,
@@ -54,9 +55,10 @@ export default function PreviewHubPage() {
       <div className="mx-auto flex min-h-dvh max-w-[1800px] flex-col gap-5 px-4 py-4 sm:px-6 lg:px-8">
         <header className="flex flex-col justify-between gap-4 rounded-[2rem] bg-white/[0.06] px-5 py-4 shadow-2xl shadow-black/30 ring-1 ring-inset ring-white/10 backdrop-blur md:flex-row md:items-start">
           <div className="min-w-0">
+            <Logo href="" size="lg" tone="inverse" className="mb-3" />
             <span className="mb-3 inline-flex items-center gap-2 rounded-full bg-primary-300/10 px-3 py-1 text-xs font-black uppercase tracking-[0.16em] text-primary-200 ring-1 ring-inset ring-primary-300/25">
               <TabletSmartphone className="h-3.5 w-3.5 shrink-0" strokeWidth={2.25} />
-              FuelWell live preview
+              Live preview
             </span>
             <h1 className="text-2xl font-black tracking-tight md:text-4xl">
               Web app and iOS simulator review deck

@@ -3,13 +3,13 @@
 import { useEffect, useSyncExternalStore } from "react";
 import type { WorkoutEntry } from "@/lib/coach/types";
 import { todayIsoDate } from "@/lib/fuelwell-data";
-import type { MutationResult } from "@/lib/use-day-log";
+import type { IdentityScope, MutationResult } from "@/lib/use-day-log";
 
 const LEGACY_STORAGE_KEY = "fuelwell-workout-log-v1";
 const PREVIEW_CACHE_PREFIX = "fuelwell-workout-log-preview-v2";
 const USER_CACHE_PREFIX = "fuelwell-workout-log-user-v2";
 
-type WorkoutLogMode = "unknown" | "preview" | "authenticated";
+type WorkoutLogMode = "unknown" | "preview" | "authenticated" | "anonymous";
 type PersistenceStatus = "idle" | "loading" | "saving" | "saved" | "error";
 
 export type WorkoutLogPersistence = {
@@ -37,7 +37,11 @@ const date = todayIsoDate();
 const listeners = new Set<() => void>();
 const EMPTY: WorkoutEntry[] = [];
 let initialized = false;
+let activeIdentity: IdentityScope | null = null;
+let identityGeneration = 0;
+let initializedIdentityKey: string | null = null;
 let initializePromise: Promise<boolean> | null = null;
+let initializePromiseKey: string | null = null;
 let mutationQueue: Promise<unknown> = Promise.resolve();
 let snapshot: WorkoutLogSnapshot = {
   workouts: EMPTY,
@@ -53,6 +57,28 @@ function userCacheKey(userId: string, day: string) {
   return `${USER_CACHE_PREFIX}:${userId}:${day}`;
 }
 
+function identityKey(identity: IdentityScope | null) {
+  if (!identity) return "unknown";
+  return identity.mode === "authenticated"
+    ? `authenticated:${identity.userId}`
+    : identity.mode;
+}
+
+function responseMatchesIdentity(body: WorkoutLogResponse, identity: IdentityScope | null) {
+  if (!identity) return true;
+  if (identity.mode === "authenticated") {
+    return body.signedIn && body.userId === identity.userId;
+  }
+  return !body.signedIn;
+}
+
+function adoptResponseIdentity(body: WorkoutLogResponse) {
+  if (activeIdentity) return;
+  activeIdentity = body.signedIn && body.userId
+    ? { mode: "authenticated", userId: body.userId }
+    : { mode: "preview" };
+}
+
 function emit(next: WorkoutLogSnapshot) {
   snapshot = next;
   listeners.forEach((listener) => listener());
@@ -63,6 +89,23 @@ function setWorkouts(
   persistence: Partial<WorkoutLogPersistence> = {},
 ) {
   emit({ workouts, persistence: { ...snapshot.persistence, ...persistence } });
+}
+
+export function resetWorkoutLogForIdentity(identity: IdentityScope) {
+  if (identityKey(activeIdentity) === identityKey(identity)) return;
+  activeIdentity = identity;
+  identityGeneration += 1;
+  initialized = false;
+  initializedIdentityKey = null;
+  initializePromise = null;
+  initializePromiseKey = null;
+  mutationQueue = Promise.resolve();
+  setWorkouts([], {
+    mode: "unknown",
+    status: "idle",
+    userId: identity.mode === "authenticated" ? identity.userId : null,
+    error: null,
+  });
 }
 
 function readCache(key: string): WorkoutEntry[] | null {
@@ -102,18 +145,27 @@ async function readResponse(response: Response): Promise<WorkoutLogResponse> {
 }
 
 export async function initializeWorkoutLog(): Promise<boolean> {
-  if (initialized) return true;
-  if (initializePromise) return initializePromise;
+  const requestKey = identityKey(activeIdentity);
+  if (initialized && initializedIdentityKey === requestKey) return true;
+  if (initializePromise && initializePromiseKey === requestKey) return initializePromise;
   setWorkouts(snapshot.workouts, { status: "loading", error: null });
-  initializePromise = (async () => {
+  const requestGeneration = identityGeneration;
+  const requestIdentity = activeIdentity;
+  const request = (async () => {
     try {
       const body = await readResponse(await fetch(
         `/api/workout-log?date=${encodeURIComponent(date)}`,
         { cache: "no-store" },
       ));
+      if (requestGeneration !== identityGeneration) return false;
+      if (!responseMatchesIdentity(body, requestIdentity)) {
+        throw new Error("Workout log response did not match the active account.");
+      }
+      adoptResponseIdentity(body);
       if (body.signedIn) {
         if (!body.userId) throw new Error("Authenticated workout response omitted the user.");
         initialized = true;
+        initializedIdentityKey = identityKey(activeIdentity);
         writeCache(userCacheKey(body.userId, date), body.workouts);
         setWorkouts(body.workouts, {
           mode: "authenticated",
@@ -125,29 +177,47 @@ export async function initializeWorkoutLog(): Promise<boolean> {
       }
 
       initialized = true;
-      const previewWorkouts =
-        readCache(previewCacheKey(date)) ?? readCache(LEGACY_STORAGE_KEY) ?? EMPTY;
-      writeCache(previewCacheKey(date), previewWorkouts);
-      setWorkouts(previewWorkouts, {
-        mode: "preview",
+      initializedIdentityKey = identityKey(activeIdentity);
+      const isPreview = activeIdentity?.mode !== "anonymous";
+      const signedOutWorkouts = isPreview
+        ? readCache(previewCacheKey(date)) ?? readCache(LEGACY_STORAGE_KEY) ?? EMPTY
+        : EMPTY;
+      if (isPreview) writeCache(previewCacheKey(date), signedOutWorkouts);
+      setWorkouts(signedOutWorkouts, {
+        mode: isPreview ? "preview" : "anonymous",
         status: "saved",
         userId: null,
         error: null,
       });
       return true;
     } catch (error) {
+      if (requestGeneration !== identityGeneration) return false;
       setWorkouts(snapshot.workouts, {
         mode: "unknown",
         status: "error",
-        userId: null,
+        userId: requestIdentity?.mode === "authenticated" ? requestIdentity.userId : null,
         error: errorText(error),
       });
       return false;
-    } finally {
-      initializePromise = null;
     }
   })();
-  return initializePromise;
+  initializePromise = request;
+  initializePromiseKey = requestKey;
+  void request.then(
+    () => {
+      if (initializePromise === request) {
+        initializePromise = null;
+        initializePromiseKey = null;
+      }
+    },
+    () => {
+      if (initializePromise === request) {
+        initializePromise = null;
+        initializePromiseKey = null;
+      }
+    },
+  );
+  return request;
 }
 
 function subscribe(listener: () => void) {
@@ -174,10 +244,19 @@ async function mutate<T>(
   request: () => Promise<Response>,
   value: T,
 ): Promise<MutationResult<T>> {
+  const queuedGeneration = identityGeneration;
   return enqueue(async () => {
+    if (queuedGeneration !== identityGeneration) {
+      return { ok: false, error: "The active account changed before the workout was saved." };
+    }
     if (!(await initializeWorkoutLog())) {
       return { ok: false, error: snapshot.persistence.error || "Workout log did not initialize." };
     }
+    if (queuedGeneration !== identityGeneration) {
+      return { ok: false, error: "The active account changed before the workout was saved." };
+    }
+    const operationGeneration = queuedGeneration;
+    const operationUserId = snapshot.persistence.userId;
     const before = snapshot.workouts;
     const optimisticWorkouts = optimistic(before);
     setWorkouts(optimisticWorkouts, { status: "saving", error: null });
@@ -195,7 +274,10 @@ async function mutate<T>(
 
     try {
       const body = await readResponse(await request());
-      if (!body.signedIn || body.userId !== snapshot.persistence.userId) {
+      if (operationGeneration !== identityGeneration) {
+        return { ok: false, error: "The active account changed before the workout was saved." };
+      }
+      if (!body.signedIn || body.userId !== operationUserId) {
         throw new Error("Authenticated workout response did not match the current user.");
       }
       writeCache(userCacheKey(body.userId, date), body.workouts);
@@ -203,6 +285,9 @@ async function mutate<T>(
       return { ok: true, value };
     } catch (error) {
       const message = errorText(error);
+      if (operationGeneration !== identityGeneration) {
+        return { ok: false, error: "The active account changed before the workout was saved." };
+      }
       setWorkouts(before, { status: "error", error: message });
       return { ok: false, error: message };
     }

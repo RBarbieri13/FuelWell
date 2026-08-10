@@ -1,0 +1,2 @@
+{"id": "9fa7515218ec", "path": "tools/release/test-ios-candidate-ui.sh", "run": "21ed00afc981", "supersedes": null, "ts": "2026-08-10T03:59:20.867658+00:00", "version": "bb47319"}
+{"id": "c73eb0548877", "path": "tests/unit/ci-release-gates.test.ts", "run": "21ed00afc981", "supersedes": null, "ts": "2026-08-10T03:59:21.139210+00:00", "version": "bb47319"}

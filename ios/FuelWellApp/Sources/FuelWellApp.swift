@@ -1,18 +1,25 @@
 import DesignSystem
 import OSLog
 import SwiftUI
-import UIKit
-import WebKit
 
 @main
 struct FuelWellApp: SwiftUI.App {
+    @State private var incomingURL: FuelWellIncomingURL?
+
     init() {
         FuelWellFontRegistry.registerBundledFonts()
     }
 
     var body: some Scene {
         WindowGroup {
-            FuelWellWebAppView()
+            FuelWellWebAppView(incomingURL: $incomingURL)
+                .onOpenURL { url in
+                    incomingURL = FuelWellIncomingURL(url: url)
+                }
+                .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) { activity in
+                    guard let url = activity.webpageURL else { return }
+                    incomingURL = FuelWellIncomingURL(url: url)
+                }
         }
     }
 }
@@ -60,115 +67,224 @@ enum FuelWellDisplayError {
 }
 
 private struct FuelWellWebAppView: View {
+    @Environment(\.colorScheme) private var colorScheme
     @Environment(\.theme) private var theme
 
     private let releaseBinding: ReleaseBinding?
+    private let launchURL: URL?
+    private let supabaseURL: URL?
+    private let shellTestMode: Bool
+    @Binding private var incomingURL: FuelWellIncomingURL?
 
     @State private var isLoading: Bool
     @State private var errorMessage: String?
-    @State private var releaseIsVerified = false
+    @State private var releaseIsVerified: Bool
     @State private var reloadToken = UUID()
+    @State private var canGoBack = false
+    @State private var backRequest = 0
+    @State private var shellStatus: String?
 
-    init(infoDictionary: [String: Any] = Bundle.main.infoDictionary ?? [:]) {
-        do {
-            releaseBinding = try ReleaseBinding(infoDictionary: infoDictionary)
+    init(
+        incomingURL: Binding<FuelWellIncomingURL?>,
+        infoDictionary: [String: Any] = Bundle.main.infoDictionary ?? [:],
+        arguments: [String] = ProcessInfo.processInfo.arguments
+    ) {
+        _incomingURL = incomingURL
+        shellTestMode = arguments.contains("--fuelwell-shell-ui-test")
+        let configuredSupabaseURL = (infoDictionary["FuelWellSupabaseURL"] as? String)
+            .flatMap(URL.init(string:))
+            .flatMap { url in
+                url.scheme?.lowercased() == "https" && url.host != nil ? url : nil
+            }
+        supabaseURL = shellTestMode
+            ? URL(string: "https://project-ref.supabase.co")
+            : configuredSupabaseURL
+
+        if shellTestMode {
+            releaseBinding = nil
+            launchURL = URL(string: "fuelwell-test://app/home")
             _isLoading = State(initialValue: true)
             _errorMessage = State(initialValue: nil)
+            _releaseIsVerified = State(initialValue: true)
+            return
+        }
+
+        do {
+            let binding = try ReleaseBinding(infoDictionary: infoDictionary)
+            releaseBinding = binding
+            launchURL = binding.startURL
+            _isLoading = State(initialValue: true)
+            _errorMessage = State(initialValue: nil)
+            _releaseIsVerified = State(initialValue: false)
         } catch {
             releaseBinding = nil
+            launchURL = nil
             _isLoading = State(initialValue: false)
+            _releaseIsVerified = State(initialValue: false)
             FuelWellDisplayError.record(error, context: "Invalid release configuration")
             _errorMessage = State(initialValue: FuelWellDisplayError.message(for: error))
         }
     }
 
     var body: some View {
-        ZStack {
-            if releaseIsVerified, let releaseBinding {
-                FuelWellWebView(
-                    url: releaseBinding.startURL,
-                    reloadToken: reloadToken,
-                    isLoading: $isLoading,
-                    errorMessage: $errorMessage
-                )
-            }
-
-            if isLoading {
-                VStack(spacing: self.theme.spacing.sm) {
-                    ProgressView()
-                        .controlSize(.large)
-                        .tint(self.theme.color.primary.accent.color)
-                    Text("Preparing FuelWell")
-                        .font(.headline.weight(.bold))
-                        .foregroundStyle(self.theme.color.text.primary.color)
-                    Text("Verifying this build and opening your dashboard.")
-                        .font(.subheadline)
-                        .multilineTextAlignment(.center)
-                        .foregroundStyle(self.theme.color.text.secondary.color)
-                }
-                .padding(self.theme.spacing.lg)
-                .frame(maxWidth: 320)
-                .background(
-                    self.theme.color.bg.surface.color,
-                    in: RoundedRectangle(cornerRadius: self.theme.radius.lg, style: .continuous)
-                )
-                .overlay {
-                    RoundedRectangle(cornerRadius: self.theme.radius.lg, style: .continuous)
-                        .stroke(self.theme.color.bg.borderSoft.color, lineWidth: 1)
-                }
-                .accessibilityElement(children: .combine)
-                .accessibilityLabel("Loading FuelWell")
-                .accessibilityValue("Verifying this build and opening your dashboard.")
-                .accessibilityAddTraits(.updatesFrequently)
-            }
-
-            if let errorMessage {
-                VStack(spacing: self.theme.spacing.md) {
-                    Image(systemName: "wifi.exclamationmark")
-                        .font(.title2.weight(.semibold))
-                        .foregroundStyle(self.theme.color.semantic.warning.color)
-                        .accessibilityHidden(true)
-                    Text("FuelWell couldn’t open")
-                        .font(.headline.weight(.bold))
-                        .foregroundStyle(self.theme.color.text.primary.color)
-                    Text(errorMessage)
-                        .font(.subheadline)
-                        .multilineTextAlignment(.center)
-                        .foregroundStyle(self.theme.color.text.secondary.color)
-                    if releaseBinding != nil {
-                        Button {
-                            self.errorMessage = nil
-                            isLoading = true
-                            releaseIsVerified = false
-                            reloadToken = UUID()
-                        } label: {
-                            Label("Try again", systemImage: "arrow.clockwise")
-                                .font(.headline.weight(.bold))
-                                .frame(maxWidth: .infinity)
-                                .frame(minHeight: 44)
-                        }
-                        .buttonStyle(.borderedProminent)
-                        .tint(self.theme.color.bg.elevated.color)
-                        .accessibilityHint("Checks this build again and reloads FuelWell.")
+        VStack(spacing: 0) {
+            if canGoBack {
+                HStack {
+                    Button {
+                        backRequest &+= 1
+                    } label: {
+                        Label("Back", systemImage: "chevron.left")
+                            .font(.body.weight(.bold))
+                            .frame(minHeight: 44)
                     }
+                    .buttonStyle(.plain)
+                    .foregroundStyle(self.theme.color.text.primary.color)
+                    .accessibilityIdentifier("FuelWell Back")
+                    .accessibilityHint("Returns to the previous FuelWell screen.")
+                    Spacer(minLength: 0)
                 }
-                .padding(self.theme.spacing.lg)
-                .frame(maxWidth: 320)
-                .background(
-                    self.theme.color.bg.surface.color,
-                    in: RoundedRectangle(cornerRadius: self.theme.radius.lg, style: .continuous)
-                )
-                .overlay {
-                    RoundedRectangle(cornerRadius: self.theme.radius.lg, style: .continuous)
-                        .stroke(self.theme.color.bg.border.color, lineWidth: 1)
+                .padding(.horizontal, self.theme.spacing.md)
+                .background(self.theme.color.bg.surface.color)
+                .overlay(alignment: .bottom) {
+                    Rectangle()
+                        .fill(self.theme.color.bg.borderSoft.color)
+                        .frame(height: 1)
                 }
-                .padding(self.theme.spacing.md)
-                .accessibilityElement(children: .contain)
+            }
+
+            ZStack(alignment: .top) {
+                if releaseIsVerified, let launchURL {
+                    FuelWellWebView(
+                        url: launchURL,
+                        supabaseURL: supabaseURL,
+                        reloadToken: reloadToken,
+                        incomingURL: incomingURL,
+                        backRequest: backRequest,
+                        shellTestMode: shellTestMode,
+                        isLoading: $isLoading,
+                        errorMessage: $errorMessage,
+                        canGoBack: $canGoBack,
+                        shellStatus: $shellStatus
+                    )
+                }
+
+                if let shellStatus {
+                    HStack(spacing: self.theme.spacing.sm) {
+                        Image(systemName: "info.circle.fill")
+                            .foregroundStyle(self.theme.color.primary.accent.color)
+                            .accessibilityHidden(true)
+                        Text(shellStatus)
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(self.theme.color.text.primary.color)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        Button {
+                            self.shellStatus = nil
+                        } label: {
+                            Image(systemName: "xmark")
+                                .frame(width: 44, height: 44)
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel("Dismiss")
+                    }
+                    .padding(.leading, self.theme.spacing.md)
+                    .background(
+                        self.theme.color.bg.surface.color,
+                        in: RoundedRectangle(cornerRadius: self.theme.radius.md, style: .continuous)
+                    )
+                    .overlay {
+                        RoundedRectangle(cornerRadius: self.theme.radius.md, style: .continuous)
+                            .stroke(self.theme.color.bg.border.color, lineWidth: 1)
+                    }
+                    .padding(self.theme.spacing.sm)
+                    .accessibilityElement(children: .contain)
+                    .accessibilityIdentifier("FuelWell Shell Status")
+                }
+
+                if isLoading {
+                    VStack(spacing: self.theme.spacing.sm) {
+                        Image(colorScheme == .dark ? "FuelWellLaunchLogoInverse" : "FuelWellLaunchLogo")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(maxWidth: 220)
+                            .accessibilityHidden(true)
+                            .padding(.bottom, self.theme.spacing.sm)
+                        ProgressView()
+                            .controlSize(.large)
+                            .tint(self.theme.color.primary.accent.color)
+                        Text("Preparing FuelWell")
+                            .font(.headline.weight(.bold))
+                            .foregroundStyle(self.theme.color.text.primary.color)
+                        Text(shellTestMode ? "Opening shell verification." : "Verifying this build and opening your dashboard.")
+                            .font(.subheadline)
+                            .multilineTextAlignment(.center)
+                            .foregroundStyle(self.theme.color.text.secondary.color)
+                    }
+                    .padding(self.theme.spacing.lg)
+                    .frame(maxWidth: 320)
+                    .background(
+                        self.theme.color.bg.surface.color,
+                        in: RoundedRectangle(cornerRadius: self.theme.radius.lg, style: .continuous)
+                    )
+                    .overlay {
+                        RoundedRectangle(cornerRadius: self.theme.radius.lg, style: .continuous)
+                            .stroke(self.theme.color.bg.borderSoft.color, lineWidth: 1)
+                    }
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel("Loading FuelWell")
+                    .accessibilityValue("Opening the FuelWell app.")
+                    .accessibilityAddTraits(.updatesFrequently)
+                }
+
+                if let errorMessage {
+                    VStack(spacing: self.theme.spacing.md) {
+                        Image(systemName: "wifi.exclamationmark")
+                            .font(.title2.weight(.semibold))
+                            .foregroundStyle(self.theme.color.semantic.warning.color)
+                            .accessibilityHidden(true)
+                        Text("FuelWell couldn’t open")
+                            .font(.headline.weight(.bold))
+                            .foregroundStyle(self.theme.color.text.primary.color)
+                        Text(errorMessage)
+                            .font(.subheadline)
+                            .multilineTextAlignment(.center)
+                            .foregroundStyle(self.theme.color.text.secondary.color)
+                        if releaseBinding != nil {
+                            Button {
+                                self.errorMessage = nil
+                                isLoading = true
+                                releaseIsVerified = false
+                                reloadToken = UUID()
+                            } label: {
+                                Label("Try again", systemImage: "arrow.clockwise")
+                                    .font(.headline.weight(.bold))
+                                    .frame(maxWidth: .infinity)
+                                    .frame(minHeight: 44)
+                            }
+                            .buttonStyle(.borderedProminent)
+                            .tint(self.theme.color.bg.elevated.color)
+                            .accessibilityHint("Checks this build again and reloads FuelWell.")
+                        }
+                    }
+                    .padding(self.theme.spacing.lg)
+                    .frame(maxWidth: 320)
+                    .background(
+                        self.theme.color.bg.surface.color,
+                        in: RoundedRectangle(cornerRadius: self.theme.radius.lg, style: .continuous)
+                    )
+                    .overlay {
+                        RoundedRectangle(cornerRadius: self.theme.radius.lg, style: .continuous)
+                            .stroke(self.theme.color.bg.border.color, lineWidth: 1)
+                    }
+                    .padding(self.theme.spacing.md)
+                    .accessibilityElement(children: .contain)
+                }
             }
         }
         .background(self.theme.color.bg.base.color)
         .task(id: reloadToken) {
-            await verifyRelease()
+            if !shellTestMode {
+                await verifyRelease()
+            }
         }
     }
 
@@ -189,182 +305,6 @@ private struct FuelWellWebAppView: View {
             FuelWellDisplayError.record(error, context: "Release verification failed")
             isLoading = false
             errorMessage = FuelWellDisplayError.message(for: error)
-        }
-    }
-}
-
-private struct FuelWellWebView: UIViewRepresentable {
-    let url: URL
-    let reloadToken: UUID
-    @Binding var isLoading: Bool
-    @Binding var errorMessage: String?
-
-    func makeCoordinator() -> Coordinator {
-        Coordinator(isLoading: $isLoading, errorMessage: $errorMessage)
-    }
-
-    func makeUIView(context: Context) -> WKWebView {
-        let configuration = WKWebViewConfiguration()
-        configuration.websiteDataStore = .default()
-        configuration.allowsInlineMediaPlayback = true
-        configuration.applicationNameForUserAgent = "FuelWell-iOS-TestFlight"
-
-        let webView = WKWebView(frame: .zero, configuration: configuration)
-        webView.navigationDelegate = context.coordinator
-        webView.uiDelegate = context.coordinator
-        webView.allowsBackForwardNavigationGestures = true
-        webView.scrollView.contentInsetAdjustmentBehavior = .never
-        webView.scrollView.keyboardDismissMode = .interactive
-        webView.scrollView.alwaysBounceHorizontal = false
-        webView.scrollView.isDirectionalLockEnabled = true
-        webView.scrollView.automaticallyAdjustsScrollIndicatorInsets = true
-        webView.load(URLRequest(url: url, cachePolicy: .reloadRevalidatingCacheData, timeoutInterval: 30))
-        context.coordinator.lastReloadToken = reloadToken
-        return webView
-    }
-
-    func updateUIView(_ webView: WKWebView, context: Context) {
-        guard context.coordinator.lastReloadToken != reloadToken else { return }
-        context.coordinator.lastReloadToken = reloadToken
-        webView.load(URLRequest(url: url, cachePolicy: .reloadRevalidatingCacheData, timeoutInterval: 30))
-    }
-
-    final class Coordinator: NSObject, WKNavigationDelegate, WKUIDelegate, WKDownloadDelegate {
-        @Binding var isLoading: Bool
-        @Binding var errorMessage: String?
-        var lastReloadToken: UUID?
-        private var pendingDownloadURL: URL?
-
-        init(isLoading: Binding<Bool>, errorMessage: Binding<String?>) {
-            _isLoading = isLoading
-            _errorMessage = errorMessage
-        }
-
-        func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation?) {
-            isLoading = true
-            errorMessage = nil
-        }
-
-        func webView(_ webView: WKWebView, didFinish navigation: WKNavigation?) {
-            isLoading = false
-            errorMessage = nil
-        }
-
-        func webView(_ webView: WKWebView, didFail navigation: WKNavigation?, withError error: Error) {
-            guard !FuelWellDisplayError.shouldIgnore(error) else { return }
-            FuelWellDisplayError.record(error, context: "WKWebView navigation failed")
-            isLoading = false
-            errorMessage = FuelWellDisplayError.message(for: error)
-        }
-
-        func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation?, withError error: Error) {
-            guard !FuelWellDisplayError.shouldIgnore(error) else { return }
-            FuelWellDisplayError.record(error, context: "WKWebView provisional navigation failed")
-            isLoading = false
-            errorMessage = FuelWellDisplayError.message(for: error)
-        }
-
-        func webView(
-            _ webView: WKWebView,
-            createWebViewWith configuration: WKWebViewConfiguration,
-            for navigationAction: WKNavigationAction,
-            windowFeatures: WKWindowFeatures
-        ) -> WKWebView? {
-            guard navigationAction.targetFrame == nil else { return nil }
-            webView.load(navigationAction.request)
-            return nil
-        }
-
-        func webView(
-            _ webView: WKWebView,
-            decidePolicyFor navigationAction: WKNavigationAction
-        ) async -> WKNavigationActionPolicy {
-            guard let url = navigationAction.request.url else { return .cancel }
-
-            if let scheme = url.scheme?.lowercased(), !["http", "https", "about"].contains(scheme) {
-                await UIApplication.shared.open(url)
-                return .cancel
-            }
-
-            return .allow
-        }
-
-        func webView(
-            _ webView: WKWebView,
-            decidePolicyFor navigationResponse: WKNavigationResponse
-        ) async -> WKNavigationResponsePolicy {
-            guard let response = navigationResponse.response as? HTTPURLResponse else {
-                return .allow
-            }
-            let disposition = response.value(forHTTPHeaderField: "Content-Disposition")?.lowercased()
-            return disposition?.contains("attachment") == true ? .download : .allow
-        }
-
-        func webView(
-            _ webView: WKWebView,
-            navigationResponse: WKNavigationResponse,
-            didBecome download: WKDownload
-        ) {
-            download.delegate = self
-            isLoading = false
-            errorMessage = nil
-        }
-
-        func webView(
-            _ webView: WKWebView,
-            navigationAction: WKNavigationAction,
-            didBecome download: WKDownload
-        ) {
-            download.delegate = self
-            isLoading = false
-            errorMessage = nil
-        }
-
-        func download(
-            _ download: WKDownload,
-            decideDestinationUsing response: URLResponse,
-            suggestedFilename: String
-        ) async -> URL? {
-            let safeName = suggestedFilename.replacingOccurrences(of: "/", with: "-")
-            let destination = FileManager.default.temporaryDirectory.appendingPathComponent(safeName)
-            try? FileManager.default.removeItem(at: destination)
-            pendingDownloadURL = destination
-            return destination
-        }
-
-        func downloadDidFinish(_ download: WKDownload) {
-            isLoading = false
-            errorMessage = nil
-            guard let url = pendingDownloadURL else { return }
-            pendingDownloadURL = nil
-            Task { @MainActor in
-                guard let windowScene = UIApplication.shared.connectedScenes
-                    .compactMap({ $0 as? UIWindowScene })
-                    .first(where: { $0.activationState == .foregroundActive }),
-                    let root = windowScene.windows.first(where: { $0.isKeyWindow })?.rootViewController
-                else { return }
-                var presenter = root
-                while let presented = presenter.presentedViewController {
-                    presenter = presented
-                }
-                let share = UIActivityViewController(activityItems: [url], applicationActivities: nil)
-                if let popover = share.popoverPresentationController {
-                    popover.sourceView = presenter.view
-                    popover.sourceRect = CGRect(
-                        x: presenter.view.bounds.midX,
-                        y: presenter.view.bounds.midY,
-                        width: 1,
-                        height: 1
-                    )
-                }
-                presenter.present(share, animated: true)
-            }
-        }
-
-        func download(_ download: WKDownload, didFailWithError error: Error, resumeData: Data?) {
-            pendingDownloadURL = nil
-            isLoading = false
-            errorMessage = "The account export could not be downloaded. Please try again."
         }
     }
 }

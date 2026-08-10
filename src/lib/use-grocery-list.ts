@@ -4,6 +4,7 @@ import { useEffect, useSyncExternalStore } from "react";
 import { normalizeGroceryInput } from "@/lib/grocery-normalization";
 import type { GroceryItem as CoachGroceryItem } from "@/lib/coach/types";
 import { todayIsoDate } from "@/lib/fuelwell-data";
+import type { IdentityScope } from "@/lib/use-day-log";
 
 export type GroceryCategory = "Protein" | "Produce" | "Pantry" | "Dairy" | "Frozen" | "Other";
 
@@ -21,7 +22,7 @@ export type RichGroceryItem = {
 };
 
 export type GroceryPersistence = {
-  mode: "unknown" | "preview" | "authenticated";
+  mode: "unknown" | "preview" | "authenticated" | "anonymous";
   status: "idle" | "loading" | "saving" | "saved" | "error";
   userId: string | null;
   error: string | null;
@@ -142,7 +143,11 @@ const serverSnapshot = snapshot;
 const listeners = new Set<() => void>();
 const idAliases = new Map<string, string>();
 let initialized = false;
+let activeIdentity: IdentityScope | null = null;
+let identityGeneration = 0;
+let initializedIdentityKey: string | null = null;
 let initializePromise: Promise<boolean> | null = null;
+let initializePromiseKey: string | null = null;
 let mutationQueue: Promise<void> = Promise.resolve();
 
 function previewCacheKey() {
@@ -151,6 +156,28 @@ function previewCacheKey() {
 
 function userCacheKey(userId: string) {
   return `${USER_CACHE_PREFIX}:${userId}:${date}`;
+}
+
+function identityKey(identity: IdentityScope | null) {
+  if (!identity) return "unknown";
+  return identity.mode === "authenticated"
+    ? `authenticated:${identity.userId}`
+    : identity.mode;
+}
+
+function responseMatchesIdentity(body: GroceryResponse, identity: IdentityScope | null) {
+  if (!identity) return true;
+  if (identity.mode === "authenticated") {
+    return body.signedIn && body.userId === identity.userId;
+  }
+  return !body.signedIn;
+}
+
+function adoptResponseIdentity(body: GroceryResponse) {
+  if (activeIdentity) return;
+  activeIdentity = body.signedIn && body.userId
+    ? { mode: "authenticated", userId: body.userId }
+    : { mode: "preview" };
 }
 
 function readCache(key: string): RichGroceryItem[] | null {
@@ -176,6 +203,24 @@ function setSnapshot(items: RichGroceryItem[], patch: Partial<GroceryPersistence
   listeners.forEach((listener) => listener());
 }
 
+export function resetGroceryListForIdentity(identity: IdentityScope) {
+  if (identityKey(activeIdentity) === identityKey(identity)) return;
+  activeIdentity = identity;
+  identityGeneration += 1;
+  initialized = false;
+  initializedIdentityKey = null;
+  initializePromise = null;
+  initializePromiseKey = null;
+  mutationQueue = Promise.resolve();
+  idAliases.clear();
+  setSnapshot([], {
+    mode: "unknown",
+    status: "idle",
+    userId: identity.mode === "authenticated" ? identity.userId : null,
+    error: null,
+  });
+}
+
 function errorText(error: unknown) {
   return error instanceof Error ? error.message : "Grocery list request failed.";
 }
@@ -191,12 +236,20 @@ export function getGrocerySnapshot() {
 }
 
 export async function initializeGroceryList() {
-  if (initialized) return true;
-  if (initializePromise) return initializePromise;
-  initializePromise = (async () => {
+  const requestKey = identityKey(activeIdentity);
+  if (initialized && initializedIdentityKey === requestKey) return true;
+  if (initializePromise && initializePromiseKey === requestKey) return initializePromise;
+  const requestGeneration = identityGeneration;
+  const requestIdentity = activeIdentity;
+  const request = (async () => {
     setSnapshot(snapshot.items, { status: "loading", error: null });
     try {
       const body = await readResponse(await fetch(`/api/grocery-list?date=${date}`));
+      if (requestGeneration !== identityGeneration) return false;
+      if (!responseMatchesIdentity(body, requestIdentity)) {
+        throw new Error("Grocery response did not match the active account.");
+      }
+      adoptResponseIdentity(body);
       if (body.signedIn && body.userId) {
         const items = body.items.map(enrichItem);
         writeCache(userCacheKey(body.userId), items);
@@ -207,26 +260,44 @@ export async function initializeGroceryList() {
           error: null,
         });
       } else {
-        const previewItems =
-          readCache(previewCacheKey()) ?? readCache(LEGACY_CACHE_KEY) ?? SERVER_ITEMS;
-        writeCache(previewCacheKey(), previewItems);
-        setSnapshot(previewItems, {
-          mode: "preview",
+        const isPreview = activeIdentity?.mode !== "anonymous";
+        const signedOutItems = isPreview
+          ? readCache(previewCacheKey()) ?? readCache(LEGACY_CACHE_KEY) ?? SERVER_ITEMS
+          : [];
+        if (isPreview) writeCache(previewCacheKey(), signedOutItems);
+        setSnapshot(signedOutItems, {
+          mode: isPreview ? "preview" : "anonymous",
           status: "saved",
           userId: null,
           error: null,
         });
       }
       initialized = true;
+      initializedIdentityKey = identityKey(activeIdentity);
       return true;
     } catch (error) {
+      if (requestGeneration !== identityGeneration) return false;
       setSnapshot(snapshot.items, { status: "error", error: errorText(error) });
       return false;
-    } finally {
-      initializePromise = null;
     }
   })();
-  return initializePromise;
+  initializePromise = request;
+  initializePromiseKey = requestKey;
+  void request.then(
+    () => {
+      if (initializePromise === request) {
+        initializePromise = null;
+        initializePromiseKey = null;
+      }
+    },
+    () => {
+      if (initializePromise === request) {
+        initializePromise = null;
+        initializePromiseKey = null;
+      }
+    },
+  );
+  return request;
 }
 
 function normalizeId(id: string) {
@@ -263,10 +334,19 @@ function enqueue(operation: () => Promise<GroceryMutationResult>) {
 }
 
 export function setGroceryItems(next: RichGroceryItem[]): Promise<GroceryMutationResult> {
+  const queuedGeneration = identityGeneration;
   return enqueue(async () => {
+    if (queuedGeneration !== identityGeneration) {
+      return { ok: false, error: "The active account changed before the grocery list was saved." };
+    }
     if (!(await initializeGroceryList())) {
       return { ok: false, error: snapshot.persistence.error || "Grocery list did not initialize." };
     }
+    if (queuedGeneration !== identityGeneration) {
+      return { ok: false, error: "The active account changed before the grocery list was saved." };
+    }
+    const operationGeneration = queuedGeneration;
+    const operationUserId = snapshot.persistence.userId;
     const before = snapshot.items;
     const normalized = normalizeItems(next);
     setSnapshot(normalized, { status: "saving", error: null });
@@ -288,7 +368,10 @@ export function setGroceryItems(next: RichGroceryItem[]): Promise<GroceryMutatio
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ date, items: normalized }),
       }));
-      if (!body.signedIn || body.userId !== snapshot.persistence.userId) {
+      if (operationGeneration !== identityGeneration) {
+        return { ok: false, error: "The active account changed before the grocery list was saved." };
+      }
+      if (!body.signedIn || body.userId !== operationUserId) {
         throw new Error("Authenticated grocery response did not match the current user.");
       }
       const saved = body.items.map(enrichItem);
@@ -297,6 +380,9 @@ export function setGroceryItems(next: RichGroceryItem[]): Promise<GroceryMutatio
       return { ok: true, value: saved };
     } catch (error) {
       const message = errorText(error);
+      if (operationGeneration !== identityGeneration) {
+        return { ok: false, error: "The active account changed before the grocery list was saved." };
+      }
       setSnapshot(before, { status: "error", error: message });
       return { ok: false, error: message };
     }

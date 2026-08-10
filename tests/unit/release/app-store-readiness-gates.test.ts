@@ -29,6 +29,7 @@ describe("App Store readiness repository gates", () => {
     expect(generator).toContain("iPhone 16e");
     expect(generator).toContain("iPhone 17 Pro Max");
     expect(generator).toContain("FUELWELL_CANDIDATE_GIT_SHA");
+    expect(generator).toContain("FUELWELL_SUPABASE_URL");
   });
 
   it("requires native OAuth, trusted navigation, and release permissions", () => {
@@ -40,8 +41,15 @@ describe("App Store readiness repository gates", () => {
     expect(generator).toContain("ASWebAuthenticationSession");
     expect(generator).toContain("WKNavigationAction");
     expect(generator).toContain("safeRelativePath");
+    expect(generator).toContain("message.frameInfo.isMainFrame");
+    expect(generator).toContain("message.frameInfo.securityOrigin");
+    expect(generator).toContain("oauthOrigin");
+    expect(generator).toContain("sameOrigin");
     expect(generator).toContain("openExternal");
     expect(generator).toContain("NSLocationWhenInUseUsageDescription");
     expect(generator).toContain("CFBundleURLTypes");
+    expect(generator).toContain("FuelWellSupabaseURL");
+    expect(generator).toContain("$(MARKETING_VERSION)");
+    expect(generator).toContain("$(CURRENT_PROJECT_VERSION)");
   });
 });

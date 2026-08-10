@@ -132,7 +132,7 @@ test.describe("grocery iPhone responsive gate", () => {
       await page.setViewportSize({ width, height: 844 });
       await page.addInitScript(() => {
         localStorage.setItem(
-          "fuelwell-coach-chat-v1",
+          "fuelwell-coach-chat-v1:preview",
           JSON.stringify({
             date: new Date().toISOString().split("T")[0],
             items: [

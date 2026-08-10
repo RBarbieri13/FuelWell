@@ -17,9 +17,22 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.fuelwell.app.auth</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fuelwell</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>FuelWellExpectedDeploymentID</key>
 	<string>$(FUELWELL_EXPECTED_DEPLOYMENT_ID)</string>
 	<key>FuelWellExpectedDeploymentURL</key>
@@ -34,12 +47,16 @@
 	<string>$(FUELWELL_RELEASE_SCHEMA_VERSION)</string>
 	<key>FuelWellStartURL</key>
 	<string>$(FUELWELL_START_URL)</string>
+	<key>FuelWellSupabaseURL</key>
+	<string>$(FUELWELL_SUPABASE_URL)</string>
 	<key>NSCameraUsageDescription</key>
 	<string>FuelWell uses the camera to log meal photos for nutrition tracking.</string>
 	<key>NSHealthShareUsageDescription</key>
 	<string>FuelWell reads workouts, sleep, steps, energy, and body measurements to personalize coaching.</string>
 	<key>NSHealthUpdateUsageDescription</key>
 	<string>FuelWell does not write Health data in this phase.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>FuelWell uses your location while the app is open to improve outdoor activity and nearby grocery guidance.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -48,7 +65,12 @@
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchScreen</key>
-	<dict/>
+	<dict>
+		<key>UIImageName</key>
+		<string>FuelWellLaunchLogo</string>
+		<key>UIImageRespectsSafeAreaInsets</key>
+		<true/>
+	</dict>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
