@@ -19,7 +19,10 @@ describe("release CI workflow contracts", () => {
 
     expect(script).toContain("playwright test");
     expect(script).toContain("tests/mobile-component-clipping.spec.ts");
+    expect(script).toContain("FUELWELL_PLAYWRIGHT_MOBILE_WEBKIT=1");
+    expect(script).toContain("FUELWELL_PLAYWRIGHT_SERVER_COMMAND='npm run start:test'");
     expect(script).toContain("--project=chromium");
+    expect(script).toContain("--project=mobile-webkit");
   });
 
   it("runs root web quality gates for source, test, and config changes", () => {
@@ -28,10 +31,12 @@ describe("release CI workflow contracts", () => {
     for (const path of [
       '"src/**"',
       '"tests/**"',
+      '"public/**"',
       '"package.json"',
       '"package-lock.json"',
       '"next.config.ts"',
       '"playwright.config.ts"',
+      '"postcss.config.mjs"',
       '"vitest.config.ts"',
     ]) {
       expect(workflow).toContain(path);
@@ -42,7 +47,7 @@ describe("release CI workflow contracts", () => {
       "npm run lint",
       "npm run build",
       "npm run test:unit",
-      "npx playwright install --with-deps chromium",
+      "npx playwright install --with-deps chromium webkit",
       "npm run test:mobile:bounded",
     ]) {
       expect(workflow).toContain(command);

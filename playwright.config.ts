@@ -3,6 +3,7 @@ import { defineConfig, devices } from "@playwright/test";
 const candidateBaseURL = process.env.FUELWELL_PLAYWRIGHT_BASE_URL;
 const browserChannel = process.env.FUELWELL_PLAYWRIGHT_BROWSER_CHANNEL;
 const includeMobileWebKit = process.env.FUELWELL_PLAYWRIGHT_MOBILE_WEBKIT === "1";
+const serverCommand = process.env.FUELWELL_PLAYWRIGHT_SERVER_COMMAND ?? "npm run dev";
 
 /**
  * Smoke-test config. Runs against the local dev server in preview mode
@@ -44,7 +45,7 @@ export default defineConfig({
   webServer: candidateBaseURL
     ? undefined
     : {
-        command: "npm run dev",
+        command: serverCommand,
         url: "http://localhost:3000",
         reuseExistingServer: true,
         timeout: 120_000,

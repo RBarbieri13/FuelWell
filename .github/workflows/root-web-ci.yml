@@ -6,12 +6,14 @@ on:
     paths:
       - "src/**"
       - "tests/**"
+      - "public/**"
       - "package.json"
       - "package-lock.json"
       - "components.json"
       - "eslint.config.mjs"
       - "next.config.ts"
       - "playwright.config.ts"
+      - "postcss.config.mjs"
       - "tsconfig.json"
       - "vitest.config.ts"
       - ".github/workflows/root-web-ci.yml"
@@ -51,8 +53,8 @@ jobs:
       - name: Run unit tests
         run: npm run test:unit
 
-      - name: Install Playwright Chromium
-        run: npx playwright install --with-deps chromium
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium webkit
 
       - name: Run bounded mobile regression suite
         run: npm run test:mobile:bounded
