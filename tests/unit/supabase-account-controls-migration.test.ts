@@ -7,6 +7,10 @@ const migrationPath = resolve(
   "supabase/migrations/20260809173000_account_controls_and_authenticated_grants.sql",
 );
 const sql = readFileSync(migrationPath, "utf8");
+const confirmationUsesSql = readFileSync(
+  resolve(process.cwd(), "supabase/migrations/20260809174500_account_delete_confirmation_uses.sql"),
+  "utf8",
+);
 
 const grantedTables = [
   "profiles",
@@ -55,5 +59,16 @@ describe("account controls Supabase migration", () => {
   it("does not require a service-role credential in application code", () => {
     expect(sql).not.toContain("service_role");
     expect(sql).not.toContain("SUPABASE_SERVICE_ROLE");
+  });
+
+  it("persists one-time delete confirmation nonces behind authenticated RLS", () => {
+    expect(confirmationUsesSql).toContain("nonce_hash text primary key");
+    expect(confirmationUsesSql).toContain("with check (auth.uid() = user_id)");
+    expect(confirmationUsesSql).toContain(
+      "grant insert on table public.account_delete_confirmation_uses to authenticated",
+    );
+    expect(confirmationUsesSql).toContain(
+      "revoke all on table public.account_delete_confirmation_uses from anon",
+    );
   });
 });

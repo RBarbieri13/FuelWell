@@ -257,6 +257,8 @@ private struct FuelWellWebView: UIViewRepresentable {
             didBecome download: WKDownload
         ) {
             download.delegate = self
+            isLoading = false
+            errorMessage = nil
         }
 
         func webView(
@@ -265,6 +267,8 @@ private struct FuelWellWebView: UIViewRepresentable {
             didBecome download: WKDownload
         ) {
             download.delegate = self
+            isLoading = false
+            errorMessage = nil
         }
 
         func download(
@@ -280,6 +284,8 @@ private struct FuelWellWebView: UIViewRepresentable {
         }
 
         func downloadDidFinish(_ download: WKDownload) {
+            isLoading = false
+            errorMessage = nil
             guard let url = pendingDownloadURL else { return }
             pendingDownloadURL = nil
             Task { @MainActor in
@@ -308,6 +314,7 @@ private struct FuelWellWebView: UIViewRepresentable {
 
         func download(_ download: WKDownload, didFailWithError error: Error, resumeData: Data?) {
             pendingDownloadURL = nil
+            isLoading = false
             errorMessage = "The account export could not be downloaded. Please try again."
         }
     }

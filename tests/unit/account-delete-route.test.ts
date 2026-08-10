@@ -4,6 +4,7 @@ const mocks = vi.hoisted(() => ({
   hasSupabaseConfig: true,
   user: null as null | { id: string; email: string },
   rpc: vi.fn(),
+  insert: vi.fn(),
 }));
 
 vi.mock("@/lib/preview-session", () => ({
@@ -15,6 +16,7 @@ vi.mock("@/lib/supabase/server", () => ({
     auth: {
       getUser: vi.fn(async () => ({ data: { user: mocks.user } })),
     },
+    from: vi.fn(() => ({ insert: mocks.insert })),
     rpc: mocks.rpc,
   })),
 }));
@@ -25,6 +27,8 @@ describe("/api/account/delete", () => {
     mocks.user = { id: "user-1", email: "Member@FuelWell.test" };
     mocks.rpc.mockReset();
     mocks.rpc.mockResolvedValue({ error: null });
+    mocks.insert.mockReset();
+    mocks.insert.mockResolvedValue({ error: null });
     process.env.ACCOUNT_DELETE_CONFIRMATION_SECRET = "test-delete-confirmation-secret";
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-08-09T12:00:00.000Z"));
@@ -50,6 +54,63 @@ describe("/api/account/delete", () => {
     expect(response.headers.get("set-cookie")).toContain("HttpOnly");
   });
 
+  it("rejects replay of a consumed delete confirmation", async () => {
+    const route = await import("@/app/api/account/delete/route");
+    const challenge = await route.POST();
+    const cookie = challenge.headers.get("set-cookie") ?? "";
+    mocks.insert
+      .mockResolvedValueOnce({ error: null })
+      .mockResolvedValueOnce({ error: { code: "23505", message: "duplicate key" } });
+    const request = () => new Request("http://fuelwell.test/api/account/delete", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json", cookie },
+      body: JSON.stringify({ confirmation: "DELETE member@fuelwell.test" }),
+    });
+
+    expect((await route.DELETE(request())).status).toBe(200);
+    const replay = await route.DELETE(request());
+
+    expect(replay.status).toBe(409);
+    expect(mocks.rpc).toHaveBeenCalledTimes(1);
+    await expect(replay.json()).resolves.toEqual({
+      error: "This delete confirmation was already used. Request a new one.",
+    });
+  });
+
+  it("rejects an expired confirmation before consuming it", async () => {
+    const route = await import("@/app/api/account/delete/route");
+    const challenge = await route.POST();
+    const cookie = challenge.headers.get("set-cookie") ?? "";
+    vi.setSystemTime(new Date("2026-08-09T12:11:00.000Z"));
+
+    const response = await route.DELETE(new Request("http://fuelwell.test/api/account/delete", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json", cookie },
+      body: JSON.stringify({ confirmation: "DELETE member@fuelwell.test" }),
+    }));
+
+    expect(response.status).toBe(410);
+    expect(mocks.insert).not.toHaveBeenCalled();
+    expect(mocks.rpc).not.toHaveBeenCalled();
+  });
+
+  it("binds the confirmation to the user who requested it", async () => {
+    const route = await import("@/app/api/account/delete/route");
+    const challenge = await route.POST();
+    const cookie = challenge.headers.get("set-cookie") ?? "";
+    mocks.user = { id: "user-2", email: "other@fuelwell.test" };
+
+    const response = await route.DELETE(new Request("http://fuelwell.test/api/account/delete", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json", cookie },
+      body: JSON.stringify({ confirmation: "DELETE member@fuelwell.test" }),
+    }));
+
+    expect(response.status).toBe(400);
+    expect(mocks.insert).not.toHaveBeenCalled();
+    expect(mocks.rpc).not.toHaveBeenCalled();
+  });
+
   it("deletes the authenticated account only after a matching fresh confirmation", async () => {
     const route = await import("@/app/api/account/delete/route");
     const challenge = await route.POST();
@@ -67,6 +128,10 @@ describe("/api/account/delete", () => {
     );
 
     expect(response.status).toBe(200);
+    expect(mocks.insert).toHaveBeenCalledWith(expect.objectContaining({
+      user_id: "user-1",
+      nonce_hash: expect.stringMatching(/^[a-f0-9]{64}$/),
+    }));
     expect(mocks.rpc).toHaveBeenCalledWith("delete_own_account");
     expect(response.headers.get("set-cookie")).toContain("Max-Age=0");
     await expect(response.json()).resolves.toEqual({ signedIn: true, deleted: true });

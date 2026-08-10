@@ -7,6 +7,7 @@ import {
   createDeleteChallenge,
   createJsonError,
   deleteChallengeCookieName,
+  hashDeleteChallengeNonce,
   readDeleteChallengeFromCookieHeader,
   serializeSetCookie,
 } from "@/app/api/account/shared";
@@ -84,6 +85,22 @@ export async function DELETE(request: Request) {
 
   if (parsed.data.confirmation.trim().toLowerCase() !== challenge.phrase.toLowerCase()) {
     return createJsonError("Type the exact confirmation phrase to delete this account.", 400);
+  }
+
+  const { error: consumeError } = await supabase.from("account_delete_confirmation_uses").insert({
+    nonce_hash: hashDeleteChallengeNonce(challenge.nonce),
+    user_id: user.id,
+    expires_at: challenge.expiresAt,
+  });
+  if (consumeError) {
+    const replayed = consumeError.code === "23505";
+    return createJsonError(
+      replayed
+        ? "This delete confirmation was already used. Request a new one."
+        : "Account deletion confirmation could not be recorded. Request a new one.",
+      replayed ? 409 : 503,
+      clearCookieHeader,
+    );
   }
 
   const { error } = await supabase.rpc("delete_own_account");

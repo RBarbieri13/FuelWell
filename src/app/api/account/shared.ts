@@ -13,6 +13,7 @@ type DeleteChallengeCookie = {
   userId: string;
   phrase: string;
   expiresAt: string;
+  nonce: string;
 };
 
 export function accountCacheHeaders() {
@@ -69,6 +70,7 @@ export function createDeleteChallenge(
   if (!secret) return null;
   const expiresAt = new Date(Date.now() + DELETE_CONFIRM_TTL_MS).toISOString();
   const phrase = buildDeleteConfirmationPhrase(user);
+  const nonce = randomBytes(18).toString("base64url");
   return {
     phrase,
     expiresAt,
@@ -76,8 +78,15 @@ export function createDeleteChallenge(
       userId: user.id,
       phrase,
       expiresAt,
+      nonce,
     }, secret),
   };
+}
+
+export function hashDeleteChallengeNonce(nonce: string) {
+  return createHmac("sha256", "fuelwell-account-delete-confirmation-nonce")
+    .update(nonce)
+    .digest("hex");
 }
 
 export function deleteChallengeCookieName() {
@@ -139,7 +148,9 @@ function decodeDeleteChallengeCookie(encoded: string, secret: string) {
     if (
       typeof parsed.userId === "string" &&
       typeof parsed.phrase === "string" &&
-      typeof parsed.expiresAt === "string"
+      typeof parsed.expiresAt === "string" &&
+      typeof parsed.nonce === "string" &&
+      parsed.nonce.length >= 16
     ) {
       return parsed as DeleteChallengeCookie;
     }
