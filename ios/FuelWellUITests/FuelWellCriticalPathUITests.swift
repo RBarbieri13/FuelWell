@@ -301,13 +301,17 @@ final class FuelWellCriticalPathUITests: XCTestCase {
         XCTAssertTrue(target.waitForExistence(timeout: routeTimeout), "Missing navigation control: \(label)")
 
         let bottomNavigationLabels = ["Home", "Log", "Coach", "Move", "Groceries", "Review"]
-        if let index = bottomNavigationLabels.firstIndex(of: label) {
+        if bottomNavigationLabels.contains(label) {
             dismissKeyboardIntroductionIfNeeded(in: app)
             // Concurrent WebKit screenshot runs can expose a visible link with a
-            // transiently invalid accessibility activation point. Tap the stable
-            // bottom-nav slot after proving the semantic control exists.
-            let x = (CGFloat(index) + 0.5) / CGFloat(bottomNavigationLabels.count)
-            app.coordinate(withNormalizedOffset: CGVector(dx: x, dy: 0.93)).tap()
+            // transiently invalid accessibility activation point. Tap the center
+            // of the semantic control's visible frame instead.
+            let targetFrame = target.frame
+            let appFrame = app.frame
+            XCTAssertFalse(targetFrame.isEmpty, "Navigation control has no visible frame: \(label)")
+            let x = (targetFrame.midX - appFrame.minX) / appFrame.width
+            let y = (targetFrame.midY - appFrame.minY) / appFrame.height
+            app.coordinate(withNormalizedOffset: CGVector(dx: x, dy: y)).tap()
             return
         }
 
