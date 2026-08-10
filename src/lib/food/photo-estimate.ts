@@ -5,6 +5,7 @@ import {
   providerModelCandidates,
   resolveCoachProviderConfig,
 } from "@/lib/coach/provider-client";
+import { costUsdCents } from "@/lib/coach/cost";
 
 export type PhotoEstimateCandidate = {
   name: string;
@@ -20,6 +21,13 @@ export type PhotoEstimateResult = {
   candidates: PhotoEstimateCandidate[];
   reviewRequired: true;
   sourceNote: string;
+};
+
+type PhotoEstimateUsage = {
+  inputTokens: number;
+  outputTokens: number;
+  costUsdCents: number;
+  model: string;
 };
 
 function candidateFromName(name: string, source: PhotoEstimateCandidate["source"]): PhotoEstimateCandidate | null {
@@ -64,6 +72,8 @@ export function estimateFromDescription(description: string): PhotoEstimateCandi
 export async function estimateFromImage(input: {
   dataUrl: string;
   description?: string;
+}, options?: {
+  onUsage?: (usage: PhotoEstimateUsage) => Promise<void> | void;
 }): Promise<PhotoEstimateResult> {
   const enabled = process.env.PHOTO_LOGGING_ENABLED === "true";
   if (!enabled) {
@@ -103,6 +113,7 @@ export async function estimateFromImage(input: {
     process.env.PHOTO_LOGGING_MODEL ?? "claude-haiku-4-5",
   );
   let message: Awaited<ReturnType<typeof anthropic.messages.create>> | null = null;
+  let selectedModel: string | null = null;
   for (const model of models) {
     try {
       message = await anthropic.messages.create({
@@ -128,6 +139,7 @@ export async function estimateFromImage(input: {
           },
         ],
       });
+      selectedModel = model;
       break;
     } catch {
       // Try the next approved vision-capable Gateway model.
@@ -141,6 +153,18 @@ export async function estimateFromImage(input: {
       sourceNote:
         "Photo analysis is temporarily unavailable. Any draft comes from your description and must be reviewed before saving.",
     };
+  }
+  if (selectedModel && options?.onUsage) {
+    await options.onUsage({
+      inputTokens: message.usage.input_tokens,
+      outputTokens: message.usage.output_tokens,
+      costUsdCents: costUsdCents(
+        selectedModel,
+        message.usage.input_tokens,
+        message.usage.output_tokens,
+      ),
+      model: selectedModel,
+    });
   }
   const text = message.content.find((block) => block.type === "text")?.text ?? "{}";
   let names: string[] = [];
