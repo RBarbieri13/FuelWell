@@ -114,11 +114,11 @@ export function AuthShell({
                 <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[1.15rem] bg-gradient-to-br from-primary-500 to-teal-600 text-white shadow-e2">
                   <Leaf className="h-5 w-5" strokeWidth={2} />
                 </span>
-                <Logo size="lg" href="/" />
+                <Logo size="sm" href="/" />
               </div>
               <Link
                 href="/"
-                className="-mx-2 inline-flex min-h-11 items-center rounded-full px-2 text-sm font-black text-primary-700 transition-colors hover:text-primary-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 focus-visible:ring-offset-2"
+                className="inline-flex min-h-11 shrink-0 items-center rounded-full px-2 text-sm font-black text-primary-700 transition-colors hover:text-primary-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 focus-visible:ring-offset-2"
               >
                 Home
               </Link>
