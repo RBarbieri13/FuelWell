@@ -4,13 +4,13 @@ Date: 2026-08-10
 
 ## Current state
 
-The frozen runtime candidate is commit `8f59d3c157d727ffb57d991ca8fcc70736511a87` on `release/fuelwell-appstore-20260809`. The worktree was clean at candidate freeze and the candidate is 32 commits ahead of `origin/main`, but it has not been deployed, pushed, uploaded to TestFlight, or submitted to App Review.
+The frozen runtime candidate is commit `1a09de1d750afa3da8645f6ad9068be38d452772` on `release/fuelwell-appstore-20260809`. The candidate is 35 commits ahead of `origin/main`; only this status/evidence update remains outside the runtime commit. It has not been deployed, pushed, uploaded to TestFlight, or submitted to App Review.
 
 The live FuelWell Supabase project `xzsftuxvnkgxtbiibvac` is currently `INACTIVE`. The public Vercel production alias still points to deployment `dpl_CcrusBaFKJSwhwwWAQJjDSMEFA3R` at git SHA `722341a08c9e06603f3ba259e895c8c8a2170701`, so neither live surface represents the frozen candidate yet.
 
 ## Verified locally
 
-- Web unit suite: 61 files, 457 tests passed.
+- Web unit suite: 61 files, 458 tests passed.
 - ESLint and TypeScript: passed.
 - Next.js production build: passed; 807 static pages generated.
 - Phone containment: 38 checks passed in Chromium and mobile WebKit at 320, 375, 390, and 430 pixels, including the public Privacy and Support pages.
@@ -20,16 +20,24 @@ The live FuelWell Supabase project `xzsftuxvnkgxtbiibvac` is currently `INACTIVE
 - Unsigned iOS Release archive: passed as version `1.4.0`, build `202608100001`, bound to the production candidate environment.
 - Export compliance: archived app declares `ITSAppUsesNonExemptEncryption=false`.
 - Public App Store listing surfaces: `/privacy` and `/support` are implemented, mobile-contained, referenced by Fastlane metadata, and required to return HTTP 200 by the immutable candidate gate.
-- Repository App Store readiness with the private Apple environment loaded: 47 checks passed, 2 external blockers, 0 code failures.
+- Repository App Store readiness with the private Apple environment loaded: 48 checks passed, 2 external blockers, 0 code failures.
 - Local screenshot tooling: required iPhone simulators are installed, Bundler 2.6.9 is available through Homebrew Ruby, and the private screenshot-attestation key is configured with owner-only permissions.
-- Authenticated state: server-authoritative repository implementation and account-switch guards passed independent review, 457 unit tests, and adversarial PostgreSQL RLS verification.
+- Authenticated state: server-authoritative repository implementation and account-switch guards passed independent review, 458 unit tests, and adversarial PostgreSQL RLS verification.
+- App Store promotion safety: the release lane requires an explicit reviewed TestFlight build number, verifies the matching `1.4.0` build is valid and unexpired in App Store Connect, and promotes it without rebuilding or re-uploading a different binary.
+
+## Live Apple inventory
+
+- App Store Connect app: `Fuelwell`, Apple app ID `6776103250`, bundle ID `com.fuelwell.app`.
+- Current App Store version record: `1.0`, state `PREPARE_FOR_SUBMISSION`.
+- Latest uploaded build: `1.0 (202607160658)`, valid and unexpired, uploaded 2026-07-16.
+- No `1.4.0` build has been uploaded yet. The approved candidate upload must create that build train before App Store preparation can select it.
 
 ## Required before TestFlight
 
 1. Obtain Robert's approval to restore the inactive Supabase project, apply the live migration, configure production Vercel variables, and deploy the frozen candidate.
 2. Restore Supabase and apply `supabase/migrations/20260810040034_server_authoritative_user_app_state.sql`; verify RLS, grants, migration history, and security advisors.
 3. Configure the production Vercel environment for Supabase and Coach, then verify Google, Facebook, and Apple OAuth redirects and native callback handling.
-4. Deploy commit `8f59d3c157d727ffb57d991ca8fcc70736511a87` to one immutable Vercel URL and verify the release manifest, public Privacy and Support pages, authenticated launch preflight, and `/.well-known/apple-app-site-association` response.
+4. Deploy commit `1a09de1d750afa3da8645f6ad9068be38d452772` to one immutable Vercel URL and verify the release manifest, public Privacy and Support pages, authenticated launch preflight, and `/.well-known/apple-app-site-association` response.
 5. Run two-account isolation/persistence, live OAuth, live Coach text/image/PDF, universal-link, and compact/large iPhone candidate tests against that exact deployment.
 6. Obtain Robert's separate approval to push the exact candidate, merge it to `main`, and upload its signed build to TestFlight.
 7. Confirm the processed TestFlight build works for Robert and Max before promoting it toward App Review.

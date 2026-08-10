@@ -2,3 +2,6 @@
 {"id": "c73eb0548877", "path": "tests/unit/ci-release-gates.test.ts", "run": "21ed00afc981", "supersedes": null, "ts": "2026-08-10T03:59:21.139210+00:00", "version": "bb47319"}
 {"id": "9422b4bfc41a", "path": "docs/ios-guide/APP_STORE_CANDIDATE_STATUS_20260810.md", "run": "22f171d9009e", "supersedes": null, "ts": "2026-08-10T06:39:19.740680+00:00", "version": "8f59d3c157d727ffb57d991ca8fcc70736511a87"}
 {"id": "3a4c1388aef4", "path": "docs/ios-guide/APP_STORE_CANDIDATE_STATUS_20260810.md", "run": "22f171d9009e", "supersedes": "9422b4bfc41a", "ts": "2026-08-10T06:47:23.986561+00:00", "version": "8f59d3c157d727ffb57d991ca8fcc70736511a87"}
+{"id": "dc3a4032e8e4", "path": "docs/ios-guide/APP_STORE_CANDIDATE_STATUS_20260810.md", "run": "c7d1910aed32", "supersedes": "3a4c1388aef4", "ts": "2026-08-10T06:58:58.179167+00:00", "version": "07eb28d3a2dd99ce22076a4b4772b33aba099d2f"}
+{"id": "93a0b6212a55", "path": "docs/ios-guide/APP_STORE_CANDIDATE_STATUS_20260810.md", "run": "3fae2b6bb08b", "supersedes": "dc3a4032e8e4", "ts": "2026-08-10T07:11:53.609433+00:00", "version": "bd54711510bc5318547346751ae80cf8a8aeca69"}
+{"id": "a37c524bc219", "path": "docs/ios-guide/APP_STORE_CANDIDATE_STATUS_20260810.md", "run": "253dce864eb8", "supersedes": "93a0b6212a55", "ts": "2026-08-10T07:30:19.163368+00:00", "version": "1a09de1d750afa3da8645f6ad9068be38d452772"}
