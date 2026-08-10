@@ -8,7 +8,7 @@ expected_deployment_id="${FUELWELL_CANDIDATE_DEPLOYMENT_ID:-}"
 expected_environment="${FUELWELL_CANDIDATE_ENVIRONMENT:-}"
 supabase_url="${NEXT_PUBLIC_SUPABASE_URL:-${FUELWELL_SUPABASE_URL:-}}"
 supabase_anon_key="${NEXT_PUBLIC_SUPABASE_ANON_KEY:-${FUELWELL_SUPABASE_ANON_KEY:-}}"
-device="${FUELWELL_RELEASE_TEST_DEVICE:-iPhone 15}"
+devices_csv="${FUELWELL_RELEASE_TEST_DEVICES:-${FUELWELL_RELEASE_TEST_DEVICE:-iPhone 16e,iPhone 17 Pro Max}}"
 result_path="${FUELWELL_UI_TEST_RESULT_PATH:-${repo_root}/ios/build/reports/FuelWellCandidateUITests.xcresult}"
 overflow_result_path="${FUELWELL_MOBILE_OVERFLOW_RESULT_PATH:-${repo_root}/ios/build/reports/coach-mobile-overflow}"
 
@@ -28,7 +28,9 @@ Required release gate:
 The script rejects the mutable fuelwell-preview.vercel.app alias, validates the
 candidate release manifest, requires authenticated live Coach inference,
 verifies Coach overflow at release mobile widths,
-generates an isolated Xcode project, and preserves screenshots and test results
+generates an isolated Xcode project, and runs the native candidate journey on a
+compact and large iPhone by default. Override the comma-separated device list
+with FUELWELL_RELEASE_TEST_DEVICES. Screenshots and test results are preserved
 under ios/build/reports.
 EOF
 }
@@ -171,29 +173,49 @@ xcodegen generate \
   --quiet
 
 mkdir -p "$(dirname "${result_path}")"
-rm -rf "${result_path}"
 
 echo "Testing iOS shell against immutable candidate ${candidate_origin}"
 echo "Candidate SHA: ${manifest_git_sha}; deployment: ${deployment_id}; environment: ${environment}"
 
-DEVELOPER_DIR="${DEVELOPER_DIR:-/Applications/Xcode.app/Contents/Developer}" \
-  xcodebuild \
-    -project "${temporary_project}/FuelWellApp.xcodeproj" \
-    -scheme CandidateUITests \
-    -destination "platform=iOS Simulator,name=${device}" \
-    -resultBundlePath "${result_path}" \
-    -only-testing:FuelWellUITests \
-    CODE_SIGNING_ALLOWED=NO \
-    INFOPLIST_FILE="${repo_root}/ios/FuelWellApp/Info.plist" \
-    FUELWELL_START_URL="${candidate_origin}/app/dashboard" \
-    FUELWELL_EXPECTED_PACKAGE_VERSION="${package_version}" \
-    FUELWELL_EXPECTED_GIT_SHA="${manifest_git_sha}" \
-    FUELWELL_EXPECTED_DEPLOYMENT_ID="${deployment_id}" \
-    FUELWELL_EXPECTED_DEPLOYMENT_URL="${candidate_origin}" \
-    FUELWELL_EXPECTED_ENVIRONMENT="${environment}" \
-    FUELWELL_RELEASE_SCHEMA_VERSION="${schema_version}" \
-    test
+IFS=',' read -r -a devices <<<"${devices_csv}"
+[[ "${#devices[@]}" -gt 0 ]] || fail "at least one iPhone simulator is required"
+
+result_stem="${result_path%.xcresult}"
+result_paths=()
+
+for raw_device in "${devices[@]}"; do
+  device="$(printf '%s' "${raw_device}" | sed -E 's/^[[:space:]]+|[[:space:]]+$//g')"
+  [[ -n "${device}" ]] || fail "FUELWELL_RELEASE_TEST_DEVICES contains an empty device name"
+
+  device_slug="$(printf '%s' "${device}" | tr '[:upper:] ' '[:lower:]-' | tr -cd '[:alnum:]-')"
+  if [[ "${#devices[@]}" -eq 1 ]]; then
+    device_result_path="${result_path}"
+  else
+    device_result_path="${result_stem}-${device_slug}.xcresult"
+  fi
+  rm -rf "${device_result_path}"
+
+  echo "Running candidate UI tests on ${device}"
+  DEVELOPER_DIR="${DEVELOPER_DIR:-/Applications/Xcode.app/Contents/Developer}" \
+    xcodebuild \
+      -project "${temporary_project}/FuelWellApp.xcodeproj" \
+      -scheme CandidateUITests \
+      -destination "platform=iOS Simulator,name=${device}" \
+      -resultBundlePath "${device_result_path}" \
+      -only-testing:FuelWellUITests \
+      CODE_SIGNING_ALLOWED=NO \
+      INFOPLIST_FILE="${repo_root}/ios/FuelWellApp/Info.plist" \
+      FUELWELL_START_URL="${candidate_origin}/app/dashboard" \
+      FUELWELL_EXPECTED_PACKAGE_VERSION="${package_version}" \
+      FUELWELL_EXPECTED_GIT_SHA="${manifest_git_sha}" \
+      FUELWELL_EXPECTED_DEPLOYMENT_ID="${deployment_id}" \
+      FUELWELL_EXPECTED_DEPLOYMENT_URL="${candidate_origin}" \
+      FUELWELL_EXPECTED_ENVIRONMENT="${environment}" \
+      FUELWELL_RELEASE_SCHEMA_VERSION="${schema_version}" \
+      test
+  result_paths+=("${device_result_path}")
+done
 
 echo "PASS: bound iOS candidate launched and all critical web routes remained live"
-echo "Evidence: ${result_path}"
+printf 'Evidence: %s\n' "${result_paths[@]}"
 echo "Coach overflow evidence: ${overflow_result_path}"

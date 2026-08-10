@@ -82,6 +82,16 @@ describe("release CI workflow contracts", () => {
     expect(verifier).toContain(".productionReady == true and .liveReady == true");
   });
 
+  it("runs candidate UI journeys on compact and large iPhones", () => {
+    const verifier = readRepoFile("tools/release/test-ios-candidate-ui.sh");
+
+    expect(verifier).toContain("FUELWELL_RELEASE_TEST_DEVICES");
+    expect(verifier).toContain("iPhone 16e,iPhone 17 Pro Max");
+    expect(verifier).toContain('for raw_device in "${devices[@]}"');
+    expect(verifier).toContain('Running candidate UI tests on ${device}');
+    expect(verifier).toContain('result_paths+=("${device_result_path}")');
+  });
+
   it("builds the exact candidate SHA requested by the TestFlight dispatch", () => {
     const workflow = readRepoFile(".github/workflows/ios-testflight.yml");
     const checkoutIndex = workflow.indexOf("ref: ${{ inputs.candidate_git_sha }}");
