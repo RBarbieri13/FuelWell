@@ -92,8 +92,8 @@ else
   fail "HealthKit entitlement is missing from ios/FuelWellApp/FuelWellApp.entitlements"
 fi
 
-if rg -q "CODE_SIGN_ENTITLEMENTS: FuelWellApp/FuelWellApp.entitlements" ios/project.yml && \
-  rg -q "CODE_SIGN_ENTITLEMENTS = FuelWellApp/FuelWellApp.entitlements;" ios/FuelWellApp.xcodeproj/project.pbxproj; then
+if grep -Fq "CODE_SIGN_ENTITLEMENTS: FuelWellApp/FuelWellApp.entitlements" ios/project.yml && \
+  grep -Fq "CODE_SIGN_ENTITLEMENTS = FuelWellApp/FuelWellApp.entitlements;" ios/FuelWellApp.xcodeproj/project.pbxproj; then
   pass "FuelWellApp signs with the committed HealthKit entitlements file"
 else
   fail "FuelWellApp signing does not point at the committed HealthKit entitlements file"
