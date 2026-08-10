@@ -3,6 +3,38 @@ import { expect, test } from "@playwright/test";
 const PHONE_WIDTHS = [320, 375, 390, 430] as const;
 
 test.describe("Daily Review energy ledger", () => {
+  test("phone defaults keep the overview open and lower-priority sections collapsed", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 320, height: 844 });
+    await page.goto("/app/daily-review");
+
+    await expect(
+      page.getByTestId("daily-review-overview-section").locator('button[aria-expanded="true"]')
+    ).toHaveCount(1);
+    await expect(
+      page.getByTestId("daily-review-summary-section").locator('button[aria-expanded="false"]')
+    ).toHaveCount(1);
+    await expect(
+      page.getByTestId("daily-review-details-section").locator('button[aria-expanded="false"]')
+    ).toHaveCount(1);
+  });
+
+  test("desktop keeps the full review expanded", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto("/app/daily-review");
+
+    for (const testId of [
+      "daily-review-overview-section",
+      "daily-review-summary-section",
+      "daily-review-details-section",
+    ]) {
+      await expect(
+        page.getByTestId(testId).locator('button[aria-controls][aria-expanded="true"]').first()
+      ).toBeVisible();
+    }
+  });
+
   for (const width of PHONE_WIDTHS) {
     test(`${width}px contains the ledger and fully hides collapsed content`, async ({ page }) => {
       await page.setViewportSize({ width, height: 844 });

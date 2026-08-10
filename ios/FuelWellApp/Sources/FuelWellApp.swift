@@ -1,4 +1,5 @@
 import DesignSystem
+import OSLog
 import SwiftUI
 import UIKit
 import WebKit
@@ -13,6 +14,48 @@ struct FuelWellApp: SwiftUI.App {
         WindowGroup {
             FuelWellWebAppView()
         }
+    }
+}
+
+enum FuelWellDisplayError {
+    private static let logger = Logger(
+        subsystem: Bundle.main.bundleIdentifier ?? "com.fuelwell.app",
+        category: "ReleaseShell"
+    )
+
+    static func message(for error: Error) -> String {
+        if let releaseError = error as? ReleaseBindingError {
+            return releaseError.localizedDescription
+        }
+
+        if let urlError = error as? URLError {
+            switch urlError.code {
+            case .timedOut:
+                return "FuelWell is taking longer than expected. Check your connection and try again."
+            case .cannotFindHost,
+                 .cannotConnectToHost,
+                 .dataNotAllowed,
+                 .dnsLookupFailed,
+                 .internationalRoamingOff,
+                 .networkConnectionLost,
+                 .notConnectedToInternet:
+                return "FuelWell can’t connect right now. Check your internet connection and try again."
+            default:
+                break
+            }
+        }
+
+        return "FuelWell is temporarily unavailable. Try again in a moment."
+    }
+
+    static func shouldIgnore(_ error: Error) -> Bool {
+        (error as? URLError)?.code == .cancelled
+    }
+
+    static func record(_ error: Error, context: String) {
+        logger.error(
+            "\(context, privacy: .public): \(String(describing: error), privacy: .private(mask: .hash))"
+        )
     }
 }
 
@@ -34,7 +77,8 @@ private struct FuelWellWebAppView: View {
         } catch {
             releaseBinding = nil
             _isLoading = State(initialValue: false)
-            _errorMessage = State(initialValue: error.localizedDescription)
+            FuelWellDisplayError.record(error, context: "Invalid release configuration")
+            _errorMessage = State(initialValue: FuelWellDisplayError.message(for: error))
         }
     }
 
@@ -142,8 +186,9 @@ private struct FuelWellWebAppView: View {
             releaseIsVerified = true
         } catch {
             guard !Task.isCancelled else { return }
+            FuelWellDisplayError.record(error, context: "Release verification failed")
             isLoading = false
-            errorMessage = error.localizedDescription
+            errorMessage = FuelWellDisplayError.message(for: error)
         }
     }
 }
@@ -206,13 +251,17 @@ private struct FuelWellWebView: UIViewRepresentable {
         }
 
         func webView(_ webView: WKWebView, didFail navigation: WKNavigation?, withError error: Error) {
+            guard !FuelWellDisplayError.shouldIgnore(error) else { return }
+            FuelWellDisplayError.record(error, context: "WKWebView navigation failed")
             isLoading = false
-            errorMessage = error.localizedDescription
+            errorMessage = FuelWellDisplayError.message(for: error)
         }
 
         func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation?, withError error: Error) {
+            guard !FuelWellDisplayError.shouldIgnore(error) else { return }
+            FuelWellDisplayError.record(error, context: "WKWebView provisional navigation failed")
             isLoading = false
-            errorMessage = error.localizedDescription
+            errorMessage = FuelWellDisplayError.message(for: error)
         }
 
         func webView(

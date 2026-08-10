@@ -315,17 +315,19 @@ export function ProfileClient({
             )}
 
             <div className="space-y-2">
-              <Link href="/app/settings#health-profile" className="block">
-                <Button variant="secondary" className="w-full">
-                  <Pencil className="h-4 w-4" />
-                  Edit targets in Settings
-                </Button>
+              <Link
+                href="/app/settings#health-profile"
+                className="fw-press inline-flex min-h-11 w-full select-none items-center justify-center gap-2 rounded-[1.15rem] border border-primary-100 bg-surface/92 px-4 py-3 text-sm font-bold text-primary-800 shadow-e1 hover:border-primary-200 hover:bg-primary-50 active:bg-primary-100 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2"
+              >
+                <Pencil className="h-4 w-4" />
+                Edit targets in Settings
               </Link>
-              <Link href="/app/onboarding" className="block">
-                <Button variant="ghost" className="w-full">
-                  <Settings className="h-4 w-4" />
-                  Retake the setup quiz
-                </Button>
+              <Link
+                href="/app/onboarding"
+                className="fw-press inline-flex min-h-11 w-full select-none items-center justify-center gap-2 rounded-[1.15rem] px-4 py-3 text-sm font-bold text-ink-muted hover:bg-primary-50 hover:text-primary-800 active:bg-primary-100 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2"
+              >
+                <Settings className="h-4 w-4" />
+                Retake the setup quiz
               </Link>
             </div>
           </Card>

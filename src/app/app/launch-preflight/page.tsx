@@ -15,7 +15,6 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { getLaunchPreflight, type PreflightCheck, type PreflightState } from "@/lib/launch-preflight";
 import { isPreviewHost } from "@/lib/preview-session";
 import { cn } from "@/lib/utils/cn";
@@ -92,11 +91,12 @@ export default async function LaunchPreflightPage() {
               Checks AI interpretation, preview routing, database environment, and per-user isolation evidence without exposing secrets.
             </p>
           </div>
-          <Link href="/preview">
-            <Button size="lg" className="rounded-full px-6">
-              Open preview
-              <ArrowRight className="h-4 w-4" />
-            </Button>
+          <Link
+            href="/preview"
+            className="fw-press inline-flex min-h-11 select-none items-center justify-center gap-2.5 rounded-full bg-gradient-to-b from-primary-500 to-teal-600 px-6 py-3 text-base font-bold text-white shadow-glow hover:from-primary-400 hover:to-teal-500 hover:shadow-e3 active:from-primary-700 active:to-primary-800 active:shadow-e1 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2"
+          >
+            Open preview
+            <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
       </header>

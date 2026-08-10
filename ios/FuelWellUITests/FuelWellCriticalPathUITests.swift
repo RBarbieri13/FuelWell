@@ -86,10 +86,30 @@ final class FuelWellCriticalPathUITests: XCTestCase {
         capture("coach-live-answer", in: app)
     }
 
-    private func launchBoundRelease() -> XCUIApplication {
+    func testAccessibilityTextSizeKeepsPrimaryNavigationUsable() {
+        let app = launchBoundRelease(
+            additionalLaunchArguments: [
+                "-UIPreferredContentSizeCategoryName",
+                "UICTContentSizeCategoryAccessibilityExtraExtraExtraLarge",
+            ]
+        )
+        defer { app.terminate() }
+
+        for label in ["Home", "Log", "Coach", "Move", "Groceries", "Review"] {
+            let control = element(in: app, label: label)
+            XCTAssertTrue(control.exists, "Missing \(label) at an accessibility text size.")
+            XCTAssertTrue(control.isHittable, "\(label) is not usable at an accessibility text size.")
+        }
+
+        assertNoLoadFailure(in: app)
+        capture("accessibility-text-primary-navigation", in: app)
+    }
+
+    private func launchBoundRelease(additionalLaunchArguments: [String] = []) -> XCUIApplication {
         let app = XCUIApplication()
         setupSnapshot(app)
         app.launchArguments += ["--fuelwell-candidate-ui-test"]
+        app.launchArguments += additionalLaunchArguments
         app.launch()
 
         XCTAssertTrue(

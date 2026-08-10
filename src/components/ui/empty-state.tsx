@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils/cn";
 import { type LucideIcon } from "lucide-react";
 
@@ -53,15 +52,19 @@ export function EmptyState({
       {(action || secondaryAction) && (
         <div className="mt-6 flex w-full max-w-xs flex-col items-stretch gap-2 sm:w-auto sm:flex-row sm:items-center">
           {action && (
-            <Link href={action.href} className="sm:w-auto">
-              <Button className="w-full">{action.label}</Button>
+            <Link
+              href={action.href}
+              className="fw-press inline-flex min-h-11 w-full select-none items-center justify-center gap-2 rounded-[1.15rem] bg-gradient-to-b from-primary-500 to-teal-600 px-4 py-3 text-sm font-bold text-white shadow-glow hover:from-primary-400 hover:to-teal-500 hover:shadow-e3 active:from-primary-700 active:to-primary-800 active:shadow-e1 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2 sm:w-auto"
+            >
+              {action.label}
             </Link>
           )}
           {secondaryAction && (
-            <Link href={secondaryAction.href} className="sm:w-auto">
-              <Button variant="secondary" className="w-full">
-                {secondaryAction.label}
-              </Button>
+            <Link
+              href={secondaryAction.href}
+              className="fw-press inline-flex min-h-11 w-full select-none items-center justify-center gap-2 rounded-[1.15rem] border border-primary-100 bg-surface/92 px-4 py-3 text-sm font-bold text-primary-800 shadow-e1 hover:border-primary-200 hover:bg-primary-50 active:bg-primary-100 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2 sm:w-auto"
+            >
+              {secondaryAction.label}
             </Link>
           )}
         </div>

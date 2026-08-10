@@ -1,6 +1,13 @@
 "use client";
 
-import { useEffect, useId, useMemo, useState, type ReactNode } from "react";
+import {
+  useEffect,
+  useId,
+  useMemo,
+  useState,
+  useSyncExternalStore,
+  type ReactNode,
+} from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils/cn";
 import {
@@ -32,7 +39,6 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ProgressMeter } from "@/components/ui/progress-meter";
@@ -297,6 +303,25 @@ function pillLinkClass(
   );
 }
 
+const primaryActionLinkClass =
+  "fw-press inline-flex min-h-11 select-none items-center justify-center gap-2.5 rounded-[1.15rem] bg-gradient-to-b from-primary-500 to-teal-600 px-6 py-3 text-base font-bold text-white shadow-glow hover:from-primary-400 hover:to-teal-500 hover:shadow-e3 active:from-primary-700 active:to-primary-800 active:shadow-e1 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2";
+
+const phoneDailyReviewQuery = "(max-width: 767px)";
+
+function subscribeToPhoneDailyReview(callback: () => void) {
+  const query = window.matchMedia(phoneDailyReviewQuery);
+  query.addEventListener("change", callback);
+  return () => query.removeEventListener("change", callback);
+}
+
+function getPhoneDailyReviewSnapshot() {
+  return window.matchMedia(phoneDailyReviewQuery).matches;
+}
+
+function getServerPhoneDailyReviewSnapshot() {
+  return false;
+}
+
 export function FitnessDetailSurface() {
   const { workouts } = useWorkoutLog();
   const activityLog = useMemo(() => buildActivityLog(workouts), [workouts]);
@@ -459,11 +484,12 @@ export function NutritionDetailSurface({
                       </p>
                     </div>
                   </div>
-                  <Link href="/app/log" className="inline-flex shrink-0">
-                    <Button variant="tonal" className="rounded-full px-5">
-                      <Plus className="h-4 w-4" strokeWidth={2.25} />
-                      Add dinner
-                    </Button>
+                  <Link
+                    href="/app/log"
+                    className={cn(pillLinkClass("primary"), "shrink-0 px-5")}
+                  >
+                    <Plus className="h-4 w-4" strokeWidth={2.25} />
+                    Add dinner
                   </Link>
                 </Card>
               )}
@@ -510,11 +536,18 @@ export function DailyReviewSurface({
 }) {
   const { workouts, persistence: workoutPersistence } = useWorkoutLog();
   const { meals, hydrateDayLog } = useDayLog();
+  const isPhone = useSyncExternalStore(
+    subscribeToPhoneDailyReview,
+    getPhoneDailyReviewSnapshot,
+    getServerPhoneDailyReviewSnapshot
+  );
   const [overviewExpanded, setOverviewExpanded] = useState(true);
-  const [summaryExpanded, setSummaryExpanded] = useState(true);
-  const [detailsExpanded, setDetailsExpanded] = useState(true);
+  const [summaryExpandedOverride, setSummaryExpandedOverride] = useState<boolean | null>(null);
+  const [detailsExpandedOverride, setDetailsExpandedOverride] = useState<boolean | null>(null);
   const [nutritionExpanded, setNutritionExpanded] = useState(true);
   const [fitnessExpanded, setFitnessExpanded] = useState(true);
+  const summaryExpanded = summaryExpandedOverride ?? !isPhone;
+  const detailsExpanded = detailsExpandedOverride ?? !isPhone;
 
   useEffect(() => {
     hydrateDayLog(initialMeals);
@@ -543,6 +576,7 @@ export function DailyReviewSurface({
 
       <div className="fw-page-inner space-y-4 md:space-y-6 pb-28 md:pb-8">
         <DailyReviewSection
+          testId="daily-review-overview-section"
           icon={Sparkles}
           eyebrow="Overview"
           title="Today's whole picture"
@@ -582,12 +616,13 @@ export function DailyReviewSurface({
         </DailyReviewSection>
 
         <DailyReviewSection
+          testId="daily-review-summary-section"
           icon={ShieldCheck}
           eyebrow="Daily summary"
           title="What needs attention"
           description="A short read on logged meals, movement signals, and the next place to review."
           expanded={summaryExpanded}
-          onToggle={() => setSummaryExpanded((value) => !value)}
+          onToggle={() => setSummaryExpandedOverride((value) => !(value ?? !isPhone))}
           collapsedText="Daily summary collapsed. Expand it to see the meal count, activity count, and next best review."
         >
           <div className="space-y-4">
@@ -623,11 +658,12 @@ export function DailyReviewSurface({
             </section>
             {/* The single primary action on Daily review — everything else on
                 this page steps down to tonal pills and card links. */}
-            <Link href="/app/coach" className="inline-flex w-full sm:w-auto">
-              <Button className="w-full rounded-full px-5 sm:w-auto">
-                <Sparkles className="h-4 w-4" strokeWidth={2.25} />
-                Ask coach what to do next
-              </Button>
+            <Link
+              href="/app/coach"
+              className={cn(primaryActionLinkClass, "w-full rounded-full px-5 text-sm sm:w-auto")}
+            >
+              <Sparkles className="h-4 w-4" strokeWidth={2.25} />
+              Ask coach what to do next
             </Link>
           </div>
         </DailyReviewSection>
@@ -641,12 +677,13 @@ export function DailyReviewSurface({
         </section>
 
         <DailyReviewSection
+          testId="daily-review-details-section"
           icon={Salad}
           eyebrow="Details"
           title="Nutrition and fitness logs"
           description="Expand only the ledger you need when reviewing or editing the day."
           expanded={detailsExpanded}
-          onToggle={() => setDetailsExpanded((value) => !value)}
+          onToggle={() => setDetailsExpandedOverride((value) => !(value ?? !isPhone))}
           collapsedText="Log sections are collapsed. Expand Details when you want to edit meals or activity for this day."
         >
             <section className="mt-4 grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
@@ -732,6 +769,7 @@ export function DailyReviewSurface({
 }
 
 function DailyReviewSection({
+  testId,
   icon: Icon,
   eyebrow,
   title,
@@ -741,6 +779,7 @@ function DailyReviewSection({
   collapsedText,
   children,
 }: {
+  testId?: string;
   icon: LucideIcon;
   eyebrow: string;
   title: string;
@@ -755,7 +794,10 @@ function DailyReviewSection({
     // Tinted tray at e1; the header plate above it carries the only lift
     // (fw-lift-edge = inset highlight + e2) so the region reads as one depth
     // step rather than two stacked drop shadows.
-    <section className="rounded-[2rem] border border-primary-200/90 bg-primary-50/35 p-3 shadow-e1 md:p-4">
+    <section
+      data-testid={testId}
+      className="rounded-[2rem] border border-primary-200/90 bg-primary-50/35 p-3 shadow-e1 md:p-4"
+    >
       <div className="fw-lift-edge rounded-[1.5rem] border border-white/85 bg-surface/72 px-4 py-3.5 md:px-5">
         {/* The whole header is the disclosure control: it sits at the top of
             the region it collapses, and the chevron points down toward that
@@ -835,11 +877,15 @@ function DetailHero({
         <p className="col-span-2 text-sm font-semibold leading-6 text-ink-muted sm:col-span-1 sm:col-start-2">
           {copy}
         </p>
-        <Link href={href} className="col-span-2 mt-1 block sm:col-span-1 sm:col-start-3 sm:row-span-3 sm:row-start-1 sm:mt-0 sm:self-center">
-          <Button size="lg" className="w-full whitespace-nowrap rounded-full px-6 sm:w-auto">
-            <Plus className="h-4 w-4" strokeWidth={2.25} />
-            {action}
-          </Button>
+        <Link
+          href={href}
+          className={cn(
+            primaryActionLinkClass,
+            "col-span-2 mt-1 w-full whitespace-nowrap rounded-full sm:col-span-1 sm:col-start-3 sm:row-span-3 sm:row-start-1 sm:mt-0 sm:w-auto sm:self-center"
+          )}
+        >
+          <Plus className="h-4 w-4" strokeWidth={2.25} />
+          {action}
         </Link>
       </div>
     </Card>

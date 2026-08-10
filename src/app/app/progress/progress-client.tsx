@@ -332,11 +332,12 @@ export function ProgressClient({
               </p>
             </div>
           </div>
-          <Link href={nextAction.href} className="shrink-0">
-            <Button variant="secondary" size="lg" className="w-full sm:w-auto">
-              {nextAction.label}
-              <ArrowRight className="h-4 w-4" strokeWidth={2.25} />
-            </Button>
+          <Link
+            href={nextAction.href}
+            className="fw-press inline-flex min-h-11 w-full shrink-0 select-none items-center justify-center gap-2.5 rounded-[1.15rem] border border-primary-100 bg-surface/92 px-6 py-3 text-base font-bold text-primary-800 shadow-e1 hover:border-primary-200 hover:bg-primary-50 active:bg-primary-100 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2 sm:w-auto"
+          >
+            {nextAction.label}
+            <ArrowRight className="h-4 w-4" strokeWidth={2.25} />
           </Link>
         </div>
       </Card>

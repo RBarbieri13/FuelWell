@@ -17,9 +17,15 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { Logo } from "@/components/ui/logo";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils/cn";
+
+const linkButtonBase =
+  "fw-press inline-flex min-h-11 select-none items-center justify-center font-bold focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-offset-2";
+const primaryLinkButton =
+  "gap-2.5 rounded-[1.15rem] bg-gradient-to-b from-primary-500 to-teal-600 px-6 py-3 text-base text-white shadow-glow hover:from-primary-400 hover:to-teal-500 hover:shadow-e3 active:from-primary-700 active:to-primary-800 active:shadow-e1 focus-visible:ring-primary-600";
+const secondaryLinkButton =
+  "gap-2.5 rounded-[1.15rem] border border-primary-100 bg-surface/92 px-6 py-3 text-base text-primary-800 shadow-e1 hover:border-primary-200 hover:bg-primary-50 active:bg-primary-100 focus-visible:ring-primary-600";
 
 const WORKFLOWS = [
   {
@@ -77,20 +83,28 @@ export default function HomePage() {
           {/* Nav CTAs step down to ghost/tonal so the hero owns the page's one
               primary action. */}
           <div className="flex shrink-0 items-center gap-1 sm:gap-1.5">
-            <Link href="/login">
-              <Button variant="ghost" size="sm" className="whitespace-nowrap">
-                Log in
-              </Button>
+            <Link
+              href="/login"
+              className={cn(
+                linkButtonBase,
+                "gap-1.5 whitespace-nowrap rounded-[1.15rem] px-3 py-1.5 text-sm text-ink-muted hover:bg-primary-50 hover:text-primary-800 active:bg-primary-100 focus-visible:ring-primary-600"
+              )}
+            >
+              Log in
             </Link>
-            <Link href="/signup">
-              <Button variant="tonal" size="sm" className="whitespace-nowrap">
-                Get started
-                <ArrowRight
-                  className="hidden h-4 w-4 shrink-0 sm:block"
-                  strokeWidth={2.25}
-                  aria-hidden="true"
-                />
-              </Button>
+            <Link
+              href="/signup"
+              className={cn(
+                linkButtonBase,
+                "gap-1.5 whitespace-nowrap rounded-[1.15rem] bg-primary-50 px-3 py-1.5 text-sm text-primary-800 hover:bg-primary-100 active:bg-primary-200 focus-visible:ring-primary-600"
+              )}
+            >
+              Get started
+              <ArrowRight
+                className="hidden h-4 w-4 shrink-0 sm:block"
+                strokeWidth={2.25}
+                aria-hidden="true"
+              />
             </Link>
           </div>
         </nav>
@@ -110,16 +124,18 @@ export default function HomePage() {
             {/* The Link must carry the width too, or the full-width button
                 inside an inline anchor collapses on mobile. */}
             <div className="flex flex-col gap-3 sm:flex-row">
-              <Link href="/signup" className="w-full sm:w-auto">
-                <Button size="lg" className="w-full sm:w-auto">
-                  Start free
-                  <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.25} />
-                </Button>
+              <Link
+                href="/signup"
+                className={cn(linkButtonBase, primaryLinkButton, "w-full sm:w-auto")}
+              >
+                Start free
+                <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.25} />
               </Link>
-              <Link href="/app/dashboard" className="w-full sm:w-auto">
-                <Button variant="secondary" size="lg" className="w-full sm:w-auto">
-                  Preview the app
-                </Button>
+              <Link
+                href="/app/dashboard"
+                className={cn(linkButtonBase, secondaryLinkButton, "w-full sm:w-auto")}
+              >
+                Preview the app
               </Link>
             </div>
             <ul className="flex flex-wrap gap-2">
@@ -207,20 +223,22 @@ export default function HomePage() {
                   </h2>
                 </div>
                 <div className="flex flex-col gap-3 sm:flex-row lg:justify-end">
-                  <Link href="/signup" className="w-full sm:w-auto">
-                    <Button size="lg" className="w-full sm:w-auto">
-                      Create account
-                      <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.25} />
-                    </Button>
+                  <Link
+                    href="/signup"
+                    className={cn(linkButtonBase, primaryLinkButton, "w-full sm:w-auto")}
+                  >
+                    Create account
+                    <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.25} />
                   </Link>
-                  <Link href="/login" className="w-full sm:w-auto">
-                    <Button
-                      variant="secondary"
-                      size="lg"
-                      className="w-full border-transparent bg-white/10 text-white shadow-none ring-1 ring-inset ring-white/20 hover:border-transparent hover:bg-white/20 active:bg-white/25 sm:w-auto"
-                    >
-                      Log in
-                    </Button>
+                  <Link
+                    href="/login"
+                    className={cn(
+                      linkButtonBase,
+                      secondaryLinkButton,
+                      "w-full border-transparent bg-white/10 text-white shadow-none ring-1 ring-inset ring-white/20 hover:border-transparent hover:bg-white/20 active:bg-white/25 sm:w-auto"
+                    )}
+                  >
+                    Log in
                   </Link>
                 </div>
               </div>

@@ -86,11 +86,12 @@ export default function ForgotPasswordPage() {
           </p>
           {/* The Link has to carry the width too, or a full-width button inside
               an inline anchor collapses to its text on mobile. */}
-          <Link href="/login" className="mt-6 block w-full sm:inline-block sm:w-auto">
-            <Button variant="secondary" className="w-full sm:w-auto">
-              <ArrowLeft className="h-4 w-4 shrink-0" strokeWidth={2.25} aria-hidden="true" />
-              Back to login
-            </Button>
+          <Link
+            href="/login"
+            className="fw-press mt-6 inline-flex min-h-11 w-full select-none items-center justify-center gap-2 rounded-[1.15rem] border border-primary-100 bg-surface/92 px-4 py-3 text-sm font-bold text-primary-800 shadow-e1 hover:border-primary-200 hover:bg-primary-50 active:bg-primary-100 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2 sm:w-auto"
+          >
+            <ArrowLeft className="h-4 w-4 shrink-0" strokeWidth={2.25} aria-hidden="true" />
+            Back to login
           </Link>
         </div>
       ) : (

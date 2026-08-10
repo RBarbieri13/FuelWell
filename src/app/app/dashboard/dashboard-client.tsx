@@ -250,11 +250,12 @@ export function DashboardClient({
               </p>
 
               <div className="mt-5 flex flex-wrap items-center gap-3">
-                <Link href={coachVerdict.href} className="rounded-full">
-                  <Button size="lg" className="rounded-full px-6 py-3 text-sm">
-                    <Sparkles className="h-4 w-4" strokeWidth={2} />
-                    {coachVerdict.action}
-                  </Button>
+                <Link
+                  href={coachVerdict.href}
+                  className="fw-press inline-flex min-h-11 select-none items-center justify-center gap-2.5 rounded-full bg-gradient-to-b from-primary-500 to-teal-600 px-6 py-3 text-sm font-bold text-white shadow-glow hover:from-primary-400 hover:to-teal-500 hover:shadow-e3 active:from-primary-700 active:to-primary-800 active:shadow-e1 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2"
+                >
+                  <Sparkles className="h-4 w-4" strokeWidth={2} />
+                  {coachVerdict.action}
                 </Link>
                 <Link
                   href="/app/dashboard/score"
@@ -296,11 +297,12 @@ export function DashboardClient({
             <MacroBar label="Carbs" current={totals.carbs} target={effectiveTargets.carbs} color="var(--color-macro-carbs)" />
             <MacroBar label="Fat" current={totals.fat} target={effectiveTargets.fat} color="var(--color-macro-fat)" />
           </div>
-          <Link href="/app/nutrition" className="mt-4 block rounded-[1.15rem]">
-            <Button variant="secondary" className="w-full">
-              Open meal breakdown
-              <ArrowRight className="h-4 w-4" strokeWidth={2} />
-            </Button>
+          <Link
+            href="/app/nutrition"
+            className="fw-press mt-4 inline-flex min-h-11 w-full select-none items-center justify-center gap-2 rounded-[1.15rem] border border-primary-100 bg-surface/92 px-4 py-3 text-sm font-bold text-primary-800 shadow-e1 hover:border-primary-200 hover:bg-primary-50 active:bg-primary-100 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2"
+          >
+            Open meal breakdown
+            <ArrowRight className="h-4 w-4" strokeWidth={2} />
           </Link>
         </Card>
       </section>

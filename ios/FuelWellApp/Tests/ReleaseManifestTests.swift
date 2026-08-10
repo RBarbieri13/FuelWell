@@ -1,5 +1,6 @@
 @testable import FuelWellApp
 import Foundation
+import WebKit
 import XCTest
 
 final class ReleaseManifestTests: XCTestCase {
@@ -67,6 +68,32 @@ final class ReleaseManifestTests: XCTestCase {
                 ])
             )
         }
+    }
+
+    func testDisplayErrorUsesBoundedNetworkMessages() {
+        XCTAssertEqual(
+            FuelWellDisplayError.message(for: URLError(.notConnectedToInternet)),
+            "FuelWell can’t connect right now. Check your internet connection and try again."
+        )
+        XCTAssertEqual(
+            FuelWellDisplayError.message(for: URLError(.timedOut)),
+            "FuelWell is taking longer than expected. Check your connection and try again."
+        )
+        XCTAssertEqual(
+            FuelWellDisplayError.message(for: NSError(domain: WKError.errorDomain, code: WKError.webContentProcessTerminated.rawValue)),
+            "FuelWell is temporarily unavailable. Try again in a moment."
+        )
+    }
+
+    func testDisplayErrorPreservesReleaseBindingGuidanceAndIgnoresCancellation() {
+        let releaseError = ReleaseBindingError.manifestUnavailable
+
+        XCTAssertEqual(
+            FuelWellDisplayError.message(for: releaseError),
+            releaseError.localizedDescription
+        )
+        XCTAssertTrue(FuelWellDisplayError.shouldIgnore(URLError(.cancelled)))
+        XCTAssertFalse(FuelWellDisplayError.shouldIgnore(URLError(.timedOut)))
     }
 
     private func settings() throws -> [String: Any] {

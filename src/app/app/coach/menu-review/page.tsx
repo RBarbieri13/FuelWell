@@ -11,7 +11,6 @@ import {
   UtensilsCrossed,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ProgressMeter } from "@/components/ui/progress-meter";
 import { SectionHeader } from "@/components/ui/section-header";
@@ -91,11 +90,12 @@ export default function MenuChoiceReviewPage() {
               Upload a menu or screenshot in Coach, then use this decision shape to rank choices before logging.
             </p>
           </div>
-          <Link href="/app/coach" className="shrink-0">
-            <Button size="lg" className="whitespace-nowrap rounded-full px-6">
-              Analyze a menu
-              <ArrowRight className="h-4 w-4" strokeWidth={2} />
-            </Button>
+          <Link
+            href="/app/coach"
+            className="fw-press inline-flex min-h-11 shrink-0 select-none items-center justify-center gap-2.5 whitespace-nowrap rounded-full bg-gradient-to-b from-primary-500 to-teal-600 px-6 py-3 text-base font-bold text-white shadow-glow hover:from-primary-400 hover:to-teal-500 hover:shadow-e3 active:from-primary-700 active:to-primary-800 active:shadow-e1 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2"
+          >
+            Analyze a menu
+            <ArrowRight className="h-4 w-4" strokeWidth={2} />
           </Link>
         </div>
       </header>
@@ -224,11 +224,12 @@ export default function MenuChoiceReviewPage() {
             title="What the coach should return"
             description="Ranked choices, nutrition estimates, uncertainty, swaps, and a one-tap logging recommendation."
             action={
-              <Link href="/app/coach?prompt=Rank%20this%20menu%20for%20my%20remaining%20calories%20and%20protein.">
-                <Button variant="secondary" size="lg" className="whitespace-nowrap rounded-full px-6">
-                  Start menu chat
-                  <ArrowRight className="h-4 w-4" strokeWidth={2} />
-                </Button>
+              <Link
+                href="/app/coach?prompt=Rank%20this%20menu%20for%20my%20remaining%20calories%20and%20protein."
+                className="fw-press inline-flex min-h-11 select-none items-center justify-center gap-2.5 whitespace-nowrap rounded-full border border-primary-100 bg-surface/92 px-6 py-3 text-base font-bold text-primary-800 shadow-e1 hover:border-primary-200 hover:bg-primary-50 active:bg-primary-100 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2"
+              >
+                Start menu chat
+                <ArrowRight className="h-4 w-4" strokeWidth={2} />
               </Link>
             }
           />

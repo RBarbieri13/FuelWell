@@ -4,7 +4,6 @@ import { Activity, ArrowLeft, ArrowRight, HeartPulse, Salad } from "lucide-react
 import { createClient } from "@/lib/supabase/server";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { ProgressMeter } from "@/components/ui/progress-meter";
 import {
   buildScoreContributors,
@@ -238,11 +237,12 @@ function ScoreDetail({
         ))}
       </div>
 
-      <Link href="/app/dashboard" className="inline-block rounded-[1.15rem]">
-        <Button variant="secondary">
-          <ArrowLeft className="h-4 w-4" strokeWidth={2} />
-          Back to dashboard
-        </Button>
+      <Link
+        href="/app/dashboard"
+        className="fw-press inline-flex min-h-11 select-none items-center justify-center gap-2 rounded-[1.15rem] border border-primary-100 bg-surface/92 px-4 py-3 text-sm font-bold text-primary-800 shadow-e1 hover:border-primary-200 hover:bg-primary-50 active:bg-primary-100 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-600 focus-visible:ring-offset-2"
+      >
+        <ArrowLeft className="h-4 w-4" strokeWidth={2} />
+        Back to dashboard
       </Link>
       </div>
     </div>
