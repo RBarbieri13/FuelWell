@@ -299,6 +299,17 @@ final class FuelWellCriticalPathUITests: XCTestCase {
         let target = element(in: app, label: label)
         XCTAssertTrue(target.waitForExistence(timeout: routeTimeout), "Missing navigation control: \(label)")
         XCTAssertTrue(target.isHittable, "Navigation control is not tappable: \(label)")
+
+        let bottomNavigationLabels = ["Home", "Log", "Coach", "Move", "Groceries", "Review"]
+        if let index = bottomNavigationLabels.firstIndex(of: label) {
+            // Concurrent WebKit screenshot runs can expose a visible link with a
+            // transiently invalid accessibility activation point. Tap the stable
+            // bottom-nav slot after proving the semantic control is hittable.
+            let x = (CGFloat(index) + 0.5) / CGFloat(bottomNavigationLabels.count)
+            app.coordinate(withNormalizedOffset: CGVector(dx: x, dy: 0.93)).tap()
+            return
+        }
+
         target.tap()
     }
 
