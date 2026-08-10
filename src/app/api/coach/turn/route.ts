@@ -51,7 +51,6 @@ import { enforceVoice, redactPii } from "@/lib/coach/voice-filter";
 import { writeAudit } from "@/lib/coach/audit";
 import { normalizeGroceryInput } from "@/lib/grocery-normalization";
 import {
-  consumePreviewCoachConfirmationNonce,
   hashCoachConfirmationNonce,
   issueCoachConfirmationToken,
   verifyCoachConfirmationToken,
@@ -605,6 +604,13 @@ export async function POST(request: Request) {
             try {
               const input = def.schema.parse(body.confirmedTool.input);
               if (def.destructive) {
+                if (!user) {
+                  assistantText =
+                    "Sign in to confirm changes that delete or replace saved FuelWell data.";
+                  emit({ type: "text_delta", text: assistantText });
+                  await audit(def.name, { input }, "rejected-preview-destructive-tool");
+                  throw new Error("preview destructive action rejected");
+                }
                 const confirmation = verifyCoachConfirmationToken({
                   token: body.confirmedTool.token,
                   userId,
@@ -619,20 +625,15 @@ export async function POST(request: Request) {
                   await audit(def.name, { input, reason: confirmation.reason }, "rejected-confirmed-tool");
                   throw new Error("confirmation rejected");
                 }
-                const consumed = user
-                  ? !(
-                      await storageClient.from("coach_confirmation_uses").insert({
-                        nonce_hash: hashCoachConfirmationNonce(confirmation.nonce),
-                        user_id: userId,
-                        conversation_id: conversationId ?? body.conversationId ?? null,
-                        tool: def.name,
-                        expires_at: new Date(confirmation.expiresAt).toISOString(),
-                      })
-                    ).error
-                  : consumePreviewCoachConfirmationNonce(
-                      confirmation.nonce,
-                      confirmation.expiresAt,
-                    );
+                const consumed = !(
+                  await storageClient.from("coach_confirmation_uses").insert({
+                    nonce_hash: hashCoachConfirmationNonce(confirmation.nonce),
+                    user_id: userId,
+                    conversation_id: conversationId ?? body.conversationId ?? null,
+                    tool: def.name,
+                    expires_at: new Date(confirmation.expiresAt).toISOString(),
+                  })
+                ).error;
                 if (!consumed) {
                   assistantText =
                     "That confirmation was already used or is no longer available. Ask me to do it again for a fresh confirmation card.";
@@ -822,6 +823,15 @@ export async function POST(request: Request) {
                   type: "tool_result",
                   tool_use_id: tu.id,
                   content: "The destructive action could not be validated.",
+                  is_error: true,
+                });
+                continue;
+              }
+              if (!user) {
+                toolResults.push({
+                  type: "tool_result",
+                  tool_use_id: tu.id,
+                  content: "Sign in before deleting or replacing saved FuelWell data.",
                   is_error: true,
                 });
                 continue;

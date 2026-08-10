@@ -31,6 +31,7 @@ const REQUIRED_TABLES = [
   "coach_usage",
   "coach_audit",
   "coach_knowledge_bases",
+  "coach_confirmation_uses",
 ] as const;
 
 type Dependencies = {

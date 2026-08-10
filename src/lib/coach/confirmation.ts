@@ -2,7 +2,6 @@ import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 
 const CONFIRMATION_WINDOW_MS = 10 * 60_000;
 const DEV_FALLBACK_SECRET = randomBytes(32).toString("hex");
-const previewConsumedNonces = new Map<string, number>();
 
 type ConfirmationPayload = {
   v: 1;
@@ -76,19 +75,6 @@ export function hashCoachConfirmationNonce(nonce: string): string {
   return createHmac("sha256", "fuelwell-coach-confirmation-nonce")
     .update(nonce)
     .digest("hex");
-}
-
-export function consumePreviewCoachConfirmationNonce(
-  nonce: string,
-  expiresAt: number,
-  now = Date.now(),
-): boolean {
-  for (const [storedNonce, storedExpiry] of previewConsumedNonces) {
-    if (storedExpiry <= now) previewConsumedNonces.delete(storedNonce);
-  }
-  if (previewConsumedNonces.has(nonce)) return false;
-  previewConsumedNonces.set(nonce, expiresAt);
-  return true;
 }
 
 export function issueCoachConfirmationToken(params: {

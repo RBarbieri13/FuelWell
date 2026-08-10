@@ -10,6 +10,7 @@ const mocks = vi.hoisted(() => ({
   getTool: vi.fn(),
   persistCoachMutations: vi.fn(),
   insertSupabaseAudit: vi.fn(),
+  writeAudit: vi.fn(),
   loadServerDailyGoalContext: vi.fn(),
   consumedConfirmationNonces: new Set<string>(),
 }));
@@ -35,6 +36,10 @@ vi.mock("@/lib/coach/registry", () => ({
 }));
 
 vi.mock("@/lib/coach/tools", () => ({}));
+
+vi.mock("@/lib/coach/audit", () => ({
+  writeAudit: vi.fn(async (...args) => mocks.writeAudit(...args)),
+}));
 
 vi.mock("@/lib/coach/persistence", () => ({
   ensureConversation: vi.fn(async () => "conversation-1"),
@@ -80,6 +85,7 @@ beforeEach(() => {
   mocks.getTool.mockReset();
   mocks.persistCoachMutations.mockReset();
   mocks.insertSupabaseAudit.mockReset();
+  mocks.writeAudit.mockReset();
   mocks.loadServerDailyGoalContext.mockReset();
   mocks.consumedConfirmationNonces.clear();
   mocks.loadServerDailyGoalContext.mockImplementation(async (_supabase, input) => {
@@ -104,6 +110,7 @@ beforeEach(() => {
 afterEach(() => {
   vi.restoreAllMocks();
   vi.resetModules();
+  delete process.env.FUELWELL_PREVIEW_MODE;
 });
 
 describe("coach turn confirmation integrity", () => {
@@ -140,6 +147,43 @@ describe("coach turn confirmation integrity", () => {
     expect(run).not.toHaveBeenCalled();
     expect(mocks.insertSupabaseAudit).toHaveBeenCalledWith(
       expect.objectContaining({ resultSummary: "rejected-confirmed-tool" }),
+    );
+  });
+
+  it("fails closed for destructive preview confirmations", async () => {
+    mocks.currentUser = null;
+    process.env.FUELWELL_PREVIEW_MODE = "true";
+    const run = vi.fn();
+    mocks.getTool.mockReturnValue({
+      name: "delete_meal",
+      destructive: true,
+      schema: z.object({ mealId: z.string() }),
+      run,
+    });
+    const token = issueCoachConfirmationToken({
+      userId: "fuelwell-preview-user",
+      conversationId: null,
+      toolName: "delete_meal",
+      input: { mealId: "meal-1" },
+      env: { ANTHROPIC_API_KEY: "test-confirm-secret" },
+    });
+
+    const { POST } = await import("@/app/api/coach/turn/route");
+    const response = await POST(new Request("https://fuelwell.test/api/coach/turn", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        messages: [{ role: "user", content: "Delete it." }],
+        snapshot: makeSnapshot(),
+        confirmedTool: { name: "delete_meal", input: { mealId: "meal-1" }, token },
+      }),
+    }));
+
+    expect(response.status).toBe(200);
+    expect(await response.text()).toContain("Sign in to confirm changes");
+    expect(run).not.toHaveBeenCalled();
+    expect(mocks.writeAudit).toHaveBeenCalledWith(
+      expect.objectContaining({ resultSummary: "rejected-preview-destructive-tool" }),
     );
   });
 
