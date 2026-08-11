@@ -252,12 +252,9 @@ test.describe("TestFlight authenticated persistence release gate", () => {
       groceryId = groceryResult.grocery.id;
       await assertPhoneFit(firstPage, "grocery list after write");
 
-      const initialHistoryPromise = firstPage.waitForResponse(
-        (response) => response.url().includes("/api/coach/history") && response.request().method() === "GET",
-        { timeout: PERSISTENCE_TIMEOUT },
-      );
       await firstPage.goto("/app/coach");
-      const initialHistoryResponse = await initialHistoryPromise;
+      const initialHistoryResponse = await firstPage.request.get("/api/coach/history");
+      expect(initialHistoryResponse.status(), "Coach history endpoint should remain authenticated").toBe(200);
       const initialHistory = (await initialHistoryResponse.json()) as {
         messages: Array<{ role: "user" | "assistant" }>;
       };
