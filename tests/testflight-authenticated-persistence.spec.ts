@@ -112,7 +112,13 @@ async function addMealThroughUI(page: Page, mealType: string, name: string, offs
   const saved = body.meals.find((meal) => meal.name === savedName);
   expect(saved, `The persisted meal response omitted ${name}.`).toBeTruthy();
   await expect(page.getByText(name).first()).toBeVisible({ timeout: PERSISTENCE_TIMEOUT });
-  await page.getByRole("button", { name: "Close ingredient drawer" }).click();
+  const drawerTrigger = page.getByRole("button", { name: /Current meal \(\d+\)/ });
+  await expect(drawerTrigger).toBeVisible({ timeout: PERSISTENCE_TIMEOUT });
+  await drawerTrigger.click();
+  const drawer = page.getByRole("dialog", { name: "Ingredient drawer" });
+  await expect(drawer).toBeVisible({ timeout: PERSISTENCE_TIMEOUT });
+  await drawer.getByRole("button", { name: "Close ingredient drawer" }).click();
+  await expect(drawer).toHaveCount(0);
   return { date: body.date, meal: saved! };
 }
 

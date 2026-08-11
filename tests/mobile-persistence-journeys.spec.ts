@@ -197,7 +197,13 @@ async function logMeal(page: Page, mealType: string, name: string, offset: numbe
   const payload = (await response.json()) as { meals?: Array<{ name?: string }> };
   expect(payload.meals?.some((meal) => meal.name?.startsWith(name))).toBe(true);
   await expect(page.getByText(name).first()).toBeVisible();
-  await page.getByRole("button", { name: "Close ingredient drawer" }).click();
+  const drawerTrigger = page.getByRole("button", { name: /Current meal \(\d+\)/ });
+  await expect(drawerTrigger).toBeVisible();
+  await drawerTrigger.click();
+  const drawer = page.getByRole("dialog", { name: "Ingredient drawer" });
+  await expect(drawer).toBeVisible();
+  await drawer.getByRole("button", { name: "Close ingredient drawer" }).click();
+  await expect(drawer).toHaveCount(0);
 }
 
 async function runJourney(page: Page, journey: Journey, testInfo: TestInfo) {
