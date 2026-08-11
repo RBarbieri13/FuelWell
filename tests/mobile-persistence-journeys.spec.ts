@@ -178,7 +178,7 @@ async function completeOnboarding(page: Page, journey: Journey) {
 }
 
 async function logMeal(page: Page, mealType: string, name: string, offset: number) {
-  await page.getByRole("button", { name: mealType, exact: true }).click();
+  await page.getByRole("button", { name: mealType, exact: true }).first().click();
   await page.getByRole("button", { name: "Add your own meal" }).click();
   await page.getByLabel("Meal name").fill(name);
   const form = page.getByRole("button", { name: `Add to ${mealType}` }).locator("xpath=ancestor::div[1]");
