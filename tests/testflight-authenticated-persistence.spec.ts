@@ -344,6 +344,13 @@ test.describe("TestFlight authenticated persistence release gate", () => {
       await assertPhoneFit(secondPage, "Coach history after fresh sign-in");
 
       await secondPage.goto("/app/daily-review");
+      const detailsSection = secondPage.getByTestId("daily-review-details-section");
+      const detailsDisclosure = detailsSection.locator('button[aria-expanded="false"]').first();
+      await expect(detailsDisclosure).toBeVisible({ timeout: PERSISTENCE_TIMEOUT });
+      await detailsDisclosure.click();
+      await expect(detailsSection.locator('button[aria-expanded="true"]').first()).toBeVisible({
+        timeout: PERSISTENCE_TIMEOUT,
+      });
       for (const mealName of mealNames) {
         await expect(secondPage.getByText(mealName).first()).toBeVisible({ timeout: PERSISTENCE_TIMEOUT });
       }
