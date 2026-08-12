@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { authenticateCandidate } from "./helpers/authenticate";
 
 /**
  * Component-level clipping gate.
@@ -213,14 +214,7 @@ async function openRoute(page: Page, route: string, width: number) {
   await routePage.setViewportSize({ width, height: VIEWPORT_HEIGHT });
   await routePage.goto(route, { waitUntil: "domcontentloaded" });
   if (new URL(routePage.url()).pathname === "/login") {
-    const email = process.env.FUELWELL_UI_TEST_EMAIL;
-    const password = process.env.FUELWELL_UI_TEST_PASSWORD;
-    expect(email, "FUELWELL_UI_TEST_EMAIL is required for an authenticated candidate.").toBeTruthy();
-    expect(password, "FUELWELL_UI_TEST_PASSWORD is required for an authenticated candidate.").toBeTruthy();
-    await routePage.getByLabel("Email").fill(email!);
-    await routePage.getByLabel("Password").fill(password!);
-    await routePage.getByRole("button", { name: "Sign in" }).click();
-    await routePage.goto(route, { waitUntil: "domcontentloaded" });
+    await authenticateCandidate(routePage, route);
   }
   expect(new URL(routePage.url()).pathname).toBe(route.split("?")[0]);
   await settle(routePage);

@@ -84,12 +84,15 @@ describe("release CI workflow contracts", () => {
 
   it("uses the maintained authenticated mobile containment gate for TestFlight", () => {
     const verifier = readRepoFile("tools/release/test-ios-candidate-ui.sh");
+    const mobileGate = readRepoFile("tests/mobile-component-clipping.spec.ts");
 
     expect(verifier).toContain("tests/mobile-component-clipping.spec.ts");
     expect(verifier).toContain("--project=chromium");
     expect(verifier).toContain("--project=mobile-webkit");
     expect(verifier).not.toContain("tests/mobile-persistence-journeys.spec.ts");
     expect(verifier).not.toContain("tests/workouts-progressive-disclosure.spec.ts");
+    expect(mobileGate).toContain('import { authenticateCandidate } from "./helpers/authenticate"');
+    expect(mobileGate).toContain("await authenticateCandidate(routePage, route)");
   });
 
   it("runs candidate UI journeys on compact and large iPhones", () => {
