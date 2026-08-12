@@ -82,6 +82,16 @@ describe("release CI workflow contracts", () => {
     expect(verifier).toContain(".productionReady == true and .liveReady == true");
   });
 
+  it("uses the maintained authenticated mobile containment gate for TestFlight", () => {
+    const verifier = readRepoFile("tools/release/test-ios-candidate-ui.sh");
+
+    expect(verifier).toContain("tests/mobile-component-clipping.spec.ts");
+    expect(verifier).toContain("--project=chromium");
+    expect(verifier).toContain("--project=mobile-webkit");
+    expect(verifier).not.toContain("tests/mobile-persistence-journeys.spec.ts");
+    expect(verifier).not.toContain("tests/workouts-progressive-disclosure.spec.ts");
+  });
+
   it("runs candidate UI journeys on compact and large iPhones", () => {
     const verifier = readRepoFile("tools/release/test-ios-candidate-ui.sh");
 

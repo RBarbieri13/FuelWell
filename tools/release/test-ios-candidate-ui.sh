@@ -194,28 +194,22 @@ FUELWELL_PLAYWRIGHT_OUTPUT_DIR="${overflow_result_path}-authenticated-persistenc
     --project=chromium \
     --workers=1
 
-echo "Testing FuelWell phone workflows against immutable candidate ${candidate_origin}"
+echo "Testing authenticated FuelWell mobile containment against immutable candidate ${candidate_origin}"
 FUELWELL_PLAYWRIGHT_BASE_URL="${candidate_origin}" \
 FUELWELL_PLAYWRIGHT_BROWSER_CHANNEL="${FUELWELL_PLAYWRIGHT_BROWSER_CHANNEL:-chrome}" \
 FUELWELL_PLAYWRIGHT_OUTPUT_DIR="${overflow_result_path}" \
   "${repo_root}/node_modules/.bin/playwright" test \
-    "${repo_root}/tests/coach-mobile-overflow.spec.ts" \
-    "${repo_root}/tests/mobile-route-containment.spec.ts" \
-    "${repo_root}/tests/grocery-mobile.spec.ts" \
-    "${repo_root}/tests/daily-review-mobile.spec.ts" \
-    "${repo_root}/tests/workouts-progressive-disclosure.spec.ts" \
-    "${repo_root}/tests/recipe-planning.spec.ts" \
-    "${repo_root}/tests/mobile-persistence-journeys.spec.ts" \
+    "${repo_root}/tests/mobile-component-clipping.spec.ts" \
     --config="${repo_root}/playwright.config.ts" \
-    --project=chromium
+    --project=chromium \
+    --workers=1
 
-echo "Repeating containment and Coach overflow in mobile WebKit"
+echo "Repeating authenticated mobile containment in mobile WebKit"
 FUELWELL_PLAYWRIGHT_BASE_URL="${candidate_origin}" \
 FUELWELL_PLAYWRIGHT_MOBILE_WEBKIT=1 \
 FUELWELL_PLAYWRIGHT_OUTPUT_DIR="${overflow_result_path}-webkit" \
   "${repo_root}/node_modules/.bin/playwright" test \
-    "${repo_root}/tests/coach-mobile-overflow.spec.ts" \
-    "${repo_root}/tests/mobile-route-containment.spec.ts" \
+    "${repo_root}/tests/mobile-component-clipping.spec.ts" \
     --config="${repo_root}/playwright.config.ts" \
     --project=mobile-webkit \
     --workers=1
