@@ -1,0 +1,172 @@
+import Link from "next/link";
+import Image from "next/image";
+import { Separator } from "@/components/ui/separator";
+import { Building2, ExternalLink, Heart } from "lucide-react";
+
+const LINKEDIN_URL = "https://www.linkedin.com/company/fuelwell-health/";
+
+const productLinks = [
+  { label: "Features", href: "/features" },
+  { label: "Founders 100", href: "/founders-100" },
+  { label: "Sign Up", href: "/founders-100/signup" },
+];
+
+const companyLinks = [
+  { label: "About", href: "/about" },
+  { label: "Contact", href: "/contact" },
+];
+
+const legalLinks = [
+  { label: "Privacy Policy", href: "/privacy" },
+  { label: "Terms of Service", href: "/terms" },
+];
+
+const socialLinks = [
+  { label: "LinkedIn", href: LINKEDIN_URL, icon: Building2 },
+];
+
+export function Footer() {
+  return (
+    <footer className="bg-fw-surface border-t border-fw-border">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-2 gap-8 md:grid-cols-5">
+          {/* Brand */}
+          <div className="col-span-2 md:col-span-2 space-y-4">
+            <Link href="/" className="inline-flex items-center group">
+              <Image src="/fuelwell-logo-full.png" alt="FuelWell Health" width={150} height={75} className="group-hover:scale-105 transition-transform duration-200" />
+            </Link>
+            <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
+              AI-powered nutrition and fitness coaching that adapts to your real
+              life. Fuel well, feel well.
+            </p>
+            <div className="flex items-center gap-2.5 pt-1">
+              {socialLinks.map((link) => {
+                const Icon = link.icon;
+                return (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    target={link.href !== "#" ? "_blank" : undefined}
+                    rel={link.href !== "#" ? "noopener noreferrer" : undefined}
+                    aria-label={link.label}
+                    className="flex h-8 w-8 items-center justify-center rounded-lg bg-white border border-fw-border text-muted-foreground hover:text-fw-accent hover:border-fw-accent/40 transition-all duration-200"
+                  >
+                    <Icon className="h-3.5 w-3.5" />
+                  </a>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Product */}
+          <div className="space-y-3">
+            <p className="text-sm font-semibold text-foreground uppercase tracking-wider">Product</p>
+            <nav className="flex flex-col gap-2.5">
+              {productLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="text-sm text-muted-foreground transition-colors duration-200 hover:text-fw-accent"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+
+          {/* Company */}
+          <div className="space-y-3">
+            <p className="text-sm font-semibold text-foreground uppercase tracking-wider">Company</p>
+            <nav className="flex flex-col gap-2.5">
+              {companyLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="text-sm text-muted-foreground transition-colors duration-200 hover:text-fw-accent"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+
+          {/* Legal */}
+          <div className="space-y-3">
+            <p className="text-sm font-semibold text-foreground uppercase tracking-wider">Legal</p>
+            <nav className="flex flex-col gap-2.5">
+              {legalLinks.map((link) => (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  className="text-sm text-muted-foreground transition-colors duration-200 hover:text-fw-accent"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+        </div>
+
+        {/* Connect with Us — LinkedIn preview */}
+        <Separator className="my-8 bg-fw-border/50" />
+
+        <div className="max-w-sm mx-auto md:mx-0">
+          <p className="text-sm font-semibold text-foreground uppercase tracking-wider mb-3">
+            Connect with Us
+          </p>
+          <a
+            href={LINKEDIN_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group block rounded-xl border border-fw-border bg-white p-4 shadow-card hover:shadow-card-hover hover:border-fw-accent/30 hover:-translate-y-0.5 transition-all duration-300"
+          >
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#0A66C2]">
+                <Building2 className="h-5 w-5 text-white" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <p className="text-sm font-semibold text-foreground truncate">
+                    FuelWell Health
+                  </p>
+                  <ExternalLink className="h-3 w-3 text-muted-foreground/50 shrink-0 group-hover:text-fw-accent transition-colors duration-200" />
+                </div>
+                <p className="text-xs text-muted-foreground truncate">
+                  AI-powered nutrition & fitness coaching
+                </p>
+              </div>
+            </div>
+            <div className="mt-3 flex items-center gap-4 text-[11px] text-muted-foreground/70">
+              <span>Health, Wellness & Fitness</span>
+              <span className="flex items-center gap-1">
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                Follow us on LinkedIn
+              </span>
+            </div>
+          </a>
+        </div>
+
+        <Separator className="my-8 bg-fw-border/50" />
+
+        <div className="flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
+          <p>
+            &copy; {new Date().getFullYear()} FuelWell Health, Inc. All rights
+            reserved.
+          </p>
+          <span className="inline-flex items-center rounded-md border border-fw-border bg-white px-2 py-1 text-[11px] font-medium text-muted-foreground">
+            Founded March 2026
+          </span>
+          <p className="flex items-center gap-1">
+            Made with <Heart className="h-3 w-3 text-rose-400 fill-rose-400 animate-pulse" /> for healthier living
+          </p>
+        </div>
+
+        <p className="text-[11px] text-center text-muted-foreground/50 mt-6 max-w-xl mx-auto leading-relaxed">
+          FuelWell is designed to support healthier decision-making and
+          education. It does not replace medical advice, personal trainers, or
+          licensed nutrition professionals.
+        </p>
+      </div>
+    </footer>
+  );
+}
