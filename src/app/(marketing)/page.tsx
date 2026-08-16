@@ -1,538 +1,615 @@
-import Link from "next/link";
+"use client";
+
+import Image from "next/image";
+import { Section } from "@/components/ui/section";
+import { GradientButton } from "@/components/ui/gradient-button";
+import { OutlineButton } from "@/components/ui/outline-button";
+import { AppCarousel } from "@/components/app-carousel";
+import { AnimatedSection } from "@/components/animated-section";
+import { MacroCalculator } from "@/components/macro-calculator";
+import { InteractiveCoach } from "@/components/interactive-coach";
 import {
-  ArrowRight,
-  BarChart3,
   Brain,
-  Camera,
-  Check,
-  ChefHat,
+  DollarSign,
   Dumbbell,
-  Leaf,
-  MessageCircle,
-  ScanBarcode,
-  ShieldCheck,
+  TrendingUp,
+  Users,
+  Camera,
+  ChefHat,
+  Wallet,
+  BookOpen,
+  BarChart3,
+  XCircle,
+  ArrowRight,
   Sparkles,
-  Target,
-  UtensilsCrossed,
-  type LucideIcon,
+  Globe,
+  Smartphone,
+  Tablet,
+  Watch,
+  Heart,
+  Activity,
+  Zap,
 } from "lucide-react";
-import { Logo } from "@/components/ui/logo";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { cn } from "@/lib/utils/cn";
 
-const WORKFLOWS = [
+const credibilityItems = [
+  { icon: Brain, label: "AI-guided nutrition" },
+  { icon: DollarSign, label: "Budget-friendly planning" },
+  { icon: Dumbbell, label: "Adaptive workouts" },
+  { icon: TrendingUp, label: "Progress insights" },
+  { icon: Users, label: "Supports trainers" },
+];
+
+const problemBullets = [
+  "You eat out and don\u2019t know what to order.",
+  "Weekends throw you off and you can\u2019t recover.",
+  "Your weight jumps around and nobody explains why.",
+  "Eating healthy feels like a second job.",
+  "Your workout plan ignores how your body actually feels.",
+];
+
+const howItWorksSteps = [
   {
-    icon: UtensilsCrossed,
-    title: "Log the real meal",
-    copy: "Search, scan, snap a photo, or add a custom plate without turning dinner into data entry.",
+    number: 1,
+    title: "Tell",
+    description:
+      "Share your goals, preferences, dietary needs, and budget. FuelWell adapts to who you are and how you live.",
+    color: "from-emerald-400 to-teal-400",
+    image: "/features/ate-more.png",
+    imageAlt: "FuelWell profile and goals setup",
+    width: 375,
+    height: 1600,
   },
   {
-    icon: Brain,
-    title: "Ask the coach",
-    copy: "Get a next move based on what you already ate, what you still need, and how your day is going.",
+    number: 2,
+    title: "Get",
+    description:
+      "Receive personalized meal suggestions, grocery lists, workout plans, and real-time coaching \u2014 all tailored to your day.",
+    color: "from-orange-400 to-amber-400",
+    image: "/features/progress-tracking.png",
+    imageAlt: "FuelWell personalized meal and workout plan",
+    width: 563,
+    height: 1600,
   },
   {
+    number: 3,
+    title: "Track",
+    description:
+      "See your progress clearly with trends, insights, and smart nudges that keep you moving forward without obsessing over numbers.",
+    color: "from-cyan-400 to-blue-400",
+    image: "/features/body-insights.png",
+    imageAlt: "FuelWell activity insights and progress tracking",
+    width: 494,
+    height: 1600,
+  },
+];
+
+/* Feature showcase items — each pairs a Stitch image with text in an alternating layout */
+const featureShowcases = [
+  {
+    image: "/features/smarter-food.png",
+    imageAlt: "FuelWell AI insight for smarter food decisions",
+    width: 688,
+    height: 1559,
+    title: "Make smarter food decisions",
+    description:
+      "Snap a photo of your meal or describe what you\u2019re eating. FuelWell gives you instant feedback, alternatives, and coaching \u2014 not just calorie counts.",
+    icon: Camera,
+  },
+  {
+    image: "/features/build-meals.png",
+    imageAlt: "FuelWell AI-personalized meal with macro breakdown and preparation guide",
+    width: 276,
+    height: 1600,
+    title: "Build meals that taste good",
+    description:
+      "Optimized nutrition doesn\u2019t mean sacrificing flavor. Get AI-personalized recipes engineered for your macros, inflammatory markers, and taste preferences \u2014 with step-by-step prep guides.",
+    icon: ChefHat,
+  },
+  {
+    image: "/features/stay-on-budget.png",
+    imageAlt: "FuelWell smart spending tracker with grocery list and budget optimization",
+    width: 274,
+    height: 1600,
+    title: "Stay on budget",
+    description:
+      "Fueling your body shouldn\u2019t break the bank. Your AI assistant optimizes your cart for maximum nutrition at minimal cost \u2014 with real-time spending tracking and smart swap suggestions.",
+    icon: Wallet,
+  },
+];
+
+/* Real-life scenario showcases — full phone mockups */
+const scenarioShowcases = [
+  {
+    image: "/features/at-restaurant.png",
+    imageAlt: "FuelWell dining mode showing macro allowance, AI smart tips, and menu scanning",
+    width: 318,
+    height: 1600,
+    title: "At a restaurant?",
+    subtitle: "Dining Mode activates automatically.",
+    description:
+      "FuelWell analyzes your remaining macros in real-time, gives you AI-powered tips for the best menu choices, and even lets you scan the menu for instant recommendations.",
+  },
+  {
+    image: "/features/ate-more.png",
+    imageAlt: "FuelWell auto-balance feature adjusting macros after overeating",
+    width: 375,
+    height: 1600,
+    title: "Ate more than planned?",
+    subtitle: "No guilt. Just recalibration.",
+    description:
+      "One meal doesn\u2019t define your journey. FuelWell automatically rebalances your day \u2014 adjusting dinner, snacks, and even suggesting a quick walk to offset the surplus.",
+  },
+  {
+    image: "/features/sore-recovery.png",
+    imageAlt: "FuelWell recovery mode with inflammation detection and AI coach recommendations",
+    width: 272,
+    height: 1600,
+    title: "Sore or low energy?",
+    subtitle: "Your body is telling you something.",
+    description:
+      "FuelWell detects when your body needs recovery, tracks inflammation markers and glycogen levels, and recommends the right fuel and movement to accelerate repair.",
+  },
+];
+
+/* Additional feature showcases — upgraded from SVG placeholders to Stitch images */
+const additionalShowcases = [
+  {
+    image: "/features/customized-workouts.png",
+    imageAlt: "FuelWell Muscle Mass Mastery program with goals, milestones, and AI coach insights",
+    width: 472,
+    height: 1600,
+    title: "Get customized workouts",
+    description:
+      "Whether you\u2019re at home, in a gym, or traveling \u2014 FuelWell builds workouts around your equipment, time, and fitness level. Track muscle mass, set milestones, and get real-time AI coaching.",
+    icon: Dumbbell,
+    premium: true,
+  },
+  {
+    image: "/features/body-insights.png",
+    imageAlt: "FuelWell activity insights showing steps, heart rate, calorie deficit, and body measurements",
+    width: 494,
+    height: 1600,
+    title: "Understand your body",
+    description:
+      "See your daily steps, heart rate zones, calorie trends, and detailed body measurements in one place. Learn why your weight changes, what affects your energy, and how food and movement connect.",
+    icon: BookOpen,
+  },
+  {
+    image: "/features/progress-tracking.png",
+    imageAlt: "FuelWell measurements dashboard with weight trends, hydration, muscle mass, and AI coach insights",
+    width: 563,
+    height: 1600,
+    title: "Track progress clearly",
+    description:
+      "Visual dashboards that show trends over time \u2014 not just daily numbers. Monitor weight, hydration, muscle mass, and activity with AI-powered insights that keep you motivated.",
     icon: BarChart3,
-    title: "Watch the pattern",
-    copy: "Progress reads like direction over time, not a pass/fail scoreboard for one imperfect day.",
   },
-] satisfies { icon: LucideIcon; title: string; copy: string }[];
+];
 
-const FEATURE_ROWS = [
-  { icon: Target, title: "Daily targets", detail: "Calories and macros sized from setup." },
-  { icon: Camera, title: "Photo estimates", detail: "Draft meals from a plate image." },
-  { icon: ScanBarcode, title: "Barcode lookup", detail: "Fast grocery and packaged-food logging." },
-  { icon: ChefHat, title: "Recipes", detail: "Meals that respect goals and preferences." },
-  { icon: Dumbbell, title: "Workouts", detail: "Suggestions that fit energy and recovery." },
-  { icon: ShieldCheck, title: "Food rules", detail: "Diet and allergy context stays attached." },
-] satisfies { icon: LucideIcon; title: string; detail: string }[];
-
-const COACH_MESSAGES = [
-  {
-    question: "I have 1,400 calories and 102g protein left. What should dinner be?",
-    answer: "Build dinner around lean protein first. Chicken quinoa bowl or salmon with sweet potatoes both close the gap cleanly.",
-  },
-  {
-    question: "I only have 20 minutes to move. Is that worth logging?",
-    answer: "Yes. Pick a low-impact full-body circuit and keep intensity moderate so tomorrow still works.",
-  },
-  {
-    question: "Why did my weight jump after a good day?",
-    answer: "Likely water, sodium, stress, or sleep. Your trend matters more than one weigh-in.",
-  },
-] satisfies { question: string; answer: string }[];
-
-export default function HomePage() {
+export default function Home() {
   return (
-    <div className="fw-app-surface min-h-screen">
-      <header className="sticky top-0 z-40 border-b border-hairline bg-background/85 backdrop-blur-xl">
-        {/* The wordmark steps down a size below sm: at 320px a 24px logo plus
-            both CTAs overran the viewport and pushed the header into a
-            horizontal scroll. */}
-        <nav className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-4 py-3 sm:gap-3 sm:px-6 lg:px-8">
-          <span className="min-w-0 shrink">
-            <Logo size="lg" href="/" className="text-xl sm:text-2xl" />
-          </span>
-          {/* Nav CTAs step down to ghost/tonal so the hero owns the page's one
-              primary action. */}
-          <div className="flex shrink-0 items-center gap-1 sm:gap-1.5">
-            <Link href="/login">
-              <Button variant="ghost" size="sm" className="whitespace-nowrap">
-                Log in
-              </Button>
-            </Link>
-            <Link href="/signup">
-              <Button variant="tonal" size="sm" className="whitespace-nowrap">
-                Get started
-                <ArrowRight
-                  className="hidden h-4 w-4 shrink-0 sm:block"
-                  strokeWidth={2.25}
-                  aria-hidden="true"
-                />
-              </Button>
-            </Link>
-          </div>
-        </nav>
-      </header>
+    <>
+      {/* ───── HERO ───── */}
+      <section className="relative overflow-hidden">
+        {/* Pastel gradient mesh background */}
+        <div className="absolute inset-0 gradient-mesh" />
+        <div className="absolute inset-0 dot-grid" />
+        <div className="absolute top-[-15%] left-[-5%] w-[500px] h-[500px] rounded-full bg-emerald-200/30 blur-[120px] animate-float-slow" />
+        <div className="absolute bottom-[-10%] right-[-5%] w-[400px] h-[400px] rounded-full bg-orange-200/25 blur-[100px] animate-float-slower" />
+        <div className="absolute top-[20%] right-[15%] w-[300px] h-[300px] rounded-full bg-violet-200/20 blur-[80px] animate-pulse-glow" />
 
-      <main>
-        <section className="mx-auto grid max-w-7xl items-center gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8 lg:py-12 xl:py-16">
-          <div className="space-y-7">
-            <div className="inline-flex items-center gap-2 rounded-full bg-surface/80 px-3 py-1.5 text-xs font-black uppercase tracking-[0.18em] text-primary-700 shadow-e1 ring-1 ring-inset ring-primary-100">
-              <Sparkles className="h-4 w-4 shrink-0" strokeWidth={2.25} />
-              Daily decision system
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 md:pt-36 pb-20 md:pb-28">
+          <AnimatedSection className="max-w-3xl mx-auto text-center space-y-8">
+            <div
+className="flex items-center justify-center gap-2.5 text-sm font-semibold text-foreground"            >
+              <span className="absolute inset-0 rounded-full bg-gradient-to-r from-emerald-400/10 via-transparent to-violet-400/10" />
+              <div className="relative flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 shadow-sm">
+                <Sparkles className="h-3.5 w-3.5 text-white" />
+              </div>
+              <span className="relative">
+                Get <span className="gradient-text font-bold">50% off for life</span> — only 100 founding spots
+              </span>
             </div>
-            <h1 className="fw-heading max-w-xl text-4xl leading-[1.06] sm:text-5xl lg:text-6xl">
-              A nutrition coach for the next choice, not a spreadsheet for
-              the last mistake.
+
+            <div className="block inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-orange-500 to-pink-500 px-5 py-2 text-sm font-bold text-white shadow-lg shadow-orange-500/30 animate-pulse-glow">
+              <span className="h-2 w-2 rounded-full bg-white animate-pulse" />
+              Launching Fall 2026 — lock in your spot now
+            </div>
+
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-[-0.035em] text-foreground leading-[1.05]">
+              Build a healthier lifestyle{" "}
+              <span className="gradient-text">without giving up real life.</span>
             </h1>
-            {/* The Link must carry the width too, or the full-width button
-                inside an inline anchor collapses on mobile. */}
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <Link href="/signup" className="w-full sm:w-auto">
-                <Button size="lg" className="w-full sm:w-auto">
-                  Start free
-                  <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.25} />
-                </Button>
-              </Link>
-              <Link href="/app/dashboard" className="w-full sm:w-auto">
-                <Button variant="secondary" size="lg" className="w-full sm:w-auto">
-                  Preview the app
-                </Button>
-              </Link>
-            </div>
-            <ul className="flex flex-wrap gap-2">
-              <TrustPill>Free to start</TrustPill>
-              <TrustPill>No credit card</TrustPill>
-              <TrustPill>Works with any diet</TrustPill>
-            </ul>
-          </div>
 
-          <AppPreview />
-        </section>
+            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-[1.6]">
+              Smarter food choices. Adaptive workouts. Real-time coaching.
+              Habits that actually stick — because they fit your life.
+            </p>
 
-        {/* scroll-mt clears the sticky header — without it an in-page jump to
-            #how-it-works parks the section title behind the nav bar. */}
-        <section
-          id="how-it-works"
-          className="scroll-mt-20 border-y border-hairline bg-surface/60 py-16 sm:py-20"
-        >
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <SectionHeading
-              kicker="How it works"
-              title="The same loop, every day"
-              copy="Log what happened, see what still matters, and let the coach pick the highest-leverage next move."
-            />
-            <div className="mt-10 grid gap-4 md:grid-cols-3">
-              {WORKFLOWS.map((workflow) => (
-                <FeatureCard key={workflow.title} {...workflow} />
-              ))}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
+              <GradientButton href="/founders-100" size="lg">
+                Secure Your Spot
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </GradientButton>
+              <OutlineButton href="/features">
+                See How It Works
+              </OutlineButton>
             </div>
-          </div>
-        </section>
 
-        <section className="py-16 sm:py-20">
-          <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[0.8fr_1.2fr] lg:px-8">
-            <div>
-              <SectionHeading
-                align="left"
-                kicker="Product"
-                title="Built for messy real life"
-                copy="FuelWell keeps the practical surfaces close together: food, coach, workouts, recipes, groceries, recovery, and progress."
-              />
-              <Card variant="tinted" padding="sm" className="mt-7">
-                <p className="text-xs font-black uppercase tracking-[0.14em] text-primary-700">
-                  The point is not perfect tracking.
-                </p>
-                <p className="mt-2 text-lg font-semibold leading-7 text-ink-muted">
-                  The point is making the next clean choice obvious enough to
-                  act on when your day is already moving.
-                </p>
-              </Card>
-            </div>
-            <div className="grid gap-3 sm:grid-cols-2">
-              {FEATURE_ROWS.map((feature) => (
-                <FeatureRow key={feature.title} {...feature} />
-              ))}
-            </div>
-          </div>
-        </section>
+            <p className="text-sm text-muted-foreground/70 max-w-md mx-auto font-accent">
+              No rigid diets. No guilt. Just smarter decisions, every day.
+            </p>
+          </AnimatedSection>
 
-        <section className="border-y border-hairline bg-surface/60 py-16 sm:py-20">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <SectionHeading
-              kicker="Coach"
-              title="Answers that can carry structure"
-              copy="The coach can respond with practical plans, comparisons, lists, tables, meal ideas, and progress explanations right in the chat."
-            />
-            <div className="mt-10 grid gap-4 lg:grid-cols-3">
-              {COACH_MESSAGES.map((message) => (
-                <CoachExample key={message.question} {...message} />
-              ))}
-            </div>
-          </div>
-        </section>
+          {/* Hero app carousel */}
+          <AnimatedSection delay={0.3} className="mt-16 px-6">
+            <AppCarousel />
+          </AnimatedSection>
+        </div>
+      </section>
 
-        <section className="py-16 sm:py-20">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="fw-dark-panel overflow-hidden rounded-[2rem] border p-7 sm:p-10">
-              <div className="grid gap-8 lg:grid-cols-[1fr_0.72fr] lg:items-center">
-                <div>
-                  <p className="text-xs font-black uppercase tracking-[0.18em] text-primary-100">
-                    Start in two minutes
-                  </p>
-                  <h2 className="mt-3 max-w-3xl text-4xl font-black leading-tight tracking-tight text-white sm:text-5xl">
-                    Get a starting plan, then let the app adapt from real logs.
-                  </h2>
+      {/* ───── BUILT TO GUIDE, NOT JUDGE ───── */}
+      <Section className="py-14 md:py-18">
+        <AnimatedSection className="max-w-2xl mx-auto text-center space-y-4">
+          <h2 className="text-3xl md:text-[2.75rem] font-bold text-foreground leading-tight">
+            Built to Guide, Not Judge
+          </h2>
+          <p className="text-base md:text-lg text-muted-foreground leading-[1.7] max-w-xl mx-auto">
+            No guilt trips. No punishment days. FuelWell helps you make
+            better choices while staying in control — and it works
+            alongside your trainer, not against them.
+          </p>
+        </AnimatedSection>
+      </Section>
+
+      {/* ───── REAL-LIFE SCENARIOS — FULL PHONE SHOWCASES ───── */}
+      <Section className="py-16 md:py-24 bg-fw-surface/50">
+        <AnimatedSection className="text-center mb-14">
+          <h2 className="text-3xl md:text-[2.75rem] font-bold text-foreground leading-tight">
+            FuelWell meets you where life happens.
+          </h2>
+          <p className="text-muted-foreground text-base md:text-lg max-w-lg mx-auto mt-3 leading-relaxed">
+            Real situations. Real solutions. See exactly how FuelWell responds.
+          </p>
+        </AnimatedSection>
+
+        <div className="space-y-12 md:space-y-16">
+          {scenarioShowcases.map((scenario, i) => (
+            <AnimatedSection key={scenario.title} delay={0.1}>
+              <div className={`flex flex-col ${i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} items-center gap-10 md:gap-16 max-w-5xl mx-auto`}>
+                {/* Phone mockup */}
+                <div className="flex-shrink-0 w-[260px] md:w-[300px]">
+                  <div className="rounded-[2.5rem] border-[6px] border-gray-800 bg-gray-800 shadow-phone overflow-hidden">
+                    <div className="rounded-[2rem] overflow-hidden bg-white">
+                      <Image
+                        src={scenario.image}
+                        alt={scenario.imageAlt}
+                        width={scenario.width}
+                        height={scenario.height}
+                        className="w-full h-[600px] md:h-[640px] object-cover object-top"
+                        priority={i === 0}
+                      />
+                    </div>
+                  </div>
                 </div>
-                <div className="flex flex-col gap-3 sm:flex-row lg:justify-end">
-                  <Link href="/signup" className="w-full sm:w-auto">
-                    <Button size="lg" className="w-full sm:w-auto">
-                      Create account
-                      <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.25} />
-                    </Button>
-                  </Link>
-                  <Link href="/login" className="w-full sm:w-auto">
-                    <Button
-                      variant="secondary"
-                      size="lg"
-                      className="w-full border-transparent bg-white/10 text-white shadow-none ring-1 ring-inset ring-white/20 hover:border-transparent hover:bg-white/20 active:bg-white/25 sm:w-auto"
-                    >
-                      Log in
-                    </Button>
-                  </Link>
+
+                {/* Text content */}
+                <div className="flex-1 text-center md:text-left max-w-lg">
+                  <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
+                    {scenario.title}
+                  </h3>
+                  <p className="text-fw-accent font-semibold text-sm uppercase tracking-wider mb-4">
+                    {scenario.subtitle}
+                  </p>
+                  <p className="text-base md:text-lg text-muted-foreground leading-[1.7]">
+                    {scenario.description}
+                  </p>
                 </div>
               </div>
-            </div>
-          </div>
-        </section>
-      </main>
+            </AnimatedSection>
+          ))}
+        </div>
+      </Section>
 
-      <footer className="border-t border-hairline bg-surface/50 py-8">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 text-center sm:flex-row sm:px-6 sm:text-left lg:px-8">
-          <Logo size="sm" href="/" />
-          <p className="text-sm font-semibold text-ink-muted">
-            &copy; {new Date().getFullYear()} FuelWell. Built for the next clean choice.
+      {/* ───── CREDIBILITY STRIP ───── */}
+      <Section className="py-8 md:py-10 border-y border-fw-border/50">
+        <AnimatedSection delay={0.1}>
+          <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12">
+            {credibilityItems.map((item) => (
+              <div
+                key={item.label}
+                className="flex items-center gap-2.5 text-muted-foreground group"
+              >
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-50 group-hover:bg-emerald-100 transition-colors duration-200">
+                  <item.icon className="h-4.5 w-4.5 text-fw-accent" />
+                </div>
+                <span className="text-sm font-semibold font-accent group-hover:text-foreground transition-colors duration-200">{item.label}</span>
+              </div>
+            ))}
+          </div>
+        </AnimatedSection>
+      </Section>
+
+      {/* ───── PROBLEM SECTION ───── */}
+      <Section className="py-16 md:py-22">
+        <AnimatedSection className="max-w-2xl mx-auto">
+          <h2 className="text-3xl md:text-[2.75rem] font-bold text-foreground text-center mb-5 leading-tight">
+            Most fitness plans break the moment life gets real.
+          </h2>
+          <p className="text-muted-foreground text-center text-base md:text-lg mb-10 max-w-xl mx-auto leading-[1.7]">
+            Rigid meal plans don&apos;t survive restaurant dinners, weekend plans, or tight budgets. Sound familiar?
           </p>
-        </div>
-      </footer>
-    </div>
-  );
-}
+          <ul className="space-y-4 max-w-md mx-auto">
+            {problemBullets.map((bullet, i) => (
+              <AnimatedSection key={bullet} delay={0.3 + i * 0.08}>
+                <li className="flex items-start gap-3 group">
+                  <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-red-50 mt-0.5 group-hover:bg-red-100 transition-colors duration-200">
+                    <XCircle className="h-3.5 w-3.5 text-red-400" />
+                  </div>
+                  <span className="text-[15px] text-muted-foreground leading-relaxed group-hover:text-foreground transition-colors duration-200">
+                    {bullet}
+                  </span>
+                </li>
+              </AnimatedSection>
+            ))}
+          </ul>
+        </AnimatedSection>
+      </Section>
 
-function AppPreview() {
-  return (
-    // One elevation for the whole mock. Everything nested inside steps down to
-    // hairlines and tints rather than stacking a second drop shadow.
-    <div className="rounded-[2.25rem] border border-hairline-strong bg-surface/90 p-4 shadow-e4 backdrop-blur">
-      {/* shadow-none cancels the box-shadow .fw-dark-panel carries by default —
-          nested inside the shadow-e4 wrapper it would stack a second drop
-          shadow on the same mock. */}
-      <div className="fw-dark-panel rounded-[1.75rem] border p-6 shadow-none">
-        <div className="flex items-start justify-between gap-4">
-          <div className="min-w-0">
-            <p className="text-xs font-black uppercase tracking-[0.16em] text-primary-100">
-              Today&apos;s decision
-            </p>
-            <h2 className="mt-3 max-w-lg text-3xl font-black leading-tight text-white sm:text-4xl">
-              You have room to make a clean next choice.
+      {/* ───── SOLUTION / HOW IT WORKS ───── */}
+      <Section className="bg-fw-surface py-16 md:py-22">
+        <AnimatedSection className="text-center mb-12">
+          <h2 className="text-3xl md:text-[2.75rem] font-bold text-foreground mb-5 leading-tight">
+            Your daily decision coach.
+          </h2>
+          <p className="text-muted-foreground text-base md:text-lg max-w-lg mx-auto leading-relaxed">
+            Three steps. No overthinking.
+          </p>
+        </AnimatedSection>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative max-w-4xl mx-auto">
+          <div className="hidden md:block absolute top-7 left-[calc(16.67%+28px)] right-[calc(16.67%+28px)] h-[2px] bg-gradient-to-r from-emerald-300 via-orange-300 to-cyan-300 opacity-30 overflow-hidden">
+            <div className="h-full w-full shimmer" />
+          </div>
+
+          {howItWorksSteps.map((step) => (
+            <AnimatedSection
+              key={step.number}
+              delay={step.number * 0.15}
+              className="text-center relative"
+            >
+              <div className={`inline-flex items-center justify-center h-14 w-14 rounded-2xl bg-gradient-to-br ${step.color} text-white text-xl font-bold mb-5 shadow-md relative z-10`}>
+                {step.number}
+              </div>
+              <h3 className="text-xl font-semibold text-foreground mb-2">
+                {step.title}
+              </h3>
+              <p className="text-sm text-muted-foreground leading-[1.7] max-w-[280px] mx-auto mb-6">
+                {step.description}
+              </p>
+              <div className="flex justify-center">
+                <div className="w-[180px]">
+                  <div className="rounded-[1.75rem] border-[5px] border-gray-800 bg-gray-800 shadow-phone overflow-hidden">
+                    <div className="rounded-[1.35rem] overflow-hidden bg-white">
+                      <Image
+                        src={step.image}
+                        alt={step.imageAlt}
+                        width={step.width}
+                        height={step.height}
+                        className="w-full h-[340px] object-cover object-top"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </AnimatedSection>
+          ))}
+        </div>
+      </Section>
+
+      {/* ───── FEATURE SHOWCASES — FULL PHONE MOCKUPS ───── */}
+      <Section className="py-16 md:py-24">
+        <AnimatedSection className="text-center mb-14">
+          <h2 className="text-3xl md:text-[2.75rem] font-bold text-foreground mb-5 leading-tight">
+            What changes when you have FuelWell
+          </h2>
+          <p className="text-muted-foreground text-base md:text-lg max-w-xl mx-auto leading-relaxed">
+            Eat smarter. Train better. Actually stay consistent.
+          </p>
+        </AnimatedSection>
+
+        <div className="space-y-12 md:space-y-16">
+          {featureShowcases.map((feature, i) => (
+            <AnimatedSection key={feature.title} delay={0.1}>
+              <div className={`flex flex-col ${i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} items-center gap-10 md:gap-16 max-w-5xl mx-auto`}>
+                {/* Phone mockup */}
+                <div className="flex-shrink-0 w-[260px] md:w-[300px]">
+                  <div className="rounded-[2.5rem] border-[6px] border-gray-800 bg-gray-800 shadow-phone overflow-hidden">
+                    <div className="rounded-[2rem] overflow-hidden bg-white">
+                      <Image
+                        src={feature.image}
+                        alt={feature.imageAlt}
+                        width={feature.width}
+                        height={feature.height}
+                        className="w-full h-[600px] md:h-[640px] object-cover object-top"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Text content */}
+                <div className="flex-1 text-center md:text-left max-w-lg">
+                  <div className="inline-flex items-center justify-center h-12 w-12 rounded-xl bg-gradient-to-br from-emerald-50 to-teal-50 ring-1 ring-emerald-200/50 mb-5 shadow-sm">
+                    <feature.icon className="h-5 w-5 text-emerald-600" />
+                  </div>
+                  <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
+                    {feature.title}
+                  </h3>
+                  <p className="text-base md:text-lg text-muted-foreground leading-[1.7]">
+                    {feature.description}
+                  </p>
+                </div>
+              </div>
+            </AnimatedSection>
+          ))}
+        </div>
+
+        {/* Additional feature showcases — full phone mockups */}
+        <div className="space-y-12 md:space-y-16 mt-12 md:mt-16">
+          {additionalShowcases.map((feature, i) => (
+            <AnimatedSection key={feature.title} delay={0.1}>
+              <div className={`flex flex-col ${i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} items-center gap-10 md:gap-16 max-w-5xl mx-auto`}>
+                {/* Phone mockup */}
+                <div className="flex-shrink-0 w-[260px] md:w-[300px]">
+                  <div className="rounded-[2.5rem] border-[6px] border-gray-800 bg-gray-800 shadow-phone overflow-hidden">
+                    <div className="rounded-[2rem] overflow-hidden bg-white">
+                      <Image
+                        src={feature.image}
+                        alt={feature.imageAlt}
+                        width={feature.width}
+                        height={feature.height}
+                        className="w-full h-[600px] md:h-[640px] object-cover object-top"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Text content */}
+                <div className="flex-1 text-center md:text-left max-w-lg">
+                  <div className="inline-flex items-center gap-2 mb-5">
+                    <div className="inline-flex items-center justify-center h-12 w-12 rounded-xl bg-gradient-to-br from-emerald-50 to-teal-50 ring-1 ring-emerald-200/50 shadow-sm">
+                      <feature.icon className="h-5 w-5 text-emerald-600" />
+                    </div>
+                    {feature.premium && (
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-orange-600 bg-orange-50 border border-orange-200 px-2.5 py-1 rounded-full">
+                        Premium
+                      </span>
+                    )}
+                  </div>
+                  <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
+                    {feature.title}
+                  </h3>
+                  <p className="text-base md:text-lg text-muted-foreground leading-[1.7]">
+                    {feature.description}
+                  </p>
+                </div>
+              </div>
+            </AnimatedSection>
+          ))}
+        </div>
+      </Section>
+
+      {/* ───── SMART COACHING EXAMPLES ───── */}
+      <Section className="bg-fw-surface py-16 md:py-24">
+        <AnimatedSection className="text-center mb-12">
+          <h2 className="text-3xl md:text-[2.75rem] font-bold text-foreground mb-5 leading-tight">
+            Coaching that sounds like a friend, not a textbook.
+          </h2>
+          <p className="text-muted-foreground text-base md:text-lg max-w-lg mx-auto leading-relaxed">
+            Real questions. Real answers. Zero judgment.
+          </p>
+        </AnimatedSection>
+
+        <AnimatedSection delay={0.1} className="max-w-6xl mx-auto">
+          <InteractiveCoach />
+        </AnimatedSection>
+      </Section>
+
+      {/* ───── PLATFORM AVAILABILITY ───── */}
+      <Section className="py-12 md:py-16 border-y border-fw-border/40">
+        <AnimatedSection className="text-center mb-8">
+          <h3 className="text-xl md:text-2xl font-bold text-foreground mb-2">Available Everywhere You Are</h3>
+          <p className="text-muted-foreground text-sm max-w-md mx-auto leading-relaxed">
+            Use FuelWell across all your devices, synced and seamless.
+          </p>
+        </AnimatedSection>
+
+        <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12 mb-10">
+          {[
+            { icon: Globe, label: "Web App", desc: "Any browser" },
+            { icon: Smartphone, label: "iPhone", desc: "iOS 16+" },
+            { icon: Tablet, label: "iPad", desc: "iPadOS 16+" },
+            { icon: Smartphone, label: "Android", desc: "Android 12+" },
+          ].map((p, i) => (
+            <AnimatedSection key={p.label} delay={i * 0.08}>
+              <div className="flex flex-col items-center gap-2 group">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 border border-emerald-100 group-hover:bg-emerald-100 group-hover:scale-105 transition-all duration-200 shadow-sm">
+                  <p.icon className="h-6 w-6 text-fw-accent" />
+                </div>
+                <p className="text-sm font-semibold text-foreground">{p.label}</p>
+                <p className="text-[11px] text-muted-foreground">{p.desc}</p>
+              </div>
+            </AnimatedSection>
+          ))}
+        </div>
+
+        <AnimatedSection delay={0.3}>
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-6 text-center">Works with the tech you already wear</p>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 max-w-4xl mx-auto">
+            {[
+              { icon: Heart, label: "Apple Health", color: "from-red-50 to-pink-50", iconColor: "text-red-500" },
+              { icon: Watch, label: "Apple Watch", color: "from-gray-50 to-slate-100", iconColor: "text-gray-700" },
+              { icon: Activity, label: "WHOOP", color: "from-teal-50 to-emerald-50", iconColor: "text-teal-600" },
+              { icon: Zap, label: "Oura Ring", color: "from-amber-50 to-yellow-50", iconColor: "text-amber-600" },
+              { icon: TrendingUp, label: "Garmin", color: "from-blue-50 to-sky-50", iconColor: "text-blue-600" },
+            ].map((int) => (
+              <div
+                key={int.label}
+                className="group rounded-2xl border border-fw-border bg-white p-4 text-center hover:-translate-y-0.5 hover:shadow-card-hover hover:border-fw-accent/30 transition-all duration-300 shadow-card flex flex-col items-center gap-2.5"
+              >
+                <div className={`flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${int.color} ring-1 ring-fw-border/40 shadow-sm group-hover:scale-105 transition-transform duration-300`}>
+                  <int.icon className={`h-7 w-7 ${int.iconColor}`} />
+                </div>
+                <span className="text-xs font-semibold text-foreground">{int.label}</span>
+              </div>
+            ))}
+          </div>
+        </AnimatedSection>
+      </Section>
+
+      {/* ───── INTERACTIVE MACRO CALCULATOR ───── */}
+      <Section className="py-16 md:py-24">
+        <AnimatedSection className="text-center mb-10">
+          <h2 className="text-3xl md:text-[2.75rem] font-bold text-foreground mb-4 leading-tight">
+            Your personalized macros, calculated live.
+          </h2>
+          <p className="text-muted-foreground text-base md:text-lg max-w-xl mx-auto leading-relaxed">
+            Drag the sliders below and see exactly where FuelWell would start you — then
+            get in the app to let real weight and training data refine it every week.
+          </p>
+        </AnimatedSection>
+        <AnimatedSection delay={0.1} className="max-w-6xl mx-auto">
+          <MacroCalculator />
+        </AnimatedSection>
+      </Section>
+
+      {/* ───── FINAL CTA ───── */}
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0 gradient-mesh" />
+        <div className="absolute inset-0 dot-grid opacity-50" />
+        <div className="absolute top-[20%] left-[30%] w-[300px] h-[300px] rounded-full bg-emerald-200/20 blur-[100px] animate-float-slow" />
+        <div className="absolute bottom-[20%] right-[20%] w-[250px] h-[250px] rounded-full bg-orange-200/15 blur-[80px] animate-float-slower" />
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
+          <AnimatedSection className="text-center max-w-xl mx-auto space-y-6">
+            <h2 className="text-4xl md:text-5xl font-bold text-foreground">
+              FuelWell. <span className="gradient-text">Feel well.</span>
             </h2>
-          </div>
-          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[1rem] bg-primary-400 text-primary-950">
-            <Sparkles className="h-6 w-6" strokeWidth={2} />
-          </span>
-        </div>
-        {/* The calorie figure is read from the same constant the ring below is
-            drawn from, so the panel and the arc can never state two different
-            numbers — and it gets the same thousands separator. */}
-        <div className="mt-6 grid gap-3 sm:grid-cols-2">
-          <DarkMetric
-            label="Calories left"
-            value={RING_REMAINING.toLocaleString()}
-            of={`of ${RING_TARGET.toLocaleString()}`}
-          />
-          <DarkMetric label="Protein left" value="102g" of="today's target" />
-        </div>
-      </div>
-
-      <div className="mt-4 grid gap-4 lg:grid-cols-[0.85fr_1fr]">
-        <div className="rounded-[1.75rem] border border-hairline bg-surface p-5">
-          <div className="flex items-center justify-between gap-3">
-            <div className="min-w-0">
-              <h3 className="text-lg font-black text-ink">Today&apos;s plate</h3>
-              <p className="text-sm font-semibold text-ink-muted">Logged meals only.</p>
+            <p className="text-lg text-muted-foreground leading-relaxed max-w-md mx-auto">
+              Make consistency actually stick — with real-time guidance that fits your life.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
+              <GradientButton href="/founders-100" size="lg">
+                Secure Your Spot
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </GradientButton>
+              <OutlineButton href="/about">
+                Learn More
+              </OutlineButton>
             </div>
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100">
-              <Leaf className="h-[1.125rem] w-[1.125rem]" strokeWidth={2} />
-            </span>
-          </div>
-          <CalorieRing />
-          <CalorieRingLegend />
+          </AnimatedSection>
         </div>
-
-        <ul className="grid gap-3">
-          <MiniSurface icon={UtensilsCrossed} title="Log Meal" detail="Breakfast and lunch are already counted." />
-          <MiniSurface icon={MessageCircle} title="Ask Coach" detail="Generate dinner options that close the gap." />
-          <MiniSurface icon={Dumbbell} title="Move" detail="Pick a low-impact workout for today." />
-        </ul>
-      </div>
-    </div>
-  );
-}
-
-// Product mock for the marketing hero. The geometry is derived from the two
-// figures the panel already states (1,400 kcal remaining of a 3,300 kcal day),
-// so the arc, the centre number, and the aria-label cannot drift apart.
-const RING_TARGET = 3300;
-const RING_REMAINING = 1400;
-const RING_RADIUS = 66;
-const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
-
-function CalorieRing() {
-  const consumedRatio = (RING_TARGET - RING_REMAINING) / RING_TARGET;
-
-  return (
-    <div className="relative mx-auto mt-5 flex h-40 w-40 items-center justify-center">
-      <svg
-        viewBox="0 0 160 160"
-        className="absolute inset-0 h-full w-full -rotate-90 animate-in fade-in-0 zoom-in-95 duration-700 ease-out-soft"
-        role="img"
-        aria-label={`Calories: ${RING_REMAINING.toLocaleString()} of ${RING_TARGET.toLocaleString()} remaining, ${Math.round(consumedRatio * 100)} percent used.`}
-      >
-        <defs>
-          <linearGradient id="fw-ring-fill" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="var(--color-primary-400)" />
-            <stop offset="100%" stopColor="var(--color-teal-600)" />
-          </linearGradient>
-        </defs>
-        <circle
-          cx="80"
-          cy="80"
-          r={RING_RADIUS}
-          fill="none"
-          stroke="var(--color-surface-sunken)"
-          strokeWidth="14"
-        />
-        {/* Quarter ticks give the ring a scale — without them the arc length
-            is unreadable as a proportion. */}
-        {[0, 90, 180, 270].map((angle) => (
-          <line
-            key={angle}
-            x1="80"
-            y1="7"
-            x2="80"
-            y2="15"
-            stroke="var(--color-hairline-strong)"
-            strokeWidth="2"
-            strokeLinecap="round"
-            transform={`rotate(${angle} 80 80)`}
-          />
-        ))}
-        <circle
-          cx="80"
-          cy="80"
-          r={RING_RADIUS}
-          fill="none"
-          stroke="url(#fw-ring-fill)"
-          strokeWidth="14"
-          strokeLinecap="round"
-          strokeDasharray={RING_CIRCUMFERENCE}
-          strokeDashoffset={RING_CIRCUMFERENCE * (1 - consumedRatio)}
-        />
-      </svg>
-      <div className="text-center">
-        <p className="text-3xl font-black tabular-nums leading-none text-ink">
-          {RING_REMAINING.toLocaleString()}
-        </p>
-        {/* Both sublabels sit at ink-muted (5.78:1 on the white card); at 12px
-            and 11px neither can afford ink-subtle/ink-faint. Hierarchy below
-            the figure is carried by weight and size instead of by fading. */}
-        <p className="mt-1 text-xs font-black uppercase tracking-[0.12em] text-ink-muted">
-          remaining
-        </p>
-        <p className="mt-1.5 text-[0.6875rem] font-semibold tabular-nums text-ink-muted">
-          of {RING_TARGET.toLocaleString()}
-        </p>
-      </div>
-    </div>
-  );
-}
-
-// Keys the two arc segments to their figures. Both numbers are derived from
-// the same two constants the arc is drawn from, so the legend cannot drift.
-function CalorieRingLegend() {
-  return (
-    <div className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 text-xs font-bold">
-      <span className="inline-flex items-center gap-1.5 text-ink-muted">
-        <span
-          aria-hidden="true"
-          className="h-2 w-2 shrink-0 rounded-full bg-gradient-to-br from-primary-400 to-teal-600"
-        />
-        <span className="tabular-nums">
-          {(RING_TARGET - RING_REMAINING).toLocaleString()} used
-        </span>
-      </span>
-      {/* Both entries carry the same ink so neither of two equally-weighted
-          12px labels drops below 4.5:1; the swatch alone distinguishes them. */}
-      <span className="inline-flex items-center gap-1.5 text-ink-muted">
-        <span
-          aria-hidden="true"
-          className="h-2 w-2 shrink-0 rounded-full bg-surface-sunken ring-1 ring-inset ring-hairline-strong"
-        />
-        <span className="tabular-nums">
-          {RING_REMAINING.toLocaleString()} left
-        </span>
-      </span>
-    </div>
-  );
-}
-
-function TrustPill({ children }: { children: React.ReactNode }) {
-  return (
-    // Supporting reassurance, not a heading — text-xl made these outweigh the
-    // CTA row directly above them.
-    <li className="inline-flex items-center gap-2 rounded-full bg-surface/70 px-3.5 py-2 text-sm font-bold text-ink-muted ring-1 ring-inset ring-hairline-strong">
-      <Check className="h-4 w-4 shrink-0 text-primary-600" strokeWidth={2.75} />
-      {children}
-    </li>
-  );
-}
-
-function SectionHeading({
-  kicker,
-  title,
-  copy,
-  align = "center",
-}: {
-  kicker: string;
-  title: string;
-  copy: string;
-  align?: "center" | "left";
-}) {
-  return (
-    <div className={cn("mx-auto max-w-3xl", align === "center" ? "text-center" : "mx-0 text-left")}>
-      <p className="text-xs font-black uppercase tracking-[0.18em] text-primary-700">
-        {kicker}
-      </p>
-      <h2 className="fw-heading mt-3 text-3xl sm:text-4xl">{title}</h2>
-      <p
-        className={cn(
-          "mt-3 text-lg font-semibold leading-8 text-ink-muted",
-          align === "center" && "mx-auto max-w-2xl"
-        )}
-      >
-        {copy}
-      </p>
-    </div>
-  );
-}
-
-// Every card below sits at one elevation (Card's own), with a single icon
-// size and stroke weight per context.
-function FeatureCard({ icon: Icon, title, copy }: { icon: LucideIcon; title: string; copy: string }) {
-  return (
-    <article className="h-full">
-      <Card padding="md" className="h-full">
-        <span className="flex h-12 w-12 items-center justify-center rounded-[1rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100">
-          <Icon className="h-6 w-6" strokeWidth={2} />
-        </span>
-        <h3 className="mt-5 text-xl font-black text-ink">{title}</h3>
-        <p className="mt-2 text-base font-semibold leading-7 text-ink-muted">{copy}</p>
-      </Card>
-    </article>
-  );
-}
-
-function FeatureRow({ icon: Icon, title, detail }: { icon: LucideIcon; title: string; detail: string }) {
-  return (
-    <article className="h-full">
-      <Card variant="tinted" padding="sm" className="flex h-full gap-3.5">
-        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[1rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100">
-          <Icon className="h-5 w-5" strokeWidth={2} />
-        </span>
-        <div className="min-w-0">
-          <h3 className="font-black text-ink">{title}</h3>
-          <p className="mt-0.5 text-sm font-semibold leading-6 text-ink-muted">{detail}</p>
-        </div>
-      </Card>
-    </article>
-  );
-}
-
-function CoachExample({ question, answer }: { question: string; answer: string }) {
-  return (
-    <article className="h-full">
-      <Card padding="sm" className="flex h-full flex-col">
-        {/* Nested blocks are tints, never a second shadow. */}
-        <p className="rounded-[1.25rem] bg-surface-muted p-4 text-sm font-black leading-6 text-ink">
-          {question}
-        </p>
-        <p className="mt-2.5 rounded-[1.25rem] bg-primary-50 p-4 text-sm font-semibold leading-6 text-ink-muted ring-1 ring-inset ring-primary-100">
-          {answer}
-        </p>
-      </Card>
-    </article>
-  );
-}
-
-function DarkMetric({
-  label,
-  value,
-  of,
-}: {
-  label: string;
-  value: string;
-  /** Denominator line — a number with no scale is decoration. */
-  of: string;
-}) {
-  return (
-    <div className="rounded-[1.25rem] bg-white/10 p-4 ring-1 ring-inset ring-white/15">
-      <p className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-        <span className="text-3xl font-black tabular-nums leading-none text-white">
-          {value}
-        </span>
-        <span className="text-xs font-bold tabular-nums leading-none text-white/70">
-          {of}
-        </span>
-      </p>
-      <p className="mt-1.5 text-xs font-black uppercase tracking-[0.14em] text-white/60">
-        {label}
-      </p>
-    </div>
-  );
-}
-
-function MiniSurface({ icon: Icon, title, detail }: { icon: LucideIcon; title: string; detail: string }) {
-  return (
-    <li className="flex items-center gap-3 rounded-[1.25rem] bg-surface-subtle p-4 ring-1 ring-inset ring-hairline">
-      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[1rem] bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-100">
-        <Icon className="h-5 w-5" strokeWidth={2} aria-hidden="true" />
-      </span>
-      <div className="min-w-0">
-        <p className="font-black text-ink">{title}</p>
-        <p className="mt-0.5 text-sm font-semibold leading-6 text-ink-muted">{detail}</p>
-      </div>
-    </li>
+      </section>
+    </>
   );
 }
