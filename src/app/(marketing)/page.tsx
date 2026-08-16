@@ -194,25 +194,18 @@ export default function Home() {
         {/* Pastel gradient mesh background */}
         <div className="absolute inset-0 gradient-mesh" />
         <div className="absolute inset-0 dot-grid" />
-        <div className="absolute top-[-15%] left-[-5%] w-[500px] h-[500px] rounded-full bg-emerald-200/30 blur-[120px] animate-float-slow" />
-        <div className="absolute bottom-[-10%] right-[-5%] w-[400px] h-[400px] rounded-full bg-orange-200/25 blur-[100px] animate-float-slower" />
-        <div className="absolute top-[20%] right-[15%] w-[300px] h-[300px] rounded-full bg-violet-200/20 blur-[80px] animate-pulse-glow" />
+        <div className="absolute left-[-5%] top-[-15%] h-[500px] w-[500px] rounded-full bg-emerald-200/25 blur-[120px] animate-float-slow" />
+        <div className="absolute bottom-[-10%] right-[-5%] h-[400px] w-[400px] rounded-full bg-orange-200/20 blur-[100px] animate-float-slower" />
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 md:pt-36 pb-20 md:pb-28">
-          <AnimatedSection className="max-w-3xl mx-auto text-center space-y-8">
-            <div
-className="flex items-center justify-center gap-2.5 text-sm font-semibold text-foreground"            >
-              <span className="absolute inset-0 rounded-full bg-gradient-to-r from-emerald-400/10 via-transparent to-violet-400/10" />
-              <div className="relative flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 shadow-sm">
-                <Sparkles className="h-3.5 w-3.5 text-white" />
-              </div>
-              <span className="relative">
-                Get <span className="gradient-text font-bold">50% off for life</span> — only 100 founding spots
-              </span>
+          <AnimatedSection className="mx-auto max-w-3xl space-y-7 text-center sm:space-y-8">
+            <div className="fw-marketing-eyebrow">
+              <Sparkles className="h-4 w-4" />
+              <span>Get 50% off for life — only 100 founding spots</span>
             </div>
 
-            <div className="block inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-orange-500 to-pink-500 px-5 py-2 text-sm font-bold text-white shadow-lg shadow-orange-500/30 animate-pulse-glow">
-              <span className="h-2 w-2 rounded-full bg-white animate-pulse" />
+            <div className="inline-flex items-center gap-2 rounded-full border border-orange-200 bg-orange-50 px-4 py-2 text-sm font-bold text-orange-700 shadow-sm">
+              <span className="h-2 w-2 rounded-full bg-fw-orange" />
               Launching Fall 2026 — lock in your spot now
             </div>
 
@@ -226,7 +219,7 @@ className="flex items-center justify-center gap-2.5 text-sm font-semibold text-f
               Habits that actually stick — because they fit your life.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
+            <div className="flex flex-col items-stretch justify-center gap-3 pt-2 sm:flex-row sm:items-center sm:gap-4">
               <GradientButton href="/founders-100" size="lg">
                 Secure Your Spot
                 <ArrowRight className="ml-2 h-5 w-5" />
@@ -236,7 +229,7 @@ className="flex items-center justify-center gap-2.5 text-sm font-semibold text-f
               </OutlineButton>
             </div>
 
-            <p className="text-sm text-muted-foreground/70 max-w-md mx-auto font-accent">
+            <p className="mx-auto max-w-md text-sm text-muted-foreground/70">
               No rigid diets. No guilt. Just smarter decisions, every day.
             </p>
           </AnimatedSection>

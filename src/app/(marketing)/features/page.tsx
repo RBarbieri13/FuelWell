@@ -172,7 +172,7 @@ export default function FeaturesPage() {
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 md:pt-36 pb-12 md:pb-16">
           <AnimatedSection className="text-center max-w-3xl mx-auto">
-            <Badge className="mb-6 bg-fw-accent/10 text-fw-accent border-fw-accent/20 px-4 py-1.5">
+            <Badge className="fw-marketing-eyebrow mb-6">
               Full Feature Breakdown
             </Badge>
             <h1 className="gradient-text">
@@ -266,14 +266,14 @@ export default function FeaturesPage() {
             const Icon = item.icon;
             return (
               <AnimatedSection key={item.title} delay={i * 0.1}>
-                <div className="rounded-2xl border border-fw-border bg-white p-7 hover:-translate-y-1 hover:border-fw-accent/30 transition-all duration-300 shadow-card h-full">
+                <div className="fw-marketing-card h-full p-7 transition-[border-color,box-shadow,transform] duration-300 hover:-translate-y-1 hover:border-fw-accent/30 hover:shadow-card-hover">
                   <div className="flex items-center justify-between mb-5">
                     <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-50 to-teal-50 ring-1 ring-emerald-200/50 shadow-sm">
                       <Icon className="h-5 w-5 text-fw-accent" />
                     </div>
                     <div className="text-right">
                       <p className="text-lg font-bold text-fw-accent">{item.stat}</p>
-                      <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{item.statLabel}</p>
+                      <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{item.statLabel}</p>
                     </div>
                   </div>
                   <h3 className="text-lg font-semibold mb-3">{item.title}</h3>
@@ -360,7 +360,7 @@ export default function FeaturesPage() {
             const IntIcon = item.icon;
             return (
               <AnimatedSection key={item.name} delay={i * 0.06}>
-                <div className="group rounded-2xl border border-fw-border bg-white p-5 text-center hover:-translate-y-1 hover:shadow-card-hover hover:border-fw-accent/30 transition-all duration-300 shadow-card h-full flex flex-col items-center gap-3">
+                <div className="fw-marketing-card group flex h-full flex-col items-center gap-3 p-5 text-center transition-[border-color,box-shadow,transform] duration-300 hover:-translate-y-1 hover:border-fw-accent/30 hover:shadow-card-hover">
                   <div className={`flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br ${item.color} ring-1 ring-fw-border/40 shadow-sm group-hover:scale-105 transition-transform duration-300`}>
                     <IntIcon className={`h-8 w-8 ${item.iconColor}`} />
                   </div>

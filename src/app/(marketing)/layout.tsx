@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Outfit, DM_Sans } from "next/font/google";
+import { Inter, Outfit } from "next/font/google";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import "./marketing.css";
@@ -16,13 +16,8 @@ const outfit = Outfit({
   weight: ["400", "500", "600", "700", "800"],
 });
 
-const dmSans = DM_Sans({
-  variable: "--font-dm-sans",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-});
-
 export const metadata: Metadata = {
+  metadataBase: new URL("https://fuelwellhealth.com"),
   title: {
     default: "FuelWell — AI-Powered Nutrition & Fitness Coaching",
     template: "%s | FuelWell",
@@ -53,7 +48,7 @@ export default function MarketingLayout({
 }>) {
   return (
     <div
-      className={`${inter.variable} ${outfit.variable} ${dmSans.variable} fw-legacy-marketing min-h-screen bg-background text-foreground antialiased`}
+      className={`${inter.variable} ${outfit.variable} fw-legacy-marketing min-h-screen bg-background text-foreground antialiased`}
     >
       <div className="flex min-h-screen flex-col">
         <Navbar />

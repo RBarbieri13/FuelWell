@@ -16,9 +16,9 @@ interface GradientButtonProps {
 }
 
 const sizeClasses = {
-  lg: "h-14 px-10 text-lg",
-  default: "h-12 px-8 text-base",
-  sm: "h-10 px-6 text-sm",
+  lg: "min-h-14 px-9 text-base sm:px-10 sm:text-lg",
+  default: "min-h-12 px-7 text-[15px] sm:px-8 sm:text-base",
+  sm: "min-h-11 px-5 text-sm sm:px-6",
 }
 
 export function GradientButton({
@@ -34,11 +34,11 @@ export function GradientButton({
   const baseClasses = cn(
     "inline-flex items-center justify-center",
     "bg-gradient-to-r from-emerald-500 to-teal-500",
-    "text-white font-semibold rounded-xl shadow-md",
-    "hover:shadow-lg hover:from-emerald-600 hover:to-teal-600",
+    "text-white font-semibold rounded-[0.875rem] shadow-card",
+    "hover:shadow-card-hover hover:from-emerald-600 hover:to-teal-600",
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2",
     "disabled:pointer-events-none disabled:opacity-50",
-    "transition-all duration-200",
+    "transition-[background-color,box-shadow,transform] duration-200",
     sizeClasses[size],
     className
   )
@@ -49,7 +49,7 @@ export function GradientButton({
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         transition={{ duration: 0.15, ease: "easeOut" }}
-        className="inline-block"
+        className="inline-flex max-w-full"
       >
         <Link href={href} className={baseClasses} aria-label={ariaLabel}>
           {children}

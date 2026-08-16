@@ -69,7 +69,7 @@ export function AppScreensCarousel() {
           type="button"
           onClick={() => go(-1)}
           aria-label="Previous image"
-          className="flex h-10 w-10 md:h-12 md:w-12 shrink-0 items-center justify-center rounded-full border-2 border-fw-border bg-white shadow-card hover:border-fw-accent/40 hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200 z-10"
+          className="z-10 flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-fw-border bg-white shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:border-fw-accent/40 hover:shadow-card-hover md:h-12 md:w-12"
         >
           <ChevronLeft className="h-5 w-5 text-foreground" />
         </button>
@@ -113,14 +113,14 @@ export function AppScreensCarousel() {
           type="button"
           onClick={() => go(1)}
           aria-label="Next image"
-          className="flex h-10 w-10 md:h-12 md:w-12 shrink-0 items-center justify-center rounded-full border-2 border-fw-border bg-white shadow-card hover:border-fw-accent/40 hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200 z-10"
+          className="z-10 flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-fw-border bg-white shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:border-fw-accent/40 hover:shadow-card-hover md:h-12 md:w-12"
         >
           <ChevronRight className="h-5 w-5 text-foreground" />
         </button>
       </div>
 
       {/* Dot indicators */}
-      <div className="flex items-center justify-center gap-2 mt-6">
+      <div className="mt-6 flex items-center justify-center gap-0 sm:gap-1">
         {SLIDES.map((_, i) => (
           <button
             key={i}
@@ -130,13 +130,15 @@ export function AppScreensCarousel() {
               setCurrent(i);
             }}
             aria-label={`Go to image ${i + 1}`}
-            className={cn(
-              "h-2 rounded-full transition-all duration-300",
-              i === current
-                ? "w-8 bg-fw-accent"
-                : "w-2 bg-fw-border hover:bg-muted-foreground/40",
-            )}
-          />
+            className="flex h-11 w-11 items-center justify-center rounded-full transition-colors hover:bg-fw-surface"
+          >
+            <span
+              className={cn(
+                "h-2 rounded-full transition-all duration-300",
+                i === current ? "w-8 bg-fw-accent" : "w-2 bg-fw-border",
+              )}
+            />
+          </button>
         ))}
       </div>
     </div>
