@@ -25,6 +25,17 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - Prefer existing FuelWell component shapes, Tailwind theme tokens, and local
   color roles over new one-off visual values.
 
+## Public marketing design contract
+
+- Scope public-site styling to `src/app/(marketing)` and `.fw-legacy-marketing`;
+  do not let it change `/preview` or `/app/*`.
+- Use Inter for body text and controls, Outfit for headings, and the existing
+  FuelWell marketing tokens for color, spacing, borders, radii, and shadows.
+- Prefer shared `fw-marketing-*` patterns and shared button/card components over
+  one-off font, radius, border, or shadow values.
+- Verify every public route at desktop and narrow iPhone widths before release,
+  including no horizontal overflow and visible keyboard focus.
+
 # Coach engine Definition of Done
 
 - Coach must be a personalized health, nutrition, fitness, and

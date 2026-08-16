@@ -80,7 +80,7 @@ export function MacroCalculator() {
                   type="button"
                   onClick={() => setSex(s)}
                   className={cn(
-                    "rounded-xl border-2 py-2.5 text-sm font-medium capitalize transition-all",
+                    "min-h-11 rounded-xl border py-2.5 text-sm font-semibold capitalize transition-all",
                     sex === s
                       ? "border-fw-accent bg-emerald-50 text-fw-accent"
                       : "border-fw-border bg-white text-muted-foreground hover:border-fw-accent/40"
@@ -128,7 +128,7 @@ export function MacroCalculator() {
                     type="button"
                     onClick={() => setActivity(a)}
                     className={cn(
-                      "rounded-xl border-2 px-3 py-2 text-left transition-all",
+                      "min-h-12 rounded-xl border px-3 py-2 text-left transition-all",
                       activity === a
                         ? "border-fw-accent bg-emerald-50"
                         : "border-fw-border bg-white hover:border-fw-accent/40"
@@ -153,7 +153,7 @@ export function MacroCalculator() {
                   type="button"
                   onClick={() => setGoal(g)}
                   className={cn(
-                    "rounded-xl border-2 py-2.5 text-xs font-semibold transition-all",
+                    "min-h-11 rounded-xl border py-2.5 text-xs font-semibold transition-all",
                     goal === g
                       ? "border-fw-accent bg-emerald-50 text-fw-accent"
                       : "border-fw-border bg-white text-muted-foreground hover:border-fw-accent/40"
@@ -351,18 +351,18 @@ function MacroPill({
   text: string;
 }) {
   return (
-    <div className="rounded-2xl bg-white/80 backdrop-blur-sm border border-fw-border/60 p-3 text-center shadow-sm">
+    <div className="rounded-2xl border border-fw-border/60 bg-white/80 p-2 text-center shadow-sm backdrop-blur-sm sm:p-3">
       <div className={cn("mx-auto flex h-9 w-9 items-center justify-center rounded-xl", bg)}>
         <Icon className={cn("h-4 w-4", text)} />
       </div>
-      <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mt-2">
+      <p className="mt-2 text-[9px] font-semibold uppercase tracking-wide text-muted-foreground sm:text-[10px]">
         {label}
       </p>
       <motion.p
         key={grams}
         initial={{ opacity: 0, y: 3 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-xl font-bold text-foreground tabular-nums mt-0.5"
+        className="mt-0.5 text-lg font-bold tabular-nums text-foreground sm:text-xl"
       >
         {grams}
         <span className="text-xs text-muted-foreground ml-0.5">g</span>

@@ -82,8 +82,7 @@ export default function AboutPage() {
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 dot-grid" />
-        <div className="absolute top-[-10%] left-[20%] w-[400px] h-[400px] rounded-full bg-emerald-200/20 blur-[120px] animate-float-slow" />
-        <div className="absolute bottom-[-10%] right-[10%] w-[300px] h-[300px] rounded-full bg-violet-200/15 blur-[100px] animate-float-slower" />
+        <div className="absolute left-[20%] top-[-10%] h-[400px] w-[400px] rounded-full bg-emerald-200/20 blur-[120px] animate-float-slow" />
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 md:pt-36 pb-12 md:pb-16">
           <AnimatedSection className="text-center max-w-3xl mx-auto">
@@ -137,7 +136,7 @@ export default function AboutPage() {
           <AnimatedSection delay={0.1}>
             <div className="group text-center space-y-5">
               <div className="relative mx-auto w-56 h-56 sm:w-64 sm:h-64">
-                <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-fw-accent/40 via-emerald-200/30 to-violet-300/30 group-hover:from-fw-accent/60 group-hover:via-emerald-300/40 group-hover:to-violet-400/40 transition-all duration-500 blur-sm" />
+                <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-fw-accent/40 via-emerald-200/30 to-cyan-200/30 blur-sm transition-all duration-500 group-hover:from-fw-accent/60 group-hover:via-emerald-300/40 group-hover:to-cyan-300/40" />
                 <div className="relative w-full h-full rounded-full overflow-hidden border-[3px] border-white shadow-lg group-hover:shadow-xl transition-shadow duration-300">
                   <Image
                     src="/max.png"
@@ -156,7 +155,7 @@ export default function AboutPage() {
           <AnimatedSection delay={0.2}>
             <div className="group text-center space-y-5">
               <div className="relative mx-auto w-56 h-56 sm:w-64 sm:h-64">
-                <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-fw-accent/40 via-emerald-200/30 to-violet-300/30 group-hover:from-fw-accent/60 group-hover:via-emerald-300/40 group-hover:to-violet-400/40 transition-all duration-500 blur-sm" />
+                <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-fw-accent/40 via-emerald-200/30 to-cyan-200/30 blur-sm transition-all duration-500 group-hover:from-fw-accent/60 group-hover:via-emerald-300/40 group-hover:to-cyan-300/40" />
                 <div className="relative w-full h-full rounded-full overflow-hidden border-[3px] border-white shadow-lg group-hover:shadow-xl transition-shadow duration-300">
                   <Image
                     src="/robby.png"
@@ -180,7 +179,7 @@ export default function AboutPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
           {principles.map((principle, index) => (
             <AnimatedSection key={principle.title} delay={index * 0.1}>
-              <div className="group bg-white border border-fw-border rounded-xl p-8 text-center space-y-4 shadow-card hover:-translate-y-1 hover:border-fw-accent/30 transition-all duration-300">
+              <div className="fw-marketing-card group space-y-4 p-8 text-center transition-[border-color,box-shadow,transform] duration-300 hover:-translate-y-1 hover:border-fw-accent/30 hover:shadow-card-hover">
                 <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-emerald-50 group-hover:bg-emerald-100 mx-auto transition-colors duration-200">
                   <principle.icon className="w-7 h-7 text-fw-accent group-hover:scale-110 transition-transform duration-300" />
                 </div>

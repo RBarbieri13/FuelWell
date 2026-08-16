@@ -20,14 +20,14 @@ export default function SignupPage() {
 
   return (
     <>
-      <Section className="pt-24 md:pt-32 pb-8">
+      <Section className="pb-8 pt-20 md:pb-10 md:pt-28">
         <AnimatedSection className="text-center max-w-2xl mx-auto">
           <h1 className="gradient-text">{heading}</h1>
-          <p className="mt-4 text-lg text-muted-foreground">{subheading}</p>
+          <p className="mx-auto mt-5 max-w-xl text-lg leading-7 text-muted-foreground">{subheading}</p>
         </AnimatedSection>
       </Section>
 
-      <Section className="pb-24">
+      <Section className="pb-24 pt-8 md:pt-10">
         <AnimatedSection delay={0.15}>
           <SignupForm
             source="founders-100"

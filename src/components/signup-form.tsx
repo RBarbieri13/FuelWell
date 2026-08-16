@@ -140,7 +140,7 @@ export function SignupForm({
   return (
     <>
       <Toast visible={toastVisible} message={successTitle} />
-      <form onSubmit={handleSubmit} className="space-y-6 max-w-lg mx-auto">
+      <form onSubmit={handleSubmit} className="fw-marketing-card mx-auto max-w-xl space-y-6 p-5 sm:p-7">
       {/* First / Last name */}
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
@@ -155,7 +155,7 @@ export function SignupForm({
             onChange={(e) => setFirstName(e.target.value)}
             required
             autoComplete="given-name"
-            className="h-12 bg-white border-fw-border"
+            className="h-12 rounded-[0.875rem] border-fw-border bg-white text-base"
           />
         </div>
         <div className="space-y-2">
@@ -170,7 +170,7 @@ export function SignupForm({
             onChange={(e) => setLastName(e.target.value)}
             required
             autoComplete="family-name"
-            className="h-12 bg-white border-fw-border"
+            className="h-12 rounded-[0.875rem] border-fw-border bg-white text-base"
           />
         </div>
       </div>
@@ -187,15 +187,15 @@ export function SignupForm({
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          className="h-12 bg-white border-fw-border"
+          className="h-12 rounded-[0.875rem] border-fw-border bg-white text-base"
         />
       </div>
 
       {/* Informational pricing (founders-100 only) */}
       {showFoundersPricing && (
-        <div className="space-y-4 rounded-2xl border-2 border-violet-200 bg-gradient-to-br from-violet-50/60 to-emerald-50/40 p-5">
+        <div className="space-y-4 rounded-[1rem] border border-emerald-200 bg-emerald-50/50 p-5">
           <div className="flex items-center gap-2">
-            <Sparkles className="h-4 w-4 text-violet-600" />
+            <Sparkles className="h-4 w-4 text-emerald-700" />
             <Label className="text-sm font-semibold text-foreground">
               Your Founders 100 Pricing — locked in for life
             </Label>
@@ -209,11 +209,11 @@ export function SignupForm({
             {founders100Pricing.map((tier) => (
               <div
                 key={tier.key}
-                className="rounded-xl border border-fw-border bg-white p-4 space-y-3"
+                className="space-y-3 rounded-[0.875rem] border border-fw-border bg-white p-4 shadow-sm"
               >
                 <div>
                   <p className="font-semibold text-sm text-foreground">{tier.name}</p>
-                  <p className="text-[11px] text-muted-foreground leading-tight mt-0.5">
+                  <p className="mt-1 text-xs leading-snug text-muted-foreground">
                     {tier.description}
                   </p>
                 </div>
@@ -225,7 +225,7 @@ export function SignupForm({
                     >
                       <span className="text-muted-foreground">{plan.period}</span>
                       <span className="flex items-baseline gap-2">
-                        <span className="line-through text-muted-foreground/60 text-[11px]">
+                        <span className="text-xs text-muted-foreground/60 line-through">
                           {plan.regular}
                         </span>
                         <span className="font-semibold text-fw-accent">

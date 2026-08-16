@@ -113,21 +113,21 @@ export function AppCarousel() {
       {/* Navigation arrows */}
       <button
         onClick={() => navigate(-1)}
-        className="absolute left-[-24px] top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 backdrop-blur-sm border border-fw-border shadow-card-premium hover:shadow-lg hover:border-fw-accent/40 transition-all duration-200 z-10"
+        className="absolute left-[-18px] top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-fw-border bg-white/95 shadow-card-premium backdrop-blur-sm transition-all duration-200 hover:border-fw-accent/40 hover:shadow-card-hover sm:left-[-24px]"
         aria-label="Previous screen"
       >
         <ChevronLeft className="h-5 w-5 text-foreground" />
       </button>
       <button
         onClick={() => navigate(1)}
-        className="absolute right-[-24px] top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 backdrop-blur-sm border border-fw-border shadow-card-premium hover:shadow-lg hover:border-fw-accent/40 transition-all duration-200 z-10"
+        className="absolute right-[-18px] top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-fw-border bg-white/95 shadow-card-premium backdrop-blur-sm transition-all duration-200 hover:border-fw-accent/40 hover:shadow-card-hover sm:right-[-24px]"
         aria-label="Next screen"
       >
         <ChevronRight className="h-5 w-5 text-foreground" />
       </button>
 
       {/* Tab labels */}
-      <div className="flex items-center justify-center gap-3 mt-6">
+      <div className="mt-6 flex flex-wrap items-center justify-center gap-2 sm:gap-3">
         {screens.map((s, i) => (
           <button
             key={s.label}
@@ -136,7 +136,7 @@ export function AppCarousel() {
               setCurrent(i);
             }}
             className={cn(
-              "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200",
+              "flex min-h-11 items-center gap-1.5 rounded-full px-3 py-2 text-xs font-semibold transition-all duration-200",
               i === current
                 ? "bg-emerald-100 text-emerald-700 border border-emerald-200 shadow-sm"
                 : "text-muted-foreground hover:text-foreground hover:bg-fw-surface"

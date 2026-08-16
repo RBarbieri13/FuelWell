@@ -97,8 +97,8 @@ export function StitchCarousel() {
           </div>
 
           {/* Text + controls */}
-          <div className="text-center md:text-left">
-            <AnimatePresence mode="wait">
+          <div className="min-w-0 overflow-hidden text-center md:text-left">
+            <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={current}
                 initial={{ opacity: 0, y: 10 }}
@@ -120,42 +120,48 @@ export function StitchCarousel() {
             </AnimatePresence>
 
             {/* Controls */}
-            <div className="flex items-center justify-center md:justify-start gap-4 mt-7">
-              <button
-                type="button"
-                onClick={() => go(-1)}
-                aria-label="Previous slide"
-                className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-fw-border bg-white shadow-card hover:border-fw-accent/40 hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200"
-              >
-                <ChevronLeft className="h-5 w-5 text-foreground" />
-              </button>
-              <button
-                type="button"
-                onClick={() => go(1)}
-                aria-label="Next slide"
-                className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-fw-border bg-white shadow-card hover:border-fw-accent/40 hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200"
-              >
-                <ChevronRight className="h-5 w-5 text-foreground" />
-              </button>
+            <div className="mt-7 flex min-w-0 flex-wrap items-center justify-center gap-x-4 gap-y-1 md:flex-nowrap md:justify-start">
+              <div className="flex items-center gap-4">
+                <button
+                  type="button"
+                  onClick={() => go(-1)}
+                  aria-label="Previous slide"
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-fw-border bg-white shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:border-fw-accent/40 hover:shadow-card-hover"
+                >
+                  <ChevronLeft className="h-5 w-5 text-foreground" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => go(1)}
+                  aria-label="Next slide"
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-fw-border bg-white shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:border-fw-accent/40 hover:shadow-card-hover"
+                >
+                  <ChevronRight className="h-5 w-5 text-foreground" />
+                </button>
+              </div>
 
-              <div className="flex items-center gap-1.5 ml-3">
+              <span className="text-xs font-semibold text-muted-foreground tabular-nums md:ml-auto">
+                {String(current + 1).padStart(2, "0")} / {String(SLIDES.length).padStart(2, "0")}
+              </span>
+
+              <div className="flex basis-full items-center justify-center gap-0 sm:gap-1 md:order-none md:ml-3 md:basis-auto">
                 {SLIDES.map((_, i) => (
                   <button
                     key={i}
                     type="button"
                     onClick={() => { setDirection(i > current ? 1 : -1); setCurrent(i); }}
                     aria-label={`Go to slide ${i + 1}`}
-                    className={cn(
-                      "h-2 rounded-full transition-all duration-300",
-                      i === current ? "w-8 bg-fw-accent" : "w-2 bg-fw-border hover:bg-muted-foreground/40"
-                    )}
-                  />
+                    className="flex h-11 w-11 items-center justify-center rounded-full transition-colors hover:bg-fw-surface"
+                  >
+                    <span
+                      className={cn(
+                        "h-2 rounded-full transition-all duration-300",
+                        i === current ? "w-8 bg-fw-accent" : "w-2 bg-fw-border"
+                      )}
+                    />
+                  </button>
                 ))}
               </div>
-
-              <span className="ml-auto text-xs font-semibold text-muted-foreground tabular-nums">
-                {String(current + 1).padStart(2, "0")} / {String(SLIDES.length).padStart(2, "0")}
-              </span>
             </div>
           </div>
         </div>

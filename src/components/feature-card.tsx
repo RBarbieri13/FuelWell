@@ -24,17 +24,16 @@ export function FeatureCard({
   return (
     <div
       className={cn(
-        "group relative rounded-2xl border border-fw-border bg-white p-7 transition-all duration-300 shadow-card-premium overflow-hidden",
-        "hover:-translate-y-1.5 hover:shadow-card-hover hover:border-fw-accent/30",
+        "fw-marketing-card group relative overflow-hidden p-6 transition-[border-color,box-shadow,transform] duration-300 sm:p-7",
+        "hover:-translate-y-1 hover:shadow-card-hover hover:border-fw-accent/30",
         "flex flex-col h-full",
         className
       )}
     >
-      {/* Top gradient bar — visible on hover */}
-      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-fw-orange via-fw-accent to-fw-info opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-fw-orange via-fw-accent to-fw-info opacity-80" />
 
       {premium && (
-        <Badge className="absolute top-4 right-4 bg-gradient-to-r from-violet-100 to-purple-100 text-violet-600 border-violet-200 text-[10px] uppercase tracking-wider font-bold shadow-sm">
+        <Badge className="absolute right-4 top-4 border-emerald-200 bg-emerald-50 text-xs font-bold uppercase tracking-wide text-emerald-700">
           Premium
         </Badge>
       )}
@@ -50,8 +49,8 @@ export function FeatureCard({
       <div className="mb-5 flex h-13 w-13 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-50 to-teal-50 ring-1 ring-emerald-200/50 group-hover:ring-2 group-hover:ring-emerald-300/60 group-hover:from-emerald-100 group-hover:to-teal-100 transition-all duration-300 shadow-sm">
         <Icon className="h-6 w-6 text-emerald-600 group-hover:scale-110 transition-transform duration-300" />
       </div>
-      <h3 className="mb-2.5 text-xl font-semibold text-foreground">{title}</h3>
-      <p className="text-base leading-[1.7] text-muted-foreground">
+      <h3 className="mb-2.5 text-xl font-bold text-foreground">{title}</h3>
+      <p className="text-base leading-7 text-muted-foreground">
         {description}
       </p>
     </div>

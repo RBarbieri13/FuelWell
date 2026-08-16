@@ -230,10 +230,10 @@ export function InteractiveCoach() {
             <button
               type="button"
               disabled
-              className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 shadow-sm disabled:opacity-70"
+              className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 shadow-sm disabled:opacity-70"
               aria-label="Send message"
             >
-              <Send className="h-3.5 w-3.5 text-white" />
+              <Send className="h-4 w-4 text-white" />
             </button>
           </div>
         </div>

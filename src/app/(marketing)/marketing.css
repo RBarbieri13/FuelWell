@@ -5,11 +5,11 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  /* Typography — Outfit for headings, Inter for body, DM Sans for accents */
+  /* Typography — Outfit for headings, Inter everywhere else */
   --font-sans: var(--font-inter);
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   --font-heading: var(--font-outfit);
-  --font-accent: var(--font-dm-sans);
+  --font-accent: var(--font-inter);
 
   /* shadcn semantic colors → FuelWell tokens */
   --color-background: var(--background);
@@ -53,8 +53,8 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-/* FuelWell light/bright pastel theme */
-:root {
+/* FuelWell public-site theme. Keep these tokens scoped away from the app. */
+.fw-legacy-marketing {
   --background: #FAFBFE;
   --foreground: #0F1117;
   --card: #FFFFFF;
@@ -74,55 +74,93 @@
   --input: #F1F5F9;
   --ring: #34D399;
   --radius: 0.75rem;
+  --fw-section-gap: clamp(4.5rem, 8vw, 7rem);
+  --fw-card-radius: 1.25rem;
+  --fw-control-radius: 0.875rem;
+  --fw-shadow-1: 0 1px 2px rgba(15, 17, 23, 0.04), 0 6px 20px rgba(15, 17, 23, 0.05);
+  --fw-shadow-2: 0 2px 4px rgba(15, 17, 23, 0.05), 0 14px 40px rgba(15, 17, 23, 0.08);
 }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-
-  html {
-    @apply font-sans scroll-smooth;
+  .fw-legacy-marketing {
+    min-width: 0;
+    overflow-x: clip;
+    font-family: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     font-size: 17px;
-  }
-
-  body {
-    @apply bg-background text-foreground font-normal;
+    font-weight: 400;
+    line-height: 1.65;
+    background: var(--background);
+    color: var(--foreground);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
-  ::selection {
+  .fw-legacy-marketing *,
+  .fw-legacy-marketing *::before,
+  .fw-legacy-marketing *::after {
+    box-sizing: border-box;
+  }
+
+  .fw-legacy-marketing ::selection {
     background: rgba(52, 211, 153, 0.2);
     color: #1A1D2E;
   }
 
-  /* Typography — Outfit headings */
-  h1 {
+  .fw-legacy-marketing h1,
+  .fw-legacy-marketing h2,
+  .fw-legacy-marketing h3,
+  .fw-legacy-marketing h4,
+  .fw-legacy-marketing h5,
+  .fw-legacy-marketing h6 {
     font-family: var(--font-outfit), var(--font-inter), system-ui, sans-serif;
-    @apply text-[3.5rem] font-bold leading-[1.08] tracking-[-0.03em];
+    color: var(--foreground);
+    text-wrap: balance;
   }
-  h2 {
-    font-family: var(--font-outfit), var(--font-inter), system-ui, sans-serif;
-    @apply text-[2.5rem] font-bold leading-[1.15] tracking-[-0.02em];
+
+  .fw-legacy-marketing h1 {
+    font-size: clamp(2.65rem, 6vw, 4.75rem);
+    font-weight: 800;
+    line-height: 1.04;
+    letter-spacing: -0.035em;
   }
-  h3 {
-    font-family: var(--font-outfit), var(--font-inter), system-ui, sans-serif;
-    @apply text-[1.5rem] font-semibold leading-[1.3] tracking-[-0.01em];
+
+  .fw-legacy-marketing h2 {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.025em;
+  }
+
+  .fw-legacy-marketing h3 {
+    font-size: clamp(1.35rem, 2vw, 1.75rem);
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.015em;
+  }
+
+  .fw-legacy-marketing p,
+  .fw-legacy-marketing li,
+  .fw-legacy-marketing label,
+  .fw-legacy-marketing input,
+  .fw-legacy-marketing textarea,
+  .fw-legacy-marketing select,
+  .fw-legacy-marketing button,
+  .fw-legacy-marketing a {
+    font-family: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   }
 
   /* Custom scrollbar — light version */
-  ::-webkit-scrollbar {
+  .fw-legacy-marketing ::-webkit-scrollbar {
     width: 6px;
   }
-  ::-webkit-scrollbar-track {
+  .fw-legacy-marketing ::-webkit-scrollbar-track {
     background: #FAFBFE;
   }
-  ::-webkit-scrollbar-thumb {
+  .fw-legacy-marketing ::-webkit-scrollbar-thumb {
     background: #CBD5E1;
     border-radius: 3px;
   }
-  ::-webkit-scrollbar-thumb:hover {
+  .fw-legacy-marketing ::-webkit-scrollbar-thumb:hover {
     background: #94A3B8;
   }
 }
@@ -162,7 +200,7 @@
     font-family: var(--font-outfit), var(--font-inter), system-ui, sans-serif;
   }
   .font-accent {
-    font-family: var(--font-dm-sans), var(--font-inter), system-ui, sans-serif;
+    font-family: var(--font-inter), system-ui, sans-serif;
   }
 
   /* Glass morphism — light */
@@ -191,10 +229,10 @@
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.03);
   }
   .shadow-card {
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 20px rgba(0, 0, 0, 0.03);
+    box-shadow: var(--fw-shadow-1);
   }
   .shadow-card-hover {
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06), 0 8px 40px rgba(0, 0, 0, 0.04);
+    box-shadow: var(--fw-shadow-2);
   }
 
   /* Animated gradient border — pastel */
@@ -255,11 +293,7 @@
 
   /* Premium shadows */
   .shadow-card-premium {
-    box-shadow:
-      0 1px 2px rgba(0, 0, 0, 0.03),
-      0 4px 12px rgba(0, 0, 0, 0.04),
-      0 12px 40px rgba(0, 0, 0, 0.06),
-      0 0 0 1px rgba(0, 0, 0, 0.02);
+    box-shadow: var(--fw-shadow-2);
   }
   .shadow-phone {
     box-shadow:
@@ -338,6 +372,63 @@
 
 .animate-fade-in-up {
   animation: fade-in-up 0.5s ease-out forwards;
+}
+
+/* Shared public-site component language. */
+.fw-legacy-marketing .fw-marketing-section {
+  padding-block: var(--fw-section-gap);
+}
+
+.fw-legacy-marketing .fw-marketing-card {
+  border: 1px solid var(--border);
+  border-radius: var(--fw-card-radius);
+  background: var(--card);
+  box-shadow: var(--fw-shadow-1);
+}
+
+.fw-legacy-marketing .fw-marketing-eyebrow {
+  display: inline-flex;
+  min-height: 2rem;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid rgba(52, 211, 153, 0.24);
+  border-radius: 999px;
+  background: rgba(52, 211, 153, 0.08);
+  padding: 0.35rem 0.8rem;
+  color: #047857;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.fw-legacy-marketing :where(a, button, input, textarea, select):focus-visible {
+  outline: 3px solid rgba(52, 211, 153, 0.45);
+  outline-offset: 3px;
+}
+
+@media (max-width: 639px) {
+  .fw-legacy-marketing {
+    font-size: 16px;
+  }
+
+  .fw-legacy-marketing h1 {
+    font-size: clamp(2.45rem, 12vw, 3.35rem);
+  }
+
+  .fw-legacy-marketing h2 {
+    font-size: clamp(1.9rem, 9vw, 2.5rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fw-legacy-marketing *,
+  .fw-legacy-marketing *::before,
+  .fw-legacy-marketing *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 @keyframes scan-line {

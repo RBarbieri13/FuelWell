@@ -15,6 +15,7 @@ import {
   Gift,
   Trophy,
   Gem,
+  Check,
 } from "lucide-react";
 import { Section } from "@/components/ui/section";
 import { AnimatedSection } from "@/components/animated-section";
@@ -28,42 +29,36 @@ const benefits = [
     title: "Lifetime Discounted Pricing",
     description:
       "Lock in founding member rates for as long as you stay subscribed. Your price never goes up.",
-    emoji: "🔒",
   },
   {
     icon: Sparkles,
     title: "Early Access to New Features",
     description:
       "Be the first to try new capabilities before they roll out to the general public.",
-    emoji: "✨",
   },
   {
     icon: MessageSquare,
     title: "Direct Feedback Channel",
     description:
       "A private line to the founders. Share ideas, report issues, and help shape the product roadmap.",
-    emoji: "💬",
   },
   {
     icon: Award,
     title: "Founding Member Badge",
     description:
       "A permanent badge inside the app that marks you as one of the original 100.",
-    emoji: "🏆",
   },
   {
     icon: Lightbulb,
     title: "Influence Future Features",
     description:
       "Vote on what we build next. Founders 100 members get priority input on the product roadmap.",
-    emoji: "💡",
   },
   {
     icon: Gift,
     title: "Exclusive Content & Perks",
     description:
       "Get founder-only guides, templates, and surprise perks as we grow together.",
-    emoji: "🎁",
   },
 ];
 
@@ -176,12 +171,11 @@ export function Founders100Content({ spotsClaimed }: Founders100ContentProps) {
             const Icon = benefit.icon;
             return (
               <AnimatedSection key={benefit.title} delay={i * 0.08}>
-                <div className="group rounded-2xl border-2 border-fw-border bg-white p-6 h-full hover:-translate-y-1 hover:border-violet-200 transition-all duration-300 shadow-card hover:shadow-lg">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-violet-50 to-purple-50 ring-2 ring-violet-100 group-hover:ring-violet-200 group-hover:from-violet-100 group-hover:to-purple-100 transition-all duration-300">
-                      <Icon className="h-5 w-5 text-violet-600 group-hover:scale-110 transition-transform duration-300" />
+                <div className="fw-marketing-card group h-full p-6 transition-[border-color,box-shadow,transform] duration-300 hover:-translate-y-1 hover:border-fw-accent/30 hover:shadow-card-hover">
+                  <div className="mb-4 flex items-start">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-emerald-100 bg-emerald-50 transition-all duration-300 group-hover:bg-emerald-100">
+                      <Icon className="h-5 w-5 text-emerald-700 transition-transform duration-300 group-hover:scale-110" />
                     </div>
-                    <span className="text-2xl">{benefit.emoji}</span>
                   </div>
                   <h3 className="text-lg font-semibold mb-2">
                     {benefit.title}
@@ -213,7 +207,7 @@ export function Founders100Content({ spotsClaimed }: Founders100ContentProps) {
         <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {/* Pro Card */}
           <AnimatedSection delay={0.1}>
-            <div className="rounded-3xl border-2 border-fw-border bg-white p-8 h-full flex flex-col hover:border-fw-accent/40 transition-all duration-300 shadow-card hover:shadow-lg relative overflow-hidden">
+            <div className="fw-marketing-card relative flex h-full flex-col overflow-hidden p-7 transition-[border-color,box-shadow] duration-300 hover:border-fw-accent/40 hover:shadow-card-hover sm:p-8">
               {/* Decorative corner */}
               <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-emerald-50 to-transparent rounded-bl-[3rem]" />
 
@@ -252,7 +246,7 @@ export function Founders100Content({ spotsClaimed }: Founders100ContentProps) {
                     key={feature.label}
                     className="flex items-center gap-3 text-sm"
                   >
-                    <span className="text-base">{feature.icon}</span>
+                    <Check className="h-4 w-4 shrink-0 text-fw-accent" />
                     <span>{feature.label}</span>
                   </li>
                 ))}
@@ -262,7 +256,7 @@ export function Founders100Content({ spotsClaimed }: Founders100ContentProps) {
 
           {/* Premium Card */}
           <AnimatedSection delay={0.2}>
-            <div className="relative rounded-3xl border-3 border-violet-300 bg-gradient-to-b from-violet-50 to-white p-8 h-full flex flex-col glow-premium overflow-hidden">
+            <div className="relative flex h-full flex-col overflow-hidden rounded-[1.25rem] border border-violet-200 bg-gradient-to-b from-violet-50/70 to-white p-7 shadow-card-premium sm:p-8">
               {/* Decorative elements */}
               <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-violet-100/80 to-transparent rounded-bl-[4rem]" />
               <div className="absolute bottom-0 left-0 w-20 h-20 bg-gradient-to-tr from-purple-100/50 to-transparent rounded-tr-[3rem]" />
@@ -312,7 +306,7 @@ export function Founders100Content({ spotsClaimed }: Founders100ContentProps) {
                     key={feature.label}
                     className="flex items-start gap-3 text-sm"
                   >
-                    <span className="text-base shrink-0 mt-0.5">{feature.icon}</span>
+                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-violet-600" />
                     <span className={feature.highlight ? "text-foreground font-semibold" : "text-foreground/80"}>
                       {feature.label}
                     </span>

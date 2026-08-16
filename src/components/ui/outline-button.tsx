@@ -16,15 +16,15 @@ export function OutlineButton({ children, href, className }: OutlineButtonProps)
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       transition={{ duration: 0.15, ease: "easeOut" }}
-      className="inline-block"
+      className="inline-flex max-w-full"
     >
       <Link
         href={href}
         className={cn(
-          "inline-flex items-center justify-center h-12 px-8 text-base font-medium rounded-xl",
+          "inline-flex min-h-12 items-center justify-center px-7 text-[15px] font-semibold rounded-[0.875rem] sm:px-8 sm:text-base",
           "border border-fw-border bg-white text-foreground shadow-sm",
           "hover:bg-fw-surface hover:border-fw-accent/40",
-          "transition-all duration-200",
+          "transition-[background-color,border-color,box-shadow,transform] duration-200",
           className
         )}
       >
